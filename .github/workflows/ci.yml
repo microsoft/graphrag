@@ -33,6 +33,11 @@ jobs:
         with:
           poetry-version: '1.6.1'
   
+      
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm-11 python3-dev
+        name: "LLVM install"
 
       - uses: actions/checkout@v3
 
