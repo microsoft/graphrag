@@ -61,11 +61,17 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - run: yarn check
+        name: Static Checks
+
+      - run: yarn build
+        name: Build
+
       - run: yarn start:azurite&
         name: Start Azurite
 
-      - run: yarn ci
-        name: Verify
+      - run: yarn test
+        name: Test
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY.required }}
           GRAPHRAG_LLM_MODEL: ${{ secrets.OPENAI_LLM_MODEL.required }}
