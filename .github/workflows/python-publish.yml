@@ -1,4 +1,4 @@
-name: Python-Publish-CI
+name: Python Publish
 on:
   push:
       branches: [main]
