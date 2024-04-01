@@ -1,0 +1,23 @@
+workflows:
+  - name: "entity_extraction"
+    config:
+      entity_extract:
+          strategy: 
+              type: "nltk"
+
+  - name: "entity_graph"
+    config:
+      cluster_graph: 
+        strategy: 
+          type: "leiden"
+      embed_graph: 
+          strategy: 
+              type: "node2vec"
+              num_walks: 10
+              walk_length: 40
+              window_size: 2
+              iterations: 3
+              random_seed: 597832
+      layout_graph: 
+          strategy: 
+              type: "umap"

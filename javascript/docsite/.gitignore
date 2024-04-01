@@ -1,0 +1,5 @@
+_site
+_posts/_index/_verbs/*.md
+_posts/_index/_workflows/*.md
+!_posts/_index/_verbs/overview.md
+!_posts/_index/_workflows/overview.md

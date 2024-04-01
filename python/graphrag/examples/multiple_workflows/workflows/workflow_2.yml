@@ -1,0 +1,17 @@
+name: workflow_2
+steps:
+  - verb: fill
+    args:
+      to: "col_workflow_2"
+      value: 2
+    input: 
+
+      # workflow_2 is dependent on workflow_1
+      # so in workflow_2 output, you'll also see the output from workflow_1
+      source: "workflow:workflow_1"
+
+  # Example of pulling in values from a shared file
+  - verb: fill
+    args:
+      to: "col_from_shared_file"
+      value: !include ./shared/shared_fill_value.txt

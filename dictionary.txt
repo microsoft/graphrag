@@ -1,0 +1,171 @@
+# Team
+Alonso
+
+# Pythonisms
+PYTHONPATH
+pycache
+nopython
+virtualenv
+Pythonisms
+pyproject
+ipynb
+pymodule
+virtualenv
+virtualenvs
+signum
+ospath
+msecs
+asdict
+isna
+getcwd
+fillna
+
+# Azure
+abfs
+
+# NLTK Terms
+chunker
+wordnet
+maxent
+punkt
+
+# Libraries
+Langchain
+networkx
+graspologic
+graphml
+dataframe
+dataframes
+nltk
+datashaper
+numba
+graphintelligence
+dotenv
+tiktoken
+pydantic
+faiss
+pyarrow
+pyaml
+Chakra
+poethepoet
+pyodbc
+lancedb
+httpx
+qdrant
+Qdrant
+pymongo
+uvloop
+aiofiles
+asyncio
+numpy
+pypi
+nbformat
+
+# Library Methods
+iterrows
+rprint
+ndarray
+nprobe
+astype
+monkeypatches
+nlist
+ntotal
+quantizer
+arun
+tiktokens
+dtype
+linewidths
+asearch
+iloc
+itertuples
+isin
+nocache
+nbconvert
+
+# Verbs
+binarize
+prechunked
+openai
+genid
+umap
+concat
+unhot
+groupby
+retryer
+agenerate
+aembed
+dedupe
+
+# LLM Terms
+AOAI
+embedder
+llm
+llms
+
+# Galaxy-Brain Terms
+Unipartite
+idempotently
+covariate
+covariates
+logit
+
+# Charting
+plottable
+scatterplot
+
+# Resilience Team Terms
+SITREP
+megapipeline
+columnwise
+janky
+docstore
+datasource
+devcontainers
+codebases
+
+# Microsoft
+MSRC
+
+# Broken Upstream
+# TODO FIX IN DATASHAPER
+Arrary
+
+# Prompt Inputs
+VOLKIMIR
+VLODIMIR
+VOLODYMYR
+VOLADIMIR
+VOLODYMYR
+VOLDEMIR
+VOLDEMIR
+VOLYNMYR
+VOLYNMYR
+VOLYN
+ZELENS
+ZELENSKY
+ZELENSKI
+ZELENSKIY
+ZELENSKYI
+ZELENSKII
+ROSIYA
+ROSSIA
+ROSIYA
+ROSIJA
+ROSIA
+OLEKSANDROVYCH
+Siamak
+Namazi
+Emad
+Shargi
+Evin
+Morad
+Tahbaz
+abila
+abilas
+payus
+derp
+POKRALLY
+dulce
+
+# English
+skippable

@@ -1,0 +1,4 @@
+workflows:
+  - !include workflows/workflow_1.yml
+  - !include workflows/workflow_2.yml
+  - !include workflows/workflow_3.yml

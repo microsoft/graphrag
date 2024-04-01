@@ -1,0 +1,37 @@
+{
+  "name": "@graphrag/project",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "author": "Chris Trevino <chris.trevino@microsoft.com>",
+  "scripts": {
+    "_ci_packages": "turbo run ci",
+    "_install_poetry_freeze": "poetry self add poetry-plugin-freeze",
+    "_python_install": "turbo run python_install",
+    "_python_install_ci": "turbo run python_install -- -E azure-artifacts",
+    "python_authenticate": "turbo run python_authenticate --concurrency=1 --force",
+    "python_install": "run-s _install_poetry_freeze _python_install",
+    "python_install_ci": "run-s _install_poetry_freeze _python_install_ci",
+    "clean": "turbo run clean --parallel",
+    "build": "turbo run build --force",
+    "fix": "turbo run fix",
+    "check": "turbo run check --force",
+    "test": "turbo run test --force",
+    "format": "turbo run format",
+    "publish": "turbo run publish",
+    "update_sdks": "yarn dlx @yarnpkg/sdks vscode",
+    "start": "turbo run start --parallel",
+    "ci": "run-s _ci_packages spellcheck",
+    "spellcheck": "cspell -c cspell.config.yaml --no-progress lint ."
+  },
+  "workspaces": [
+    "javascript/*",
+    "python/*"
+  ],
+  "packageManager": "yarn@4.0.2",
+  "devDependencies": {
+    "cspell": "^8.3.2",
+    "npm-run-all": "^4.1.5",
+    "turbo": "^1.12.4"
+  }
+}

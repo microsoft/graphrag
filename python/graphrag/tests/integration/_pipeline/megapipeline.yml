@@ -1,0 +1,99 @@
+input:
+  type: csv
+  base_dir: ../../../examples/_sample_data
+  file_pattern: .*\.csv$
+  source_column: "author"
+  text_column: "message"
+  timestamp_column: "date(yyyyMMddHHmmss)"
+  timestamp_format: "%Y%m%d%H%M%S"
+  title_column: "message"
+  post_process:
+    - verb: sample
+      args:
+        size: 100
+        seed: 0xF00D
+      input:
+        source: source
+
+storage:
+  type: memory
+
+cache:
+  type: memory
+
+workflows:
+  - name: create_base_text_units
+    config:
+      text_chunk:
+        strategy:
+          type: sentence
+
+      # Just lump everything together
+      chunk_by: []
+
+      # Mostly for consistency
+      sort_columns:
+        - author
+
+  - name: create_base_extracted_entities
+    config:
+      graphml_snapshot: True
+      summarize_descriptions_enabled: False
+      resolve_entities_enabled: False
+      entity_extract:
+        strategy:
+          type: nltk
+
+  - name: create_base_entity_graph
+    config:
+      graphml_snapshot: True
+      summarize_descriptions_enabled: False
+      resolve_entities_enabled: False
+      embed_graph_enabled: True
+      cluster_graph:
+        strategy:
+          type: leiden
+          verbose: True
+
+  - name: create_final_nodes
+
+  - name: create_base_documents
+    config:
+      document_attribute_columns:
+        - author
+        - source
+        - year
+        - month
+        - day
+
+  # - name: create_final_community_reports
+  #   config:
+  #     create_community_reports:
+  #       <<: *llm_parallel_config
+  #       strategy:
+  #         type: graph_intelligence
+  #         llm: *llm_config
+
+  - name: create_final_communities
+  - name: create_final_text_units
+    config:
+      text_embed:
+        strategy:
+          type: mock
+
+  - name: create_final_entities
+    config:
+      text_embed:
+        strategy:
+          type: mock
+
+  - name: create_final_documents
+    config:
+      text_embed:
+        strategy:
+          type: mock
+  - name: create_final_relationships
+    config:
+      text_embed:
+        strategy:
+          type: mock

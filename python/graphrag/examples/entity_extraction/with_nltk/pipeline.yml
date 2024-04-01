@@ -1,0 +1,6 @@
+workflows:
+  - name: "entity_extraction"
+    config:
+      entity_extract:
+          strategy: 
+              type: "nltk"
