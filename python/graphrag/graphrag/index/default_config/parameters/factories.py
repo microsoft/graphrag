@@ -127,8 +127,8 @@ def default_config_parameters_from_env_vars(
     def _float(key: str, default_value: float | None = None) -> float | None:
         return env.float(key, default_value)
 
-    def section(key: str):
-        return env.prefixed(f"{key}_")
+    def section(key: Section):
+        return env.prefixed(f"{key.value}_")
 
     fallback_oai_key = _str("OPENAI_API_KEY", _str("AZURE_OPENAI_API_KEY"))
     fallback_oai_org = _str("OPENAI_ORG_ID")
