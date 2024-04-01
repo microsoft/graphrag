@@ -1,0 +1,80 @@
+name: JavaScript CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 18.x
+        python-version:
+          - '3.10'
+          - '3.11'
+
+
+    steps:
+      - name: Use Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry 1.6.1
+        uses: abatilo/actions-poetry@v2.1.6
+        with:
+          poetry-version: '1.6.1'
+  
+
+      - uses: actions/checkout@v3
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+        name: Install node dependencies
+
+
+      - run: yarn python_install_ci
+        name: Install python dependencies
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: yarn start:azurite&
+        name: Start Azurite
+
+      - run: yarn ci
+        name: Verify
+        env:
+          GRAPHRAG_API_KEY: $(openaiApiKey)
+          GRAPHRAG_LLM_MODEL: $(completionModel)
+          GRAPHRAG_EMBEDDING_MODEL: $(embeddingModel)
+
+      - run: |
+          git add -A 
+          git status
+        name: Git status
+
+      - run: yarn is_clean
+        name: Check if repo is clean

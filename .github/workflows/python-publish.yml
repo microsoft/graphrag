@@ -1,0 +1,46 @@
+name: Python-Publish-CI
+on:
+  push:
+      branches: [main]
+
+jobs:
+  publish:
+    name: Upload release to PyPI
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/graphrag
+    permissions:
+        id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install Poetry 1.6.1
+        uses: abatilo/actions-poetry@v2.1.6
+        with:
+          poetry-version: '1.6.1'
+
+      - name: Install dependencies
+        shell: bash
+        working-directory: ./python/graphrag
+        run: poetry install
+
+      - name: Build Distributable
+        shell: bash
+        working-directory: ./python/graphrag
+        run: poetry build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/graphrag/dist
+          skip-existing: true
+          verbose: true
+      
