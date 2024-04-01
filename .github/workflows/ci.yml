@@ -67,9 +67,9 @@ jobs:
       - run: yarn ci
         name: Verify
         env:
-          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GRAPHRAG_LLM_MODEL: ${{ secrets.OPENAI_LLM_MODEL }}
-          GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.OPENAI_EMBEDDING_MODEL }}
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY.required }}
+          GRAPHRAG_LLM_MODEL: ${{ secrets.OPENAI_LLM_MODEL.required }}
+          GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.OPENAI_EMBEDDING_MODEL.required }}
 
       - run: |
           git add -A 
