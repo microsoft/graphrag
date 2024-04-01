@@ -54,6 +54,19 @@ def build_steps(
         },
         {"verb": "rename", "args": {"columns": {"title": "name"}}},
         {
+            # ELIMINATE EMPTY NAMES
+            "verb": "filter",
+            "args": {
+                "column": "name",
+                "criteria": [
+                    {
+                        "type": "value",
+                        "operator": "is not empty",
+                    }
+                ],
+            },
+        },
+        {
             "verb": "text_split",
             "args": {"separator": ",", "column": "source_id", "to": "text_unit_ids"},
         },
@@ -97,6 +110,19 @@ def build_steps(
                     "verb": "drop",
                     "args": {
                         "columns": ["name_description"],
+                    },
+                },
+                {
+                    # ELIMINATE EMPTY DESCRIPTION EMBEDDINGS
+                    "verb": "filter",
+                    "args": {
+                        "column": "description_embedding",
+                        "criteria": [
+                            {
+                                "type": "value",
+                                "operator": "is not empty",
+                            }
+                        ],
                     },
                 },
             ]
