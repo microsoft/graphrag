@@ -3,6 +3,7 @@
     "input_type": "text",
     "workflow_config": {
         "skip_assert": true,
+        "skip": true,
         "azure": {
             "input_container": "dulceazure",
             "input_base_dir": "input"

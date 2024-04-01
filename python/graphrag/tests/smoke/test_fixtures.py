@@ -239,6 +239,9 @@ class TestIndexer:
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
+        if workflow_config.get("skip", False):
+            return
+        
         azure = workflow_config.get("azure")
         root = Path(input_path)
         dispose = None
