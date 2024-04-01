@@ -69,9 +69,15 @@ jobs:
 
       - run: yarn start:azurite&
         name: Start Azurite
+      
+      - run: yarn test:unit
+        name: Unit Tests
 
-      - run: yarn test
-        name: Test
+      - run: yarn test:integration
+        name: Integration Tests
+      
+      - run: yarn test:smoke
+        name: Smoke Tests
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY.required }}
           GRAPHRAG_LLM_MODEL: ${{ secrets.OPENAI_LLM_MODEL.required }}
