@@ -66,16 +66,20 @@ jobs:
 
       - run: yarn build
         name: Build
-
-      - run: yarn start:azurite&
-        name: Start Azurite
       
       - run: yarn test:unit
         name: Unit Tests
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY.required }}
 
       - run: yarn test:integration
         name: Integration Tests
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY.required }}
       
+      - run: yarn start:azurite&
+        name: Start Azurite
+
       - run: yarn test:smoke
         name: Smoke Tests
         env:
