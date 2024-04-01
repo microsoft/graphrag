@@ -1,0 +1,6 @@
+extends: default
+
+workflows:
+  - name: TEST_WORKFLOW
+    steps:
+      - verb: TEST_VERB

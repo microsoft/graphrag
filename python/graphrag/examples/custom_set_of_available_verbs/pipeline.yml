@@ -1,0 +1,7 @@
+workflows:
+ - steps:
+    - verb: "str_append"  # should be the key that you pass to the custom_verbs dict below
+      args: 
+        source_column: "col1"
+        target_column: "col_1_custom"
+        string_to_append: " - custom verb"

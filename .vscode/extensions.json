@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "arcanis.vscode-zipfs",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-python.vscode-pylance",
+    "bierner.markdown-mermaid",
+    "streetsidesoftware.code-spell-checker",
+    "ronnidc.nunjucks"
+  ]
+}

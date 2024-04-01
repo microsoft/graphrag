@@ -1,0 +1,16 @@
+workflows:
+  - name: "entity_extraction"
+    config:
+      entity_extract:
+        strategy:
+          type: "graph_intelligence"
+          llm:
+            type: "openai_chat"
+
+            # create a .env file in the same directory as this pipeline.yml file
+            # end add the following lines to it:
+            # EXAMPLE_OPENAI_API_KEY="YOUR_API_KEY"
+            api_key: !ENV ${EXAMPLE_OPENAI_API_KEY:None} # None is the default
+            model: !ENV ${EXAMPLE_OPENAI_MODEL:gpt-3.5-turbo} # gpt-3.5-turbo is the default
+            max_tokens: !ENV ${EXAMPLE_OPENAI_MAX_TOKENS:2500} # 2500 is the default
+            temperature: !ENV ${EXAMPLE_OPENAI_TEMPERATURE:0} # 0 is the default

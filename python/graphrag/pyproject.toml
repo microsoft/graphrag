@@ -1,0 +1,226 @@
+[tool.poetry]
+name = "graphrag"
+version = "0.1.0"
+description = ""
+authors = [
+    "Chris Trevino <chtrevin@microsoft.com>",
+    "Jonathan Larson <jolarso@microsoft.com>",
+    "Nathan Evans <naevans@microsoft.com>",
+    "Ha Trinh <trinhha@microsoft.com>",
+    "Alonso Guevara <alonsog@microsoft.com>",
+]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "graphrag" }]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+format = "v{base}+{commit}"
+bump = true
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+environs = "^9.5.0"
+datashaper = "^0.0.49"
+
+# Vector Stores
+lancedb = { version = "^0.4.4", optional = true }
+qdrant-client = "^1.8.2"
+
+# Event Loops
+uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
+nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
+
+# Async IO
+aiolimiter = "^1.1.0"
+aiofiles = "^23.2.1"
+
+# LLM
+openai = "^1.1.1"
+nltk = "3.8.1"
+tiktoken = "^0.6.0"
+
+# Data-Sci
+numba = "0.58.1"
+numpy = "^1.25.2"
+graspologic = "^3.3.0"
+networkx = "^3.2.1"
+fastparquet = "^2023.8.0"
+
+# Configuration
+pyyaml = "^6.0.1"
+pyaml-env = "^1.2.1"
+python-dotenv = "^1.0.0"
+
+# Network
+httpx = "^0.25.1"
+tenacity = "^8.2.3"
+
+swifter = "^1.4.0"
+pydantic = "^2"
+rich = "^13.6.0"
+textual = "^0.41.0"
+azure-storage-blob = "^12.19.0"
+
+# Optional, publication-time dependencies
+artifacts-keyring = { version = "^0.3.4", optional = true }
+azure-devops-artifacts-helpers = { version = "^1.2.0", optional = true }
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.2"
+poethepoet = "^0.24.4"
+typing-extensions = "^4.5.0"
+coverage = "^7.3.2"
+pytest = "^7.4.2"
+twine = "^4.0.2"
+pyright = "^1.1.352"
+pytest-asyncio = "^0.23.4"
+ipykernel = "^6.29.3"
+jupyter = "^1.0.0"
+nbconvert = "^7.16.3"
+
+[tool.poetry.extras]
+azure-artifacts = ["artifacts-keyring", "azure-devops-artifacts-helpers"]
+lancedb = ["lancedb"]
+qdrant = ["qdrant-client"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poe.tasks]
+_sort_imports = "ruff check --select I --fix ."
+_format_code = "ruff format ."
+_ruff_check = 'ruff check .'
+_pyright = "pyright"
+coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
+check_format = 'ruff format . --check'
+fix = "ruff check --fix ."
+fix_unsafe = "ruff check --fix --unsafe-fixes ."
+
+_test_all = "coverage run -m pytest ./tests"
+test_unit = "pytest ./tests/unit"
+test_integration = "pytest ./tests/integration"
+build_docs = "python -m graphrag.build_docs"
+index = "python -m graphrag.index"
+query = "python -m graphrag.query"
+# Pass in a test pattern
+test_only = "pytest -s -k"
+
+[[tool.poe.tasks.format]]
+sequence = ['_sort_imports', '_format_code']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.check]]
+sequence = ['check_format', '_ruff_check', '_pyright']
+ignore_fail = 'return_non_zero'
+
+
+[tool.ruff]
+target-version = "py310"
+extend-include = ["*.ipynb"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 20
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "W291",
+    "YTT",
+    "T10",
+    "ICN",
+    "INP",
+    "Q",
+    "RSE",
+    "SLOT",
+    "INT",
+    "FLY",
+    "LOG",
+    "C90",
+    "T20",
+    "D",
+    "RET",
+    "PD",
+    "N",
+    "PIE",
+    "SIM",
+    "S",
+    "G",
+    "ERA",
+    "ASYNC",
+    "TID",
+    "UP",
+    "SLF",
+    "BLE",
+    "C4",
+    "I",
+    "F",
+    "A",
+    "ARG",
+    "PTH",
+    "RUF",
+    "B",
+    "TCH",
+    "DTZ",
+    "PYI",
+    "PT",
+    "EM",
+    "TRY",
+    "PERF",
+    # "FBT", # use named arguments for boolean flags
+    # "TD", # todos
+    # "FIX", # fixme
+    # "FURB" # preview rules
+    # ANN # Type annotations, re-enable when we get bandwidth
+]
+ignore = [
+    # Deprecated Rules
+    "ANN101",
+    "ANN102",
+    # Conflicts with interface argument checking
+    "ARG002",
+    "ANN204",
+    # TODO: Inspect these pandas rules for validity
+    "PD002", # prevents inplace=True
+    # TODO RE-Enable when we get bandwidth
+    "PERF203", # Needs restructuring of errors, we should bail-out on first error
+    "C901",    # needs refactoring to remove cyclomatic complexity
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
+"examples/*" = ["S", "D", "ANN", "T201", "PTH", "TRY", "PERF"]
+"graphrag/index/config/*" = ["TCH"]
+"*.ipynb" = ["T201"]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["input", "id", "bytes"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.poe.tasks.upload]
+cmd = "twine upload -r resilience_python --skip-existing --config-file $pypirc_path dist/*.whl"
+
+[[tool.poe.tasks.upload.args]]
+name = "pypirc_path"
+help = "The twine configuration"
+default = "${PYPIRC_PATH}"
+
+[[tool.poe.tasks.test]]
+sequence = ['_test_all', 'coverage_report']
+ignore_fail = 'return_non_zero'
+
+# https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
+[tool.pyright]
+include = ["graphrag", "tests", "examples", "examples_notebooks"]
+exclude = ["**/node_modules", "**/__pycache__"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+# log_cli = true
+# log_cli_level = "INFO"

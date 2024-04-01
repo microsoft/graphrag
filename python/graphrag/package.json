@@ -1,0 +1,26 @@
+{
+	"name": "graphrag",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"start:azurite": "azurite -L -l ./temp_azurite -d ./temp_azurite/debug.log",
+		"_test_e2e": "./e2e-test.sh",
+		"_poe_test": "poetry run poe test",
+		"python_authenticate": "poetry config http-basic.resilience resilience $RESILIENCE_ARTIFACTS_PASSWORD",
+		"python_install": "poetry install",
+		"check": "poetry run poe check",
+		"fix": "poetry run poe fix",
+		"format": "poetry run poe format",
+		"build": "poetry build && poetry run poe build_docs",
+		"freeze": "poetry freeze-wheel -vvv",
+		"test": "run-s _poe_test _test_e2e",
+		"run:index": "poetry run poe index",
+		"run:query": "poetry run poe query",
+		"upload": "poetry run poe upload",
+		"publish": "run-s build freeze upload"
+	},
+	"devDependencies": {
+		"azurite": "^3.29.0",
+		"npm-run-all": "^4.1.5"
+	}
+}

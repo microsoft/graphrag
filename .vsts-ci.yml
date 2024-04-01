@@ -1,0 +1,190 @@
+name: GraphRAG CI
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+variables:
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  pythonVersion: "3.10"
+  poetryVersion: "1.6.1"
+  nodeVersion: "18.x"
+  artifactsFullFeedName: "Resilience/resilience_python"
+
+stages:
+  - stage: Compliance
+    dependsOn: []
+    jobs:
+      - job: compliance
+        displayName: Compliance
+        pool:
+          vmImage: windows-latest
+        steps:
+          - task: CredScan@3
+            inputs:
+              outputFormat: sarif
+              debugMode: false
+
+          - task: ComponentGovernanceComponentDetection@0
+            inputs:
+              scanType: "Register"
+              verbosity: "Verbose"
+              alertWarningLevel: "High"
+
+          - task: PublishSecurityAnalysisLogs@3
+            inputs:
+              ArtifactName: "CodeAnalysisLogs"
+              ArtifactType: "Container"
+
+  - stage: Verification
+    dependsOn: []
+    jobs:
+      - job: verification
+        displayName: Verification
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: ${{variables.pythonVersion}}
+            displayName: "Use Python ${{variables.pythonVersion}}"
+
+          - script: curl -sSL https://install.python-poetry.org | python -
+            displayName: "Install Poetry ${{variables.poetryVersion}}"
+            env:
+              POETRY_VERSION: ${{variables.poetryVersion}}
+
+          - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+            displayName: "Add Poetry to path"
+
+          - task: NodeTool@0
+            displayName: Install Node ${{variables.nodeVersion}}
+            inputs:
+              versionSpec: ${{variables.nodeVersion}}
+
+          - task: Bash@3
+            displayName: Install Dependencies
+            inputs:
+              targetType: "inline"
+              script: |
+                echo "Running Yarn Install..."
+                yarn install --immutable
+                echo "Running Python Authenticate..."
+                yarn python_authenticate
+                echo "Running Python Install..."
+                yarn python_install_ci
+            env:
+              RESILIENCE_ARTIFACTS_PASSWORD: $(resilienceArtifactsPassword)
+
+          - bash: |
+              yarn start:azurite&
+            displayName: 'Install and Run Azurite'
+          
+          - task: Bash@3
+            displayName: Verify Packages
+            inputs:
+              targetType: "inline"
+              script: yarn ci
+            env:
+              GRAPHRAG_API_KEY: $(openaiApiKey)
+              GRAPHRAG_LLM_MODEL: $(completionModel)
+              GRAPHRAG_EMBEDDING_MODEL: $(embeddingModel)
+              BLOB_STORAGE_CONNECTION_STRING: $(blobStorageConnectionString)
+
+  - stage: publish
+    displayName: Publish
+    dependsOn: []
+    condition: eq(variables.isMain, 'true')
+    jobs:
+      - job: publish
+        displayName: Publish
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          # fetch tags when checking out the repo, so we can use them with versioning
+          - checkout: self
+            fetchTags: true
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python ${{variables.pythonVersion}}"
+            inputs:
+              versionSpec: ${{variables.pythonVersion}}
+
+          - script: |
+              sudo apt-get update
+              sudo apt-get install -y llvm-11 python3-dev
+            displayName: "LLVM install"
+
+          - script: echo "##vso[task.setvariable variable=LLVM_CONFIG]llvm-config-11"
+            displayName: "Configure LLVM"
+
+          - script: curl -sSL https://install.python-poetry.org | python -
+            displayName: "Install Poetry ${{variables.poetryVersion}}"
+            env:
+              POETRY_VERSION: ${{variables.poetryVersion}}
+
+          - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+            displayName: "Add Poetry to path"
+          
+          - script: |
+              pip install wheel
+              pip install twine
+            displayName: "install publication tools tooling"
+
+          - task: NodeTool@0
+            displayName: Install Node ${{variables.nodeVersion}}
+            inputs:
+              versionSpec: ${{variables.nodeVersion}}
+
+          - task: Bash@3
+            displayName: Install Dependencies
+            inputs:
+              targetType: "inline"
+              script: |
+                echo "Running Yarn Install..."
+                yarn install --immutable
+                echo "Running Python Authenticate..."
+                yarn python_authenticate
+                echo "Running Python Install..."
+                yarn python_install
+            env:
+              RESILIENCE_ARTIFACTS_USERNAME: $(resilienceArtifactsUsername)
+              RESILIENCE_ARTIFACTS_PASSWORD: $(resilienceArtifactsPassword)
+
+          
+          - task: TwineAuthenticate@1
+            displayName: Twine Authenticate
+            inputs:
+              artifactFeed: ${{ variables.artifactsFullFeedName }}
+
+          - task: Bash@3
+            displayName: Build Docsite
+            inputs:
+              targetType: "inline"
+              script: yarn build:docs
+
+          - task: Bash@3
+            displayName: Publish Packages
+            inputs:
+              targetType: "inline"
+              script: yarn publish
+            env:
+              PYPIRC_PATH: $(PYPIRC_PATH)
+
+          - task: AzureStaticWebApp@0
+            displayName: "Publish Static Web App"
+            inputs:
+              skip_app_build: true
+              app_location: "javascript/docsite/_site"
+              azure_static_web_apps_api_token: $(deploymentToken)
+          
+          # These tasks will publish the distribution files as pipeline artifacts, not Azure Artifacts artifacts.
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "python/graphrag/dist"
+              artifact: graphrag
+              publishLocation: "pipeline"

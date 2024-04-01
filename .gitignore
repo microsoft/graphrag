@@ -1,0 +1,47 @@
+# Node Artifacts
+node_modules/
+python/*/lib/
+javascript/*/src/**/*.js
+javascript/*/lib/
+javascript/*/storybook-static/
+javascript/*/docsTemp/
+javascript/*/build/
+.swc/
+dist/
+
+# Test Output
+.coverage
+coverage/
+licenses.txt
+python/graphrag/examples_notebooks/*/lancedb
+python/graphrag/examples_notebooks/*/data
+python/graphrag/tests/fixtures/*/cache
+python/graphrag/tests/fixtures/*/output
+
+# Random
+.DS_Store
+*.log*
+.venv
+.conda
+.tmp
+
+# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+.env
+build.zip
+
+.turbo
+
+__pycache__
+
+.pipeline
+
+temp_azurite/
+__azurite*.json

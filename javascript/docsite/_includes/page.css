@@ -1,0 +1,76 @@
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.page-content {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: lightgrey;
+    height: 40px;
+    padding: 10px;
+}
+
+nav {
+    padding: 1em;
+    min-width: 200px;
+}
+
+main {
+    flex: 1;
+    padding: 0 5em 0 5em;
+}
+
+.logotitle {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.number {
+    all: unset;
+}
+
+.tag.token {
+    all: unset;
+}
+
+main ul {
+    list-style-type: disc;
+    padding-left: 30px;
+    margin-top: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-top: 10px; 
+    font-weight: 500;
+}
+p {
+    margin-top: 10px;
+}

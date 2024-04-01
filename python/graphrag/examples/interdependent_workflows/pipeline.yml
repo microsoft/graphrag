@@ -1,0 +1,23 @@
+workflows:
+  - name: aggregate_workflow
+    steps:
+      - verb: "aggregate"  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/aggregate.py
+        args:
+            groupby: "type"
+            column: "col_multiplied"
+            to: "aggregated_output"
+            operation: "sum"
+        input:
+          source: "workflow:derive_workflow" # reference the derive_workflow, cause this one requires that one to run first
+            # Notice, these are out of order, the indexing engine will figure out the right order to run them in
+
+  - name: derive_workflow
+    steps:
+      - verb: "derive" # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/derive.py
+        args:
+          column1: "col1"  # from above
+          column2: "col2"  # from above
+          to: "col_multiplied"  # new column name
+          operator: "*"  # multiply the two columns,
+    # Since we're trying to act on the dataset, we don't need explicitly to specify an input
+      # "input": { "source": "source" } # use the dataset as the input to this verb. This is the default, so you can omit it.
