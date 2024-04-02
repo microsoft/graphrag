@@ -82,46 +82,44 @@ def build_steps(
         })
 
     if not skip_description_embedding:
-        result.extend(
-            [
-                {
-                    "verb": "merge",
-                    "args": {
-                        "strategy": "concat",
-                        "columns": ["name", "description"],
-                        "to": "name_description",
-                        "delimiter": ":",
-                        "preserveSource": True,
-                    },
+        result.extend([
+            {
+                "verb": "merge",
+                "args": {
+                    "strategy": "concat",
+                    "columns": ["name", "description"],
+                    "to": "name_description",
+                    "delimiter": ":",
+                    "preserveSource": True,
                 },
-                {
-                    "verb": "text_embed",
-                    "args": {
-                        "column": "name_description",
-                        "to": "description_embedding",
-                        **text_embed_config,
-                    },
+            },
+            {
+                "verb": "text_embed",
+                "args": {
+                    "column": "name_description",
+                    "to": "description_embedding",
+                    **text_embed_config,
                 },
-                {
-                    "verb": "drop",
-                    "args": {
-                        "columns": ["name_description"],
-                    },
+            },
+            {
+                "verb": "drop",
+                "args": {
+                    "columns": ["name_description"],
                 },
-                {
-                    # ELIMINATE EMPTY DESCRIPTION EMBEDDINGS
-                    "verb": "filter",
-                    "args": {
-                        "column": "description_embedding",
-                        "criteria": [
-                            {
-                                "type": "value",
-                                "operator": "is not empty",
-                            }
-                        ],
-                    },
+            },
+            {
+                # ELIMINATE EMPTY DESCRIPTION EMBEDDINGS
+                "verb": "filter",
+                "args": {
+                    "column": "description_embedding",
+                    "criteria": [
+                        {
+                            "type": "value",
+                            "operator": "is not empty",
+                        }
+                    ],
                 },
-            ]
-        )
+            },
+        ])
 
     return result
