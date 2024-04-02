@@ -25,7 +25,6 @@ class BlobPipelineStorage(PipelineStorage):
     _container_name: str
     _path_prefix: str
     _encoding: str
-    _path_prefix: str
 
     def __init__(
         self,
