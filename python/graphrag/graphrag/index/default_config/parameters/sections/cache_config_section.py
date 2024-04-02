@@ -5,7 +5,10 @@
 from environs import Env
 
 from graphrag.index.config import PipelineCacheType
-from graphrag.index.default_config.parameters.defaults import DEFAULT_CACHE_TYPE
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_CACHE_BASE_DIR,
+    DEFAULT_CACHE_TYPE,
+)
 from graphrag.index.default_config.parameters.models import (
     CacheConfigModel,
 )
@@ -41,7 +44,7 @@ class CacheConfigSection(ConfigSection):
     @property
     def base_dir(self) -> str:
         """The base directory for the cache."""
-        return self.replace(self._values.base_dir)
+        return self.replace(self._values.base_dir, DEFAULT_CACHE_BASE_DIR)
 
     def to_dict(self) -> dict:
         """Convert the configuration to a dictionary."""

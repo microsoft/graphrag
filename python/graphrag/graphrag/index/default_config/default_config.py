@@ -77,15 +77,14 @@ def default_config(
     if verbose:
         _log_llm_settings(settings)
 
-    output_root = _output_root(settings)
     skip_workflows = _determine_skip_workflows(settings)
     embedded_fields = _get_embedded_fields(settings)
 
     result = PipelineConfig(
         root_dir=root_dir,
         input=_get_pipeline_input_config(settings),
-        reporting=_get_reporting_config(settings, output_root),
-        storage=_get_storage_config(settings, output_root),
+        reporting=_get_reporting_config(settings),
+        storage=_get_storage_config(settings),
         cache=_get_cache_config(settings),
         workflows=[
             *_document_workflows(settings, embedded_fields),
@@ -111,14 +110,6 @@ def _get_embedded_fields(settings: DefaultConfigParametersDict) -> list[str]:
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
-
-
-def _output_root(settings: DefaultConfigParametersDict) -> str:
-    return (
-        f"output/{settings.resume_from}"
-        if settings.resume_from is not None
-        else "output/${timestamp}"
-    )
 
 
 def _determine_skip_workflows(settings: DefaultConfigParametersDict) -> list[str]:
@@ -346,13 +337,13 @@ def _get_pipeline_input_config(
 
 
 def _get_reporting_config(
-    settings: DefaultConfigParametersDict, output_root: str
+    settings: DefaultConfigParametersDict,
 ) -> PipelineReportingConfigTypes:
     """Get the reporting config from the settings."""
     match settings.reporting.type:
         case PipelineReportingType.file:
             # relative to the root_dir
-            return PipelineFileReportingConfig(base_dir=f"{output_root}/reports")
+            return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
         case PipelineReportingType.blob:
             return PipelineBlobReportingConfig(
                 connection_string=settings.reporting.connection_string,
@@ -362,37 +353,32 @@ def _get_reporting_config(
             return PipelineConsoleReportingConfig()
         case _:
             # relative to the root_dir
-            return PipelineFileReportingConfig(base_dir=f"{output_root}/reports")
+            return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
 
 
 def _get_storage_config(
-    settings: DefaultConfigParametersDict, output_root: str
+    settings: DefaultConfigParametersDict,
 ) -> PipelineStorageConfigTypes:
     """Get the storage type from the settings."""
     root_dir = settings.root_dir
-    artifacts_dir = str(Path(output_root) / "artifacts")
     match settings.storage.type:
         case PipelineStorageType.memory:
             return PipelineMemoryStorageConfig()
         case PipelineStorageType.file:
             # relative to the root_dir
             return PipelineFileStorageConfig(
-                base_dir=str(
-                    Path(root_dir) / (settings.storage.base_dir or artifacts_dir)
-                )
+                base_dir=str(Path(root_dir) / settings.storage.base_dir)
             )
         case PipelineStorageType.blob:
             return PipelineBlobStorageConfig(
                 connection_string=settings.storage.connection_string,
                 container_name=settings.storage.container_name,
-                base_dir=settings.storage.base_dir or artifacts_dir,
+                base_dir=settings.storage.base_dir,
             )
         case _:
             # relative to the root_dir
             return PipelineFileStorageConfig(
-                base_dir=str(
-                    Path(root_dir) / (settings.storage.base_dir or artifacts_dir)
-                )
+                base_dir=str(Path(root_dir) / settings.storage.base_dir)
             )
 
 
@@ -405,9 +391,7 @@ def _get_cache_config(
             return PipelineMemoryCacheConfig()
         case PipelineCacheType.file:
             # relative to root dir
-            return PipelineFileCacheConfig(
-                base_dir=settings.cache.base_dir or "./cache"
-            )
+            return PipelineFileCacheConfig(base_dir=settings.cache.base_dir)
         case PipelineCacheType.none:
             return PipelineNoneCacheConfig()
         case PipelineCacheType.blob:

@@ -41,14 +41,12 @@ from .models import (
 
 
 def default_config_parameters(
-    values: DefaultConfigParametersModel,
-    root_dir: str | None,
-    resume_from: str | None = None,
+    values: DefaultConfigParametersModel, root_dir: str | None
 ):
     """Load Configuration Parameters from a dictionary."""
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
-    return DefaultConfigParametersDict(values, env, root_dir, resume_from)
+    return DefaultConfigParametersDict(values, env, root_dir)
 
 
 class Fragment(str, Enum):
@@ -107,7 +105,7 @@ class Section(str, Enum):
 
 
 def default_config_parameters_from_env_vars(
-    root_dir: str | None, resume_from: str | None = None
+    root_dir: str | None,
 ):
     """Load Configuration Parameters from environment variables."""
     root_dir = root_dir or str(Path.cwd())
@@ -359,7 +357,6 @@ def default_config_parameters_from_env_vars(
             ),
             env,
             root_dir,
-            resume_from,
         )
 
 

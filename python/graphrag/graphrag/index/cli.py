@@ -25,6 +25,8 @@ from graphrag.index.progress import (
 from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
+from .emit import TableEmitterType
+
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
@@ -54,7 +56,7 @@ def index_cli(
     """Run the pipeline with the given config."""
     progress_reporter = _get_progress_reporter(reporter)
     pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, resume, progress_reporter
+        root, verbose, progress_reporter
     )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
@@ -86,11 +88,13 @@ def index_cli(
             async for output in run_pipeline_with_config(
                 pipeline_config,
                 debug=verbose,
-                resume=resume,  # type: ignore
+                resume=resume,
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
-                emit=pipeline_emit,  # type: ignore
+                emit=[TableEmitterType(e) for e in pipeline_emit]
+                if pipeline_emit
+                else None,
             ):
                 if output.errors and len(output.errors) > 0:
                     encountered_errors = True
@@ -131,7 +135,7 @@ def index_cli(
 
 
 def _create_default_config(
-    root: str, verbose: bool, resume: str | None, reporter: ProgressReporter
+    root: str, verbose: bool, reporter: ProgressReporter
 ) -> PipelineConfig:
     """Create a default config if none is provided."""
     import json
@@ -140,7 +144,7 @@ def _create_default_config(
         msg = f"Root directory {root} does not exist"
         raise ValueError(msg)
 
-    parameters = _read_config_parameters(root, resume, reporter)
+    parameters = _read_config_parameters(root, reporter)
     if verbose:
         reporter.info(
             f"Using default configuration: {redact(json.dumps(parameters.to_dict(), indent=4))}"
@@ -153,7 +157,7 @@ def _create_default_config(
     return result
 
 
-def _read_config_parameters(root: str, resume: str | None, reporter: ProgressReporter):
+def _read_config_parameters(root: str, reporter: ProgressReporter):
     _root = Path(root)
     settings_yaml = _root / "settings.yaml"
     if not settings_yaml.exists():
@@ -167,7 +171,7 @@ def _read_config_parameters(root: str, resume: str | None, reporter: ProgressRep
 
             data = yaml.safe_load(file)
             model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(model, root, resume)
+            return default_config_parameters(model, root)
 
     if settings_json.exists():
         reporter.success(f"Reading settings from {settings_json}")
@@ -176,10 +180,10 @@ def _read_config_parameters(root: str, resume: str | None, reporter: ProgressRep
 
             data = json.loads(file.read())
             model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(data, root, resume)
+            return default_config_parameters(data, root)
 
     reporter.success("Reading settings from environment variables")
-    return default_config_parameters_from_env_vars(root, resume)
+    return default_config_parameters_from_env_vars(root)
 
 
 def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
