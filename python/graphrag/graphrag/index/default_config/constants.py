@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Field Embedding Names."""
+
 entity_name_embedding = "entity.name"
 entity_description_embedding = "entity.description"
 relationship_description_embedding = "relationship.description"

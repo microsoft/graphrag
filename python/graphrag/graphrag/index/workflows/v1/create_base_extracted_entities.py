@@ -1,7 +1,4 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing build_steps method definition."""
 
@@ -62,13 +59,11 @@ def build_steps(
                                 "delimiter": ", ",
                                 "distinct": True,
                             },
-                            "description": (
-                                {
-                                    "operation": "concat",
-                                    "separator": "\n",
-                                    "distinct": False,
-                                }
-                            ),
+                            "description": ({
+                                "operation": "concat",
+                                "separator": "\n",
+                                "distinct": False,
+                            }),
                         },
                         "edges": {
                             "source_id": {
@@ -76,13 +71,11 @@ def build_steps(
                                 "delimiter": ", ",
                                 "distinct": True,
                             },
-                            "description": (
-                                {
-                                    "operation": "concat",
-                                    "separator": "\n",
-                                    "distinct": False,
-                                }
-                            ),
+                            "description": ({
+                                "operation": "concat",
+                                "separator": "\n",
+                                "distinct": False,
+                            }),
                             "weight": "sum",
                         },
                     },

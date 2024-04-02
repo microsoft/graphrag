@@ -1,13 +1,11 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """
 Data load utils.
 
 Code is based on SITREP: https://dev.azure.com/msresearch/Resilience/_git/sitrep?path=/python/db/sitrepdb/loaders/utils.py
 """
+
 import numpy as np
 import pandas as pd
 

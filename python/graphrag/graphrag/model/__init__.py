@@ -1,7 +1,4 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """
 GraphRAG knowledge model package root.
@@ -9,6 +6,7 @@ GraphRAG knowledge model package root.
 The GraphRAG knowledge model contains a set of classes that represent the target datamodels for our pipelines and analytics tools.
 These models can be augmented and integrated into your own data infrastructure to suit your needs.
 """
+
 from .community import Community
 from .community_report import CommunityReport
 from .covariate import Covariate

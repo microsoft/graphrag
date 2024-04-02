@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing create_community_reports and load_strategy methods definition."""
+
 from enum import Enum
 from random import Random
 from typing import Any, cast
@@ -88,9 +86,11 @@ async def prepare_community_reports(
             all_input += t_in
 
     return TableContainer(
-        table=pd.DataFrame(
-            {"community": all_communities, "input": all_input, "level": all_levels}
-        )
+        table=pd.DataFrame({
+            "community": all_communities,
+            "input": all_input,
+            "level": all_levels,
+        })
     )
 
 

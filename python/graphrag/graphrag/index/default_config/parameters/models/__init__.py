@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Interfaces for Default Config parameterization."""
+
 from .cache_config_model import CacheConfigModel
 from .chunking_config_model import ChunkingConfigModel
 from .claim_extraction_config_model import ClaimExtractionConfigModel
@@ -23,22 +21,22 @@ from .text_embedding_config_model import TextEmbeddingConfigModel, TextEmbedding
 from .umap_config_model import UmapConfigModel
 
 __all__ = [
-    "EmbedGraphConfigModel",
-    "ReportingConfigModel",
-    "LLMConfigModel",
-    "InputConfigModel",
-    "SnapshotsConfigModel",
-    "StorageConfigModel",
     "CacheConfigModel",
-    "TextEmbeddingConfigModel",
     "ChunkingConfigModel",
-    "EntityExtractionConfigModel",
-    "UmapConfigModel",
     "ClaimExtractionConfigModel",
     "ClusterGraphConfigModel",
-    "SummarizeDescriptionsConfigModel",
     "CommunityReportsConfigModel",
-    "TextEmbeddingTarget",
+    "EmbedGraphConfigModel",
+    "EntityExtractionConfigModel",
+    "InputConfigModel",
+    "LLMConfigModel",
     "LLMParametersModel",
     "ParallelizationParametersModel",
+    "ReportingConfigModel",
+    "SnapshotsConfigModel",
+    "StorageConfigModel",
+    "SummarizeDescriptionsConfigModel",
+    "TextEmbeddingConfigModel",
+    "TextEmbeddingTarget",
+    "UmapConfigModel",
 ]

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Utils methods definition."""
+
 from .dicts import dict_has_keys_with_types
 from .hashing import gen_md5_hash
 from .is_null import is_null
@@ -15,14 +13,14 @@ from .topological_sort import topological_sort
 from .uuid import gen_uuid
 
 __all__ = [
+    "clean_str",
+    "clean_up_json",
     "dict_has_keys_with_types",
     "gen_md5_hash",
+    "gen_uuid",
     "is_null",
-    "clean_up_json",
     "load_graph",
-    "clean_str",
     "num_tokens_from_string",
     "string_from_tokens",
     "topological_sort",
-    "gen_uuid",
 ]

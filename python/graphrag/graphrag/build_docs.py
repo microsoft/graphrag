@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A script utility to build verb-specific documentation for the Docsite."""
+
 import ast
 import logging
 from dataclasses import dataclass

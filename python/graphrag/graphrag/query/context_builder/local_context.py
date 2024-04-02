@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Local Context Builder."""
+
 from collections import defaultdict
 from typing import Any, cast
 
@@ -146,9 +144,9 @@ def build_covariates_context(
     results = []
     all_context_records = [header]
     for entity in selected_entities:
-        selected_covariates.extend(
-            [cov for cov in covariates if cov.subject_id == entity.title]
-        )
+        selected_covariates.extend([
+            cov for cov in covariates if cov.subject_id == entity.title
+        ])
 
         for covariate in selected_covariates:
             new_context = [

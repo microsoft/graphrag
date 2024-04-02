@@ -1,4 +1,6 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """Blob Storage Tests."""
+
 import re
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage

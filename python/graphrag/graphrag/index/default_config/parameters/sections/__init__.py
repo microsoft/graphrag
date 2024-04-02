@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Json-based default configuration parameterization."""
+
 from .cache_config_section import CacheConfigSection
 from .chunking_config_section import ChunkingConfigSection
 from .claim_extraction_config_section import ClaimExtractionConfigSection
@@ -29,15 +27,15 @@ __all__ = [
     "ClaimExtractionConfigSection",
     "ClusterGraphConfigSection",
     "CommunityReportsConfigSection",
+    "ConfigSection",
+    "EmbedGraphConfigSection",
     "EntityExtractionConfigSection",
     "InputConfigSection",
     "LLMConfigSection",
-    "EmbedGraphConfigSection",
     "ReportingConfigSection",
     "SnapshotsConfigSection",
     "StorageConfigSection",
     "SummarizeDescriptionsConfigSection",
     "TextEmbeddingConfigSection",
     "UmapConfigSection",
-    "ConfigSection",
 ]
