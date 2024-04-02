@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Indexing Engine unipartite graph package root."""
+
 from .graph_extractor import (
     DEFAULT_ENTITY_TYPES,
     GraphExtractionResult,
@@ -12,8 +10,8 @@ from .graph_extractor import (
 from .prompts import GRAPH_EXTRACTION_PROMPT
 
 __all__ = [
-    "GraphExtractor",
-    "GraphExtractionResult",
-    "GRAPH_EXTRACTION_PROMPT",
     "DEFAULT_ENTITY_TYPES",
+    "GRAPH_EXTRACTION_PROMPT",
+    "GraphExtractionResult",
+    "GraphExtractor",
 ]

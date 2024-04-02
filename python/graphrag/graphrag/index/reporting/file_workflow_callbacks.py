@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A reporter that writes to a file."""
+
 import json
 import logging
 from io import TextIOWrapper
@@ -35,15 +33,13 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
     ):
         """Handle when an error occurs."""
         self._out_stream.write(
-            json.dumps(
-                {
-                    "type": "error",
-                    "data": message,
-                    "stack": stack,
-                    "source": str(cause),
-                    "details": details,
-                }
-            )
+            json.dumps({
+                "type": "error",
+                "data": message,
+                "stack": stack,
+                "source": str(cause),
+                "details": details,
+            })
             + "\n"
         )
         message = f"{message} details={details}"

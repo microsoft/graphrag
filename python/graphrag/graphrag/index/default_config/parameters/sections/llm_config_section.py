@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
+
 from typing import Any, Generic, TypeVar, cast
 
 from datashaper import AsyncType
@@ -53,12 +51,10 @@ class LLMConfigSection(ConfigSection, Generic[TConfigSection]):
         section = cast(LLMConfigModel, self._values).llm.model_dump()
         opts = cast(
             dict,
-            self.replace_dict(
-                {
-                    **{k: v for k, v in root.items() if v is not None},
-                    **{k: v for k, v in section.items() if v is not None},
-                }
-            ),
+            self.replace_dict({
+                **{k: v for k, v in root.items() if v is not None},
+                **{k: v for k, v in section.items() if v is not None},
+            }),
         )
         return {
             **opts,

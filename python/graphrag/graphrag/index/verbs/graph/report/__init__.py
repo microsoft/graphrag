@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Indexing Engine graph report package root."""
+
 from .create_community_reports import (
     CreateCommunityReportsStrategyType,
     create_community_reports,
@@ -11,7 +9,7 @@ from .create_community_reports import (
 from .prepare_community_reports import prepare_community_reports
 
 __all__ = [
+    "CreateCommunityReportsStrategyType",
     "create_community_reports",
     "prepare_community_reports",
-    "CreateCommunityReportsStrategyType",
 ]

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """LLM limiters module."""
+
 from .composite_limiter import CompositeLLMLimiter
 from .create_limiters import create_tpm_rpm_limiters
 from .llm_limiter import LLMLimiter
@@ -12,8 +10,8 @@ from .tpm_rpm_limiter import TpmRpmLLMLimiter
 
 __all__ = [
     "CompositeLLMLimiter",
-    "TpmRpmLLMLimiter",
     "LLMLimiter",
     "NoopLLMLimiter",
+    "TpmRpmLLMLimiter",
     "create_tpm_rpm_limiters",
 ]

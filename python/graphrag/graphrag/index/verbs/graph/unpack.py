@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing unpack_graph, _run_unpack, _unpack_nodes and _unpack_edges methods definition."""
+
 from typing import Any, cast
 
 import networkx as nx
@@ -55,17 +53,15 @@ def unpack_graph(
             else {}
         )
 
-        result.extend(
-            [
-                {**cleaned_row, **graph_id}
-                for graph_id in _run_unpack(
-                    cast(str | nx.Graph, row[column]),
-                    type,
-                    embeddings,
-                    kwargs,
-                )
-            ]
-        )
+        result.extend([
+            {**cleaned_row, **graph_id}
+            for graph_id in _run_unpack(
+                cast(str | nx.Graph, row[column]),
+                type,
+                embeddings,
+                kwargs,
+            )
+        ])
 
     output_df = pd.DataFrame(result)
     return TableContainer(table=output_df)

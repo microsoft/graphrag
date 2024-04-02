@@ -1,10 +1,8 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 # isort: skip_file
 """A module containing the 'PipelineRunStats' and 'PipelineRunContext' models."""
+
 from dataclasses import dataclass as dc_dataclass
 from dataclasses import field
 

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing run, _run_extractor and _load_nodes_edges_for_claim_chain methods definition."""
+
 import json
 import logging
 import traceback
@@ -61,11 +59,9 @@ async def _run_extractor(
     )
 
     try:
-        chain_results = await extractor(
-            {
-                "input_text": input,
-            }
-        )
+        chain_results = await extractor({
+            "input_text": input,
+        })
 
         text_report = chain_results.output
         report = chain_results.structured_output

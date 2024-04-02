@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Indexing Engine graph clustering package root."""
+
 from .cluster_graph import GraphCommunityStrategyType, cluster_graph
 
-__all__ = ["cluster_graph", "GraphCommunityStrategyType"]
+__all__ = ["GraphCommunityStrategyType", "cluster_graph"]

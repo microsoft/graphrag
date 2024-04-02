@@ -1,7 +1,4 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Configuration parameterization settings for the indexing pipeline."""
 
@@ -38,19 +35,19 @@ __all__ = [
     "ClusterGraphConfigModel",
     "CommunityReportsConfigModel",
     "DefaultConfigParametersModel",
+    "EmbedGraphConfigModel",
     "EntityExtractionConfigModel",
     "InputConfigModel",
     "LLMConfigModel",
     "LLMParametersModel",
     "ParallelizationParametersModel",
-    "EmbedGraphConfigModel",
     "ReportingConfigModel",
     "SnapshotsConfigModel",
     "StorageConfigModel",
     "SummarizeDescriptionsConfigModel",
     "TextEmbeddingConfigModel",
     "UmapConfigModel",
-    "read_dotenv",
     "default_config_parameters",
     "default_config_parameters_from_env_vars",
+    "read_dotenv",
 ]

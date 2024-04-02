@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 
@@ -7,14 +8,12 @@ from graphrag.index import run_pipeline, run_pipeline_with_config
 from graphrag.index.config import PipelineWorkflowReference
 
 # Our fake dataset
-dataset = pd.DataFrame(
-    [
-        {"type": "A", "col1": 2, "col2": 4},
-        {"type": "A", "col1": 5, "col2": 10},
-        {"type": "A", "col1": 15, "col2": 26},
-        {"type": "B", "col1": 6, "col2": 15},
-    ]
-)
+dataset = pd.DataFrame([
+    {"type": "A", "col1": 2, "col2": 4},
+    {"type": "A", "col1": 5, "col2": 10},
+    {"type": "A", "col1": 15, "col2": 26},
+    {"type": "B", "col1": 6, "col2": 15},
+])
 
 
 async def run_with_config():
