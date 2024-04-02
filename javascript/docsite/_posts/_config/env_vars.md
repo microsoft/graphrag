@@ -51,24 +51,15 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 
 ## Base LLM Settings
 
-These settings control the base LLM arguments used by the pipeline, for both text-generation and embedding tasks. This is useful for configuring common connection, parallelization, and retry settings.
+These settings control the base LLM arguments used by the pipeline. This is useful for API connection parameters.
 
-| Parameter                      | Description                                                                            | Type    | Required or Optional | Default Value |
-| ------------------------------ | -------------------------------------------------------------------------------------- | ------- | -------------------- | ------------- |
-| `GRAPHRAG_API_KEY`             | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | required             | `None`        |
-| `GRAPHRAG_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_REQUEST_TIMEOUT`     | The maximum number of seconds to wait for a response from the chat client.             | `int`   | optional             | `180`         |
-| `GRAPHRAG_THREAD_COUNT`        | The number of threads to use for LLM parallelization.                                  | `int`   | optional             | 50            |
-| `GRAPHRAG_THREAD_STAGGER`      | The time to wait (in seconds) between starting each thread.                            | `float` | optional             | 0.3           |
-| `GRAPHRAG_CONCURRENT_REQUESTS` | The number of concurrent requests to allow for the embedding client.                   | `int`   | optional             | 25            |
-| `GRAPHRAG_TPM`                 | The number of tokens per minute to allow for the LLM client. 0 = Bypass                | `int`   | optional             | 0             |
-| `GRAPHRAG_RPM`                 | The number of requests per minute to allow for the LLM client. 0 = Bypass              | `int`   | optional             | 0             |
-| `GRAPHRAG_MAX_RETRIES`         | The maximum number of retries to attempt when a request fails.                         | `int`   | optional             | 10            |
-| `GRAPHRAG_MAX_RETRY_WAIT`      | The maximum number of seconds to wait between retries.                                 | `int`   | optional             | 10            |
-| `GRAPHRAG_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` | Whether to sleep on rate limit recommendation. (Azure Only)             | `bool`  | optional             | `True`        |
+| Parameter                           | Description                                                                            | Type    | Required or Optional | Default Value |
+| ----------------------------------- | -------------------------------------------------------------------------------------- | ------- | -------------------- | ------------- |
+| `GRAPHRAG_BASE_API_KEY`             | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | required             | `None`        |
+| `GRAPHRAG_BASE_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
+| `GRAPHRAG_BASE_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
+| `GRAPHRAG_BASE_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
+| `GRAPHRAG_BASE_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
 
 
 ## Text Generation Settings

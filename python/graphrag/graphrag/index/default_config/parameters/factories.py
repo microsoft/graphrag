@@ -17,6 +17,7 @@ from graphrag.index.config import (
 )
 from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
 from graphrag.index.default_config.parameters.read_dotenv import read_dotenv
+from graphrag.index.llm.types import LLMType
 
 from .default_config_parameters import DefaultConfigParametersDict
 from .default_config_parameters_model import DefaultConfigParametersModel
@@ -89,6 +90,7 @@ class Fragment(str, Enum):
 class Section(str, Enum):
     """Configuration Sections."""
 
+    base = "BASE"
     cache = "CACHE"
     chunk = "CHUNK"
     claim_extraction = "CLAIM_EXTRACTION"
@@ -104,6 +106,28 @@ class Section(str, Enum):
     storage = "STORAGE"
     summarize_descriptions = "SUMMARIZE_DESCRIPTIONS"
     umap = "UMAP"
+
+
+LLM_KEY_REQUIRED = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_BASE_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
+EMBEDDING_KEY_REQUIRED = "API Key is required for Embedding API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_EMBEDDING_API_KEY environment variable."
+AZURE_LLM_DEPLOYMENT_NAME_REQUIRED = (
+    "GRAPHRAG_LLM_DEPLOYMENT_NAME is required for Azure OpenAI."
+)
+AZURE_LLM_API_BASE_REQUIRED = (
+    "GRAPHRAG_BASE_API_BASE or GRAPHRAG_LLM_API_BASE is required for Azure OpenAI."
+)
+AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED = (
+    "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME is required for Azure OpenAI."
+)
+AZURE_EMBEDDING_API_BASE_REQUIRED = "GRAPHRAG_BASE_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
+
+
+def _is_azure(llm_type: LLMType) -> bool:
+    return (
+        llm_type == LLMType.AzureOpenAI
+        or llm_type == LLMType.AzureOpenAIChat
+        or llm_type == LLMType.AzureOpenAIEmbedding
+    )
 
 
 def default_config_parameters_from_env_vars(
@@ -137,72 +161,77 @@ def default_config_parameters_from_env_vars(
     fallback_oai_version = _str("OPENAI_API_VERSION")
 
     with section(Section.graphrag):
-        _api_key = _str(Fragment.api_key, fallback_oai_key)
-        _api_base = _str(Fragment.api_base, fallback_oai_url)
-        _api_version = _str(Fragment.api_version, fallback_oai_version)
-        _organization = _str(Fragment.organization, fallback_oai_org)
-        _proxy = _str(Fragment.proxy)
-        _tpm = _int(Fragment.tpm)
-        _rpm = _int(Fragment.rpm)
-        _request_timeout = _float(Fragment.request_timeout)
-        _max_retries = _int(Fragment.max_retries)
-        _max_retry_wait = _float(Fragment.max_retry_wait)
-        _sleep_recommendation = _bool(Fragment.sleep_recommendation)
-        _concurrent_requests = _int(Fragment.concurrent_requests)
-        _async_mode = _str(Fragment.async_mode)
-        _stagger = _float(Fragment.thread_stagger)
-        _thread_count = _int(Fragment.thread_count)
+        with section(Section.base):
+            _api_key = _str(Fragment.api_key, fallback_oai_key)
+            _api_base = _str(Fragment.api_base, fallback_oai_url)
+            _api_version = _str(Fragment.api_version, fallback_oai_version)
+            _organization = _str(Fragment.organization, fallback_oai_org)
+            _proxy = _str(Fragment.proxy)
 
         with section(Section.llm):
             api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
             if api_key is None:
-                msg = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
-                raise ValueError(msg)
+                raise ValueError(LLM_KEY_REQUIRED)
+            llm_type = _str(Fragment.type)
+            llm_type = LLMType(type)
+            deployment_name = str(Fragment.deployment_name)
+            is_azure = _is_azure(llm_type)
+            api_base = _str(Fragment.api_base, _api_base)
+            if is_azure and deployment_name is None:
+                raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
+            if is_azure and api_base is None:
+                raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+
             llm_parameters = LLMParametersModel(
                 api_key=api_key,
-                type=_str(Fragment.type),
+                type=llm_type,
                 model=_str(Fragment.model),
                 max_tokens=_int(Fragment.max_tokens),
                 model_supports_json=_bool(Fragment.model_supports_json),
-                request_timeout=_float(Fragment.request_timeout, _request_timeout),
-                api_base=_str(Fragment.api_base, _api_base),
+                request_timeout=_float(Fragment.request_timeout),
+                api_base=api_base,
                 api_version=_str(Fragment.api_version, _api_version),
                 organization=_str(Fragment.organization, _organization),
                 proxy=_str(Fragment.proxy, _proxy),
-                deployment_name=_str(Fragment.deployment_name),
-                tokens_per_minute=_int(Fragment.tpm, _tpm),
-                requests_per_minute=_int(Fragment.rpm, _rpm),
-                max_retries=_int(Fragment.max_retries, _max_retries),
-                max_retry_wait=_float(Fragment.max_retry_wait, _max_retry_wait),
-                sleep_on_rate_limit_recommendation=_bool(
-                    Fragment.sleep_recommendation, _sleep_recommendation
-                ),
-                concurrent_requests=_int(
-                    Fragment.concurrent_requests, _concurrent_requests
-                ),
+                deployment_name=deployment_name,
+                tokens_per_minute=_int(Fragment.tpm),
+                requests_per_minute=_int(Fragment.rpm),
+                max_retries=_int(Fragment.max_retries),
+                max_retry_wait=_float(Fragment.max_retry_wait),
+                sleep_on_rate_limit_recommendation=_bool(Fragment.sleep_recommendation),
+                concurrent_requests=_int(Fragment.concurrent_requests),
             )
             llm_parallelization = ParallelizationParametersModel(
-                stagger=_float(Fragment.thread_stagger, _stagger),
-                num_threads=_int(Fragment.thread_count, _thread_count),
+                stagger=_float(Fragment.thread_stagger),
+                num_threads=_int(Fragment.thread_count),
             )
 
         with section(Section.embedding):
             api_key = _str(Fragment.api_key, _api_key)
             if api_key is None:
-                msg = "API Key is required for Embedding API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_EMBEDDING_API_KEY environment variable."
-                raise ValueError(msg)
+                raise ValueError(EMBEDDING_KEY_REQUIRED)
 
             embedding_target = _str("TARGET")
             embedding_target = (
                 TextEmbeddingTarget(embedding_target) if embedding_target else None
             )
-            async_mode = _str(Fragment.async_mode, _async_mode)
+            async_mode = _str(Fragment.async_mode)
             async_mode_enum = AsyncType(async_mode) if async_mode else None
+            deployment_name = _str(Fragment.deployment_name)
+            llm_type = _str(Fragment.type)
+            llm_type = LLMType(type)
+            is_azure = _is_azure(llm_type)
+            api_base = _str(Fragment.api_base, _api_base)
+
+            if is_azure and deployment_name is None:
+                raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
+            if is_azure and api_base is None:
+                raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
 
             text_embeddings = TextEmbeddingConfigModel(
                 parallelization=ParallelizationParametersModel(
-                    stagger=_float(Fragment.thread_stagger, _stagger),
-                    num_threads=_int(Fragment.thread_count, _thread_count),
+                    stagger=_float(Fragment.thread_stagger),
+                    num_threads=_int(Fragment.thread_count),
                 ),
                 async_mode=async_mode_enum,
                 target=embedding_target,
@@ -211,24 +240,22 @@ def default_config_parameters_from_env_vars(
                 skip=_array_string("SKIP"),
                 llm=LLMParametersModel(
                     api_key=_str(Fragment.api_key, _api_key),
-                    type=_str(Fragment.type),
+                    type=llm_type,
                     model=_str(Fragment.model),
-                    request_timeout=_float(Fragment.request_timeout, _request_timeout),
-                    api_base=_str(Fragment.api_base, _api_base),
+                    request_timeout=_float(Fragment.request_timeout),
+                    api_base=api_base,
                     api_version=_str(Fragment.api_version, _api_version),
                     organization=_str(Fragment.organization, _organization),
                     proxy=_str(Fragment.proxy, _proxy),
-                    deployment_name=_str(Fragment.deployment_name),
-                    tokens_per_minute=_int(Fragment.tpm, _tpm),
-                    requests_per_minute=_int(Fragment.rpm, _rpm),
-                    max_retries=_int(Fragment.max_retries, _max_retries),
-                    max_retry_wait=_float(Fragment.max_retry_wait, _max_retry_wait),
+                    deployment_name=deployment_name,
+                    tokens_per_minute=_int(Fragment.tpm),
+                    requests_per_minute=_int(Fragment.rpm),
+                    max_retries=_int(Fragment.max_retries),
+                    max_retry_wait=_float(Fragment.max_retry_wait),
                     sleep_on_rate_limit_recommendation=_bool(
-                        Fragment.sleep_recommendation, _sleep_recommendation
+                        Fragment.sleep_recommendation
                     ),
-                    concurrent_requests=_int(
-                        Fragment.concurrent_requests, _concurrent_requests
-                    ),
+                    concurrent_requests=_int(Fragment.concurrent_requests),
                 ),
             )
 
