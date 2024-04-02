@@ -169,3 +169,4 @@ dulce
 
 # English
 skippable
+upvote
