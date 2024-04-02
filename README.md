@@ -9,7 +9,7 @@ The GraphRAG project a data pipeline and transformation suite that is designed t
 ## Repository Guidance
 This repository presents a methodology for using knowledge graph memory structures to enhance LLM outputs. Please note that the provided code serves as a demonstration and is not an officially supported Microsoft offering.
 
-## Quick Start
+## Quickstart
 
 ```sh
 pip install graphrag
