@@ -79,6 +79,7 @@ jobs:
         name: Unit Tests
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_BLOB_CONNECTION_STRING: ${{ secrets.GRAPHRAG_BLOB_CONNECTION_STRING}}
 
       - run: yarn test:integration
         name: Integration Tests

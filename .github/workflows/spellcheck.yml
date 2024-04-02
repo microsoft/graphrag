@@ -6,7 +6,7 @@ on:
     paths:
       - '**/*'
 jobs:
-  build:
+  spellcheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

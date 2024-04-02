@@ -21,6 +21,9 @@ debug = os.environ.get("DEBUG") is not None
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
+BLOB_CONNECTION_STRING = os.environ.get(
+    "GRAPHRAG_BLOB_CONNECTION_STRING", WELL_KNOWN_AZURITE_CONNECTION_STRING
+)
 
 
 def _load_fixtures():
@@ -237,7 +240,9 @@ class TestIndexer:
         os.environ,
         {
             **os.environ,
-            "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
+            "CACHE_TYPE": os.environ.get("CACHE_TYPE", "file"),
+            "CACHE_CONTAINER_NAME": os.environ.get("CACHE_CONTAINER_NAME", "cache"),
+            "BLOB_STORAGE_CONNECTION_STRING": BLOB_CONNECTION_STRING,
         },
         clear=True,
     )
