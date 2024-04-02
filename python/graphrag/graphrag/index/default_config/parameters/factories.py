@@ -117,7 +117,7 @@ def default_config_parameters_from_env_vars(
 
     def _key(key: str | Fragment) -> str | None:
         return key.value if isinstance(key, Fragment) else key
-    
+
     def _str(key: str | Fragment, default_value: str | None = None) -> str | None:
         return env(_key(key), default_value)
 

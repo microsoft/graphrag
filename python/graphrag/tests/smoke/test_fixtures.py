@@ -239,7 +239,9 @@ class TestIndexer:
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
-        print("Running smoke test, len(key)=", len(os.environ.get("GRAPHRAG_API_KEY", "")))
+        print(
+            "Running smoke test, len(key)=", len(os.environ.get("GRAPHRAG_API_KEY", ""))
+        )
         if workflow_config.get("skip", False):
             print("skipping smoke test :-()")
             return
