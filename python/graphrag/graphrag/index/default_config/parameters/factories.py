@@ -120,7 +120,7 @@ AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED = "GRAPHRAG_EMBEDDING_MODEL or GRAPHRAG
 AZURE_EMBEDDING_API_BASE_REQUIRED = "GRAPHRAG_BASE_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
 
 
-def _is_azure(llm_type: LLMType) -> bool:
+def _is_azure(llm_type: LLMType | None) -> bool:
     return (
         llm_type == LLMType.AzureOpenAI
         or llm_type == LLMType.AzureOpenAIChat
@@ -170,9 +170,9 @@ def default_config_parameters_from_env_vars(
             if api_key is None:
                 raise ValueError(LLM_KEY_REQUIRED)
             llm_type = _str(Fragment.type)
-            llm_type = LLMType(llm_type)
+            llm_type = LLMType(llm_type) if llm_type else None
             deployment_name = str(Fragment.deployment_name)
-            model = _str(Fragment.model_supports_json)
+            model = _str(Fragment.model)
 
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
@@ -219,7 +219,7 @@ def default_config_parameters_from_env_vars(
             deployment_name = _str(Fragment.deployment_name)
             model = _str(Fragment.model)
             llm_type = _str(Fragment.type)
-            llm_type = LLMType(llm_type)
+            llm_type = LLMType(llm_type) if llm_type else None
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
 
