@@ -66,7 +66,7 @@ class TestDefaultConfig(unittest.TestCase):
         {
             "GRAPHRAG_API_KEY": "test",
             "GRAPHRAG_LLM_MODEL": "gpt2",
-            "GRAPHRAG_THREAD_COUNT": "987",
+            "GRAPHRAG_LLM_THREAD_COUNT": "987",
             "GRAPHRAG_STORAGE_TYPE": "blob",
             "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
             "GRAPHRAG_STORAGE_CONTAINER_NAME": "test_cn",

@@ -10,11 +10,12 @@ from graphrag.index.config import (
     PipelineStorageType,
 )
 from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
+from graphrag.index.llm.types import LLMType
 
 #
 # LLM Parameters
 #
-DEFAULT_LLM_TYPE = "openai_chat"
+DEFAULT_LLM_TYPE = LLMType.OpenAIChat
 DEFAULT_LLM_MODEL = "gpt-4-turbo-preview"
 DEFAULT_LLM_MAX_TOKENS = 4000
 DEFAULT_LLM_REQUEST_TIMEOUT = 180.0
@@ -28,7 +29,7 @@ DEFAULT_LLM_CONCURRENT_REQUESTS = 25
 #
 # Text Embedding Parameters
 #
-DEFAULT_EMBEDDING_TYPE = "openai_embedding"
+DEFAULT_EMBEDDING_TYPE = LLMType.OpenAIEmbedding
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_EMBEDDING_TOKENS_PER_MINUTE = 0
 DEFAULT_EMBEDDING_REQUESTS_PER_MINUTE = 0
