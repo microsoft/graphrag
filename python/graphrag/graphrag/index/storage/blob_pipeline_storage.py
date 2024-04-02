@@ -47,16 +47,31 @@ class BlobPipelineStorage(PipelineStorage):
             self._container_name,
             self._path_prefix,
         )
+        self.create_container()
 
-        container_names = [
-            container.name for container in self._blob_service_client.list_containers()
-        ]
-        if container_name not in container_names:
-            self._blob_service_client.create_container(container_name)
+    def create_container(self) -> None:
+        """Create the container if it does not exist."""
+        if not self.container_exists():
+            container_name = self._container_name
+            container_names = [
+                container.name
+                for container in self._blob_service_client.list_containers()
+            ]
+            if container_name not in container_names:
+                self._blob_service_client.create_container(container_name)
 
     def delete_container(self) -> None:
         """Delete the container."""
-        self._blob_service_client.delete_container(self._container_name)
+        if self.container_exists():
+            self._blob_service_client.delete_container(self._container_name)
+
+    def container_exists(self) -> bool:
+        """Check if the container exists."""
+        container_name = self._container_name
+        container_names = [
+            container.name for container in self._blob_service_client.list_containers()
+        ]
+        return container_name in container_names
 
     def find(
         self,
