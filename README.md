@@ -11,7 +11,7 @@ This repository presents a methodology for using knowledge graph memory structur
 
 ## Quick Start
 
-```python
+```sh
 pip install graphrag
 
 mkdir -p ./ragtest/input
