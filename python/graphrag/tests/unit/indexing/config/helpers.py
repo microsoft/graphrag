@@ -22,10 +22,12 @@ def assert_contains_default_config(
     assert config is not None
     assert isinstance(config, PipelineConfig)
 
-    checked_config = json.loads(config.json(exclude_defaults=True, exclude_unset=True))
+    checked_config = json.loads(
+        config.model_dump_json(exclude_defaults=True, exclude_unset=True)
+    )
 
     actual_default_config = json.loads(
-        default_config(default_config_parameters_from_env_vars(".")).json(
+        default_config(default_config_parameters_from_env_vars(".")).model_dump_json(
             exclude_defaults=True, exclude_unset=True
         )
     )

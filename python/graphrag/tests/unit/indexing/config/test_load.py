@@ -79,13 +79,13 @@ class TestLoadPipelineConfig(unittest.TestCase):
         assert isinstance(config, PipelineConfig)
 
         checked_config = json.loads(
-            config.json(exclude_defaults=True, exclude_unset=True)
+            config.model_dump_json(exclude_defaults=True, exclude_unset=True)
         )
 
         actual_default_config = json.loads(
-            default_config(default_config_parameters_from_env_vars(".")).json(
-                exclude_defaults=True, exclude_unset=True
-            )
+            default_config(
+                default_config_parameters_from_env_vars(".")
+            ).model_dump_json(exclude_defaults=True, exclude_unset=True)
         )
         props_to_ignore = ["root_dir", "extends"]
 

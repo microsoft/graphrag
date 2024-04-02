@@ -45,8 +45,8 @@ def load_pipeline_config(config_or_path: str | PipelineConfig) -> PipelineConfig
         for extended_config in config.extends:
             extended_config = load_pipeline_config(extended_config)
             merged_config = {
-                **json.loads(extended_config.json()),
-                **json.loads(config.json(exclude_unset=True)),
+                **json.loads(extended_config.model_dump_json()),
+                **json.loads(config.model_dump_json(exclude_unset=True)),
             }
             config = PipelineConfig.model_validate(merged_config)
 

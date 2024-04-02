@@ -6,7 +6,7 @@
 			"outputs": ["dist/**", "docs/**"]
 		},
 		"test": {
-			"dependsOn": ["build"],
+			"dependsOn": [],
 			"outputs": []
 		},
 		"check": {
