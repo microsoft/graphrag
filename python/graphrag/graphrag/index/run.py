@@ -80,6 +80,7 @@ async def run_pipeline_with_config(
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     debug: bool = False,
+    resume: str | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -100,7 +101,7 @@ async def run_pipeline_with_config(
         log.info("Running pipeline")
 
     config = load_pipeline_config(config_or_path)
-    config, reporting_dir = _apply_substitutions(config)
+    config, reporting_dir = _apply_substitutions(config, resume)
     root_dir = config.root_dir
 
     def _create_storage(config: PipelineStorageConfigTypes | None) -> PipelineStorage:
@@ -407,8 +408,10 @@ def _validate_dataset(dataset: pd.DataFrame):
         raise TypeError(msg)
 
 
-def _apply_substitutions(config: PipelineConfig) -> tuple[PipelineConfig, str]:
-    substitutions = {"timestamp": time.strftime("%Y%m%d-%H%M%S")}
+def _apply_substitutions(
+    config: PipelineConfig, resume: str | None
+) -> tuple[PipelineConfig, str]:
+    substitutions = {"timestamp": resume or time.strftime("%Y%m%d-%H%M%S")}
     reporting_dir = ""
 
     if (

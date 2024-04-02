@@ -255,7 +255,7 @@ llm:
     )
     # create default configuration pipeline parameters from the custom settings
     model = DefaultConfigParametersModel.model_validate(config_dict)
-    parameters = default_config_parameters(model, ".", None)
+    parameters = default_config_parameters(model, ".")
 
     assert parameters.llm["api_key"] == "test"
     assert parameters.llm["model"] == "gpt2"
