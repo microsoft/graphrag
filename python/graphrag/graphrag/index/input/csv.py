@@ -43,35 +43,59 @@ async def load(
         if "id" not in data.columns:
             data["id"] = data.apply(lambda x: gen_md5_hash(x, x.keys()), axis=1)
         if csv_config.source_column is not None and "source" not in data.columns:
-            data["source"] = data.apply(lambda x: x[csv_config.source_column], axis=1)
+            if csv_config.source_column not in data.columns:
+                log.warning(
+                    "source_column %s not found in csv file %s", csv_config.source_column, path
+                )
+            else:
+                data["source"] = data.apply(lambda x: x[csv_config.source_column], axis=1)
         if csv_config.text_column is not None and "text" not in data.columns:
-            data["text"] = data.apply(lambda x: x[csv_config.text_column], axis=1)
+            if csv_config.text_column not in data.columns:
+                log.warning(
+                    "text_column %s not found in csv file %s", csv_config.text_column, path
+                )
+            else:
+                data["text"] = data.apply(lambda x: x[csv_config.text_column], axis=1)
         if csv_config.title_column is not None and "title" not in data.columns:
-            data["title"] = data.apply(lambda x: x[csv_config.title_column], axis=1)
+            if csv_config.title_column not in data.columns:
+                log.warning(
+                    "title_column %s not found in csv file %s", csv_config.title_column, path
+                )
+            else:
+                data["title"] = data.apply(lambda x: x[csv_config.title_column], axis=1)
 
         if csv_config.timestamp_column is not None:
             fmt = csv_config.timestamp_format
             if fmt is None:
                 msg = "Must specify timestamp_format if timestamp_column is specified"
                 raise ValueError(msg)
-            data["timestamp"] = pd.to_datetime(
-                data[csv_config.timestamp_column], format=fmt
-            )
+            
+            if csv_config.timestamp_column not in data.columns:
+                log.warning(
+                    "timestamp_column %s not found in csv file %s", csv_config.timestamp_column, path
+                )
+            else:
+                data["timestamp"] = pd.to_datetime(
+                    data[csv_config.timestamp_column], format=fmt
+                )
 
-            # TODO: Theres probably a less gross way to do this
-            if "year" not in data.columns:
-                data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)
-            if "month" not in data.columns:
-                data["month"] = data.apply(lambda x: x["timestamp"].month, axis=1)
-            if "day" not in data.columns:
-                data["day"] = data.apply(lambda x: x["timestamp"].day, axis=1)
-            if "hour" not in data.columns:
-                data["hour"] = data.apply(lambda x: x["timestamp"].hour, axis=1)
-            if "minute" not in data.columns:
-                data["minute"] = data.apply(lambda x: x["timestamp"].minute, axis=1)
-            if "second" not in data.columns:
-                data["second"] = data.apply(lambda x: x["timestamp"].second, axis=1)
+            if "timestamp" in data.columns:
+                if "year" not in data.columns:
+                    data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)
+                if "month" not in data.columns:
+                    data["month"] = data.apply(lambda x: x["timestamp"].month, axis=1)
+                if "day" not in data.columns:
+                    data["day"] = data.apply(lambda x: x["timestamp"].day, axis=1)
+                if "hour" not in data.columns:
+                    data["hour"] = data.apply(lambda x: x["timestamp"].hour, axis=1)
+                if "minute" not in data.columns:
+                    data["minute"] = data.apply(lambda x: x["timestamp"].minute, axis=1)
+                if "second" not in data.columns:
+                    data["second"] = data.apply(lambda x: x["timestamp"].second, axis=1)
 
+        if "text" not in data.columns:
+            msg = f"No text column found in csv file {path}"
+            raise ValueError(msg)
         return data
 
     file_pattern = (
