@@ -55,11 +55,11 @@ These settings control the base LLM arguments used by the pipeline. This is usef
 
 | Parameter                           | Description                                                                            | Type    | Required or Optional | Default Value |
 | ----------------------------------- | -------------------------------------------------------------------------------------- | ------- | -------------------- | ------------- |
-| `GRAPHRAG_BASE_API_KEY`             | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | required             | `None`        |
-| `GRAPHRAG_BASE_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_BASE_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_BASE_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_BASE_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
+| `GRAPHRAG_API_KEY`             | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | required             | `None`        |
+| `GRAPHRAG_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
+| `GRAPHRAG_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
+| `GRAPHRAG_API_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
+| `GRAPHRAG_API_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
 
 
 ## Text Generation Settings
@@ -72,8 +72,8 @@ These settings control the text generation model used by the pipeline. These set
 | `GRAPHRAG_LLM_API_KEY`             | The API key.                                                                           | `str`   | required             | `None`        |
 | `GRAPHRAG_LLM_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
 | `GRAPHRAG_LLM_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_LLM_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_LLM_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
+| `GRAPHRAG_LLM_API_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
+| `GRAPHRAG_LLM_API_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
 | `GRAPHRAG_LLM_DEPLOYMENT_NAME`     | The AOAI deployment name.                                                              | `str`   | optional for AOAI    | `None`        |
 | `GRAPHRAG_LLM_MODEL`               | The model.                                                                             | `str`   | optional             | `gpt-4-turbo-preview`       |
 | `GRAPHRAG_LLM_MAX_TOKENS`          | The maximum number of tokens.                                                          | `int`   | optional             | `4000`        |
@@ -98,8 +98,8 @@ These settings control the text embedding model used by the pipeline. These sett
 | `GRAPHRAG_EMBEDDING_API_KEY`              | The API key to use for the embedding client.                                                | `str`   | required             | `None`                   |
 | `GRAPHRAG_EMBEDDING_API_BASE`             | The API base URL.                                                                           | `str`   | required for AOAI    | `None`                   |
 | `GRAPHRAG_EMBEDDING_API_VERSION`          | The AOAI API version to use for the embedding client.                                       | `str`   | required for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_ORGANIZATION`         | The AOAI organization to use for the embedding client.                                      | `str`   | optional for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_PROXY`                | The AOAI proxy to use for the embedding client.                                             | `str`   | optional for AOAI    | `None`                   |
+| `GRAPHRAG_EMBEDDING_API_ORGANIZATION`         | The AOAI organization to use for the embedding client.                                      | `str`   | optional for AOAI    | `None`                   |
+| `GRAPHRAG_EMBEDDING_API_PROXY`                | The AOAI proxy to use for the embedding client.                                             | `str`   | optional for AOAI    | `None`                   |
 | `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | The AOAI deployment name.                                                                   | `str`   | optional for AOAI    | `None`                   |
 | `GRAPHRAG_EMBEDDING_MODEL`                | The model to use for the embedding client.                                                  | `str`   | optional             | `text-embedding-3-small` |
 | `GRAPHRAG_EMBEDDING_BATCH_SIZE`           | The number of texts to embed at once. [(Azure limit is 16)]( https://learn.microsoft.com/en-us/azure/ai-services/openai/reference)                                   | `int`   | optional             | 16                       |

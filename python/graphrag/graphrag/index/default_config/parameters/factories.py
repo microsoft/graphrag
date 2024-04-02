@@ -58,6 +58,8 @@ class Fragment(str, Enum):
     api_base = "API_BASE"
     api_key = "API_KEY"
     api_version = "API_VERSION"
+    api_organization = "API_ORGANIZATION"
+    api_proxy = "API_PROXY"
     async_mode = "ASYNC_MODE"
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"
@@ -74,9 +76,7 @@ class Fragment(str, Enum):
     max_tokens = "MAX_TOKENS"
     model = "MODEL"
     model_supports_json = "MODEL_SUPPORTS_JSON"
-    organization = "ORGANIZATION"
     prompt_file = "PROMPT_FILE"
-    proxy = "PROXY"
     request_timeout = "REQUEST_TIMEOUT"
     rpm = "RPM"
     sleep_recommendation = "SLEEP_ON_RATE_LIMIT_RECOMMENDATION"
@@ -161,12 +161,11 @@ def default_config_parameters_from_env_vars(
     fallback_oai_version = _str("OPENAI_API_VERSION")
 
     with section(Section.graphrag):
-        with section(Section.base):
-            _api_key = _str(Fragment.api_key, fallback_oai_key)
-            _api_base = _str(Fragment.api_base, fallback_oai_url)
-            _api_version = _str(Fragment.api_version, fallback_oai_version)
-            _organization = _str(Fragment.organization, fallback_oai_org)
-            _proxy = _str(Fragment.proxy)
+        _api_key = _str(Fragment.api_key, fallback_oai_key)
+        _api_base = _str(Fragment.api_base, fallback_oai_url)
+        _api_version = _str(Fragment.api_version, fallback_oai_version)
+        _organization = _str(Fragment.api_organization, fallback_oai_org)
+        _proxy = _str(Fragment.api_proxy)
 
         with section(Section.llm):
             api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
@@ -191,8 +190,8 @@ def default_config_parameters_from_env_vars(
                 request_timeout=_float(Fragment.request_timeout),
                 api_base=api_base,
                 api_version=_str(Fragment.api_version, _api_version),
-                organization=_str(Fragment.organization, _organization),
-                proxy=_str(Fragment.proxy, _proxy),
+                organization=_str(Fragment.api_organization, _organization),
+                proxy=_str(Fragment.api_proxy, _proxy),
                 deployment_name=deployment_name,
                 tokens_per_minute=_int(Fragment.tpm),
                 requests_per_minute=_int(Fragment.rpm),
@@ -245,8 +244,8 @@ def default_config_parameters_from_env_vars(
                     request_timeout=_float(Fragment.request_timeout),
                     api_base=api_base,
                     api_version=_str(Fragment.api_version, _api_version),
-                    organization=_str(Fragment.organization, _organization),
-                    proxy=_str(Fragment.proxy, _proxy),
+                    organization=_str(Fragment.api_organization, _organization),
+                    proxy=_str(Fragment.api_proxy, _proxy),
                     deployment_name=deployment_name,
                     tokens_per_minute=_int(Fragment.tpm),
                     requests_per_minute=_int(Fragment.rpm),
