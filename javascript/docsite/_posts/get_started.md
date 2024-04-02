@@ -76,7 +76,7 @@ set GRAPHRAG_LLM_MODEL=<chat_completions_model>
 set GRAPHRAG_EMBEDDING_MODEL=<embeddings_model>
 ```
 
-For more details about Environment Variables configuration please refer to the Query Engine [CLI documentation](../_query/cli).
+For more details about Environment Variables configuration please refer to the Query Engine [CLI documentation](../_query/3-cli).
 
 ## Running the Query Engine
 
