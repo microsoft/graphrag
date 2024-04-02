@@ -1,10 +1,8 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 # Use this for now instead of a wrapper
 """A module containing 'NodePosition' model."""
+
 from dataclasses import dataclass
 
 

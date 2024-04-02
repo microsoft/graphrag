@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing build_steps method definition."""
+
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_final_entities"
@@ -61,45 +59,41 @@ def build_steps(
     ]
 
     if not skip_name_embedding:
-        result.append(
+        result.append({
+            "verb": "text_embed",
+            "args": {
+                "column": "name",
+                "to": "name_embedding",
+                **text_embed_config,
+            },
+        })
+
+    if not skip_description_embedding:
+        result.extend([
+            {
+                "verb": "merge",
+                "args": {
+                    "strategy": "concat",
+                    "columns": ["name", "description"],
+                    "to": "name_description",
+                    "delimiter": ":",
+                    "preserveSource": True,
+                },
+            },
             {
                 "verb": "text_embed",
                 "args": {
-                    "column": "name",
-                    "to": "name_embedding",
+                    "column": "name_description",
+                    "to": "description_embedding",
                     **text_embed_config,
                 },
-            }
-        )
-
-    if not skip_description_embedding:
-        result.extend(
-            [
-                {
-                    "verb": "merge",
-                    "args": {
-                        "strategy": "concat",
-                        "columns": ["name", "description"],
-                        "to": "name_description",
-                        "delimiter": ":",
-                        "preserveSource": True,
-                    },
+            },
+            {
+                "verb": "drop",
+                "args": {
+                    "columns": ["name_description"],
                 },
-                {
-                    "verb": "text_embed",
-                    "args": {
-                        "column": "name_description",
-                        "to": "description_embedding",
-                        **text_embed_config,
-                    },
-                },
-                {
-                    "verb": "drop",
-                    "args": {
-                        "columns": ["name_description"],
-                    },
-                },
-            ]
-        )
+            },
+        ])
 
     return result

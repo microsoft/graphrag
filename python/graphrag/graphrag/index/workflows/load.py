@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing load_workflows, create_workflow, _get_steps_for_workflow and _remove_disabled_steps methods definition."""
+
 from __future__ import annotations
 
 from collections.abc import Callable

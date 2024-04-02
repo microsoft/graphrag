@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing read_dotenv, load_pipeline_config, _parse_yaml and _create_include_constructor methods definition."""
+
 import json
 from pathlib import Path
 

@@ -1,10 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Root package for resolution entities."""
 
 from .description_summarize import SummarizeStrategyType, summarize_descriptions
 
-__all__ = ["summarize_descriptions", "SummarizeStrategyType"]
+__all__ = ["SummarizeStrategyType", "summarize_descriptions"]

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Indexing Engine graph extractors package root."""
+
 from .claims import CLAIM_EXTRACTION_PROMPT, CLAIM_SUMMARY_PROMPT, ClaimExtractor
 from .community_reports import (
     COMMUNITY_REPORT_PROMPT,
@@ -13,12 +11,12 @@ from .community_reports import (
 from .graph import GraphExtractionResult, GraphExtractor
 
 __all__ = [
-    "ClaimExtractor",
     "CLAIM_EXTRACTION_PROMPT",
     "CLAIM_SUMMARY_PROMPT",
-    "CommunityReportsExtractor",
-    "prep_community_reports_data",
     "COMMUNITY_REPORT_PROMPT",
-    "GraphExtractor",
+    "ClaimExtractor",
+    "CommunityReportsExtractor",
     "GraphExtractionResult",
+    "GraphExtractor",
+    "prep_community_reports_data",
 ]

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """GlobalSearch LLM Callbacks."""
+
 from graphrag.query.llm.base import BaseLLMCallback
 from graphrag.query.structured_search.base import SearchResult
 

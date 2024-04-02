@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 from graphrag.index import (
     default_config,
     default_config_parameters,
