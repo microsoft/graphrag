@@ -2,7 +2,8 @@
 title: Global Search Notebook
 navtitle: Global Search
 layout: page
-tags: [post, orchestration]
+tags: [post, notebooks]
+01date: 2024-04-01
 ---
 
 ```python
