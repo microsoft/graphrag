@@ -45,3 +45,7 @@ __pycache__
 
 temp_azurite/
 __azurite*.json
+
+# Getting started example
+ragtest/
+.ragtest/
