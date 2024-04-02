@@ -348,6 +348,7 @@ def _get_reporting_config(
             return PipelineBlobReportingConfig(
                 connection_string=settings.reporting.connection_string,
                 container_name=settings.reporting.container_name,
+                base_dir=settings.reporting.base_dir,
             )
         case PipelineReportingType.console:
             return PipelineConsoleReportingConfig()
@@ -398,6 +399,7 @@ def _get_cache_config(
             return PipelineBlobCacheConfig(
                 connection_string=settings.cache.connection_string,
                 container_name=settings.cache.container_name,
+                base_dir=settings.cache.base_dir,
             )
         case _:
             # relative to root dir
