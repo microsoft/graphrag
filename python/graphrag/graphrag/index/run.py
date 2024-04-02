@@ -146,7 +146,7 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    return run_pipeline(
+    async for table in run_pipeline(
         workflows=workflows,
         dataset=dataset,
         storage=storage,
@@ -158,7 +158,8 @@ async def run_pipeline_with_config(
         additional_workflows=additional_workflows,
         progress_reporter=progress_reporter,
         emit=emit,
-    )
+    ):
+        yield table
 
 
 async def run_pipeline(

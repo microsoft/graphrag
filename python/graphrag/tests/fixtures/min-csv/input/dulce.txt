@@ -2,7 +2,7 @@
 
 ## Chapter 1
 
-The thrumming of monitors cast a stark contrast to the rigid silence enveloping the group. Agent Alex Mercer, unfailingly determined on paper, seemed dwarfed by the enormity of the sterile briefing room where Delta Green's elite convened. With dulled eyes, he scanned the projectors outlining their impending odyssey into Operation: Dulce.
+The thrumming of monitors cast a stark contrast to the rigid silence enveloping the group. Agent Alex Mercer, unfailingly determined on paper, seemed dwarfed by the enormity of the sterile briefing room where Paranormal Military Squad's elite convened. With dulled eyes, he scanned the projectors outlining their impending odyssey into Operation: Dulce.
 
 “I assume, Agent Mercer, you’re not having second thoughts?” It was Taylor Cruz’s voice, laced with an edge that demanded attention.
 
@@ -138,7 +138,7 @@ Solemnly, yet unmistakably together, they moved deeper into the heart of the eni
 
 ## Chapter 3
 
-The thrumming of monitors cast a stark contrast to the rigid silence enveloping the group. Agent Alex Mercer, unfailingly determined on paper, seemed dwarfed by the enormity of the sterile briefing room where Delta Green's elite convened. With dulled eyes, he scanned the projectors outlining their impending odyssey into Operation: Dulce.
+The thrumming of monitors cast a stark contrast to the rigid silence enveloping the group. Agent Alex Mercer, unfailingly determined on paper, seemed dwarfed by the enormity of the sterile briefing room where Paranormal Military Squad's elite convened. With dulled eyes, he scanned the projectors outlining their impending odyssey into Operation: Dulce.
 
 \*
 
@@ -288,7 +288,7 @@ They left the briefing room with a shared silence, each pondering the vast weave
 
 \*
 
-As the Delta Green team convened in the heart of the Dulce military complex, an air of bristling expectation clung to the walls of the underground sanctum. Alex Mercer’s brow furrowed while watching his companions—Jordan Hayes, diligently setting up their makeshift lab station, and Sam Rivera meticulously checking the communication relays they had restored. Taylor Cruz observed with hawk-like focus, yet to betray the strain that their command posed on them.
+As the Paranormal Military Squad team convened in the heart of the Dulce military complex, an air of bristling expectation clung to the walls of the underground sanctum. Alex Mercer’s brow furrowed while watching his companions—Jordan Hayes, diligently setting up their makeshift lab station, and Sam Rivera meticulously checking the communication relays they had restored. Taylor Cruz observed with hawk-like focus, yet to betray the strain that their command posed on them.
 
 The gravity of the mission had shifted, deepened; each member of the team felt its pull, tethered to the understanding that they were now part of a larger narrative—a cosmic play with Earth as a stage and the human race unwitting actors. 
 
@@ -322,7 +322,7 @@ The desert night loomed eerily still as echoes of hidden activity reverberated d
 
 Silence settled between them, broken only by the occasional buzz of communications equipment attempting to bridge terrestrial and extraterrestrial intelligences. Tense moments drifted by, laden with the expectant weight of near breakthrough, when a soft chime signaled an incoming transmission -- a rare sound that set every agent on high alert.
 
-Absent was the voice of Washington or Delta Green command. Instead, a rhythmic series of pulses and tones filled the air, deliberately patterned, unmistakably non-human.
+Absent was the voice of Washington or Paranormal Military Squad command. Instead, a rhythmic series of pulses and tones filled the air, deliberately patterned, unmistakably non-human.
 
 Sam Rivera adjusted the sensitivity of the decoding equipment, their hands shaking with anticipation as much as focus. "I have it!" they announced, the signal transforming under their expertise into a sequence of visual symbols on the screen before them.
 
@@ -370,7 +370,7 @@ With a collective breath, the team faced the kaleidoscope of lights. The alien s
 
 And so, with deliberate steps, Alex Mercer led his team into the luminous fray. Science, protocol, and survival instinct harmonized within them, each member poised on the cusp of a new chapter in human history.
 
-They were no longer merely the instruments of Delta Green's will—they were the vanguard of humankind’s first definitive leap into the cosmic community. 
+They were no longer merely the instruments of Paranormal Military Squad's will—they were the vanguard of humankind’s first definitive leap into the cosmic community. 
 
 With the last echoes of the signal resonating in the control room, they each embraced the sequencing of the transmission, the dance of extraterrestrial light that now wrote itself into their story. The chapter of Operation: Dulce drew to a close, but the narrative of their destiny had only just begun.
 
@@ -422,9 +422,9 @@ Taylor's presence was a beacon of steely resolve. "Then let’s solve it. This i
 
 Alex and Sam exchanged a look that telegraphed their shared determination—this was not only the mission they had trained for; it was the mission they had been destined for.
 
-Together, the Delta Green team leaned into the challenge, their minds honing in on the complex patterns with a singular goal: to unlock the conversation with an intelligence that had already begun to shift the foundations of what they knew, or thought they knew, about the universe.
+Together, the Paranormal Military Squad team leaned into the challenge, their minds honing in on the complex patterns with a singular goal: to unlock the conversation with an intelligence that had already begun to shift the foundations of what they knew, or thought they knew, about the universe.
 
-In a symphony of clicks and murmurs, they worked, knowing they were about to make a giant leap not just for themselves or Delta Green, but for all of humanity. As the final pieces fell into place, Dulce's militaristic silence was shattered by the sound of intergalactic contact—by the sound of history being made.
+In a symphony of clicks and murmurs, they worked, knowing they were about to make a giant leap not just for themselves or Paranormal Military Squad, but for all of humanity. As the final pieces fell into place, Dulce's militaristic silence was shattered by the sound of intergalactic contact—by the sound of history being made.
 
 ## Chapter 7
 
@@ -444,7 +444,7 @@ Alex stepped forward, reaching a subtle decision, one dictated by foresight and 
 
 Jordan nodded, appreciating the leadership that Alex displayed in the face of the unknown, and turned back to the cryptic data. Here, before them all, was a tangible piece of evidence—proof of an extraterrestrial sentience that had outreached the bounds of their expectations.
 
-Taylor took a breath, simultaneously exuding a sense of preparedness and venturing into the unknown alongside their peers. "Then let’s do what Delta Green does best—investigate and adapt," Taylor added, finding comfort in the familiar even as they stood on the cusp of an unprecedented alchemy of science and mystery.
+Taylor took a breath, simultaneously exuding a sense of preparedness and venturing into the unknown alongside their peers. "Then let’s do what Paranormal Military Squad does best—investigate and adapt," Taylor added, finding comfort in the familiar even as they stood on the cusp of an unprecedented alchemy of science and mystery.
 
 The team leaned into their respective roles, driven by the urgency of the assignment and the pull of an insatiable curiosity. Sam offered a grin that belied the tension, a youthfulness that reminded them all of the profound excitement nested within the terror of the unknown.
 
@@ -470,9 +470,9 @@ Alex's demeanor assumed a quiet resolve—the profound knowledge that this missi
 
 A nod passed between Jordan and Alex, a silent exchange of mutual respect and shared mission. Sam, buoyed by the weighty encounters of the mind and machinery, entered keystrokes with a fervor that seemed to bring them ever closer to the alien mind.
 
-They stood there, the Delta Green team, not just as guardians of homeworld secrets or as soldiers of clandestine wars, but as humankind's chosen few at the fulcrum of history—a history that was now unfolding to the rhythm of otherworldly codes.
+They stood there, the Paranormal Military Squad team, not just as guardians of homeworld secrets or as soldiers of clandestine wars, but as humankind's chosen few at the fulcrum of history—a history that was now unfolding to the rhythm of otherworldly codes.
 
-Each revelation, each parsed symbol, inched them toward the line between the earthly and otherworldly. And as they stood on this precipice of cosmic negotiations, it was clear the ensuing dialogue would not just shape the future of Delta Green—it could very well redefine the parameters of human existence.
+Each revelation, each parsed symbol, inched them toward the line between the earthly and otherworldly. And as they stood on this precipice of cosmic negotiations, it was clear the ensuing dialogue would not just shape the future of Paranormal Military Squad—it could very well redefine the parameters of human existence.
 
 \*
 
@@ -490,7 +490,7 @@ Alex offered a nod that spoke volumes, conveying his understanding of the stakes
 
 Every second thrummed with significance as Jordan and Sam worked in tandem, each keystroke a foray into the unknown. Taylor observed with a commander's scrutiny, the gravity of their role sustaining them against the waves of ambiguity breaking against their resolve.
 
-Pivotal moments come rarely in the course of human events but here, amidst the electronic symphony of a stalwart command center, lay the incepting notes of a cosmic overture. The harmony between human and alien, between Delta Green and the vast reaches of space, began its first tentative measures, with each member of the team a vital instrument in a celestial ensemble yet to be fully heard.
+Pivotal moments come rarely in the course of human events but here, amidst the electronic symphony of a stalwart command center, lay the incepting notes of a cosmic overture. The harmony between human and alien, between Paranormal Military Squad and the vast reaches of space, began its first tentative measures, with each member of the team a vital instrument in a celestial ensemble yet to be fully heard.
 
 \*
 
@@ -510,7 +510,7 @@ Jordan, hands momentarily at rest, looked up. The signal was more than a sequenc
 
 Taylor, hardly a step away, nodded in silent agreement. The implications of their findings might very well direct the course of human destiny from this point onward.
 
-Finding a tempo among themselves, the Dulce team was a confluence of ambition and acumen, each member intuitive to the beats of discovery. The chamber around them held untold stories, secrets coaxed from the stars, that now, led by Delta Green's finest, began to unravel.
+Finding a tempo among themselves, the Dulce team was a confluence of ambition and acumen, each member intuitive to the beats of discovery. The chamber around them held untold stories, secrets coaxed from the stars, that now, led by Paranormal Military Squad's finest, began to unravel.
 
 The future in those moments was unwritten, a narrative scribed not in the dust of desert confines, but in the potential for interstellar diplomacy and understanding. As they prepared to script humanity's next chapter, the room seemed to pulse with the heartbeat of a story far greater than the sum of its parts.
 
@@ -528,7 +528,7 @@ A moment of profound silence swept over the team. The isolation of their locatio
 
 "Then our response needs to be equally symphonic," Alex uttered, contemplating the awe-inspiring transmutation of their task from a simple recovery mission to a full-blown cosmic concerto.
 
-With a renewed sense of wonder tempered by caution, the Delta Green team found themselves harmonizing a delicate balance between envoys and interpreters. The long shadow cast by their duty was now illuminated by the brilliant glow of otherworldly dialogue.
+With a renewed sense of wonder tempered by caution, the Paranormal Military Squad team found themselves harmonizing a delicate balance between envoys and interpreters. The long shadow cast by their duty was now illuminated by the brilliant glow of otherworldly dialogue.
 
 In this carefully orchestrated march towards the unknown, each individual's expertise became critical notes in a larger melody. The narrative of human achievement, so often defined by solitary pursuits, now emerged as a collaborative opus, each member of the team a maestro in their right.
 
@@ -546,7 +546,7 @@ Sam Rivera’s youthful voice permeated the tension, brimming with an excitement
 
 Alex nodded, his thoughts alighting on potential strategies for navigating the conversation they were cultivating with the unfathomable. "We need to keep that conversation going, echo its patterns, and speak its language," he resolved, knowing the delicate nature of their work merited every ounce of their collective acumen.
 
-The chamber now was a crucible, forging within it the future narrative of human contact with the unknown. Every signal pulse they sent out was an invitation for understanding, and every echo back a step closer to bridging the cosmic divide. And so, together, they stood - agents in Delta Green's clandestine ranks, united by purpose, sculpting humanity’s first sonnets into the void.
+The chamber now was a crucible, forging within it the future narrative of human contact with the unknown. Every signal pulse they sent out was an invitation for understanding, and every echo back a step closer to bridging the cosmic divide. And so, together, they stood - agents in Paranormal Military Squad's clandestine ranks, united by purpose, sculpting humanity’s first sonnets into the void.
 
 \*
 
@@ -560,9 +560,9 @@ The chamber now was a crucible, forging within it the future narrative of human 
 
 - (Alex Mercer, Adopts, Balanced strategy for contact, Moderate)
 
-- (Delta Green team, Navigates, Beats of cosmic discovery, Moderate)
+- (Paranormal Military Squad team, Navigates, Beats of cosmic discovery, Moderate)
 
-- (Delta Green team, Prepares, To script humanity's interstellar narrative, Major)
+- (Paranormal Military Squad team, Prepares, To script humanity's interstellar narrative, Major)
 
 ## Chapter 9
 
@@ -580,7 +580,7 @@ Alex leaned in, rested a hand on Jordan's shoulder—a sign of companionship and
 
 Silence fell over them, a momentary lull as each member of the team contemplated the historic weight of their task. Yet, it was impregnated with a tangible sense of excitement—a collective energy that thrummed through the air just as palpably as the electric current through the banks of machines surrounding them.
 
-They continued their work, squaring shoulders against the magnitude of their undertaking. The agents were standing not just at the precipice of a new chapter for Delta Green but for all of humanity. For now, they communicated with powerful unknowns, but with each exchange, they were etching the first words of a dialogue that might forever alter humanity's place in the cosmos.
+They continued their work, squaring shoulders against the magnitude of their undertaking. The agents were standing not just at the precipice of a new chapter for Paranormal Military Squad but for all of humanity. For now, they communicated with powerful unknowns, but with each exchange, they were etching the first words of a dialogue that might forever alter humanity's place in the cosmos.
 
 \*
 
@@ -600,7 +600,7 @@ Alex leaned in, rested a hand on Jordan's shoulder—a sign of companionship and
 
 Silence fell over them, a momentary lull as each member of the team contemplated the historic weight of their task. Yet, it was impregnated with a tangible sense of excitement—a collective energy that thrummed through the air just as palpably as the electric current through the banks of machines surrounding them.
 
-They continued their work, squaring shoulders against the magnitude of their undertaking. The agents were standing not just at the precipice of a new chapter for Delta Green but for all of humanity. For now, they communicated with powerful unknowns, but with each exchange, they were etching the first words of a dialogue that might forever alter humanity's place in the cosmos.
+They continued their work, squaring shoulders against the magnitude of their undertaking. The agents were standing not just at the precipice of a new chapter for Paranormal Military Squad but for all of humanity. For now, they communicated with powerful unknowns, but with each exchange, they were etching the first words of a dialogue that might forever alter humanity's place in the cosmos.
 
 \*
 
@@ -624,7 +624,7 @@ Jordan met his gaze, nodding sharply, and refocused on the task. The signal seem
 
 A sudden flurry of alerts and the intensifying glow of monitors heralded that they had bridged a technological chasm. The alien intelligence on the other end was no longer a distant enigma – it was an active participant, responding to their digital overtures with an unknown agenda.
 
-The team's meticulous efforts had led them to a momentous threshold. Beyond lay unprecedented contact – a nexus of curiosity and potential peril. Within the confines of the base, against the backdrop of a silent desert night, the Delta Green operatives became mediators of Earth's bid for cosmic relevance, their every action now a gesture in the grand dance of intergalactic relations.
+The team's meticulous efforts had led them to a momentous threshold. Beyond lay unprecedented contact – a nexus of curiosity and potential peril. Within the confines of the base, against the backdrop of a silent desert night, the Paranormal Military Squad operatives became mediators of Earth's bid for cosmic relevance, their every action now a gesture in the grand dance of intergalactic relations.
 
 ## Chapter 10
 
@@ -680,7 +680,7 @@ Jordan turned to Alex, a nod acknowledging the shared responsibility of this mom
 
 A sudden pulse of energy from the monitors signaled a breakthrough; the language had not only adapted but it seemed to resonate, to harmonize with their attempts at making contact. The alien script now sprawled across the screens didn't just ask to be understood—it invited interpretation, collaboration, maybe even companionship across the cold distances of space.
 
-As they stood before the precipice of first contact, Delta Green's finest became the architects of a symphony meant to echo through the cosmos. But more than architects, they were the first to play the notes of this cosmic composition, daring to believe that on the other end, someone—or something—might be listening, ready to join the chorus.
+As they stood before the precipice of first contact, Paranormal Military Squad's finest became the architects of a symphony meant to echo through the cosmos. But more than architects, they were the first to play the notes of this cosmic composition, daring to believe that on the other end, someone—or something—might be listening, ready to join the chorus.
 
 \*
 
@@ -718,7 +718,7 @@ The control room, once a fortress of solitude, erupted into an oasis of life. Li
 
 "If we're right, we've just become Earth's first emissaries to a celestial congress we're only beginning to comprehend," Jordan's voice was somber, resonating with a mix of trepidation and honor. 
 
-The room filled with the resonance of human and alien minds converging, creating a new narrative within the fathomless expanse of existence. Delta Green, once protectors of Earth's clandestine secrets, had now become the tether linking humanity to the cosmic fold.
+The room filled with the resonance of human and alien minds converging, creating a new narrative within the fathomless expanse of existence. Paranormal Military Squad, once protectors of Earth's clandestine secrets, had now become the tether linking humanity to the cosmic fold.
 
 \*
 
@@ -750,7 +750,7 @@ Taylor, ever the sober sentinel, projected a more pragmatic standpoint. "Empathy
 
 The static hiss of communications equipment filled the air, its purpose now transformed into a dialogue with an intelligence beyond the stars. It was Sam, wide-eyed amid the myriad lights and switches, who broke the silence, "We have provisional confirmation of the signal’s intent—initiation. We’re being brought into a broader spectrum of cognizance."
 
-The chamber lay still for a heartbeat, the Delta Green agents steeped in contemplation of the path unfurling before them—a path paved with possibilities of diplomacy or disruption, each step a venture further into the cosmic unknown.
+The chamber lay still for a heartbeat, the Paranormal Military Squad agents steeped in contemplation of the path unfurling before them—a path paved with possibilities of diplomacy or disruption, each step a venture further into the cosmic unknown.
 
 Alex stepped closer to the viewing monitors, each depicting alien symbols seemingly reaching out from the void. "Initiate the broadcast," he spoke with quiet command. "Our response will mark humanity’s readiness to partake in the wider conversation of conscious beings."
 
@@ -794,7 +794,7 @@ The sentiment hung for a moment before Alex gathered his conviction. "Dialogue i
 
 Their task was titanic, stepping stones laid delicately into new territories of existence. The signal, once an esoteric strand in the echo of the universe, beckoned now with a clarity rocketing the complexity of thoughts from a distant order.
 
-Action by action, the Delta Green team bridged the vast interstellar distances, their expertise and empathy casting a beacon of unity into frontiers of intelligence and knowledge. Their work, a partnership struck with an unseen cosmic congregation, each pulse sent and received a line in Earth's novitiate envoi to the cosmic shores.
+Action by action, the Paranormal Military Squad team bridged the vast interstellar distances, their expertise and empathy casting a beacon of unity into frontiers of intelligence and knowledge. Their work, a partnership struck with an unseen cosmic congregation, each pulse sent and received a line in Earth's novitiate envoi to the cosmic shores.
 
 \*
 
@@ -810,7 +810,7 @@ Alex nodded thoughtfully, recognizing the validity of Cruz's caution. Turning to
 
 Sam looked up with a smirk, a twinkle of mischief in their eye. “It’s not just any contraption, it’s potentially a direct line to their thoughts. Give me a moment more, and I'll have something for you.”
 
-The air ticked with electronic beeps and the rustling sound of the Delta Green team at work. They were so close to peering into the intelligence of an alien race—a reality on the brink of dramatically expanding their understanding of the universe.
+The air ticked with electronic beeps and the rustling sound of the Paranormal Military Squad team at work. They were so close to peering into the intelligence of an alien race—a reality on the brink of dramatically expanding their understanding of the universe.
 
 The machinery whirred in response to Sam’s precise touches, and suddenly, the room filled with a low hum—something had changed, a signal had been successfully sent. The team held their breath as they listened. The sound that filled the room was unmistakable: a response, an alien voice filtered through the static of space and time.
 
@@ -832,7 +832,7 @@ As the agents dispersed into the labyrinth of the facility, lost in their though
 
 \*
 
-The gritty, wind-tossed surface of New Mexico, just above the cavernous domain of Dulce Base, offered no shelter from the burgeoning storm—the scouring sands an earthly reminder of chaos theories in motion. Far beneath, a similar maelstrom brewed within the confines of the command center, as Delta Green's handpicked squad stood poised for potential enormities of contact.
+The gritty, wind-tossed surface of New Mexico, just above the cavernous domain of Dulce Base, offered no shelter from the burgeoning storm—the scouring sands an earthly reminder of chaos theories in motion. Far beneath, a similar maelstrom brewed within the confines of the command center, as Paranormal Military Squad's handpicked squad stood poised for potential enormities of contact.
 
 Ruffling through printed transmission logs, Jordan Hayes dialed the focus of their analytical prowess onto the emerging pattern of signals crisscrossing between Earth and the unfathomable. "Our responses so far have echoed their complexity, but the real divergence is yet to come," Jordan remarked stoically, the calm belying the mounting surge of adrenaline for the revelation ahead.
 
@@ -844,13 +844,13 @@ Amidst a chorus of bleeps and static, Sam Rivera's tech-clad hands moved rhythmi
 
 Alex, drawing near Jordan, spoke again, his voice now a thread woven through the very fabric of their operations. "Let's be the cartographers of this new territory. Our initial shades of understanding could color the cosmos for generations to come."
 
-Their gazes fell upon a screen as the latest transmission painted its digital blooms of alien script across the black. This time, the pattern wavered in an almost imperceptible fashion, a modification that whispered of active, alien thought awaiting their next move. A hush enveloped the Delta Green ensemble, the gravity of the pathogen undeniable. They were about to issue a reply, one poised to reshape the very concept of humanity's outreach into the cosmos.
+Their gazes fell upon a screen as the latest transmission painted its digital blooms of alien script across the black. This time, the pattern wavered in an almost imperceptible fashion, a modification that whispered of active, alien thought awaiting their next move. A hush enveloped the Paranormal Military Squad ensemble, the gravity of the pathogen undeniable. They were about to issue a reply, one poised to reshape the very concept of humanity's outreach into the cosmos.
 
 The New Mexico desert's secrets were infamous, its storms a mere prelude to the revelations that the team—united in purpose—would unleash upon the world. The howling winds outside found their counterpart in the newfound resolve within, as Dulce's stalwart guardians readied themselves to send forth humanity's retort to the echoes from beyond.
 
 \*
 
-The cavernous control room, deeply entrenched beneath the desolate New Mexico terrain, held the Delta Green team in intense focus; an island of calm amid the storm of cosmic dialectics. Dr. Jordan Hayes worked methodically, every keystroke an intricate step in their tenuous cosmic ballet. Suddenly, they paused, a signal pattern resonating from the screen. "This is new; it's...inviting. It’s as if the signal is not just calling to us but weaving its intelligence through ours."
+The cavernous control room, deeply entrenched beneath the desolate New Mexico terrain, held the Paranormal Military Squad team in intense focus; an island of calm amid the storm of cosmic dialectics. Dr. Jordan Hayes worked methodically, every keystroke an intricate step in their tenuous cosmic ballet. Suddenly, they paused, a signal pattern resonating from the screen. "This is new; it's...inviting. It’s as if the signal is not just calling to us but weaving its intelligence through ours."
 
 Alex Mercer scrutinized the shift in data. "A confluence of minds, then. If we're to meet them halfway, Jordan, our reply must be both innovative and discerning," he proposed, a glimmer of profound curiosity behind his authoritative demeanor.
 
@@ -860,7 +860,7 @@ Against the backdrop of their conversation, Sam Rivera’s youthful optimism cut
 
 Alex returned Sam’s smile with his own, tempered and faint, as he turned back to the task at hand. The magnitude of their mission extended beyond the fabric of the universe, an exploration into the threads that connected sentient beings across the vast expanse. “Let’s reply with our own woven tapestry of thought—delicate, but deliberate.”
 
-With renewed determination, the room came alive with an undercurrent of anticipation, its occupants charged with the potential of forging an alliance with the cosmos. Delta Green's finest were no longer merely soldiers and scientists; they had become pioneers on the vanguard of humanity’s greatest odyssey.
+With renewed determination, the room came alive with an undercurrent of anticipation, its occupants charged with the potential of forging an alliance with the cosmos. Paranormal Military Squad's finest were no longer merely soldiers and scientists; they had become pioneers on the vanguard of humanity’s greatest odyssey.
 
 The New Mexican sands above, impassive to the change brewing underneath, stood as silent sentinels as Earth's emissaries crafted their response. A response that, composed with care and imbued with humanity's essence, reached into the void, connecting with an otherworldly intelligence that awaited their harmony in the cosmic conversation.
 
@@ -876,7 +876,7 @@ Sam Rivera, the youngest of the cohort, worked feverishly at their station. "It'
 
 Alex turned, facing his team, the stoic mask of command tempered by the perceptible flicker of awe in his gaze. "Let this dance then be our dialogue. We will match their steps with prudent but daring measures—our humanity as our guide."
 
-In the ensuing hours, the Delta Green team forged a rhythm of their own, their collective expertise a beacon piercing through the fog of the unknown. The signal, increasingly intricate and seemingly conscious, now demanded not just observation but participation, an interstellar pas de deux that hummed with the promise and peril of first contact.
+In the ensuing hours, the Paranormal Military Squad team forged a rhythm of their own, their collective expertise a beacon piercing through the fog of the unknown. The signal, increasingly intricate and seemingly conscious, now demanded not just observation but participation, an interstellar pas de deux that hummed with the promise and peril of first contact.
 
 Before them, the communications interface flickered to life with a received transmission—a resonant hum that seemed to vibrate through the very foundations of the base. They had successfully established a back-and-forth with whatever intelligence lay hidden among the stars. Every subsequent note they struck within the cosmic ether would come to define humanity's place within the galactic community—heralds of Earth's grand entrance into a universe far less silent than once perceived. 
 
@@ -894,13 +894,13 @@ Taylor Cruz, arms crossed, wore the heavy mantle of their skepticism comfortably
 
 In this cavern of history, voices both human and inhuman whispered secrets to those brave enough to listen. Each member present understood the gravity that pulled at their feet; no longer were they mere mortals shackled to their terrestrial plane. The digital pings and encrypted calls resonated with an implication of a cosmic agenda that would not be ignored.
 
-Jordan's fingers paused, hovering in hesitation. What ripple might the next keystroke send through the fabric of known existence? It was a step into the ballet of the infinite, where the Delta Green team played their part in the waltz of wonders with an audience of stars.
+Jordan's fingers paused, hovering in hesitation. What ripple might the next keystroke send through the fabric of known existence? It was a step into the ballet of the infinite, where the Paranormal Military Squad team played their part in the waltz of wonders with an audience of stars.
 
 \*
 
 ## Chapter 15
 
-In the clandestine hush of Dulce Base's subterranean command center, the Delta Green team had become a crucible for interstellar communication. Dr. Jordan Hayes' gaze lingered on the screen as they navigated through the convolution of alien code. Each character held the potential to unravel a new dimension of contact, and with Sam Rivera's keen interjection, they were crafting humanity's inaugural cosmological discourse.
+In the clandestine hush of Dulce Base's subterranean command center, the Paranormal Military Squad team had become a crucible for interstellar communication. Dr. Jordan Hayes' gaze lingered on the screen as they navigated through the convolution of alien code. Each character held the potential to unravel a new dimension of contact, and with Sam Rivera's keen interjection, they were crafting humanity's inaugural cosmological discourse.
 
 Alex Mercer peered over Jordan's shoulder, calculating the implications of every visual nuance that cascaded across the monitor. "Look for consistency—any repeating motifs could signal a willingness to engage. We're drafting history with each exchange," he remarked, aware of the delicate balance between forging a bond and exposing vulnerabilities.
 
@@ -912,7 +912,7 @@ Amidst the whirring servers and the occasional flicker of emergency lighting, th
 
 Alex stepped back, his profile etched by the chamber's artificial day. "Then let's ensure our contribution to this symphony harmonizes with theirs. It's time for humanity's voice to rise and be counted among the cosmic ensemble."
 
-Under his directive, the Delta Green team initiated their calculated response, weaving thoughts and theories into a digital overture aimed at the heart of alien intellect. As the digital stream punctured the endless night, each member of this clandestine group was acutely aware of the irrevocable step they undertook—bringing Earth into the pantheon of galactic entities designed to converse among the stars.
+Under his directive, the Paranormal Military Squad team initiated their calculated response, weaving thoughts and theories into a digital overture aimed at the heart of alien intellect. As the digital stream punctured the endless night, each member of this clandestine group was acutely aware of the irrevocable step they undertook—bringing Earth into the pantheon of galactic entities designed to converse among the stars.
 
 \*
 
@@ -928,15 +928,15 @@ Taylor Cruz, hands clasped behind their back, regarded the unfolding scene, thei
 
 Alex's eyes locked on the screen, taking in the scope of what they were attempting to interpret. Drawing a deep breath, Alex gave a slight nod. "If this is their song, then let us respond with ours. We've come this far by mirroring their signals, now let's engage in an interstellar duet, and see where the music leads us."
 
-With the expectation of the significant achieving a crescendo, the members of Delta Green huddled over their equipment—sages at the threshold of a potentially world-altering communion. The strange harmonies that reverberated through the command center suggested that their interlocutors were poised, waiting, perhaps even eager, for Earth's chorus to join the symphony.
+With the expectation of the significant achieving a crescendo, the members of Paranormal Military Squad huddled over their equipment—sages at the threshold of a potentially world-altering communion. The strange harmonies that reverberated through the command center suggested that their interlocutors were poised, waiting, perhaps even eager, for Earth's chorus to join the symphony.
 
 As the team initiated their reply, weaving humanity's own intricate melody into the vast cosmic dialogue, they each felt a profound change within—an evolution of purpose. They were not just messengers or investigators; they had become co-composers in a galactic orchestra, with the universe itself as their witness and concert hall.
 
-With the exchange of harmonious signals crawling through the vacuum of space, the Delta Green operatives found themselves part of a bridging of minds—a realization that out there, among the vast arrays of stars and planets, harmony was the true universal language.
+With the exchange of harmonious signals crawling through the vacuum of space, the Paranormal Military Squad operatives found themselves part of a bridging of minds—a realization that out there, among the vast arrays of stars and planets, harmony was the true universal language.
 
 \*
 
-The dim glow of monitors cast an otherworldly ambiance upon Dulce Base's command center, where Delta Green's chosen stood huddled over their instruments, suspended at history's threshold. Codes—alien in origin and nature—were being deciphered by Dr. Jordan Hayes, whose countenance bore the marks of deep concentration.
+The dim glow of monitors cast an otherworldly ambiance upon Dulce Base's command center, where Paranormal Military Squad's chosen stood huddled over their instruments, suspended at history's threshold. Codes—alien in origin and nature—were being deciphered by Dr. Jordan Hayes, whose countenance bore the marks of deep concentration.
 
 Alex Mercer, the bedrock upon which their team's resolve was founded, leaned in with an eagerness tempered by his chain of command. "Jordan, we've invested our expertise into comprehending their patterns, but now we must also endeavor to understand their intent," he urged, his voice bearing the gravitas of their mission's potential consequences.
 
@@ -954,7 +954,7 @@ Textures of sound meshed with the light from countless computations, the palpabl
 
 \*
 
-In the sterile hum and flickering lights of Dulce Base's command center, the Delta Green team stood as humanity's vanguard, verging on the brim of an intergalactic abyss. Dr. Jordan Hayes, analytical edges sharp, deciphered extraterrestrial patterns that bled across screens in enigmatic cascades—a daunting mosaic of potential threats and untapped wisdom.
+In the sterile hum and flickering lights of Dulce Base's command center, the Paranormal Military Squad team stood as humanity's vanguard, verging on the brim of an intergalactic abyss. Dr. Jordan Hayes, analytical edges sharp, deciphered extraterrestrial patterns that bled across screens in enigmatic cascades—a daunting mosaic of potential threats and untapped wisdom.
 
 Agent Alex Mercer, the embodiment of focus and a steadfast nerve, observed the unfolding digital drama with the gravitas due a historic first contact. "Let the data weave its narrative, Jordan," he instructed, a moderate undertone of exhilaration within his command. "It's encoding more than information—it's outlining civilization."
 
