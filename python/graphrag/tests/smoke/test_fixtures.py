@@ -241,7 +241,7 @@ class TestIndexer:
     ):
         if workflow_config.get("skip", False):
             return
-        
+
         azure = workflow_config.get("azure")
         root = Path(input_path)
         dispose = None
