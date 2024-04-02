@@ -1,8 +1,8 @@
 ---
 title: Local Search Notebook
-navtitle: Local Search
+navtitle: Local Search Notebook
 layout: page
-tags: [post, orchestration]
+tags: [post, notebook]
 ---
 
 ```python
