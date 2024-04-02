@@ -41,12 +41,41 @@ from .models import (
 )
 
 
+def perform_replacements(values: dict, env: Env):
+    """Perform env-var replacements in the dictionary."""
+
+    def traverse_dict(dictionary):
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                traverse_dict(value)
+            elif (
+                isinstance(value, str)
+                and value.startswith("${")
+                and value.endswith("}")
+            ):
+                env_var = value[2:-1]
+                dictionary[key] = env(env_var)
+
+    traverse_dict(values)
+
+
+def default_config_parameters_from_dict(values: dict, root_dir: str | None):
+    """Load Configuration Parameters from a dictionary."""
+    root_dir = root_dir or str(Path.cwd())
+    env = _make_env(root_dir)
+    perform_replacements(values, env)
+
+    model = DefaultConfigParametersModel.model_validate(values)
+    return default_config_parameters(model, root_dir)
+
+
 def default_config_parameters(
     values: DefaultConfigParametersModel, root_dir: str | None
 ):
     """Load Configuration Parameters from a dictionary."""
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
+
     return DefaultConfigParametersDict(values, env, root_dir)
 
 

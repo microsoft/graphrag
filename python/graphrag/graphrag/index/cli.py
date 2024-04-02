@@ -12,9 +12,8 @@ from pathlib import Path
 from graphrag.index.cache import NoopPipelineCache
 from graphrag.index.config import PipelineConfig
 from graphrag.index.default_config import (
-    DefaultConfigParametersModel,
     default_config,
-    default_config_parameters,
+    default_config_parameters_from_dict,
     default_config_parameters_from_env_vars,
 )
 from graphrag.index.progress import (
@@ -170,8 +169,7 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import yaml
 
             data = yaml.safe_load(file)
-            model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(model, root)
+            return default_config_parameters_from_dict(data, root)
 
     if settings_json.exists():
         reporter.success(f"Reading settings from {settings_json}")
@@ -179,8 +177,7 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import json
 
             data = json.loads(file.read())
-            model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(data, root)
+            return default_config_parameters_from_dict(data, root)
 
     reporter.success("Reading settings from environment variables")
     return default_config_parameters_from_env_vars(root)

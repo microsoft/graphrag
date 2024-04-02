@@ -29,7 +29,8 @@ class CacheConfigSection(ConfigSection):
     @property
     def type(self) -> PipelineCacheType:
         """The cache type to use."""
-        return self.replace(self._values.type, DEFAULT_CACHE_TYPE)
+        result = self.replace(str(self._values.type))
+        return PipelineCacheType(result) if result else DEFAULT_CACHE_TYPE
 
     @property
     def connection_string(self) -> str:

@@ -5,6 +5,7 @@
 from .default_config_parameters_model import DefaultConfigParametersModel
 from .factories import (
     default_config_parameters,
+    default_config_parameters_from_dict,
     default_config_parameters_from_env_vars,
 )
 from .models import (
@@ -48,6 +49,7 @@ __all__ = [
     "TextEmbeddingConfigModel",
     "UmapConfigModel",
     "default_config_parameters",
+    "default_config_parameters_from_dict",
     "default_config_parameters_from_env_vars",
     "read_dotenv",
 ]

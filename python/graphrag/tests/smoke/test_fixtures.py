@@ -24,6 +24,8 @@ WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountNam
 BLOB_CONNECTION_STRING = os.environ.get(
     "GRAPHRAG_BLOB_CONNECTION_STRING", WELL_KNOWN_AZURITE_CONNECTION_STRING
 )
+CACHE_TYPE = os.environ.get("CACHE_TYPE", "file") or "file"
+CACHE_CONTAINER_NAME = os.environ.get("CACHE_CONTAINER_NAME", "cache") or "cache"
 
 
 def _load_fixtures():
@@ -244,8 +246,8 @@ class TestIndexer:
         os.environ,
         {
             **os.environ,
-            "CACHE_TYPE": os.environ.get("CACHE_TYPE", "file"),
-            "CACHE_CONTAINER_NAME": os.environ.get("CACHE_CONTAINER_NAME", "cache"),
+            "CACHE_TYPE": CACHE_TYPE,
+            "CACHE_CONTAINER_NAME": CACHE_CONTAINER_NAME,
             "BLOB_STORAGE_CONNECTION_STRING": BLOB_CONNECTION_STRING,
         },
         clear=True,

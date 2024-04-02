@@ -29,7 +29,8 @@ class ReportingConfigSection(ConfigSection):
     @property
     def type(self) -> PipelineReportingType:
         """The reporting type to use."""
-        return self.replace(self._values.type, DEFAULT_REPORTING_TYPE)
+        result = self.replace(str(self._values.type))
+        return PipelineReportingType(result) if result else DEFAULT_REPORTING_TYPE
 
     @property
     def connection_string(self) -> str:

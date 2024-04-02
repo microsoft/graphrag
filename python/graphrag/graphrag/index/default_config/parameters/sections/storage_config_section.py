@@ -29,7 +29,8 @@ class StorageConfigSection(ConfigSection):
     @property
     def type(self) -> PipelineStorageType:
         """The storage type to use."""
-        return self.replace(self._values.type, DEFAULT_STORAGE_TYPE)
+        result = self.replace(str(self._values.type))
+        return PipelineStorageType(result) if result else DEFAULT_STORAGE_TYPE
 
     @property
     def connection_string(self) -> str:

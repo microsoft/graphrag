@@ -34,7 +34,8 @@ class InputConfigSection(ConfigSection):
     @property
     def type(self) -> PipelineInputType:
         """The input type to use."""
-        return self.replace(self._values.type, DEFAULT_INPUT_TYPE)
+        result = self.replace(str(self._values.type))
+        return PipelineInputType(result) if result else DEFAULT_INPUT_TYPE
 
     @property
     def storage_type(self) -> PipelineInputStorageType:
