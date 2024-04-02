@@ -265,7 +265,7 @@ llm:
     # generate the pipeline from the default parameters
     pipeline_config = default_config(parameters, True)
 
-    config_str = pipeline_config.json()
+    config_str = pipeline_config.model_dump_json()
     assert "${PIPELINE_LLM_API_KEY}" not in config_str
     assert "${PIPELINE_LLM_API_BASE}" not in config_str
     assert "${PIPELINE_LLM_API_VERSION}" not in config_str

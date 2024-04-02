@@ -115,20 +115,23 @@ def default_config_parameters_from_env_vars(
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
 
-    def _str(key: str, default_value: str | None = None) -> str | None:
-        return env(key, default_value)
+    def _key(key: str | Fragment) -> str | None:
+        return key.value if isinstance(key, Fragment) else key
 
-    def _int(key: str, default_value: int | None = None) -> int | None:
-        return env.int(key, default_value)
+    def _str(key: str | Fragment, default_value: str | None = None) -> str | None:
+        return env(_key(key), default_value)
 
-    def _bool(key: str, default_value: bool | None = None) -> bool | None:
-        return env.bool(key, default_value)
+    def _int(key: str | Fragment, default_value: int | None = None) -> int | None:
+        return env.int(_key(key), default_value)
 
-    def _float(key: str, default_value: float | None = None) -> float | None:
-        return env.float(key, default_value)
+    def _bool(key: str | Fragment, default_value: bool | None = None) -> bool | None:
+        return env.bool(_key(key), default_value)
 
-    def section(key: str):
-        return env.prefixed(f"{key}_")
+    def _float(key: str | Fragment, default_value: float | None = None) -> float | None:
+        return env.float(_key(key), default_value)
+
+    def section(key: Section):
+        return env.prefixed(f"{key.value}_")
 
     fallback_oai_key = _str("OPENAI_API_KEY", _str("AZURE_OPENAI_API_KEY"))
     fallback_oai_org = _str("OPENAI_ORG_ID")

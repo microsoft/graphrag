@@ -1,4 +1,4 @@
-name: JavaScript CI
+name: CI
 on:
   push:
     branches: [main]
@@ -33,6 +33,11 @@ jobs:
         with:
           poetry-version: '1.6.1'
   
+      
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm-11 python3-dev
+        name: "LLVM install"
 
       - uses: actions/checkout@v3
 
@@ -61,20 +66,28 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - run: yarn check
+        name: Static Checks
+
+      - run: yarn build
+        name: Build
+      
       - run: yarn start:azurite&
         name: Start Azurite
-
-      - run: yarn ci
-        name: Verify
+      
+      - run: yarn test:unit
+        name: Unit Tests
         env:
-          GRAPHRAG_API_KEY: $(openaiApiKey)
-          GRAPHRAG_LLM_MODEL: $(completionModel)
-          GRAPHRAG_EMBEDDING_MODEL: $(embeddingModel)
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - run: |
-          git add -A 
-          git status
-        name: Git status
+      - run: yarn test:integration
+        name: Integration Tests
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - run: yarn is_clean
-        name: Check if repo is clean
+      - run: yarn test:smoke
+        name: Smoke Tests
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_LLM_MODEL: ${{ secrets.OPENAI_LLM_MODEL }}
+          GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.OPENAI_EMBEDDING_MODEL }}
