@@ -136,7 +136,9 @@ class TestDefaultConfig(unittest.TestCase):
     def test_create_parameters(self) -> None:
         parameters = default_config_parameters(
             DefaultConfigParametersModel(
-                llm=LLMParametersModel(api_key="${API_KEY_X}", model="gpt-4-turbo-preview"),
+                llm=LLMParametersModel(
+                    api_key="${API_KEY_X}", model="gpt-4-turbo-preview"
+                ),
                 storage=StorageConfigModel(
                     type=PipelineStorageType.blob,
                     connection_string="test_cs",
