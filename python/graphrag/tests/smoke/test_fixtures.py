@@ -112,7 +112,11 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
         )
         await input_storage.set(file_path, text, encoding="utf-8")
 
-    return lambda: input_storage.delete_container()
+    def dispose():
+        if BLOB_CONNECTION_STRING == WELL_KNOWN_AZURITE_CONNECTION_STRING:
+            input_storage.delete_container()
+
+    return dispose
 
 
 class TestIndexer:
