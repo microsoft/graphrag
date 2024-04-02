@@ -86,6 +86,13 @@ class BlobPipelineStorage(PipelineStorage):
             file_pattern.pattern,
         )
 
+        def blobname(blob_name: str) -> str:
+            if blob_name.startswith(self._path_prefix):
+                blob_name = blob_name.replace(self._path_prefix, "", 1)
+            if blob_name.startswith("/"):
+                blob_name = blob_name[1:]
+            return blob_name
+
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
@@ -106,10 +113,7 @@ class BlobPipelineStorage(PipelineStorage):
                 if match and blob.name.startswith(base_dir):
                     group = match.groupdict()
                     if item_filter(group):
-                        blob_name = blob.name.replace(self._path_prefix, "")
-                        if blob_name.startswith("/"):
-                            blob_name = blob_name[1:]
-                        yield (blob_name, group)
+                        yield (blobname(blob.name), group)
                         num_loaded += 1
                         if max_count > 0 and num_loaded >= max_count:
                             break
