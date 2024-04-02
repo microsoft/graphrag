@@ -65,7 +65,7 @@ class TestDefaultConfig(unittest.TestCase):
         os.environ,
         {
             "GRAPHRAG_API_KEY": "test",
-            "GRAPHRAG_LLM_MODEL": "gpt-4-turbo-preview",
+            "GRAPHRAG_LLM_MODEL": "test-llm",
             "GRAPHRAG_LLM_THREAD_COUNT": "987",
             "GRAPHRAG_STORAGE_TYPE": "blob",
             "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
@@ -101,7 +101,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_create_parameters_from_env_vars(self) -> None:
         parameters = default_config_parameters_from_env_vars(".")
         assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["model"] == "gpt-4-turbo-preview"
+        assert parameters.llm["model"] == "test-llm"
         assert parameters.parallelization["num_threads"] == 987
         assert parameters.encoding_model == "derp123"
         assert parameters.skip_workflows == ["a", "b", "c"]
@@ -137,7 +137,7 @@ class TestDefaultConfig(unittest.TestCase):
         parameters = default_config_parameters(
             DefaultConfigParametersModel(
                 llm=LLMParametersModel(
-                    api_key="${API_KEY_X}", model="gpt-4-turbo-preview"
+                    api_key="${API_KEY_X}", model="test-llm"
                 ),
                 storage=StorageConfigModel(
                     type=PipelineStorageType.blob,
@@ -192,7 +192,7 @@ class TestDefaultConfig(unittest.TestCase):
             ".",
         )
         assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["model"] == "gpt-4-turbo-preview"
+        assert parameters.llm["model"] == "test-llm"
         assert parameters.encoding_model == "derp123"
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.storage.type == PipelineStorageType.blob
@@ -230,7 +230,7 @@ class TestDefaultConfig(unittest.TestCase):
         "PIPELINE_LLM_API_KEY": "test",
         "PIPELINE_LLM_API_BASE": "http://test",
         "PIPELINE_LLM_API_VERSION": "v1",
-        "PIPELINE_LLM_MODEL": "gpt-4-turbo-preview",
+        "PIPELINE_LLM_MODEL": "test-llm",
         "PIPELINE_LLM_DEPLOYMENT_NAME": "test",
     },
     clear=True,
@@ -260,7 +260,7 @@ llm:
     parameters = default_config_parameters(model, ".")
 
     assert parameters.llm["api_key"] == "test"
-    assert parameters.llm["model"] == "gpt-4-turbo-preview"
+    assert parameters.llm["model"] == "test-llm"
     assert parameters.llm["api_base"] == "http://test"
     assert parameters.llm["api_version"] == "v1"
     assert parameters.llm["deployment_name"] == "test"
