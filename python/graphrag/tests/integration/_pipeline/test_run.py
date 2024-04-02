@@ -15,9 +15,7 @@ class TestRun(unittest.IsolatedAsyncioTestCase):
             os.path.dirname(os.path.abspath(__file__)),
             "./megapipeline.yml",
         )
-        pipeline_result = [
-            gen async for gen in await run_pipeline_with_config(pipeline_path)
-        ]
+        pipeline_result = [gen async for gen in run_pipeline_with_config(pipeline_path)]
 
         errors = []
         for result in pipeline_result:

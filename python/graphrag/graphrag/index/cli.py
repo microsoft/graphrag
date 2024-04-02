@@ -83,7 +83,7 @@ def index_cli(
 
         async def execute():
             nonlocal encountered_errors
-            async for output in await run_pipeline_with_config(
+            async for output in run_pipeline_with_config(
                 pipeline_config,
                 debug=verbose,
                 resume=resume,  # type: ignore

@@ -20,7 +20,7 @@ async def run():
 
     # Grab the last result from the pipeline, should be our entity extraction
     outputs = []
-    async for output in await run_pipeline_with_config(
+    async for output in run_pipeline_with_config(
         config_or_path=config, dataset=dataset
     ):
         outputs.append(output)
