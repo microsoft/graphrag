@@ -142,7 +142,9 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     @property
     def api_base(self) -> str | None:
         """API base property definition."""
-        return _non_blank(self._api_base)
+        result = _non_blank(self._api_base)
+        # Remove trailing slash
+        return result[:-1] if result and result.endswith("/") else result
 
     @property
     def api_version(self) -> str | None:
