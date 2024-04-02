@@ -405,7 +405,9 @@ def _get_cache_config(
             return PipelineMemoryCacheConfig()
         case PipelineCacheType.file:
             # relative to root dir
-            return PipelineFileCacheConfig(base_dir="./cache")
+            return PipelineFileCacheConfig(
+                base_dir=settings.cache.base_dir or "./cache"
+            )
         case PipelineCacheType.none:
             return PipelineNoneCacheConfig()
         case PipelineCacheType.blob:
