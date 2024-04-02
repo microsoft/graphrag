@@ -172,7 +172,7 @@ def default_config_parameters_from_env_vars(
             if api_key is None:
                 raise ValueError(LLM_KEY_REQUIRED)
             llm_type = _str(Fragment.type)
-            llm_type = LLMType(type)
+            llm_type = LLMType(llm_type)
             deployment_name = str(Fragment.deployment_name)
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
@@ -218,7 +218,7 @@ def default_config_parameters_from_env_vars(
             async_mode_enum = AsyncType(async_mode) if async_mode else None
             deployment_name = _str(Fragment.deployment_name)
             llm_type = _str(Fragment.type)
-            llm_type = LLMType(type)
+            llm_type = LLMType(llm_type)
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
 
