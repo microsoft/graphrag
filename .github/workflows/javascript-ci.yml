@@ -31,8 +31,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - run: yarn install
-        working-directory: ./docsite
+        working-directory: docsite
         name: Install Dependencies
 
       - run: yarn build
+        working-directory: docsite
         name: Build Docsite
