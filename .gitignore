@@ -1,5 +1,5 @@
 # Node Artifacts
-docsite/node_modules/
+*/node_modules/
 docsite/*/src/**/*.js
 docsite/*/lib/
 docsite/*/storybook-static/
