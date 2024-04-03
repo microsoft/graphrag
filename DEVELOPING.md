@@ -40,6 +40,7 @@ Available scripts are:
   * security patterns
   * type-checking
 * `poetry run poe fix` - This will apply any available auto-fixes to the package. Usually this is just formatting fixes.
+* `poetry run poe fix_unsafe` - This will apply any available auto-fixes to the package, including those that may be unsafe.
 * `poetry run poe format` - Explicitly run the formatter across the package.
 * `poetry run poe build_docs` - Build dynamic docsite content.
 
