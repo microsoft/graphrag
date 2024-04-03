@@ -169,7 +169,7 @@ def default_config_parameters_from_env_vars(
                 raise ValueError(LLM_KEY_REQUIRED)
             llm_type = _str(Fragment.type)
             llm_type = LLMType(llm_type) if llm_type else None
-            deployment_name = str(Fragment.deployment_name)
+            deployment_name = _str(Fragment.deployment_name)
             model = _str(Fragment.model)
 
             is_azure = _is_azure(llm_type)
