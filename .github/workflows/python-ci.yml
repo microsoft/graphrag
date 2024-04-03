@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         run: |
-          poetry run poe build
+          poetry build
           
       - name: Start Azurite
         run: yarn start:azurite&
