@@ -1,0 +1,117 @@
+name: GraphRAG CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      # Docsite
+      - "docsite/**/*"
+      # Python
+      - 'graphrag/**/*'
+      - '**/*.py'
+      - '**/*.toml'
+      - '**/*.ipynb'
+      - .github/workflows/ci.yml
+jobs:
+  graphrag-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+        poetry-version: ['1.6.1']
+        node-version: ['18.x']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+           filters: |
+              python:
+                - 'graphrag/**/*'
+                - '**/*.py'
+                - '**/*.toml'
+                - '**/*.ipynb'
+                - .github/workflows/ci.yml
+              docsite:
+                - "docsite/**/*"
+                - .github/workflows/ci.yml
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry ${{ matrix.poetry-version }}
+        uses: abatilo/actions-poetry@v3.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Use Node ${{ matrix.node-version }}
+        if: steps.changes.outputs.docsite == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: yarn install
+        if: steps.changes.outputs.docsite == 'true'
+        working-directory: docsite
+        name: Install Dependencies
+
+      - run: yarn build
+        if: steps.changes.outputs.docsite == 'true'
+        working-directory: docsite
+        name: Build Docsite
+
+      - name: Install dependencies
+        if: steps.changes.outputs.python == 'true'
+        shell: bash
+        run: poetry install
+
+      - name: Check Semversioner
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run semversioner check
+          
+      - name: Check
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run poe check
+
+      - name: Build
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry build
+          
+      - name: Start Azurite
+        if: steps.changes.outputs.python == 'true'
+        run: ./scripts/start-azurite.sh&
+      
+      - name: Unit Test
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run poe test_unit
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Integration Test
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run poe test_integration
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Smoke Test
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run poe test_smoke
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
+          GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
+
+      - name: E2E Test
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          ./scripts/e2e-test.sh
