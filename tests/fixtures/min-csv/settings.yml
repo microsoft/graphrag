@@ -7,3 +7,7 @@ embeddings:
 
 input:
     type: csv
+
+chunks:
+    overlap: 0
+    size: 1200

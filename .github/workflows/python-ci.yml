@@ -7,6 +7,7 @@ on:
       - 'graphrag/**/*'
       - '**/*.py'
       - '**/*.toml'
+      - '**/*.ipynb'
       - .github/workflows/python-ci.yml
 jobs:
   python-ci:
@@ -17,15 +18,15 @@ jobs:
         poetry-version: ['1.6.1']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry ${{ matrix.poetry-version }}
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
 
@@ -58,7 +59,7 @@ jobs:
 
       - name: Smoke Test
         run: |
-          poetry run poe test_integration
+          poetry run poe test_smoke
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
