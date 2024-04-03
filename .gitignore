@@ -1,14 +1,23 @@
 # Node Artifacts
-node_modules/
-python/*/lib/
-javascript/*/src/**/*.js
-javascript/*/lib/
-javascript/*/storybook-static/
-javascript/*/docsTemp/
-javascript/*/build/
+docsite/node_modules/
+docsite/*/src/**/*.js
+docsite/*/lib/
+docsite/*/storybook-static/
+docsite/*/docsTemp/
+docsite/*/build/
 .swc/
 dist/
+# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
+docsite/.yarn/*
+!docsite/.yarn/patches
+!docsite/.yarn/releases
+!docsite/.yarn/plugins
+!docsite/.yarn/sdks
+!docsite/.yarn/versions
+docsite/.pnp.*
 
+# Python Artifacts
+python/*/lib/
 # Test Output
 .coverage
 coverage/
@@ -26,14 +35,6 @@ python/graphrag/tests/fixtures/*/output
 .conda
 .tmp
 
-# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
 
 .env
 build.zip
@@ -50,3 +51,5 @@ __azurite*.json
 # Getting started example
 ragtest/
 .ragtest/
+.pipelines
+.pipeline

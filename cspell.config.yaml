@@ -20,9 +20,9 @@ ignorePaths:
   - pyproject.toml
   - entity_extraction.txt
   - package.json
-  - fixtures/
-  - javascript/docsite/data/
-  - javascript/docsite/_posts/_query/notebooks/inputs/
+  - tests/fixtures/
+  - docsite/data/
+  - docsite/_posts/_query/notebooks/inputs/
   - '*.csv'
   - '*.parquet'
   - '*.faiss'

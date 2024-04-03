@@ -1,0 +1,38 @@
+name: JavaScript CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - "docsite/**/*"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.js"
+      - "**/*.mjs"
+      - "**/*.cjs"
+      - "**/*.json"
+      - "yarn.lock"
+      - .github/workflows/javascript-ci.yml
+jobs:
+  javascript-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 18.x
+
+    steps:
+      - name: Use Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/checkout@v3
+
+      - run: yarn install
+        working-directory: ./docsite
+        name: Install Dependencies
+
+      - run: yarn build
+        name: Build Docsite
