@@ -3,8 +3,8 @@
 """An LLM that unpacks cached JSON responses."""
 
 import json
-from typing import cast
 import logging
+from typing import cast
 
 from typing_extensions import Unpack
 
@@ -20,6 +20,7 @@ from graphrag.llm.types import (
 log = logging.getLogger(__name__)
 
 UNPARSABLE_JSON = "Failed to parse JSON data"
+
 
 class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
     """An OpenAI History-Tracking LLM."""
@@ -39,7 +40,7 @@ class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
         if kwargs.get("json") and result.json is None and result.output is not None:
             try:
                 result.json = cast(dict, json.loads(result.output))
-            except json.JSONDecodeError:
-                log.error("Failed to parse JSON output:\n%s", result.output)
-                raise ValueError(UNPARSABLE_JSON)
+            except json.JSONDecodeError as e:
+                log.error("Failed to parse JSON output:\n%s", result.output)  # noqa TRY400
+                raise ValueError(UNPARSABLE_JSON) from e
         return result
