@@ -19,9 +19,33 @@ title: GraphRAG
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <style>{{ css | safe }}</style>
     {% mermaid_js %}
+
+    {% block js %}
+    <script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js" type="text/javascript"></script>
+    <script>
+        function onConsentChanged(categoryPreferences) {
+            console.log("onConsentChanged", categoryPreferences);        
+        }
+
+        function initialize(){
+          var siteConsent
+          window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
+              if (!err) {
+                  console.log("consentUpdated", _siteConsent)
+                  siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
+              } else {
+                  console.log("Error initializing WcpConsent: "+ err);
+              }
+          }, onConsentChanged, WcpConsent.themes.light);
+        }
+
+        addEventListener("DOMContentLoaded", initialize)
+    </script>
+    {% endblock %}
   </head>
   <body>
     <header>
+        <div id="cookie-banner"></div>
         <a href="/"><span class="logotitle">GraphRAG</span></a>
     </header>
     <div class="page-content">
