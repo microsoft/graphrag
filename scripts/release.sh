@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Maintainers: do not change the pyproject.toml version, or CHANGELOG.md contents manually.
+# This release script will automate these changes for you.
+#
 echo "Releasing new version"
 poetry run semversioner release
 echo "Updating CHANGELOG.md"
