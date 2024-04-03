@@ -7,6 +7,7 @@ on:
       - 'graphrag/**/*'
       - '**/*.py'
       - '**/*.toml'
+      - '**/*.ipynb'
       - .github/workflows/python-ci.yml
 jobs:
   python-ci:
@@ -58,7 +59,7 @@ jobs:
 
       - name: Smoke Test
         run: |
-          poetry run poe test_integration
+          poetry run poe test_smoke
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
