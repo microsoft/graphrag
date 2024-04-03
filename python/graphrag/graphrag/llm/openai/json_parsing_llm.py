@@ -40,7 +40,7 @@ class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
         if kwargs.get("json") and result.json is None and result.output is not None:
             try:
                 result.json = cast(dict, json.loads(result.output))
-            except json.JSONDecodeError as e:
+            except json.decoder.JSONDecodeError as e:
                 log.error("Failed to parse JSON output:\n%s", result.output)  # noqa TRY400
                 raise ValueError(UNPARSABLE_JSON) from e
         return result
