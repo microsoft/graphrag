@@ -9,6 +9,25 @@ body{
     margin: 0;
 }
 
+footer{
+    width: 100%;
+	height: 32px;
+	font-size: 12px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 18px;
+	align-items: center;
+	color: #5d5d5d;
+	background: #e9eaeb;
+	border-top: 1px solid #c4c5c6;
+}
+
+#cookiesManager{
+    cursor: pointer;
+    color: #485fc7;
+}
+
 .page-content {
     display: flex;
     flex-direction: row;
