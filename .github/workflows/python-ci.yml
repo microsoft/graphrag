@@ -42,7 +42,7 @@ jobs:
           poetry build
           
       - name: Start Azurite
-        run: yarn start:azurite&
+        run: ./scripts/start-azurite.sh&
       
       - name: Unit Test
         run: |
