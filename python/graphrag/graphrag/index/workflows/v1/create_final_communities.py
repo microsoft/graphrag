@@ -148,7 +148,7 @@ def build_steps(
 
 
 create_community_title_wf = [
-    # janky way of string concat "Community " + id
+    # Hack to string concat "Community " + id
     {
         "verb": "fill",
         "args": {
