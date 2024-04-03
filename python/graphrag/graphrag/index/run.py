@@ -81,6 +81,7 @@ async def run_pipeline_with_config(
     memory_profile: bool = False,
     debug: bool = False,
     resume: str | None = None,
+    enable_logging: bool | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -93,6 +94,7 @@ async def run_pipeline_with_config(
         - cache - The cache to use for the pipeline (this overrides the config)
         - reporter - The reporter to use for the pipeline (this overrides the config)
         - input_post_process_steps - The post process steps to run on the input data (this overrides the config)
+        - enable_logging - Whether to configure logging for the pipeline. If false, you should configure the standard Python logging yourself.
         - debug - Whether or not to run in debug mode
     """
     if isinstance(config_or_path, str):
@@ -131,7 +133,8 @@ async def run_pipeline_with_config(
     ) -> list[PipelineWorkflowStep] | None:
         return config.post_process if config is not None else None
 
-    _enable_logging(root_dir or "", reporting_dir, debug)
+    if enable_logging:
+        _enable_logging(root_dir or "", reporting_dir, debug)
 
     progress_reporter = progress_reporter or NullProgressReporter()
     storage = storage or _create_storage(config.storage)

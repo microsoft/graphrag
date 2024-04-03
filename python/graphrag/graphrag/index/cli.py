@@ -89,6 +89,7 @@ def index_cli(
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
+                enable_logging=True,
                 emit=[TableEmitterType(e) for e in pipeline_emit]
                 if pipeline_emit
                 else None,
