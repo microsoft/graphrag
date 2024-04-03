@@ -23,7 +23,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install Poetry 1.6.1
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
           poetry-version: '1.6.1'
 
