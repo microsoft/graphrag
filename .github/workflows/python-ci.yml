@@ -1,0 +1,69 @@
+name: Python CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'graphrag/**/*'
+      - '**/*.py'
+      - '**/*.toml'
+      - .github/workflows/python-ci.yml
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+        poetry-version: ['1.6.1']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry ${{ matrix.poetry-version }}
+        uses: abatilo/actions-poetry@v2.1.6
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Install dependencies
+        shell: bash
+        run: poetry install
+
+      - name: Check
+        run: |
+          poetry run poe check
+
+      - name: Build
+        run: |
+          poetry build
+          
+      - name: Start Azurite
+        run: ./scripts/start-azurite.sh&
+      
+      - name: Unit Test
+        run: |
+          poetry run poe test_unit
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Integration Test
+        run: |
+          poetry run poe test_integration
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Smoke Test
+        run: |
+          poetry run poe test_integration
+        env:
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
+          GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
+
+      - name: E2E Test
+        run: |
+          ./scripts/e2e-test.sh

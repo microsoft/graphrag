@@ -37,7 +37,7 @@ tags: [post, {self.type}]
         basename = Path(self.file).name
         return f"""
 ## Code
-[{basename}](https://dev.azure.com/msresearch/Resilience/_git/ire-indexing?path=/python/graphrag/{self.file})
+[{basename}](https://github.com/microsoft/graphrag/blob/main/graphrag/{self.file})
 """
 
     @property
@@ -97,7 +97,7 @@ def _get_workflow_documentation(content: str, file: str) -> list[Doc]:
 
 
 verb_files = Path("graphrag/index/verbs").rglob("**/*.py")
-docs_root = "../../javascript/docsite/_posts/_index"
+docs_root = "docsite/_posts/_index"
 
 for verb_file in verb_files:
     with Path(verb_file).open() as file:

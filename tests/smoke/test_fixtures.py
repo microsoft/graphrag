@@ -123,8 +123,10 @@ class TestIndexer:
         input_type: str,
     ):
         command = [
-            "yarn",
-            "run:index",
+            "poetry",
+            "run",
+            "poe",
+            "index",
             "--verbose" if debug else None,
             "--root",
             root.absolute().as_posix(),
@@ -219,8 +221,10 @@ class TestIndexer:
     def __run_query(self, root: Path, query_config: dict[str, str]):
         data_dir = next((root / "output").iterdir()) / "artifacts"
         command = [
-            "yarn",
-            "run:query",
+            "poetry",
+            "run",
+            "poe",
+            "query",
             "--data",
             data_dir.absolute().as_posix(),
             "--method",

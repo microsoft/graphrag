@@ -1,5 +1,0 @@
-dist/
-.turbo/
-.pytest_cache/
-.coverage
-__pycache__/
