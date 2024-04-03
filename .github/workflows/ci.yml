@@ -61,7 +61,7 @@ jobs:
         name: Install python dependencies
 
       - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v2
+        uses: felixmosh/turborepo-gh-artifacts@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: ${{ secrets.GITHUB_TOKEN }}
