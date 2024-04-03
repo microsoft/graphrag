@@ -16,6 +16,14 @@ docsite/.yarn/*
 !docsite/.yarn/versions
 docsite/.pnp.*
 
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # Python Artifacts
 python/*/lib/
 # Test Output

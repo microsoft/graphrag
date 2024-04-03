@@ -17,8 +17,10 @@ title: GraphRAG
     <title>{{ title }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>{{ css | safe }}</style>
     {% mermaid_js %}
+    {% initClipboardJS %}
 
     {% block js %}
     <script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js" type="text/javascript"></script>
