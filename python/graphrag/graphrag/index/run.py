@@ -91,7 +91,7 @@ async def run_pipeline_with_config(
         - workflows - The workflows to run (this overrides the config)
         - dataset - The dataset to run the pipeline on (this overrides the config)
         - storage - The storage to use for the pipeline (this overrides the config)
-        - cache - The cache to use for the pipeline` (this overrides the config)
+        - cache - The cache to use for the pipeline (this overrides the config)
         - reporter - The reporter to use for the pipeline (this overrides the config)
         - input_post_process_steps - The post process steps to run on the input data (this overrides the config)
         - debug - Whether or not to run in debug mode
