@@ -22,11 +22,11 @@ python/*/lib/
 .coverage
 coverage/
 licenses.txt
-python/graphrag/examples_notebooks/*/lancedb
-python/graphrag/examples_notebooks/*/data
-python/graphrag/tests/fixtures/cache
-python/graphrag/tests/fixtures/*/cache
-python/graphrag/tests/fixtures/*/output
+examples_notebooks/*/lancedb
+examples_notebooks/*/data
+tests/fixtures/cache
+tests/fixtures/*/cache
+tests/fixtures/*/output
 
 # Random
 .DS_Store
