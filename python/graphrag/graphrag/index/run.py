@@ -94,6 +94,7 @@ async def run_pipeline_with_config(
         - cache - The cache to use for the pipeline (this overrides the config)
         - reporter - The reporter to use for the pipeline (this overrides the config)
         - input_post_process_steps - The post process steps to run on the input data (this overrides the config)
+        - enable_logging - Whether to configure logging for the pipeline. If false, you should configure the standard Python logging yourself.
         - debug - Whether or not to run in debug mode
     """
     if isinstance(config_or_path, str):
