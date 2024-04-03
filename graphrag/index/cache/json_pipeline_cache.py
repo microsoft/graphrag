@@ -24,9 +24,16 @@ class JsonPipelineCache(PipelineCache):
     async def get(self, key: str) -> str | None:
         """Get method definition."""
         if await self.has(key):
-            data = await self._storage.get(key, encoding=self._encoding)
-            if data is not None:
+            try:
+                data = await self._storage.get(key, encoding=self._encoding)
                 data = json.loads(data)
+            except UnicodeDecodeError:
+                await self._storage.delete(key)
+                return None
+            except json.decoder.JSONDecodeError:
+                await self._storage.delete(key)
+                return None
+            else:
                 return data.get("result")
 
         return None
