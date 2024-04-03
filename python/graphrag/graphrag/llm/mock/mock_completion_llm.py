@@ -12,7 +12,6 @@ from graphrag.llm.types import (
     CompletionOutput,
     LLMInput,
 )
-from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)
 
@@ -34,5 +33,4 @@ class MockCompletionLLM(
         input: CompletionInput,
         **kwargs: Unpack[LLMInput],
     ) -> CompletionOutput:
-        return self.responses[0]    
-
+        return self.responses[0]
