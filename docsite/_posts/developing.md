@@ -9,7 +9,7 @@ tags: [post]
 
 | Name | Installation | Purpose
 --- | --- | ---
-Python 3.10 | [Download](https://www.python.org/downloads/) | Our pipeline is python-based, so Python is necessary!
+Python 3.10 or 3.11 | [Download](https://www.python.org/downloads/) | Our library is python-based, so Python is necessary!
 Poetry | [Instructions](https://python-poetry.org/docs/#installation) | Poetry is used for package management and virtualenv management in Python codebases
 
 # Getting Started
