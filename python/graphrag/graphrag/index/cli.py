@@ -77,10 +77,7 @@ def index_cli(
         # Register signal handlers for SIGINT and SIGHUP
         signal.signal(signal.SIGINT, handle_signal)
 
-        if sys.platform == "win32":
-            signal.signal(signal.CTRL_C_EVENT, handle_signal)
-            signal.signal(signal.SIGBREAK, handle_signal)
-        else:
+        if sys.platform != "win32":
             signal.signal(signal.SIGHUP, handle_signal)
 
         async def execute():
