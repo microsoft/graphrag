@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "graphrag"
-version = "0.1.0"
+version = "0.0.1"
 description = ""
 authors = [
     "Chris Trevino <chtrevin@microsoft.com>",
@@ -79,6 +79,7 @@ ipykernel = "^6.29.3"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
 semversioner = "^2.0.2"
+update-toml = "^0.0.3"
 
 [tool.poetry.extras]
 azure-artifacts = ["artifacts-keyring", "azure-devops-artifacts-helpers"]

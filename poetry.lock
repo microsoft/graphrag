@@ -5076,6 +5076,17 @@ files = [
 ]
 
 [[package]]
+name = "tomlkit"
+version = "0.12.4"
+description = "Style preserving TOML library"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tomlkit-0.12.4-py3-none-any.whl", hash = "sha256:5cd82d48a3dd89dee1f9d64420aa20ae65cfbd00668d6f094d7578a78efbb77b"},
+    {file = "tomlkit-0.12.4.tar.gz", hash = "sha256:7ca1cfc12232806517a8515047ba66a19369e71edf2439d0f5824f91032b6cc3"},
+]
+
+[[package]]
 name = "toolz"
 version = "0.12.1"
 description = "List processing tools and functional utilities"
@@ -5232,6 +5243,22 @@ tqdm = "*"
 parametric-umap = ["tensorflow (>=2.1)", "tensorflow-probability (>=0.10)"]
 plot = ["bokeh", "colorcet", "datashader", "holoviews", "matplotlib", "pandas", "scikit-image", "seaborn"]
 tbb = ["tbb (>=2019.0)"]
+
+[[package]]
+name = "update-toml"
+version = "0.0.3"
+description = "Update a toml value from a CLI"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "update_toml-0.0.3-py2.py3-none-any.whl", hash = "sha256:1d6f8a6a27d6254afacaeb8ba1cffb5d3ddda658a5811c152c56b222196e59f3"},
+]
+
+[package.dependencies]
+tomlkit = "*"
+
+[package.extras]
+dev = ["black", "build", "flake8", "isort", "mypy", "pytest"]
 
 [[package]]
 name = "uri-template"
@@ -5493,4 +5520,4 @@ lancedb = ["lancedb"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "8ab64d4270abb007572ee2988dbbc39842a033ce0023a64c537faf1c21019968"
+content-hash = "8b5c0458bd17ce8ad3d852f32b19f69ce64e8e88a735606b845a13d9c35184bf"
