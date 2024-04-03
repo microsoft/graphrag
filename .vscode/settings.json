@@ -27,20 +27,14 @@
     "pyproject.toml": "poetry.lock, poetry.toml",
     "cspell.config.yaml": "dictionary.txt"
   },
-  "azureFunctions.deploySubpath": "javascript/azure-functions",
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "TypeScript",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
-  "azureFunctions.projectSubpath": "javascript/azure-functions",
   "azureFunctions.preDeployTask": "npm prune (functions)",
   "appService.zipIgnorePattern": [
     "node_modules{,/**}",
     ".vscode{,/**}"
-  ],
-  "appService.deploySubpath": "javascript/services/dist",
-  "python.venvFolders": [
-    "python/services/.venv"
   ],
   "python.defaultInterpreterPath": "python/services/.venv/bin/python",
   "python.languageServer": "Pylance",

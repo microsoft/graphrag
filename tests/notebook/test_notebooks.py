@@ -6,7 +6,7 @@ from pathlib import Path
 import nbformat
 import pytest
 
-DOCS_PATH = Path("../../javascript/docsite")
+DOCS_PATH = Path("../../docsite")
 
 notebooks_list = list(DOCS_PATH.rglob("*.ipynb"))
 

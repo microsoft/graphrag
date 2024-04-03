@@ -81,23 +81,27 @@ stages:
               versionSpec: ${{variables.nodeVersion}}
 
           - task: Bash@3
-            displayName: Install Dependencies
+            displayName: Install Poetry Dependencies
             inputs:
               targetType: "inline"
-              script: |
-                echo "Running Yarn Install..."
-                yarn install --immutable
-                echo "Running Python Authenticate..."
-                yarn python_authenticate
-                echo "Running Python Install..."
-                yarn python_install
-            env:
-              RESILIENCE_ARTIFACTS_USERNAME: $(resilienceArtifactsUsername)
-              RESILIENCE_ARTIFACTS_PASSWORD: $(resilienceArtifactsPassword)
+              script: poetry install
+
+          - task: Bash@3
+            displayName: Install Docsite Dependencies
+            inputs: 
+              workingDirectory: docsite
+              script: yarn install --immutable
+
+          - task: Bash@3
+            displayName: "Build Python Docs"
+            inputs:
+              targetType: "inline"
+              script: poetry run poe build_docs
 
           - task: Bash@3
             displayName: Build Docsite
             inputs:
+              workingDirectory: docsite
               targetType: "inline"
               script: yarn build
 
@@ -105,5 +109,5 @@ stages:
             displayName: "Publish Static Web App"
             inputs:
               skip_app_build: true
-              app_location: "javascript/docsite/_site"
+              app_location: "docsite/_site"
               azure_static_web_apps_api_token: $(deploymentToken)
