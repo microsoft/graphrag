@@ -9,7 +9,7 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "pip" # See documentation for possible values
-    directory: "python/" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
