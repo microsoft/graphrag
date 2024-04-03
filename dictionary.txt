@@ -117,7 +117,6 @@ scatterplot
 SITREP
 megapipeline
 columnwise
-janky
 docstore
 datasource
 devcontainers
@@ -131,28 +130,6 @@ MSRC
 Arrary
 
 # Prompt Inputs
-VOLKIMIR
-VLODIMIR
-VOLODYMYR
-VOLADIMIR
-VOLODYMYR
-VOLDEMIR
-VOLDEMIR
-VOLYNMYR
-VOLYNMYR
-VOLYN
-ZELENS
-ZELENSKY
-ZELENSKI
-ZELENSKIY
-ZELENSKYI
-ZELENSKII
-ROSIYA
-ROSSIA
-ROSIYA
-ROSIJA
-ROSIA
-OLEKSANDROVYCH
 Siamak
 Namazi
 Emad
@@ -163,7 +140,6 @@ Tahbaz
 abila
 abilas
 payus
-derp
 POKRALLY
 dulce
 

@@ -45,11 +45,11 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         await self.cache.set("test1", "test1")
         assert os.path.exists(f"{TEMP_DIR}/test1")
 
-        child = self.cache.child("derp")
-        assert os.path.exists(f"{TEMP_DIR}/derp")
+        child = self.cache.child("test")
+        assert os.path.exists(f"{TEMP_DIR}/test")
 
         await child.set("test2", "test2")
-        assert os.path.exists(f"{TEMP_DIR}/derp/test2")
+        assert os.path.exists(f"{TEMP_DIR}/test/test2")
 
         await self.cache.set("test1", "test1")
         await self.cache.delete("test1")
