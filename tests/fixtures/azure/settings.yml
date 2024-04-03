@@ -30,5 +30,5 @@ reporting:
     base_dir: reports
 
 chunks:
-    overlap: ${GRAPHRAG_CHUNK_OVERLAP}
-    size: ${GRAPHRAG_CHUNK_SIZE}
+    overlap: 0
+    size: 1200
