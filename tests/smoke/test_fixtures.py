@@ -242,8 +242,8 @@ class TestIndexer:
         {
             **os.environ,
             "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
-            "GRAPHRAG_CHUNK_SIZE": 1200,
-            "GRAPHRAG_CHUNK_OVERLAP": 0,
+            "GRAPHRAG_CHUNK_SIZE": "1200",
+            "GRAPHRAG_CHUNK_OVERLAP": "0",
         },
         clear=True,
     )
