@@ -1,7 +1,4 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing get_default_verbs method definition."""
 
@@ -26,27 +23,27 @@ from .unzip import unzip
 from .zip import zip_verb
 
 __all__ = [
-    "extract_claims",
-    "entity_extract",
-    "genid",
+    "aggregate",
+    "chunk",
     "cluster_graph",
+    "concat",
     "create_community_reports",
     "create_graph",
     "embed_graph",
+    "entity_extract",
+    "extract_claims",
+    "genid",
     "layout_graph",
-    "merge_graphs",
-    "unpack_graph",
-    "aggregate",
-    "concat",
     "merge",
+    "merge_graphs",
     "snapshot",
     "snapshot_rows",
     "spread_json",
     "summarize_descriptions",
-    "chunk",
     "text_embed",
     "text_split",
     "text_translate",
+    "unpack_graph",
     "unzip",
     "zip_verb",
 ]

@@ -1,13 +1,14 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
+
 from environs import Env
 
 from graphrag.index.config import PipelineCacheType
-from graphrag.index.default_config.parameters.defaults import DEFAULT_CACHE_TYPE
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_CACHE_BASE_DIR,
+    DEFAULT_CACHE_TYPE,
+)
 from graphrag.index.default_config.parameters.models import (
     CacheConfigModel,
 )
@@ -43,7 +44,7 @@ class CacheConfigSection(ConfigSection):
     @property
     def base_dir(self) -> str:
         """The base directory for the cache."""
-        return self.replace(self._values.base_dir)
+        return self.replace(self._values.base_dir, DEFAULT_CACHE_BASE_DIR)
 
     def to_dict(self) -> dict:
         """Convert the configuration to a dictionary."""

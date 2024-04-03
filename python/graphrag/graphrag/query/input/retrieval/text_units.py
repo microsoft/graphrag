@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Util functions to retrieve text units from a collection."""
+
 from typing import Any, cast
 
 import pandas as pd

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing run and _run_chain methods definitions."""
+
 from collections.abc import Iterable
 from typing import Any
 
@@ -72,17 +70,15 @@ async def _execute(
 
     texts = [texts] if isinstance(texts, str) else texts
 
-    results = await extractor(
-        {
-            "input_text": texts,
-            "entity_specs": entity_types,
-            "resolved_entities": resolved_entities_map,
-            "claim_description": claim_description,
-            "tuple_delimiter": tuple_delimiter,
-            "record_delimiter": record_delimiter,
-            "completion_delimiter": completion_delimiter,
-        }
-    )
+    results = await extractor({
+        "input_text": texts,
+        "entity_specs": entity_types,
+        "resolved_entities": resolved_entities_map,
+        "claim_description": claim_description,
+        "tuple_delimiter": tuple_delimiter,
+        "record_delimiter": record_delimiter,
+        "completion_delimiter": completion_delimiter,
+    })
 
     claim_data = results.output
     return CovariateExtractionResult([create_covariate(item) for item in claim_data])

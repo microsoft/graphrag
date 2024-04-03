@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 
@@ -39,7 +40,7 @@ async def main():
         os.path.dirname(os.path.abspath(__file__)), "./pipelines/workflows_only.yml"
     )
     tables = []
-    async for table in await run_pipeline_with_config(pipeline_path, dataset=dataset):
+    async for table in run_pipeline_with_config(pipeline_path, dataset=dataset):
         tables.append(table)
     pipeline_result = tables[-1]
 

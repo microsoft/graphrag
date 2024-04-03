@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The GlobalSearch Implementation."""
+
 import asyncio
 import logging
 import re
@@ -108,14 +106,12 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(
-            *[
-                self._map_response_single_batch(
-                    context_data=data, query=query, **self.map_llm_params
-                )
-                for data in context_chunks
-            ]
-        )
+        map_responses = await asyncio.gather(*[
+            self._map_response_single_batch(
+                context_data=data, query=query, **self.map_llm_params
+            )
+            for data in context_chunks
+        ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
@@ -234,7 +230,7 @@ class GlobalSearch(BaseSearch):
             total_tokens = 0
             for index, response in enumerate(filtered_map_responses):
                 formatted_response_data = []
-                formatted_response_data.append(f"-----Analyst {index+1}-----")
+                formatted_response_data.append(f"-----Analyst {index + 1}-----")
                 formatted_response_data.append(
                     f'Helpfulness Score: {response.response["score"]}'  # type: ignore
                 )

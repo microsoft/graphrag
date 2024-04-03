@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Indexing Engine workflows package root."""
+
 from .load import create_workflow, load_workflows
 from .typing import (
     StepDefinition,
@@ -15,12 +13,12 @@ from .typing import (
 )
 
 __all__ = [
-    "create_workflow",
-    "load_workflows",
     "StepDefinition",
     "VerbDefinitions",
+    "VerbTiming",
     "WorkflowConfig",
     "WorkflowDefinitions",
-    "VerbTiming",
     "WorkflowToRun",
+    "create_workflow",
+    "load_workflows",
 ]

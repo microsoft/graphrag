@@ -1,11 +1,10 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """LLM Parameters model."""
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from graphrag.index.llm.types import LLMType
 
 
 class LLMParametersModel(BaseModel):
@@ -15,7 +14,9 @@ class LLMParametersModel(BaseModel):
     api_key: str | None = Field(
         description="The API key to use for the LLM service.", default=None
     )
-    type: str | None = Field(description="The type of LLM model to use.", default=None)
+    type: LLMType | None = Field(
+        description="The type of LLM model to use.", default=None
+    )
     model: str | None = Field(description="The LLM model to use.", default=None)
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.", default=None

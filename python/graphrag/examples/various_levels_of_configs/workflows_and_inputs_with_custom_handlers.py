@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 from typing import Any
@@ -36,7 +37,7 @@ async def main():
     # run the pipeline with the config, and override the dataset with the one we just created
     # and grab the last result from the pipeline, should be the last workflow that was run (our nodes)
     pipeline_result = []
-    async for result in await run_pipeline_with_config(
+    async for result in run_pipeline_with_config(
         pipeline_path,
         storage=custom_storage,
         callbacks=custom_reporter,

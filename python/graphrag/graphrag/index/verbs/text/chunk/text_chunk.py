@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
+
 from enum import Enum
 from typing import Any, cast
 
@@ -131,13 +129,11 @@ def run_strategy(
             results.append(strategy_result.text_chunk)
         else:
             doc_ids = [input[doc_idx][0] for doc_idx in doc_indices]
-            results.append(
-                (
-                    doc_ids,
-                    strategy_result.text_chunk,
-                    strategy_result.n_tokens,
-                )
-            )
+            results.append((
+                doc_ids,
+                strategy_result.text_chunk,
+                strategy_result.n_tokens,
+            ))
     return results
 
 

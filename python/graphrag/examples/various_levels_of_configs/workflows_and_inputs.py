@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 
@@ -22,7 +23,7 @@ async def main():
     # run the pipeline with the config, and override the dataset with the one we just created
     # and grab the last result from the pipeline, should be the last workflow that was run (our nodes)
     tables = []
-    async for table in await run_pipeline_with_config(pipeline_path):
+    async for table in run_pipeline_with_config(pipeline_path):
         tables.append(table)
     pipeline_result = tables[-1]
 

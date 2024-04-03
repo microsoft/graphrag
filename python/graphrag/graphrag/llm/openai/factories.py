@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Factory functions for creating OpenAI LLMs."""
+
 import asyncio
 
 from graphrag.llm.base import CachingLLM, RateLimitingLLM
@@ -18,6 +16,7 @@ from graphrag.llm.types import (
     OnCacheActionFn,
 )
 
+from .json_parsing_llm import JsonParsingLLM
 from .openai_chat_llm import OpenAIChatLLM
 from .openai_completion_llm import OpenAICompletionLLM
 from .openai_configuration import OpenAIConfiguration
@@ -54,7 +53,8 @@ def create_openai_chat_llm(
     if cache is not None:
         result = _cached(result, config, operation, cache, on_cache_hit, on_cache_miss)
     result = OpenAIHistoryTrackingLLM(result)
-    return OpenAITokenReplacingLLM(result)
+    result = OpenAITokenReplacingLLM(result)
+    return JsonParsingLLM(result)
 
 
 def create_openai_completion_llm(

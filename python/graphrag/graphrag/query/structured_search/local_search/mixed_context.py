@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Algorithms to build context data for local search prompt."""
+
 import logging
 from typing import Any
 
@@ -331,9 +329,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
                         if selected_unit.attributes is None:
                             selected_unit.attributes = {}
                         selected_unit.attributes["entity_order"] = index
-                        selected_unit.attributes[
-                            "num_relationships"
-                        ] = num_relationships
+                        selected_unit.attributes["num_relationships"] = (
+                            num_relationships
+                        )
                         selected_text_units.append(selected_unit)
 
         # sort selected text units by ascending order of entity order and descending order of number of relationships

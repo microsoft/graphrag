@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import json
 import logging
@@ -90,6 +91,11 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
         connection_string=WELL_KNOWN_AZURITE_CONNECTION_STRING,
         container_name=input_container,
     )
+    # Bounce the container if it exists to clear out old run data
+    input_storage.delete_container()
+    input_storage.create_container()
+
+    # Upload data files
     txt_files = list((root / "input").glob("*.txt"))
     csv_files = list((root / "input").glob("*.csv"))
     data_files = txt_files + csv_files
@@ -119,10 +125,11 @@ class TestIndexer:
         command = [
             "yarn",
             "run:index",
-            "--verbose",
+            "--verbose" if debug else None,
             "--root",
             root.absolute().as_posix(),
         ]
+        command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
         completion = subprocess.run(
             command, env={**os.environ, "GRAPHRAG_INPUT_TYPE": input_type}
@@ -136,6 +143,8 @@ class TestIndexer:
     ):
         outputs_path = root / "output"
         output_entries = list(outputs_path.iterdir())
+        # Sort the output folders by creation time, most recent
+        output_entries.sort(key=lambda entry: entry.stat().st_ctime, reverse=True)
 
         if not debug:
             assert (
@@ -239,11 +248,8 @@ class TestIndexer:
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
-        print(
-            "Running smoke test, len(key)=", len(os.environ.get("GRAPHRAG_API_KEY", ""))
-        )
         if workflow_config.get("skip", False):
-            print("skipping smoke test :-()")
+            print(f"skipping smoke test {input_path})")
             return
 
         azure = workflow_config.get("azure")

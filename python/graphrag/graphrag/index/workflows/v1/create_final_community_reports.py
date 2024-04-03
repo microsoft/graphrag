@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing build_steps method definition."""
+
 from datashaper import AsyncType
 
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
@@ -76,39 +74,33 @@ def build_steps(
     ]
 
     if not skip_full_content_embedding:
-        result.append(
-            {
-                "verb": "text_embed",
-                "args": {
-                    "column": "full_content",
-                    "to": "full_content_embedding",
-                    **text_embed_config,
-                },
-            }
-        )
+        result.append({
+            "verb": "text_embed",
+            "args": {
+                "column": "full_content",
+                "to": "full_content_embedding",
+                **text_embed_config,
+            },
+        })
 
     if not skip_summary_embedding:
-        result.append(
-            {
-                "verb": "text_embed",
-                "args": {
-                    "column": "summary",
-                    "to": "summary_embedding",
-                    **text_embed_config,
-                },
-            }
-        )
+        result.append({
+            "verb": "text_embed",
+            "args": {
+                "column": "summary",
+                "to": "summary_embedding",
+                **text_embed_config,
+            },
+        })
 
     if not skip_title_embedding:
-        result.append(
-            {
-                "verb": "text_embed",
-                "args": {
-                    "column": "title",
-                    "to": "title_embedding",
-                    **text_embed_config,
-                },
-            }
-        )
+        result.append({
+            "verb": "text_embed",
+            "args": {
+                "column": "title",
+                "to": "title_embedding",
+                **text_embed_config,
+            },
+        })
 
     return result

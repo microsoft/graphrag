@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """The Datashaper OpenAI Utilities package."""
+
 from .base import BaseLLM, CachingLLM, RateLimitingLLM
 from .errors import RetriesExhaustedError
 from .limiting import (
@@ -45,48 +43,48 @@ from .types import (
 )
 
 __all__ = [
-    # Cache
-    "LLMCache",
-    # Callbacks
-    "ErrorHandlerFn",
-    "IsResponseValidFn",
-    "LLMInvocationFn",
-    "OnCacheActionFn",
-    # Errors
-    "RetriesExhaustedError",
     # LLM Types
     "LLM",
     "BaseLLM",
     "CachingLLM",
-    "RateLimitingLLM",
-    "LLMConfig",
+    "CompletionInput",
     "CompletionLLM",
+    "CompletionOutput",
+    "CompositeLLMLimiter",
+    "EmbeddingInput",
     "EmbeddingLLM",
+    "EmbeddingOutput",
+    # Callbacks
+    "ErrorHandlerFn",
+    "IsResponseValidFn",
+    # Cache
+    "LLMCache",
+    "LLMConfig",
     # LLM I/O Types
     "LLMInput",
-    "LLMOutput",
+    "LLMInvocationFn",
     "LLMInvocationResult",
-    "CompletionInput",
-    "CompletionOutput",
-    "EmbeddingInput",
-    "EmbeddingOutput",
-    # Limiters
-    "create_tpm_rpm_limiters",
     "LLMLimiter",
-    "NoopLLMLimiter",
-    "TpmRpmLLMLimiter",
-    "CompositeLLMLimiter",
-    # OpenAI
-    "OpenAIConfiguration",
-    "OpenAIClientTypes",
-    "create_openai_client",
-    "OpenAIEmbeddingsLLM",
-    "OpenAIChatLLM",
-    "OpenAICompletionLLM",
-    "create_openai_chat_llm",
-    "create_openai_completion_llm",
-    "create_openai_embedding_llm",
+    "LLMOutput",
+    "MockChatLLM",
     # Mock
     "MockCompletionLLM",
-    "MockChatLLM",
+    "NoopLLMLimiter",
+    "OnCacheActionFn",
+    "OpenAIChatLLM",
+    "OpenAIClientTypes",
+    "OpenAICompletionLLM",
+    # OpenAI
+    "OpenAIConfiguration",
+    "OpenAIEmbeddingsLLM",
+    "RateLimitingLLM",
+    # Errors
+    "RetriesExhaustedError",
+    "TpmRpmLLMLimiter",
+    "create_openai_chat_llm",
+    "create_openai_client",
+    "create_openai_completion_llm",
+    "create_openai_embedding_llm",
+    # Limiters
+    "create_tpm_rpm_limiters",
 ]

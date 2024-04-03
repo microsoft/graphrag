@@ -15,6 +15,7 @@ coverage/
 licenses.txt
 python/graphrag/examples_notebooks/*/lancedb
 python/graphrag/examples_notebooks/*/data
+python/graphrag/tests/fixtures/cache
 python/graphrag/tests/fixtures/*/cache
 python/graphrag/tests/fixtures/*/output
 
@@ -45,3 +46,7 @@ __pycache__
 
 temp_azurite/
 __azurite*.json
+
+# Getting started example
+ragtest/
+.ragtest/

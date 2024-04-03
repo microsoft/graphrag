@@ -1,4 +1,6 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """Blob Storage Tests."""
+
 import re
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
@@ -40,6 +42,21 @@ async def test_find():
             await storage.delete("test.txt")
             output = await storage.get("test.txt")
             assert output is None
+    finally:
+        storage.delete_container()
+
+
+async def test_dotprefix():
+    storage = BlobPipelineStorage(
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testfind",
+        path_prefix=".",
+    )
+    try:
+        await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
+        items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
+        items = [item[0] for item in items]
+        assert items == ["input/christmas.txt"]
     finally:
         storage.delete_container()
 

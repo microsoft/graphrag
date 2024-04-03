@@ -47,6 +47,11 @@ Next we'll inject some required config variables:
 ```sh
 echo "GRAPHRAG_API_KEY=\"<Your OpenAI API Key>\"" >> ./ragtest/.env
 echo "GRAPHRAG_INPUT_TYPE=text" >> ./ragtest/.env
+
+# For Azure OpenAI Users
+echo "GRAPHRAG_API_BASE=http://<domain>.openai.azure.com" >> ./ragtest/.env
+echo "GRAPHRAG_LLM_DEPLOYMENT_NAME"="gpt-4" >> ./ragtest/.env
+echo "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME"="text-embedding-3-small" >> ./ragtest/.env
 ```
 
 Finally we'll run the pipeline!
@@ -76,7 +81,7 @@ set GRAPHRAG_LLM_MODEL=<chat_completions_model>
 set GRAPHRAG_EMBEDDING_MODEL=<embeddings_model>
 ```
 
-For more details about Environment Variables configuration please refer to the Query Engine [CLI documentation](../_query/cli).
+For more details about Environment Variables configuration please refer to the Query Engine [CLI documentation](../_query/3-cli).
 
 ## Running the Query Engine
 

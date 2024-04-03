@@ -1,15 +1,14 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
-
 
 from environs import Env
 
 from graphrag.index.config import PipelineStorageType
-from graphrag.index.default_config.parameters.defaults import DEFAULT_STORAGE_TYPE
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_STORAGE_BASE_DIR,
+    DEFAULT_STORAGE_TYPE,
+)
 from graphrag.index.default_config.parameters.models import (
     StorageConfigModel,
 )
@@ -45,7 +44,7 @@ class StorageConfigSection(ConfigSection):
     @property
     def base_dir(self) -> str:
         """The base directory for the storage."""
-        return self.replace(self._values.base_dir)
+        return self.replace(self._values.base_dir, DEFAULT_STORAGE_BASE_DIR)
 
     def to_dict(self) -> dict:
         """Convert the configuration to a dictionary."""

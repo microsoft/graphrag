@@ -1,0 +1,9 @@
+llm:
+    api_key: ${GRAPHRAG_API_KEY}
+
+embeddings: 
+    llm:
+        api_key: ${GRAPHRAG_API_KEY}
+
+input:
+    type: csv

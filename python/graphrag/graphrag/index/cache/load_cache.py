@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A module containing load_cache method definition."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
@@ -42,8 +40,8 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
         case PipelineCacheType.blob:
             config = cast(PipelineBlobCacheConfig, config)
             storage = BlobPipelineStorage(
-                config.connection_string, config.container_name, config.base_dir
-            )
+                config.connection_string, config.container_name
+            ).child(config.base_dir)
             return JsonPipelineCache(storage)
         case _:
             msg = f"Unknown cache type: {config.type}"

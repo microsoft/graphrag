@@ -1,7 +1,4 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Different methods to run the pipeline."""
 
@@ -83,6 +80,7 @@ async def run_pipeline_with_config(
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     debug: bool = False,
+    resume: str | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -103,7 +101,7 @@ async def run_pipeline_with_config(
         log.info("Running pipeline")
 
     config = load_pipeline_config(config_or_path)
-    config, reporting_dir = _apply_substitutions(config)
+    config, reporting_dir = _apply_substitutions(config, resume)
     root_dir = config.root_dir
 
     def _create_storage(config: PipelineStorageConfigTypes | None) -> PipelineStorage:
@@ -149,7 +147,7 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    return run_pipeline(
+    async for table in run_pipeline(
         workflows=workflows,
         dataset=dataset,
         storage=storage,
@@ -161,7 +159,8 @@ async def run_pipeline_with_config(
         additional_workflows=additional_workflows,
         progress_reporter=progress_reporter,
         emit=emit,
-    )
+    ):
+        yield table
 
 
 async def run_pipeline(
@@ -409,8 +408,10 @@ def _validate_dataset(dataset: pd.DataFrame):
         raise TypeError(msg)
 
 
-def _apply_substitutions(config: PipelineConfig) -> tuple[PipelineConfig, str]:
-    substitutions = {"timestamp": time.strftime("%Y%m%d-%H%M%S")}
+def _apply_substitutions(
+    config: PipelineConfig, resume: str | None
+) -> tuple[PipelineConfig, str]:
+    substitutions = {"timestamp": resume or time.strftime("%Y%m%d-%H%M%S")}
     reporting_dir = ""
 
     if (

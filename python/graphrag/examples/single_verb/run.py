@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 
@@ -18,7 +19,7 @@ async def run_with_config():
     )
 
     tables = []
-    async for table in await run_pipeline_with_config(
+    async for table in run_pipeline_with_config(
         config_or_path=config_path, dataset=dataset
     ):
         tables.append(table)

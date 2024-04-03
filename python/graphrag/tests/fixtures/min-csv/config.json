@@ -1,5 +1,5 @@
 {
-    "input_path": "./tests/fixtures/dulce",
+    "input_path": "./tests/fixtures/min-csv",
     "input_type": "text",
     "workflow_config": {
         "create_base_text_units": {
@@ -71,7 +71,7 @@
                 "description",
                 "graph_embedding"
             ],
-            "subworkflows": 10,
+            "subworkflows": 12,
             "max_runtime": 300
         },
         "create_final_relationships": {

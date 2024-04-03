@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
+
 from environs import Env
 
 from .default_config_parameters_model import DefaultConfigParametersModel
@@ -31,7 +29,6 @@ class DefaultConfigParametersDict(LLMConfigSection):
 
     _values: DefaultConfigParametersModel
     _root_dir: str
-    _resume_from: str | None
     _embed_graph: EmbedGraphConfigSection
     _reporting: ReportingConfigSection
     _storage: StorageConfigSection
@@ -53,14 +50,12 @@ class DefaultConfigParametersDict(LLMConfigSection):
         values: DefaultConfigParametersModel,
         env: Env,
         root_dir: str,
-        resume_from: str | None = None,
     ):
         """Create a new instance of the parameters class."""
         super().__init__(values, values, env)
         root_dir = root_dir
         self._values = values
         self._root_dir = root_dir
-        self._resume_from = resume_from
         self._embed_graph = EmbedGraphConfigSection(values.embed_graph, env)
         self._reporting = ReportingConfigSection(values.reporting, env)
         self._storage = StorageConfigSection(values.storage, env)
@@ -174,11 +169,6 @@ class DefaultConfigParametersDict(LLMConfigSection):
         return self._root_dir
 
     @property
-    def resume_from(self) -> str | None:
-        """The run id to resume from."""
-        return self._resume_from
-
-    @property
     def skip_workflows(self) -> list[str]:
         """The workflows to skip, usually for testing reasons."""
         return self.replace(self._values.skip_workflows, [])
@@ -187,7 +177,6 @@ class DefaultConfigParametersDict(LLMConfigSection):
         """Return a JSON representation of the parameters."""
         return {
             "root_dir": self.root_dir,
-            "resume_from": self.resume_from,
             "skip_workflows": self.skip_workflows,
             "encoding_model": self.encoding_model,
             "summarize_descriptions": self.summarize_descriptions.to_dict(),

@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Azure Blob Storage implementation of PipelineStorage."""
+
 import logging
 import re
 from collections.abc import Iterator
@@ -27,7 +25,6 @@ class BlobPipelineStorage(PipelineStorage):
     _container_name: str
     _path_prefix: str
     _encoding: str
-    _path_prefix: str
 
     def __init__(
         self,
@@ -49,16 +46,31 @@ class BlobPipelineStorage(PipelineStorage):
             self._container_name,
             self._path_prefix,
         )
+        self.create_container()
 
-        container_names = [
-            container.name for container in self._blob_service_client.list_containers()
-        ]
-        if container_name not in container_names:
-            self._blob_service_client.create_container(container_name)
+    def create_container(self) -> None:
+        """Create the container if it does not exist."""
+        if not self.container_exists():
+            container_name = self._container_name
+            container_names = [
+                container.name
+                for container in self._blob_service_client.list_containers()
+            ]
+            if container_name not in container_names:
+                self._blob_service_client.create_container(container_name)
 
     def delete_container(self) -> None:
         """Delete the container."""
-        self._blob_service_client.delete_container(self._container_name)
+        if self.container_exists():
+            self._blob_service_client.delete_container(self._container_name)
+
+    def container_exists(self) -> bool:
+        """Check if the container exists."""
+        container_name = self._container_name
+        container_names = [
+            container.name for container in self._blob_service_client.list_containers()
+        ]
+        return container_name in container_names
 
     def find(
         self,
@@ -88,6 +100,13 @@ class BlobPipelineStorage(PipelineStorage):
             file_pattern.pattern,
         )
 
+        def blobname(blob_name: str) -> str:
+            if blob_name.startswith(self._path_prefix):
+                blob_name = blob_name.replace(self._path_prefix, "", 1)
+            if blob_name.startswith("/"):
+                blob_name = blob_name[1:]
+            return blob_name
+
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
@@ -108,10 +127,7 @@ class BlobPipelineStorage(PipelineStorage):
                 if match and blob.name.startswith(base_dir):
                     group = match.groupdict()
                     if item_filter(group):
-                        blob_name = blob.name.replace(self._path_prefix, "")
-                        if blob_name.startswith("/"):
-                            blob_name = blob_name[1:]
-                        yield (blob_name, group)
+                        yield (blobname(blob.name), group)
                         num_loaded += 1
                         if max_count > 0 and num_loaded >= max_count:
                             break

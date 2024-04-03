@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Common default configuration values."""
+
 from graphrag.index.config import (
     PipelineCacheType,
     PipelineInputStorageType,
@@ -12,11 +10,12 @@ from graphrag.index.config import (
     PipelineStorageType,
 )
 from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
+from graphrag.index.llm.types import LLMType
 
 #
 # LLM Parameters
 #
-DEFAULT_LLM_TYPE = "openai_chat"
+DEFAULT_LLM_TYPE = LLMType.OpenAIChat
 DEFAULT_LLM_MODEL = "gpt-4-turbo-preview"
 DEFAULT_LLM_MAX_TOKENS = 4000
 DEFAULT_LLM_REQUEST_TIMEOUT = 180.0
@@ -30,7 +29,7 @@ DEFAULT_LLM_CONCURRENT_REQUESTS = 25
 #
 # Text Embedding Parameters
 #
-DEFAULT_EMBEDDING_TYPE = "openai_embedding"
+DEFAULT_EMBEDDING_TYPE = LLMType.OpenAIEmbedding
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_EMBEDDING_TOKENS_PER_MINUTE = 0
 DEFAULT_EMBEDDING_REQUESTS_PER_MINUTE = 0
@@ -43,6 +42,7 @@ DEFAULT_EMBEDDING_BATCH_MAX_TOKENS = 8191
 DEFAULT_EMBEDDING_TARGET = TextEmbeddingTarget.required
 
 DEFAULT_CACHE_TYPE = PipelineCacheType.file
+DEFAULT_CACHE_BASE_DIR = "cache"
 DEFAULT_CHUNK_SIZE = 300
 DEFAULT_CHUNK_OVERLAP = 100
 DEFAULT_CHUNK_GROUP_BY_COLUMNS = ["id"]
@@ -71,9 +71,11 @@ DEFAULT_NODE2VEC_WINDOW_SIZE = 2
 DEFAULT_NODE2VEC_ITERATIONS = 3
 DEFAULT_NODE2VEC_RANDOM_SEED = 597832
 DEFAULT_REPORTING_TYPE = PipelineReportingType.file
+DEFAULT_REPORTING_BASE_DIR = "output/${timestamp}/reports"
 DEFAULT_SNAPSHOTS_GRAPHML = False
 DEFAULT_SNAPSHOTS_RAW_ENTITIES = False
 DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES = False
 DEFAULT_STORAGE_TYPE = PipelineStorageType.file
+DEFAULT_STORAGE_BASE_DIR = "output/${timestamp}/artifacts"
 DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 DEFAULT_UMAP_ENABLED = False

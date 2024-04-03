@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Classes for storing and managing conversation history."""
+
 from dataclasses import dataclass
 from enum import Enum
 
@@ -191,19 +189,15 @@ class ConversationHistory:
         turn_list = []
         current_context_df = pd.DataFrame()
         for turn in qa_turns:
-            turn_list.append(
-                {
-                    "turn": ConversationRole.USER.__str__(),
-                    "content": turn.user_query.content,
-                }
-            )
+            turn_list.append({
+                "turn": ConversationRole.USER.__str__(),
+                "content": turn.user_query.content,
+            })
             if turn.assistant_answers:
-                turn_list.append(
-                    {
-                        "turn": ConversationRole.ASSISTANT.__str__(),
-                        "content": turn.get_answer_text(),
-                    }
-                )
+                turn_list.append({
+                    "turn": ConversationRole.ASSISTANT.__str__(),
+                    "content": turn.get_answer_text(),
+                })
 
             context_df = pd.DataFrame(turn_list)
             context_text = header + context_df.to_csv(sep=column_delimiter, index=False)

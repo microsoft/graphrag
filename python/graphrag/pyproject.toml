@@ -82,21 +82,20 @@ nbconvert = "^7.16.3"
 [tool.poetry.extras]
 azure-artifacts = ["artifacts-keyring", "azure-devops-artifacts-helpers"]
 lancedb = ["lancedb"]
-qdrant = ["qdrant-client"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-_sort_imports = "ruff check --select I --fix ."
-_format_code = "ruff format ."
-_ruff_check = 'ruff check .'
+_sort_imports = "ruff check --select I --fix . --preview"
+_format_code = "ruff format  . --preview"
+_ruff_check = 'ruff check . --preview'
 _pyright = "pyright"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
-check_format = 'ruff format . --check'
-fix = "ruff check --fix ."
-fix_unsafe = "ruff check --fix --unsafe-fixes ."
+check_format = 'ruff format . --check --preview'
+fix = "ruff  --preview check --fix ."
+fix_unsafe = "ruff --preview check --fix --unsafe-fixes ."
 
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
@@ -172,6 +171,7 @@ select = [
     "EM",
     "TRY",
     "PERF",
+    "CPY",
     # "FBT", # use named arguments for boolean flags
     # "TD", # todos
     # "FIX", # fixme

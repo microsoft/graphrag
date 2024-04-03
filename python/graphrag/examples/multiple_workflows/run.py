@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import asyncio
 import os
 
@@ -32,7 +33,7 @@ async def run_with_config():
         os.path.dirname(os.path.abspath(__file__)), "./pipeline.yml"
     )
 
-    async for result in await run_pipeline_with_config(pipeline_path, dataset=dataset):
+    async for result in run_pipeline_with_config(pipeline_path, dataset=dataset):
         print(f"Workflow {result.workflow} result\n: ")
         print(result.result)
 

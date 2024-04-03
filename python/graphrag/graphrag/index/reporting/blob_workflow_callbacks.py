@@ -1,9 +1,7 @@
-#
-# Copyright (c) Microsoft. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project.
-#
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """A reporter that writes to a blob storage."""
+
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -75,15 +73,13 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         details: dict | None = None,
     ):
         """Report an error."""
-        self._write_log(
-            {
-                "type": "error",
-                "data": message,
-                "cause": str(cause),
-                "stack": stack,
-                "details": details,
-            }
-        )
+        self._write_log({
+            "type": "error",
+            "data": message,
+            "cause": str(cause),
+            "stack": stack,
+            "details": details,
+        })
 
     def on_warning(self, message: str, details: dict | None = None):
         """Report a warning."""
