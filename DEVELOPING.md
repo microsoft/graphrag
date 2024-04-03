@@ -4,7 +4,7 @@
 
 | Name | Installation | Purpose
 --- | --- | ---
-Python 3.10 or 3.11 | [Download](https://www.python.org/downloads/) | Our library is python-based, so Python is necessary!
+Python 3.10 or 3.11 | [Download](https://www.python.org/downloads/) | The library is Python-based.
 Poetry | [Instructions](https://python-poetry.org/docs/#installation) | Poetry is used for package management and virtualenv management in Python codebases
 
 # Getting Started
