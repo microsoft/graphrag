@@ -8,18 +8,30 @@ Python 3.10 or 3.11 | [Download](https://www.python.org/downloads/) | The librar
 Poetry | [Instructions](https://python-poetry.org/docs/#installation) | Poetry is used for package management and virtualenv management in Python codebases
 
 # Getting Started
+
+## Install Dependencies
 ```sh
 # Install Python dependencies.
 poetry install
+```
 
-# Execute the Indexing Engine
-poetry run poe index --root=<data_project_directory> # default config mode
-poetry run poe index --config=<config_file_path> # custom config mode
+## Execute the Indexing Engine
+
+```sh
+poetry run poe index <...args>
+```
+
+## Executing Queries
+```sh
+poetry run poe query <...args>
 ```
 
 # Azurite
-Some unit and smoke tests use Azurite to emulate Azure resources. This can be started by running `./scripts/start-azurite.sh`.
+Some unit and smoke tests use Azurite to emulate Azure resources. This can be started by running:
 
+```sh
+./scripts/start-azurite.sh
+```
 
 # Lifecycle Scripts
 Our Python package utilizes Poetry to manage dependencies and [poethepoet](https://pypi.org/project/poethepoet/) to manage build scripts.
