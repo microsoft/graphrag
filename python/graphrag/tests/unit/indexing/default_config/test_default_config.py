@@ -90,10 +90,10 @@ class TestDefaultConfig(unittest.TestCase):
             "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
             "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
             "GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH": "23456",
-            "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "derp 123",
+            "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
             "GRAPHRAG_MAX_CLUSTER_SIZE": "123",
             "GRAPHRAG_UMAP_ENABLED": "true",
-            "GRAPHRAG_ENCODING_MODEL": "derp123",
+            "GRAPHRAG_ENCODING_MODEL": "test123",
             "GRAPHRAG_SKIP_WORKFLOWS": "a,b,c",
         },
         clear=True,
@@ -103,7 +103,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.llm["api_key"] == "test"
         assert parameters.llm["model"] == "test-llm"
         assert parameters.parallelization["num_threads"] == 987
-        assert parameters.encoding_model == "derp123"
+        assert parameters.encoding_model == "test123"
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.storage.connection_string == "test_cs"
@@ -128,7 +128,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.max_gleanings == 112
         assert parameters.summarize_descriptions.max_length == 12345
         assert parameters.community_reports.max_length == 23456
-        assert parameters.claim_extraction.description == "derp 123"
+        assert parameters.claim_extraction.description == "test 123"
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.umap.enabled
 
@@ -179,19 +179,19 @@ class TestDefaultConfig(unittest.TestCase):
                 community_reports=CommunityReportsConfigModel(
                     max_length=23456,
                 ),
-                claim_extraction=ClaimExtractionConfigModel(description="derp 123"),
+                claim_extraction=ClaimExtractionConfigModel(description="test 123"),
                 cluster_graph=ClusterGraphConfigModel(
                     max_cluster_size=123,
                 ),
                 umap=UmapConfigModel(enabled=True),
-                encoding_model="derp123",
+                encoding_model="test123",
                 skip_workflows=["a", "b", "c"],
             ),
             ".",
         )
         assert parameters.llm["api_key"] == "test"
         assert parameters.llm["model"] == "test-llm"
-        assert parameters.encoding_model == "derp123"
+        assert parameters.encoding_model == "test123"
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.storage.connection_string == "test_cs"
@@ -217,7 +217,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.max_gleanings == 112
         assert parameters.summarize_descriptions.max_length == 12345
         assert parameters.community_reports.max_length == 23456
-        assert parameters.claim_extraction.description == "derp 123"
+        assert parameters.claim_extraction.description == "test 123"
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.umap.enabled
 
