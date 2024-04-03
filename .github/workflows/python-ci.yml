@@ -7,6 +7,7 @@ on:
       - 'graphrag/**/*'
       - '**/*.py'
       - '**/*.toml'
+      - '**/*.ipynb'
       - .github/workflows/python-ci.yml
 jobs:
   python-ci:
