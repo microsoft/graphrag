@@ -23,6 +23,11 @@ footer{
 	border-top: 1px solid #c4c5c6;
 }
 
+#cookiesManager{
+    cursor: pointer;
+    color: #485fc7;
+}
+
 .page-content {
     display: flex;
     flex-direction: row;

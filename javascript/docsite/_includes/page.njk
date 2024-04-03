@@ -27,8 +27,11 @@ title: GraphRAG
             console.log("onConsentChanged", categoryPreferences);        
         }
 
+        var siteConsent
+
         function initialize(){
-          var siteConsent
+          var currentYear = new Date().getFullYear()
+          document.getElementById("copyright").innerHTML = `©️ ${currentYear} Microsoft`;
           window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
               if (!err) {
                   siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
@@ -39,6 +42,12 @@ title: GraphRAG
         }
 
         addEventListener("DOMContentLoaded", initialize)
+
+        function manageConsent() {
+        if(siteConsent.isConsentRequired){
+            siteConsent.manageConsent();
+        }
+    }
     </script>
     {% endblock %}
   </head>
@@ -125,7 +134,19 @@ title: GraphRAG
         </main>
     </div>
     <footer>
-      Test
-    </footer>
+      <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy</a>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy</a>
+      |
+      <span id="cookiesManager" onclick="manageConsent();">Cookies</span>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>
+      |
+      <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+      |
+      <a href="https://www.microsoft.com" id="copyright"></a>
+      |
+      <a href="https://github.com/microsoft/graphrag">GitHub</a>
+    </footer>    
   </body>
 </html>
