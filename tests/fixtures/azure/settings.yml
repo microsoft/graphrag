@@ -28,3 +28,7 @@ reporting:
     connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: reports
+
+chunks:
+    overlap: ${GRAPHRAG_CHUNK_OVERLAP}
+    size: ${GRAPHRAG_CHUNK_SIZE}
