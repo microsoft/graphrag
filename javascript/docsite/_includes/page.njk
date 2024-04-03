@@ -31,7 +31,6 @@ title: GraphRAG
           var siteConsent
           window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
               if (!err) {
-                  console.log("consentUpdated", _siteConsent)
                   siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
               } else {
                   console.log("Error initializing WcpConsent: "+ err);
@@ -125,5 +124,8 @@ title: GraphRAG
             {{ content | safe }}
         </main>
     </div>
+    <footer>
+      Test
+    </footer>
   </body>
 </html>
