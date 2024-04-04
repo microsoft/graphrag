@@ -1,0 +1,62 @@
+name: gh-pages
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+        poetry-version: ['1.6.1']
+        node-version: ['18.x']
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+  
+      - name: Install Poetry ${{ matrix.poetry-version }}
+        uses: abatilo/actions-poetry@v3.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Use Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: yarn install
+        working-directory: docsite
+        name: Install Yarn dependencies
+
+      - name: Install Poetry dependencies
+        shell: bash
+        run: poetry install
+
+      - run: poetry run build_docs
+        name: Build generated docpages
+
+      - run: yarn build
+        working-directory: docsite
+        name: Build docsite
+
+      - run: find docsite/_site
+        name: List docsite files
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: docsite/_site
+          clean: true
