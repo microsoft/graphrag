@@ -1,7 +1,7 @@
 ---
 title: Workflows
 navtitle: Overview
-tags: [post, indexing]
+tags: [post]
 layout: page
 date: 2023-01-01
 ---
