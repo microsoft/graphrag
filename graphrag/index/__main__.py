@@ -55,17 +55,24 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument("--nocache", help="Disable LLM cache.", action="store_true")
+    parser.add_argument(
+        "--init",
+        help="Create an initial configuration in the given path.",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     index_cli(
         root=args.root,
-        verbose=args.verbose,
+        verbose=args.verbose or False,
         resume=args.resume,
-        memprofile=args.memprofile,
-        nocache=args.nocache,
+        memprofile=args.memprofile or False,
+        nocache=args.nocache or False,
         reporter=args.reporter,
         config=args.config,
         emit=args.emit,
-        dryrun=args.dryrun,
+        dryrun=args.dryrun or False,
+        init=args.init or False,
         cli=True,
     )

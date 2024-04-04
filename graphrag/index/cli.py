@@ -26,6 +26,7 @@ from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType
+from .init_content import INIT_DOTENV, INIT_YAML
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -44,6 +45,7 @@ def redact(input: str) -> str:
 
 def index_cli(
     root: str,
+    init: bool,
     verbose: bool,
     resume: str | None,
     memprofile: bool,
@@ -51,17 +53,19 @@ def index_cli(
     reporter: str | None,
     config: str | None,
     emit: str | None,
+    dryrun: bool,
     cli: bool = False,
-    dryrun: bool = False,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = _get_progress_reporter(reporter)
+    if init:
+        _initialize_project_at(root, progress_reporter)
+        sys.exit(0)
     pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, dryrun, progress_reporter
+        root, verbose, dryrun or False, progress_reporter
     )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
-
     encountered_errors = False
 
     def _run_workflow_async() -> None:
@@ -131,6 +135,26 @@ def index_cli(
 
     if cli:
         sys.exit(1 if encountered_errors else 0)
+
+
+def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
+    """Initialize the project at the given path."""
+    reporter.info(f"Initializing project at {path}")
+    root = Path(path)
+    if not root.exists():
+        root.mkdir(parents=True, exist_ok=True)
+
+    settings_yaml = root / "settings.yaml"
+    dotenv = root / ".env"
+    if settings_yaml.exists() or dotenv.exists():
+        msg = f"Project already initialized at {root}"
+        raise ValueError(msg)
+
+    with settings_yaml.open("w") as file:
+        file.write(INIT_YAML)
+
+    with dotenv.open("w") as file:
+        file.write(INIT_DOTENV)
 
 
 def _create_default_config(
