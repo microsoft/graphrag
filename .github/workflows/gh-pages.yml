@@ -4,6 +4,11 @@ on:
     branches:
       - main
 
+  # TODO: remove this section
+  pull_request:
+    branches:
+      - main
+
 permissions:
   contents: write
 
@@ -49,6 +54,8 @@ jobs:
       - name: Build docsite
         run: yarn build
         working-directory: docsite
+        env:
+          DOCSITE_BASE_URL: "graphrag"
 
       - name: List docsite files
         run: find docsite/_site
