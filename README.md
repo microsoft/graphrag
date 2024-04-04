@@ -1,6 +1,6 @@
 # GraphRAG
 
-👉 [Check out our docsite!](https://ashy-glacier-0caaba110.4.azurestaticapps.net)
+👉 [Read the docs](https://microsoft.github.io/graphrag)
 
 ## Overview
 
