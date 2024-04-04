@@ -1,1 +1,2 @@
-!_posts/_indexing/_verbs/*.md
+!_posts/_index/_verbs/*.md
+!_posts/_index/_workflows/*.md
