@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to GraphRAG</title>
+    <title>GraphRAG Indexing 🤖</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -154,7 +154,7 @@ p {
           <ul class="menu-list">
             <li>
               
-<a href="/graphrag/" class="is-active" aria-current="page">Welcome</a>
+<a href="/graphrag/">Welcome</a>
 
             </li>
 
@@ -171,7 +171,7 @@ p {
             <!-- Indexing Links -->
             <li>
                 
-<a href="/graphrag/posts/index/overview/">Indexing</a>
+<a href="/graphrag/posts/index/overview/" class="is-active" aria-current="page">Indexing</a>
 
                 <ul><li>
 <a href="/graphrag/posts/index/0-architecture/">Architecture</a>
@@ -302,40 +302,81 @@ p {
 
         <!-- Main Content -->
         <main>
-            <h1>Welcome to GraphRAG</h1>
-            <p>👉 <a href="https://github.com/microsoft/graphrag">GitHub Repository</a></p>
-<p align="center">
-<img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center">
-</p>
-<p align="center">
-Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
-</p>
-<p>GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
-approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.</p>
-<h2>Get Started 🚀</h2>
-<p>To start using GraphRAG, check out the <a href="posts/get_started"><em>Get Started</em></a> guide.
-For a deeper dive into the main sub-systems, please visit the docpages for the <a href="posts/index/overview">Indexer</a> and <a href="posts/query/overview">Query</a> packages.</p>
-<h2>GraphRAG vs Baseline RAG 🔍</h2>
-<p>Retrieval-Augmented Generation (RAG) is a technique to improve LLM outputs using real-world information. This technique is an important part of most LLM-based tools and the majority of RAG approaches use vector similarity as the search technique, which we call <em>Baseline RAG</em>. GraphRAG uses knowledge graphs to provide substantial improvements in question-and-answer performance when reasoning about complex information. RAG techniques have shown promise in helping LLMs to reason about <em>private datasets</em> - data that the LLM is not trained on and has never seen before, such as an enterprise’s proprietary research, business documents, or communications. <em>Baseline RAG</em> was created to help solve this problem, but we observe situations where baseline RAG performs very poorly. For example:</p>
+            <h1>GraphRAG Indexing 🤖</h1>
+            <p>The GraphRAG indexing package is a data pipeline and transformation suite that is designed to extract meaningful, structured data from unstructured text using LLMs.</p>
+<p>Indexing Pipelines are configurable. They are composed of workflows, standard and custom steps, prompt templates, and input/output adapters. Our standard pipeline is designed to:</p>
 <ul>
-<li>Baseline RAG struggles to connect the dots. This happens when answering a question requires traversing disparate pieces of information through their shared attributes in order to provide new synthesized insights.</li>
-<li>Baseline RAG performs poorly when being asked to holistically understand summarized semantic concepts over large data collections or even singular large documents.</li>
+<li>extract entities, relationships and claims from raw text</li>
+<li>perform community detection in entities</li>
+<li>generate community summaries and reports at multiple levels of granularity</li>
+<li>embed entities into a graph vector space</li>
+<li>embed text chunks into a textual vector space</li>
 </ul>
-<p>To address this, the tech community is working to develop methods that extend and enhance RAG. Microsoft Research’s new approach, GraphRAG, uses LLMs to create a knowledge graph based on an input corpus. This graph, along with community summaries and graph machine learning outputs, are used to augment prompts at query time. GraphRAG shows substantial improvement in answering the two classes of questions described above, demonstrating intelligence or mastery that outperforms other approaches previously applied to private datasets.</p>
-<h2>The GraphRAG Process 🤖</h2>
-<p>GraphRAG builds upon our prior <a href="https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart">research</a> and <a href="https://github.com/microsoft/graspologic">tooling</a> using graph machine learning. The basic steps of the GraphRAG process are as follows:</p>
-<h3>Index</h3>
+<p>The outputs of the pipeline can be stored in a variety of formats, including JSON and Parquet - or they can be handled manually via the Python API.</p>
+<h2>Getting Started</h2>
+<h3>Requirements</h3>
+<p>See the <a href="/graphrag/posts/developing#requirements">requirements</a> section in <a href="/graphrag/posts/get_started">Get Started</a> for details on setting up a development environment.</p>
+<p>The Indexing Engine can be used in either a default configuration mode or with a custom pipeline.
+To configure GraphRAG, see the <a href="/graphrag/posts/config/overview">configuration</a> documentation.
+After you have a config file you can run the pipeline using the CLI or the Python API.</p>
+<h2>Usage</h2>
+<h3>CLI</h3>
+
+<div style="position: relative">
+  <pre class="language-bash"><code id="code-54" class="language-bash"><span class="token comment"># Via Poetry</span>
+poetry run poe cli <span class="token parameter variable">--root</span> <span class="token operator">&lt;</span>data_root<span class="token operator">></span> <span class="token comment"># default config mode</span>
+poetry run poe cli <span class="token parameter variable">--config</span> your_pipeline.yml <span class="token comment"># custom config mode</span>
+
+<span class="token comment"># Via Node</span>
+<span class="token function">yarn</span> run:index <span class="token parameter variable">--root</span> <span class="token operator">&lt;</span>data_root<span class="token operator">></span> <span class="token comment"># default config mode</span>
+<span class="token function">yarn</span> run:index <span class="token parameter variable">--config</span> your_pipeline.yml <span class="token comment"># custom config mode</span>
+</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-54" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h3>Python API</h3>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-58" class="language-python"><span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>index <span class="token keyword">import</span> run_pipeline
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>index<span class="token punctuation">.</span>config <span class="token keyword">import</span> PipelineWorkflowReference
+
+workflows<span class="token punctuation">:</span> <span class="token builtin">list</span><span class="token punctuation">[</span>PipelineWorkflowReference<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span>
+    PipelineWorkflowReference<span class="token punctuation">(</span>
+        steps<span class="token operator">=</span><span class="token punctuation">[</span>
+            <span class="token punctuation">{</span>
+                <span class="token comment"># built-in verb</span>
+                <span class="token string">"verb"</span><span class="token punctuation">:</span> <span class="token string">"derive"</span><span class="token punctuation">,</span>  <span class="token comment"># https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/derive.py</span>
+                <span class="token string">"args"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                    <span class="token string">"column1"</span><span class="token punctuation">:</span> <span class="token string">"col1"</span><span class="token punctuation">,</span>  <span class="token comment"># from above</span>
+                    <span class="token string">"column2"</span><span class="token punctuation">:</span> <span class="token string">"col2"</span><span class="token punctuation">,</span>  <span class="token comment"># from above</span>
+                    <span class="token string">"to"</span><span class="token punctuation">:</span> <span class="token string">"col_multiplied"</span><span class="token punctuation">,</span>  <span class="token comment"># new column name</span>
+                    <span class="token string">"operator"</span><span class="token punctuation">:</span> <span class="token string">"*"</span><span class="token punctuation">,</span>  <span class="token comment"># multiply the two columns</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token comment"># Since we're trying to act on the default input, we don't need explicitly to specify an input</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">]</span>
+    <span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
+
+dataset <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token string">"col1"</span><span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token string">"col2"</span><span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token string">"col1"</span><span class="token punctuation">:</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token string">"col2"</span><span class="token punctuation">:</span> <span class="token number">10</span><span class="token punctuation">}</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+outputs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">async</span> <span class="token keyword">for</span> output <span class="token keyword">in</span> <span class="token keyword">await</span> run_pipeline<span class="token punctuation">(</span>dataset<span class="token operator">=</span>dataset<span class="token punctuation">,</span> workflows<span class="token operator">=</span>workflows<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    outputs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>output
+pipeline_result <span class="token operator">=</span> outputs<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>pipeline_result<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-58" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h2>Further Reading</h2>
 <ul>
-<li>Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.</li>
-<li>Extract all entities, relationships, and key claims from the TextUnits using an LLM.</li>
-<li>Perform a hierarchical clustering of the graph using the <a href="https://arxiv.org/pdf/1810.08473.pdf">Leiden technique</a>. To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.</li>
-<li>Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.</li>
-</ul>
-<h3>Query</h3>
-<p>At query time, these structures are used to provide materials for the LLM context window when answering a question. The primary query modes are:</p>
-<ul>
-<li><a href="posts/query/0-global_search"><em>Global Search</em></a> for reasoning about holistic questions about the corpus by leveraging the community summaries.</li>
-<li><a href="posts/query/1-local_search"><em>Local Search</em></a> for reasoning about specific entities by fanning-out to their neighbors and associated concepts.</li>
+<li>To start developing within the <em>GraphRAG</em> project, see <a href="/graphrag/posts/developing/">getting started</a></li>
+<li>To understand the underlying concepts and execution model of the indexing library, see <a href="/graphrag/posts/index/0-architecture/">the architecture documentation</a></li>
+<li>To get running with a series of examples, see <a href="https://github.com/microsoft/graphrag/blob/main/examples/README.md">the examples documentation</a></li>
+<li>To read more about configuring the indexing engine, see <a href="/graphrag/posts/config/overview">the configuration documentation</a></li>
 </ul>
 
         </main>

@@ -1,0 +1,505 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Default Configuration Mode (using JSON/YAML)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+footer{
+    width: 100%;
+	height: 32px;
+	font-size: 12px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 18px;
+	align-items: center;
+	color: #5d5d5d;
+	background: #e9eaeb;
+	border-top: 1px solid #c4c5c6;
+}
+
+#cookiesManager{
+    cursor: pointer;
+    color: #485fc7;
+}
+
+.page-content {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: lightgrey;
+    height: 2%;
+    padding: 10px;
+}
+
+nav {
+    padding: 1em;
+    min-width: 200px;
+}
+
+main {
+    flex: 1;
+    padding: 0 5em 0 5em;
+}
+
+.logotitle {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.number {
+    all: unset;
+}
+
+.tag.token {
+    all: unset;
+}
+
+main ul {
+    list-style-type: disc;
+    padding-left: 30px;
+    margin-top: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-top: 10px; 
+    font-weight: 500;
+}
+p {
+    margin-top: 10px;
+}
+</style>
+    <script type="module" async="">import mermaid from "https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs";document.addEventListener('DOMContentLoaded', mermaid.initialize({"loadOnSave":true}));</script>
+    <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed..."))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+
+    
+    <script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js" type="text/javascript"></script>
+    <script>
+        function onConsentChanged(categoryPreferences) {
+            console.log("onConsentChanged", categoryPreferences);        
+        }
+
+        var siteConsent
+
+        function initialize(){
+          var currentYear = new Date().getFullYear()
+          document.getElementById("copyright").innerHTML = `©️ ${currentYear} Microsoft`;
+          window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
+              if (!err) {
+                  siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
+              } else {
+                  console.log("Error initializing WcpConsent: "+ err);
+              }
+          }, onConsentChanged, WcpConsent.themes.light);
+        }
+
+        addEventListener("DOMContentLoaded", initialize)
+
+        function manageConsent() {
+        if(siteConsent.isConsentRequired){
+            siteConsent.manageConsent();
+        }
+    }
+    </script>
+    
+  </head>
+  <body>
+    <header>
+        <div id="cookie-banner"></div>
+        <a href="/graphrag/"><span class="logotitle">GraphRAG</span></a>
+    </header>
+    <div class="page-content">
+        <!-- Sidebar -->
+        <aside class="menu">
+          <ul class="menu-list">
+            <li>
+              
+<a href="/graphrag/">Welcome</a>
+
+            </li>
+
+            <!-- Get Started Links -->
+            <li>
+              
+<a href="/graphrag/posts/get_started/">Get Started</a>
+
+              
+<a href="/graphrag/posts/developing/">Developing</a>
+
+            </li>
+
+            <!-- Indexing Links -->
+            <li>
+                
+<a href="/graphrag/posts/index/overview/">Indexing</a>
+
+                <ul><li>
+<a href="/graphrag/posts/index/0-architecture/">Architecture</a>
+</li><li>
+<a href="/graphrag/posts/index/1-default_dataflow/">Dataflow</a>
+</li><li>
+<a href="/graphrag/posts/index/2-cli/">CLI</a>
+</li><li>
+                    
+<a href="/graphrag/posts/index/workflows/overview/">Workflows</a>
+
+                    <ul hidden=""><li>
+<a href="/graphrag/posts/index/workflows/create_base_documents/">create_base_documents</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_communities/">create_final_communities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_community_reports/">create_final_community_reports</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_relationships/">create_final_relationships</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_summarized_entities/">create_summarized_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_entity_graph/">create_base_entity_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_text_units/">create_base_text_units</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_covariates/">create_final_covariates</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_documents/">create_final_documents</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_entities/">create_final_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_nodes/">create_final_nodes</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_text_units/">create_final_text_units</a>
+</li></ul>
+                  </li>
+
+                  <li>
+                    
+<a href="/graphrag/posts/index/verbs/overview/">Verbs</a>
+
+                    <ul hidden=""><li>
+<a href="/graphrag/posts/index/verbs/genid/">genid</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/spread_json/">spread_json</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/unzip/">unzip</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/zip/">zip</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/aggregate/">aggregate</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/concat/">concat</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/merge/">merge</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/text_replace/">text_replace</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/text_split/">text_split</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/chunk/">chunk</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/create_graph/">create_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/unpack_graph/">unpack_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/layout_graph/">layout_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/merge_graphs/">merge_graphs</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/cluster_graph/">cluster_graph</a>
+</li></ul>
+                  </li>
+
+                  <li>
+                    
+<a href="/graphrag/posts/config/overview/">Configuration</a>
+
+                    <ul>
+                      <li>
+<a href="/graphrag/posts/config/env_vars">Using Env Vars</a>
+</li>
+                      <li>
+<a href="/graphrag/posts/config/json_yaml">Using JSON or YAML</a>
+</li>
+                      <li>
+<a href="/graphrag/posts/config/custom">Fully Custom</a>
+</li>
+                    </ul>
+                  </li>
+                </ul>
+            </li>
+            
+
+            <!-- Query Links -->
+            <li>
+              
+<a href="/graphrag/posts/query/overview/">Query</a>
+
+              <ul><li>
+<a href="/graphrag/posts/query/0-global_search/">Global Search</a>
+</li><li>
+<a href="/graphrag/posts/query/1-local_search/">Local Search</a>
+</li><li>
+<a href="/graphrag/posts/query/2-question_generation/">Question Generation</a>
+</li><li>
+<a href="/graphrag/posts/query/3-cli/">CLI</a>
+</li><li>
+                  
+<a href="/graphrag/posts/query/notebooks/overview/">Notebooks</a>
+
+                  <ul>
+                    <li>
+<a href="/graphrag/posts/query/notebooks/global_search_nb">Global Search</a>
+</li>
+                    <li>
+<a href="/graphrag/posts/query/notebooks/local_search_nb">Local Search</a>
+</li>
+                  </ul>
+                </li>
+            </ul>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <h1>Default Configuration Mode (using JSON/YAML)</h1>
+            <p>The default configuration mode may be configured by using a <code>config.json</code> or <code>config.yml</code> file in the data project root. If a <code>.env</code> file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using <code>${ENV_VAR}</code> syntax.</p>
+<p>For example:</p>
+<pre><code># .env
+API_KEY=some_api_key
+
+# config.json
+{
+    &quot;llm&quot;: {
+        &quot;api_key&quot;: &quot;${API_KEY}&quot;
+    }
+}
+</code></pre>
+<h1>Config Sections</h1>
+<h2>input</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>type</code> <strong>text|csv</strong> - The type of input data to load. Either <code>text</code> or <code>csv</code>. Default is <code>csv</code></li>
+<li><code>file_encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
+<li><code>file_pattern</code> <strong>str</strong> - A glob pattern to match input files. Default is <code>**/*.csv</code> if in csv mode and <code>**/*.txt</code> if in text mode.</li>
+<li><code>source_column</code> <strong>str</strong> - (CSV Mode Only) The source column name.</li>
+<li><code>timestamp_column</code> <strong>str</strong> - (CSV Mode Only) The timestamp column name.</li>
+<li><code>timestamp_format</code> <strong>str</strong> - (CSV Mode Only) The source format.</li>
+<li><code>text_column</code> <strong>str</strong> - (CSV Mode Only) The text column name.</li>
+<li><code>title_column</code> <strong>str</strong> - (CSV Mode Only) The title column name.</li>
+<li><code>document_attribute_columns</code> <strong>list[str]</strong> - (CSV Mode Only) The additional document attributes to include.</li>
+<li><code>storage_type</code> <strong>file|blob</strong> - The input storage type to use. Default=<code>file</code></li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to read input from, relative to the root.</li>
+</ul>
+<h2>llm</h2>
+<p>This is the base LLM configuration section. Other steps may override this configuration with their own LLM configuration.</p>
+<h3>Fields</h3>
+<ul>
+<li><code>api_key</code> <strong>str</strong> - The OpenAI API key to use.</li>
+<li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding</strong> - The type of LLM to use.</li>
+<li><code>model</code> <strong>str</strong> - The model name.</li>
+<li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens.</li>
+<li><code>request_timeout</code> <strong>float</strong> - The per-request timeout.</li>
+<li><code>api_base</code> <strong>str</strong> - The API base url to use.</li>
+<li><code>api_version</code> <strong>str</strong> - The API version</li>
+<li><code>organization</code> <strong>str</strong> - The client organization.</li>
+<li><code>proxy</code> <strong>str</strong> - The proxy URL to use.</li>
+<li><code>deployment_name</code> <strong>str</strong> - The deployment name to use (Azure).</li>
+<li><code>model_supports_json</code> <strong>bool</strong> - Whether the model supports JSON-mode output.</li>
+<li><code>tokens_per_minute</code> <strong>int</strong> - Set a leaky-bucket throttle on tokens-per-minute.</li>
+<li><code>requests_per_minute</code> <strong>int</strong> - Set a leaky-bucket throttle on requests-per-minute.</li>
+<li><code>max_retries</code> <strong>int</strong> - The maximum number of retries to use.</li>
+<li><code>max_retry_wait</code> <strong>float</strong> - The maximum backoff time.</li>
+<li><code>sleep_on_rate_limit_recommendation</code> <strong>bool</strong> - Whether to adhere to sleep recommendations (Azure).</li>
+<li><code>concurrent_requests</code> <strong>int</strong> The number of open requests to allow at once.</li>
+</ul>
+<h2>parallelization</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>stagger</code> <strong>float</strong> - The threading stagger value.</li>
+<li><code>num_threads</code> <strong>int</strong> - The maximum number of work threads.</li>
+</ul>
+<h2>async_mode</h2>
+<p><strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or `threaded.</p>
+<h2>embeddings</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>llm</code> (see LLM top-level config)</li>
+<li><code>parallelization</code> (see Parallelization top-level config)</li>
+<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
+<li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch #-tokens.</li>
+<li><code>target</code> <strong>required|all</strong> - Determines which set of embeddings to emit.</li>
+<li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the text-embedding strategy.</li>
+</ul>
+<h2>chunks</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>size</code> <strong>int</strong> - The max chunk size in tokens.</li>
+<li><code>overlap</code> <strong>int</strong> - The chunk overlap in tokens.</li>
+<li><code>group_by_columns</code> <strong>list[str]</strong> - group documents by fields before chunking.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the chunking strategy.</li>
+</ul>
+<h2>cache</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>type</code> <strong>file|memory|none|blob</strong> - The cache type to use. Default=<code>file</code></li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write cache to, relative to the root.</li>
+</ul>
+<h2>storage</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>type</code> <strong>file|memory|blob</strong> - The storage type to use. Default=<code>file</code></li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write reports to, relative to the root.</li>
+</ul>
+<h2>reporting</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>type</code> <strong>file|console|blob</strong> - The reporting type to use. Default=<code>file</code></li>
+<li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
+<li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
+<li><code>base_dir</code> <strong>str</strong> - The base directory to write reports to, relative to the root.</li>
+</ul>
+<h2>entity_extraction</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>llm</code> (see LLM top-level config)</li>
+<li><code>parallelization</code> (see Parallelization top-level config)</li>
+<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>entity_types</code> <strong>list[str]</strong> - The entity types to identify.</li>
+<li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the entity extraction strategy.</li>
+</ul>
+<h2>summarize_descriptions</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>llm</code> (see LLM top-level config)</li>
+<li><code>parallelization</code> (see Parallelization top-level config)</li>
+<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per summarization.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the summarize description strategy.</li>
+</ul>
+<h2>claim_extraction</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>llm</code> (see LLM top-level config)</li>
+<li><code>parallelization</code> (see Parallelization top-level config)</li>
+<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>description</code> <strong>str</strong> - Describes the types of claims we want to extract.</li>
+<li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the claim extraction strategy.</li>
+</ul>
+<h2>community_reports</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>llm</code> (see LLM top-level config)</li>
+<li><code>parallelization</code> (see Parallelization top-level config)</li>
+<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per report.</li>
+<li><code>max_input_length</code> <strong>int</strong> - The maximum number of input tokens to use when generating reports.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the community reports strategy.</li>
+</ul>
+<h2>cluster_graph</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>max_cluster_size</code> <strong>int</strong> - The maximum cluster size to emit.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the cluster_graph strategy.</li>
+</ul>
+<h2>embed_graph</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>is_enabled</code> <strong>bool</strong> - Whether to enable graph embeddings.</li>
+<li><code>num_walks</code> <strong>int</strong> - The node2vec number of walks.</li>
+<li><code>walk_length</code>  <strong>int</strong> - The node2vec walk length.</li>
+<li><code>window_size</code> <strong>int</strong> - The node2vec window size.</li>
+<li><code>iterations</code> <strong>int</strong> - The node2vec number of iterations.</li>
+<li><code>random_seed</code> <strong>int</strong> - The node2vec random seed.</li>
+<li><code>strategy</code> <strong>dict</strong> - Fully override the embed graph strategy.</li>
+</ul>
+<h2>umap</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>enabled</code> <strong>bool</strong> - Whether to enable UMAP layouts.</li>
+</ul>
+<h2>snapshots</h2>
+<h3>Fields</h3>
+<ul>
+<li><code>graphml</code> <strong>bool</strong> - Emit graphml snapshots.</li>
+<li><code>raw_entities</code> <strong>bool</strong> - Emit raw entity snapshots.</li>
+<li><code>top_level_nodes</code> <strong>bool</strong> - Emit top-level-node snapshots.</li>
+</ul>
+<h2>encoding_model</h2>
+<p><strong>str</strong> - The text encoding model to use. Default is <code>cl100k_base</code>.</p>
+<h2>skip_workflows</h2>
+<p><strong>list[str]</strong> - Which workflow names to skip.</p>
+
+        </main>
+    </div>
+    <footer>
+      <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy</a>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy</a>
+      |
+      <span id="cookiesManager" onClick="manageConsent();">Cookies</span>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>
+      |
+      <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+      |
+      <a href="https://www.microsoft.com" id="copyright"></a>
+      |
+      <a href="https://github.com/microsoft/graphrag">GitHub</a>
+    </footer>    
+  </body>
+</html>

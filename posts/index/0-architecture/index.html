@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to GraphRAG</title>
+    <title>Indexing Architecture</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -154,7 +154,7 @@ p {
           <ul class="menu-list">
             <li>
               
-<a href="/graphrag/" class="is-active" aria-current="page">Welcome</a>
+<a href="/graphrag/">Welcome</a>
 
             </li>
 
@@ -174,7 +174,7 @@ p {
 <a href="/graphrag/posts/index/overview/">Indexing</a>
 
                 <ul><li>
-<a href="/graphrag/posts/index/0-architecture/">Architecture</a>
+<a href="/graphrag/posts/index/0-architecture/" class="is-active" aria-current="page">Architecture</a>
 </li><li>
 <a href="/graphrag/posts/index/1-default_dataflow/">Dataflow</a>
 </li><li>
@@ -302,41 +302,37 @@ p {
 
         <!-- Main Content -->
         <main>
-            <h1>Welcome to GraphRAG</h1>
-            <p>👉 <a href="https://github.com/microsoft/graphrag">GitHub Repository</a></p>
-<p align="center">
-<img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center">
-</p>
-<p align="center">
-Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
-</p>
-<p>GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
-approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.</p>
-<h2>Get Started 🚀</h2>
-<p>To start using GraphRAG, check out the <a href="posts/get_started"><em>Get Started</em></a> guide.
-For a deeper dive into the main sub-systems, please visit the docpages for the <a href="posts/index/overview">Indexer</a> and <a href="posts/query/overview">Query</a> packages.</p>
-<h2>GraphRAG vs Baseline RAG 🔍</h2>
-<p>Retrieval-Augmented Generation (RAG) is a technique to improve LLM outputs using real-world information. This technique is an important part of most LLM-based tools and the majority of RAG approaches use vector similarity as the search technique, which we call <em>Baseline RAG</em>. GraphRAG uses knowledge graphs to provide substantial improvements in question-and-answer performance when reasoning about complex information. RAG techniques have shown promise in helping LLMs to reason about <em>private datasets</em> - data that the LLM is not trained on and has never seen before, such as an enterprise’s proprietary research, business documents, or communications. <em>Baseline RAG</em> was created to help solve this problem, but we observe situations where baseline RAG performs very poorly. For example:</p>
-<ul>
-<li>Baseline RAG struggles to connect the dots. This happens when answering a question requires traversing disparate pieces of information through their shared attributes in order to provide new synthesized insights.</li>
-<li>Baseline RAG performs poorly when being asked to holistically understand summarized semantic concepts over large data collections or even singular large documents.</li>
-</ul>
-<p>To address this, the tech community is working to develop methods that extend and enhance RAG. Microsoft Research’s new approach, GraphRAG, uses LLMs to create a knowledge graph based on an input corpus. This graph, along with community summaries and graph machine learning outputs, are used to augment prompts at query time. GraphRAG shows substantial improvement in answering the two classes of questions described above, demonstrating intelligence or mastery that outperforms other approaches previously applied to private datasets.</p>
-<h2>The GraphRAG Process 🤖</h2>
-<p>GraphRAG builds upon our prior <a href="https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart">research</a> and <a href="https://github.com/microsoft/graspologic">tooling</a> using graph machine learning. The basic steps of the GraphRAG process are as follows:</p>
-<h3>Index</h3>
-<ul>
-<li>Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.</li>
-<li>Extract all entities, relationships, and key claims from the TextUnits using an LLM.</li>
-<li>Perform a hierarchical clustering of the graph using the <a href="https://arxiv.org/pdf/1810.08473.pdf">Leiden technique</a>. To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.</li>
-<li>Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.</li>
-</ul>
-<h3>Query</h3>
-<p>At query time, these structures are used to provide materials for the LLM context window when answering a question. The primary query modes are:</p>
-<ul>
-<li><a href="posts/query/0-global_search"><em>Global Search</em></a> for reasoning about holistic questions about the corpus by leveraging the community summaries.</li>
-<li><a href="posts/query/1-local_search"><em>Local Search</em></a> for reasoning about specific entities by fanning-out to their neighbors and associated concepts.</li>
-</ul>
+            <h1>Indexing Architecture</h1>
+            <h2>Key Concepts</h2>
+<h3>Knowledge Model</h3>
+<p>In order to support the GraphRAG system, the outputs of the indexing engine (in the Default Configuration Mode) are aligned to a knowledge model we call the <em>GraphRAG Knowledge Model</em>.
+This model is designed to be an abstraction over the underlying data storage technology, and to provide a common interface for the GraphRAG system to interact with.
+In normal use-cases the outputs of the GraphRAG Indexer would be loaded into a database system, and the GraphRAG's Query Engine would interact with the database using the knowledge model data-store types.</p>
+<h3>DataShaper Workflows</h3>
+<p>GraphRAG's Indexing Pipeline is built on top of our open-source library, <a href="https://github.com/microsoft/datashaper">DataShaper</a>.
+DataShaper is a data processing library that allows users to declaratively express data pipelines, schemas, and related assets using well-defined schemas.
+DataShaper has implementations in JavaScript and Python, and is designed to be extensible to other languages.</p>
+<p>One of the core resource types within DataShaper is a <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/WorkflowSchema.ts">Workflow</a>.
+Workflows are expressed as sequences of steps, which we call <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/verbs.ts">verbs</a>.
+Each step has a verb name and a configuration object.
+In DataShaper, these verbs model relational concepts such as SELECT, DROP, JOIN, etc.. Each verb transforms an input data table, and that table is passed down the pipeline.</p>
+<pre class="mermaid">---&#10;title: Sample Workflow&#10;---&#10;flowchart LR&#10;    input[Input Table] --&gt; select[SELECT] --&gt; join[JOIN] --&gt; binarize[BINARIZE] --&gt; output[Output Table]&#10;</pre>
+<h3>LLM-based Workflow Steps</h3>
+<p>GraphRAG's Indexing Pipeline implements a handful of custom verbs on top of the standard, relational verbs that our DataShaper library provides. These verbs give us the ability to augment text documents with rich, structured data using the power of LLMs such as GPT-4. We utilize these verbs in our standard workflow to extract entities, relationships, claims, community structures, and community reports and summaries. This behavior is customizable and can be extended to support many kinds of AI-based data enrichment and extraction tasks.</p>
+<h3>Workflow Graphs</h3>
+<p>Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.
+In the GraphRAG Indexing Pipeline, each workflow may define dependencies on other workflows, effectively forming a directed acyclic graph (DAG) of workflows, which is then used to schedule processing.</p>
+<pre class="mermaid">---&#10;title: Sample Workflow DAG&#10;---&#10;stateDiagram-v2&#10;    [*] --&gt; Prepare&#10;    Prepare --&gt; Chunk&#10;    Chunk --&gt; ExtractGraph&#10;    Chunk --&gt; EmbedDocuments&#10;    ExtractGraph --&gt; GenerateReports&#10;    ExtractGraph --&gt; EmbedGraph&#10;    EntityResolution --&gt; EmbedGraph&#10;    EntityResolution --&gt; GenerateReports&#10;    ExtractGraph --&gt; EntityResolution&#10;</pre>
+<h3>Dataframe Message Format</h3>
+<p>The primary unit of communication between workflows, and between workflow steps is an instance of <code>pandas.DataFrame</code>.
+Although side-effects are possible, our goal is to be <em>data-centric</em> and <em>table-centric</em> in our approach to data processing.
+This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
+Our underlying dataframe technology may change over time, but our primary goal is to support the DataShaper workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
+<h3>LLM Caching</h3>
+<p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors errors due to network latency, throttling, etc..
+Because of these potential error cases, we've added a cache layer around LLM interactions.
+When completion requests are made using the same input set (prompt and tuning parameters), we return a cached result if one exists.
+This allows our indexer to be more resilient to network issues, to act idempotently, and to provide a more efficient end-user experience.</p>
 
         </main>
     </div>

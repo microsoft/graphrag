@@ -1,0 +1,520 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Search Notebook</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+footer{
+    width: 100%;
+	height: 32px;
+	font-size: 12px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 18px;
+	align-items: center;
+	color: #5d5d5d;
+	background: #e9eaeb;
+	border-top: 1px solid #c4c5c6;
+}
+
+#cookiesManager{
+    cursor: pointer;
+    color: #485fc7;
+}
+
+.page-content {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    overflow: scroll;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: lightgrey;
+    height: 2%;
+    padding: 10px;
+}
+
+nav {
+    padding: 1em;
+    min-width: 200px;
+}
+
+main {
+    flex: 1;
+    padding: 0 5em 0 5em;
+}
+
+.logotitle {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.number {
+    all: unset;
+}
+
+.tag.token {
+    all: unset;
+}
+
+main ul {
+    list-style-type: disc;
+    padding-left: 30px;
+    margin-top: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-top: 10px; 
+    font-weight: 500;
+}
+p {
+    margin-top: 10px;
+}
+</style>
+    <script type="module" async="">import mermaid from "https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs";document.addEventListener('DOMContentLoaded', mermaid.initialize({"loadOnSave":true}));</script>
+    <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed..."))});</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+
+    
+    <script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js" type="text/javascript"></script>
+    <script>
+        function onConsentChanged(categoryPreferences) {
+            console.log("onConsentChanged", categoryPreferences);        
+        }
+
+        var siteConsent
+
+        function initialize(){
+          var currentYear = new Date().getFullYear()
+          document.getElementById("copyright").innerHTML = `©️ ${currentYear} Microsoft`;
+          window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
+              if (!err) {
+                  siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
+              } else {
+                  console.log("Error initializing WcpConsent: "+ err);
+              }
+          }, onConsentChanged, WcpConsent.themes.light);
+        }
+
+        addEventListener("DOMContentLoaded", initialize)
+
+        function manageConsent() {
+        if(siteConsent.isConsentRequired){
+            siteConsent.manageConsent();
+        }
+    }
+    </script>
+    
+  </head>
+  <body>
+    <header>
+        <div id="cookie-banner"></div>
+        <a href="/graphrag/"><span class="logotitle">GraphRAG</span></a>
+    </header>
+    <div class="page-content">
+        <!-- Sidebar -->
+        <aside class="menu">
+          <ul class="menu-list">
+            <li>
+              
+<a href="/graphrag/">Welcome</a>
+
+            </li>
+
+            <!-- Get Started Links -->
+            <li>
+              
+<a href="/graphrag/posts/get_started/">Get Started</a>
+
+              
+<a href="/graphrag/posts/developing/">Developing</a>
+
+            </li>
+
+            <!-- Indexing Links -->
+            <li>
+                
+<a href="/graphrag/posts/index/overview/">Indexing</a>
+
+                <ul><li>
+<a href="/graphrag/posts/index/0-architecture/">Architecture</a>
+</li><li>
+<a href="/graphrag/posts/index/1-default_dataflow/">Dataflow</a>
+</li><li>
+<a href="/graphrag/posts/index/2-cli/">CLI</a>
+</li><li>
+                    
+<a href="/graphrag/posts/index/workflows/overview/">Workflows</a>
+
+                    <ul hidden=""><li>
+<a href="/graphrag/posts/index/workflows/create_base_documents/">create_base_documents</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_communities/">create_final_communities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_community_reports/">create_final_community_reports</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_relationships/">create_final_relationships</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_summarized_entities/">create_summarized_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_entity_graph/">create_base_entity_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_base_text_units/">create_base_text_units</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_covariates/">create_final_covariates</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_documents/">create_final_documents</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_entities/">create_final_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_nodes/">create_final_nodes</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_text_units/">create_final_text_units</a>
+</li></ul>
+                  </li>
+
+                  <li>
+                    
+<a href="/graphrag/posts/index/verbs/overview/">Verbs</a>
+
+                    <ul hidden=""><li>
+<a href="/graphrag/posts/index/verbs/genid/">genid</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/spread_json/">spread_json</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/unzip/">unzip</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/zip/">zip</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/aggregate/">aggregate</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/concat/">concat</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/merge/">merge</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/text_replace/">text_replace</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/text_split/">text_split</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/chunk/">chunk</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/create_graph/">create_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/unpack_graph/">unpack_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/layout_graph/">layout_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/merge_graphs/">merge_graphs</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/cluster_graph/">cluster_graph</a>
+</li></ul>
+                  </li>
+
+                  <li>
+                    
+<a href="/graphrag/posts/config/overview/">Configuration</a>
+
+                    <ul>
+                      <li>
+<a href="/graphrag/posts/config/env_vars">Using Env Vars</a>
+</li>
+                      <li>
+<a href="/graphrag/posts/config/json_yaml">Using JSON or YAML</a>
+</li>
+                      <li>
+<a href="/graphrag/posts/config/custom">Fully Custom</a>
+</li>
+                    </ul>
+                  </li>
+                </ul>
+            </li>
+            
+
+            <!-- Query Links -->
+            <li>
+              
+<a href="/graphrag/posts/query/overview/">Query</a>
+
+              <ul><li>
+<a href="/graphrag/posts/query/0-global_search/">Global Search</a>
+</li><li>
+<a href="/graphrag/posts/query/1-local_search/">Local Search</a>
+</li><li>
+<a href="/graphrag/posts/query/2-question_generation/">Question Generation</a>
+</li><li>
+<a href="/graphrag/posts/query/3-cli/">CLI</a>
+</li><li>
+                  
+<a href="/graphrag/posts/query/notebooks/overview/">Notebooks</a>
+
+                  <ul>
+                    <li>
+<a href="/graphrag/posts/query/notebooks/global_search_nb">Global Search</a>
+</li>
+                    <li>
+<a href="/graphrag/posts/query/notebooks/local_search_nb">Local Search</a>
+</li>
+                  </ul>
+                </li>
+            </ul>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <h1>Global Search Notebook</h1>
+            
+<div style="position: relative">
+  <pre class="language-python"><code id="code-0" class="language-python"><span class="token triple-quoted-string string">"""
+Copyright (c) Microsoft Corporation. All rights reserved.
+"""</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-0" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-1" class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
+<span class="token keyword">import</span> tiktoken
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>llm<span class="token punctuation">.</span>oai<span class="token punctuation">.</span>chat_openai <span class="token keyword">import</span> ChatOpenAI
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>llm<span class="token punctuation">.</span>oai<span class="token punctuation">.</span>typing <span class="token keyword">import</span> OpenaiApiType
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span><span class="token builtin">input</span><span class="token punctuation">.</span>loaders<span class="token punctuation">.</span>dfs <span class="token keyword">import</span> read_community_reports
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>structured_search<span class="token punctuation">.</span>global_search<span class="token punctuation">.</span>search <span class="token keyword">import</span> GlobalSearch
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>structured_search<span class="token punctuation">.</span>global_search<span class="token punctuation">.</span>community_context <span class="token keyword">import</span> GlobalCommunityContext
+
+<span class="token keyword">print</span><span class="token punctuation">(</span>os<span class="token punctuation">.</span>getcwd<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-1" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h2>Global Search example</h2>
+<p>Global search method generates answers by searching over all AI-generated community reports in a map-reduce fashion. This is a resource-intensive method, but often gives good responses for questions that require an understanding of the dataset as a whole (e.g. What are the most significant values of the herbs mentioned in this notebook?).</p>
+<h3>LLM setup</h3>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-11" class="language-python">
+api_key <span class="token operator">=</span> <span class="token string">"&lt;api_key>"</span>
+api_version <span class="token operator">=</span> <span class="token string">"api_version"</span>
+llm_model <span class="token operator">=</span> <span class="token string">"model or deployment id"</span>
+
+llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>
+    api_key<span class="token operator">=</span>api_key<span class="token punctuation">,</span>
+    model<span class="token operator">=</span>llm_model<span class="token punctuation">,</span>
+    api_type<span class="token operator">=</span>OpenaiApiType<span class="token punctuation">.</span>OpenAI<span class="token punctuation">,</span> <span class="token comment"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
+    api_version<span class="token operator">=</span>api_version<span class="token punctuation">,</span>
+    max_retries<span class="token operator">=</span><span class="token number">20</span>
+<span class="token punctuation">)</span>
+
+token_encoder <span class="token operator">=</span> tiktoken<span class="token punctuation">.</span>get_encoding<span class="token punctuation">(</span><span class="token string">"cl100k_base"</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-11" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h3>Load community reports as context for global search</h3>
+<ul>
+<li>Load all community reports from <strong>create_final_community_reports</strong> table from the ire-indexing engine.</li>
+</ul>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-22" class="language-python"><span class="token comment"># parquet files generated from indexing pipeline</span>
+INPUT_DIR <span class="token operator">=</span> <span class="token string">"./data"</span>
+COMMUNITY_REPORT_TABLE <span class="token operator">=</span> <span class="token string">"create_final_community_reports"</span>
+ENTITY_TABLE <span class="token operator">=</span> <span class="token string">"create_final_nodes"</span>
+
+<span class="token comment"># community level in the Leiden community hierarchy from which we will load the community reports</span>
+<span class="token comment"># higher value means we use reports on smaller communities (and thus will have more reports to query aga</span>
+COMMUNITY_LEVEL <span class="token operator">=</span> <span class="token number">2</span>
+</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-22" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-23" class="language-python">
+entity_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>ENTITY_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token punctuation">(</span>entity_df<span class="token punctuation">.</span><span class="token builtin">type</span><span class="token operator">==</span><span class="token string">"entity"</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token punctuation">(</span>entity_df<span class="token punctuation">.</span>level<span class="token operator">&lt;=</span><span class="token string">"level_{COMMUNITY_LEVEL}"</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>fillna<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
+
+entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">.</span>groupby<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"title"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">.</span>agg<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">"community"</span><span class="token punctuation">:</span> <span class="token string">"max"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span>resetindex<span class="token punctuation">(</span><span class="token punctuation">)</span>
+entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">)</span>
+filtered_community_df <span class="token operator">=</span> entity_df<span class="token punctuation">.</span>rename<span class="token punctuation">(</span>columns<span class="token operator">=</span><span class="token punctuation">{</span><span class="token string">"community"</span><span class="token punctuation">:</span> <span class="token string">"community_id"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token string">"community_id"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>drop_duplicates<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+report_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_REPORT_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+report_df <span class="token operator">=</span> report_df<span class="token punctuation">[</span>report_df<span class="token punctuation">.</span>level <span class="token operator">&lt;=</span> <span class="token string-interpolation"><span class="token string">f"level_</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_LEVEL<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">]</span>
+
+report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span> <span class="token operator">=</span> report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
+
+report_df <span class="token operator">=</span> report_df<span class="token punctuation">.</span>merge<span class="token punctuation">(</span>filtered_community_df<span class="token punctuation">,</span> on<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span> how<span class="token operator">=</span><span class="token string">"inner"</span><span class="token punctuation">)</span>
+
+reports <span class="token operator">=</span> read_community_reports<span class="token punctuation">(</span>
+    df<span class="token operator">=</span>report_df<span class="token punctuation">,</span>
+    id_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
+    short_id_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
+    community_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
+    title_col<span class="token operator">=</span><span class="token string">"title"</span><span class="token punctuation">,</span>
+    summary_col<span class="token operator">=</span><span class="token string">"summary"</span><span class="token punctuation">,</span>
+    content_col<span class="token operator">=</span><span class="token string">"full_content"</span><span class="token punctuation">,</span>
+    rank_col<span class="token operator">=</span><span class="token string">"rank"</span><span class="token punctuation">,</span>
+    summary_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+    content_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+<span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'Report records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>report_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+report_df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-23" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h4>Build global context based on community reports</h4>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-27" class="language-python">context_builder <span class="token operator">=</span> GlobalCommunityContext<span class="token punctuation">(</span>
+    community_reports<span class="token operator">=</span>reports<span class="token punctuation">,</span>
+    token_encoder<span class="token operator">=</span>token_encoder
+<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-27" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h4>Perform global search</h4>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-31" class="language-python">context_builder_params <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"use_community_summary"</span><span class="token punctuation">:</span> <span class="token boolean">False</span><span class="token punctuation">,</span> <span class="token comment"># False means using full community reports. True means using community short summaries.</span>
+    <span class="token string">"shuffle_data"</span><span class="token punctuation">:</span> <span class="token boolean">True</span><span class="token punctuation">,</span>
+    <span class="token string">"include_community_rank"</span><span class="token punctuation">:</span> <span class="token boolean">True</span><span class="token punctuation">,</span>
+    <span class="token string">"min_community_rank"</span><span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token string">"max_tokens"</span><span class="token punctuation">:</span> <span class="token number">16000</span><span class="token punctuation">,</span> <span class="token comment"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
+    <span class="token string">"context_name"</span><span class="token punctuation">:</span> <span class="token string">"Reports"</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+
+map_llm_params <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"max_tokens"</span><span class="token punctuation">:</span> <span class="token number">500</span><span class="token punctuation">,</span>
+    <span class="token string">"temperature"</span><span class="token punctuation">:</span> <span class="token number">0.0</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+
+reduce_llm_params <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"max_tokens"</span><span class="token punctuation">:</span> <span class="token number">2000</span><span class="token punctuation">,</span> <span class="token comment"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500)</span>
+    <span class="token string">"temperature"</span><span class="token punctuation">:</span> <span class="token number">0.0</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-31" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-32" class="language-python">search_engine <span class="token operator">=</span> GlobalSearch<span class="token punctuation">(</span>
+    llm<span class="token operator">=</span>llm<span class="token punctuation">,</span>
+    context_builder<span class="token operator">=</span>context_builder<span class="token punctuation">,</span>
+    token_encoder<span class="token operator">=</span>token_encoder<span class="token punctuation">,</span>
+    max_data_tokens <span class="token operator">=</span> <span class="token number">16000</span><span class="token punctuation">,</span> <span class="token comment"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
+    map_llm_params<span class="token operator">=</span>map_llm_params<span class="token punctuation">,</span>
+    reduce_llm_params<span class="token operator">=</span>reduce_llm_params<span class="token punctuation">,</span>
+    context_builder_params<span class="token operator">=</span>context_builder_params<span class="token punctuation">,</span>
+    concurrent_coroutines<span class="token operator">=</span><span class="token number">32</span><span class="token punctuation">,</span>
+    response_type<span class="token operator">=</span><span class="token string">"multiple paragraphs"</span> <span class="token comment"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-32" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-33" class="language-python">result <span class="token operator">=</span> <span class="token keyword">await</span> search_engine<span class="token punctuation">.</span>asearch<span class="token punctuation">(</span><span class="token string">'How reliable are medicinal herbs?​'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-33" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-34" class="language-python"><span class="token comment"># inspect the data used to build the context for the LLM responses</span>
+result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"reports"</span><span class="token punctuation">]</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-34" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-35" class="language-python"><span class="token comment"># inspect number of LLM calls and tokens</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'LLM calls: </span><span class="token interpolation"><span class="token punctuation">{</span>result<span class="token punctuation">.</span>llm_calls<span class="token punctuation">}</span></span><span class="token string">. LLM tokens: </span><span class="token interpolation"><span class="token punctuation">{</span>result<span class="token punctuation">.</span>prompt_tokens<span class="token punctuation">}</span></span><span class="token string">'</span></span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-35" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>LLM calls: 13. LLM tokens: 184660</p>
+
+        </main>
+    </div>
+    <footer>
+      <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy</a>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy</a>
+      |
+      <span id="cookiesManager" onClick="manageConsent();">Cookies</span>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>
+      |
+      <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+      |
+      <a href="https://www.microsoft.com" id="copyright"></a>
+      |
+      <a href="https://github.com/microsoft/graphrag">GitHub</a>
+    </footer>    
+  </body>
+</html>

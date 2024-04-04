@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to GraphRAG</title>
+    <title>Query CLI</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -154,7 +154,7 @@ p {
           <ul class="menu-list">
             <li>
               
-<a href="/graphrag/" class="is-active" aria-current="page">Welcome</a>
+<a href="/graphrag/">Welcome</a>
 
             </li>
 
@@ -281,7 +281,7 @@ p {
 </li><li>
 <a href="/graphrag/posts/query/2-question_generation/">Question Generation</a>
 </li><li>
-<a href="/graphrag/posts/query/3-cli/">CLI</a>
+<a href="/graphrag/posts/query/3-cli/" class="is-active" aria-current="page">CLI</a>
 </li><li>
                   
 <a href="/graphrag/posts/query/notebooks/overview/">Notebooks</a>
@@ -302,40 +302,50 @@ p {
 
         <!-- Main Content -->
         <main>
-            <h1>Welcome to GraphRAG</h1>
-            <p>👉 <a href="https://github.com/microsoft/graphrag">GitHub Repository</a></p>
-<p align="center">
-<img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center">
-</p>
-<p align="center">
-Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
-</p>
-<p>GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
-approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.</p>
-<h2>Get Started 🚀</h2>
-<p>To start using GraphRAG, check out the <a href="posts/get_started"><em>Get Started</em></a> guide.
-For a deeper dive into the main sub-systems, please visit the docpages for the <a href="posts/index/overview">Indexer</a> and <a href="posts/query/overview">Query</a> packages.</p>
-<h2>GraphRAG vs Baseline RAG 🔍</h2>
-<p>Retrieval-Augmented Generation (RAG) is a technique to improve LLM outputs using real-world information. This technique is an important part of most LLM-based tools and the majority of RAG approaches use vector similarity as the search technique, which we call <em>Baseline RAG</em>. GraphRAG uses knowledge graphs to provide substantial improvements in question-and-answer performance when reasoning about complex information. RAG techniques have shown promise in helping LLMs to reason about <em>private datasets</em> - data that the LLM is not trained on and has never seen before, such as an enterprise’s proprietary research, business documents, or communications. <em>Baseline RAG</em> was created to help solve this problem, but we observe situations where baseline RAG performs very poorly. For example:</p>
+            <h1>Query CLI</h1>
+            <p>The GraphRAG query CLI allows for no-code usage of the GraphRAG Query engine.</p>
+
+<div style="position: relative">
+  <pre class="language-bash"><code id="code-3" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.query <span class="token parameter variable">--data</span> <span class="token operator">&lt;</span>path-to-data<span class="token operator">></span> <span class="token parameter variable">--community_level</span> <span class="token operator">&lt;</span>comunit-level<span class="token operator">></span> <span class="token parameter variable">--response_type</span> <span class="token operator">&lt;</span>response-type<span class="token operator">></span> <span class="token parameter variable">--method</span> <span class="token operator">&lt;</span><span class="token string">"local"</span><span class="token operator">|</span><span class="token string">"global"</span><span class="token operator">></span> <span class="token operator">&lt;</span>query<span class="token operator">></span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-3" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h2>CLI Arguments</h2>
 <ul>
-<li>Baseline RAG struggles to connect the dots. This happens when answering a question requires traversing disparate pieces of information through their shared attributes in order to provide new synthesized insights.</li>
-<li>Baseline RAG performs poorly when being asked to holistically understand summarized semantic concepts over large data collections or even singular large documents.</li>
+<li><code>--data &lt;path-to-data&gt;</code> - Folder containing the <code>.parquet</code> output files from running the Indexer.</li>
+<li><code>--community_level &lt;community-level&gt;</code> - Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2</li>
+<li><code>--response_type &lt;response-type&gt;</code> - Free form text describing the response type and format, can be anything, e.g. <code>Multiple Paragraphs</code>, <code>Single Paragraph</code>, <code>Single Sentence</code>, <code>List of 3-7 Points</code>, <code>Single Page</code>, <code>Multi-Page Report</code>. Default: <code>Multiple Paragraphs</code>.</li>
+<li><code>--method &lt;&quot;local&quot;|&quot;global&quot;&gt;</code> - Method to use to answer the query, one of local or global. For more information check <a href="overview.md">Overview</a></li>
 </ul>
-<p>To address this, the tech community is working to develop methods that extend and enhance RAG. Microsoft Research’s new approach, GraphRAG, uses LLMs to create a knowledge graph based on an input corpus. This graph, along with community summaries and graph machine learning outputs, are used to augment prompts at query time. GraphRAG shows substantial improvement in answering the two classes of questions described above, demonstrating intelligence or mastery that outperforms other approaches previously applied to private datasets.</p>
-<h2>The GraphRAG Process 🤖</h2>
-<p>GraphRAG builds upon our prior <a href="https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart">research</a> and <a href="https://github.com/microsoft/graspologic">tooling</a> using graph machine learning. The basic steps of the GraphRAG process are as follows:</p>
-<h3>Index</h3>
+<h2>Env Variables</h2>
+<p>Required environment variables to execute:</p>
 <ul>
-<li>Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.</li>
-<li>Extract all entities, relationships, and key claims from the TextUnits using an LLM.</li>
-<li>Perform a hierarchical clustering of the graph using the <a href="https://arxiv.org/pdf/1810.08473.pdf">Leiden technique</a>. To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.</li>
-<li>Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.</li>
+<li><code>GRAPHRAG_API_KEY</code> - API Key for executing the model, will fallback to <code>OPENAI_API_KEY</code> if one is not provided.</li>
+<li><code>GRAPHRAG_LLM_MODEL</code> - Model to use for Chat Completions.</li>
+<li><code>GRAPHRAG_EMBEDDING_MODEL</code> - Model to use for Embeddings.</li>
 </ul>
-<h3>Query</h3>
-<p>At query time, these structures are used to provide materials for the LLM context window when answering a question. The primary query modes are:</p>
+<p>You can further customize the execution by providing these environment variables:</p>
 <ul>
-<li><a href="posts/query/0-global_search"><em>Global Search</em></a> for reasoning about holistic questions about the corpus by leveraging the community summaries.</li>
-<li><a href="posts/query/1-local_search"><em>Local Search</em></a> for reasoning about specific entities by fanning-out to their neighbors and associated concepts.</li>
+<li><code>GRAPHRAG_LLM_API_BASE</code> - The API Base URL. Default: <code>None</code></li>
+<li><code>GRAPHRAG_LLM_TYPE</code> - The LLM operation type. Either <code>openai_chat</code> or <code>azure_openai_chat</code>. Default: <code>openai_chat</code></li>
+<li><code>GRAPHRAG_LLM_MAX_RETRIES</code> - The maximum number of retries to attempt when a request fails. Default: <code>20</code></li>
+<li><code>GRAPHRAG_EMBEDDING_API_BASE</code> - The API Base URL. Default: <code>None</code></li>
+<li><code>GRAPHRAG_EMBEDDING_TYPE</code> - The embedding client to use. Either <code>openai_embedding</code> or <code>azure_openai_embedding</code>. Default: <code>openai_embedding</code></li>
+<li><code>GRAPHRAG_EMBEDDING_MAX_RETRIES</code> - The maximum number of retries to attempt when a request fails. Default: <code>20</code></li>
+<li><code>TEXT_UNIT_PROP</code> - Proportion of context window dedicated to related text units. Default: <code>0.5</code></li>
+<li><code>COMMUNITY_PROP</code> - Proportion of context window dedicated to community reports. Default: <code>0.1</code></li>
+<li><code>CONVERSATION_HISTORY_MAX_TURNS</code> - Maximum number of turns to include in the conversation history. Default: <code>5</code></li>
+<li><code>TOP_K_MAPPED_ENTITIES</code> - Number of related entities to retrieve from the entity description embedding store. Default: <code>10</code></li>
+<li><code>TOP_K_RELATIONSHIPS</code> - Control the number of out-of-network relationships to pull into the context window. Default: <code>10</code></li>
+<li><code>LOCAL_CONTEXT_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>GRAPHRAG_LLM_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500). Default: <code>2000</code></li>
+<li><code>CONTEXT_BUILDER_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>MAP_LLM_MAX_TOKENS</code> - Default: <code>500</code></li>
+<li><code>REDUCE_LLM_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500). Default: <code>2000</code></li>
+<li><code>SEARCH_ENGINE_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>SEARCH_ENGINE_CONCURRENCY</code> - Default: <code>32</code></li>
 </ul>
 
         </main>
