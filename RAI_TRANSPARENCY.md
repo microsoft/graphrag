@@ -20,7 +20,7 @@ GraphRAG has been evaluated in multiple ways.  The primary concerns are 1) accur
 
 1) Accurate representation of the dataset has been tested by both manual inspection and automated testing against a “gold answer” that is created from randomly selected subsets of a test corpus. 
 
-2) GraphRAG has been tested against datasets with known confusors and noise in multiple domains. These tests include both automated evaluation of answer detail (as compared to vector search approaches) as well as manual inspection using questions that are known to be difficult or impossible for other search systems to answer. 
+2) GraphRAG has been tested against datasets with known confusers and noise in multiple domains. These tests include both automated evaluation of answer detail (as compared to vector search approaches) as well as manual inspection using questions that are known to be difficult or impossible for other search systems to answer. 
 
 3) Transparency and provenance is tested via automated answer coverage evaluation and human inspection of the underlying context returned. Additionally, adversarial testing is conducted using manually created test data specifically prepared to be difficult to detect. 
 
