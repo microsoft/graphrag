@@ -3,15 +3,14 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths:
-      '**/*'
+    paths: "**/*"
 jobs:
   python-ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11']
-        poetry-version: ['1.6.1']
+        python-version: ["3.10", "3.11"]
+        poetry-version: ["1.6.1"]
 
     steps:
       - uses: actions/checkout@v4
@@ -28,12 +27,12 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry install
+        run: poetry install -E jupyter
 
       - name: Check Semversioner
         run: |
           poetry run semversioner check
-          
+
       - name: Check
         run: |
           poetry run poe check
@@ -41,10 +40,10 @@ jobs:
       - name: Build
         run: |
           poetry build
-          
+
       - name: Start Azurite
         run: ./scripts/start-azurite.sh&
-      
+
       - name: Unit Test
         run: |
           poetry run poe test_unit
