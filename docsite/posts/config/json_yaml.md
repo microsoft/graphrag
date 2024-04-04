@@ -29,7 +29,7 @@ API_KEY=some_api_key
 
 * `type` **text|csv** - The type of input data to load. Either `text` or `csv`. Default is `csv`
 * `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
-* `file_pattern` **str** - A glob pattern to match input files. Default is `**/*.csv` if in csv mode and `**/*.txt` if in text mode.
+* `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
 * `source_column` **str** - (CSV Mode Only) The source column name.
 * `timestamp_column` **str** - (CSV Mode Only) The timestamp column name.
 * `timestamp_format` **str** - (CSV Mode Only) The source format.
