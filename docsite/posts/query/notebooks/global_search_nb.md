@@ -71,7 +71,7 @@ entity_df = entity_df[(entity_df.type=="entity") & (entity_df.level<="level_{COM
 entity_df["community"] = entity_df["community"].fillna(-1)
 entity_df["community"] = entity_df["community"].astype(int)
 
-entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
+entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).resetindex()
 entity_df["community"] = entity_df["community"].astype(str)
 filtered_community_df = entity_df.rename(columns={"community": "community_id"})["community_id"].drop_duplicates()
 

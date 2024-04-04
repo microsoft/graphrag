@@ -70,7 +70,7 @@ entity_df["community"] = entity_df["community"].astype(int)
 entity_df["rank"] = entity_df["rank"].astype(int)
 
 # for duplicate entities, keep the one with the highest community level
-entity_df = entity_df.groupby(["name", "rank"]).agg({"community": "max"}).reset_index()
+entity_df = entity_df.groupby(["name", "rank"]).agg({"community": "max"}).resetindex()
 entity_df['community'] = entity_df['community'].apply(lambda x: [str(x)])
 
 entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
