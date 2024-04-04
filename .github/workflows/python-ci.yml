@@ -31,6 +31,7 @@ jobs:
               - '**/*.py'
               - '**/*.toml'
               - '**/*.ipynb'
+              - .github/workflows/python-ci.yml
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
