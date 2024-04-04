@@ -2,7 +2,8 @@
 title: Welcome to GraphRAG
 layout: page
 ---
-👉 [GitHub Repository](https://dev.azure.com/msresearch/Resilience/_git/ire-indexing)
+
+👉 [GitHub Repository](https://github.com/microsoft/graphrag)
 
 <p align="center">
 <img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center" />
@@ -10,8 +11,6 @@ layout: page
 <p align="center">
 Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
 </p>
-
-
 
 GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
 approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.
@@ -35,12 +34,15 @@ To address this, the tech community is working to develop methods that extend an
 GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart) and [tooling](https://github.com/microsoft/graspologic) using graph machine learning. The basic steps of the GraphRAG process are as follows:
 
 ### Index
-* Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.
-* Extract all entities, relationships, and key claims from the TextUnits using an LLM.
-* Perform a hierarchical clustering of the graph using the [Leiden technique](https://arxiv.org/pdf/1810.08473.pdf). To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.
-* Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.
-  
+
+- Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.
+- Extract all entities, relationships, and key claims from the TextUnits using an LLM.
+- Perform a hierarchical clustering of the graph using the [Leiden technique](https://arxiv.org/pdf/1810.08473.pdf). To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.
+- Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.
+
 ### Query
+
 At query time, these structures are used to provide materials for the LLM context window when answering a question. The primary query modes are:
-* [_Global Search_](_posts/_query/0-global_search.md) for reasoning about holistic questions about the corpus by leveraging the community summaries.
-* [_Local Search_](_posts/_query/1-local_search.md) for reasoning about specific entities by fanning-out to their neighbors and associated concepts.
+
+- [_Global Search_](_posts/_query/0-global_search.md) for reasoning about holistic questions about the corpus by leveraging the community summaries.
+- [_Local Search_](_posts/_query/1-local_search.md) for reasoning about specific entities by fanning-out to their neighbors and associated concepts.
