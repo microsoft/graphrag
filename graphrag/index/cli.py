@@ -52,11 +52,12 @@ def index_cli(
     config: str | None,
     emit: str | None,
     cli: bool = False,
+    dryrun: bool = False,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = _get_progress_reporter(reporter)
     pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, progress_reporter
+        root, verbose, dryrun, progress_reporter
     )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
@@ -133,7 +134,7 @@ def index_cli(
 
 
 def _create_default_config(
-    root: str, verbose: bool, reporter: ProgressReporter
+    root: str, verbose: bool, dryrun: bool, reporter: ProgressReporter
 ) -> PipelineConfig:
     """Create a default config if none is provided."""
     import json
@@ -143,15 +144,19 @@ def _create_default_config(
         raise ValueError(msg)
 
     parameters = _read_config_parameters(root, reporter)
-    if verbose:
+    if verbose or dryrun:
         reporter.info(
             f"Using default configuration: {redact(json.dumps(parameters.to_dict(), indent=4))}"
         )
     result = default_config(parameters, verbose)
-    if verbose:
+    if verbose or dryrun:
         reporter.info(
             f"Final Config: {redact(json.dumps(result.model_dump(), indent=4))}"
         )
+
+    if dryrun:
+        reporter.info("dry run complete, exiting...")
+        sys.exit(0)
     return result
 
 
