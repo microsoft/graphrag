@@ -54,6 +54,7 @@ First let's make sure to setup the required environment variables:
 
 - `GRAPHRAG_API_KEY` - API Key for executing the model, will fallback to `OPENAI_API_KEY` if one is not provided.
 - `GRAPHRAG_LLM_MODEL` - Model to use for Chat Completions.
+- `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` - This will signal to the indexing engine that you're using a model capable of JSON-mode output (e.g. gpt-4 or gpt-3.5-turbo). We *highly recommend* enabling this to avoid malformed JSON errors during indexing.
 - `GRAPHRAG_EMBEDDING_MODEL` - Model to use for Embeddings.
 - `GRAPHRAG_INPUT_TYPE` - Type of input data, can be `text` or `csv`.
 - `GRAPHRAG_API_BASE` - Base URL for the Azure OpenAI. Only required for Azure OpenAI users.
@@ -66,6 +67,7 @@ First let's make sure to setup the required environment variables:
 export GRAPHRAG_API_KEY=<api_key> && \
 export GRAPHRAG_LLM_MODEL=<chat_completions_model> && \
 export GRAPHRAG_EMBEDDING_MODEL=<embeddings_model> && \
+export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True" && \
 export GRAPHRAG_INPUT_TYPE="text"
 ```
 
