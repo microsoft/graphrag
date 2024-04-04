@@ -29,8 +29,8 @@ GRAPHRAG_LLM_DEPLOYMENT_NAME="gpt-4-turbo-preview"
 GRAPHRAG_LLM_MODEL_SUPPORTS_JSON=True
 
 # Text Embedding Settings
-GRAPHRAG_EMBEDDING_TYPE = azure_openai_embedding # or openai_embedding
-GRAPHRAG_LLM_DEPLOYMENT_NAME = "text-embedding-3-small"
+GRAPHRAG_EMBEDDING_TYPE="azure_openai_embedding" # or openai_embedding
+GRAPHRAG_LLM_DEPLOYMENT_NAME="text-embedding-3-small"
 
 # Data Mapping Settings
 GRAPHRAG_INPUT_TYPE="text"
