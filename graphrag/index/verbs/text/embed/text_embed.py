@@ -72,7 +72,11 @@ async def text_embed(
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
-        vector_store: BaseVectorStore = _create_vector_store(vector_store_config)
+        embedding_name = kwargs["embedding_name"]
+        collection_name = _get_collection_name(vector_store_config, embedding_name)
+        vector_store: BaseVectorStore = _create_vector_store(
+            vector_store_config, collection_name
+        )
         return await _text_embed_with_vector_store(
             input,
             callbacks,
@@ -136,6 +140,16 @@ async def _text_embed_with_vector_store(
     id_column: str = vector_store_config.get("id_column") or "id"
     overwrite: bool = vector_store_config.get("overwrite", True)
 
+    if column not in output_df.columns:
+        msg = f"Column {column} not found in input dataframe"
+        raise ValueError(msg)
+    if title_column not in output_df.columns:
+        msg = f"Column {title_column} not found in input dataframe"
+        raise ValueError(msg)
+    if id_column not in output_df.columns:
+        msg = f"Column {id_column} not found in input dataframe"
+        raise ValueError(msg)
+
     total_rows = 0
     for row in output_df[column]:
         if isinstance(row, list):
@@ -176,10 +190,10 @@ async def _text_embed_with_vector_store(
     return TableContainer(table=output_df)
 
 
-def _create_vector_store(vector_store_config: dict) -> BaseVectorStore:
+def _create_vector_store(
+    vector_store_config: dict, collection_name: str
+) -> BaseVectorStore:
     vector_store_type = vector_store_config.get("type")
-    collection_name: str = vector_store_config["collection_name"]
-
     result: BaseVectorStore
     match vector_store_type:
         case "qdrant":
@@ -196,6 +210,20 @@ def _create_vector_store(vector_store_config: dict) -> BaseVectorStore:
 
     result.connect(**vector_store_config)
     return result
+
+
+def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
+    collection_name = vector_store_config.get("collection_name")
+    if not collection_name:
+        collection_names = vector_store_config.get("collection_names", {})
+        collection_name = collection_names.get(embedding_name) or embedding_name
+
+    log.info(
+        "using qdrant collection_name %s for embedding %s",
+        collection_name,
+        embedding_name,
+    )
+    return collection_name
 
 
 def load_strategy(strategy: TextEmbedStrategyType) -> TextEmbeddingStrategy:

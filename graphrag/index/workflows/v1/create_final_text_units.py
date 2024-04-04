@@ -18,7 +18,8 @@ def build_steps(
     * `workflow:create_final_entities`
     * `workflow:create_final_communities`
     """
-    text_embed_config = config.get("text_embed", {})
+    base_text_embed = config.get("text_embed", {})
+    text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
     covariates_enabled = config.get("covariates_enabled", False)
     return [
         {
@@ -126,7 +127,7 @@ def build_steps(
             "args": {
                 "column": config.get("column", "text"),
                 "to": config.get("to", "text_embedding"),
-                **text_embed_config,
+                **text_unit_text_embed_config,
             },
         },
         {

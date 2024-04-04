@@ -16,7 +16,10 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_entity_graph`
     """
-    text_embed_config = config.get("text_embed", {})
+    base_text_embed = config.get("text_embed", {})
+    relationship_description_embed_config = config.get(
+        "relationship_description_embed", base_text_embed
+    )
     skip_description_embedding = config.get("skip_description_embedding", False)
 
     return [
@@ -48,9 +51,10 @@ def build_steps(
                 {
                     "verb": "text_embed",
                     "args": {
+                        "embedding_name": "relationship_description",
                         "column": "description",
                         "to": "description_embedding",
-                        **text_embed_config,
+                        **relationship_description_embed_config,
                     },
                 }
             ]

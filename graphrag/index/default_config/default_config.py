@@ -62,7 +62,10 @@ from .constants import (
     relationship_description_embedding,
     required_embeddings,
 )
-from .parameters.default_config_parameters import DefaultConfigParametersDict
+from .parameters.default_config_parameters import (
+    DefaultConfigParametersDict,
+    TextEmbeddingConfigSection,
+)
 
 log = logging.getLogger(__name__)
 
@@ -152,7 +155,9 @@ def _document_workflows(
         PipelineWorkflowReference(
             name=create_final_documents,
             config={
-                "text_embed": {"strategy": settings.embeddings.strategy},
+                "document_raw_content_embed": _get_embedding_settings(
+                    settings.embeddings, "document_raw_content"
+                ),
                 "skip_raw_content_embedding": skip_document_raw_content_embedding,
             },
         ),
@@ -182,11 +187,35 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=create_final_text_units,
             config={
-                "text_embed": {"strategy": settings.embeddings.strategy},
+                "text_unit_text_embed": _get_embedding_settings(
+                    settings.embeddings, "text_unit_text"
+                ),
                 "covariates_enabled": create_final_covariates not in skip_workflows,
             },
         ),
     ]
+
+
+def _get_embedding_settings(
+    settings: TextEmbeddingConfigSection, embedding_name: str
+) -> dict:
+    vector_store_settings = settings.vector_store
+    if vector_store_settings is None:
+        return {"strategy": settings.strategy}
+
+    #
+    # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
+    # settings.vector_store.base contains connection information, or may be undefined
+    # settings.vector_store.<vector_name> contains the specific settings for this embedding
+    #
+    return {
+        "strategy": settings.strategy,
+        "embedding_name": embedding_name,
+        "vector_store": {
+            **(vector_store_settings.get("base") or {}),
+            **(vector_store_settings.get(embedding_name) or {}),
+        },
+    }
 
 
 def _graph_workflows(
@@ -236,7 +265,12 @@ def _graph_workflows(
         PipelineWorkflowReference(
             name=create_final_entities,
             config={
-                "text_embed": {"strategy": settings.embeddings.strategy},
+                "entity_name_embed": _get_embedding_settings(
+                    settings.embeddings, "entity_name"
+                ),
+                "entity_name_description_embed": _get_embedding_settings(
+                    settings.embeddings, "entity_name_description"
+                ),
                 "skip_name_embedding": skip_entity_name_embedding,
                 "skip_description_embedding": skip_entity_description_embedding,
             },
@@ -244,7 +278,9 @@ def _graph_workflows(
         PipelineWorkflowReference(
             name=create_final_relationships,
             config={
-                "text_embed": {"strategy": settings.embeddings.strategy},
+                "relationship_description_embed": _get_embedding_settings(
+                    settings.embeddings, "relationship_description"
+                ),
                 "skip_description_embedding": skip_relationship_description_embedding,
             },
         ),
@@ -281,7 +317,15 @@ def _community_workflows(
                     "async_mode": settings.community_reports.async_mode,
                     "strategy": settings.community_reports.strategy,
                 },
-                "text_embed": {"strategy": settings.embeddings.strategy},
+                "community_report_full_content_embed": _get_embedding_settings(
+                    settings.embeddings, "community_report_full_content"
+                ),
+                "community_report_summary_embed": _get_embedding_settings(
+                    settings.embeddings, "community_report_summary"
+                ),
+                "community_report_title_embed": _get_embedding_settings(
+                    settings.embeddings, "community_report_title"
+                ),
             },
         ),
     ]
