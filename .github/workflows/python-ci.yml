@@ -26,10 +26,11 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
+              - 'poetry.lock'
+              - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
               - '**/*.ipynb'
-              - .github/workflows/python-ci.yml
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -58,18 +59,15 @@ jobs:
           poetry build
 
       - name: Start Azurite
-        if: steps.changes.outputs.python == 'true'
         run: ./scripts/start-azurite.sh&
 
       - name: Unit Test
-        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_unit
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Integration Test
-        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_integration
         env:
