@@ -68,21 +68,21 @@ title: GraphRAG
 
             <!-- Get Started Links -->
             <li>
-              {{link_to("/_posts/get_started/", "Get Started")}}
-              {{link_to("/_posts/developing/", "Developing")}}
+              {{link_to("/posts/get_started/", "Get Started")}}
+              {{link_to("/posts/developing/", "Developing")}}
             </li>
 
             <!-- Indexing Links -->
             <li>
-                {{link_to("/_posts/_index/overview/", "Indexing")}}
+                {{link_to("/posts/index/overview/", "Indexing")}}
                 <ul>
                   {%- for post in collections.indexing -%}
                   <li>{{link_to(post.url, post.data.navtitle)}}</li>
                   {%- endfor -%}
 
                   <li>
-                    {{link_to("/_posts/_index/_workflows/overview/", "Workflows")}}
-                    <ul {% if not "/_posts/_index/_workflows" in page.url %} hidden {% endif %}>
+                    {{link_to("/posts/index/workflows/overview/", "Workflows")}}
+                    <ul {% if not "/posts/index/workflows" in page.url %} hidden {% endif %}>
                         {%- for post in collections.workflow -%}
                         <li>{{link_to(post.url, post.data.navtitle)}}</li>
                         {%- endfor -%}
@@ -90,8 +90,8 @@ title: GraphRAG
                   </li>
 
                   <li>
-                    {{link_to("/_posts/_index/_verbs/overview/", "Verbs")}}
-                    <ul {% if not "/_posts/_index/_verbs" in page.url %} hidden {% endif %}>
+                    {{link_to("/posts/index/verbs/overview/", "Verbs")}}
+                    <ul {% if not "/posts/index/verbs" in page.url %} hidden {% endif %}>
                       {%- for post in collections.verb -%}
                       <li>{{link_to(post.url, post.data.navtitle)}}</li>
                       {%- endfor -%}
@@ -99,11 +99,11 @@ title: GraphRAG
                   </li>
 
                   <li>
-                    {{link_to("/_posts/_config/overview/", "Configuration")}}
+                    {{link_to("/posts/config/overview/", "Configuration")}}
                     <ul>
-                      <li>{{link_to("/_posts/_config/env_vars", "Using Env Vars")}}</li>
-                      <li>{{link_to("/_posts/_config/json_yaml", "Using JSON or YAML")}}</li>
-                      <li>{{link_to("/_posts/_config/custom", "Fully Custom")}}</li>
+                      <li>{{link_to("/posts/config/env_vars", "Using Env Vars")}}</li>
+                      <li>{{link_to("/posts/config/json_yaml", "Using JSON or YAML")}}</li>
+                      <li>{{link_to("/posts/config/custom", "Fully Custom")}}</li>
                     </ul>
                   </li>
                 </ul>
@@ -112,16 +112,16 @@ title: GraphRAG
 
             <!-- Query Links -->
             <li>
-              {{link_to("/_posts/_query/overview/", "Query")}}
+              {{link_to("/posts/_query/overview/", "Query")}}
               <ul>
                 {%- for post in collections.orchestration -%}
                 <li>{{link_to(post.url, post.data.navtitle)}}</li>
                 {%- endfor -%}
                 <li>
-                  {{link_to("/_posts/_query/notebooks/overview/", "Notebooks")}}
+                  {{link_to("/posts/query/notebooks/overview/", "Notebooks")}}
                   <ul>
-                    <li>{{link_to("/_posts/_query/notebooks/global_search_nb", "Global Search")}}</li>
-                    <li>{{link_to("/_posts/_query/notebooks/local_search_nb", "Local Search")}}</li>
+                    <li>{{link_to("/posts/query/notebooks/global_search_nb", "Global Search")}}</li>
+                    <li>{{link_to("/posts/query/notebooks/local_search_nb", "Local Search")}}</li>
                   </ul>
                 </li>
             </ul>

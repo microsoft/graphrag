@@ -22,7 +22,7 @@ ignorePaths:
   - package.json
   - tests/fixtures/
   - docsite/data/
-  - docsite/_posts/_query/notebooks/inputs/
+  - docsite/posts/query/notebooks/inputs/
   - '*.csv'
   - '*.parquet'
   - '*.faiss'
