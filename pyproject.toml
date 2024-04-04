@@ -42,7 +42,7 @@ nltk = "3.8.1"
 tiktoken = "^0.6.0"
 
 # Data-Sci
-numba = "0.58.1"
+numba = "0.59.1"
 numpy = "^1.25.2"
 graspologic = "^3.3.0"
 networkx = "^3.2.1"
