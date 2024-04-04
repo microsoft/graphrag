@@ -355,7 +355,7 @@ API_KEY=some_api_key
 <ul>
 <li><code>type</code> <strong>text|csv</strong> - The type of input data to load. Either <code>text</code> or <code>csv</code>. Default is <code>csv</code></li>
 <li><code>file_encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
-<li><code>file_pattern</code> <strong>str</strong> - A glob pattern to match input files. Default is <code>**/*.csv</code> if in csv mode and <code>**/*.txt</code> if in text mode.</li>
+<li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code> if in csv mode and <code>.*\.txt$</code> if in text mode.</li>
 <li><code>source_column</code> <strong>str</strong> - (CSV Mode Only) The source column name.</li>
 <li><code>timestamp_column</code> <strong>str</strong> - (CSV Mode Only) The timestamp column name.</li>
 <li><code>timestamp_format</code> <strong>str</strong> - (CSV Mode Only) The source format.</li>
