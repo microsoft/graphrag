@@ -9,7 +9,7 @@ date: 2023-01-04
 The following template can be used and stored as a `.env` in the the directory where you're are pointing
 the `--root` parameter on your Indexing Pipeline execution.
 
-For details about how to run the Indexing Pipeline, refer to the [Index CLI](../index/2-cli) documentation.
+For details about how to run the Indexing Pipeline, refer to the [Index CLI](../../index/2-cli) documentation.
 
 ## .env File Template
 
