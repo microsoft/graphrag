@@ -15,6 +15,15 @@ This repository presents a methodology for using knowledge graph memory structur
 - To read more about the indexing library, see [python/graphrag/README.md](./python/graphrag/README.md)
 - To learn about our contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - To start developing _GraphRAG_, see [DEVELOPING.md](./DEVELOPING.md)
+  
+## Responsible AI FAQ
+See [RAI_TRANSPARENCY.md](./RAI_TRANSPARENCY.md)
+- [What is GraphRAG?](./RAI_TRANSPARENCY.md#what-is-graphrag)
+- [What can GraphRAG do?](./RAI_TRANSPARENCY.md#what-can-graphrag-do)
+- [What are GraphRAG’s intended use(s)?](./RAI_TRANSPARENCY.md#what-are-graphrags-intended-uses)
+- [How was GraphRAG evaluated? What metrics are used to measure performance?](./RAI_TRANSPARENCY.md#how-was-graphrag-evaluated-what-metrics-are-used-to-measure-performance)
+- [What are the limitations of GraphRAG? How can users minimize the impact of GraphRAG’s limitations when using the system?](./RAI_TRANSPARENCY.md#what-are-the-limitations-of-graphrag-how-can-users-minimize-the-impact-of-graphrags-limitations-when-using-the-system)
+- [What operational factors and settings allow for effective and responsible use of GraphRAG?](./RAI_TRANSPARENCY.md#what-operational-factors-and-settings-allow-for-effective-and-responsible-use-of-graphrag)
 
 ## Trademarks
 
