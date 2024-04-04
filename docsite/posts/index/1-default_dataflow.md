@@ -189,7 +189,7 @@ flowchart LR
 
 ### Augment with Columns (CSV Only)
 
-If the workflow is operating on CSV data, you may configure your workflow to add additional fields to Documents output. These fields should exist on the incoming CSV tables. Details about configuring this can be found in the [Default Configuration](../2-default_configuration/) page.
+If the workflow is operating on CSV data, you may configure your workflow to add additional fields to Documents output. These fields should exist on the incoming CSV tables. Details about configuring this can be found in the [configuration documentation](/posts/config/overview/).
 
 ### Link to TextUnits
 

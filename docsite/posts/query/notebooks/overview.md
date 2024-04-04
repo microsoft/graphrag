@@ -7,5 +7,5 @@ tags: [post, notebook]
 
 For examples about running Query please refer to the following notebooks:
 
-- [Global Search Notebook](../global_search_nb)
-- [Local Search Notebook](../local_search_nb)
+- [Global Search Notebook](/posts/query/notebooks/global_search_nb)
+- [Local Search Notebook](/posts/query/notebooks/ocal_search_nb)

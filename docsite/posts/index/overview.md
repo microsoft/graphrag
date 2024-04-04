@@ -21,11 +21,10 @@ The outputs of the pipeline can be stored in a variety of formats, including JSO
 
 ### Requirements
 
-See the [requirements](../../developing#requirements) section in [Get Started](../../get_started) for details on setting up a development environment.
+See the [requirements](/posts/developing#requirements) section in [Get Started](/posts/get_started) for details on setting up a development environment.
 
 The Indexing Engine can be used in either a default configuration mode or with a custom pipeline.
-To use the default configuration mode, see the [Default Configuration](../default_configuration) documentation.
-To configure your own pipeline, see [Configuring a Pipeline](#configuring-a-pipeline) for more details.
+To configure GraphRAG, see the [configuration](/posts/config/overview) documentation.
 After you have a config file you can run the pipeline using the CLI or the Python API.
 
 ## Usage
