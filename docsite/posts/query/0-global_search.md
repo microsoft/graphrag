@@ -10,7 +10,7 @@ date: 2024-03-28
 
 Baseline RAG struggles with queries that require aggregation of information across the dataset to compose an answer. Queries such as “What are the top 5 themes in the data?” perform terribly because baseline RAG relies on a vector search of semantically similar text content within the dataset. There is nothing in the query to direct it to the correct information.
 
-However, with GraphRAG we can answer such questions, because the structure of the LLM-generated knowledge graph tells us about the structure (and thus themes) of the dataset as a whole. This allows the private dataset to be organized into meaningful semantic clusters that are pre-summarized. Using our [global search](../../../../python/graphrag/graphrag/query/structured_search/global_search/) method, the LLM uses these clusters to summarize these themes when responding to a user query.
+However, with GraphRAG we can answer such questions, because the structure of the LLM-generated knowledge graph tells us about the structure (and thus themes) of the dataset as a whole. This allows the private dataset to be organized into meaningful semantic clusters that are pre-summarized. Using our [global search](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/) method, the LLM uses these clusters to summarize these themes when responding to a user query.
 
 ## Methodology
 
@@ -58,16 +58,16 @@ The quality of the global search’s response can be heavily influenced by the l
 
 ## Configuration
 
-Below are the key parameters of the [GlobalSearch class](../../../../python/graphrag/graphrag/query/structured_search/global_search/search.py):
+Below are the key parameters of the [GlobalSearch class](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/search.py):
 * `llm`: OpenAI model object to be used for response generation
-* `context_builder`: [context builder](../../../../python/graphrag/graphrag/query/structured_search/global_search/community_context.py) object to be used for preparing context data from community reports
-* `map_system_prompt`: prompt template used in the `map` stage. Default template can be found at [map_system_prompt](../../../../python/graphrag/graphrag/query/structured_search/global_search/map_system_prompt.py)
-* `reduce_system_prompt`: prompt template used in the `reduce` stage, default template can be found at [reduce_system_prompt](../../../../python/graphrag/graphrag/query/structured_search/global_search/reduce_system_prompt.py)
+* `context_builder`: [context builder](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/community_context.py) object to be used for preparing context data from community reports
+* `map_system_prompt`: prompt template used in the `map` stage. Default template can be found at [map_system_prompt](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/map_system_prompt.py)
+* `reduce_system_prompt`: prompt template used in the `reduce` stage, default template can be found at [reduce_system_prompt](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/reduce_system_prompt.py)
 * `response_type`: free-form text describing the desired response type and format (e.g., `Multiple Paragraphs`, `Multi-Page Report`)
 * `max_data_tokens`: token budget for the context data
 * `map_llm_params`: a dictionary of additional parameters (e.g., temperature, max_tokens) to be passed to the LLM call at the `map` stage
 * `reduce_llm_params`: a dictionary of additional parameters (e.g., temperature, max_tokens) to passed to the LLM call at the `reduce` stage
-* `context_builder_params`: a dictionary of additional parameters to be passed to the [`context_builder`](../../../../python/graphrag/graphrag/query/structured_search/global_search/community_context.py) object when building context window for the `map` stage.
+* `context_builder_params`: a dictionary of additional parameters to be passed to the [`context_builder`](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/global_search/community_context.py) object when building context window for the `map` stage.
 * `concurrent_coroutines`: controls the degree of parallelism in the `map` stage.
 * `callbacks`: optional callback functions, can be used to provide custom event handlers for LLM's completion streaming events
 

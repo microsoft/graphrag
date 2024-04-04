@@ -12,12 +12,12 @@ tags: [post]
 To get started with the GraphRAG system, you have a few options:
 
 👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
-👉 [Use it from source](../developing)<br/>
+👉 [Use it from source](/posts/developing)<br/>
 
 # Top-Level Packages
 
-[Indexing Pipeline Overview](../_index/overview)<br/>
-[Query Engine Overview](../_query/overview)
+[Indexing Pipeline Overview](/posts/index/overview)<br/>
+[Query Engine Overview](/posts/query/overview)
 
 # Overview
 
@@ -32,7 +32,7 @@ pip install graphrag
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/_posts/_config/overview/), which you can customize as needed using [environment variables](/_posts/_config/env_vars/) or using a [config file](/_posts/_config/json_yaml/).
+Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using [environment variables](/posts/config/env_vars/) or using a [config file](/posts/config/json_yaml/).
 
 First let's get a sample dataset ready:
 
@@ -79,7 +79,8 @@ export GRAPHRAG_INPUT_TYPE="text" && \
 export GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
 ```
 
-For more details about Environment Variables configuration please refer to [Environment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../_query/3-cli).
+For more details about configuring GraphRAG, see the [configuration documentation](/posts/config/overview/).
+For more details about using the CLI, refer to the [CLI documentation](/posts/query/3-cli/).
 
 ## Running the Indexing pipeline
 
@@ -118,4 +119,4 @@ python -m graphrag.query \
 "Who is Scrooge, and what are his main relationships?"
 ```
 
-Please refer to [Query Engine](../_query/overview) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.
+Please refer to [Query Engine](/posts/query/overview) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.

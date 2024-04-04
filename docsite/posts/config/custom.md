@@ -8,7 +8,7 @@ date: 2023-01-04
 
 The primary configuration sections for Indexing Engine pipelines are described below. Each configuration section can be expressed in Python (for use in Python API mode) as well as YAML, but YAML is show here for brevity.
 
-Using custom configuration is an advanced use-case. Most users will want to use the [Default Configuration](../overview) instead.
+Using custom configuration is an advanced use-case. Most users will want to use the [Default Configuration](/posts/config/overview) instead.
 
 ## Indexing Engine Examples
 

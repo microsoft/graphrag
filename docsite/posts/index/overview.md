@@ -21,11 +21,10 @@ The outputs of the pipeline can be stored in a variety of formats, including JSO
 
 ### Requirements
 
-See the [requirements](../../developing#requirements) section in [Get Started](../../get_started) for details on setting up a development environment.
+See the [requirements](/posts/developing#requirements) section in [Get Started](/posts/get_started) for details on setting up a development environment.
 
 The Indexing Engine can be used in either a default configuration mode or with a custom pipeline.
-To use the default configuration mode, see the [Default Configuration](../default_configuration) documentation.
-To configure your own pipeline, see [Configuring a Pipeline](#configuring-a-pipeline) for more details.
+To configure GraphRAG, see the [configuration](/posts/config/overview) documentation.
 After you have a config file you can run the pipeline using the CLI or the Python API.
 
 ## Usage
@@ -77,8 +76,7 @@ print(pipeline_result)
 
 ## Further Reading
 
-- To start developing within the _GraphRAG_ project, see [getting started](../../developing/)
-- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](../0-architecture/)
+- To start developing within the _GraphRAG_ project, see [getting started](/posts/developing/)
+- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](/posts/index/0-architecture/)
 - To get running with a series of examples, see [the examples documentation](https://github.com/microsoft/graphrag/blob/main/examples/README.md)
-- To read more about using the default configuration with the indexing engine, see [the default configuration documentation](../../_config/overview)
-- To read more about custom configuring with the indexing engine, see [the custom configuration documentation](../../_config/custom)
+- To read more about configuring the indexing engine, see [the configuration documentation](/posts/config/overview)

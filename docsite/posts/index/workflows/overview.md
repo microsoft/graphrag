@@ -1,7 +1,6 @@
 ---
-title: Verbs
+title: Workflows
 navtitle: Overview
-tags: [post, workflow_overview]
 layout: page
 date: 2023-01-01
 ---

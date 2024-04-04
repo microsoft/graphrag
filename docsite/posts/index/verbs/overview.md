@@ -1,7 +1,6 @@
 ---
 title: Verbs
 navtitle: Overview
-tags: [post, verb_overview]
 layout: page
 date: 2023-01-01
 ---
