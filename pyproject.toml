@@ -118,6 +118,9 @@ ignore_fail = 'return_non_zero'
 sequence = ['check_format', '_ruff_check', '_pyright']
 ignore_fail = 'return_non_zero'
 
+[[tool.poe.tasks.test]]
+sequence = ['_test_all', 'coverage_report']
+ignore_fail = 'return_non_zero'
 
 [tool.ruff]
 target-version = "py310"
@@ -206,18 +209,6 @@ builtins-ignorelist = ["input", "id", "bytes"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
-
-[tool.poe.tasks.upload]
-cmd = "twine upload -r resilience_python --skip-existing --config-file $pypirc_path dist/*.whl"
-
-[[tool.poe.tasks.upload.args]]
-name = "pypirc_path"
-help = "The twine configuration"
-default = "${PYPIRC_PATH}"
-
-[[tool.poe.tasks.test]]
-sequence = ['_test_all', 'coverage_report']
-ignore_fail = 'return_non_zero'
 
 # https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
