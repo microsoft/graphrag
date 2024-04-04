@@ -154,6 +154,18 @@ a {
         }
 
         addEventListener("DOMContentLoaded", initialize)
+        addEventListener("DOMContentLoaded", checkCookieManager)
+
+        function checkCookieManager(){
+          if(siteConsent.isConsentRequired){
+            document.getElementById("cookiesManager").style.display = 'block';
+            document.getElementById("divider").style.display = 'block';
+          }
+          else{
+            document.getElementById("cookiesManager").style.display = 'none';
+            document.getElementById("divider").style.display = 'none';
+          }
+        }
 
         function manageConsent() {
         if(siteConsent.isConsentRequired){
@@ -1245,7 +1257,7 @@ a {
       <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy</a>
       |
       <span id="cookiesManager" onClick="manageConsent();">Cookies</span>
-      |
+      <span id="divider">|</span>
       <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>
       |
       <a href="https://www.microsoft.com/trademarks">Trademarks</a>
