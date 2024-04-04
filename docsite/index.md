@@ -44,5 +44,5 @@ GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/workla
 
 At query time, these structures are used to provide materials for the LLM context window when answering a question. The primary query modes are:
 
-- [_Global Search_](posts/query/0-global_search.md) for reasoning about holistic questions about the corpus by leveraging the community summaries.
-- [_Local Search_](posts/query/1-local_search.md) for reasoning about specific entities by fanning-out to their neighbors and associated concepts.
+- [_Global Search_](posts/query/0-global_search) for reasoning about holistic questions about the corpus by leveraging the community summaries.
+- [_Local Search_](posts/query/1-local_search) for reasoning about specific entities by fanning-out to their neighbors and associated concepts.

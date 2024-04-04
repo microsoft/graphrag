@@ -32,7 +32,7 @@ pip install graphrag
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/_posts/_config/overview/), which you can customize as needed using [environment variables](/_posts/_config/env_vars/) or using a [config file](/_posts/_config/json_yaml/).
+Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using [environment variables](/posts/config/env_vars/) or using a [config file](/posts/config/json_yaml/).
 
 First let's get a sample dataset ready:
 

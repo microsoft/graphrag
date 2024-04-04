@@ -77,8 +77,7 @@ print(pipeline_result)
 
 ## Further Reading
 
-- To start developing within the _GraphRAG_ project, see [getting started](../../developing/)
-- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](../0-architecture/)
+- To start developing within the _GraphRAG_ project, see [getting started](/posts/developing/)
+- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](/posts/index/0-architecture/)
 - To get running with a series of examples, see [the examples documentation](https://github.com/microsoft/graphrag/blob/main/examples/README.md)
-- To read more about using the default configuration with the indexing engine, see [the default configuration documentation](../../_config/overview)
-- To read more about custom configuring with the indexing engine, see [the custom configuration documentation](../../_config/custom)
+- To read more about configuring the indexing engine, see [the configuration documentation](/posts/config/overview)

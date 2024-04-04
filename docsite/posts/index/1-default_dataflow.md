@@ -20,7 +20,7 @@ The knowledge model is a specification for data outputs that conform to our data
 
 ## The Default Configuration Workflow
 
-Let's take a look at how the default-configuration workflow transforms text documents into the _GraphRAG Knowledge Model_. This page gives a general overview of the major steps in this process. To fully configure this workflow, check out the [Default Configuration](../2-default_configuration/) page.
+Let's take a look at how the default-configuration workflow transforms text documents into the _GraphRAG Knowledge Model_. This page gives a general overview of the major steps in this process. To fully configure this workflow, check out the [configuration](/posts/config/overview/) documentation.
 
 ```mermaid
 ---
