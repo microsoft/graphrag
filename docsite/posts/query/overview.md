@@ -5,7 +5,7 @@ tags: [post]
 layout: page
 ---
 
-The Query Engine is the retrieval module of the Graph RAG Library. It is one of the two main components of the Graph RAG library, the other being the Indexing Pipeline (see [Indexing Pipeline](../../_index/overview)).
+The Query Engine is the retrieval module of the Graph RAG Library. It is one of the two main components of the Graph RAG library, the other being the Indexing Pipeline (see [Indexing Pipeline](../../index/overview)).
 It is responsible for the following tasks:
 
 - [Local Search](#local-search)

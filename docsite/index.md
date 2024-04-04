@@ -18,7 +18,7 @@ approaches using plain text snippets. The GraphRAG process involves extracting a
 ## Get Started 🚀
 
 To start using GraphRAG, check out the [_Get Started_](posts/get_started) guide.
-For a deeper dive into the main sub-systems, please visit the docpages for the [Indexer](posts/_index/overview) and [Query](posts/_query/overview) packages.
+For a deeper dive into the main sub-systems, please visit the docpages for the [Indexer](posts/index/overview) and [Query](posts/query/overview) packages.
 
 ## GraphRAG vs Baseline RAG 🔍
 

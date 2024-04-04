@@ -16,8 +16,8 @@ To get started with the GraphRAG system, you have a few options:
 
 # Top-Level Packages
 
-[Indexing Pipeline Overview](../_index/overview)<br/>
-[Query Engine Overview](../_query/overview)
+[Indexing Pipeline Overview](../index/overview)<br/>
+[Query Engine Overview](../query/overview)
 
 # Overview
 
@@ -79,7 +79,7 @@ export GRAPHRAG_INPUT_TYPE="text" && \
 export GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
 ```
 
-For more details about Environment Variables configuration please refer to [Environment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../_query/3-cli).
+For more details about Environment Variables configuration please refer to [Environment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../query/3-cli).
 
 ## Running the Indexing pipeline
 
@@ -118,4 +118,4 @@ python -m graphrag.query \
 "Who is Scrooge, and what are his main relationships?"
 ```
 
-Please refer to [Query Engine](../_query/overview) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.
+Please refer to [Query Engine](../query/overview) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.
