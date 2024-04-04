@@ -2,10 +2,7 @@
 
 """The Indexing Engine package root."""
 
-import argparse
-
 from .cache import PipelineCache
-from .cli import index_cli
 from .config import (
     PipelineBlobCacheConfig,
     PipelineBlobReportingConfig,
