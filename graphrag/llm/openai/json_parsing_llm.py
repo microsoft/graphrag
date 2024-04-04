@@ -2,10 +2,6 @@
 
 """An LLM that unpacks cached JSON responses."""
 
-import json
-import logging
-from typing import cast
-
 from typing_extensions import Unpack
 
 from graphrag.llm.types import (
@@ -17,9 +13,7 @@ from graphrag.llm.types import (
     LLMOutput,
 )
 
-log = logging.getLogger(__name__)
-
-UNPARSABLE_JSON = "Failed to parse JSON data"
+from .utils import try_parse_json_object
 
 
 class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
@@ -38,9 +32,5 @@ class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
         """Call the LLM with the input and kwargs."""
         result = await self._delegate(input, **kwargs)
         if kwargs.get("json") and result.json is None and result.output is not None:
-            try:
-                result.json = cast(dict, json.loads(result.output))
-            except json.JSONDecodeError as e:
-                log.error("Failed to parse JSON output:\n%s", result.output)  # noqa TRY400
-                raise ValueError(UNPARSABLE_JSON) from e
+            result.json = try_parse_json_object(result.output)
         return result
