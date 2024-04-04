@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "eleventy --serve",
-        "build": "eleventy",
+        "build": "eleventy && touch _site/.nojekyll",
         "build:docs": "yarn build",
         "start:docs": "yarn start"
     },
