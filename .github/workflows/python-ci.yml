@@ -3,7 +3,12 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths: "**/*"
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+    
 jobs:
   python-ci:
     runs-on: ubuntu-latest
@@ -14,6 +19,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'graphrag/**/*'
+              - '**/*.py'
+              - '**/*.toml'
+              - '**/*.ipynb'
+              - .github/workflows/python-ci.yml
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -42,21 +58,25 @@ jobs:
           poetry build
 
       - name: Start Azurite
+        if: steps.changes.outputs.python == 'true'
         run: ./scripts/start-azurite.sh&
 
       - name: Unit Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_unit
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Integration Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_integration
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Smoke Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_smoke
         env:
@@ -65,5 +85,6 @@ jobs:
           GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
 
       - name: E2E Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           ./scripts/e2e-test.sh
