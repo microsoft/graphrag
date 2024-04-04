@@ -3,8 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths:
-      '**/*'
+    branches: [main]
 jobs:
   javascript-ci:
     runs-on: ubuntu-latest
