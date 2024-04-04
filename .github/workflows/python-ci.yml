@@ -49,19 +49,19 @@ jobs:
         run: |
           poetry run poe test_unit
         env:
-          GRAPHRAG_BASE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Integration Test
         run: |
           poetry run poe test_integration
         env:
-          GRAPHRAG_BASE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Smoke Test
         run: |
           poetry run poe test_smoke
         env:
-          GRAPHRAG_BASE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
           GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
 
