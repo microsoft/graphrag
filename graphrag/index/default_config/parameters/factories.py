@@ -106,16 +106,16 @@ class Section(str, Enum):
     umap = "UMAP"
 
 
-LLM_KEY_REQUIRED = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_BASE_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
+LLM_KEY_REQUIRED = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
 EMBEDDING_KEY_REQUIRED = "API Key is required for Embedding API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_EMBEDDING_API_KEY environment variable."
 AZURE_LLM_DEPLOYMENT_NAME_REQUIRED = (
     "GRAPHRAG_LLM_MODEL or GRAPHRAG_LLM_DEPLOYMENT_NAME is required for Azure OpenAI."
 )
 AZURE_LLM_API_BASE_REQUIRED = (
-    "GRAPHRAG_BASE_API_BASE or GRAPHRAG_LLM_API_BASE is required for Azure OpenAI."
+    "GRAPHRAG_API_BASE or GRAPHRAG_LLM_API_BASE is required for Azure OpenAI."
 )
 AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED = "GRAPHRAG_EMBEDDING_MODEL or GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME is required for Azure OpenAI."
-AZURE_EMBEDDING_API_BASE_REQUIRED = "GRAPHRAG_BASE_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
+AZURE_EMBEDDING_API_BASE_REQUIRED = "GRAPHRAG_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:
