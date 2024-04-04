@@ -64,7 +64,7 @@ input:
 
 cache:
   type: file # or blob
-  base_dir: "cache
+  base_dir: cache
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
