@@ -4,11 +4,19 @@ name = "graphrag"
 version = "0.0.1"
 description = ""
 authors = [
+    "Alonso Guevara Fernández <alonsog@microsoft.com>",
+    "Andrés Morales Esquivel <andresmor@microsoft.com>",
     "Chris Trevino <chtrevin@microsoft.com>",
-    "Jonathan Larson <jolarso@microsoft.com>",
-    "Nathan Evans <naevans@microsoft.com>",
+    "David Tittsworth <datittsw@microsoft.com>",
+    "Dayenne de Souza <ddesouza@microsoft.com>",
+    "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
     "Ha Trinh <trinhha@microsoft.com>",
-    "Alonso Guevara <alonsog@microsoft.com>",
+    "Kate Lytvynets <kalytv@microsoft.com>",
+    "Jonathan Larson <jolarso@microsoft.com>",
+    "Mónica Carvajal>",
+    "Nathan Evans <naevans@microsoft.com>",
+    "Rodrigo Racanicci <rracanicci@microsoft.com>",
+    "Sarah Smith <smithsarah@microsoft.com>",
 ]
 license = "MIT"
 readme = "README.md"
