@@ -47,6 +47,8 @@ numpy = "^1.25.2"
 graspologic = "^3.3.0"
 networkx = "^3.2.1"
 fastparquet = "^2023.8.0"
+# 1.13.0 was a footgun
+scipy = "1.12.0"
 
 # Configuration
 pyyaml = "^6.0.1"
@@ -63,17 +65,12 @@ rich = "^13.6.0"
 textual = "^0.41.0"
 azure-storage-blob = "^12.19.0"
 
-# Optional, publication-time dependencies
-artifacts-keyring = { version = "^0.3.4", optional = true }
-azure-devops-artifacts-helpers = { version = "^1.2.0", optional = true }
-
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"
 poethepoet = "^0.25.0"
 typing-extensions = "^4.5.0"
 coverage = "^7.3.2"
 pytest = "^7.4.2"
-twine = "^4.0.2"
 pyright = "^1.1.352"
 pytest-asyncio = "^0.23.4"
 ipykernel = "^6.29.3"
@@ -83,7 +80,6 @@ semversioner = "^2.0.2"
 update-toml = "^0.0.3"
 
 [tool.poetry.extras]
-azure-artifacts = ["artifacts-keyring", "azure-devops-artifacts-helpers"]
 lancedb = ["lancedb"]
 
 [build-system]
