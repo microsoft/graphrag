@@ -116,7 +116,6 @@ plottable
 scatterplot
 
 # Resilience Team Terms
-SITREP
 megapipeline
 columnwise
 docstore

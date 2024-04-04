@@ -3,7 +3,6 @@
 """
 Data load utils.
 
-Code is based on SITREP: https://dev.azure.com/msresearch/Resilience/_git/sitrep?path=/python/db/sitrepdb/loaders/utils.py
 """
 
 import numpy as np
