@@ -2,8 +2,6 @@
 
 """An LLM that unpacks cached JSON responses."""
 
-import logging
-
 from typing_extensions import Unpack
 
 from graphrag.llm.types import (
@@ -16,8 +14,6 @@ from graphrag.llm.types import (
 )
 
 from .utils import try_parse_json_object
-
-log = logging.getLogger(__name__)
 
 
 class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
