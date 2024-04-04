@@ -12,12 +12,13 @@ This repository presents a methodology for using knowledge graph memory structur
 
 ## Diving Deeper
 
-- To read more about the indexing library, see [python/graphrag/README.md](./python/graphrag/README.md)
 - To learn about our contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - To start developing _GraphRAG_, see [DEVELOPING.md](./DEVELOPING.md)
-  
+
 ## Responsible AI FAQ
+
 See [RAI_TRANSPARENCY.md](./RAI_TRANSPARENCY.md)
+
 - [What is GraphRAG?](./RAI_TRANSPARENCY.md#what-is-graphrag)
 - [What can GraphRAG do?](./RAI_TRANSPARENCY.md#what-can-graphrag-do)
 - [What are GraphRAG’s intended use(s)?](./RAI_TRANSPARENCY.md#what-are-graphrags-intended-uses)
@@ -34,4 +35,5 @@ Use of Microsoft trademarks or logos in modified versions of this project must n
 Any use of third-party trademarks or logos are subject to those third-party's policies.
 
 ## Privacy
+
 [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement)
