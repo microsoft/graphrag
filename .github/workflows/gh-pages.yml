@@ -32,7 +32,7 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
 
       - name: Use Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -54,7 +54,7 @@ jobs:
         run: find docsite/_site
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
           branch: gh-pages
           folder: docsite/_site
