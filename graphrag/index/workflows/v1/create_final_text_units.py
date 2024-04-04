@@ -16,7 +16,7 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_text_units`
     * `workflow:create_final_entities`
-    * `workflow:create_final_communities
+    * `workflow:create_final_communities`
     """
     text_embed_config = config.get("text_embed", {})
     covariates_enabled = config.get("covariates_enabled", False)

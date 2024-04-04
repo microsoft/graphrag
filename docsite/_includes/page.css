@@ -109,3 +109,7 @@ a {
 .token.comment, .token.prolog, .token.doctype, .token.cdata {
     color: #8093a5;
 }
+
+.token.property, .token.tag, .token.constant, .token.symbol, .token.deleted {
+    color: #ff36ab;
+}
