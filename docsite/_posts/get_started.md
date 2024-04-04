@@ -79,7 +79,7 @@ export GRAPHRAG_INPUT_TYPE="text" && \
 export GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
 ```
 
-For more details about Environment Variables configuration please refer to [Enviroment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../_query/3-cli).
+For more details about Environment Variables configuration please refer to [Environment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../_query/3-cli).
 
 ## Running the Indexing pipeline
 
