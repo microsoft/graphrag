@@ -27,7 +27,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry install -E jupyter
+        run: poetry install -E jupyter-libs
 
       - name: Check Semversioner
         run: |
