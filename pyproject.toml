@@ -62,7 +62,7 @@ tenacity = "^8.2.3"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.41.0"
+textual = "^0.55.1"
 azure-storage-blob = "^12.19.0"
 
 [tool.poetry.group.dev.dependencies]
