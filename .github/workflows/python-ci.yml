@@ -3,7 +3,11 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths: "**/*"
+    branches: [main]
+
+permissions:
+  pull-requests: read
+    
 jobs:
   python-ci:
     runs-on: ubuntu-latest
@@ -15,48 +19,69 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'graphrag/**/*'
+              - '**/*.py'
+              - '**/*.toml'
+              - '**/*.ipynb'
+              - .github/workflows/python-ci.yml
+
       - name: Set up Python ${{ matrix.python-version }}
+        if: steps.changes.outputs.python == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry ${{ matrix.poetry-version }}
+        if: steps.changes.outputs.python == 'true'
         uses: abatilo/actions-poetry@v3.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
 
       - name: Install dependencies
+        if: steps.changes.outputs.python == 'true'
         shell: bash
         run: poetry install
 
       - name: Check Semversioner
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run semversioner check
 
       - name: Check
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe check
 
       - name: Build
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry build
 
       - name: Start Azurite
+        if: steps.changes.outputs.python == 'true'
         run: ./scripts/start-azurite.sh&
 
       - name: Unit Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_unit
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Integration Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_integration
         env:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Smoke Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_smoke
         env:
@@ -65,5 +90,6 @@ jobs:
           GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
 
       - name: E2E Test
+        if: steps.changes.outputs.python == 'true'
         run: |
           ./scripts/e2e-test.sh
