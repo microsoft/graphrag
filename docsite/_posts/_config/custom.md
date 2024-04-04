@@ -22,12 +22,11 @@ Most examples include two different forms of running the pipeline, both are cont
 To run an example:
 
 - Run `poetry shell` to activate a virtual environment with the required dependencies.
-- Run `PYTHONPATH="$(pwd)" python examples/path_to_example/run.py` from the `python/graphrag` directory.
+- Run `PYTHONPATH="$(pwd)" python examples/path_to_example/run.py` from the `root` directory.
 
 For example to run the single_verb example, you would run the following commands:
 
 ```bash
-cd python/graphrag
 poetry shell
 ```
 
