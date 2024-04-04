@@ -49,6 +49,11 @@ if __name__ == "__main__":
         help="The data formats to emit, comma-separated. Valid values are 'parquet' and 'csv'. default='parquet,csv'",
         type=str,
     )
+    parser.add_argument(
+        "--dryrun",
+        help="Run the pipeline without actually executing any steps and inspect the configuration.",
+        action="store_true",
+    )
     parser.add_argument("--nocache", help="Disable LLM cache.", action="store_true")
     args = parser.parse_args()
 
@@ -61,5 +66,6 @@ if __name__ == "__main__":
         reporter=args.reporter,
         config=args.config,
         emit=args.emit,
+        dryrun=args.dryrun,
         cli=True,
     )
