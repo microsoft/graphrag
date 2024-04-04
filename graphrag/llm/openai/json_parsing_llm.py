@@ -19,8 +19,6 @@ from .utils import try_parse_json_object
 
 log = logging.getLogger(__name__)
 
-UNPARSABLE_JSON = "Failed to parse JSON data"
-
 
 class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
     """An OpenAI History-Tracking LLM."""
