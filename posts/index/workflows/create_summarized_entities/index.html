@@ -107,6 +107,26 @@ h3 {
 p {
     margin-top: 10px;
 }
+
+/* Accessibility styling */
+
+a {
+    color: #485fc7;
+    text-decoration: underline;
+}
+
+.menu-list a {
+    text-decoration: none;
+}
+
+
+.token.comment, .token.prolog, .token.doctype, .token.cdata {
+    color: #8093a5;
+}
+
+.token.property, .token.tag, .token.constant, .token.symbol, .token.deleted {
+    color: #ff36ab;
+}
 </style>
     <script type="module" async="">import mermaid from "https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs";document.addEventListener('DOMContentLoaded', mermaid.initialize({"loadOnSave":true}));</script>
     <script>function showTooltip(o,e){o.trigger.className.includes("tooltipped")||(o.trigger.children[0].className="tooltipped tooltipped-s",o.trigger.children[0].ariaLabel=e)}window.addEventListener("load",()=>{var o=new ClipboardJS(".code-copy");o.on("success",o=>showTooltip(o,"Copied!")),o.on("error",o=>showTooltip(o,"Failed..."))});</script>
@@ -188,14 +208,6 @@ p {
 </li><li>
 <a href="/graphrag/posts/index/workflows/create_base_entity_graph/">create_base_entity_graph</a>
 </li><li>
-<a href="/graphrag/posts/index/workflows/create_final_covariates/">create_final_covariates</a>
-</li><li>
-<a href="/graphrag/posts/index/workflows/create_final_entities/">create_final_entities</a>
-</li><li>
-<a href="/graphrag/posts/index/workflows/create_final_nodes/">create_final_nodes</a>
-</li><li>
-<a href="/graphrag/posts/index/workflows/create_final_text_units/">create_final_text_units</a>
-</li><li>
 <a href="/graphrag/posts/index/workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
 </li><li>
 <a href="/graphrag/posts/index/workflows/create_base_text_units/">create_base_text_units</a>
@@ -204,9 +216,17 @@ p {
 </li><li>
 <a href="/graphrag/posts/index/workflows/create_final_community_reports/">create_final_community_reports</a>
 </li><li>
+<a href="/graphrag/posts/index/workflows/create_final_covariates/">create_final_covariates</a>
+</li><li>
 <a href="/graphrag/posts/index/workflows/create_final_documents/">create_final_documents</a>
 </li><li>
+<a href="/graphrag/posts/index/workflows/create_final_entities/">create_final_entities</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_nodes/">create_final_nodes</a>
+</li><li>
 <a href="/graphrag/posts/index/workflows/create_final_relationships/">create_final_relationships</a>
+</li><li>
+<a href="/graphrag/posts/index/workflows/create_final_text_units/">create_final_text_units</a>
 </li><li>
 <a href="/graphrag/posts/index/workflows/create_summarized_entities/" class="is-active" aria-current="page">create_summarized_entities</a>
 </li></ul>
@@ -217,35 +237,35 @@ p {
 <a href="/graphrag/posts/index/verbs/overview/">Verbs</a>
 
                     <ul hidden=""><li>
-<a href="/graphrag/posts/index/verbs/genid/">genid</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/spread_json/">spread_json</a>
-</li><li>
 <a href="/graphrag/posts/index/verbs/aggregate/">aggregate</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/chunk/">chunk</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/cluster_graph/">cluster_graph</a>
 </li><li>
 <a href="/graphrag/posts/index/verbs/concat/">concat</a>
 </li><li>
+<a href="/graphrag/posts/index/verbs/create_graph/">create_graph</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/genid/">genid</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/layout_graph/">layout_graph</a>
+</li><li>
 <a href="/graphrag/posts/index/verbs/merge/">merge</a>
 </li><li>
+<a href="/graphrag/posts/index/verbs/merge_graphs/">merge_graphs</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/spread_json/">spread_json</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/text_replace/">text_replace</a>
+</li><li>
 <a href="/graphrag/posts/index/verbs/text_split/">text_split</a>
+</li><li>
+<a href="/graphrag/posts/index/verbs/unpack_graph/">unpack_graph</a>
 </li><li>
 <a href="/graphrag/posts/index/verbs/unzip/">unzip</a>
 </li><li>
 <a href="/graphrag/posts/index/verbs/zip/">zip</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/chunk/">chunk</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/text_replace/">text_replace</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/create_graph/">create_graph</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/unpack_graph/">unpack_graph</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/layout_graph/">layout_graph</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/merge_graphs/">merge_graphs</a>
-</li><li>
-<a href="/graphrag/posts/index/verbs/cluster_graph/">cluster_graph</a>
 </li></ul>
                   </li>
 
