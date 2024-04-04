@@ -24,7 +24,7 @@ GRAPHRAG_API_BASE=None # For Azure OpenAI Users
 GRAPHRAG_API_VERSION=None # For Azure OpenAI Users
 
 # Text Generation Settings
-GRAPHRAG_LLM_TYPE=azure_openai_chat # or openai_chat
+GRAPHRAG_LLM_TYPE="azure_openai_chat" # or openai_chat
 GRAPHRAG_LLM_DEPLOYMENT_NAME="gpt-4-turbo-preview"
 GRAPHRAG_LLM_MODEL_SUPPORTS_JSON=True
 
