@@ -8,11 +8,11 @@ date: 2023-01-04
 
 The primary configuration sections for Indexing Engine pipelines are described below. Each configuration section can be expressed in Python (for use in Python API mode) as well as YAML, but YAML is show here for brevity.
 
-Using custom configuration is an advanced use-case. Most users will want to use the [Default Configuration](../default_configuration) instead.
+Using custom configuration is an advanced use-case. Most users will want to use the [Default Configuration](../overview) instead.
 
 ## Indexing Engine Examples
 
-The [examples](https://dev.azure.com/msresearch/Resilience/_git/ire-indexing?path=/python/graphrag/examples) directory contains several examples of how to use the indexing engine with _custom configuration_.
+The [examples](https://github.com/microsoft/graphrag/blob/main/examples/) directory contains several examples of how to use the indexing engine with _custom configuration_.
 
 Most examples include two different forms of running the pipeline, both are contained in the examples `run.py`
 
@@ -22,13 +22,15 @@ Most examples include two different forms of running the pipeline, both are cont
 To run an example:
 
 - Run `poetry shell` to activate a virtual environment with the required dependencies.
-- Run `PYTHONPATH="$(pwd)" python examples/path_to_example/run.py` from the `python/graphrag` directory.
+- Run `PYTHONPATH="$(pwd)" python examples/path_to_example/run.py` from the `root` directory.
 
 For example to run the single_verb example, you would run the following commands:
 
 ```bash
-cd python/graphrag
 poetry shell
+```
+
+```sh
 PYTHONPATH="$(pwd)" python examples/single_verb/run.py
 ```
 

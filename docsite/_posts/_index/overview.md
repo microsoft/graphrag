@@ -78,7 +78,7 @@ print(pipeline_result)
 ## Further Reading
 
 - To start developing within the _GraphRAG_ project, see [getting started](../../developing/)
-- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](../architecture/)
-- To get running with a series of examples, see [the examples documentation](https://dev.azure.com/msresearch/Resilience/_git/ire-indexing?path=/python/graphrag/examples/README.md&_a=preview)
-- To read more about using the default configuration with the indexing engine, see [the default configuration documentation](../default_configuration/)
-- To read more about custom configuring with the indexing engine, see [the custom configuration documentation](../custom_configuration/)
+- To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](../0-architecture/)
+- To get running with a series of examples, see [the examples documentation](https://github.com/microsoft/graphrag/blob/main/examples/README.md)
+- To read more about using the default configuration with the indexing engine, see [the default configuration documentation](../../_config/overview)
+- To read more about custom configuring with the indexing engine, see [the custom configuration documentation](../../_config/custom)
