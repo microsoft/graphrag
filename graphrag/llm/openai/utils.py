@@ -3,6 +3,7 @@
 """Utility functions for the OpenAI API."""
 
 import json
+import logging
 from collections.abc import Callable
 from typing import Any
 
@@ -25,6 +26,8 @@ RETRYABLE_ERRORS: list[type[Exception]] = [
     InternalServerError,
 ]
 RATE_LIMIT_ERRORS: list[type[Exception]] = [RateLimitError]
+
+log = logging.getLogger(__name__)
 
 
 def get_token_counter(config: OpenAIConfiguration) -> Callable[[str], int]:
@@ -85,10 +88,15 @@ def get_completion_llm_args(
 
 def try_parse_json_object(input: str) -> dict:
     """Generate JSON-string output using best-attempt prompting & parsing techniques."""
-    result = json.loads(input)
-    if not isinstance(result, dict):
-        raise TypeError
-    return result
+    try:
+        result = json.loads(input)
+    except json.JSONDecodeError:
+        log.exception("error loading json, json=%s", input)
+        raise
+    else:
+        if not isinstance(result, dict):
+            raise TypeError
+        return result
 
 
 def get_sleep_time_from_error(e: Any) -> float:
