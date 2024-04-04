@@ -60,29 +60,6 @@ First let's make sure to setup the required environment variables:
 - `GRAPHRAG_LLM_DEPLOYMENT_NAME` - Deployment name for the Chat Completions model. Only required for Azure OpenAI users.
 - `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME` - Deployment name for the Embeddings model. Only required for Azure OpenAI users.
 
-### Shell
-
-#### <ins>OpenAI</ins>
-
-```sh
-set GRAPHRAG_API_KEY=<api_key> && \
-set GRAPHRAG_LLM_MODEL=<chat_completions_model> && \
-set GRAPHRAG_EMBEDDING_MODEL=<embeddings_model> && \
-set GRAPHRAG_INPUT_TYPE="text"
-```
-
-#### <ins>Azure OpenAI</ins>
-
-```sh
-set GRAPHRAG_API_KEY=<api_key> && \
-set GRAPHRAG_LLM_DEPLOYMENT_NAME=<chat_completions_model> && \
-set GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME=<embeddings_model> && \
-set GRAPHRAG_INPUT_TYPE="text" && \
-set GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
-```
-
-### Bash
-
 #### <ins>OpenAI</ins>
 
 ```sh
