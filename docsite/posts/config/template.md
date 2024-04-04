@@ -3,7 +3,7 @@ title: Configuration Template
 navtitle: Configuration Template
 layout: page
 tags: [post]
-date: 2023-01-04
+date: 2024-04-04
 ---
 
 The following template can be used and stored as a `.env` in the the directory where you're are pointing
@@ -171,7 +171,4 @@ GRAPHRAG_EMBEDDING_API_VERSION=None # For Azure OpenAI Users and if GRAPHRAG_API
 # GRAPHRAG_ENTITY_RESOLUTION_ENABLED=False
 # GRAPHRAG_SKIP_WORKFLOWS=None
 # GRAPHRAG_UMAP_ENABLED=False
-
-
-
 ```
