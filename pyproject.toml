@@ -65,11 +65,6 @@ rich = "^13.6.0"
 textual = "^0.55.1"
 azure-storage-blob = "^12.19.0"
 
-#Jupyter
-ipykernel = { version = "^6.29.4", optional = true }
-jupyter = { version = "^1.0.0", optional = true }
-nbconvert = { version = "^7.16.3", optional = true }
-
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"
 poethepoet = "^0.25.0"
@@ -80,11 +75,13 @@ pyright = "^1.1.352"
 pytest-asyncio = "^0.23.4"
 semversioner = "^2.0.2"
 update-toml = "^0.0.3"
+ipykernel = "^6.29.4"
+jupyter = "^1.0.0"
+nbconvert = "^7.16.3"
 
 
 [tool.poetry.extras]
 lancedb = ["lancedb"]
-jupyter-libs = ["ipykernel", "jupyter", "nbconvert"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
