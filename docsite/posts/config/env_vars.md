@@ -30,14 +30,14 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 
 | Parameter                     | Description                                                                       | Type  | Required or Optional | Default   |
 | ----------------------------- | --------------------------------------------------------------------------------- | ----- | -------------------- | --------- |
-| `GRAPHRAG_INPUT_FILE_PATTERN` | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.txt` |
+| `GRAPHRAG_INPUT_FILE_PATTERN` | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.txt$` |
 
 
 ### CSV Input Data (`GRAPHRAG_INPUT_TYPE`=csv)
 
 | Parameter                          | Description                                                                       | Type  | Required or Optional | Default   |
 | ---------------------------------- | --------------------------------------------------------------------------------- | ----- | -------------------- | --------- |
-| `GRAPHRAG_INPUT_FILE_PATTERN`      | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.csv` |
+| `GRAPHRAG_INPUT_FILE_PATTERN`      | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.csv$` |
 | `GRAPHRAG_INPUT_SOURCE_COLUMN`     | The 'source' column to use when reading CSV input files.                          | `str` | optional             | `source`  |
 | `GRAPHRAG_INPUT_TIMESTAMP_COLUMN`  | The 'timestamp' column to use when reading CSV input files.                       | `str` | optional             | `None`    |
 | `GRAPHRAG_INPUT_TIMESTAMP_FORMAT`  | The timestamp format to use when parsing timestamps in the timestamp column       | `str` | optional             | `None`    |
