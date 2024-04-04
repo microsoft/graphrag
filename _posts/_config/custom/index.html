@@ -216,21 +216,17 @@ p {
 </li><li>
 <a href="/_posts/_indexing/_workflows/create_summarized_entities/">create_summarized_entities</a>
 </li><li>
-<a href="/_posts/_index/_workflows/create_base_documents/">create_base_documents</a>
-</li><li>
-<a href="/_posts/_index/_workflows/create_final_communities/">create_final_communities</a>
-</li><li>
 <a href="/_posts/_index/_workflows/create_final_community_reports/">create_final_community_reports</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_relationships/">create_final_relationships</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_summarized_entities/">create_summarized_entities</a>
 </li><li>
+<a href="/_posts/_index/_workflows/create_base_documents/">create_base_documents</a>
+</li><li>
 <a href="/_posts/_index/_workflows/create_base_entity_graph/">create_base_entity_graph</a>
 </li><li>
-<a href="/_posts/_index/_workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
-</li><li>
-<a href="/_posts/_index/_workflows/create_base_text_units/">create_base_text_units</a>
+<a href="/_posts/_index/_workflows/create_final_communities/">create_final_communities</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_covariates/">create_final_covariates</a>
 </li><li>
@@ -239,6 +235,10 @@ p {
 <a href="/_posts/_index/_workflows/create_final_entities/">create_final_entities</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_nodes/">create_final_nodes</a>
+</li><li>
+<a href="/_posts/_index/_workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
+</li><li>
+<a href="/_posts/_index/_workflows/create_base_text_units/">create_base_text_units</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_text_units/">create_final_text_units</a>
 </li></ul>
@@ -281,29 +281,29 @@ p {
 </li><li>
 <a href="/_posts/_indexing/_verbs/zip/">zip</a>
 </li><li>
+<a href="/_posts/_index/_verbs/genid/">genid</a>
+</li><li>
 <a href="/_posts/_index/_verbs/spread_json/">spread_json</a>
 </li><li>
 <a href="/_posts/_index/_verbs/unzip/">unzip</a>
-</li><li>
-<a href="/_posts/_index/_verbs/genid/">genid</a>
 </li><li>
 <a href="/_posts/_index/_verbs/zip/">zip</a>
 </li><li>
 <a href="/_posts/_index/_verbs/aggregate/">aggregate</a>
 </li><li>
-<a href="/_posts/_index/_verbs/chunk/">chunk</a>
-</li><li>
 <a href="/_posts/_index/_verbs/concat/">concat</a>
 </li><li>
 <a href="/_posts/_index/_verbs/merge/">merge</a>
 </li><li>
-<a href="/_posts/_index/_verbs/text_replace/">text_replace</a>
-</li><li>
 <a href="/_posts/_index/_verbs/text_split/">text_split</a>
 </li><li>
-<a href="/_posts/_index/_verbs/unpack_graph/">unpack_graph</a>
+<a href="/_posts/_index/_verbs/chunk/">chunk</a>
+</li><li>
+<a href="/_posts/_index/_verbs/text_replace/">text_replace</a>
 </li><li>
 <a href="/_posts/_index/_verbs/create_graph/">create_graph</a>
+</li><li>
+<a href="/_posts/_index/_verbs/unpack_graph/">unpack_graph</a>
 </li><li>
 <a href="/_posts/_index/_verbs/layout_graph/">layout_graph</a>
 </li><li>
@@ -368,9 +368,9 @@ p {
         <main>
             <h1>Custom Configuration Mode</h1>
             <p>The primary configuration sections for Indexing Engine pipelines are described below. Each configuration section can be expressed in Python (for use in Python API mode) as well as YAML, but YAML is show here for brevity.</p>
-<p>Using custom configuration is an advanced use-case. Most users will want to use the <a href="../default_configuration">Default Configuration</a> instead.</p>
+<p>Using custom configuration is an advanced use-case. Most users will want to use the <a href="../overview">Default Configuration</a> instead.</p>
 <h2>Indexing Engine Examples</h2>
-<p>The <a href="https://dev.azure.com/msresearch/Resilience/_git/ire-indexing?path=/python/graphrag/examples">examples</a> directory contains several examples of how to use the indexing engine with <em>custom configuration</em>.</p>
+<p>The <a href="https://github.com/microsoft/graphrag/blob/main/examples/">examples</a> directory contains several examples of how to use the indexing engine with <em>custom configuration</em>.</p>
 <p>Most examples include two different forms of running the pipeline, both are contained in the examples <code>run.py</code></p>
 <ol>
 <li>Using mostly the Python API</li>
@@ -379,17 +379,25 @@ p {
 <p>To run an example:</p>
 <ul>
 <li>Run <code>poetry shell</code> to activate a virtual environment with the required dependencies.</li>
-<li>Run <code>PYTHONPATH=&quot;$(pwd)&quot; python examples/path_to_example/run.py</code> from the <code>python/graphrag</code> directory.</li>
+<li>Run <code>PYTHONPATH=&quot;$(pwd)&quot; python examples/path_to_example/run.py</code> from the <code>root</code> directory.</li>
 </ul>
 <p>For example to run the single_verb example, you would run the following commands:</p>
 
 <div style="position: relative">
-  <pre class="language-bash"><code id="code-45" class="language-bash"><span class="token builtin class-name">cd</span> python/graphrag
-poetry shell
-<span class="token assign-left variable">PYTHONPATH</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">pwd</span><span class="token variable">)</span></span>"</span> python examples/single_verb/run.py</code></pre>
+  <pre class="language-bash"><code id="code-45" class="language-bash">poetry shell</code></pre>
 
   <button class="code-copy "
     data-clipboard-target="#code-45"
+    style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-sh"><code id="code-46" class="language-sh"><span class="token assign-left variable">PYTHONPATH</span><span class="token operator">=</span><span class="token string">"<span class="token variable"><span class="token variable">$(</span><span class="token builtin class-name">pwd</span><span class="token variable">)</span></span>"</span> python examples/single_verb/run.py</code></pre>
+
+  <button class="code-copy "
+    data-clipboard-target="#code-46"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -399,24 +407,24 @@ poetry shell
 <p>This configuration allows you to extend a base configuration file or files.</p>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-55" class="language-yaml"><span class="token comment"># single base</span>
+  <pre class="language-yaml"><code id="code-56" class="language-yaml"><span class="token comment"># single base</span>
 <span class="token key atrule">extends</span><span class="token punctuation">:</span> ../base_config.yml</code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-55"
+    data-clipboard-target="#code-56"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-56" class="language-yaml"><span class="token comment"># multiple bases</span>
+  <pre class="language-yaml"><code id="code-57" class="language-yaml"><span class="token comment"># multiple bases</span>
 <span class="token key atrule">extends</span><span class="token punctuation">:</span>
   <span class="token punctuation">-</span> ../base_config.yml
   <span class="token punctuation">-</span> ../base_config2.yml</code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-56"
+    data-clipboard-target="#code-57"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -425,10 +433,10 @@ poetry shell
 <p>This configuration allows you to set the root directory for the pipeline. All data inputs and outputs are assumed to be relative to this path.</p>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-63" class="language-yaml"><span class="token key atrule">root_dir</span><span class="token punctuation">:</span> /workspace/data_project</code></pre>
+  <pre class="language-yaml"><code id="code-64" class="language-yaml"><span class="token key atrule">root_dir</span><span class="token punctuation">:</span> /workspace/data_project</code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-63"
+    data-clipboard-target="#code-64"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -465,7 +473,7 @@ poetry shell
 </ul>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-166" class="language-yaml"><span class="token key atrule">workflows</span><span class="token punctuation">:</span>
+  <pre class="language-yaml"><code id="code-167" class="language-yaml"><span class="token key atrule">workflows</span><span class="token punctuation">:</span>
   <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> workflow1
     <span class="token key atrule">steps</span><span class="token punctuation">:</span>
       <span class="token punctuation">-</span> <span class="token key atrule">verb</span><span class="token punctuation">:</span> derive
@@ -483,7 +491,7 @@ poetry shell
           <span class="token key atrule">source</span><span class="token punctuation">:</span> workflow<span class="token punctuation">:</span>workflow1</code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-166"
+    data-clipboard-target="#code-167"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -501,7 +509,7 @@ poetry shell
 </ul>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-212" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
+  <pre class="language-yaml"><code id="code-213" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
   <span class="token key atrule">type</span><span class="token punctuation">:</span> csv
   <span class="token key atrule">base_dir</span><span class="token punctuation">:</span> ../data/csv <span class="token comment"># the directory containing the CSV files, this is relative to the config file</span>
   <span class="token key atrule">file_pattern</span><span class="token punctuation">:</span> <span class="token string">'.*[\/](?P&lt;source>[^\/]+)[\/](?P&lt;year>\d{4})-(?P&lt;month>\d{2})-(?P&lt;day>\d{2})_(?P&lt;author>[^_]+)_\d+\.csv$'</span> <span class="token comment"># a regex to match the CSV files</span>
@@ -522,14 +530,14 @@ poetry shell
         <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">"My document"</span></code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-212"
+    data-clipboard-target="#code-213"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-213" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
+  <pre class="language-yaml"><code id="code-214" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
   <span class="token key atrule">type</span><span class="token punctuation">:</span> text
   <span class="token key atrule">base_dir</span><span class="token punctuation">:</span> ../data/csv <span class="token comment"># the directory containing the CSV files, this is relative to the config file</span>
   <span class="token key atrule">file_pattern</span><span class="token punctuation">:</span> <span class="token string">'.*[\/](?P&lt;source>[^\/]+)[\/](?P&lt;year>\d{4})-(?P&lt;month>\d{2})-(?P&lt;day>\d{2})_(?P&lt;author>[^_]+)_\d+\.csv$'</span> <span class="token comment"># a regex to match the CSV files</span>
@@ -546,7 +554,7 @@ poetry shell
         <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">"My document"</span></code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-213"
+    data-clipboard-target="#code-214"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>

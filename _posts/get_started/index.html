@@ -216,21 +216,17 @@ p {
 </li><li>
 <a href="/_posts/_indexing/_workflows/create_summarized_entities/">create_summarized_entities</a>
 </li><li>
-<a href="/_posts/_index/_workflows/create_base_documents/">create_base_documents</a>
-</li><li>
-<a href="/_posts/_index/_workflows/create_final_communities/">create_final_communities</a>
-</li><li>
 <a href="/_posts/_index/_workflows/create_final_community_reports/">create_final_community_reports</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_relationships/">create_final_relationships</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_summarized_entities/">create_summarized_entities</a>
 </li><li>
+<a href="/_posts/_index/_workflows/create_base_documents/">create_base_documents</a>
+</li><li>
 <a href="/_posts/_index/_workflows/create_base_entity_graph/">create_base_entity_graph</a>
 </li><li>
-<a href="/_posts/_index/_workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
-</li><li>
-<a href="/_posts/_index/_workflows/create_base_text_units/">create_base_text_units</a>
+<a href="/_posts/_index/_workflows/create_final_communities/">create_final_communities</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_covariates/">create_final_covariates</a>
 </li><li>
@@ -239,6 +235,10 @@ p {
 <a href="/_posts/_index/_workflows/create_final_entities/">create_final_entities</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_nodes/">create_final_nodes</a>
+</li><li>
+<a href="/_posts/_index/_workflows/create_base_extracted_entities/">create_base_extracted_entities</a>
+</li><li>
+<a href="/_posts/_index/_workflows/create_base_text_units/">create_base_text_units</a>
 </li><li>
 <a href="/_posts/_index/_workflows/create_final_text_units/">create_final_text_units</a>
 </li></ul>
@@ -281,29 +281,29 @@ p {
 </li><li>
 <a href="/_posts/_indexing/_verbs/zip/">zip</a>
 </li><li>
+<a href="/_posts/_index/_verbs/genid/">genid</a>
+</li><li>
 <a href="/_posts/_index/_verbs/spread_json/">spread_json</a>
 </li><li>
 <a href="/_posts/_index/_verbs/unzip/">unzip</a>
-</li><li>
-<a href="/_posts/_index/_verbs/genid/">genid</a>
 </li><li>
 <a href="/_posts/_index/_verbs/zip/">zip</a>
 </li><li>
 <a href="/_posts/_index/_verbs/aggregate/">aggregate</a>
 </li><li>
-<a href="/_posts/_index/_verbs/chunk/">chunk</a>
-</li><li>
 <a href="/_posts/_index/_verbs/concat/">concat</a>
 </li><li>
 <a href="/_posts/_index/_verbs/merge/">merge</a>
 </li><li>
-<a href="/_posts/_index/_verbs/text_replace/">text_replace</a>
-</li><li>
 <a href="/_posts/_index/_verbs/text_split/">text_split</a>
 </li><li>
-<a href="/_posts/_index/_verbs/unpack_graph/">unpack_graph</a>
+<a href="/_posts/_index/_verbs/chunk/">chunk</a>
+</li><li>
+<a href="/_posts/_index/_verbs/text_replace/">text_replace</a>
 </li><li>
 <a href="/_posts/_index/_verbs/create_graph/">create_graph</a>
+</li><li>
+<a href="/_posts/_index/_verbs/unpack_graph/">unpack_graph</a>
 </li><li>
 <a href="/_posts/_index/_verbs/layout_graph/">layout_graph</a>
 </li><li>
@@ -394,9 +394,7 @@ It shows how to use the system to index some text, and then use the indexed data
 <p>First let's get a sample dataset ready:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-37" class="language-sh"><span class="token function">mkdir</span> <span class="token parameter variable">-p</span> ./ragtest/input
-<span class="token comment"># A Christmas Carol by Charles Dickens</span>
-<span class="token function">curl</span> https://www.gutenberg.org/cache/epub/24022/pg24022.txt <span class="token operator">></span> ./ragtest/input/book.txt</code></pre>
+  <pre class="language-sh"><code id="code-37" class="language-sh"><span class="token function">mkdir</span> <span class="token parameter variable">-p</span> ./ragtest/input</code></pre>
 
   <button class="code-copy "
     data-clipboard-target="#code-37"
@@ -404,16 +402,10 @@ It shows how to use the system to index some text, and then use the indexed data
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
-<p>Next we'll inject some required config variables:</p>
+<p>Now let's get a copy of A Christmas Carol by Charles Dickens from a trusted source</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-41" class="language-sh"><span class="token builtin class-name">echo</span> <span class="token string">"GRAPHRAG_API_KEY=<span class="token entity" title="\&quot;">\"</span>&lt;Your OpenAI API Key><span class="token entity" title="\&quot;">\"</span>"</span> <span class="token operator">>></span> ./ragtest/.env
-<span class="token builtin class-name">echo</span> <span class="token string">"GRAPHRAG_INPUT_TYPE=text"</span> <span class="token operator">>></span> ./ragtest/.env
-
-<span class="token comment"># For Azure OpenAI Users</span>
-<span class="token builtin class-name">echo</span> <span class="token string">"GRAPHRAG_API_BASE=http://&lt;domain>.openai.azure.com"</span> <span class="token operator">>></span> ./ragtest/.env
-<span class="token builtin class-name">echo</span> <span class="token string">"GRAPHRAG_LLM_DEPLOYMENT_NAME"</span><span class="token operator">=</span><span class="token string">"gpt-4"</span> <span class="token operator">>></span> ./ragtest/.env
-<span class="token builtin class-name">echo</span> <span class="token string">"GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME"</span><span class="token operator">=</span><span class="token string">"text-embedding-3-small"</span> <span class="token operator">>></span> ./ragtest/.env</code></pre>
+  <pre class="language-sh"><code id="code-41" class="language-sh"><span class="token function">curl</span> https://www.gutenberg.org/cache/epub/24022/pg24022.txt <span class="token operator">></span> ./ragtest/input/book.txt</code></pre>
 
   <button class="code-copy "
     data-clipboard-target="#code-41"
@@ -421,13 +413,56 @@ It shows how to use the system to index some text, and then use the indexed data
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
+<p>Next we'll inject some required config variables:</p>
+<h2>Set Up Environment Variables</h2>
+<p>First let's make sure to setup the required environment variables:</p>
+<ul>
+<li><code>GRAPHRAG_API_KEY</code> - API Key for executing the model, will fallback to <code>OPENAI_API_KEY</code> if one is not provided.</li>
+<li><code>GRAPHRAG_LLM_MODEL</code> - Model to use for Chat Completions.</li>
+<li><code>GRAPHRAG_EMBEDDING_MODEL</code> - Model to use for Embeddings.</li>
+<li><code>GRAPHRAG_INPUT_TYPE</code> - Type of input data, can be <code>text</code> or <code>csv</code>.</li>
+<li><code>GRAPHRAG_API_BASE</code> - Base URL for the Azure OpenAI. Only required for Azure OpenAI users.</li>
+<li><code>GRAPHRAG_LLM_DEPLOYMENT_NAME</code> - Deployment name for the Chat Completions model. Only required for Azure OpenAI users.</li>
+<li><code>GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</code> - Deployment name for the Embeddings model. Only required for Azure OpenAI users.</li>
+</ul>
+<h4><ins>OpenAI</ins></h4>
+
+<div style="position: relative">
+  <pre class="language-sh"><code id="code-91" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_KEY</span><span class="token operator">=</span><span class="token operator">&lt;</span>api_key<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_MODEL</span><span class="token operator">=</span><span class="token operator">&lt;</span>chat_completions_model<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_MODEL</span><span class="token operator">=</span><span class="token operator">&lt;</span>embeddings_model<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span></code></pre>
+
+  <button class="code-copy "
+    data-clipboard-target="#code-91"
+    style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h4><ins>Azure OpenAI</ins></h4>
+
+<div style="position: relative">
+  <pre class="language-sh"><code id="code-95" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_KEY</span><span class="token operator">=</span><span class="token operator">&lt;</span>api_key<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token operator">&lt;</span>chat_completions_model<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token operator">&lt;</span>embeddings_model<span class="token operator">></span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_BASE</span><span class="token operator">=</span><span class="token string">"http://&lt;domain>.openai.azure.com"</span></code></pre>
+
+  <button class="code-copy "
+    data-clipboard-target="#code-95"
+    style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>For more details about Environment Variables configuration please refer to <a href="./_config/overview/">Environment Configuration</a> to the Query Engine <a href="../_query/3-cli">CLI documentation</a>.</p>
+<h2>Running the Indexing pipeline</h2>
 <p>Finally we'll run the pipeline!</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-45" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--root</span> ./ragtest</code></pre>
+  <pre class="language-sh"><code id="code-105" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--root</span> ./ragtest</code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-45"
+    data-clipboard-target="#code-105"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -436,38 +471,18 @@ It shows how to use the system to index some text, and then use the indexed data
 <p>This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your <code>.env</code> file).
 Once the pipeline is complete, you should see a new folder called <code>./ragtest/output/&lt;timestamp&gt;/artifacts</code> with a series of parquet files.</p>
 <h1>Using the Query Engine</h1>
-<h2>Set Up Environment Variables</h2>
-<p>First let's make sure to setup the required environment variables:</p>
-<ul>
-<li><code>GRAPHRAG_API_KEY</code> - API Key for executing the model, will fallback to <code>OPENAI_API_KEY</code> if one is not provided.</li>
-<li><code>GRAPHRAG_LLM_MODEL</code> - Model to use for Chat Completions.</li>
-<li><code>GRAPHRAG_EMBEDDING_MODEL</code> - Model to use for Embeddings.</li>
-</ul>
-
-<div style="position: relative">
-  <pre class="language-sh"><code id="code-78" class="language-sh"><span class="token builtin class-name">set</span> <span class="token assign-left variable">GRAPHRAG_API_KEY</span><span class="token operator">=</span><span class="token operator">&lt;</span>api_key<span class="token operator">></span>
-<span class="token builtin class-name">set</span> <span class="token assign-left variable">GRAPHRAG_LLM_MODEL</span><span class="token operator">=</span><span class="token operator">&lt;</span>chat_completions_model<span class="token operator">></span>
-<span class="token builtin class-name">set</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_MODEL</span><span class="token operator">=</span><span class="token operator">&lt;</span>embeddings_model<span class="token operator">></span></code></pre>
-
-  <button class="code-copy "
-    data-clipboard-target="#code-78"
-    style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<p>For more details about Environment Variables configuration please refer to the Query Engine <a href="../_query/3-cli">CLI documentation</a>.</p>
 <h2>Running the Query Engine</h2>
 <p>Now let's ask some questions using this dataset.</p>
 <p>Here is an example using Global search to ask a high-level question:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-91" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
+  <pre class="language-sh"><code id="code-124" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
 <span class="token parameter variable">--data</span> ./ragtest/output/<span class="token operator">&lt;</span>timestamp<span class="token operator">></span>/artifacts <span class="token punctuation">\</span>
 <span class="token parameter variable">--method</span> global<span class="token punctuation">\</span>
 <span class="token string">"What are the top themes in this story?"</span></code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-91"
+    data-clipboard-target="#code-124"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
@@ -475,13 +490,13 @@ Once the pipeline is complete, you should see a new folder called <code>./ragtes
 <p>Here is an example using Local search to ask a more specific question about a particular character:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-95" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
+  <pre class="language-sh"><code id="code-128" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
 <span class="token parameter variable">--data</span> ./ragtest/output/<span class="token operator">&lt;</span>timestamp<span class="token operator">></span>/artifacts <span class="token punctuation">\</span>
 <span class="token parameter variable">--method</span> <span class="token builtin class-name">local</span> <span class="token punctuation">\</span>
 <span class="token string">"Who is Scrooge, and what are his main relationships?"</span></code></pre>
 
   <button class="code-copy "
-    data-clipboard-target="#code-95"
+    data-clipboard-target="#code-128"
     style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
