@@ -46,7 +46,7 @@ numba = "0.58.1"
 numpy = "^1.25.2"
 graspologic = "^3.3.0"
 networkx = "^3.2.1"
-fastparquet = "^2023.8.0"
+fastparquet = "^2024.2.0"
 # 1.13.0 was a footgun
 scipy = "1.12.0"
 
