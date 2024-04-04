@@ -19,9 +19,9 @@ Required variables are uncommented. All the optional configuration can be turned
 
 ```bash
 # Base LLM Settings
-GRAPHRAG_API_KEY=None
-GRAPHRAG_API_BASE=None # For Azure OpenAI Users
-GRAPHRAG_API_VERSION=None # For Azure OpenAI Users
+GRAPHRAG_API_KEY="your_api_key"
+GRAPHRAG_API_BASE="http://<domain>.openai.azure.com" # For Azure OpenAI Users
+GRAPHRAG_API_VERSION="api_version" # For Azure OpenAI Users
 
 # Text Generation Settings
 GRAPHRAG_LLM_TYPE="azure_openai_chat" # or openai_chat
@@ -64,17 +64,17 @@ GRAPHRAG_INPUT_SOURCE_COLUMN=source
 # GRAPHRAG_INPUT_BASE_DIR=None
 
 # Base LLM Settings
-GRAPHRAG_API_KEY=None
-GRAPHRAG_API_BASE=None # For Azure OpenAI Users
-GRAPHRAG_API_VERSION=None # For Azure OpenAI Users
+GRAPHRAG_API_KEY="your_api_key"
+GRAPHRAG_API_BASE="http://<domain>.openai.azure.com" # For Azure OpenAI Users
+GRAPHRAG_API_VERSION="api_version" # For Azure OpenAI Users
 # GRAPHRAG_API_ORGANIZATION=None
 # GRAPHRAG_API_PROXY=None
 
 # Text Generation Settings
 # GRAPHRAG_LLM_TYPE=openai_chat
-GRAPHRAG_LLM_API_KEY=None # If GRAPHRAG_API_KEY is not set
-GRAPHRAG_LLM_API_BASE=None # For Azure OpenAI Users and if GRAPHRAG_API_BASE is not set
-GRAPHRAG_LLM_API_VERSION=None # For Azure OpenAI Users and if GRAPHRAG_API_VERSION is not set
+GRAPHRAG_LLM_API_KEY="your_api_key" # If GRAPHRAG_API_KEY is not set
+GRAPHRAG_LLM_API_BASE="http://<domain>.openai.azure.com" # For Azure OpenAI Users and if GRAPHRAG_API_BASE is not set
+GRAPHRAG_LLM_API_VERSION="api_version" # For Azure OpenAI Users and if GRAPHRAG_API_VERSION is not set
 GRAPHRAG_LLM_MODEL_SUPPORTS_JSON=True # Suggested by default
 # GRAPHRAG_LLM_API_ORGANIZATION=None
 # GRAPHRAG_LLM_API_PROXY=None
@@ -93,9 +93,9 @@ GRAPHRAG_LLM_MODEL_SUPPORTS_JSON=True # Suggested by default
 
 # Text Embedding Settings
 # GRAPHRAG_EMBEDDING_TYPE=openai_embedding
-GRAPHRAG_EMBEDDING_API_KEY=None # If GRAPHRAG_API_KEY is not set
-GRAPHRAG_EMBEDDING_API_BASE=None  # For Azure OpenAI Users and if GRAPHRAG_API_BASE is not set
-GRAPHRAG_EMBEDDING_API_VERSION=None # For Azure OpenAI Users and if GRAPHRAG_API_VERSION is not set
+GRAPHRAG_EMBEDDING_API_KEY="your_api_key" # If GRAPHRAG_API_KEY is not set
+GRAPHRAG_EMBEDDING_API_BASE="http://<domain>.openai.azure.com"  # For Azure OpenAI Users and if GRAPHRAG_API_BASE is not set
+GRAPHRAG_EMBEDDING_API_VERSION="api_version" # For Azure OpenAI Users and if GRAPHRAG_API_VERSION is not set
 # GRAPHRAG_EMBEDDING_API_ORGANIZATION=None
 # GRAPHRAG_EMBEDDING_API_PROXY=None
 # GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME=None
