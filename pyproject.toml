@@ -76,11 +76,16 @@ pytest = "^7.4.2"
 twine = "^4.0.2"
 pyright = "^1.1.352"
 pytest-asyncio = "^0.23.4"
-ipykernel = "^6.29.3"
-jupyter = "^1.0.0"
-nbconvert = "^7.16.3"
 semversioner = "^2.0.2"
 update-toml = "^0.0.3"
+
+[tool.poetry.group.jupyter]
+optional = true
+
+[tool.poetry.group.jupyter.dependencies]
+ipykernel = "^6.29.4"
+jupyter = "^1.0.0"
+nbconvert = "^7.16.3"
 
 [tool.poetry.extras]
 azure-artifacts = ["artifacts-keyring", "azure-devops-artifacts-helpers"]
