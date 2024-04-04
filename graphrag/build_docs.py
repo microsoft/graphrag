@@ -97,13 +97,13 @@ def _get_workflow_documentation(content: str, file: str) -> list[Doc]:
 
 
 verb_files = Path("graphrag/index/verbs").rglob("**/*.py")
-docs_root = "docsite/_posts/_index"
+docs_root = "docsite/posts/index"
 
 for verb_file in verb_files:
     with Path(verb_file).open() as file:
         content = file.read()
         verb_docs = _get_verb_documentation(content, f"{verb_file}")
-        verb_folder = Path(docs_root) / "_verbs"
+        verb_folder = Path(docs_root) / "verbs"
         verb_folder.mkdir(parents=True, exist_ok=True)
         for verb in verb_docs:
             with (verb_folder / f"{verb.name}.md").open("w") as file:
@@ -115,7 +115,7 @@ for workflow_file in workflow_files:
     with Path(workflow_file).open() as file:
         content = file.read()
         workflow_docs = _get_workflow_documentation(content, f"{workflow_file}")
-        workflow_folder = Path(docs_root) / "_workflows"
+        workflow_folder = Path(docs_root) / "workflows"
         workflow_folder.mkdir(parents=True, exist_ok=True)
         for workflow in workflow_docs:
             with (workflow_folder / f"{workflow.name}.md").open("w") as file:
