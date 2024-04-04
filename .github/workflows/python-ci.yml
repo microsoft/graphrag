@@ -4,11 +4,7 @@ on:
     branches: [main]
   pull_request:
     paths:
-      - 'graphrag/**/*'
-      - '**/*.py'
-      - '**/*.toml'
-      - '**/*.ipynb'
-      - .github/workflows/python-ci.yml
+      '**/*'
 jobs:
   python-ci:
     runs-on: ubuntu-latest
@@ -34,6 +30,10 @@ jobs:
         shell: bash
         run: poetry install
 
+      - name: Check Semversioner
+        run: |
+          poetry run semversioner check
+          
       - name: Check
         run: |
           poetry run poe check

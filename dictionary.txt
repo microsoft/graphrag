@@ -60,6 +60,7 @@ asyncio
 numpy
 pypi
 nbformat
+semversioner
 
 # Library Methods
 iterrows
@@ -108,6 +109,7 @@ idempotently
 covariate
 covariates
 logit
+confusors
 
 # Charting
 plottable
