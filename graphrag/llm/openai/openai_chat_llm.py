@@ -44,7 +44,9 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
     async def _execute_llm(
         self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> CompletionOutput | None:
-        args = get_completion_llm_args(kwargs.get("parameters"), self.configuration)
+        args = get_completion_llm_args(
+            kwargs.get("model_parameters"), self.configuration
+        )
         history = kwargs.get("history") or []
         messages = [
             *history,
@@ -54,6 +56,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             messages=messages, **args
         )
         return completion.choices[0].message.content
+        
 
     async def _invoke_json(
         self,
@@ -104,7 +107,15 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             )
 
             raw_output = result.output or ""
-            json_output = json.loads(raw_output)
+
+            try:
+                json_output = json.loads(raw_output)
+            except json.JSONDecodeError:
+                log.exception(
+                    "error parsing llm json, emitting none, json=%s", raw_output
+                )
+                raise
+
             return LLMOutput[CompletionOutput](
                 output=raw_output,
                 json=json_output,
