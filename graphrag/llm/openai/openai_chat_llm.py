@@ -56,7 +56,6 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             messages=messages, **args
         )
         return completion.choices[0].message.content
-        
 
     async def _invoke_json(
         self,
