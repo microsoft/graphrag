@@ -21,4 +21,11 @@ module.exports = (eleventyConfig) => {
   }).use(codeClipboard.markdownItCopyButton);
   
   eleventyConfig.setLibrary("md", markdownLibrary);
+
+  eleventyConfig.addFilter('sortByNavtitle', values => {
+    if (!Array.isArray(values)) {
+      return values;
+    }
+    return values.slice().sort((a, b) => a.data.navtitle.localeCompare(b.data.navtitle))
+  })
 };

@@ -93,3 +93,23 @@ h3 {
 p {
     margin-top: 10px;
 }
+
+/* Accessibility styling */
+
+a {
+    color: #485fc7;
+    text-decoration: underline;
+}
+
+.menu-list a {
+    text-decoration: none;
+}
+
+
+.token.comment, .token.prolog, .token.doctype, .token.cdata {
+    color: #8093a5;
+}
+
+.token.property, .token.tag, .token.constant, .token.symbol, .token.deleted {
+    color: #ff36ab;
+}
