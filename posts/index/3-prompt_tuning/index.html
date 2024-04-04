@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>create_graph</title>
+    <title>Prompt Tuning</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -200,7 +200,7 @@ a {
 </li><li>
 <a href="/graphrag/posts/index/2-cli/">CLI</a>
 </li><li>
-<a href="/graphrag/posts/index/3-prompt_tuning/">Prompt Tuning</a>
+<a href="/graphrag/posts/index/3-prompt_tuning/" class="is-active" aria-current="page">Prompt Tuning</a>
 </li><li>
                     
 <a href="/graphrag/posts/index/workflows/overview/">Workflows</a>
@@ -238,7 +238,7 @@ a {
                     
 <a href="/graphrag/posts/index/verbs/overview/">Verbs</a>
 
-                    <ul><li>
+                    <ul hidden=""><li>
 <a href="/graphrag/posts/index/verbs/aggregate/">aggregate</a>
 </li><li>
 <a href="/graphrag/posts/index/verbs/chunk/">chunk</a>
@@ -247,7 +247,7 @@ a {
 </li><li>
 <a href="/graphrag/posts/index/verbs/concat/">concat</a>
 </li><li>
-<a href="/graphrag/posts/index/verbs/create_graph/" class="is-active" aria-current="page">create_graph</a>
+<a href="/graphrag/posts/index/verbs/create_graph/">create_graph</a>
 </li><li>
 <a href="/graphrag/posts/index/verbs/genid/">genid</a>
 </li><li>
@@ -324,36 +324,47 @@ a {
 
         <!-- Main Content -->
         <main>
-            <h1>create_graph</h1>
-            <p>Create a graph from a dataframe. The verb outputs a new column containing the graph.</p>
-<blockquote>
-<p>Note: This will roll up all rows into a single graph.</p>
-</blockquote>
-<h2>Usage</h2>
-
-<div style="position: relative">
-  <pre class="language-yaml"><code id="code-11" class="language-yaml"><span class="token key atrule">verb</span><span class="token punctuation">:</span> create_graph
-<span class="token key atrule">args</span><span class="token punctuation">:</span>
-    <span class="token key atrule">type</span><span class="token punctuation">:</span> node <span class="token comment"># The type of graph to create, one of: node, edge</span>
-    <span class="token key atrule">to</span><span class="token punctuation">:</span> &lt;column name<span class="token punctuation">></span> <span class="token comment"># The name of the column to output the graph to, this will be a graphml graph</span>
-    <span class="token key atrule">attributes</span><span class="token punctuation">:</span> <span class="token comment"># The attributes for the nodes / edges</span>
-        <span class="token comment"># If using the node type, the following attributes are required:</span>
-        <span class="token key atrule">id</span><span class="token punctuation">:</span> &lt;id_column_name<span class="token punctuation">></span>
-
-        <span class="token comment"># If using the edge type, the following attributes are required:</span>
-        <span class="token key atrule">source</span><span class="token punctuation">:</span> &lt;source_column_name<span class="token punctuation">></span>
-        <span class="token key atrule">target</span><span class="token punctuation">:</span> &lt;target_column_name<span class="token punctuation">></span>
-
-        <span class="token comment"># Other attributes can be added as follows:</span>
-        <span class="token key atrule">&lt;attribute_name></span><span class="token punctuation">:</span> &lt;column_name<span class="token punctuation">></span>
-        <span class="token punctuation">...</span> for each attribute</code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-11" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<h2>Code</h2>
-<p><a href="https://github.com/microsoft/graphrag/blob/main/graphrag/graphrag/index/verbs/graph/create.py">create.py</a></p>
+            <h1>Prompt Tuning</h1>
+            <p>The GraphRAG indexer, by default, will run with a handful of prompts that are designed to work well in the broad context of knowledge discovery.
+However, it is quite common to want to tune the prompts to better suit your specific use case.
+We provide a means for you to do this by allowing you to specify a custom prompt file, which will each use a series of token-replacements internally.</p>
+<p>Each of these prompts may be overridden by writing a custom prompt file in plaintext. We use token-replacements in the form of <code>{token_name}</code>, and the descriptions for the available tokens can be found below.</p>
+<h2>Entity/Relationship Extraction</h2>
+<p><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/graph/prompts.py">Prompt Source</a></p>
+<h3>Tokens (values provided by extractor)</h3>
+<ul>
+<li><strong>{input_text}</strong> - The input text to be processed.</li>
+<li><strong>{entity_types}</strong> - A list of entity types</li>
+<li><strong>{tuple_delimiter}</strong> - A delimiter for separating values within a tuple. A single tuple is used to represent an individual entity or relationship.</li>
+<li><strong>{record_delimiter}</strong> - A delimiter for separating tuple instances.</li>
+<li><strong>{completion_delimiter}</strong> - An indicator for when generation is complete.</li>
+</ul>
+<h2>Summarize Entity/Relationship Descriptions</h2>
+<p><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/summarize/prompts.py">Prompt Source</a></p>
+<h3>Tokens (values provided by extractor)</h3>
+<ul>
+<li><strong>{entity_name}</strong> - The name of the entity or the source/target pair of the relationship.</li>
+<li><strong>{description_list}</strong> - A list of descriptions for the entity or relationship.</li>
+</ul>
+<h2>Claim Extraction</h2>
+<p><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/claims/prompts.py">Prompt Source</a></p>
+<h3>Tokens (values provided by extractor)</h3>
+<ul>
+<li><strong>{input_text}</strong> - The input text to be processed.</li>
+<li><strong>{tuple_delimiter}</strong> - A delimiter for separating values within a tuple. A single tuple is used to represent an individual entity or relationship.</li>
+<li><strong>{record_delimiter}</strong> - A delimiter for separating tuple instances.</li>
+<li><strong>{completion_delimiter}</strong> - An indicator for when generation is complete.</li>
+</ul>
+<p>Note: there is additional paramater for the <code>Claim Description</code> that is used in claim extraction.
+The default value is</p>
+<p><code>&quot;Any claims or facts that could be relevant to information discovery.&quot;</code></p>
+<p>See the <a href="/graphrag/posts/config/overview/">configuration documentation</a> for details on how to change this.</p>
+<h2>Generate Community Reports</h2>
+<p><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/community_reports/prompts.py">Prompt Source</a></p>
+<h3>Tokens (values provided by extractor)</h3>
+<ul>
+<li><strong>{input_text}</strong> - The input text to generate the report with. This will contain tables of entities and relationships.</li>
+</ul>
 
         </main>
     </div>
