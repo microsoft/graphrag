@@ -30,7 +30,7 @@ class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
     ) -> EmbeddingOutput | None:
         args = {
             "model": self.configuration.model,
-            **(kwargs.get("parameters") or {}),
+            **(kwargs.get("model_parameters") or {}),
         }
         embedding = await self.client.embeddings.create(
             input=input,

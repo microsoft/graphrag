@@ -2,9 +2,8 @@
 
 """The Chat-based language model."""
 
-import json
 import logging
-import traceback
+from json import JSONDecodeError
 
 from typing_extensions import Unpack
 
@@ -44,7 +43,9 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
     async def _execute_llm(
         self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> CompletionOutput | None:
-        args = get_completion_llm_args(kwargs.get("parameters"), self.configuration)
+        args = get_completion_llm_args(
+            kwargs.get("model_parameters"), self.configuration
+        )
         history = kwargs.get("history") or []
         messages = [
             *history,
@@ -91,34 +92,25 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> LLMOutput[CompletionOutput]:
         """Generate JSON output using a model's native JSON-output support."""
-        try:
-            result = await self._invoke(
-                input,
-                **{
-                    **kwargs,
-                    "model_parameters": {
-                        **(kwargs.get("model_parameters") or {}),
-                        "response_format": {"type": "json_object"},
-                    },
+        result = await self._invoke(
+            input,
+            **{
+                **kwargs,
+                "model_parameters": {
+                    **(kwargs.get("model_parameters") or {}),
+                    "response_format": {"type": "json_object"},
                 },
-            )
+            },
+        )
 
-            raw_output = result.output or ""
-            json_output = json.loads(raw_output)
-            return LLMOutput[CompletionOutput](
-                output=raw_output,
-                json=json_output,
-                history=result.history,
-            )
-        except BaseException as e:
-            log.exception("error parsing llm json, emitting none")
-            if self._on_error:
-                self._on_error(
-                    e,
-                    traceback.format_exc(),
-                    {"input": input, "operation": "native_json"},
-                )
-            raise
+        raw_output = result.output or ""
+        json_output = try_parse_json_object(raw_output)
+
+        return LLMOutput[CompletionOutput](
+            output=raw_output,
+            json=json_output,
+            history=result.history,
+        )
 
     async def _manual_json(
         self, input: CompletionInput, **kwargs: Unpack[LLMInput]
@@ -132,26 +124,18 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             return LLMOutput[CompletionOutput](
                 output=output, json=json_output, history=history
             )
-        except BaseException:
-            log.exception("error parsing llm json, retrying")
+        except (TypeError, JSONDecodeError):
+            log.warning("error parsing llm json, retrying")
             # If cleaned up json is unparsable, use the LLM to reformat it (may throw)
             result = await self._try_clean_json_with_llm(output, **kwargs)
             output = clean_up_json(result.output or "")
-            try:
-                return LLMOutput[CompletionOutput](
-                    output=output,
-                    json=try_parse_json_object(output),
-                    history=history,
-                )
-            except Exception as e:
-                log.exception("error parsing llm json, emitting none")
-                if self._on_error:
-                    self._on_error(
-                        e,
-                        traceback.format_exc(),
-                        {"input": input, "operation": "manual_json"},
-                    )
-                raise
+            json = try_parse_json_object(output)
+
+            return LLMOutput[CompletionOutput](
+                output=output,
+                json=json,
+                history=history,
+            )
 
     async def _try_clean_json_with_llm(
         self, output: str, **kwargs: Unpack[LLMInput]
