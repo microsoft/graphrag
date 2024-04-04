@@ -60,6 +60,7 @@ asyncio
 numpy
 pypi
 nbformat
+semversioner
 
 # Library Methods
 iterrows
