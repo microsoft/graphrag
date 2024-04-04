@@ -3,4 +3,4 @@ posts/index/verbs/*.md
 posts/index/workflows/*.md
 !posts/index/verbs/overview.md
 !posts/index/workflows/overview.md
-posts/indexing
+_posts
