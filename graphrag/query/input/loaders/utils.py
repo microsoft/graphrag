@@ -1,9 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
-"""
-Data load utils.
-
-"""
+"""Data load utils."""
 
 import numpy as np
 import pandas as pd
