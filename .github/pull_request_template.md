@@ -32,7 +32,7 @@ Feel free to discard it if you need to (e.g. when you just fix a typo). -->
 - [ ] I have updated the documentation (if necessary).
 - [ ] I have added appropriate unit tests (if applicable).
 - [ ] I have assigned the pull request to the appropriate reviewer(s).
-- [ ] I have updated the CHANGELOG file (if necessary).
+- [ ] I have run `poetry run semversioner add-change` to create a semver-impact file.
 
 ## Additional Notes
 

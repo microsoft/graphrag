@@ -34,6 +34,10 @@ jobs:
         shell: bash
         run: poetry install
 
+      - name: Check Semversioner
+        run: |
+          poetry run semversioner check
+          
       - name: Check
         run: |
           poetry run poe check
