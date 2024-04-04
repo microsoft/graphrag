@@ -48,20 +48,63 @@ curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt > ./ragtest/input/bo
 
 Next we'll inject some required config variables:
 
-For OpenAI users:
+## Set Up Environment Variables
+
+First let's make sure to setup the required environment variables:
+
+- `GRAPHRAG_API_KEY` - API Key for executing the model, will fallback to `OPENAI_API_KEY` if one is not provided.
+- `GRAPHRAG_LLM_MODEL` - Model to use for Chat Completions.
+- `GRAPHRAG_EMBEDDING_MODEL` - Model to use for Embeddings.
+- `GRAPHRAG_INPUT_TYPE` - Type of input data, can be `text` or `csv`.
+- `GRAPHRAG_API_BASE` - Base URL for the Azure OpenAI. Only required for Azure OpenAI users.
+- `GRAPHRAG_LLM_DEPLOYMENT_NAME` - Deployment name for the Chat Completions model. Only required for Azure OpenAI users.
+- `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME` - Deployment name for the Embeddings model. Only required for Azure OpenAI users.
+
+### Shell
+
+#### <ins>OpenAI</ins>
 
 ```sh
-echo "GRAPHRAG_API_KEY=\"<Your OpenAI API Key>\"" >> ./ragtest/.env \
-echo "GRAPHRAG_INPUT_TYPE=text" >> ./ragtest/.env
+set GRAPHRAG_API_KEY=<api_key> \
+set GRAPHRAG_LLM_MODEL=<chat_completions_model> \
+set GRAPHRAG_EMBEDDING_MODEL=<embeddings_model> \
+set GRAPHRAG_INPUT_TYPE="text"
 ```
 
-And for Azure OpenAI Users:
+#### <ins>Azure OpenAI</ins>
 
 ```sh
-echo "GRAPHRAG_API_BASE=http://<domain>.openai.azure.com" >> ./ragtest/.env \
-echo "GRAPHRAG_LLM_DEPLOYMENT_NAME"="gpt-4" >> ./ragtest/.env \
-echo "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME"="text-embedding-3-small" >> ./ragtest/.env
+set GRAPHRAG_API_KEY=<api_key> \
+set GRAPHRAG_LLM_DEPLOYMENT_NAME=<chat_completions_model> \
+set GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME=<embeddings_model> \
+set GRAPHRAG_INPUT_TYPE="text" \
+set GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
 ```
+
+### Bash
+
+#### <ins>OpenAI</ins>
+
+```sh
+export GRAPHRAG_API_KEY=<api_key> \
+export GRAPHRAG_LLM_MODEL=<chat_completions_model> \
+export GRAPHRAG_EMBEDDING_MODEL=<embeddings_model> \
+export GRAPHRAG_INPUT_TYPE="text"
+```
+
+#### <ins>Azure OpenAI</ins>
+
+```sh
+export GRAPHRAG_API_KEY=<api_key> \
+export GRAPHRAG_LLM_DEPLOYMENT_NAME=<chat_completions_model> \
+export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME=<embeddings_model> \
+export GRAPHRAG_INPUT_TYPE="text" \
+export GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
+```
+
+For more details about Environment Variables configuration please refer to [Enviroment Configuration](./_config/overview/) to the Query Engine [CLI documentation](../_query/3-cli).
+
+## Running the Indexing pipeline
 
 Finally we'll run the pipeline!
 
@@ -75,32 +118,6 @@ This process will take some time to run. This depends on the size of your input 
 Once the pipeline is complete, you should see a new folder called `./ragtest/output/<timestamp>/artifacts` with a series of parquet files.
 
 # Using the Query Engine
-
-## Set Up Environment Variables
-
-First let's make sure to setup the required environment variables:
-
-- `GRAPHRAG_API_KEY` - API Key for executing the model, will fallback to `OPENAI_API_KEY` if one is not provided.
-- `GRAPHRAG_LLM_MODEL` - Model to use for Chat Completions.
-- `GRAPHRAG_EMBEDDING_MODEL` - Model to use for Embeddings.
-
-### Shell
-
-```sh
-set GRAPHRAG_API_KEY=<api_key> \
-set GRAPHRAG_LLM_MODEL=<chat_completions_model> \
-set GRAPHRAG_EMBEDDING_MODEL=<embeddings_model>
-```
-
-### Bash
-
-```bash
-export GRAPHRAG_API_KEY=<api_key> \
-export GRAPHRAG_LLM_MODEL=<chat_completions_model> \
-export GRAPHRAG_EMBEDDING_MODEL=<embeddings_model>
-```
-
-For more details about Environment Variables configuration please refer to the Query Engine [CLI documentation](../_query/3-cli).
 
 ## Running the Query Engine
 
