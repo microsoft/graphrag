@@ -2,6 +2,8 @@
 
 """Common default configuration values."""
 
+from datashaper import AsyncType
+
 from graphrag.index.config import (
     PipelineCacheType,
     PipelineInputStorageType,
@@ -12,6 +14,7 @@ from graphrag.index.config import (
 from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
 from graphrag.index.llm.types import LLMType
 
+DEFAULT_ASYNC_MODE = AsyncType.Threaded
 #
 # LLM Parameters
 #
