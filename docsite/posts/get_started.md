@@ -61,24 +61,27 @@ First let's make sure to setup the required environment variables:
 - `GRAPHRAG_LLM_DEPLOYMENT_NAME` - Deployment name for the Chat Completions model. Only required for Azure OpenAI users.
 - `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME` - Deployment name for the Embeddings model. Only required for Azure OpenAI users.
 
-#### <ins>OpenAI</ins>
+#### <ins>OpenAI and Azure OpenAI</ins>
 
+To get started, let's set the base environment variables.
 ```sh
-export GRAPHRAG_API_KEY=<api_key> && \
-export GRAPHRAG_LLM_MODEL=<chat_completions_model> && \
-export GRAPHRAG_EMBEDDING_MODEL=<embeddings_model> && \
+export GRAPHRAG_API_KEY="<api_key>" && \
+export GRAPHRAG_LLM_MODEL="<chat_completions_model>" && \
 export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True" && \
+export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>" && \
 export GRAPHRAG_INPUT_TYPE="text"
 ```
 
 #### <ins>Azure OpenAI</ins>
 
+In addition, Azure OpenAI users should set the following env-vars.
 ```sh
-export GRAPHRAG_API_KEY=<api_key> && \
-export GRAPHRAG_LLM_DEPLOYMENT_NAME=<chat_completions_model> && \
-export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME=<embeddings_model> && \
-export GRAPHRAG_INPUT_TYPE="text" && \
-export GRAPHRAG_API_BASE="http://<domain>.openai.azure.com"
+export GRAPHRAG_API_BASE="https://<domain>.openai.azure.com" && \
+export GRAPHRAG_API_VERSION="2024-02-15-preview" && \
+export GRAPHRAG_LLM_API_TYPE = "azure_openai_chat" && \
+export GRAPHRAG_LLM_DEPLOYMENT_NAME="<chat_completions_deployment_name>" && \
+export GRAPHRAG_EMBEDDING_API_TYPE = "azure_openai_embedding" && \
+export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME="<embeddings_deployment_name>"
 ```
 
 For more details about configuring GraphRAG, see the [configuration documentation](/posts/config/overview/).
