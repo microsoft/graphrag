@@ -174,12 +174,8 @@ def default_config_parameters_from_env_vars(
             deployment_name = _str(Fragment.deployment_name)
             model = _str(Fragment.model)
 
-            api_base = _str(Fragment.api_base, _api_base)
-            api_version = _str(Fragment.api_version, _api_version)
-            organization = _str(Fragment.api_organization, _organization)
-            proxy = _str(Fragment.api_proxy, _proxy)
-
             is_azure = _is_azure(llm_type)
+            api_base = _str(Fragment.api_base, _api_base)
             if is_azure and deployment_name is None and model is None:
                 raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
             if is_azure and api_base is None:
@@ -193,9 +189,9 @@ def default_config_parameters_from_env_vars(
                 model_supports_json=_bool(Fragment.model_supports_json),
                 request_timeout=_float(Fragment.request_timeout),
                 api_base=api_base,
-                api_version=api_version,
-                organization=organization,
-                proxy=proxy,
+                api_version=_str(Fragment.api_version, _api_version),
+                organization=_str(Fragment.api_organization, _organization),
+                proxy=_str(Fragment.api_proxy, _proxy),
                 deployment_name=deployment_name,
                 tokens_per_minute=_int(Fragment.tpm),
                 requests_per_minute=_int(Fragment.rpm),
@@ -226,9 +222,6 @@ def default_config_parameters_from_env_vars(
             llm_type = LLMType(llm_type) if llm_type else None
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
-            api_version = _str(Fragment.api_version, _api_version)
-            organization = _str(Fragment.api_organization, _organization)
-            proxy = _str(Fragment.api_proxy, _proxy)
 
             if is_azure and deployment_name is None and model is None:
                 raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
@@ -251,9 +244,9 @@ def default_config_parameters_from_env_vars(
                     model=model,
                     request_timeout=_float(Fragment.request_timeout),
                     api_base=api_base,
-                    api_version=api_version,
-                    organization=organization,
-                    proxy=proxy,
+                    api_version=_str(Fragment.api_version, _api_version),
+                    organization=_str(Fragment.api_organization, _organization),
+                    proxy=_str(Fragment.api_proxy, _proxy),
                     deployment_name=deployment_name,
                     tokens_per_minute=_int(Fragment.tpm),
                     requests_per_minute=_int(Fragment.rpm),
