@@ -102,7 +102,7 @@ chunks:
   group_by_columns: [{",".join(DEFAULT_CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
     
 input:
-  type: {DEFAULT_INPUT_TYPE}
+  type: {DEFAULT_INPUT_TYPE.value}
   base_dir: "{DEFAULT_INPUT_BASE_DIR}"
   file_encoding: {DEFAULT_INPUT_FILE_ENCODING}
   file_pattern: ".*\\\\.csv$"
@@ -120,7 +120,7 @@ storage:
   # container_name: <azure_blob_storage_container_name>
 
 reporting:
-  type: {DEFAULT_REPORTING_TYPE} # or console, blob
+  type: {DEFAULT_REPORTING_TYPE.value} # or console, blob
   base_dir: "{DEFAULT_REPORTING_BASE_DIR}"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
