@@ -283,20 +283,32 @@ def __get_text_units(data_dir: Path):
 
 def __get_llm():
     return ChatOpenAI(
-        api_key=_env_with_fallback("GRAPHRAG_API_KEY", ["OPENAI_API_KEY"]),
-        api_base=os.environ.get("GRAPHRAG_LLM_API_BASE", None),
+        api_key=_env_with_fallback(
+            "GRAPHRAG_LLM_API_KEY", ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"]
+        ),
+        api_base=_env_with_fallback("GRAPHRAG_LLM_API_BASE", ["GRAPHRAG_API_BASE"]),
         model=os.environ.get("GRAPHRAG_LLM_MODEL", _DEFAULT_LLM_MODEL),
         api_type=OpenaiApiType.OpenAI
         if os.environ.get("GRAPHRAG_LLM_TYPE", "openai_chat") == "openai_chat"
         else OpenaiApiType.AzureOpenAI,
+        deployment_name=os.environ.get(
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME", _DEFAULT_LLM_MODEL
+        ),
+        api_version=_env_with_fallback(
+            "GRAPHRAG_LLM_API_VERSION", ["GRAPHRAG_API_VERSION", "OPENAI_API_VERSION"]
+        ),
         max_retries=int(os.environ.get("GRAPHRAG_LLM_MAX_RETRIES", 20)),
     )
 
 
 def __get_text_embedder():
     return OpenAIEmbedding(
-        api_key=_env_with_fallback("GRAPHRAG_API_KEY", ["OPENAI_API_KEY"]),
-        api_base=os.environ.get("GRAPHRAG_EMBEDDING_API_BASE", None),
+        api_key=_env_with_fallback(
+            "GRAPHRAG_EMBEDDING_API_KEY", ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"]
+        ),
+        api_base=_env_with_fallback(
+            "GRAPHRAG_EMBEDDING_API_BASE", ["GRAPHRAG_API_BASE"]
+        ),
         api_type=OpenaiApiType.OpenAI
         if os.environ.get("GRAPHRAG_EMBEDDING_TYPE", "openai_embedding")
         == "openai_embedding"
@@ -304,6 +316,10 @@ def __get_text_embedder():
         model=os.environ.get("GRAPHRAG_EMBEDDING_MODEL", _DEFAULT_EMBEDDING_MODEL),
         deployment_name=os.environ.get(
             "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME", _DEFAULT_EMBEDDING_MODEL
+        ),
+        api_version=_env_with_fallback(
+            "GRAPHRAG_EMBEDDING_API_VERSION",
+            ["GRAPHRAG_API_VERSION", "OPENAI_API_VERSION"],
         ),
         max_retries=int(os.environ.get("GRAPHRAG_EMBEDDING_MAX_RETRIES", 20)),
     )
