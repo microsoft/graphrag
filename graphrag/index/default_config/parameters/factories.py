@@ -156,9 +156,8 @@ def default_config_parameters_from_env_vars(
     def redact(value: str | None) -> str:
         if value is None:
             return "None"
-        if len(value) < 4:
-            return "*" * len(value)
-        return value[:4] + "*" * (len(value) - 4)
+        redacted_length = len(value)
+        return f"len()={redacted_length}"
 
     def section(key: Section):
         return env.prefixed(f"{key.value}_")
