@@ -13,7 +13,7 @@ module.exports = (eleventyConfig) => {
   });
   eleventyConfig.addPassthroughCopy("data");
   eleventyConfig.addPassthroughCopy("img");
-  // Verbs and Workflows are auto-generated
+  // Ignore auto-generated content
   eleventyConfig.setUseGitIgnore(false);
 
   const markdownLibrary = markdownIt({
@@ -22,10 +22,4 @@ module.exports = (eleventyConfig) => {
   
   eleventyConfig.setLibrary("md", markdownLibrary);
 
-  eleventyConfig.addFilter('sortByNavtitle', values => {
-    if (!Array.isArray(values)) {
-      return values;
-    }
-    return values.slice().sort((a, b) => a.data.navtitle.localeCompare(b.data.navtitle))
-  })
 };

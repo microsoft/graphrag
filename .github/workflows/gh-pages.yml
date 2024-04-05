@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11']
-        poetry-version: ['1.6.1']
-        node-version: ['18.x']
+        python-version: ["3.11"]
+        poetry-version: ["1.6.1"]
+        node-version: ["18.x"]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-  
+
       - name: Install Poetry ${{ matrix.poetry-version }}
         uses: abatilo/actions-poetry@v3.0.0
         with:
@@ -42,9 +42,6 @@ jobs:
 
       - name: Install Poetry dependencies
         run: poetry install
-
-      - name: Build generated docpages
-        run: poetry run poe build_docs
 
       - name: Build docsite
         run: yarn build
