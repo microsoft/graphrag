@@ -171,11 +171,15 @@ def default_config_parameters_from_env_vars(
 
     with section(Section.graphrag):
         _api_key = _str(Fragment.api_key, fallback_oai_key)
-        log.info("using LLM api key %s", redact(_api_key))
         _api_base = _str(Fragment.api_base, fallback_oai_url)
         _api_version = _str(Fragment.api_version, fallback_oai_version)
         _organization = _str(Fragment.api_organization, fallback_oai_org)
         _proxy = _str(Fragment.api_proxy)
+        log.info("base api key %s", redact(_api_key))
+        log.info("base api base %s", _api_base)
+        log.info("base api version %s", _api_version)
+        log.info("base api organization %s", _organization)
+        log.info("base api proxy %s", _proxy)
 
         with section(Section.llm):
             api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
@@ -186,12 +190,22 @@ def default_config_parameters_from_env_vars(
             deployment_name = _str(Fragment.deployment_name)
             model = _str(Fragment.model)
 
-            is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
+            api_version = _str(Fragment.api_version, _api_version)
+            organization = _str(Fragment.api_organization, _organization)
+            proxy = _str(Fragment.api_proxy, _proxy)
+
+            is_azure = _is_azure(llm_type)
             if is_azure and deployment_name is None and model is None:
                 raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
             if is_azure and api_base is None:
                 raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+
+            log.info("llm api key %s", redact(api_key))
+            log.info("llm api base %s", api_base)
+            log.info("llm api version %s", api_version)
+            log.info("llm api organization %s", organization)
+            log.info("llm api proxy %s", proxy)
 
             llm_parameters = LLMParametersModel(
                 api_key=api_key,
@@ -201,9 +215,9 @@ def default_config_parameters_from_env_vars(
                 model_supports_json=_bool(Fragment.model_supports_json),
                 request_timeout=_float(Fragment.request_timeout),
                 api_base=api_base,
-                api_version=_str(Fragment.api_version, _api_version),
-                organization=_str(Fragment.api_organization, _organization),
-                proxy=_str(Fragment.api_proxy, _proxy),
+                api_version=api_version,
+                organization=organization,
+                proxy=proxy,
                 deployment_name=deployment_name,
                 tokens_per_minute=_int(Fragment.tpm),
                 requests_per_minute=_int(Fragment.rpm),
@@ -219,7 +233,6 @@ def default_config_parameters_from_env_vars(
 
         with section(Section.embedding):
             api_key = _str(Fragment.api_key, _api_key)
-            log.info("using embedding api key %s", redact(_api_key))
             if api_key is None:
                 raise ValueError(EMBEDDING_KEY_REQUIRED)
 
@@ -235,11 +248,20 @@ def default_config_parameters_from_env_vars(
             llm_type = LLMType(llm_type) if llm_type else None
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
+            api_version = _str(Fragment.api_version, _api_version)
+            organization = _str(Fragment.api_organization, _organization)
+            proxy = _str(Fragment.api_proxy, _proxy)
 
             if is_azure and deployment_name is None and model is None:
                 raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
             if is_azure and api_base is None:
                 raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
+
+            log.info("embedding api key %s", redact(api_key))
+            log.info("embedding api base %s", api_base)
+            log.info("embedding api version %s", api_version)
+            log.info("embedding api organization %s", organization)
+            log.info("embedding api proxy %s", proxy)
 
             text_embeddings = TextEmbeddingConfigModel(
                 parallelization=ParallelizationParametersModel(
@@ -257,9 +279,9 @@ def default_config_parameters_from_env_vars(
                     model=model,
                     request_timeout=_float(Fragment.request_timeout),
                     api_base=api_base,
-                    api_version=_str(Fragment.api_version, _api_version),
-                    organization=_str(Fragment.api_organization, _organization),
-                    proxy=_str(Fragment.api_proxy, _proxy),
+                    api_version=api_version,
+                    organization=organization,
+                    proxy=proxy,
                     deployment_name=deployment_name,
                     tokens_per_minute=_int(Fragment.tpm),
                     requests_per_minute=_int(Fragment.rpm),
