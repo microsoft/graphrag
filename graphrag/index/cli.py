@@ -26,11 +26,11 @@ from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType
-from .init_content import INIT_DOTENV, INIT_YAML
-from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
-from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
+from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
+from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
+from .init_content import INIT_DOTENV, INIT_YAML
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -148,7 +148,6 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
     if not root.exists():
         root.mkdir(parents=True, exist_ok=True)
 
-    
     settings_yaml = root / "settings.yaml"
     if settings_yaml.exists():
         msg = f"Project already initialized at {root}"
@@ -175,7 +174,7 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
     if not summarize_descriptions.exists():
         with summarize_descriptions.open("w") as file:
             file.write(SUMMARIZE_PROMPT)
-            
+
     claim_extraction = prompts_dir / "claim_extraction.txt"
     if not claim_extraction.exists():
         with claim_extraction.open("w") as file:
