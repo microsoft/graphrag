@@ -52,10 +52,9 @@ Next we'll inject some required config variables:
 
 First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [environment variables documentation](/posts/config/env_vars/).
 
-#### <ins>OpenAI and Azure OpenAI</ins>
-```sh
 
-To get started, let's set the base environment variables.
+#### <ins>OpenAI and Azure OpenAI</ins>
+Let's set the base environment variables.
 
 ```sh
 export GRAPHRAG_API_KEY="<api_key>" && \
