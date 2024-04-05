@@ -2,6 +2,7 @@
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
 
+import logging
 from enum import Enum
 from pathlib import Path
 
@@ -39,6 +40,8 @@ from .models import (
     TextEmbeddingConfigModel,
     UmapConfigModel,
 )
+
+log = logging.getLogger(__name__)
 
 
 def default_config_parameters(
@@ -150,16 +153,25 @@ def default_config_parameters_from_env_vars(
     def _float(key: str | Fragment, default_value: float | None = None) -> float | None:
         return env.float(_key(key), default_value)
 
+    def redact(value: str | None) -> str:
+        if value is None:
+            return "None"
+        if len(value) < 4:
+            return "*" * len(value)
+        return value[:4] + "*" * (len(value) - 4)
+
     def section(key: Section):
         return env.prefixed(f"{key.value}_")
 
     fallback_oai_key = _str("OPENAI_API_KEY", _str("AZURE_OPENAI_API_KEY"))
+    log.info("fallback LLM key is %s", redact(fallback_oai_key))
     fallback_oai_org = _str("OPENAI_ORG_ID")
     fallback_oai_url = _str("OPENAI_BASE_URL")
     fallback_oai_version = _str("OPENAI_API_VERSION")
 
     with section(Section.graphrag):
         _api_key = _str(Fragment.api_key, fallback_oai_key)
+        log.info("using LLM api key %s", redact(_api_key))
         _api_base = _str(Fragment.api_base, fallback_oai_url)
         _api_version = _str(Fragment.api_version, fallback_oai_version)
         _organization = _str(Fragment.api_organization, fallback_oai_org)
@@ -207,6 +219,7 @@ def default_config_parameters_from_env_vars(
 
         with section(Section.embedding):
             api_key = _str(Fragment.api_key, _api_key)
+            log.info("using embedding api key %s", redact(_api_key))
             if api_key is None:
                 raise ValueError(EMBEDDING_KEY_REQUIRED)
 
