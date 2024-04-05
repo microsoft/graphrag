@@ -17,28 +17,12 @@ def test_init_yaml():
 
 
 def test_init_yaml_uncommented():
-    content = (
-        INIT_YAML.replace("# llm: override the global llm settings for this task", "")
-        .replace(
-            "# parallelization: override the global parallelization settings for this task",
-            "",
-        )
-        .replace(
-            "# async_mode: override the global async_mode settings for this task", ""
-        )
-    )
-    lines = content.splitlines()
+    lines = INIT_YAML.splitlines()
+    lines = [line for line in lines if "##" not in line]
 
     def uncomment_line(line: str) -> str:
-        result = re.sub(r"^(\s*)#", "\\1", line, count=1)
         leading_whitespace = cast(Any, re.search(r"^(\s*)", line)).group(1)
-        result = re.sub(r"^\s*#", leading_whitespace, line, count=1)
-        if result != line:
-            result = result.replace(" ", "", 1)
-
-        if result != line:
-            print(f"result\n${line}\n${result}")
-        return result
+        return re.sub(r"^\s*# ", leading_whitespace, line, count=1)
 
     content = "\n".join([uncomment_line(line) for line in lines])
     data = yaml.load(content, Loader=yaml.FullLoader)

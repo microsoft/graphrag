@@ -83,32 +83,32 @@ reporting:
   # container_name: <azure_blob_storage_container_name>
 
 entity_extraction:
-  # llm: override the global llm settings for this task
-  # parallelization: override the global parallelization settings for this task
-  # async_mode: override the global async_mode settings for this task
+  ## llm: override the global llm settings for this task
+  ## parallelization: override the global parallelization settings for this task
+  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/entity_extraction.txt"
   entity_types: ["organization", "person", "geo", "event"]
   max_gleanings: 0
 
 summarize_descriptions:
-  # llm: override the global llm settings for this task
-  # parallelization: override the global parallelization settings for this task
-  # async_mode: override the global async_mode settings for this task
+  ## llm: override the global llm settings for this task
+  ## parallelization: override the global parallelization settings for this task
+  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/summarize_descriptions.txt"
   max_length: 500
 
 claim_extraction:
-   # llm: override the global llm settings for this task
-  # parallelization: override the global parallelization settings for this task
-  # async_mode: override the global async_mode settings for this task
+  ## llm: override the global llm settings for this task
+  ## parallelization: override the global parallelization settings for this task
+  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/claim_extraction.txt"
   description: "Any claims or facts that could be relevant to information discovery."
   max_gleanings: 0
 
 community_report:
-  # llm: override the global llm settings for this task
-  # parallelization: override the global parallelization settings for this task
-  # async_mode: override the global async_mode settings for this task
+  ## llm: override the global llm settings for this task
+  ## parallelization: override the global parallelization settings for this task
+  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/community_report.txt"
   max_length: 1500
   max_input_length: 12_000
