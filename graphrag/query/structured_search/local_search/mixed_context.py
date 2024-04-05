@@ -399,7 +399,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         entity_context, entity_context_data = build_entity_context(
             selected_entities=selected_entities,
             token_encoder=self.token_encoder,
-            max_tokens=int(max_tokens * 0.3),
+            max_tokens=int(max_tokens),
             column_delimiter=column_delimiter,
             single_batch=True,
             include_entity_rank=include_entity_rank,
@@ -427,7 +427,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 selected_entities=added_entities,
                 relationships=list(self.relationships.values()),
                 token_encoder=self.token_encoder,
-                max_tokens=int(max_tokens * 0.3),
+                max_tokens=int(max_tokens),
                 column_delimiter=column_delimiter,
                 single_batch=True,
                 top_k_relationships=top_k_relationships,
