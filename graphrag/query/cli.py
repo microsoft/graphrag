@@ -293,7 +293,7 @@ def __get_llm():
             "GRAPHRAG_LLM_API_KEY",
             ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"],
             required=True,
-        ),
+        ),  # type: ignore | Since this is required, will always return a value or break
         api_base=_env_with_fallback(
             "GRAPHRAG_LLM_API_BASE", ["GRAPHRAG_API_BASE"], required=is_azure_client
         ),
@@ -322,7 +322,7 @@ def __get_text_embedder():
             "GRAPHRAG_EMBEDDING_API_KEY",
             ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"],
             required=True,
-        ),
+        ),  # type: ignore | Since this is required, will always return a value or break
         api_base=_env_with_fallback(
             "GRAPHRAG_EMBEDDING_API_BASE",
             ["GRAPHRAG_API_BASE"],
