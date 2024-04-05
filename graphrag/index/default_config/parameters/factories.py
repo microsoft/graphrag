@@ -206,6 +206,7 @@ def default_config_parameters_from_env_vars(
             log.info("llm api version %s", api_version)
             log.info("llm api organization %s", organization)
             log.info("llm api proxy %s", proxy)
+            log.info("llm model %s", model)
 
             llm_parameters = LLMParametersModel(
                 api_key=api_key,
@@ -262,6 +263,7 @@ def default_config_parameters_from_env_vars(
             log.info("embedding api version %s", api_version)
             log.info("embedding api organization %s", organization)
             log.info("embedding api proxy %s", proxy)
+            log.info("embedding model %s", model)
 
             text_embeddings = TextEmbeddingConfigModel(
                 parallelization=ParallelizationParametersModel(
