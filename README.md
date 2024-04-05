@@ -1,10 +1,13 @@
 # GraphRAG
 
+👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/)
 👉 [Read the docs](https://microsoft.github.io/graphrag)
 
 ## Overview
 
 The GraphRAG project a data pipeline and transformation suite that is designed to extract meaningful, structured data from unstructured text using the power of LLMs.
+
+To learn more about GraphRAG and how it can be used to extend LLM capabilities, please visit the [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/).
 
 ## Repository Guidance
 
@@ -14,6 +17,11 @@ This repository presents a methodology for using knowledge graph memory structur
 
 - To learn about our contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - To start developing _GraphRAG_, see [DEVELOPING.md](./DEVELOPING.md)
+
+## Prompt Tuning
+
+Running _GraphRAG_ with your data out of the box may not yield the best possible results.
+We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](https://microsoft.github.io/graphrag/posts/index/3-prompt_tuning/) in our documentation.
 
 ## Responsible AI FAQ
 
