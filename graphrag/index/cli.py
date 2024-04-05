@@ -26,6 +26,11 @@ from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType
+from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
+from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
+from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
+from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
+from .init_content import INIT_DOTENV, INIT_YAML
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -44,6 +49,7 @@ def redact(input: str) -> str:
 
 def index_cli(
     root: str,
+    init: bool,
     verbose: bool,
     resume: str | None,
     memprofile: bool,
@@ -51,17 +57,19 @@ def index_cli(
     reporter: str | None,
     config: str | None,
     emit: str | None,
+    dryrun: bool,
     cli: bool = False,
-    dryrun: bool = False,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = _get_progress_reporter(reporter)
+    if init:
+        _initialize_project_at(root, progress_reporter)
+        sys.exit(0)
     pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, dryrun, progress_reporter
+        root, verbose, dryrun or False, progress_reporter
     )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
-
     encountered_errors = False
 
     def _run_workflow_async() -> None:
@@ -131,6 +139,51 @@ def index_cli(
 
     if cli:
         sys.exit(1 if encountered_errors else 0)
+
+
+def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
+    """Initialize the project at the given path."""
+    reporter.info(f"Initializing project at {path}")
+    root = Path(path)
+    if not root.exists():
+        root.mkdir(parents=True, exist_ok=True)
+
+    settings_yaml = root / "settings.yaml"
+    if settings_yaml.exists():
+        msg = f"Project already initialized at {root}"
+        raise ValueError(msg)
+
+    dotenv = root / ".env"
+    if not dotenv.exists():
+        with settings_yaml.open("w") as file:
+            file.write(INIT_YAML)
+
+    with dotenv.open("w") as file:
+        file.write(INIT_DOTENV)
+
+    prompts_dir = root / "prompts"
+    if not prompts_dir.exists():
+        prompts_dir.mkdir(parents=True, exist_ok=True)
+
+    entity_extraction = prompts_dir / "entity_extraction.txt"
+    if not entity_extraction.exists():
+        with entity_extraction.open("w") as file:
+            file.write(GRAPH_EXTRACTION_PROMPT)
+
+    summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
+    if not summarize_descriptions.exists():
+        with summarize_descriptions.open("w") as file:
+            file.write(SUMMARIZE_PROMPT)
+
+    claim_extraction = prompts_dir / "claim_extraction.txt"
+    if not claim_extraction.exists():
+        with claim_extraction.open("w") as file:
+            file.write(CLAIM_EXTRACTION_PROMPT)
+
+    community_report = prompts_dir / "community_report.txt"
+    if not community_report.exists():
+        with community_report.open("w") as file:
+            file.write(COMMUNITY_REPORT_PROMPT)
 
 
 def _create_default_config(
