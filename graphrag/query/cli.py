@@ -38,10 +38,12 @@ _DEFAULT_LLM_MODEL = "gpt-4-turbo-preview"
 _DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 
 
-def _env_with_fallback(key: str, fallback: list[str]):
+def _env_with_fallback(key: str, fallback: list[str], optional=False):
     for k in [key, *fallback]:
         if k in os.environ:
             return os.environ[k]
+    if optional:
+        return None
     msg = f"None of the following environment variables found: {key}, {fallback}"
     raise ValueError(msg)
 
@@ -284,9 +286,13 @@ def __get_text_units(data_dir: Path):
 def __get_llm():
     return ChatOpenAI(
         api_key=_env_with_fallback(
-            "GRAPHRAG_LLM_API_KEY", ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"]
+            "GRAPHRAG_LLM_API_KEY",
+            ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"],
+            optional=False,
         ),
-        api_base=_env_with_fallback("GRAPHRAG_LLM_API_BASE", ["GRAPHRAG_API_BASE"]),
+        api_base=_env_with_fallback(
+            "GRAPHRAG_LLM_API_BASE", ["GRAPHRAG_API_BASE"], optional=True
+        ),
         model=os.environ.get("GRAPHRAG_LLM_MODEL", _DEFAULT_LLM_MODEL),
         api_type=OpenaiApiType.OpenAI
         if os.environ.get("GRAPHRAG_LLM_TYPE", "openai_chat") == "openai_chat"
@@ -295,7 +301,9 @@ def __get_llm():
             "GRAPHRAG_LLM_DEPLOYMENT_NAME", _DEFAULT_LLM_MODEL
         ),
         api_version=_env_with_fallback(
-            "GRAPHRAG_LLM_API_VERSION", ["GRAPHRAG_API_VERSION", "OPENAI_API_VERSION"]
+            "GRAPHRAG_LLM_API_VERSION",
+            ["GRAPHRAG_API_VERSION", "OPENAI_API_VERSION"],
+            optional=True,
         ),
         max_retries=int(os.environ.get("GRAPHRAG_LLM_MAX_RETRIES", 20)),
     )
@@ -304,10 +312,12 @@ def __get_llm():
 def __get_text_embedder():
     return OpenAIEmbedding(
         api_key=_env_with_fallback(
-            "GRAPHRAG_EMBEDDING_API_KEY", ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"]
+            "GRAPHRAG_EMBEDDING_API_KEY",
+            ["GRAPHRAG_API_KEY", "OPENAI_API_KEY"],
+            optional=False,
         ),
         api_base=_env_with_fallback(
-            "GRAPHRAG_EMBEDDING_API_BASE", ["GRAPHRAG_API_BASE"]
+            "GRAPHRAG_EMBEDDING_API_BASE", ["GRAPHRAG_API_BASE"], optional=True
         ),
         api_type=OpenaiApiType.OpenAI
         if os.environ.get("GRAPHRAG_EMBEDDING_TYPE", "openai_embedding")
@@ -320,6 +330,7 @@ def __get_text_embedder():
         api_version=_env_with_fallback(
             "GRAPHRAG_EMBEDDING_API_VERSION",
             ["GRAPHRAG_API_VERSION", "OPENAI_API_VERSION"],
+            optional=True,
         ),
         max_retries=int(os.environ.get("GRAPHRAG_EMBEDDING_MAX_RETRIES", 20)),
     )
