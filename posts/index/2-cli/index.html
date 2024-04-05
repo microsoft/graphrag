@@ -352,6 +352,7 @@ a {
 <ul>
 <li><code>--verbose</code> - Adds extra logging information during the run.</li>
 <li><code>--root &lt;data-project-dir&gt;</code> - the data root directory. This should contain an <code>input</code> directory with the input data, and an <code>.env</code> file with environment variables. These are described below.</li>
+<li><code>--init</code> - This will initialize the data project directory at the specified <code>root</code> with bootstrap configuration and prompt-overrides.</li>
 <li><code>--resume &lt;output-timestamp&gt;</code> - if specified, the pipeline will attempt to resume a prior run. The parquet files from the prior run will be loaded into the system as inputs, and the workflows that generated those files will be skipped. The input value should be the timestamped output folder, e.g. &quot;20240105-143721&quot;.</li>
 <li><code>--config &lt;config_file.yml&gt;</code> - This will opt-out of the Default Configuration mode and execute a custom configuration. If this is used, then none of the environment-variables below will apply.</li>
 <li><code>--reporter &lt;reporter&gt;</code> - This will specify the progress reporter to use. The default is <code>rich</code>. Valid values are <code>rich</code>, <code>print</code>, and <code>none</code>.</li>
