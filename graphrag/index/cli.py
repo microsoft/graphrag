@@ -27,6 +27,10 @@ from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType
 from .init_content import INIT_DOTENV, INIT_YAML
+from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
+from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
+from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
+from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -144,17 +148,43 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
     if not root.exists():
         root.mkdir(parents=True, exist_ok=True)
 
+    
     settings_yaml = root / "settings.yaml"
-    dotenv = root / ".env"
-    if settings_yaml.exists() or dotenv.exists():
+    if settings_yaml.exists():
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)
 
-    with settings_yaml.open("w") as file:
-        file.write(INIT_YAML)
+    dotenv = root / ".env"
+    if not dotenv.exists():
+        with settings_yaml.open("w") as file:
+            file.write(INIT_YAML)
 
     with dotenv.open("w") as file:
         file.write(INIT_DOTENV)
+
+    prompts_dir = root / "prompts"
+    if not prompts_dir.exists():
+        prompts_dir.mkdir(parents=True, exist_ok=True)
+
+    entity_extraction = prompts_dir / "entity_extraction.txt"
+    if not entity_extraction.exists():
+        with entity_extraction.open("w") as file:
+            file.write(GRAPH_EXTRACTION_PROMPT)
+
+    summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
+    if not summarize_descriptions.exists():
+        with summarize_descriptions.open("w") as file:
+            file.write(SUMMARIZE_PROMPT)
+            
+    claim_extraction = prompts_dir / "claim_extraction.txt"
+    if not claim_extraction.exists():
+        with claim_extraction.open("w") as file:
+            file.write(CLAIM_EXTRACTION_PROMPT)
+
+    community_report = prompts_dir / "community_report.txt"
+    if not community_report.exists():
+        with community_report.open("w") as file:
+            file.write(COMMUNITY_REPORT_PROMPT)
 
 
 def _create_default_config(

@@ -1,4 +1,5 @@
 """Content for the init CLI command."""
+
 INIT_YAML = """
 encoding_model: cl100k_base
 skip_workflows: []
