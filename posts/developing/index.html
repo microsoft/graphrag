@@ -364,6 +364,9 @@ poetry <span class="token function">install</span></code></pre>
 <h3>&quot;numba/_pymodule.h:6:10: fatal error: Python.h: No such file or directory&quot; when running poetry install</h3>
 <p>Make sure you have python3.10-dev installed or more generally <code>python&lt;version&gt;-dev</code></p>
 <p><code>sudo apt-get install python3.10-dev</code></p>
+<h3>LLM call constantly exceeds TPM, RPM or time limits</h3>
+<p><code>GRAPHRAG_LLM_THREAD_COUNT</code> and <code>GRAPHRAG_EMBEDDING_THREAD_COUNT</code> are both set to 50 by default. You can modify this values
+to reduce concurrency. Please refer to the <a href="../config/overview">Configuration Documents</a></p>
 
         </main>
     </div>

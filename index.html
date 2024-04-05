@@ -270,7 +270,8 @@ a {
         <!-- Main Content -->
         <main>
             <h1>Welcome to GraphRAG</h1>
-            <p>👉 <a href="https://github.com/microsoft/graphrag">GitHub Repository</a></p>
+            <p>👉 <a href="https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/">Microsoft Research Blog Post</a> <br>
+👉 <a href="https://github.com/microsoft/graphrag">GitHub Repository</a></p>
 <p align="center">
 <img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center">
 </p>
@@ -279,6 +280,7 @@ Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
 </p>
 <p>GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
 approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.</p>
+<p>To learn more about GraphRAG and how it can be used to enhance your LLMs ability to reason about your private data, please visit the <a href="https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/">Microsoft Research Blog Post</a>.</p>
 <h2>Get Started 🚀</h2>
 <p>To start using GraphRAG, check out the <a href="posts/get_started"><em>Get Started</em></a> guide.
 For a deeper dive into the main sub-systems, please visit the docpages for the <a href="posts/index/overview">Indexer</a> and <a href="posts/query/overview">Query</a> packages.</p>
@@ -304,6 +306,9 @@ For a deeper dive into the main sub-systems, please visit the docpages for the <
 <li><a href="posts/query/0-global_search"><em>Global Search</em></a> for reasoning about holistic questions about the corpus by leveraging the community summaries.</li>
 <li><a href="posts/query/1-local_search"><em>Local Search</em></a> for reasoning about specific entities by fanning-out to their neighbors and associated concepts.</li>
 </ul>
+<h3>Prompt Tuning</h3>
+<p>Using <em>GraphRAG</em> with your data out of the box may not yield the best possible results.
+We strongly recommend to fine-tune your prompts following the <a href="posts/index/3-prompt_tuning">Prompt Tuning Guide</a> in our documentation.</p>
 
         </main>
     </div>
