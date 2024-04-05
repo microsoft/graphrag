@@ -2,7 +2,6 @@
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
 
-import logging
 from enum import Enum
 from pathlib import Path
 
@@ -40,8 +39,6 @@ from .models import (
     TextEmbeddingConfigModel,
     UmapConfigModel,
 )
-
-log = logging.getLogger(__name__)
 
 
 def default_config_parameters(
@@ -153,17 +150,10 @@ def default_config_parameters_from_env_vars(
     def _float(key: str | Fragment, default_value: float | None = None) -> float | None:
         return env.float(_key(key), default_value)
 
-    def redact(value: str | None) -> str:
-        if value is None:
-            return "None"
-        redacted_length = len(value)
-        return f"len()={redacted_length}"
-
     def section(key: Section):
         return env.prefixed(f"{key.value}_")
 
     fallback_oai_key = _str("OPENAI_API_KEY", _str("AZURE_OPENAI_API_KEY"))
-    log.info("fallback LLM key is %s", redact(fallback_oai_key))
     fallback_oai_org = _str("OPENAI_ORG_ID")
     fallback_oai_url = _str("OPENAI_BASE_URL")
     fallback_oai_version = _str("OPENAI_API_VERSION")
@@ -174,11 +164,6 @@ def default_config_parameters_from_env_vars(
         _api_version = _str(Fragment.api_version, fallback_oai_version)
         _organization = _str(Fragment.api_organization, fallback_oai_org)
         _proxy = _str(Fragment.api_proxy)
-        log.info("base api key %s", redact(_api_key))
-        log.info("base api base %s", _api_base)
-        log.info("base api version %s", _api_version)
-        log.info("base api organization %s", _organization)
-        log.info("base api proxy %s", _proxy)
 
         with section(Section.llm):
             api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
@@ -199,13 +184,6 @@ def default_config_parameters_from_env_vars(
                 raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
             if is_azure and api_base is None:
                 raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
-
-            log.info("llm api key %s", redact(api_key))
-            log.info("llm api base %s", api_base)
-            log.info("llm api version %s", api_version)
-            log.info("llm api organization %s", organization)
-            log.info("llm api proxy %s", proxy)
-            log.info("llm model %s", model)
 
             llm_parameters = LLMParametersModel(
                 api_key=api_key,
@@ -256,13 +234,6 @@ def default_config_parameters_from_env_vars(
                 raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
             if is_azure and api_base is None:
                 raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
-
-            log.info("embedding api key %s", redact(api_key))
-            log.info("embedding api base %s", api_base)
-            log.info("embedding api version %s", api_version)
-            log.info("embedding api organization %s", organization)
-            log.info("embedding api proxy %s", proxy)
-            log.info("embedding model %s", model)
 
             text_embeddings = TextEmbeddingConfigModel(
                 parallelization=ParallelizationParametersModel(

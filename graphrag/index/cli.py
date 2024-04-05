@@ -3,9 +3,9 @@
 """Main definition."""
 
 import asyncio
+import json
 import logging
 import platform
-import re
 import sys
 import time
 import warnings
@@ -37,16 +37,37 @@ from .init_content import INIT_DOTENV, INIT_YAML
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
+log = logging.getLogger(__name__)
 
-def redact(input: str) -> str:
+
+def redact(input: dict) -> str:
     """Sanitize the config json."""
+
     # Redact any sensitive configuration
-    result = re.sub(r'"api_key": ".*?"', '"api_key": "REDACTED"', input)
-    result = re.sub(
-        r'"connection_string": ".*?"', '"connection_string": "REDACTED"', result
-    )
-    result = re.sub(r'"organization": ".*?"', '"organization": "REDACTED"', result)
-    return re.sub(r'"container_name": ".*?"', '"container_name": "REDACTED"', result)
+    def redact_dict(input: dict) -> dict:
+        if not isinstance(input, dict):
+            return input
+
+        result = {}
+        for key, value in input.items():
+            if key in {
+                "api_key",
+                "connection_string",
+                "container_name",
+                "organization",
+            }:
+                if value is not None:
+                    result[key] = f"REDACTED, length {len(value)}"
+            elif isinstance(value, dict):
+                result[key] = redact_dict(value)
+            elif isinstance(value, list):
+                result[key] = [redact_dict(i) for i in value]
+            else:
+                result[key] = value
+        return result
+
+    redacted_dict = redact_dict(input)
+    return json.dumps(redacted_dict, indent=4)
 
 
 def index_cli(
@@ -193,22 +214,21 @@ def _create_default_config(
     root: str, verbose: bool, dryrun: bool, reporter: ProgressReporter
 ) -> PipelineConfig:
     """Create a default config if none is provided."""
-    import json
-
     if not Path(root).exists():
         msg = f"Root directory {root} does not exist"
         raise ValueError(msg)
 
     parameters = _read_config_parameters(root, reporter)
+    log.info(
+        "using default configuration: %s",
+        redact(parameters.to_dict()),
+    )
+
     if verbose or dryrun:
-        reporter.info(
-            f"Using default configuration: {redact(json.dumps(parameters.to_dict(), indent=4))}"
-        )
+        reporter.info(f"Using default configuration: {redact(parameters.to_dict())}")
     result = default_config(parameters, verbose)
     if verbose or dryrun:
-        reporter.info(
-            f"Final Config: {redact(json.dumps(result.model_dump(), indent=4))}"
-        )
+        reporter.info(f"Final Config: {redact(result.model_dump())}")
 
     if dryrun:
         reporter.info("dry run complete, exiting...")
