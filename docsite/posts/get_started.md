@@ -50,18 +50,10 @@ Next we'll inject some required config variables:
 
 ## Set Up Environment Variables
 
-First let's make sure to setup the required environment variables:
-
-- `GRAPHRAG_API_KEY` - API Key for executing the model, will fallback to `OPENAI_API_KEY` if one is not provided.
-- `GRAPHRAG_LLM_MODEL` - Model to use for Chat Completions.
-- `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` - This will signal to the indexing engine that you're using a model capable of JSON-mode output (e.g. gpt-4 or gpt-3.5-turbo). We _highly recommend_ enabling this to avoid malformed JSON errors during indexing.
-- `GRAPHRAG_EMBEDDING_MODEL` - Model to use for Embeddings.
-- `GRAPHRAG_INPUT_TYPE` - Type of input data, can be `text` or `csv`.
-- `GRAPHRAG_API_BASE` - Base URL for the Azure OpenAI. Only required for Azure OpenAI users.
-- `GRAPHRAG_LLM_DEPLOYMENT_NAME` - Deployment name for the Chat Completions model. Only required for Azure OpenAI users.
-- `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME` - Deployment name for the Embeddings model. Only required for Azure OpenAI users.
+First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [environment variables documentation](/posts/config/env_vars/).
 
 #### <ins>OpenAI and Azure OpenAI</ins>
+```sh
 
 To get started, let's set the base environment variables.
 
