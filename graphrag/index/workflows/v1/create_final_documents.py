@@ -17,7 +17,10 @@ def build_steps(
     * `workflow:create_base_documents`
     * `workflow:create_base_document_nodes`
     """
-    text_embed_config = config.get("text_embed", {})
+    base_text_embed = config.get("text_embed", {})
+    document_raw_content_embed_config = config.get(
+        "document_raw_content_embed", base_text_embed
+    )
     skip_raw_content_embedding = config.get("skip_raw_content_embedding", False)
     result = [
         {
@@ -33,7 +36,7 @@ def build_steps(
             "args": {
                 "column": "raw_content",
                 "to": "raw_content_embedding",
-                **text_embed_config,
+                **document_raw_content_embed_config,
             },
         })
 

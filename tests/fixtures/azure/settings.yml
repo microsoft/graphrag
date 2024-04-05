@@ -4,6 +4,28 @@ llm:
 embeddings: 
     llm:
         api_key: ${GRAPHRAG_API_KEY}
+    vector_store:
+      type: "qdrant"
+      base:
+        # url: "https://qdrant:6333"
+        # port: 6333
+        # api_key: ${QDRANT_API_KEY}
+        # vector_size: 12345
+        # https: true
+        # no-url, in-memory mode
+      
+      entity_name_description: 
+        title_column: "name"
+        # id_column: "id"
+        # overwrite: true
+      # entity_name: ...
+      # relationship_description: ...
+      # community_report_full_content: ...
+      # community_report_summary: ...
+      # community_report_title: ...
+      # document_raw_content: ...
+      # text_unit_text: ...
+
 input:
     type: text
     storage_type: blob

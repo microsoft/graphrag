@@ -111,7 +111,6 @@ class TextEmbeddingConfigSection(LLMConfigSection):
             **self.parallelization,
             "batch_size": self.batch_size,
             "batch_max_tokens": self.batch_max_tokens,
-            "vector_store": self.vector_store,
         }
 
     def to_dict(self) -> dict:

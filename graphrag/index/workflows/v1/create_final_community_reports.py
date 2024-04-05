@@ -19,10 +19,20 @@ def build_steps(
     * `workflow:create_base_entity_graph`
     """
     create_community_reports_config = config.get("create_community_reports", {})
-    text_embed_config = config.get("text_embed", {})
+    base_text_embed = config.get("text_embed", {})
+    community_report_full_content_embed_config = config.get(
+        "community_report_full_content_embed", base_text_embed
+    )
+    community_report_summary_embed_config = config.get(
+        "community_report_summary_embed", base_text_embed
+    )
+    community_report_title_embed_config = config.get(
+        "community_report_title_embed", base_text_embed
+    )
     skip_title_embedding = config.get("skip_title_embedding", False)
     skip_summary_embedding = config.get("skip_summary_embedding", False)
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
+
     result = [
         {
             "verb": "prepare_community_reports",
@@ -77,9 +87,10 @@ def build_steps(
         result.append({
             "verb": "text_embed",
             "args": {
+                "embedding_name": "community_report_full_content",
                 "column": "full_content",
                 "to": "full_content_embedding",
-                **text_embed_config,
+                **community_report_full_content_embed_config,
             },
         })
 
@@ -87,9 +98,10 @@ def build_steps(
         result.append({
             "verb": "text_embed",
             "args": {
+                "embedding_name": "community_report_summary",
                 "column": "summary",
                 "to": "summary_embedding",
-                **text_embed_config,
+                **community_report_summary_embed_config,
             },
         })
 
@@ -97,9 +109,10 @@ def build_steps(
         result.append({
             "verb": "text_embed",
             "args": {
+                "embedding_name": "community_report_title",
                 "column": "title",
                 "to": "title_embedding",
-                **text_embed_config,
+                **community_report_title_embed_config,
             },
         })
 
