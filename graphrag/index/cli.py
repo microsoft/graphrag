@@ -3,9 +3,11 @@
 """Main definition."""
 
 import asyncio
+import json
+import logging
 import platform
-import re
 import sys
+import time
 import warnings
 from pathlib import Path
 
@@ -35,20 +37,41 @@ from .init_content import INIT_DOTENV, INIT_YAML
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
+log = logging.getLogger(__name__)
 
-def redact(input: str) -> str:
+
+def redact(input: dict) -> str:
     """Sanitize the config json."""
+
     # Redact any sensitive configuration
-    result = re.sub(r'"api_key": ".*?"', '"api_key": "REDACTED"', input)
-    result = re.sub(
-        r'"connection_string": ".*?"', '"connection_string": "REDACTED"', result
-    )
-    result = re.sub(r'"organization": ".*?"', '"organization": "REDACTED"', result)
-    return re.sub(r'"container_name": ".*?"', '"container_name": "REDACTED"', result)
+    def redact_dict(input: dict) -> dict:
+        if not isinstance(input, dict):
+            return input
+
+        result = {}
+        for key, value in input.items():
+            if key in {
+                "api_key",
+                "connection_string",
+                "container_name",
+                "organization",
+            }:
+                if value is not None:
+                    result[key] = f"REDACTED, length {len(value)}"
+            elif isinstance(value, dict):
+                result[key] = redact_dict(value)
+            elif isinstance(value, list):
+                result[key] = [redact_dict(i) for i in value]
+            else:
+                result[key] = value
+        return result
+
+    redacted_dict = redact_dict(input)
+    return json.dumps(redacted_dict, indent=4)
 
 
 def index_cli(
-    root: str,
+    root: str | None,
     init: bool,
     verbose: bool,
     resume: str | None,
@@ -61,6 +84,9 @@ def index_cli(
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
+    root = root or ""
+    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
     if init:
         _initialize_project_at(root, progress_reporter)
@@ -71,6 +97,7 @@ def index_cli(
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
+    resume = resume or time.strftime("%Y%m%d-%H%M%S")
 
     def _run_workflow_async() -> None:
         import signal
@@ -93,12 +120,10 @@ def index_cli(
             nonlocal encountered_errors
             async for output in run_pipeline_with_config(
                 pipeline_config,
-                debug=verbose,
-                resume=resume,
+                run_id=run_id,
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
-                enable_logging=True,
                 emit=[TableEmitterType(e) for e in pipeline_emit]
                 if pipeline_emit
                 else None,
@@ -190,22 +215,21 @@ def _create_default_config(
     root: str, verbose: bool, dryrun: bool, reporter: ProgressReporter
 ) -> PipelineConfig:
     """Create a default config if none is provided."""
-    import json
-
     if not Path(root).exists():
         msg = f"Root directory {root} does not exist"
         raise ValueError(msg)
 
     parameters = _read_config_parameters(root, reporter)
+    log.info(
+        "using default configuration: %s",
+        redact(parameters.to_dict()),
+    )
+
     if verbose or dryrun:
-        reporter.info(
-            f"Using default configuration: {redact(json.dumps(parameters.to_dict(), indent=4))}"
-        )
+        reporter.info(f"Using default configuration: {redact(parameters.to_dict())}")
     result = default_config(parameters, verbose)
     if verbose or dryrun:
-        reporter.info(
-            f"Final Config: {redact(json.dumps(result.model_dump(), indent=4))}"
-        )
+        reporter.info(f"Final Config: {redact(result.model_dump())}")
 
     if dryrun:
         reporter.info("dry run complete, exiting...")
@@ -252,3 +276,20 @@ def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
 
     msg = f"Invalid progress reporter type: {reporter_type}"
     raise ValueError(msg)
+
+
+def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
+    logging_file = (
+        Path(root_dir) / "output" / run_id / "reports" / "indexing-engine.log"
+    )
+    logging_file.parent.mkdir(parents=True, exist_ok=True)
+
+    logging_file.touch(exist_ok=True)
+
+    logging.basicConfig(
+        filename=str(logging_file),
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.DEBUG if verbose else logging.INFO,
+    )
