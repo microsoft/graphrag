@@ -1,3 +1,4 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """Content for the init CLI command."""
 
 INIT_YAML = """
