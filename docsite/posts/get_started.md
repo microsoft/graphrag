@@ -54,7 +54,7 @@ First let's make sure to setup the required environment variables:
 
 - `GRAPHRAG_API_KEY` - API Key for executing the model, will fallback to `OPENAI_API_KEY` if one is not provided.
 - `GRAPHRAG_LLM_MODEL` - Model to use for Chat Completions.
-- `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` - This will signal to the indexing engine that you're using a model capable of JSON-mode output (e.g. gpt-4 or gpt-3.5-turbo). We *highly recommend* enabling this to avoid malformed JSON errors during indexing.
+- `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` - This will signal to the indexing engine that you're using a model capable of JSON-mode output (e.g. gpt-4 or gpt-3.5-turbo). We _highly recommend_ enabling this to avoid malformed JSON errors during indexing.
 - `GRAPHRAG_EMBEDDING_MODEL` - Model to use for Embeddings.
 - `GRAPHRAG_INPUT_TYPE` - Type of input data, can be `text` or `csv`.
 - `GRAPHRAG_API_BASE` - Base URL for the Azure OpenAI. Only required for Azure OpenAI users.
@@ -64,6 +64,7 @@ First let's make sure to setup the required environment variables:
 #### <ins>OpenAI and Azure OpenAI</ins>
 
 To get started, let's set the base environment variables.
+
 ```sh
 export GRAPHRAG_API_KEY="<api_key>" && \
 export GRAPHRAG_LLM_MODEL="<chat_completions_model>" && \
@@ -75,6 +76,7 @@ export GRAPHRAG_INPUT_TYPE="text"
 #### <ins>Azure OpenAI</ins>
 
 In addition, Azure OpenAI users should set the following env-vars.
+
 ```sh
 export GRAPHRAG_API_BASE="https://<domain>.openai.azure.com" && \
 export GRAPHRAG_API_VERSION="2024-02-15-preview" && \
@@ -111,7 +113,7 @@ Here is an example using Global search to ask a high-level question:
 ```sh
 python -m graphrag.query \
 --data ./ragtest/output/<timestamp>/artifacts \
---method global\
+--method global \
 "What are the top themes in this story?"
 ```
 
