@@ -71,7 +71,7 @@ def redact(input: dict) -> str:
 
 
 def index_cli(
-    root: str,
+    root: str | None,
     init: bool,
     verbose: bool,
     resume: str | None,
@@ -84,6 +84,7 @@ def index_cli(
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
+    root = root or ""
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
     _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
