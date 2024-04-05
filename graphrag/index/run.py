@@ -79,9 +79,7 @@ async def run_pipeline_with_config(
     additional_workflows: WorkflowDefinitions | None = None,
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
-    debug: bool = False,
     resume: str | None = None,
-    enable_logging: bool | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -94,8 +92,11 @@ async def run_pipeline_with_config(
         - cache - The cache to use for the pipeline (this overrides the config)
         - reporter - The reporter to use for the pipeline (this overrides the config)
         - input_post_process_steps - The post process steps to run on the input data (this overrides the config)
-        - enable_logging - Whether to configure logging for the pipeline. If false, you should configure the standard Python logging yourself.
-        - debug - Whether or not to run in debug mode
+        - additional_verbs - The custom verbs to use for the pipeline.
+        - additional_workflows - The custom workflows to use for the pipeline.
+        - emit - The table emitters to use for the pipeline.
+        - memory_profile - Whether or not to profile the memory.
+        - resume - The run id to resume from.
     """
     if isinstance(config_or_path, str):
         log.info("Running pipeline with config %s", config_or_path)
@@ -103,7 +104,7 @@ async def run_pipeline_with_config(
         log.info("Running pipeline")
 
     config = load_pipeline_config(config_or_path)
-    config, reporting_dir = _apply_substitutions(config, resume)
+    config = _apply_substitutions(config, resume)
     root_dir = config.root_dir
 
     def _create_storage(config: PipelineStorageConfigTypes | None) -> PipelineStorage:
@@ -132,9 +133,6 @@ async def run_pipeline_with_config(
         config: PipelineInputConfigTypes | None,
     ) -> list[PipelineWorkflowStep] | None:
         return config.post_process if config is not None else None
-
-    if enable_logging:
-        _enable_logging(root_dir or "", reporting_dir, debug)
 
     progress_reporter = progress_reporter or NullProgressReporter()
     storage = storage or _create_storage(config.storage)
@@ -411,11 +409,8 @@ def _validate_dataset(dataset: pd.DataFrame):
         raise TypeError(msg)
 
 
-def _apply_substitutions(
-    config: PipelineConfig, resume: str | None
-) -> tuple[PipelineConfig, str]:
+def _apply_substitutions(config: PipelineConfig, resume: str | None) -> PipelineConfig:
     substitutions = {"timestamp": resume or time.strftime("%Y%m%d-%H%M%S")}
-    reporting_dir = ""
 
     if (
         isinstance(
@@ -440,26 +435,11 @@ def _apply_substitutions(
         )
         and config.reporting.base_dir
     ):
-        reporting_dir = Template(config.reporting.base_dir).substitute(substitutions)
-        config.reporting.base_dir = reporting_dir
+        config.reporting.base_dir = Template(config.reporting.base_dir).substitute(
+            substitutions
+        )
 
-    return config, reporting_dir
-
-
-def _enable_logging(root_dir: str, reporting_dir: str, verbose: bool) -> None:
-    reporting_path = Path(root_dir) / reporting_dir
-    reporting_path.mkdir(parents=True, exist_ok=True)
-
-    logging_file = reporting_path / "indexing-engine.log"
-    logging_file.touch(exist_ok=True)
-
-    logging.basicConfig(
-        filename=str(logging_file),
-        filemode="a",
-        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.DEBUG if verbose else logging.INFO,
-    )
+    return config
 
 
 def _create_run_context(

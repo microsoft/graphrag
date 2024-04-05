@@ -3,9 +3,11 @@
 """Main definition."""
 
 import asyncio
+import logging
 import platform
 import re
 import sys
+import time
 import warnings
 from pathlib import Path
 
@@ -61,6 +63,7 @@ def index_cli(
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
+    _enable_logging(root, verbose)
     progress_reporter = _get_progress_reporter(reporter)
     if init:
         _initialize_project_at(root, progress_reporter)
@@ -71,6 +74,7 @@ def index_cli(
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
+    resume = resume or time.strftime("%Y%m%d-%H%M%S")
 
     def _run_workflow_async() -> None:
         import signal
@@ -93,12 +97,10 @@ def index_cli(
             nonlocal encountered_errors
             async for output in run_pipeline_with_config(
                 pipeline_config,
-                debug=verbose,
                 resume=resume,
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
-                enable_logging=True,
                 emit=[TableEmitterType(e) for e in pipeline_emit]
                 if pipeline_emit
                 else None,
@@ -252,3 +254,19 @@ def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
 
     msg = f"Invalid progress reporter type: {reporter_type}"
     raise ValueError(msg)
+
+
+def _enable_logging(root_dir: str, verbose: bool) -> None:
+    reporting_path = Path(root_dir)
+    reporting_path.mkdir(parents=True, exist_ok=True)
+
+    logging_file = reporting_path / "indexing-engine.log"
+    logging_file.touch(exist_ok=True)
+
+    logging.basicConfig(
+        filename=str(logging_file),
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.DEBUG if verbose else logging.INFO,
+    )
