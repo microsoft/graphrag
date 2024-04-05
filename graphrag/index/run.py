@@ -79,7 +79,7 @@ async def run_pipeline_with_config(
     additional_workflows: WorkflowDefinitions | None = None,
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
-    resume: str | None = None,
+    run_id: str | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -96,15 +96,16 @@ async def run_pipeline_with_config(
         - additional_workflows - The custom workflows to use for the pipeline.
         - emit - The table emitters to use for the pipeline.
         - memory_profile - Whether or not to profile the memory.
-        - resume - The run id to resume from.
+        - run_id - The run id to start or resume from.
     """
     if isinstance(config_or_path, str):
         log.info("Running pipeline with config %s", config_or_path)
     else:
         log.info("Running pipeline")
 
+    run_id = run_id or time.strftime("%Y%m%d-%H%M%S")
     config = load_pipeline_config(config_or_path)
-    config = _apply_substitutions(config, resume)
+    config = _apply_substitutions(config, run_id)
     root_dir = config.root_dir
 
     def _create_storage(config: PipelineStorageConfigTypes | None) -> PipelineStorage:
@@ -409,8 +410,8 @@ def _validate_dataset(dataset: pd.DataFrame):
         raise TypeError(msg)
 
 
-def _apply_substitutions(config: PipelineConfig, resume: str | None) -> PipelineConfig:
-    substitutions = {"timestamp": resume or time.strftime("%Y%m%d-%H%M%S")}
+def _apply_substitutions(config: PipelineConfig, run_id: str) -> PipelineConfig:
+    substitutions = {"timestamp": run_id}
 
     if (
         isinstance(

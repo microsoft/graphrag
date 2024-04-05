@@ -63,7 +63,8 @@ def index_cli(
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
-    _enable_logging(root, verbose)
+    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
     if init:
         _initialize_project_at(root, progress_reporter)
@@ -97,7 +98,7 @@ def index_cli(
             nonlocal encountered_errors
             async for output in run_pipeline_with_config(
                 pipeline_config,
-                resume=resume,
+                run_id=run_id,
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
@@ -256,11 +257,12 @@ def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
     raise ValueError(msg)
 
 
-def _enable_logging(root_dir: str, verbose: bool) -> None:
-    reporting_path = Path(root_dir)
-    reporting_path.mkdir(parents=True, exist_ok=True)
+def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
+    logging_file = (
+        Path(root_dir) / "output" / run_id / "reports" / "indexing-engine.log"
+    )
+    logging_file.parent.mkdir(parents=True, exist_ok=True)
 
-    logging_file = reporting_path / "indexing-engine.log"
     logging_file.touch(exist_ok=True)
 
     logging.basicConfig(
