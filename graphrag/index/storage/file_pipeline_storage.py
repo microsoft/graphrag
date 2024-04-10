@@ -20,6 +20,8 @@ from .typing import PipelineStorage
 
 log = logging.getLogger(__name__)
 
+import os
+
 
 class FilePipelineStorage(PipelineStorage):
     """File storage class definition."""
@@ -49,7 +51,7 @@ class FilePipelineStorage(PipelineStorage):
 
             return all(re.match(value, item[key]) for key, value in file_filter.items())
 
-        search_path = Path(self._root_dir) / (base_dir or "")
+        search_path = Path(join_path(self._root_dir, (base_dir or "")))
         log.info("search %s for files matching %s", search_path, file_pattern.pattern)
         all_files = list(search_path.rglob("**/*"))
         num_loaded = 0
@@ -61,7 +63,7 @@ class FilePipelineStorage(PipelineStorage):
                 group = match.groupdict()
                 if item_filter(group):
                     filename = f"{file}".replace(self._root_dir, "")
-                    if filename.startswith("/"):
+                    if filename.startswith(os.sep):
                         filename = filename[1:]
                     yield (filename, group)
                     num_loaded += 1
@@ -78,7 +80,7 @@ class FilePipelineStorage(PipelineStorage):
         self, key: str, as_bytes: bool | None = False, encoding: str | None = None
     ) -> Any:
         """Get method definition."""
-        file_path = Path(self._root_dir) / key
+        file_path = join_path(self._root_dir, key)
 
         if await self.has(key):
             return await self._read_file(file_path, as_bytes, encoding)
@@ -112,18 +114,18 @@ class FilePipelineStorage(PipelineStorage):
         write_type = "wb" if is_bytes else "w"
         encoding = None if is_bytes else encoding or self._encoding
         async with aiofiles.open(
-            Path(self._root_dir) / key, cast(Any, write_type), encoding=encoding
+            join_path(self._root_dir, key), cast(Any, write_type), encoding=encoding
         ) as f:
             await f.write(value)
 
     async def has(self, key: str) -> bool:
         """Has method definition."""
-        return await exists(Path(self._root_dir) / key)
+        return await exists(join_path(self._root_dir, key))
 
     async def delete(self, key: str) -> None:
         """Delete method definition."""
         if await self.has(key):
-            await remove(Path(self._root_dir) / key)
+            await remove(join_path(self._root_dir, key))
 
     async def clear(self) -> None:
         """Clear method definition."""
@@ -137,7 +139,16 @@ class FilePipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        return FilePipelineStorage(str(Path(self._root_dir) / name))
+        return FilePipelineStorage(join_path(self._root_dir, name))
+
+
+def join_path (p, f, sep = os.sep):
+    f = os.path.normpath(f)
+    if p == "":
+        return (f);
+    else:
+        p = os.path.normpath(p)
+        return (os.path.join(p, *f.split(os.sep)))
 
 
 def create_file_storage(out_dir: str | None) -> PipelineStorage:
