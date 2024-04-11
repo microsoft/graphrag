@@ -61,11 +61,11 @@ jobs:
           poetry build
 
       - name: Start Azurite Linux
-        if: matrix.os == "ubuntu-latest"
+        if: matrix.os == 'ubuntu-latest'
         run: ./scripts/start-azurite.sh&
 
       - name: Start Azurite Windows
-        if: matrix.os == "windows-latest"
+        if: matrix.os == 'windows-latest'
         run: ./scripts/start-azurite-win.sh&
 
       - name: Unit Test
