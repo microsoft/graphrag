@@ -60,13 +60,9 @@ jobs:
         run: |
           poetry build
 
-      - name: Start Azurite Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: ./scripts/start-azurite.sh&
-
-      - name: Start Azurite Windows
-        if: matrix.os == 'windows-latest'
-        run: ./scripts/start-azurite-win.sh&
+      - name: Install Azurite
+        id: azuright
+        uses: potatoqualitee/azuright@v1.1
 
       - name: Unit Test
         run: |
