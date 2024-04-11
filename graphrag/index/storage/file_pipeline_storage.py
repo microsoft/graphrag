@@ -20,8 +20,6 @@ from .typing import PipelineStorage
 
 log = logging.getLogger(__name__)
 
-import os
-
 
 class FilePipelineStorage(PipelineStorage):
     """File storage class definition."""
@@ -51,7 +49,7 @@ class FilePipelineStorage(PipelineStorage):
 
             return all(re.match(value, item[key]) for key, value in file_filter.items())
 
-        search_path = Path(join_path(self._root_dir, (base_dir or "")))
+        search_path = Path(self._root_dir) / (base_dir or "")
         log.info("search %s for files matching %s", search_path, file_pattern.pattern)
         all_files = list(search_path.rglob("**/*"))
         num_loaded = 0
@@ -62,9 +60,7 @@ class FilePipelineStorage(PipelineStorage):
             if match:
                 group = match.groupdict()
                 if item_filter(group):
-                    filename = f"{file}".replace(self._root_dir, "")
-                    if filename.startswith(os.sep):
-                        filename = filename[1:]
+                    filename = Path(file).name
                     yield (filename, group)
                     num_loaded += 1
                     if max_count > 0 and num_loaded >= max_count:
@@ -139,16 +135,12 @@ class FilePipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        return FilePipelineStorage(join_path(self._root_dir, name))
+        return FilePipelineStorage(str(join_path(self._root_dir, name)))
 
 
-def join_path (p, f, sep = os.sep):
-    f = os.path.normpath(f)
-    if p == "":
-        return (f);
-    else:
-        p = os.path.normpath(p)
-        return (os.path.join(p, *f.split(os.sep)))
+def join_path(file_path: str, file_name: str) -> Path:
+    """Join a path and a file. Independent of the OS."""
+    return Path(file_path) / Path(file_name).name
 
 
 def create_file_storage(out_dir: str | None) -> PipelineStorage:
