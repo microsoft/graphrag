@@ -3,6 +3,7 @@
 """A module containing 'FileStorage' and 'FilePipelineStorage' models."""
 
 import logging
+import os
 import re
 import shutil
 from collections.abc import Iterator
@@ -60,7 +61,9 @@ class FilePipelineStorage(PipelineStorage):
             if match:
                 group = match.groupdict()
                 if item_filter(group):
-                    filename = Path(file).name
+                    filename = f"{file}".replace(self._root_dir, "")
+                    if filename.startswith(os.sep):
+                        filename = filename[1:]
                     yield (filename, group)
                     num_loaded += 1
                     if max_count > 0 and num_loaded >= max_count:
@@ -135,12 +138,12 @@ class FilePipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         if name is None:
             return self
-        return FilePipelineStorage(str(join_path(self._root_dir, name)))
+        return FilePipelineStorage(str(Path(self._root_dir) / Path(name)))
 
 
 def join_path(file_path: str, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""
-    return Path(file_path) / Path(file_name).name
+    return Path(file_path) / Path(file_name).parent / Path(file_name).name
 
 
 def create_file_storage(out_dir: str | None) -> PipelineStorage:
