@@ -149,17 +149,20 @@ def __get_entities_from_df(
     )
     entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
 
-    entity_embedding_df = entity_embedding_df[
-        [
-            "id",
-            "human_readable_id",
-            "name",
-            "type",
-            "description",
-            "description_embedding",
-            "text_unit_ids",
-        ]
-    ]
+    entity_embedding_df = cast(
+        pd.DataFrame,
+        entity_embedding_df[
+            [
+                "id",
+                "human_readable_id",
+                "name",
+                "type",
+                "description",
+                "description_embedding",
+                "text_unit_ids",
+            ]
+        ],
+    )
 
     entity_df = entity_df.merge(
         entity_embedding_df, on="name", how="inner"
