@@ -9,6 +9,7 @@ from typing import cast
 import pandas as pd
 import tiktoken
 
+from graphrag.model.entity import Entity
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.input.loaders.dfs import (
     read_community_reports,
@@ -50,6 +51,16 @@ def _env_with_fallback(key: str, fallback: list[str], required=True):
 
 def __get_reports(data_dir: Path, community_level: int):
     entity_df: pd.DataFrame = pd.read_parquet(data_dir / "create_final_nodes.parquet")
+    report_df: pd.DataFrame = pd.read_parquet(
+        data_dir / "create_final_community_reports.parquet"
+    )
+
+    return __get_reports_from_df(entity_df, report_df, community_level)
+
+
+def __get_reports_from_df(
+    entity_df: pd.DataFrame, report_df: pd.DataFrame, community_level: int
+):
     entity_df = cast(
         pd.DataFrame,
         entity_df[
@@ -66,9 +77,6 @@ def __get_reports(data_dir: Path, community_level: int):
         "community_id"
     ].drop_duplicates()
 
-    report_df: pd.DataFrame = pd.read_parquet(
-        data_dir / "create_final_community_reports.parquet"
-    )
     report_df = cast(
         pd.DataFrame, report_df[report_df.level <= f"level_{community_level}"]
     )
@@ -105,6 +113,21 @@ def __get_entities(
     data_dir: Path, community_level: int, description_embedding_store: Qdrant
 ):
     entity_df: pd.DataFrame = pd.read_parquet(data_dir / "create_final_nodes.parquet")
+    entity_embedding_df: pd.DataFrame = pd.read_parquet(
+        data_dir / "create_final_entities.parquet"
+    )
+
+    return __get_entities_from_df(
+        entity_df, entity_embedding_df, community_level, description_embedding_store
+    )
+
+
+def __get_entities_from_df(
+    entity_df: pd.DataFrame,
+    entity_embedding_df: pd.DataFrame,
+    community_level: int,
+    description_embedding_store: Qdrant,
+):
     entity_df = cast(
         pd.DataFrame,
         entity_df[
@@ -126,7 +149,6 @@ def __get_entities(
     )
     entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
 
-    entity_embedding_df = pd.read_parquet(data_dir / "create_final_entities.parquet")
     entity_embedding_df = entity_embedding_df[
         [
             "id",
@@ -165,10 +187,14 @@ def __get_entities(
     return entities
 
 
-def __get_relationships(data_dir: Path, entities):
+def __get_relationships(data_dir: Path, entities: list[Entity]):
     relationship_df: pd.DataFrame = pd.read_parquet(
         data_dir / "create_final_relationships.parquet"
     )
+    return __get_relationships_from_df(relationship_df, entities)
+
+
+def __get_relationships_from_df(relationship_df: pd.DataFrame, entities: list[Entity]):
     relationship_df = cast(
         pd.DataFrame,
         relationship_df[
@@ -245,6 +271,10 @@ def __get_claims(data_dir: Path):
             "description",
         ]
         covariate_df = pd.DataFrame({column: [] for column in columns})
+    return __get_claims_from_df(covariate_df)
+
+
+def __get_claims_from_df(covariate_df: pd.DataFrame):
     covariate_df["id"] = covariate_df["id"].astype(str)
     covariate_df["human_readable_id"] = covariate_df["human_readable_id"].astype(str)
 
@@ -271,6 +301,10 @@ def __get_claims(data_dir: Path):
 def __get_text_units(data_dir: Path):
     text_unit_df = pd.read_parquet(data_dir / "create_final_text_units.parquet")
 
+    return __get_text_units_from_df(text_unit_df)
+
+
+def __get_text_units_from_df(text_unit_df: pd.DataFrame):
     return read_text_units(
         df=text_unit_df,
         id_col="id",
