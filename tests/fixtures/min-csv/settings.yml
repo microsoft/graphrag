@@ -12,6 +12,7 @@ embeddings:
     llm:
         type: azure_openai_embedding
         api_key: ${GRAPHRAG_API_KEY}
+        api_base: ${GRAPHRAG_API_BASE}
         api_version: ${GRAPHRAG_API_VERSION}
         model: ${GRAPHRAG_EMBEDDING_MODEL}
         deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
