@@ -103,11 +103,11 @@ jobs:
           GRAPHRAG_LLM_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_LLM_DEPLOYMENT_NAME }}
           GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
           GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
-          GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
-          GRAPHRAG_LLM_TPM: 10000
-          GRAPHRAG_LLM_RPM: 60
-          GRAPHRAG_EMBEDDING_TPM: 120000
-          GRAPHRAG_EMBEDDING_RPM: 720
+          GRAPHRAG_EMBEDDING_MODEL: text-embedding-ada-002
+          GRAPHRAG_LLM_TPM: 120_000
+          GRAPHRAG_LLM_RPM: 720
+          GRAPHRAG_EMBEDDING_TPM: 350_000
+          GRAPHRAG_EMBEDDING_RPM: 2_100
 
       - name: E2E Test
         if: steps.changes.outputs.python == 'true'

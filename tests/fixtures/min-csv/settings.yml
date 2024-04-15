@@ -5,8 +5,8 @@ llm:
     api_version: ${GRAPHRAG_API_VERSION}
     model: ${GRAPHRAG_LLM_MODEL}
     deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
-    tokens_per_minute: 10000
-    requests_per_minute: 60
+    tokens_per_minute: 120_0000
+    requests_per_minute: 720
 
 embeddings: 
     llm:
@@ -15,8 +15,8 @@ embeddings:
         api_version: ${GRAPHRAG_API_VERSION}
         model: ${GRAPHRAG_EMBEDDING_MODEL}
         deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
-        tokens_per_minute: 120000
-        requests_per_minute: 720
+        tokens_per_minute: 350_000
+        requests_per_minute: 2_100
 
 input:
     type: csv
