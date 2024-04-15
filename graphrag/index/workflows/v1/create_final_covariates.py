@@ -25,23 +25,16 @@ def build_steps(
 
     return [
         {
-            "id": "extract_claims",
-            "verb": "extract_claims",
+            "verb": "extract_covariates",
             "args": {
                 "column": config.get("chunk_column", "chunk"),
                 "id_column": config.get("chunk_id_column", "chunk_id"),
                 "resolved_entities_column": "resolved_entities",
+                "covariate_type": "claim",
                 "async_mode": config.get("async_mode", AsyncType.AsyncIO),
                 **claim_extract_config,
             },
             "input": input,
-        },
-        {
-            "verb": "impute",
-            "args": {
-                "column": "covariate_type",
-                "value": "claim",
-            },
         },
         {
             "verb": "window",
