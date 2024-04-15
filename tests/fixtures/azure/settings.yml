@@ -4,6 +4,7 @@ llm:
     api_base: ${GRAPHRAG_API_BASE}
     model: ${GRAPHRAG_LLM_MODEL}
     deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
+    api_version: ${GRAPHRAG_API_VERSION}
     tokens_per_minute: 10000
     requests_per_minute: 60
 
@@ -13,6 +14,7 @@ embeddings:
         api_key: ${GRAPHRAG_API_KEY}
         model: ${GRAPHRAG_EMBEDDING_MODEL}
         deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
+        api_version: ${GRAPHRAG_API_VERSION}
         tokens_per_minute: 120000
         requests_per_minute: 720
 
