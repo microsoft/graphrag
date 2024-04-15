@@ -1,13 +1,15 @@
 llm:
     api_key: ${GRAPHRAG_API_KEY}
-    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
-    requests_per_minute: ${GRAPHRAG_LLM_RPM}
+    model: ${GRAPHRAG_LLM_MODEL}
+    tokens_per_minute: 2000000
+    requests_per_minute: 10000
 
 embeddings: 
     llm:
         api_key: ${GRAPHRAG_API_KEY}
-        tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
-        requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
+        model: ${GRAPHRAG_EMBEDDING_MODEL}
+        tokens_per_minute: 2000000
+        requests_per_minute: 10000
 
     vector_store:
       type: "qdrant"

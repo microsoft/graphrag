@@ -1,9 +1,15 @@
 llm:
     api_key: ${GRAPHRAG_API_KEY}
+    model: ${GRAPHRAG_LLM_MODEL}
+    tokens_per_minute: 2000000
+    requests_per_minute: 10000
 
 embeddings: 
     llm:
         api_key: ${GRAPHRAG_API_KEY}
+        model: ${GRAPHRAG_EMBEDDING_MODEL}
+        tokens_per_minute: 2000000
+        requests_per_minute: 10000
 
 input:
     type: csv
