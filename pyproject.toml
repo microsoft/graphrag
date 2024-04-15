@@ -75,7 +75,7 @@ azure-storage-blob = "^12.19.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.3.7"
-poethepoet = "^0.25.0"
+poethepoet = "^0.25.1"
 typing-extensions = "^4.5.0"
 coverage = "^7.3.2"
 pytest = "^7.4.2"
