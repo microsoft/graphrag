@@ -5188,4 +5188,4 @@ lancedb = ["lancedb"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "77aad39cfdb2c8c80d5e034b744e40190ed5ecbede2a53dd10624ba7361f63c3"
+content-hash = "86f0b476e9d49792320b130f395efaa2a8774b40c26253017928ca1078f6f332"
