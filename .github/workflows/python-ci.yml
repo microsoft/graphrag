@@ -82,6 +82,10 @@ jobs:
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
           GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
+          GRAPHRAG_LLM_TPM: 500000
+          GRAPHRAG_LLM_RPM: 10000
+          GRAPHRAG_EMBEDDING_TPM: 500000
+          GRAPHRAG_EMBEDDING_RPM: 10000
 
       - name: E2E Test
         if: steps.changes.outputs.python == 'true'
