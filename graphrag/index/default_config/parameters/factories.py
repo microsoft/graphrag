@@ -1,6 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
+
 import os
 from enum import Enum
 from pathlib import Path
