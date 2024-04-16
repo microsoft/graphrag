@@ -20,14 +20,58 @@ from graphrag.index.default_config.parameters.read_dotenv import read_dotenv
 from graphrag.index.llm.types import LLMType
 
 from .defaults import (
+    DEFAULT_ASYNC_MODE,
+    DEFAULT_CACHE_BASE_DIR,
     DEFAULT_CACHE_TYPE,
+    DEFAULT_CHUNK_GROUP_BY_COLUMNS,
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_CHUNK_SIZE,
+    DEFAULT_CLAIM_DESCRIPTION,
+    DEFAULT_CLAIM_MAX_GLEANINGS,
+    DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+    DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+    DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+    DEFAULT_EMBEDDING_BATCH_SIZE,
+    DEFAULT_EMBEDDING_MODEL,
     DEFAULT_EMBEDDING_TARGET,
+    DEFAULT_EMBEDDING_TYPE,
+    DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
+    DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
+    DEFAULT_INPUT_BASE_DIR,
     DEFAULT_INPUT_CSV_PATTERN,
+    DEFAULT_INPUT_FILE_ENCODING,
     DEFAULT_INPUT_STORAGE_TYPE,
+    DEFAULT_INPUT_TEXT_COLUMN,
     DEFAULT_INPUT_TEXT_PATTERN,
     DEFAULT_INPUT_TYPE,
+    DEFAULT_LLM_CONCURRENT_REQUESTS,
+    DEFAULT_LLM_MAX_RETRIES,
+    DEFAULT_LLM_MAX_RETRY_WAIT,
+    DEFAULT_LLM_MAX_TOKENS,
+    DEFAULT_LLM_MODEL,
+    DEFAULT_LLM_REQUEST_TIMEOUT,
+    DEFAULT_LLM_REQUESTS_PER_MINUTE,
+    DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+    DEFAULT_LLM_TOKENS_PER_MINUTE,
+    DEFAULT_LLM_TYPE,
+    DEFAULT_MAX_CLUSTER_SIZE,
+    DEFAULT_NODE2VEC_IS_ENABLED,
+    DEFAULT_NODE2VEC_ITERATIONS,
+    DEFAULT_NODE2VEC_NUM_WALKS,
+    DEFAULT_NODE2VEC_RANDOM_SEED,
+    DEFAULT_NODE2VEC_WALK_LENGTH,
+    DEFAULT_NODE2VEC_WINDOW_SIZE,
+    DEFAULT_PARALLELIZATION_NUM_THREADS,
+    DEFAULT_PARALLELIZATION_STAGGER,
+    DEFAULT_REPORTING_BASE_DIR,
     DEFAULT_REPORTING_TYPE,
+    DEFAULT_SNAPSHOTS_GRAPHML,
+    DEFAULT_SNAPSHOTS_RAW_ENTITIES,
+    DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
+    DEFAULT_STORAGE_BASE_DIR,
     DEFAULT_STORAGE_TYPE,
+    DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
+    DEFAULT_UMAP_ENABLED,
 )
 from .input_models import (
     CacheConfigInputModel,
@@ -105,27 +149,33 @@ def default_config_parameters(
 
     traverse_dict(values)
 
-    def _int(value: int | str | None) -> int | None:
-        return int(value) if value else None
+    def _int(value: int | str | None, default_value: int | None = None) -> int | None:
+        return int(value) if value else default_value
 
-    def _bool(value: bool | str | None) -> bool | None:
-        return bool(value) if value else None
+    def _bool(
+        value: bool | str | None, default_value: bool | None = None
+    ) -> bool | None:
+        return bool(value) if value else default_value
 
-    def _float(value: float | str | None) -> float | None:
-        return float(value) if value else None
+    def _float(
+        value: float | str | None, default_value: float | None = None
+    ) -> float | None:
+        return float(value) if value else default_value
 
-    def _list(value: list | str | None) -> list | None:
+    def _list(
+        value: list | str | None, default_value: list | None = None
+    ) -> list | None:
         return (
             value
             if isinstance(value, list)
             else [s.strip() for s in value.split(",")]
             if value
-            else None
+            else default_value
         )
 
     def _async_type(input: LLMConfigInputModel) -> AsyncType | None:
         value = input.get("async_mode")
-        return AsyncType(value) if value else None
+        return AsyncType(value) if value else DEFAULT_ASYNC_MODE
 
     def hydrate_llm_params(config: LLMConfigInputModel) -> LLMParametersModel:
         llm_settings = config.get("llm") or {}
@@ -135,26 +185,86 @@ def default_config_parameters(
             return llm_settings.get(k) or root_settings.get(k)
 
         llm_type = _lookup("type")
+        api_key = _lookup("api_key")
+        if api_key is None:
+            raise ValueError(LLM_KEY_REQUIRED)
+
         return LLMParametersModel(
-            api_key=_lookup("api_key"),
-            type=LLMType(llm_type) if llm_type else None,
+            api_key=api_key,
+            type=LLMType(llm_type) if llm_type else DEFAULT_LLM_TYPE,
             api_base=_lookup("api_base"),
             api_version=_lookup("api_version"),
             organization=_lookup("organization"),
             proxy=_lookup("proxy"),
-            model=_lookup("model"),
-            max_tokens=_int(_lookup("max_tokens")),
+            model=_lookup("model") or DEFAULT_LLM_MODEL,
+            max_tokens=_int(_lookup("max_tokens"), DEFAULT_LLM_MAX_TOKENS),
             model_supports_json=_bool(_lookup("model_supports_json")),
-            request_timeout=_float(_lookup("request_timeout")),
-            deployment_name=_lookup("deployment_name"),
-            tokens_per_minute=_int(_lookup("tokens_per_minute")),
-            requests_per_minute=_int(_lookup("requests_per_minute")),
-            max_retries=_int(_lookup("max_retries")),
-            max_retry_wait=_float(_lookup("max_retry_wait")),
-            sleep_on_rate_limit_recommendation=_bool(
-                _lookup("sleep_on_rate_limit_recommendation")
+            request_timeout=_float(
+                _lookup("request_timeout"), DEFAULT_LLM_REQUEST_TIMEOUT
             ),
-            concurrent_requests=_int(_lookup("concurrent_requests")),
+            deployment_name=_lookup("deployment_name"),
+            tokens_per_minute=_int(
+                _lookup("tokens_per_minute"), DEFAULT_LLM_TOKENS_PER_MINUTE
+            ),
+            requests_per_minute=_int(
+                _lookup("requests_per_minute"), DEFAULT_LLM_REQUESTS_PER_MINUTE
+            ),
+            max_retries=_int(_lookup("max_retries"), DEFAULT_LLM_MAX_RETRIES),
+            max_retry_wait=_float(
+                _lookup("max_retry_wait"), DEFAULT_LLM_MAX_RETRY_WAIT
+            ),
+            sleep_on_rate_limit_recommendation=_bool(
+                _lookup("sleep_on_rate_limit_recommendation"),
+                DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+            ),
+            concurrent_requests=_int(
+                _lookup("concurrent_requests"), DEFAULT_LLM_CONCURRENT_REQUESTS
+            ),
+        )
+
+    def hydrate_embeddings_params(config: LLMConfigInputModel) -> LLMParametersModel:
+        llm_settings = config.get("llm") or {}
+        root_settings = values.get("llm") or {}
+
+        def _lookup(k: str):
+            return llm_settings.get(k) or root_settings.get(k)
+
+        llm_type = _lookup("type")
+        api_key = _lookup("api_key")
+        if api_key is None:
+            raise ValueError(LLM_KEY_REQUIRED)
+
+        return LLMParametersModel(
+            api_key=api_key,
+            type=LLMType(llm_type) if llm_type else DEFAULT_EMBEDDING_TYPE,
+            api_base=_lookup("api_base"),
+            api_version=_lookup("api_version"),
+            organization=_lookup("organization"),
+            proxy=_lookup("proxy"),
+            model=_lookup("model") or DEFAULT_EMBEDDING_MODEL,
+            model_supports_json=_bool(_lookup("model_supports_json")),
+            request_timeout=_float(
+                _lookup("request_timeout"),
+                DEFAULT_LLM_REQUEST_TIMEOUT,
+            ),
+            deployment_name=_lookup("deployment_name"),
+            tokens_per_minute=_int(
+                _lookup("tokens_per_minute"), DEFAULT_LLM_TOKENS_PER_MINUTE
+            ),
+            requests_per_minute=_int(
+                _lookup("requests_per_minute"), DEFAULT_LLM_REQUESTS_PER_MINUTE
+            ),
+            max_retries=_int(_lookup("max_retries"), DEFAULT_LLM_MAX_RETRIES),
+            max_retry_wait=_float(
+                _lookup("max_retry_wait"), DEFAULT_LLM_MAX_RETRY_WAIT
+            ),
+            sleep_on_rate_limit_recommendation=_bool(
+                _lookup("sleep_on_rate_limit_recommendation"),
+                DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+            ),
+            concurrent_requests=_int(
+                _lookup("concurrent_requests"), DEFAULT_LLM_CONCURRENT_REQUESTS
+            ),
         )
 
     def hydrate_parallelization_params(
@@ -167,8 +277,10 @@ def default_config_parameters(
             return settings.get(key) or root_settings.get(key)
 
         return ParallelizationParametersModel(
-            stagger=_float(lookup("thread_stagger")),
-            num_threads=_int(lookup("thread_count")),
+            num_threads=_int(
+                lookup("thread_count"), DEFAULT_PARALLELIZATION_NUM_THREADS
+            ),
+            stagger=_float(lookup("thread_stagger"), DEFAULT_PARALLELIZATION_STAGGER),
         )
 
     embeddings_config: TextEmbeddingConfigInputModel = values.get("embeddings") or {}
@@ -234,88 +346,128 @@ def default_config_parameters(
         parallelization=hydrate_parallelization_params(values),
         async_mode=_async_type(values),
         embeddings=TextEmbeddingConfigModel(
-            llm=hydrate_llm_params(embeddings_config),
+            llm=hydrate_embeddings_params(embeddings_config),
             parallelization=hydrate_parallelization_params(embeddings_config),
             async_mode=_async_type(embeddings_config),
             target=embeddings_target,
-            batch_size=_int(embeddings_config.get("batch_size")),
-            batch_max_tokens=_int(embeddings_config.get("batch_max_tokens")),
+            batch_size=_int(
+                embeddings_config.get("batch_size"), DEFAULT_EMBEDDING_BATCH_SIZE
+            ),
+            batch_max_tokens=_int(
+                embeddings_config.get("batch_max_tokens"),
+                DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+            ),
             skip=_list(embeddings_config.get("skip")),
         ),
         embed_graph=EmbedGraphConfigModel(
-            is_enabled=_bool(embed_graph_config.get("enabled")),
-            num_walks=_int(embed_graph_config.get("num_walks")),
-            walk_length=_int(embed_graph_config.get("walk_length")),
-            window_size=_int(embed_graph_config.get("window_size")),
-            iterations=_int(embed_graph_config.get("iterations")),
-            random_seed=_int(embed_graph_config.get("random_seed")),
+            is_enabled=_bool(
+                embed_graph_config.get("enabled"), DEFAULT_NODE2VEC_IS_ENABLED
+            ),
+            num_walks=_int(
+                embed_graph_config.get("num_walks"), DEFAULT_NODE2VEC_NUM_WALKS
+            ),
+            walk_length=_int(
+                embed_graph_config.get("walk_length"), DEFAULT_NODE2VEC_WALK_LENGTH
+            ),
+            window_size=_int(
+                embed_graph_config.get("window_size"), DEFAULT_NODE2VEC_WINDOW_SIZE
+            ),
+            iterations=_int(
+                embed_graph_config.get("iterations"), DEFAULT_NODE2VEC_ITERATIONS
+            ),
+            random_seed=_int(
+                embed_graph_config.get("random_seed"), DEFAULT_NODE2VEC_RANDOM_SEED
+            ),
         ),
         reporting=ReportingConfigModel(
             type=reporting_type,
             connection_string=reporting_config.get("conn_string"),
             container_name=reporting_config.get("container_name"),
-            base_dir=reporting_config.get("base_dir"),
+            base_dir=reporting_config.get("base_dir") or DEFAULT_REPORTING_BASE_DIR,
         ),
         storage=StorageConfigModel(
             type=storage_type,
             connection_string=storage_config.get("conn_string"),
             container_name=storage_config.get("container_name"),
-            base_dir=storage_config.get("base_dir"),
+            base_dir=storage_config.get("base_dir") or DEFAULT_STORAGE_BASE_DIR,
         ),
         cache=CacheConfigModel(
             type=cache_type,
             connection_string=cache_config.get("conn_string"),
             container_name=cache_config.get("container_name"),
-            base_dir=cache_config.get("base_dir"),
+            base_dir=cache_config.get("base_dir") or DEFAULT_CACHE_BASE_DIR,
         ),
         input=InputConfigModel(
             type=input_type,
             storage_type=input_storage_type,
-            file_encoding=input_config.get("encoding"),
-            base_dir=input_config.get("base_dir"),
+            file_encoding=input_config.get("encoding") or DEFAULT_INPUT_FILE_ENCODING,
+            base_dir=input_config.get("base_dir") or DEFAULT_INPUT_BASE_DIR,
             file_pattern=file_pattern,
             source_column=input_config.get("source_column"),
             timestamp_column=input_config.get("timestamp_column"),
             timestamp_format=input_config.get("timestamp_format"),
-            text_column=input_config.get("text_column"),
+            text_column=input_config.get("text_column") or DEFAULT_INPUT_TEXT_COLUMN,
             title_column=input_config.get("title_column"),
             document_attribute_columns=_list(
                 input_config.get("document_attribute_columns")
             ),
         ),
         chunks=ChunkingConfigModel(
-            size=_int(chunk_config.get("size")),
-            overlap=_int(chunk_config.get("overlap")),
-            group_by_columns=chunk_config.get("by_columns"),
+            size=_int(chunk_config.get("size"), DEFAULT_CHUNK_SIZE),
+            overlap=_int(chunk_config.get("overlap"), DEFAULT_CHUNK_OVERLAP),
+            group_by_columns=_list(
+                chunk_config.get("by_columns"), DEFAULT_CHUNK_GROUP_BY_COLUMNS
+            ),
         ),
         snapshots=SnapshotsConfigModel(
-            graphml=_bool(snapshots_config.get("graphml")),
-            raw_entities=_bool(snapshots_config.get("raw_entities")),
-            top_level_nodes=_bool(snapshots_config.get("top_level_nodes")),
+            graphml=_bool(snapshots_config.get("graphml"), DEFAULT_SNAPSHOTS_GRAPHML),
+            raw_entities=_bool(
+                snapshots_config.get("raw_entities"), DEFAULT_SNAPSHOTS_RAW_ENTITIES
+            ),
+            top_level_nodes=_bool(
+                snapshots_config.get("top_level_nodes"),
+                DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
+            ),
         ),
         entity_extraction=EntityExtractionConfigModel(
             llm=hydrate_llm_params(entity_extraction_config),
             parallelization=hydrate_parallelization_params(entity_extraction_config),
             async_mode=_async_type(entity_extraction_config),
-            entity_types=_list(entity_extraction_config.get("entity_types")),
-            max_gleanings=_int(entity_extraction_config.get("max_gleanings")),
+            entity_types=_list(
+                entity_extraction_config.get("entity_types"),
+                DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
+            ),
+            max_gleanings=_int(
+                entity_extraction_config.get("max_gleanings"),
+                DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
+            ),
             prompt=entity_extraction_config.get("prompt_file"),
         ),
         claim_extraction=ClaimExtractionConfigModel(
             llm=hydrate_llm_params(claim_extraction_config),
             parallelization=hydrate_parallelization_params(claim_extraction_config),
             async_mode=_async_type(claim_extraction_config),
-            description=claim_extraction_config.get("description"),
+            description=claim_extraction_config.get("description")
+            or DEFAULT_CLAIM_DESCRIPTION,
             prompt=claim_extraction_config.get("prompt_file"),
-            max_gleanings=_int(claim_extraction_config.get("max_gleanings")),
+            max_gleanings=_int(
+                claim_extraction_config.get("max_gleanings"),
+                DEFAULT_CLAIM_MAX_GLEANINGS,
+            ),
         ),
         community_reports=CommunityReportsConfigModel(
             llm=hydrate_llm_params(community_report_config),
             parallelization=hydrate_parallelization_params(community_report_config),
             async_mode=_async_type(community_report_config),
             prompt=community_report_config.get("prompt_file"),
-            max_length=_int(community_report_config.get("max_length")),
-            max_input_length=_int(community_report_config.get("max_input_length")),
+            max_length=_int(
+                community_report_config.get("max_length"),
+                DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+            ),
+            max_input_length=_int(
+                community_report_config.get("max_input_length"),
+                DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+            ),
         ),
         summarize_descriptions=SummarizeDescriptionsConfigModel(
             llm=hydrate_llm_params(summarize_description_config),
@@ -324,13 +476,18 @@ def default_config_parameters(
             ),
             async_mode=_async_type(summarize_description_config),
             prompt=summarize_description_config.get("prompt_file"),
-            max_length=_int(summarize_description_config.get("max_length")),
+            max_length=_int(
+                summarize_description_config.get("max_length"),
+                DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
+            ),
         ),
         umap=UmapConfigModel(
-            enabled=_bool(umap_config.get("enabled")),
+            enabled=_bool(umap_config.get("enabled"), DEFAULT_UMAP_ENABLED),
         ),
         cluster_graph=ClusterGraphConfigModel(
-            max_cluster_size=cluster_graph_config.get("max_cluster_size"),
+            max_cluster_size=_int(
+                cluster_graph_config.get("max_cluster_size"), DEFAULT_MAX_CLUSTER_SIZE
+            ),
         ),
         encoding_model=values.get("encoding_model"),
         skip_workflows=_list(values.get("skip_workflows")),
