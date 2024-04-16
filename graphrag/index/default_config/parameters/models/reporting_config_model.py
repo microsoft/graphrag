@@ -5,16 +5,21 @@
 from pydantic import BaseModel, Field
 
 from graphrag.index.config import PipelineReportingType
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_REPORTING_BASE_DIR,
+    DEFAULT_REPORTING_TYPE,
+)
 
 
 class ReportingConfigModel(BaseModel):
     """The default configuration section for Reporting."""
 
     type: PipelineReportingType | None = Field(
-        description="The reporting type to use.", default=None
+        description="The reporting type to use.", default=DEFAULT_REPORTING_TYPE
     )
     base_dir: str | None = Field(
-        description="The base directory for reporting.", default=None
+        description="The base directory for reporting.",
+        default=DEFAULT_REPORTING_BASE_DIR,
     )
     connection_string: str | None = Field(
         description="The reporting connection string to use.", default=None

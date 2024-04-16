@@ -62,20 +62,18 @@ from .constants import (
     relationship_description_embedding,
     required_embeddings,
 )
-from .parameters.default_config_parameters import (
-    DefaultConfigParametersDict,
-    TextEmbeddingConfigSection,
+from .parameters import (
+    DefaultConfigParametersModel,
+    TextEmbeddingConfigModel,
 )
 
 log = logging.getLogger(__name__)
 
 
 def default_config(
-    settings: DefaultConfigParametersDict, verbose=False
+    settings: DefaultConfigParametersModel, verbose=False
 ) -> PipelineConfig:
     """Get the default config for the pipeline."""
-    root_dir = settings.root_dir
-
     # relative to the root_dir
     if verbose:
         _log_llm_settings(settings)
@@ -84,7 +82,7 @@ def default_config(
     embedded_fields = _get_embedded_fields(settings)
 
     result = PipelineConfig(
-        root_dir=root_dir,
+        root_dir=settings.root_dir,
         input=_get_pipeline_input_config(settings),
         reporting=_get_reporting_config(settings),
         storage=_get_storage_config(settings),
@@ -104,10 +102,10 @@ def default_config(
     return result
 
 
-def _get_embedded_fields(settings: DefaultConfigParametersDict) -> list[str]:
+def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return list(all_embeddings - {*settings.embeddings.skip})
+            return list(all_embeddings - {*(settings.embeddings.skip or [])})
         case TextEmbeddingTarget.required:
             return list(required_embeddings)
         case _:
@@ -115,8 +113,8 @@ def _get_embedded_fields(settings: DefaultConfigParametersDict) -> list[str]:
             raise ValueError(msg)
 
 
-def _determine_skip_workflows(settings: DefaultConfigParametersDict) -> list[str]:
-    skip_workflows = settings.skip_workflows
+def _determine_skip_workflows(settings: DefaultConfigParametersModel) -> list[str]:
+    skip_workflows = settings.skip_workflows or []
     if (
         create_final_covariates in skip_workflows
         and join_text_units_to_covariate_ids not in skip_workflows
@@ -125,19 +123,24 @@ def _determine_skip_workflows(settings: DefaultConfigParametersDict) -> list[str
     return skip_workflows
 
 
-def _log_llm_settings(settings: DefaultConfigParametersDict) -> None:
+def _log_llm_settings(settings: DefaultConfigParametersModel) -> None:
     log.info(
         "Using LLM Config",
-        json.dumps({**settings.entity_extraction.llm, "api_key": "*****"}, indent=4),
+        json.dumps(
+            {**settings.entity_extraction.llm.model_dump(), "api_key": "*****"},
+            indent=4,
+        ),
     )
     log.info(
         "Using Embeddings Config",
-        json.dumps({**settings.embeddings.llm, "api_key": "*****"}, indent=4),
+        json.dumps(
+            {**settings.embeddings.llm.model_dump(), "api_key": "*****"}, indent=4
+        ),
     )
 
 
 def _document_workflows(
-    settings: DefaultConfigParametersDict, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_document_raw_content_embedding = (
         document_raw_content_embedding not in embedded_fields
@@ -147,7 +150,7 @@ def _document_workflows(
             name=create_base_documents,
             config={
                 "document_attribute_columns": list(
-                    {*settings.input.document_attribute_columns}
+                    {*(settings.input.document_attribute_columns or [])}
                     - builtin_document_attributes
                 )
             },
@@ -165,7 +168,7 @@ def _document_workflows(
 
 
 def _text_unit_workflows(
-    settings: DefaultConfigParametersDict, skip_workflows: list[str]
+    settings: DefaultConfigParametersModel, skip_workflows: list[str]
 ) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
@@ -197,7 +200,7 @@ def _text_unit_workflows(
 
 
 def _get_embedding_settings(
-    settings: TextEmbeddingConfigSection, embedding_name: str
+    settings: TextEmbeddingConfigModel, embedding_name: str
 ) -> dict:
     vector_store_settings = settings.vector_store
     if vector_store_settings is None:
@@ -219,7 +222,7 @@ def _get_embedding_settings(
 
 
 def _graph_workflows(
-    settings: DefaultConfigParametersDict, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_entity_name_embedding = entity_name_embedding not in embedded_fields
     skip_entity_description_embedding = (
@@ -235,7 +238,7 @@ def _graph_workflows(
                 "graphml_snapshot": settings.snapshots.graphml,
                 "raw_entity_snapshot": settings.snapshots.raw_entities,
                 "entity_extract": {
-                    **settings.entity_extraction.parallelization,
+                    **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
                     "strategy": settings.entity_extraction.strategy,
                     "entity_types": settings.entity_extraction.entity_types,
@@ -247,7 +250,7 @@ def _graph_workflows(
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
                 "summarize_descriptions": {
-                    **settings.summarize_descriptions.parallelization,
+                    **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
                     "strategy": settings.summarize_descriptions.strategy,
                 },
@@ -295,7 +298,7 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: DefaultConfigParametersDict, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_community_title_embedding = community_title_embedding not in embedded_fields
     skip_community_summary_embedding = (
@@ -313,7 +316,7 @@ def _community_workflows(
                 "skip_summary_embedding": skip_community_summary_embedding,
                 "skip_full_content_embedding": skip_community_full_content_embedding,
                 "create_community_reports": {
-                    **settings.community_reports.parallelization,
+                    **settings.community_reports.parallelization.model_dump(),
                     "async_mode": settings.community_reports.async_mode,
                     "strategy": settings.community_reports.strategy,
                 },
@@ -332,14 +335,14 @@ def _community_workflows(
 
 
 def _covariate_workflows(
-    settings: DefaultConfigParametersDict,
+    settings: DefaultConfigParametersModel,
 ) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
             name=create_final_covariates,
             config={
                 "claim_extract": {
-                    **settings.claim_extraction.parallelization,
+                    **settings.claim_extraction.parallelization.model_dump(),
                     "strategy": settings.claim_extraction.strategy,
                 },
             },
@@ -348,7 +351,7 @@ def _covariate_workflows(
 
 
 def _get_pipeline_input_config(
-    settings: DefaultConfigParametersDict,
+    settings: DefaultConfigParametersModel,
 ) -> PipelineInputConfigTypes:
     input_type = settings.input.type
     match input_type:
@@ -381,7 +384,7 @@ def _get_pipeline_input_config(
 
 
 def _get_reporting_config(
-    settings: DefaultConfigParametersDict,
+    settings: DefaultConfigParametersModel,
 ) -> PipelineReportingConfigTypes:
     """Get the reporting config from the settings."""
     match settings.reporting.type:
@@ -389,9 +392,14 @@ def _get_reporting_config(
             # relative to the root_dir
             return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
         case PipelineReportingType.blob:
+            connection_string = settings.reporting.connection_string
+            container_name = settings.reporting.container_name
+            if connection_string is None or container_name is None:
+                msg = "Connection string and container name must be provided for blob reporting."
+                raise ValueError(msg)
             return PipelineBlobReportingConfig(
-                connection_string=settings.reporting.connection_string,
-                container_name=settings.reporting.container_name,
+                connection_string=connection_string,
+                container_name=container_name,
                 base_dir=settings.reporting.base_dir,
             )
         case PipelineReportingType.console:
@@ -402,7 +410,7 @@ def _get_reporting_config(
 
 
 def _get_storage_config(
-    settings: DefaultConfigParametersDict,
+    settings: DefaultConfigParametersModel,
 ) -> PipelineStorageConfigTypes:
     """Get the storage type from the settings."""
     root_dir = settings.root_dir
@@ -411,24 +419,33 @@ def _get_storage_config(
             return PipelineMemoryStorageConfig()
         case PipelineStorageType.file:
             # relative to the root_dir
-            return PipelineFileStorageConfig(
-                base_dir=str(Path(root_dir) / settings.storage.base_dir)
-            )
+            base_dir = settings.storage.base_dir
+            if base_dir is None:
+                msg = "Base directory must be provided for file storage."
+                raise ValueError(msg)
+            return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
         case PipelineStorageType.blob:
+            connection_string = settings.storage.connection_string
+            container_name = settings.storage.container_name
+            if connection_string is None or container_name is None:
+                msg = "Connection string and container name must be provided for blob storage."
+                raise ValueError(msg)
             return PipelineBlobStorageConfig(
-                connection_string=settings.storage.connection_string,
-                container_name=settings.storage.container_name,
+                connection_string=connection_string,
+                container_name=container_name,
                 base_dir=settings.storage.base_dir,
             )
         case _:
             # relative to the root_dir
-            return PipelineFileStorageConfig(
-                base_dir=str(Path(root_dir) / settings.storage.base_dir)
-            )
+            base_dir = settings.storage.base_dir
+            if base_dir is None:
+                msg = "Base directory must be provided for file storage."
+                raise ValueError(msg)
+            return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
 
 
 def _get_cache_config(
-    settings: DefaultConfigParametersDict,
+    settings: DefaultConfigParametersModel,
 ) -> PipelineCacheConfigTypes:
     """Get the cache type from the settings."""
     match settings.cache.type:
@@ -440,9 +457,14 @@ def _get_cache_config(
         case PipelineCacheType.none:
             return PipelineNoneCacheConfig()
         case PipelineCacheType.blob:
+            connection_string = settings.cache.connection_string
+            container_name = settings.cache.container_name
+            if connection_string is None or container_name is None:
+                msg = "Connection string and container name must be provided for blob cache."
+                raise ValueError(msg)
             return PipelineBlobCacheConfig(
-                connection_string=settings.cache.connection_string,
-                container_name=settings.cache.container_name,
+                connection_string=connection_string,
+                container_name=container_name,
                 base_dir=settings.cache.base_dir,
             )
         case _:

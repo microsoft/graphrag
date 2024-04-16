@@ -6,26 +6,26 @@ from unittest import mock
 import yaml
 
 from graphrag.index import (
-    CacheConfigModel,
-    ChunkingConfigModel,
-    ClaimExtractionConfigModel,
-    ClusterGraphConfigModel,
-    CommunityReportsConfigModel,
-    DefaultConfigParametersModel,
-    EmbedGraphConfigModel,
-    EntityExtractionConfigModel,
-    InputConfigModel,
-    LLMParametersModel,
+    CacheConfigInputModel,
+    ChunkingConfigInputModel,
+    ClaimExtractionConfigInputModel,
+    ClusterGraphConfigInputModel,
+    CommunityReportsConfigInputModel,
+    DefaultConfigParametersInputModel,
+    EmbedGraphConfigInputModel,
+    EntityExtractionConfigInputModel,
+    InputConfigInputModel,
+    LLMParametersInputModel,
     PipelineCacheType,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
-    ReportingConfigModel,
-    SnapshotsConfigModel,
-    StorageConfigModel,
-    SummarizeDescriptionsConfigModel,
-    TextEmbeddingConfigModel,
-    UmapConfigModel,
+    ReportingConfigInputModel,
+    SnapshotsConfigInputModel,
+    StorageConfigInputModel,
+    SummarizeDescriptionsConfigInputModel,
+    TextEmbeddingConfigInputModel,
+    UmapConfigInputModel,
     default_config,
     default_config_parameters,
     default_config_parameters_from_env_vars,
@@ -100,9 +100,9 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_create_parameters_from_env_vars(self) -> None:
         parameters = default_config_parameters_from_env_vars(".")
-        assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["model"] == "test-llm"
-        assert parameters.parallelization["num_threads"] == 987
+        assert parameters.llm.api_key == "test"
+        assert parameters.llm.model == "test-llm"
+        assert parameters.parallelization.num_threads == 987
         assert parameters.encoding_model == "test123"
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.storage.type == PipelineStorageType.blob
@@ -119,8 +119,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.document_attribute_columns == ["test1", "test2"]
         assert parameters.embed_graph.num_walks == 5_000_000
         assert parameters.embeddings.batch_size == 1_000_000
-        assert parameters.embeddings.parallelization["num_threads"] == 2345
-        assert parameters.embeddings.llm["model"] == "text-embedding-2"
+        assert parameters.embeddings.parallelization.num_threads == 2345
+        assert parameters.embeddings.llm.model == "text-embedding-2"
         assert parameters.chunks.size == 500
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.group_by_columns == ["a", "b"]
@@ -135,62 +135,64 @@ class TestDefaultConfig(unittest.TestCase):
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
     def test_create_parameters(self) -> None:
         parameters = default_config_parameters(
-            DefaultConfigParametersModel(
-                llm=LLMParametersModel(api_key="${API_KEY_X}", model="test-llm"),
-                storage=StorageConfigModel(
+            DefaultConfigParametersInputModel(
+                llm=LLMParametersInputModel(api_key="${API_KEY_X}", model="test-llm"),
+                storage=StorageConfigInputModel(
                     type=PipelineStorageType.blob,
                     connection_string="test_cs",
                     container_name="test_cn",
                 ),
-                cache=CacheConfigModel(
+                cache=CacheConfigInputModel(
                     type=PipelineCacheType.blob,
                     connection_string="test_cs1",
                     container_name="test_cn1",
                 ),
-                reporting=ReportingConfigModel(
+                reporting=ReportingConfigInputModel(
                     type=PipelineReportingType.blob,
                     connection_string="test_cs2",
                     container_name="test_cn2",
                 ),
-                input=InputConfigModel(
+                input=InputConfigInputModel(
                     type=PipelineInputType.text,
                     file_encoding="utf-16",
                     document_attribute_columns=["test1", "test2"],
                 ),
-                embed_graph=EmbedGraphConfigModel(
+                embed_graph=EmbedGraphConfigInputModel(
                     num_walks=5_000_000,
                 ),
-                embeddings=TextEmbeddingConfigModel(
+                embeddings=TextEmbeddingConfigInputModel(
                     batch_size=1_000_000,
                     batch_max_tokens=8000,
                     skip=["a1", "b1", "c1"],
-                    llm=LLMParametersModel(model="text-embedding-2"),
+                    llm=LLMParametersInputModel(model="text-embedding-2"),
                 ),
-                chunks=ChunkingConfigModel(
+                chunks=ChunkingConfigInputModel(
                     size=500, overlap=12, group_by_columns=["a", "b"]
                 ),
-                snapshots=SnapshotsConfigModel(
+                snapshots=SnapshotsConfigInputModel(
                     graphml=True,
                 ),
-                entity_extraction=EntityExtractionConfigModel(max_gleanings=112),
-                summarize_descriptions=SummarizeDescriptionsConfigModel(
+                entity_extraction=EntityExtractionConfigInputModel(max_gleanings=112),
+                summarize_descriptions=SummarizeDescriptionsConfigInputModel(
                     max_length=12345,
                 ),
-                community_reports=CommunityReportsConfigModel(
+                community_reports=CommunityReportsConfigInputModel(
                     max_length=23456,
                 ),
-                claim_extraction=ClaimExtractionConfigModel(description="test 123"),
-                cluster_graph=ClusterGraphConfigModel(
+                claim_extraction=ClaimExtractionConfigInputModel(
+                    description="test 123"
+                ),
+                cluster_graph=ClusterGraphConfigInputModel(
                     max_cluster_size=123,
                 ),
-                umap=UmapConfigModel(enabled=True),
+                umap=UmapConfigInputModel(enabled=True),
                 encoding_model="test123",
                 skip_workflows=["a", "b", "c"],
             ),
             ".",
         )
-        assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["model"] == "test-llm"
+        assert parameters.llm.api_key == "test"
+        assert parameters.llm.model == "test-llm"
         assert parameters.encoding_model == "test123"
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.storage.type == PipelineStorageType.blob
@@ -209,7 +211,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.embeddings.batch_size == 1_000_000
         assert parameters.embeddings.batch_max_tokens == 8000
         assert parameters.embeddings.skip == ["a1", "b1", "c1"]
-        assert parameters.embeddings.llm["model"] == "text-embedding-2"
+        assert parameters.embeddings.llm.model == "text-embedding-2"
         assert parameters.chunks.size == 500
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.group_by_columns == ["a", "b"]
@@ -254,14 +256,14 @@ llm:
 """
     )
     # create default configuration pipeline parameters from the custom settings
-    model = DefaultConfigParametersModel.model_validate(config_dict)
+    model = config_dict
     parameters = default_config_parameters(model, ".")
 
-    assert parameters.llm["api_key"] == "test"
-    assert parameters.llm["model"] == "test-llm"
-    assert parameters.llm["api_base"] == "http://test"
-    assert parameters.llm["api_version"] == "v1"
-    assert parameters.llm["deployment_name"] == "test"
+    assert parameters.llm.api_key == "test"
+    assert parameters.llm.model == "test-llm"
+    assert parameters.llm.api_base == "http://test"
+    assert parameters.llm.api_version == "v1"
+    assert parameters.llm.deployment_name == "test"
 
     # generate the pipeline from the default parameters
     pipeline_config = default_config(parameters, True)

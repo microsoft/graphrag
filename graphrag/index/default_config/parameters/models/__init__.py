@@ -7,6 +7,7 @@ from .chunking_config_model import ChunkingConfigModel
 from .claim_extraction_config_model import ClaimExtractionConfigModel
 from .cluster_graph_config_model import ClusterGraphConfigModel
 from .community_reports_config_model import CommunityReportsConfigModel
+from .default_config_parameters_model import DefaultConfigParametersModel
 from .embed_graph_config_model import EmbedGraphConfigModel
 from .entity_extraction_config_model import EntityExtractionConfigModel
 from .input_config_model import InputConfigModel
@@ -17,7 +18,8 @@ from .reporting_config_model import ReportingConfigModel
 from .snapshots_config_model import SnapshotsConfigModel
 from .storage_config_model import StorageConfigModel
 from .summarize_descriptions_config_model import SummarizeDescriptionsConfigModel
-from .text_embedding_config_model import TextEmbeddingConfigModel, TextEmbeddingTarget
+from .text_embedding_config_model import TextEmbeddingConfigModel
+from .types import TextEmbeddingTarget
 from .umap_config_model import UmapConfigModel
 
 __all__ = [
@@ -26,6 +28,7 @@ __all__ = [
     "ClaimExtractionConfigModel",
     "ClusterGraphConfigModel",
     "CommunityReportsConfigModel",
+    "DefaultConfigParametersModel",
     "EmbedGraphConfigModel",
     "EntityExtractionConfigModel",
     "InputConfigModel",

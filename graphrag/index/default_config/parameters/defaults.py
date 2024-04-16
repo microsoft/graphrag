@@ -11,8 +11,9 @@ from graphrag.index.config import (
     PipelineReportingType,
     PipelineStorageType,
 )
-from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
 from graphrag.index.llm.types import LLMType
+
+from .models.types import TextEmbeddingTarget
 
 DEFAULT_ASYNC_MODE = AsyncType.Threaded
 #

@@ -4,19 +4,25 @@
 
 from pydantic import BaseModel, Field
 
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_SNAPSHOTS_GRAPHML,
+    DEFAULT_SNAPSHOTS_RAW_ENTITIES,
+    DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
+)
+
 
 class SnapshotsConfigModel(BaseModel):
     """Configuration section for snapshots."""
 
     graphml: bool | None = Field(
         description="A flag indicating whether to take snapshots of GraphML.",
-        default=None,
+        default=DEFAULT_SNAPSHOTS_GRAPHML,
     )
     raw_entities: bool | None = Field(
         description="A flag indicating whether to take snapshots of raw entities.",
-        default=None,
+        default=DEFAULT_SNAPSHOTS_RAW_ENTITIES,
     )
     top_level_nodes: bool | None = Field(
         description="A flag indicating whether to take snapshots of top-level nodes.",
-        default=None,
+        default=DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
     )

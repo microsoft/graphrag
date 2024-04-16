@@ -4,27 +4,31 @@
 
 from pydantic import Field
 
-from .models.cache_config_model import CacheConfigModel
-from .models.chunking_config_model import ChunkingConfigModel
-from .models.claim_extraction_config_model import ClaimExtractionConfigModel
-from .models.cluster_graph_config_model import ClusterGraphConfigModel
-from .models.community_reports_config_model import CommunityReportsConfigModel
-from .models.embed_graph_config_model import EmbedGraphConfigModel
-from .models.entity_extraction_config_model import EntityExtractionConfigModel
-from .models.input_config_model import InputConfigModel
-from .models.llm_config_model import LLMConfigModel
-from .models.reporting_config_model import ReportingConfigModel
-from .models.snapshots_config_model import SnapshotsConfigModel
-from .models.storage_config_model import StorageConfigModel
-from .models.summarize_descriptions_config_model import (
+from .cache_config_model import CacheConfigModel
+from .chunking_config_model import ChunkingConfigModel
+from .claim_extraction_config_model import ClaimExtractionConfigModel
+from .cluster_graph_config_model import ClusterGraphConfigModel
+from .community_reports_config_model import CommunityReportsConfigModel
+from .embed_graph_config_model import EmbedGraphConfigModel
+from .entity_extraction_config_model import EntityExtractionConfigModel
+from .input_config_model import InputConfigModel
+from .llm_config_model import LLMConfigModel
+from .reporting_config_model import ReportingConfigModel
+from .snapshots_config_model import SnapshotsConfigModel
+from .storage_config_model import StorageConfigModel
+from .summarize_descriptions_config_model import (
     SummarizeDescriptionsConfigModel,
 )
-from .models.text_embedding_config_model import TextEmbeddingConfigModel
-from .models.umap_config_model import UmapConfigModel
+from .text_embedding_config_model import TextEmbeddingConfigModel
+from .umap_config_model import UmapConfigModel
 
 
 class DefaultConfigParametersModel(LLMConfigModel):
     """Base class for the Default-Configuration parameterization settings."""
+
+    root_dir: str = Field(
+        description="The root directory for the configuration.", default=None
+    )
 
     reporting: ReportingConfigModel = Field(
         description="The reporting configuration.", default=ReportingConfigModel()

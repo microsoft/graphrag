@@ -5,7 +5,7 @@ from typing import Any, cast
 
 import yaml
 
-from graphrag.index.default_config.parameters.default_config_parameters_model import (
+from graphrag.index.default_config.parameters.models.default_config_parameters_model import (
     DefaultConfigParametersModel,
 )
 from graphrag.index.init_content import INIT_YAML

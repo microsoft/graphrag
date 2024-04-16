@@ -2,30 +2,31 @@
 
 """Parameterization settings for the default configuration."""
 
-from enum import Enum
-
 from pydantic import Field
 
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+    DEFAULT_EMBEDDING_BATCH_SIZE,
+    DEFAULT_EMBEDDING_TARGET,
+)
+
 from .llm_config_model import LLMConfigModel
-
-
-class TextEmbeddingTarget(str, Enum):
-    """The target to use for text embeddings."""
-
-    all = "all"
-    required = "required"
+from .types import TextEmbeddingTarget
 
 
 class TextEmbeddingConfigModel(LLMConfigModel):
     """Configuration section for text embeddings."""
 
-    batch_size: int | None = Field(description="The batch size to use.", default=16)
+    batch_size: int | None = Field(
+        description="The batch size to use.", default=DEFAULT_EMBEDDING_BATCH_SIZE
+    )
     batch_max_tokens: int | None = Field(
-        description="The batch max tokens to use.", default=8191
+        description="The batch max tokens to use.",
+        default=DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
     )
     target: TextEmbeddingTarget | None = Field(
         description="The target to use. 'all' or 'required'.",
-        default=None,
+        default=DEFAULT_EMBEDDING_TARGET,
     )
     skip: list[str] | None = Field(
         description="The specific embeddings to skip.", default=[]

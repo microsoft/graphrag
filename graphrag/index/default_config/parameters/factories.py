@@ -19,8 +19,36 @@ from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
 from graphrag.index.default_config.parameters.read_dotenv import read_dotenv
 from graphrag.index.llm.types import LLMType
 
-from .default_config_parameters import DefaultConfigParametersDict
-from .default_config_parameters_model import DefaultConfigParametersModel
+from .defaults import (
+    DEFAULT_CACHE_TYPE,
+    DEFAULT_EMBEDDING_TARGET,
+    DEFAULT_INPUT_CSV_PATTERN,
+    DEFAULT_INPUT_STORAGE_TYPE,
+    DEFAULT_INPUT_TEXT_PATTERN,
+    DEFAULT_INPUT_TYPE,
+    DEFAULT_REPORTING_TYPE,
+    DEFAULT_STORAGE_TYPE,
+)
+from .input_models import (
+    CacheConfigInputModel,
+    ChunkingConfigInputModel,
+    ClaimExtractionConfigInputModel,
+    ClusterGraphConfigInputModel,
+    CommunityReportsConfigInputModel,
+    DefaultConfigParametersInputModel,
+    EmbedGraphConfigInputModel,
+    EntityExtractionConfigInputModel,
+    InputConfigInputModel,
+    LLMConfigInputModel,
+    LLMParametersInputModel,
+    ParallelizationParametersInputModel,
+    ReportingConfigInputModel,
+    SnapshotsConfigInputModel,
+    StorageConfigInputModel,
+    SummarizeDescriptionsConfigInputModel,
+    TextEmbeddingConfigInputModel,
+    UmapConfigInputModel,
+)
 from .models import (
     CacheConfigModel,
     ChunkingConfigModel,
@@ -39,6 +67,7 @@ from .models import (
     TextEmbeddingConfigModel,
     UmapConfigModel,
 )
+from .models.default_config_parameters_model import DefaultConfigParametersModel
 
 
 def default_config_parameters(
@@ -120,17 +149,271 @@ AZURE_EMBEDDING_API_BASE_REQUIRED = (
 )
 
 
+<<<<<<< Updated upstream
 def _is_azure(llm_type: LLMType | None) -> bool:
     return (
         llm_type == LLMType.AzureOpenAI
         or llm_type == LLMType.AzureOpenAIChat
         or llm_type == LLMType.AzureOpenAIEmbedding
+=======
+def default_config_parameters(
+    values: DefaultConfigParametersInputModel, root_dir: str | None
+) -> DefaultConfigParametersModel:
+    """Load Configuration Parameters from a dictionary."""
+    root_dir = root_dir or str(Path.cwd())
+    env = _make_env(root_dir)
+
+    def traverse_dict(data):
+        for key, value in data.items():
+            if isinstance(value, dict):
+                traverse_dict(value)
+            elif (
+                isinstance(value, str)
+                and value.startswith("${")
+                and value.endswith("}")
+            ):
+                env_var = value[2:-1]
+                replaced_value = env(env_var)
+                data[key] = replaced_value
+
+    traverse_dict(values)
+
+    def _int(value: int | str | None) -> int | None:
+        return int(value) if value else None
+
+    def _bool(value: bool | str | None) -> bool | None:
+        return bool(value) if value else None
+
+    def _float(value: float | str | None) -> float | None:
+        return float(value) if value else None
+
+    def _list(value: list | str | None) -> list | None:
+        return (
+            value
+            if isinstance(value, list)
+            else [s.strip() for s in value.split(",")]
+            if value
+            else None
+        )
+
+    def _async_type(input: LLMConfigInputModel) -> AsyncType | None:
+        value = input.get("async_mode")
+        return AsyncType(value) if value else None
+
+    def hydrate_llm_params(config: LLMConfigInputModel) -> LLMParametersModel:
+        llm_settings = config.get("llm") or {}
+        root_settings = values.get("llm") or {}
+
+        def _lookup(k: str):
+            return llm_settings.get(k) or root_settings.get(k)
+
+        llm_type = _lookup("type")
+        return LLMParametersModel(
+            api_key=_lookup("api_key"),
+            type=LLMType(llm_type) if llm_type else None,
+            api_base=_lookup("api_base"),
+            api_version=_lookup("api_version"),
+            organization=_lookup("organization"),
+            proxy=_lookup("proxy"),
+            model=_lookup("model"),
+            max_tokens=_int(_lookup("max_tokens")),
+            model_supports_json=_bool(_lookup("model_supports_json")),
+            request_timeout=_float(_lookup("request_timeout")),
+            deployment_name=_lookup("deployment_name"),
+            tokens_per_minute=_int(_lookup("tokens_per_minute")),
+            requests_per_minute=_int(_lookup("requests_per_minute")),
+            max_retries=_int(_lookup("max_retries")),
+            max_retry_wait=_float(_lookup("max_retry_wait")),
+            sleep_on_rate_limit_recommendation=_bool(
+                _lookup("sleep_on_rate_limit_recommendation")
+            ),
+            concurrent_requests=_int(_lookup("concurrent_requests")),
+        )
+
+    def hydrate_parallelization_params(
+        config: LLMConfigInputModel,
+    ) -> ParallelizationParametersModel:
+        settings = config.get("parallelization") or {}
+        root_settings = values.get("parallelization") or {}
+
+        def lookup(key: str) -> str | None:
+            return settings.get(key) or root_settings.get(key)
+
+        return ParallelizationParametersModel(
+            stagger=_float(lookup("thread_stagger")),
+            num_threads=_int(lookup("thread_count")),
+        )
+
+    embeddings_config: TextEmbeddingConfigInputModel = values.get("embeddings") or {}
+    embed_graph_config: EmbedGraphConfigInputModel = values.get("embed_graph") or {}
+    reporting_config: ReportingConfigInputModel = values.get("reporting") or {}
+    storage_config: StorageConfigInputModel = values.get("storage") or {}
+    cache_config: CacheConfigInputModel = values.get("cache") or {}
+    input_config: InputConfigInputModel = values.get("input") or {}
+    chunk_config: ChunkingConfigInputModel = values.get("chunk") or {}
+    snapshots_config: SnapshotsConfigInputModel = values.get("snapshots") or {}
+    entity_extraction_config: EntityExtractionConfigInputModel = (
+        values.get("entity_extraction") or {}
+    )
+    claim_extraction_config: ClaimExtractionConfigInputModel = (
+        values.get("claim_extraction") or {}
+    )
+    community_report_config: CommunityReportsConfigInputModel = (
+        values.get("community_report") or {}
+    )
+    summarize_description_config: SummarizeDescriptionsConfigInputModel = (
+        values.get("summarize_descriptions") or {}
+    )
+    umap_config: UmapConfigInputModel = values.get("umap") or {}
+    cluster_graph_config: ClusterGraphConfigInputModel = (
+        values.get("cluster_graph") or {}
+    )
+
+    reporting_type = reporting_config.get("type")
+    reporting_type = (
+        PipelineReportingType(reporting_type)
+        if reporting_type
+        else DEFAULT_REPORTING_TYPE
+    )
+    storage_type = storage_config.get("type")
+    storage_type = (
+        PipelineStorageType(storage_type) if storage_type else DEFAULT_STORAGE_TYPE
+    )
+    cache_type = cache_config.get("type")
+    cache_type = PipelineCacheType(cache_type) if cache_type else DEFAULT_CACHE_TYPE
+    input_type = input_config.get("type")
+    input_type = PipelineInputType(input_type) if input_type else DEFAULT_INPUT_TYPE
+    input_storage_type = input_config.get("storage_type")
+    input_storage_type = (
+        PipelineInputStorageType(input_storage_type)
+        if input_storage_type
+        else DEFAULT_INPUT_STORAGE_TYPE
+    )
+    embeddings_target = embeddings_config.get("target")
+    embeddings_target = (
+        TextEmbeddingTarget(embeddings_target)
+        if embeddings_target
+        else DEFAULT_EMBEDDING_TARGET
+    )
+    file_pattern = input_config.get("file_pattern") or (
+        DEFAULT_INPUT_TEXT_PATTERN
+        if input_type == PipelineInputType.text
+        else DEFAULT_INPUT_CSV_PATTERN
+    )
+
+    return DefaultConfigParametersModel(
+        root_dir=root_dir,
+        llm=hydrate_llm_params(values),
+        parallelization=hydrate_parallelization_params(values),
+        async_mode=_async_type(values),
+        embeddings=TextEmbeddingConfigModel(
+            llm=hydrate_llm_params(embeddings_config),
+            parallelization=hydrate_parallelization_params(embeddings_config),
+            async_mode=_async_type(embeddings_config),
+            target=embeddings_target,
+            batch_size=_int(embeddings_config.get("batch_size")),
+            batch_max_tokens=_int(embeddings_config.get("batch_max_tokens")),
+            skip=_list(embeddings_config.get("skip")),
+        ),
+        embed_graph=EmbedGraphConfigModel(
+            is_enabled=_bool(embed_graph_config.get("enabled")),
+            num_walks=_int(embed_graph_config.get("num_walks")),
+            walk_length=_int(embed_graph_config.get("walk_length")),
+            window_size=_int(embed_graph_config.get("window_size")),
+            iterations=_int(embed_graph_config.get("iterations")),
+            random_seed=_int(embed_graph_config.get("random_seed")),
+        ),
+        reporting=ReportingConfigModel(
+            type=reporting_type,
+            connection_string=reporting_config.get("conn_string"),
+            container_name=reporting_config.get("container_name"),
+            base_dir=reporting_config.get("base_dir"),
+        ),
+        storage=StorageConfigModel(
+            type=storage_type,
+            connection_string=storage_config.get("conn_string"),
+            container_name=storage_config.get("container_name"),
+            base_dir=storage_config.get("base_dir"),
+        ),
+        cache=CacheConfigModel(
+            type=cache_type,
+            connection_string=cache_config.get("conn_string"),
+            container_name=cache_config.get("container_name"),
+            base_dir=cache_config.get("base_dir"),
+        ),
+        input=InputConfigModel(
+            type=input_type,
+            storage_type=input_storage_type,
+            file_encoding=input_config.get("encoding"),
+            base_dir=input_config.get("base_dir"),
+            file_pattern=file_pattern,
+            source_column=input_config.get("source_column"),
+            timestamp_column=input_config.get("timestamp_column"),
+            timestamp_format=input_config.get("timestamp_format"),
+            text_column=input_config.get("text_column"),
+            title_column=input_config.get("title_column"),
+            document_attribute_columns=_list(
+                input_config.get("document_attribute_columns")
+            ),
+        ),
+        chunks=ChunkingConfigModel(
+            size=_int(chunk_config.get("size")),
+            overlap=_int(chunk_config.get("overlap")),
+            group_by_columns=chunk_config.get("by_columns"),
+        ),
+        snapshots=SnapshotsConfigModel(
+            graphml=_bool(snapshots_config.get("graphml")),
+            raw_entities=_bool(snapshots_config.get("raw_entities")),
+            top_level_nodes=_bool(snapshots_config.get("top_level_nodes")),
+        ),
+        entity_extraction=EntityExtractionConfigModel(
+            llm=hydrate_llm_params(entity_extraction_config),
+            parallelization=hydrate_parallelization_params(entity_extraction_config),
+            async_mode=_async_type(entity_extraction_config),
+            entity_types=_list(entity_extraction_config.get("entity_types")),
+            max_gleanings=_int(entity_extraction_config.get("max_gleanings")),
+            prompt=entity_extraction_config.get("prompt_file"),
+        ),
+        claim_extraction=ClaimExtractionConfigModel(
+            llm=hydrate_llm_params(claim_extraction_config),
+            parallelization=hydrate_parallelization_params(claim_extraction_config),
+            async_mode=_async_type(claim_extraction_config),
+            description=claim_extraction_config.get("description"),
+            prompt=claim_extraction_config.get("prompt_file"),
+            max_gleanings=_int(claim_extraction_config.get("max_gleanings")),
+        ),
+        community_reports=CommunityReportsConfigModel(
+            llm=hydrate_llm_params(community_report_config),
+            parallelization=hydrate_parallelization_params(community_report_config),
+            async_mode=_async_type(community_report_config),
+            prompt=community_report_config.get("prompt_file"),
+            max_length=_int(community_report_config.get("max_length")),
+            max_input_length=_int(community_report_config.get("max_input_length")),
+        ),
+        summarize_descriptions=SummarizeDescriptionsConfigModel(
+            llm=hydrate_llm_params(summarize_description_config),
+            parallelization=hydrate_parallelization_params(
+                summarize_description_config
+            ),
+            async_mode=_async_type(summarize_description_config),
+            prompt=summarize_description_config.get("prompt_file"),
+            max_length=_int(summarize_description_config.get("max_length")),
+        ),
+        umap=UmapConfigModel(
+            enabled=_bool(umap_config.get("enabled")),
+        ),
+        cluster_graph=ClusterGraphConfigModel(
+            max_cluster_size=cluster_graph_config.get("max_cluster_size"),
+        ),
+        encoding_model=values.get("encoding_model"),
+        skip_workflows=_list(values.get("skip_workflows")),
+>>>>>>> Stashed changes
     )
 
 
 def default_config_parameters_from_env_vars(
     root_dir: str | None,
-):
+) -> DefaultConfigParametersModel:
     """Load Configuration Parameters from environment variables."""
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
@@ -181,7 +464,7 @@ def default_config_parameters_from_env_vars(
             if is_azure and api_base is None:
                 raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
 
-            llm_parameters = LLMParametersModel(
+            llm_parameters = LLMParametersInputModel(
                 api_key=api_key,
                 type=llm_type,
                 model=model,
@@ -200,7 +483,7 @@ def default_config_parameters_from_env_vars(
                 sleep_on_rate_limit_recommendation=_bool(Fragment.sleep_recommendation),
                 concurrent_requests=_int(Fragment.concurrent_requests),
             )
-            llm_parallelization = ParallelizationParametersModel(
+            llm_parallelization = ParallelizationParametersInputModel(
                 stagger=_float(Fragment.thread_stagger),
                 num_threads=_int(Fragment.thread_count),
             )
@@ -228,8 +511,8 @@ def default_config_parameters_from_env_vars(
             if is_azure and api_base is None:
                 raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
 
-            text_embeddings = TextEmbeddingConfigModel(
-                parallelization=ParallelizationParametersModel(
+            text_embeddings = TextEmbeddingConfigInputModel(
+                parallelization=ParallelizationParametersInputModel(
                     stagger=_float(Fragment.thread_stagger),
                     num_threads=_int(Fragment.thread_count),
                 ),
@@ -238,7 +521,7 @@ def default_config_parameters_from_env_vars(
                 batch_size=_int("BATCH_SIZE"),
                 batch_max_tokens=_int("BATCH_MAX_TOKENS"),
                 skip=_array_string("SKIP"),
-                llm=LLMParametersModel(
+                llm=LLMParametersInputModel(
                     api_key=_str(Fragment.api_key, _api_key),
                     type=llm_type,
                     model=model,
@@ -260,7 +543,7 @@ def default_config_parameters_from_env_vars(
             )
 
         with section(Section.node2vec):
-            embed_graph = EmbedGraphConfigModel(
+            embed_graph = EmbedGraphConfigInputModel(
                 is_enabled=_bool(Fragment.enabled),
                 num_walks=_int("NUM_WALKS"),
                 walk_length=_int("WALK_LENGTH"),
@@ -273,7 +556,7 @@ def default_config_parameters_from_env_vars(
             reporting_type = (
                 PipelineReportingType(reporting_type) if reporting_type else None
             )
-            reporting = ReportingConfigModel(
+            reporting = ReportingConfigInputModel(
                 type=reporting_type,
                 connection_string=_str(Fragment.conn_string),
                 container_name=_str(Fragment.container_name),
@@ -282,7 +565,7 @@ def default_config_parameters_from_env_vars(
         with section(Section.storage):
             storage_type = _str(Fragment.type)
             storage_type = PipelineStorageType(storage_type) if storage_type else None
-            storage = StorageConfigModel(
+            storage = StorageConfigInputModel(
                 type=storage_type,
                 connection_string=_str(Fragment.conn_string),
                 container_name=_str(Fragment.container_name),
@@ -291,7 +574,7 @@ def default_config_parameters_from_env_vars(
         with section(Section.cache):
             cache_type = _str(Fragment.type)
             cache_type = PipelineCacheType(cache_type) if cache_type else None
-            cache = CacheConfigModel(
+            cache = CacheConfigInputModel(
                 type=cache_type,
                 connection_string=_str(Fragment.conn_string),
                 container_name=_str(Fragment.container_name),
@@ -304,7 +587,7 @@ def default_config_parameters_from_env_vars(
             storage_type = (
                 PipelineInputStorageType(storage_type) if storage_type else None
             )
-            input = InputConfigModel(
+            input = InputConfigInputModel(
                 type=input_type,
                 storage_type=storage_type,
                 file_encoding=_str(Fragment.encoding),
@@ -320,48 +603,48 @@ def default_config_parameters_from_env_vars(
                 ),
             )
         with section(Section.chunk):
-            chunks = ChunkingConfigModel(
+            chunks = ChunkingConfigInputModel(
                 size=_int("SIZE"),
                 overlap=_int("OVERLAP"),
                 group_by_columns=_array_string(_str("BY_COLUMNS")),
             )
         with section(Section.snapshot):
-            snapshots = SnapshotsConfigModel(
+            snapshots = SnapshotsConfigInputModel(
                 graphml=_bool("GRAPHML"),
                 raw_entities=_bool("RAW_ENTITIES"),
                 top_level_nodes=_bool("TOP_LEVEL_NODES"),
             )
         with section(Section.entity_extraction):
-            entity_extraction = EntityExtractionConfigModel(
+            entity_extraction = EntityExtractionConfigInputModel(
                 entity_types=_array_string(_str("ENTITY_TYPES")),
                 max_gleanings=_int(Fragment.max_gleanings),
                 prompt=_str(Fragment.prompt_file),
             )
         with section(Section.claim_extraction):
-            claim_extraction = ClaimExtractionConfigModel(
+            claim_extraction = ClaimExtractionConfigInputModel(
                 description=_str(Fragment.description),
                 prompt=_str(Fragment.prompt_file),
                 max_gleanings=_int(Fragment.max_gleanings),
             )
         with section(Section.community_report):
-            community_reports = CommunityReportsConfigModel(
+            community_reports = CommunityReportsConfigInputModel(
                 prompt=_str(Fragment.prompt_file),
                 max_length=_int(Fragment.max_length),
                 max_input_length=_int("MAX_INPUT_LENGTH"),
             )
         with section(Section.summarize_descriptions):
-            summarize_descriptions = SummarizeDescriptionsConfigModel(
+            summarize_descriptions = SummarizeDescriptionsConfigInputModel(
                 prompt=_str(Fragment.prompt_file),
                 max_length=_int(Fragment.max_length),
             )
         with section(Section.umap):
-            umap = UmapConfigModel(
+            umap = UmapConfigInputModel(
                 enabled=_bool(Fragment.enabled),
             )
 
         async_mode_enum = AsyncType(async_mode) if async_mode else None
-        return DefaultConfigParametersDict(
-            DefaultConfigParametersModel(
+        return default_config_parameters(
+            DefaultConfigParametersInputModel(
                 llm=llm_parameters,
                 parallelization=llm_parallelization,
                 embeddings=text_embeddings,
@@ -378,13 +661,12 @@ def default_config_parameters_from_env_vars(
                 summarize_descriptions=summarize_descriptions,
                 umap=umap,
                 async_mode=async_mode_enum,
-                cluster_graph=ClusterGraphConfigModel(
+                cluster_graph=ClusterGraphConfigInputModel(
                     max_cluster_size=_int("MAX_CLUSTER_SIZE"),
                 ),
                 encoding_model=_str(Fragment.encoding_model),
                 skip_workflows=_array_string(_str("SKIP_WORKFLOWS")),
             ),
-            env,
             root_dir,
         )
 

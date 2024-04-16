@@ -5,6 +5,8 @@
 from datashaper import AsyncType
 from pydantic import BaseModel, Field
 
+from graphrag.index.default_config.parameters.defaults import DEFAULT_ASYNC_MODE
+
 from .llm_parameters_model import LLMParametersModel
 from .parallelization_parameters_model import ParallelizationParametersModel
 
@@ -20,5 +22,5 @@ class LLMConfigModel(BaseModel):
         default=ParallelizationParametersModel(),
     )
     async_mode: AsyncType | None = Field(
-        description="The async mode to use.", default=AsyncType.Threaded
+        description="The async mode to use.", default=DEFAULT_ASYNC_MODE
     )
