@@ -1,6 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
-"""A module containing extract_claims, load_strategy and create_row_from_claim_data methods definition."""
+"""A module containing the summarize_descriptions verb."""
 
 import asyncio
 from enum import Enum
