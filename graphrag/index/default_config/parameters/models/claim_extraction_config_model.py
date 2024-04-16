@@ -8,6 +8,7 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_CLAIM_DESCRIPTION,
     DEFAULT_CLAIM_MAX_GLEANINGS,
 )
+from graphrag.index.verbs.covariates.extract_covariates import ExtractClaimsStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -18,14 +19,25 @@ class ClaimExtractionConfigModel(LLMConfigModel):
     prompt: str | None = Field(
         description="The claim extraction prompt to use.", default=None
     )
-    description: str | None = Field(
+    description: str = Field(
         description="The claim description to use.",
         default=DEFAULT_CLAIM_DESCRIPTION,
     )
-    max_gleanings: int | None = Field(
+    max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
         default=DEFAULT_CLAIM_MAX_GLEANINGS,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+
+    def resolved_strategy(self) -> dict:
+        """Get the resolved claim extraction strategy."""
+        return self.strategy or {
+            "type": ExtractClaimsStrategyType.graph_intelligence,
+            "llm": self.llm.model_dump(),
+            **self.parallelization.model_dump(),
+            "extraction_prompt": self.prompt,
+            "claim_description": self.description,
+            "max_gleanings": self.max_gleanings,
+        }

@@ -12,30 +12,42 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_NODE2VEC_WALK_LENGTH,
     DEFAULT_NODE2VEC_WINDOW_SIZE,
 )
+from graphrag.index.verbs.graph.embed import EmbedGraphStrategyType
 
 
 class EmbedGraphConfigModel(BaseModel):
     """The default configuration section for Node2Vec."""
 
-    is_enabled: bool | None = Field(
+    is_enabled: bool = Field(
         description="A flag indicating whether to enable node2vec.",
         default=DEFAULT_NODE2VEC_IS_ENABLED,
     )
-    num_walks: int | None = Field(
+    num_walks: int = Field(
         description="The node2vec number of walks.", default=DEFAULT_NODE2VEC_NUM_WALKS
     )
-    walk_length: int | None = Field(
+    walk_length: int = Field(
         description="The node2vec walk length.", default=DEFAULT_NODE2VEC_WALK_LENGTH
     )
-    window_size: int | None = Field(
+    window_size: int = Field(
         description="The node2vec window size.", default=DEFAULT_NODE2VEC_WINDOW_SIZE
     )
-    iterations: int | None = Field(
+    iterations: int = Field(
         description="The node2vec iterations.", default=DEFAULT_NODE2VEC_ITERATIONS
     )
-    random_seed: int | None = Field(
+    random_seed: int = Field(
         description="The node2vec random seed.", default=DEFAULT_NODE2VEC_RANDOM_SEED
     )
     strategy: dict | None = Field(
         description="The graph embedding strategy override.", default=None
     )
+
+    def resolved_strategy(self) -> dict:
+        """Get the resolved node2vec strategy."""
+        return self.strategy or {
+            "type": EmbedGraphStrategyType.node2vec,
+            "num_walks": self.num_walks,
+            "walk_length": self.walk_length,
+            "window_size": self.window_size,
+            "iterations": self.iterations,
+            "random_seed": self.iterations,
+        }

@@ -18,13 +18,13 @@ from graphrag.index.default_config.parameters.defaults import (
 class InputConfigModel(BaseModel):
     """The default configuration section for Input."""
 
-    type: PipelineInputType | None = Field(
+    type: PipelineInputType = Field(
         description="The input type to use.", default=DEFAULT_INPUT_TYPE
     )
-    storage_type: PipelineInputStorageType | None = Field(
+    storage_type: PipelineInputStorageType = Field(
         description="The input storage type to use.", default=DEFAULT_INPUT_STORAGE_TYPE
     )
-    base_dir: str | None = Field(
+    base_dir: str = Field(
         description="The input base directory to use.", default=DEFAULT_INPUT_BASE_DIR
     )
     connection_string: str | None = Field(
@@ -49,12 +49,12 @@ class InputConfigModel(BaseModel):
     timestamp_format: str | None = Field(
         description="The input timestamp format to use.", default=None
     )
-    text_column: str | None = Field(
+    text_column: str = Field(
         description="The input text column to use.", default=DEFAULT_INPUT_TEXT_COLUMN
     )
     title_column: str | None = Field(
         description="The input title column to use.", default=None
     )
-    document_attribute_columns: list[str] | None = Field(
-        description="The document attribute columns to use.", default=None
+    document_attribute_columns: list[str] = Field(
+        description="The document attribute columns to use.", default=[]
     )

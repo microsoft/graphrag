@@ -4,6 +4,8 @@
 
 from pydantic import Field
 
+from graphrag.index.default_config.parameters.defaults import DEFAULT_ENCODING_MODEL
+
 from .cache_config_model import CacheConfigModel
 from .chunking_config_model import ChunkingConfigModel
 from .claim_extraction_config_model import ClaimExtractionConfigModel
@@ -109,12 +111,12 @@ class DefaultConfigParametersModel(LLMConfigModel):
     )
     """The UMAP configuration to use."""
 
-    encoding_model: str | None = Field(
-        description="The encoding model to use.", default=None
+    encoding_model: str = Field(
+        description="The encoding model to use.", default=DEFAULT_ENCODING_MODEL
     )
     """The encoding model to use."""
 
-    skip_workflows: list[str] | None = Field(
-        description="The workflows to skip, usually for testing reasons.", default=None
+    skip_workflows: list[str] = Field(
+        description="The workflows to skip, usually for testing reasons.", default=[]
     )
     """The workflows to skip, usually for testing reasons."""

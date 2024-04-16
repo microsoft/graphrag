@@ -14,15 +14,15 @@ from graphrag.index.default_config.parameters.defaults import (
 class SnapshotsConfigModel(BaseModel):
     """Configuration section for snapshots."""
 
-    graphml: bool | None = Field(
+    graphml: bool = Field(
         description="A flag indicating whether to take snapshots of GraphML.",
         default=DEFAULT_SNAPSHOTS_GRAPHML,
     )
-    raw_entities: bool | None = Field(
+    raw_entities: bool = Field(
         description="A flag indicating whether to take snapshots of raw entities.",
         default=DEFAULT_SNAPSHOTS_RAW_ENTITIES,
     )
-    top_level_nodes: bool | None = Field(
+    top_level_nodes: bool = Field(
         description="A flag indicating whether to take snapshots of top-level nodes.",
         default=DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
     )

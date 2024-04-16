@@ -14,10 +14,10 @@ from graphrag.index.default_config.parameters.defaults import (
 class StorageConfigModel(BaseModel):
     """The default configuration section for Storage."""
 
-    type: PipelineStorageType | None = Field(
+    type: PipelineStorageType = Field(
         description="The storage type to use.", default=DEFAULT_STORAGE_TYPE
     )
-    base_dir: str | None = Field(
+    base_dir: str = Field(
         description="The base directory for the storage.",
         default=DEFAULT_STORAGE_BASE_DIR,
     )

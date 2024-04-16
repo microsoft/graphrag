@@ -13,11 +13,11 @@ from graphrag.index.default_config.parameters.defaults import (
 class ParallelizationParametersModel(BaseModel):
     """LLM Parameters model."""
 
-    stagger: float | None = Field(
+    stagger: float = Field(
         description="The stagger to use for the LLM service.",
         default=DEFAULT_PARALLELIZATION_STAGGER,
     )
-    num_threads: int | None = Field(
+    num_threads: int = Field(
         description="The number of threads to use for the LLM service.",
         default=DEFAULT_PARALLELIZATION_NUM_THREADS,
     )

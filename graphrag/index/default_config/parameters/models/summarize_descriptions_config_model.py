@@ -7,6 +7,7 @@ from pydantic import Field
 from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
 )
+from graphrag.index.verbs.entities.summarize import SummarizeStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -17,10 +18,20 @@ class SummarizeDescriptionsConfigModel(LLMConfigModel):
     prompt: str | None = Field(
         description="The description summarization prompt to use.", default=None
     )
-    max_length: int | None = Field(
+    max_length: int = Field(
         description="The description summarization maximum length.",
         default=DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+
+    def resolved_strategy(self) -> dict:
+        """Get the resolved description summarization strategy."""
+        return self.strategy or {
+            "type": SummarizeStrategyType.graph_intelligence,
+            "llm": self.llm.model_dump(),
+            **self.parallelization.model_dump(),
+            "summarize_prompt": self.prompt,
+            "max_summary_length": self.max_length,
+        }

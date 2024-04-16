@@ -16,6 +16,7 @@ from graphrag.index.llm.types import LLMType
 from .models.types import TextEmbeddingTarget
 
 DEFAULT_ASYNC_MODE = AsyncType.Threaded
+DEFAULT_ENCODING_MODEL = "cl100k_base"
 #
 # LLM Parameters
 #

@@ -14,10 +14,10 @@ from graphrag.index.default_config.parameters.defaults import (
 class CacheConfigModel(BaseModel):
     """The default configuration section for Cache."""
 
-    type: PipelineCacheType | None = Field(
+    type: PipelineCacheType = Field(
         description="The cache type to use.", default=DEFAULT_CACHE_TYPE
     )
-    base_dir: str | None = Field(
+    base_dir: str = Field(
         description="The base directory for the cache.", default=DEFAULT_CACHE_BASE_DIR
     )
     connection_string: str | None = Field(

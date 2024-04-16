@@ -21,6 +21,6 @@ class LLMConfigModel(BaseModel):
         description="The parallelization configuration to use.",
         default=ParallelizationParametersModel(),
     )
-    async_mode: AsyncType | None = Field(
+    async_mode: AsyncType = Field(
         description="The async mode to use.", default=DEFAULT_ASYNC_MODE
     )

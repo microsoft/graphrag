@@ -14,10 +14,10 @@ from graphrag.index.default_config.parameters.defaults import (
 class ReportingConfigModel(BaseModel):
     """The default configuration section for Reporting."""
 
-    type: PipelineReportingType | None = Field(
+    type: PipelineReportingType = Field(
         description="The reporting type to use.", default=DEFAULT_REPORTING_TYPE
     )
-    base_dir: str | None = Field(
+    base_dir: str = Field(
         description="The base directory for reporting.",
         default=DEFAULT_REPORTING_BASE_DIR,
     )

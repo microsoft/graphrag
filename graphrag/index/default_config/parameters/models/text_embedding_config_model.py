@@ -9,6 +9,7 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_EMBEDDING_BATCH_SIZE,
     DEFAULT_EMBEDDING_TARGET,
 )
+from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 
 from .llm_config_model import LLMConfigModel
 from .types import TextEmbeddingTarget
@@ -17,23 +18,31 @@ from .types import TextEmbeddingTarget
 class TextEmbeddingConfigModel(LLMConfigModel):
     """Configuration section for text embeddings."""
 
-    batch_size: int | None = Field(
+    batch_size: int = Field(
         description="The batch size to use.", default=DEFAULT_EMBEDDING_BATCH_SIZE
     )
-    batch_max_tokens: int | None = Field(
+    batch_max_tokens: int = Field(
         description="The batch max tokens to use.",
         default=DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
     )
-    target: TextEmbeddingTarget | None = Field(
+    target: TextEmbeddingTarget = Field(
         description="The target to use. 'all' or 'required'.",
         default=DEFAULT_EMBEDDING_TARGET,
     )
-    skip: list[str] | None = Field(
-        description="The specific embeddings to skip.", default=[]
-    )
+    skip: list[str] = Field(description="The specific embeddings to skip.", default=[])
     vector_store: dict | None = Field(
         description="The vector storage configuration", default=None
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+
+    def resolved_strategy(self) -> dict:
+        """Get the resolved text embedding strategy."""
+        return self.strategy or {
+            "type": TextEmbedStrategyType.openai,
+            "llm": self.llm.model_dump(),
+            **self.parallelization.model_dump(),
+            "batch_size": self.batch_size,
+            "batch_max_tokens": self.batch_max_tokens,
+        }

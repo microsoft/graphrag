@@ -105,7 +105,7 @@ def default_config(
 def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return list(all_embeddings - {*(settings.embeddings.skip or [])})
+            return list(all_embeddings - {*settings.embeddings.skip})
         case TextEmbeddingTarget.required:
             return list(required_embeddings)
         case _:
@@ -114,7 +114,7 @@ def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
 
 
 def _determine_skip_workflows(settings: DefaultConfigParametersModel) -> list[str]:
-    skip_workflows = settings.skip_workflows or []
+    skip_workflows = settings.skip_workflows
     if (
         create_final_covariates in skip_workflows
         and join_text_units_to_covariate_ids not in skip_workflows
@@ -150,7 +150,7 @@ def _document_workflows(
             name=create_base_documents,
             config={
                 "document_attribute_columns": list(
-                    {*(settings.input.document_attribute_columns or [])}
+                    {*(settings.input.document_attribute_columns)}
                     - builtin_document_attributes
                 )
             },
@@ -175,7 +175,7 @@ def _text_unit_workflows(
             name=create_base_text_units,
             config={
                 "chunk_by": settings.chunks.group_by_columns,
-                "text_chunk": {"strategy": settings.chunks.strategy},
+                "text_chunk": {"strategy": settings.chunks.resolved_strategy()},
             },
         ),
         PipelineWorkflowReference(
@@ -204,7 +204,7 @@ def _get_embedding_settings(
 ) -> dict:
     vector_store_settings = settings.vector_store
     if vector_store_settings is None:
-        return {"strategy": settings.strategy}
+        return {"strategy": settings.resolved_strategy()}
 
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
@@ -212,7 +212,7 @@ def _get_embedding_settings(
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
     return {
-        "strategy": settings.strategy,
+        "strategy": settings.resolved_strategy(),
         "embedding_name": embedding_name,
         "vector_store": {
             **(vector_store_settings.get("base") or {}),
@@ -240,7 +240,9 @@ def _graph_workflows(
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
-                    "strategy": settings.entity_extraction.strategy,
+                    "strategy": settings.entity_extraction.resolved_strategy(
+                        settings.encoding_model
+                    ),
                     "entity_types": settings.entity_extraction.entity_types,
                 },
             },
@@ -252,7 +254,7 @@ def _graph_workflows(
                 "summarize_descriptions": {
                     **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
-                    "strategy": settings.summarize_descriptions.strategy,
+                    "strategy": settings.summarize_descriptions.resolved_strategy(),
                 },
             },
         ),
@@ -261,8 +263,10 @@ def _graph_workflows(
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
                 "embed_graph_enabled": settings.embed_graph.is_enabled,
-                "cluster_graph": {"strategy": settings.cluster_graph.strategy},
-                "embed_graph": {"strategy": settings.embed_graph.strategy},
+                "cluster_graph": {
+                    "strategy": settings.cluster_graph.resolved_strategy()
+                },
+                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
             },
         ),
         PipelineWorkflowReference(
@@ -318,7 +322,7 @@ def _community_workflows(
                 "create_community_reports": {
                     **settings.community_reports.parallelization.model_dump(),
                     "async_mode": settings.community_reports.async_mode,
-                    "strategy": settings.community_reports.strategy,
+                    "strategy": settings.community_reports.resolved_strategy(),
                 },
                 "community_report_full_content_embed": _get_embedding_settings(
                     settings.embeddings, "community_report_full_content"
@@ -343,7 +347,7 @@ def _covariate_workflows(
             config={
                 "claim_extract": {
                     **settings.claim_extraction.parallelization.model_dump(),
-                    "strategy": settings.claim_extraction.strategy,
+                    "strategy": settings.claim_extraction.resolved_strategy(),
                 },
             },
         )

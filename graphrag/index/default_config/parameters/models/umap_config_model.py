@@ -10,7 +10,7 @@ from graphrag.index.default_config.parameters.defaults import DEFAULT_UMAP_ENABL
 class UmapConfigModel(BaseModel):
     """Configuration section for UMAP."""
 
-    enabled: bool | None = Field(
+    enabled: bool = Field(
         description="A flag indicating whether to enable UMAP.",
         default=DEFAULT_UMAP_ENABLED,
     )
