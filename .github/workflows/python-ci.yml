@@ -109,6 +109,12 @@ jobs:
           GRAPHRAG_EMBEDDING_TPM: 350_000
           GRAPHRAG_EMBEDDING_RPM: 2_100
 
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-artifacts
+          path: tests/fixtures/*/output
+
       - name: E2E Test
         if: steps.changes.outputs.python == 'true'
         run: |
