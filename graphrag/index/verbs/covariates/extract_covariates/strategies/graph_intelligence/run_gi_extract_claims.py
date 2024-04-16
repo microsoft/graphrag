@@ -87,7 +87,6 @@ async def _execute(
 def create_covariate(item: dict[str, Any]) -> Covariate:
     """Create a covariate from the item."""
     return Covariate(
-        covariate_type=item.get("covariate_type"),
         subject_id=item.get("subject_id"),
         subject_type=item.get("subject_type"),
         object_id=item.get("object_id"),

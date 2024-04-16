@@ -278,6 +278,7 @@ class TestIndexer:
         print("running queries")
         for query in query_config:
             result = self.__run_query(root, query)
+            print(f"Query: {query}\nResponse: {result.stdout}")
 
             assert result.stderr == "", f"Query failed with error: {result.stderr}"
             assert result.stdout is not None, "Query returned no output"

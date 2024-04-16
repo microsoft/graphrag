@@ -1,6 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
-"""A module containing extract_claims, load_strategy and create_row_from_claim_data methods definition."""
+"""A module containing the extract_covariates verb definition."""
 
 from dataclasses import asdict
 from enum import Enum
@@ -17,25 +17,25 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.covariates.typing import CovariateExtractStrategy
+from graphrag.index.verbs.covariates.typing import Covariate, CovariateExtractStrategy
 
 
 class ExtractClaimsStrategyType(str, Enum):
     """ExtractClaimsStrategyType class definition."""
 
     graph_intelligence = "graph_intelligence"
-    graph_intelligence_json = "graph_intelligence_json"
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
-@verb(name="extract_claims")
-async def extract_claims(
+@verb(name="extract_covariates")
+async def extract_covariates(
     input: VerbInput,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
     column: str,
+    covariate_type: str,
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
@@ -64,7 +64,10 @@ async def extract_claims(
         result = await strategy_exec(
             text, entity_types, resolved_entities_map, callbacks, cache, strategy_config
         )
-        return [create_row_from_claim_data(row, item) for item in result.covariate_data]
+        return [
+            create_row_from_claim_data(row, item, covariate_type)
+            for item in result.covariate_data
+        ]
 
     results = await derive_from_rows(
         output,
@@ -89,9 +92,9 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
             raise ValueError(msg)
 
 
-def create_row_from_claim_data(in_row, claim_data):
+def create_row_from_claim_data(row, covariate_data: Covariate, covariate_type: str):
     """Create a row from the claim data and the input row."""
-    item = {**in_row, **asdict(claim_data)}
+    item = {**row, **asdict(covariate_data), "covariate_type": covariate_type}
     # TODO: doc_id from extraction isn't necessary
     # since chunking happens before this
     del item["doc_id"]
