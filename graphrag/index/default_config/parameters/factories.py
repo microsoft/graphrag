@@ -278,7 +278,7 @@ def default_config_parameters(
 
         return ParallelizationParametersModel(
             num_threads=_int(
-                lookup("thread_count"), DEFAULT_PARALLELIZATION_NUM_THREADS
+                lookup("num_threads"), DEFAULT_PARALLELIZATION_NUM_THREADS
             ),
             stagger=_float(lookup("thread_stagger"), DEFAULT_PARALLELIZATION_STAGGER),
         )
@@ -289,7 +289,7 @@ def default_config_parameters(
     storage_config: StorageConfigInputModel = values.get("storage") or {}
     cache_config: CacheConfigInputModel = values.get("cache") or {}
     input_config: InputConfigInputModel = values.get("input") or {}
-    chunk_config: ChunkingConfigInputModel = values.get("chunk") or {}
+    chunk_config: ChunkingConfigInputModel = values.get("chunks") or {}
     snapshots_config: SnapshotsConfigInputModel = values.get("snapshots") or {}
     entity_extraction_config: EntityExtractionConfigInputModel = (
         values.get("entity_extraction") or {}
@@ -298,7 +298,7 @@ def default_config_parameters(
         values.get("claim_extraction") or {}
     )
     community_report_config: CommunityReportsConfigInputModel = (
-        values.get("community_report") or {}
+        values.get("community_reports") or {}
     )
     summarize_description_config: SummarizeDescriptionsConfigInputModel = (
         values.get("summarize_descriptions") or {}
@@ -381,26 +381,26 @@ def default_config_parameters(
         ),
         reporting=ReportingConfigModel(
             type=reporting_type,
-            connection_string=reporting_config.get("conn_string"),
+            connection_string=reporting_config.get("connection_string"),
             container_name=reporting_config.get("container_name"),
             base_dir=reporting_config.get("base_dir") or DEFAULT_REPORTING_BASE_DIR,
         ),
         storage=StorageConfigModel(
             type=storage_type,
-            connection_string=storage_config.get("conn_string"),
+            connection_string=storage_config.get("connection_string"),
             container_name=storage_config.get("container_name"),
             base_dir=storage_config.get("base_dir") or DEFAULT_STORAGE_BASE_DIR,
         ),
         cache=CacheConfigModel(
             type=cache_type,
-            connection_string=cache_config.get("conn_string"),
+            connection_string=cache_config.get("connection_string"),
             container_name=cache_config.get("container_name"),
             base_dir=cache_config.get("base_dir") or DEFAULT_CACHE_BASE_DIR,
         ),
         input=InputConfigModel(
             type=input_type,
             storage_type=input_storage_type,
-            file_encoding=input_config.get("encoding") or DEFAULT_INPUT_FILE_ENCODING,
+            file_encoding=input_config.get("file_encoding") or DEFAULT_INPUT_FILE_ENCODING,
             base_dir=input_config.get("base_dir") or DEFAULT_INPUT_BASE_DIR,
             file_pattern=file_pattern,
             source_column=input_config.get("source_column"),
@@ -416,7 +416,7 @@ def default_config_parameters(
             size=_int(chunk_config.get("size"), DEFAULT_CHUNK_SIZE),
             overlap=_int(chunk_config.get("overlap"), DEFAULT_CHUNK_OVERLAP),
             group_by_columns=_list(
-                chunk_config.get("by_columns"), DEFAULT_CHUNK_GROUP_BY_COLUMNS
+                chunk_config.get("group_by_columns"), DEFAULT_CHUNK_GROUP_BY_COLUMNS
             ),
         ),
         snapshots=SnapshotsConfigModel(
@@ -726,32 +726,31 @@ def default_config_parameters_from_env_vars(
             )
 
         async_mode_enum = AsyncType(async_mode) if async_mode else None
-        return default_config_parameters(
-            DefaultConfigParametersInputModel(
-                llm=llm_parameters,
-                parallelization=llm_parallelization,
-                embeddings=text_embeddings,
-                embed_graph=embed_graph,
-                reporting=reporting,
-                storage=storage,
-                cache=cache,
-                input=input,
-                chunks=chunks,
-                snapshots=snapshots,
-                entity_extraction=entity_extraction,
-                claim_extraction=claim_extraction,
-                community_reports=community_reports,
-                summarize_descriptions=summarize_descriptions,
-                umap=umap,
-                async_mode=async_mode_enum,
-                cluster_graph=ClusterGraphConfigInputModel(
-                    max_cluster_size=_int("MAX_CLUSTER_SIZE"),
-                ),
-                encoding_model=_str(Fragment.encoding_model),
-                skip_workflows=_array_string(_str("SKIP_WORKFLOWS")),
+        input_model = DefaultConfigParametersInputModel(
+            llm=llm_parameters,
+            parallelization=llm_parallelization,
+            embeddings=text_embeddings,
+            embed_graph=embed_graph,
+            reporting=reporting,
+            storage=storage,
+            cache=cache,
+            input=input,
+            chunks=chunks,
+            snapshots=snapshots,
+            entity_extraction=entity_extraction,
+            claim_extraction=claim_extraction,
+            community_reports=community_reports,
+            summarize_descriptions=summarize_descriptions,
+            umap=umap,
+            async_mode=async_mode_enum,
+            cluster_graph=ClusterGraphConfigInputModel(
+                max_cluster_size=_int("MAX_CLUSTER_SIZE"),
             ),
-            root_dir,
+            encoding_model=_str(Fragment.encoding_model),
+            skip_workflows=_array_string(_str("SKIP_WORKFLOWS")),
         )
+        print("INPUT MODEL", input_model)
+        return default_config_parameters(input_model, root_dir)
 
 
 class Fragment(str, Enum):
