@@ -11,11 +11,8 @@ llm:
 embeddings: 
     llm:
         type: azure_openai_embedding
-        api_key: ${GRAPHRAG_API_KEY}
-        api_base: ${GRAPHRAG_API_BASE}
         model: ${GRAPHRAG_EMBEDDING_MODEL}
         deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
-        api_version: ${GRAPHRAG_API_VERSION}
         tokens_per_minute: 350_000
         requests_per_minute: 2_100
 
