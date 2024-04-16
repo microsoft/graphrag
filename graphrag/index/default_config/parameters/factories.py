@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
-
+import os
 from enum import Enum
 from pathlib import Path
 
@@ -133,7 +133,7 @@ def default_config_parameters(
 ) -> DefaultConfigParametersModel:
     """Load Configuration Parameters from a dictionary."""
     root_dir = root_dir or str(Path.cwd())
-    env = _make_env(root_dir)
+    _make_env(root_dir)
 
     def traverse_dict(data):
         for key, value in data.items():
@@ -144,7 +144,7 @@ def default_config_parameters(
                 and value.startswith("${")
                 and value.endswith("}")
             ):
-                data[key] = env.expandvars(value)
+                data[key] = os.path.expandvars(value)
 
     traverse_dict(values)
 
@@ -822,7 +822,7 @@ def _is_azure(llm_type: LLMType | None) -> bool:
 
 def _make_env(root_dir: str) -> Env:
     read_dotenv(root_dir)
-    env = Env()
+    env = Env(expand_vars=True)
     env.read_env()
     return env
 
