@@ -408,6 +408,8 @@ def default_config_parameters(
                 input_config.get("document_attribute_columns")
             )
             or [],
+            connection_string=input_config.get("connection_string"),
+            container_name=input_config.get("container_name"),
         ),
         chunks=ChunkingConfigModel(
             size=_int(
