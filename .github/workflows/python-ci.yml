@@ -95,6 +95,7 @@ jobs:
         run: |
           poetry run poe test_smoke
         env:
+          DEBUG: 1
           GRAPHRAG_LLM_TYPE: "azure_openai_chat"
           GRAPHRAG_EMBEDDING_TYPE: "azure_openai_embedding"
           GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
