@@ -749,7 +749,6 @@ def default_config_parameters_from_env_vars(
             encoding_model=_str(Fragment.encoding_model),
             skip_workflows=_array_string(_str("SKIP_WORKFLOWS")),
         )
-        print("INPUT MODEL", input_model)
         return default_config_parameters(input_model, root_dir)
 
 
