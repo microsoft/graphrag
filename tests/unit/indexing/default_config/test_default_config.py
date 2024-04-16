@@ -6,6 +6,19 @@ from unittest import mock
 import yaml
 
 from graphrag.index import (
+    PipelineCacheType,
+    PipelineInputType,
+    PipelineReportingType,
+    PipelineStorageType,
+    default_config,
+    default_config_parameters,
+    default_config_parameters_from_env_vars,
+)
+from graphrag.index.config import (
+    PipelineCSVInputConfig,
+    PipelineTextInputConfig,
+)
+from graphrag.index.default_config import (
     CacheConfigInputModel,
     ChunkingConfigInputModel,
     ClaimExtractionConfigInputModel,
@@ -16,23 +29,12 @@ from graphrag.index import (
     EntityExtractionConfigInputModel,
     InputConfigInputModel,
     LLMParametersInputModel,
-    PipelineCacheType,
-    PipelineInputType,
-    PipelineReportingType,
-    PipelineStorageType,
     ReportingConfigInputModel,
     SnapshotsConfigInputModel,
     StorageConfigInputModel,
     SummarizeDescriptionsConfigInputModel,
     TextEmbeddingConfigInputModel,
     UmapConfigInputModel,
-    default_config,
-    default_config_parameters,
-    default_config_parameters_from_env_vars,
-)
-from graphrag.index.config import (
-    PipelineCSVInputConfig,
-    PipelineTextInputConfig,
 )
 
 current_dir = os.path.dirname(__file__)
