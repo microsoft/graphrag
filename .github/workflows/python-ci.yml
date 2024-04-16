@@ -31,6 +31,8 @@ jobs:
       GRAPHRAG_LLM_RPM: 720
       GRAPHRAG_EMBEDDING_TPM: 350_000
       GRAPHRAG_EMBEDDING_RPM: 2_100
+      GRAPHRAG_CHUNK_SIZE: 1200
+      GRAPHRAG_CHUNK_OVERLAP: 0
       
     steps:
       - uses: actions/checkout@v4
