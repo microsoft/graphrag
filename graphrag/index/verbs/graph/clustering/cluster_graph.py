@@ -114,7 +114,7 @@ def apply_clustering(
     graphml: str, communities: Communities, level=0, seed=0xF001
 ) -> nx.Graph:
     """Apply clustering to a graphml string."""
-    random = Random(seed)
+    random = Random(seed)  # noqa S311
     graph = nx.parse_graphml(graphml)
     for community_level, community_id, nodes in communities:
         if level == community_level:

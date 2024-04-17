@@ -45,7 +45,7 @@ aiolimiter = "^1.1.0"
 aiofiles = "^23.2.1"
 
 # LLM
-openai = "^1.1.1"
+openai = "^1.19.0"
 nltk = "3.8.1"
 tiktoken = "^0.6.0"
 
@@ -64,7 +64,6 @@ pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
 # Network
-httpx = "^0.25.1"
 tenacity = "^8.2.3"
 
 swifter = "^1.4.0"
@@ -74,11 +73,11 @@ textual = "^0.56.2"
 azure-storage-blob = "^12.19.0"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.2.2"
-poethepoet = "^0.25.0"
+ruff = "^0.3.7"
+poethepoet = "^0.25.1"
 typing-extensions = "^4.5.0"
 coverage = "^7.3.2"
-pytest = "^7.4.2"
+pytest = "^8.1.1"
 pyright = "^1.1.352"
 pytest-asyncio = "^0.23.4"
 semversioner = "^2.0.2"

@@ -115,8 +115,8 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
-        map_llm_calls = sum([response.llm_calls for response in map_responses])
-        map_prompt_tokens = sum([response.prompt_tokens for response in map_responses])
+        map_llm_calls = sum(response.llm_calls for response in map_responses)
+        map_prompt_tokens = sum(response.prompt_tokens for response in map_responses)
 
         # Step 2: Combine the intermediate answers from step 2 to generate the final answer
         reduce_response = await self._reduce_response(

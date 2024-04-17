@@ -2,6 +2,6 @@
 
 """The Indexing Engine covariates package root."""
 
-from .extract_claims import extract_claims
+from .extract_covariates import extract_covariates
 
-__all__ = ["extract_claims"]
+__all__ = ["extract_covariates"]

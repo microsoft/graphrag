@@ -16,6 +16,21 @@ jobs:
         python-version: ["3.10", "3.11"]
         poetry-version: ["1.6.1"]
         os: [ubuntu-latest, windows-latest]
+    env:
+      DEBUG: 1
+      GRAPHRAG_LLM_TYPE: "azure_openai_chat"
+      GRAPHRAG_EMBEDDING_TYPE: "azure_openai_embedding"
+      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
+      GRAPHRAG_API_VERSION: ${{ secrets.GRAPHRAG_API_VERSION }}
+      GRAPHRAG_LLM_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_LLM_DEPLOYMENT_NAME }}
+      GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
+      GRAPHRAG_LLM_MODEL: gpt-3.5-turbo-16k
+      GRAPHRAG_EMBEDDING_MODEL: text-embedding-ada-002
+      GRAPHRAG_LLM_TPM: 120_000
+      GRAPHRAG_LLM_RPM: 720
+      GRAPHRAG_EMBEDDING_TPM: 350_000
+      GRAPHRAG_EMBEDDING_RPM: 2_100
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -67,23 +82,21 @@ jobs:
       - name: Unit Test
         run: |
           poetry run poe test_unit
-        env:
-          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Integration Test
         run: |
           poetry run poe test_integration
-        env:
-          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Smoke Test
         if: steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_smoke
-        env:
-          GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GRAPHRAG_LLM_MODEL: gpt-3.5-turbo
-          GRAPHRAG_EMBEDDING_MODEL: text-embedding-3-small
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+          path: tests/fixtures/*/output
 
       - name: E2E Test
         if: steps.changes.outputs.python == 'true'

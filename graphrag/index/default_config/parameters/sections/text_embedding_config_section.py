@@ -2,6 +2,8 @@
 
 """Parameterization settings for the default configuration, loaded from environment variables."""
 
+from typing import cast
+
 from environs import Env
 
 from graphrag.index.default_config.parameters.defaults import (
@@ -23,7 +25,7 @@ from graphrag.index.default_config.parameters.models import (
 )
 from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 
-from .llm_config_section import LLMConfigSection
+from .llm_config_section import LLMConfigModel, LLMConfigSection
 
 
 class TextEmbeddingConfigSection(LLMConfigSection):
@@ -31,18 +33,34 @@ class TextEmbeddingConfigSection(LLMConfigSection):
 
     _values: TextEmbeddingConfigModel
     _encoding_model: str
+    _root: LLMConfigModel
 
-    def __init__(self, values: TextEmbeddingConfigModel, encoding_model: str, env: Env):
+    def __init__(
+        self,
+        values: TextEmbeddingConfigModel,
+        root: LLMConfigModel,
+        encoding_model: str,
+        env: Env,
+    ):
         """Create a new instance of the parameters class."""
         super().__init__(values, values, env)
         self._values = values
         self._env = env
         self._encoding_model = encoding_model
+        self._root = root
 
     @property
     def llm(self) -> dict:
         """The embeddings LLM configuration to use."""
+        root = self._root.llm.model_dump()
         opts: dict = self._values.llm.model_dump()
+        opts = cast(
+            dict,
+            self.replace_dict({
+                **{k: v for k, v in root.items() if v is not None},
+                **{k: v for k, v in opts.items() if v is not None},
+            }),
+        )
         return {
             **opts,
             "api_key": self.readopt(opts, "api_key"),

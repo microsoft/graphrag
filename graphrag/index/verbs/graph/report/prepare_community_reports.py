@@ -100,7 +100,7 @@ def _load_nodes_edges_for_claim_chain(
     seed: int = 0xD3ADF00D,
 ) -> tuple[list[dict], list[dict]]:
     nodes = []
-    random = Random(seed)
+    random = Random(seed)  # noqa S311
 
     if use_lcc:
         graph = stable_largest_connected_component(graph)

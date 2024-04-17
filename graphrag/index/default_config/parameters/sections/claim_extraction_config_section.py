@@ -12,7 +12,7 @@ from graphrag.index.default_config.parameters.models import (
     ClaimExtractionConfigModel,
     LLMConfigModel,
 )
-from graphrag.index.verbs.covariates.extract_claims import ExtractClaimsStrategyType
+from graphrag.index.verbs.covariates.extract_covariates import ExtractClaimsStrategyType
 
 from .config_section import read_text_file
 from .llm_config_section import LLMConfigSection

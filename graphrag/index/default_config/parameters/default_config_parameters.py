@@ -63,6 +63,7 @@ class DefaultConfigParametersDict(LLMConfigSection):
         self._input = InputConfigSection(values.input, env)
         self._embeddings = TextEmbeddingConfigSection(
             values.embeddings,
+            values,
             self.encoding_model,
             env,
         )
