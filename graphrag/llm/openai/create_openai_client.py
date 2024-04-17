@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 
 API_BASE_REQUIRED_FOR_AZURE = "api_base is required for Azure OpenAI client"
 
+
 @cache
 def create_openai_client(
     configuration: OpenAIConfiguration, azure: bool
