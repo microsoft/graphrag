@@ -130,6 +130,8 @@ class TestIndexer:
             "--verbose" if debug else None,
             "--root",
             root.absolute().as_posix(),
+            "--reporter",
+            "print",
         ]
         command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
