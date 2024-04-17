@@ -2,9 +2,7 @@
 
 """Parameterization settings for the default configuration."""
 
-from typing import TypedDict
-
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, TypedDict
 
 from graphrag.index.config import PipelineReportingType
 

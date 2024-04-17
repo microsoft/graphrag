@@ -2,9 +2,7 @@
 
 """LLM Parameters model."""
 
-from typing import TypedDict
-
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, TypedDict
 
 from graphrag.index.llm.types import LLMType
 

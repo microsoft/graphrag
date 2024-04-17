@@ -2,10 +2,8 @@
 
 """Parameterization settings for the default configuration."""
 
-from typing import TypedDict
-
 from datashaper import AsyncType
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, TypedDict
 
 from .llm_parameters_input_model import LLMParametersInputModel
 from .parallelization_parameters_input_model import ParallelizationParametersInputModel

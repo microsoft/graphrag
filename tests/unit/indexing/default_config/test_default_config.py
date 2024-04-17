@@ -1,9 +1,12 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 import os
 import unittest
+from typing import Any, cast
 from unittest import mock
 
+import pytest
 import yaml
+from pydantic import ValidationError
 
 from graphrag.index import (
     PipelineCacheType,
@@ -62,6 +65,17 @@ class TestDefaultConfig(unittest.TestCase):
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_malformed_input_dict_throws(self):
+        os.environ["GRAPHRAG_INPUT_TYPE"] = "text"
+
+        with pytest.raises(ValidationError):
+            default_config_parameters(cast(Any, {"herp": True, "airplane": 123}))
 
     @mock.patch.dict(
         os.environ,

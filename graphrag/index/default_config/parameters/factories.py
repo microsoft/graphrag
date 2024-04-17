@@ -5,9 +5,11 @@
 import os
 from enum import Enum
 from pathlib import Path
+from typing import cast
 
 from datashaper import AsyncType
 from environs import Env
+from pydantic import TypeAdapter
 
 from graphrag.index.config import (
     PipelineCacheType,
@@ -128,50 +130,17 @@ AZURE_EMBEDDING_API_BASE_REQUIRED = (
     "GRAPHRAG_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
 )
 
+InputModelValidator = TypeAdapter(DefaultConfigParametersInputModel)
+
 
 def default_config_parameters(
-    values: DefaultConfigParametersInputModel, root_dir: str | None
+    values: DefaultConfigParametersInputModel, root_dir: str | None = None
 ) -> DefaultConfigParametersModel:
     """Load Configuration Parameters from a dictionary."""
     root_dir = root_dir or str(Path.cwd())
     _make_env(root_dir)
-
-    def traverse_dict(data):
-        for key, value in data.items():
-            if isinstance(value, dict):
-                traverse_dict(value)
-            elif (
-                isinstance(value, str)
-                and value.startswith("${")
-                and value.endswith("}")
-            ):
-                data[key] = os.path.expandvars(value)
-
-    traverse_dict(values)
-
-    def _int(value: int | str | None, default_value: int | None = None) -> int | None:
-        return int(value) if value else default_value
-
-    def _bool(
-        value: bool | str | None, default_value: bool | None = None
-    ) -> bool | None:
-        return bool(value) if value else default_value
-
-    def _float(
-        value: float | str | None, default_value: float | None = None
-    ) -> float | None:
-        return float(value) if value else default_value
-
-    def _list(
-        value: list | str | None, default_value: list | None = None
-    ) -> list | None:
-        return (
-            value
-            if isinstance(value, list)
-            else [s.strip() for s in value.split(",")]
-            if value
-            else default_value
-        )
+    _token_replace(cast(dict, values))
+    InputModelValidator.validate_python(values)
 
     def _async_type(input: LLMConfigInputModel) -> AsyncType:
         value = input.get("async_mode")
@@ -197,7 +166,7 @@ def default_config_parameters(
             organization=_lookup("organization"),
             proxy=_lookup("proxy"),
             model=_lookup("model") or DEFAULT_LLM_MODEL,
-            max_tokens=_int(_lookup("max_tokens"), DEFAULT_LLM_MAX_TOKENS),
+            max_tokens=_int(_lookup("max_tokens")) or DEFAULT_LLM_MAX_TOKENS,
             model_supports_json=_bool(_lookup("model_supports_json")),
             request_timeout=_float(_lookup("request_timeout"))
             or DEFAULT_LLM_REQUEST_TIMEOUT,
@@ -839,3 +808,38 @@ def _array_string(
 
     result = [r.strip() for r in raw.split(",")]
     return [r for r in result if r != ""]
+
+
+def _token_replace(data: dict):
+    """Replace env-var tokens in a dictionary object."""
+    for key, value in data.items():
+        if isinstance(value, dict):
+            _token_replace(value)
+        elif isinstance(value, str):
+            data[key] = os.path.expandvars(value)
+
+
+def _int(value: int | str | None) -> int | None:
+    """Parse an integer configuration value."""
+    return int(value) if value else None
+
+
+def _bool(value: bool | str | None) -> bool | None:
+    """Parse an boolean configuration value."""
+    return bool(value) if value else None
+
+
+def _float(value: float | str | None) -> float | None:
+    """Parse an float configuration value."""
+    return float(value) if value else None
+
+
+def _list(value: list | str | None) -> list | None:
+    """Parse an list configuration value."""
+    return (
+        value
+        if isinstance(value, list)
+        else [s.strip() for s in value.split(",")]
+        if value
+        else None
+    )
