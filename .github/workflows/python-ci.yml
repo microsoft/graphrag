@@ -75,9 +75,16 @@ jobs:
         run: |
           poetry build
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
       - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
+        run: npm install -g azurite
+
+      - name: Launch Azurite
+        run: npx --yes azurite -L -l .\temp_azurite -d .\temp_azurite\debug.log
 
       - name: Unit Test
         run: |
