@@ -36,6 +36,8 @@ Some unit and smoke tests use Azurite to emulate Azure resources. This can be st
 ./scripts/start-azurite.sh
 ```
 
+or by simply running `azurite` in the terminal if already installed globally. See the [Azurite documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) for more information about how to install and use Azurite.
+
 # Lifecycle Scripts
 
 Our Python package utilizes Poetry to manage dependencies and [poethepoet](https://pypi.org/project/poethepoet/) to manage build scripts.
