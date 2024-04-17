@@ -12,6 +12,8 @@ from .types import OpenAIClientTypes
 
 log = logging.getLogger(__name__)
 
+API_BASE_REQUIRED_FOR_AZURE = "api_base is required for Azure OpenAI client"
+
 
 @cache
 def create_openai_client(
@@ -21,7 +23,7 @@ def create_openai_client(
     if azure:
         api_base = configuration.api_base
         if api_base is None:
-            raise ValueError
+            raise ValueError(API_BASE_REQUIRED_FOR_AZURE)
 
         log.info(
             "Creating Azure OpenAI client api_base=%s, deployment_name=%s",
