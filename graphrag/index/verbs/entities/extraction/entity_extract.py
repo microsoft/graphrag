@@ -2,7 +2,6 @@
 
 """A module containing entity_extract methods."""
 
-import logging
 from enum import Enum
 from typing import Any, cast
 
@@ -20,8 +19,6 @@ from graphrag.index.bootstrap import bootstrap
 from graphrag.index.cache import PipelineCache
 
 from .strategies.typing import Document, EntityExtractStrategy
-
-log = logging.getLogger(__name__)
 
 
 class ExtractEntityStrategyType(str, Enum):
@@ -127,7 +124,6 @@ async def entity_extract(
         type: nltk
     ```
     """
-    log.debug("entity_extract strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
     output = cast(pd.DataFrame, input.get_input())

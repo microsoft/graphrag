@@ -2,7 +2,6 @@
 
 """A module containing create_community_reports and load_strategy methods definition."""
 
-import logging
 from dataclasses import asdict
 from enum import Enum
 from typing import Any, cast
@@ -20,8 +19,6 @@ from datashaper import (
 from graphrag.index.cache import PipelineCache
 
 from .strategies.typing import CommunityReportsStrategy
-
-log = logging.getLogger(__name__)
 
 
 class CreateCommunityReportsStrategyType(str, Enum):
@@ -44,7 +41,6 @@ async def create_community_reports(
     **kwargs,
 ) -> TableContainer:
     """Generate entities for each row, and optionally a graph of those entities."""
-    log.debug("create_community_reports strategy=%s", strategy)
     strategy_type = strategy.get(
         "type", CreateCommunityReportsStrategyType.graph_intelligence
     )

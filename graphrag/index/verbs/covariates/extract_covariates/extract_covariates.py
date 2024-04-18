@@ -2,7 +2,6 @@
 
 """A module containing the extract_covariates verb definition."""
 
-import logging
 from dataclasses import asdict
 from enum import Enum
 from typing import Any, cast
@@ -19,8 +18,6 @@ from datashaper import (
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.verbs.covariates.typing import Covariate, CovariateExtractStrategy
-
-log = logging.getLogger(__name__)
 
 
 class ExtractClaimsStrategyType(str, Enum):
@@ -50,7 +47,6 @@ async def extract_covariates(
     ## Usage
     TODO
     """
-    log.debug("extract_covariates strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
     output = cast(pd.DataFrame, input.get_input())

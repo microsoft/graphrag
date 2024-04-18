@@ -3,7 +3,6 @@
 """A module containing the summarize_descriptions verb."""
 
 import asyncio
-import logging
 from enum import Enum
 from typing import Any, NamedTuple, cast
 
@@ -22,8 +21,6 @@ from graphrag.index.cache import PipelineCache
 from graphrag.index.utils import load_graph
 
 from .strategies.typing import SummarizationStrategy
-
-log = logging.getLogger(__name__)
 
 
 class DescriptionSummarizeRow(NamedTuple):
@@ -105,7 +102,6 @@ async def summarize_descriptions(
             proxy: !ENV ${GRAPHRAG_OPENAI_PROXY} # The proxy to use for azure
     ```
     """
-    log.debug("summarize_descriptions strategy=%s", strategy)
     output = cast(pd.DataFrame, input.get_input())
     strategy = strategy or {}
     strategy_exec = load_strategy(
