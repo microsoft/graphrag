@@ -230,31 +230,49 @@ def default_config_parameters(
 
     fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY", None))
     fallback_oai_org = env("OPENAI_ORG_ID", None)
-    fallback_oai_url = env("OPENAI_BASE_URL", None)
+    fallback_oai_base = env("OPENAI_BASE_URL", None)
     fallback_oai_version = env("OPENAI_API_VERSION", None)
 
     with reader.envvar_prefix(Section.graphrag), reader.use(values):
-        async_mode = reader.str("async_mode")
+        async_mode = reader.str(Fragment.async_mode)
         async_mode = AsyncType(async_mode) if async_mode else DEFAULT_ASYNC_MODE
+
+        fallback_oai_key = reader.str(Fragment.api_key) or fallback_oai_key
+        fallback_oai_org = reader.str(Fragment.api_organization) or fallback_oai_org
+        fallback_oai_base = reader.str(Fragment.api_base) or fallback_oai_base
+        fallback_oai_version = reader.str(Fragment.api_version) or fallback_oai_version
+        fallback_oai_proxy = reader.str(Fragment.api_proxy)
 
         with reader.envvar_prefix(Section.llm):
             with reader.use(values.get("llm")):
                 llm_type = reader.str(Fragment.type)
+                llm_type = LLMType(llm_type) if llm_type else DEFAULT_LLM_TYPE
+                api_key = reader.str(Fragment.api_key) or fallback_oai_key
+                api_organization = (
+                    reader.str(Fragment.api_organization) or fallback_oai_org
+                )
+                api_base = reader.str(Fragment.api_base) or fallback_oai_base
+                api_version = reader.str(Fragment.api_version) or fallback_oai_version
+                api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
+
+                if api_key is None:
+                    raise ValueError(LLM_KEY_REQUIRED)
+                if _is_azure(llm_type) and api_base is None:
+                    raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+
                 llm_model = LLMParametersModel(
-                    api_key=reader.str(Fragment.api_key) or fallback_oai_key,
-                    api_base=reader.str(Fragment.api_base) or fallback_oai_url,
-                    api_version=reader.str(Fragment.api_version)
-                    or fallback_oai_version,
-                    organization=reader.str(Fragment.api_organization)
-                    or fallback_oai_org,
-                    type=LLMType(llm_type) if llm_type else DEFAULT_LLM_TYPE,
+                    api_key=api_key,
+                    api_base=api_base,
+                    api_version=api_version,
+                    organization=api_organization,
+                    proxy=api_proxy,
+                    type=llm_type,
                     model=reader.str(Fragment.model) or DEFAULT_LLM_MODEL,
                     max_tokens=reader.int(Fragment.max_tokens)
                     or DEFAULT_LLM_MAX_TOKENS,
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or DEFAULT_LLM_REQUEST_TIMEOUT,
-                    proxy=reader.str(Fragment.api_proxy),
                     deployment_name=reader.str(Fragment.deployment_name),
                     tokens_per_minute=reader.int(Fragment.tpm)
                     or DEFAULT_LLM_TOKENS_PER_MINUTE,

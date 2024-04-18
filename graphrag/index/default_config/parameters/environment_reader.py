@@ -17,7 +17,7 @@ EnvKeySet = str | list[str]
 
 def read_key(value: KeyValue) -> str:
     """Read a key value."""
-    if isinstance(value, Enum):
+    if not isinstance(value, str):
         return value.value.lower()
     return value.lower()
 
@@ -53,7 +53,8 @@ class EnvironmentReader:
     def envvar_prefix(self, prefix: KeyValue):
         """Set the environment variable prefix."""
         prefix = read_key(prefix)
-        return self._env.prefixed(f"{prefix}_")
+        prefix = f"{prefix}_".upper()
+        return self._env.prefixed(prefix)
 
     def use(self, value: Any | None):
         """Create a context manager to push the value into the config_stack."""
