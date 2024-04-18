@@ -2,18 +2,10 @@
 
 """Parameterization settings for the default configuration."""
 
-from enum import Enum
-
 from pydantic import Field
 
 from .llm_config_model import LLMConfigModel
-
-
-class TextEmbeddingTarget(str, Enum):
-    """The target to use for text embeddings."""
-
-    all = "all"
-    required = "required"
+from .types import TextEmbeddingTarget
 
 
 class TextEmbeddingConfigModel(LLMConfigModel):
