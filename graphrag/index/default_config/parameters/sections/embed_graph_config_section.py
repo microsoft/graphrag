@@ -5,7 +5,7 @@
 from environs import Env
 
 from graphrag.index.default_config.parameters.defaults import (
-    DEFAULT_NODE2VEC_IS_ENABLED,
+    DEFAULT_NODE2VEC_ENABLED,
     DEFAULT_NODE2VEC_ITERATIONS,
     DEFAULT_NODE2VEC_NUM_WALKS,
     DEFAULT_NODE2VEC_RANDOM_SEED,
@@ -31,9 +31,9 @@ class EmbedGraphConfigSection(ConfigSection):
         self._values = values
 
     @property
-    def is_enabled(self) -> bool:
+    def enabled(self) -> bool:
         """A flag indicating whether to enable node2vec."""
-        return self.replace(self._values.is_enabled, DEFAULT_NODE2VEC_IS_ENABLED)
+        return self.replace(self._values.enabled, DEFAULT_NODE2VEC_ENABLED)
 
     @property
     def num_walks(self) -> int:
@@ -75,7 +75,7 @@ class EmbedGraphConfigSection(ConfigSection):
     def to_dict(self) -> dict:
         """Convert the configuration to a dictionary."""
         return {
-            "is_enabled": self.is_enabled,
+            "enabled": self.enabled,
             "num_walks": self.num_walks,
             "walk_length": self.walk_length,
             "window_size": self.window_size,

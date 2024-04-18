@@ -270,7 +270,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
         assert parameters.community_reports.prompt == "Hello, World! B"
-        assert parameters.embed_graph.is_enabled
+        assert parameters.embed_graph.enabled
         assert parameters.embed_graph.iterations == 878787
         assert parameters.embed_graph.num_walks == 5_000_000
         assert parameters.embed_graph.random_seed == 10101

@@ -257,7 +257,7 @@ def _graph_workflows(
             name=create_base_entity_graph,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
-                "embed_graph_enabled": settings.embed_graph.is_enabled,
+                "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {"strategy": settings.cluster_graph.strategy},
                 "embed_graph": {"strategy": settings.embed_graph.strategy},
             },
