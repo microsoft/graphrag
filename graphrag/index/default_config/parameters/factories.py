@@ -228,7 +228,7 @@ def default_config_parameters(
                 stagger=reader.float("thread_stagger") or base.stagger,
             )
 
-    fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY"), None)
+    fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY", None))
     fallback_oai_org = env("OPENAI_ORG_ID", None)
     fallback_oai_url = env("OPENAI_BASE_URL", None)
     fallback_oai_version = env("OPENAI_API_VERSION", None)
