@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 class EmbedGraphConfigModel(BaseModel):
     """The default configuration section for Node2Vec."""
 
-    is_enabled: bool | None = Field(
+    enabled: bool | None = Field(
         description="A flag indicating whether to enable node2vec.", default=None
     )
     num_walks: int | None = Field(

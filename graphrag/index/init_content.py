@@ -14,9 +14,6 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
     DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
     DEFAULT_EMBEDDING_BATCH_SIZE,
-    DEFAULT_EMBEDDING_CONCURRENT_REQUESTS,
-    DEFAULT_EMBEDDING_MAX_RETRIES,
-    DEFAULT_EMBEDDING_MAX_RETRY_WAIT,
     DEFAULT_EMBEDDING_MODEL,
     DEFAULT_EMBEDDING_TARGET,
     DEFAULT_EMBEDDING_TYPE,
@@ -86,10 +83,10 @@ embeddings:
     # deployment_name: <azure_model_deployment_name>
     # tokens_per_minute: 150_000 # set a leaky bucket throttle
     # requests_per_minute: 10_000 # set a leaky bucket throttle
-    # max_retries: {DEFAULT_EMBEDDING_MAX_RETRIES}
-    # max_retry_wait: {DEFAULT_EMBEDDING_MAX_RETRY_WAIT}
+    # max_retries: {DEFAULT_LLM_MAX_RETRIES}
+    # max_retry_wait: {DEFAULT_LLM_MAX_RETRY_WAIT}
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
-    # concurrent_requests: {DEFAULT_EMBEDDING_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
+    # concurrent_requests: {DEFAULT_LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
     # batch_size: {DEFAULT_EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
     # batch_max_tokens: {DEFAULT_EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
     # target: {DEFAULT_EMBEDDING_TARGET.value} # or optional
@@ -160,7 +157,7 @@ cluster_graph:
   max_cluster_size: {DEFAULT_MAX_CLUSTER_SIZE}
 
 embed_graph:
-  is_enabled: false # if true, will generate node2vec embeddings for nodes
+  enabled: false # if true, will generate node2vec embeddings for nodes
   # num_walks: {DEFAULT_NODE2VEC_NUM_WALKS}
   # walk_length: {DEFAULT_NODE2VEC_WALK_LENGTH}
   # window_size: {DEFAULT_NODE2VEC_WINDOW_SIZE}
@@ -168,7 +165,7 @@ embed_graph:
   # random_seed: {DEFAULT_NODE2VEC_RANDOM_SEED}
 
 umap:
-  is_enabled: false # if true, will generate UMAP embeddings for nodes
+  enabled: false # if true, will generate UMAP embeddings for nodes
 
 snapshots:
   graphml: false
