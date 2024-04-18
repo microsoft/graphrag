@@ -2,6 +2,8 @@
 
 """Parameterization settings for the default configuration."""
 
+from pathlib import Path
+
 from pydantic import Field
 
 from graphrag.index.default_config.parameters.defaults import (
@@ -31,13 +33,15 @@ class EntityExtractionConfigModel(LLMConfigModel):
         description="Override the default entity extraction strategy", default=None
     )
 
-    def resolved_strategy(self, encoding_model: str) -> dict:
+    def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
         """Get the resolved entity extraction strategy."""
         return self.strategy or {
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
-            "extraction_prompt": self.prompt,
+            "extraction_prompt": (Path(root_dir) / self.prompt).read_text()
+            if self.prompt
+            else None,
             "max_gleanings": self.max_gleanings,
             # It's prechunked in create_base_text_units
             "encoding_name": encoding_model,

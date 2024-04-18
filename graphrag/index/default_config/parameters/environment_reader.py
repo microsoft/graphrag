@@ -37,7 +37,7 @@ class EnvironmentReader:
         """Get the environment object."""
         return self._env
 
-    def _read(
+    def _read_env(
         self, env_key: str | list[str], default_value: T, read: Callable[[str, T], T]
     ) -> T | None:
         if isinstance(env_key, str):
@@ -84,7 +84,8 @@ class EnvironmentReader:
         key = read_key(key)
         if self.section and key in self.section:
             return self.section[key]
-        return self._read(
+
+        return self._read_env(
             env_key or key, default_value, (lambda k, dv: self._env(k, dv))
         )
 
@@ -98,7 +99,7 @@ class EnvironmentReader:
         key = read_key(key)
         if self.section and key in self.section:
             return int(self.section[key])
-        return self._read(
+        return self._read_env(
             env_key or key, default_value, lambda k, dv: self._env.int(k, dv)
         )
 
@@ -112,7 +113,8 @@ class EnvironmentReader:
         key = read_key(key)
         if self.section and key in self.section:
             return bool(self.section[key])
-        return self._read(
+
+        return self._read_env(
             env_key or key, default_value, lambda k, dv: self._env.bool(k, dv)
         )
 
@@ -126,7 +128,7 @@ class EnvironmentReader:
         key = read_key(key)
         if self.section and key in self.section:
             return float(self.section[key])
-        return self._read(
+        return self._read_env(
             env_key or key, default_value, lambda k, dv: self._env.float(k, dv)
         )
 

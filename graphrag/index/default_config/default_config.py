@@ -241,7 +241,7 @@ def _graph_workflows(
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
                     "strategy": settings.entity_extraction.resolved_strategy(
-                        settings.encoding_model
+                        settings.root_dir, settings.encoding_model
                     ),
                     "entity_types": settings.entity_extraction.entity_types,
                 },
@@ -254,7 +254,9 @@ def _graph_workflows(
                 "summarize_descriptions": {
                     **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
-                    "strategy": settings.summarize_descriptions.resolved_strategy(),
+                    "strategy": settings.summarize_descriptions.resolved_strategy(
+                        settings.root_dir,
+                    ),
                 },
             },
         ),
@@ -262,7 +264,7 @@ def _graph_workflows(
             name=create_base_entity_graph,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
-                "embed_graph_enabled": settings.embed_graph.is_enabled,
+                "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()
                 },
@@ -322,7 +324,9 @@ def _community_workflows(
                 "create_community_reports": {
                     **settings.community_reports.parallelization.model_dump(),
                     "async_mode": settings.community_reports.async_mode,
-                    "strategy": settings.community_reports.resolved_strategy(),
+                    "strategy": settings.community_reports.resolved_strategy(
+                        settings.root_dir
+                    ),
                 },
                 "community_report_full_content_embed": _get_embedding_settings(
                     settings.embeddings, "community_report_full_content"
@@ -347,7 +351,9 @@ def _covariate_workflows(
             config={
                 "claim_extract": {
                     **settings.claim_extraction.parallelization.model_dump(),
-                    "strategy": settings.claim_extraction.resolved_strategy(),
+                    "strategy": settings.claim_extraction.resolved_strategy(
+                        settings.root_dir
+                    ),
                 },
             },
         )

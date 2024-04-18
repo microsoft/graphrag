@@ -18,7 +18,7 @@ from graphrag.index.verbs.graph.embed import EmbedGraphStrategyType
 class EmbedGraphConfigModel(BaseModel):
     """The default configuration section for Node2Vec."""
 
-    is_enabled: bool = Field(
+    enabled: bool = Field(
         description="A flag indicating whether to enable node2vec.",
         default=DEFAULT_NODE2VEC_IS_ENABLED,
     )

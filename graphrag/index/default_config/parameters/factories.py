@@ -131,47 +131,51 @@ def default_config_parameters(
     reader = EnvironmentReader(env)
 
     def hydrate_async_type(input: LLMConfigInputModel, base: AsyncType) -> AsyncType:
-        value = input.get("async_mode")
+        value = input.get(Fragment.async_mode)
         return AsyncType(value) if value else base
 
     def hydrate_llm_params(
         config: LLMConfigInputModel, base: LLMParametersModel
     ) -> LLMParametersModel:
         with reader.use(config.get("llm")):
-            llm_type = reader.str("type")
+            llm_type = reader.str(Fragment.type)
             llm_type = LLMType(llm_type) if llm_type else base.type
-            api_key = reader.str("api_key") or base.api_key
-            api_base = reader.str("api_base") or base.api_base
+            api_key = reader.str(Fragment.api_key) or base.api_key
+            api_base = reader.str(Fragment.api_base) or base.api_base
 
             if api_key is None:
                 raise ValueError(LLM_KEY_REQUIRED)
             if _is_azure(llm_type) and api_base is None:
                 raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
 
+            sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
+            if sleep_on_rate_limit is None:
+                sleep_on_rate_limit = base.sleep_on_rate_limit_recommendation
+
             return LLMParametersModel(
                 api_key=api_key,
                 type=llm_type,
                 api_base=api_base,
-                api_version=reader.str("api_version") or base.api_version,
+                api_version=reader.str(Fragment.api_version) or base.api_version,
                 organization=reader.str("organization") or base.organization,
                 proxy=reader.str("proxy") or base.proxy,
                 model=reader.str("model") or base.model,
-                max_tokens=reader.int("max_tokens") or base.max_tokens,
-                model_supports_json=reader.bool("model_supports_json")
+                max_tokens=reader.int(Fragment.max_tokens) or base.max_tokens,
+                model_supports_json=reader.bool(Fragment.model_supports_json)
                 or base.model_supports_json,
-                request_timeout=reader.float("request_timeout") or base.request_timeout,
-                deployment_name=reader.str("deployment_name") or base.deployment_name,
-                tokens_per_minute=reader.int("tokens_per_minute")
+                request_timeout=reader.float(Fragment.request_timeout)
+                or base.request_timeout,
+                deployment_name=reader.str(Fragment.deployment_name)
+                or base.deployment_name,
+                tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or base.tokens_per_minute,
-                requests_per_minute=reader.int("requests_per_minute")
+                requests_per_minute=reader.int("requests_per_minute", Fragment.rpm)
                 or base.requests_per_minute,
-                max_retries=reader.int("max_retries") or base.max_retries,
-                max_retry_wait=reader.float("max_retry_wait") or base.max_retry_wait,
-                sleep_on_rate_limit_recommendation=reader.bool(
-                    "sleep_on_rate_limit_recommendation"
-                )
-                or base.sleep_on_rate_limit_recommendation,
-                concurrent_requests=reader.int("concurrent_requests")
+                max_retries=reader.int(Fragment.max_retries) or base.max_retries,
+                max_retry_wait=reader.float(Fragment.max_retry_wait)
+                or base.max_retry_wait,
+                sleep_on_rate_limit_recommendation=sleep_on_rate_limit,
+                concurrent_requests=reader.int(Fragment.concurrent_requests)
                 or base.concurrent_requests,
             )
 
@@ -179,19 +183,23 @@ def default_config_parameters(
         config: LLMConfigInputModel, base: LLMParametersModel
     ) -> LLMParametersModel:
         with reader.use(config.get("llm")):
-            api_key = reader.str("api_key") or base.api_key
-            api_base = reader.str("api_base") or base.api_base
-            api_version = reader.str("api_version") or base.api_version
+            api_key = reader.str(Fragment.api_key) or base.api_key
+            api_base = reader.str(Fragment.api_base) or base.api_base
+            api_version = reader.str(Fragment.api_version) or base.api_version
             api_organization = reader.str("organization") or base.organization
             api_proxy = reader.str("proxy") or base.proxy
 
-            api_type = reader.str("type") or DEFAULT_EMBEDDING_TYPE
+            api_type = reader.str(Fragment.type) or DEFAULT_EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else DEFAULT_LLM_TYPE
 
             if api_key is None:
                 raise ValueError(LLM_KEY_REQUIRED)
             if _is_azure(api_type) and api_base is None:
                 raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
+
+            sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
+            if sleep_on_rate_limit is None:
+                sleep_on_rate_limit = base.sleep_on_rate_limit_recommendation
 
             return LLMParametersModel(
                 api_key=api_key,
@@ -200,22 +208,19 @@ def default_config_parameters(
                 api_version=api_version,
                 organization=api_organization,
                 proxy=api_proxy,
-                model=reader.str("model") or DEFAULT_EMBEDDING_MODEL,
-                request_timeout=reader.float("request_timeout")
+                model=reader.str(Fragment.model) or DEFAULT_EMBEDDING_MODEL,
+                request_timeout=reader.float(Fragment.request_timeout)
                 or DEFAULT_LLM_REQUEST_TIMEOUT,
-                deployment_name=reader.str("deployment_name"),
-                tokens_per_minute=reader.int("tokens_per_minute")
+                deployment_name=reader.str(Fragment.deployment_name),
+                tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or DEFAULT_LLM_TOKENS_PER_MINUTE,
-                requests_per_minute=reader.int("requests_per_minute")
+                requests_per_minute=reader.int("requests_per_minute", Fragment.rpm)
                 or DEFAULT_LLM_REQUESTS_PER_MINUTE,
-                max_retries=reader.int("max_retries") or DEFAULT_LLM_MAX_RETRIES,
-                max_retry_wait=reader.float("max_retry_wait")
+                max_retries=reader.int(Fragment.max_retries) or DEFAULT_LLM_MAX_RETRIES,
+                max_retry_wait=reader.float(Fragment.max_retry_wait)
                 or DEFAULT_LLM_MAX_RETRY_WAIT,
-                sleep_on_rate_limit_recommendation=reader.bool(
-                    "sleep_on_rate_limit_recommendation"
-                )
-                or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
-                concurrent_requests=reader.int("concurrent_requests")
+                sleep_on_rate_limit_recommendation=sleep_on_rate_limit,
+                concurrent_requests=reader.int(Fragment.concurrent_requests)
                 or DEFAULT_LLM_CONCURRENT_REQUESTS,
             )
 
@@ -262,6 +267,10 @@ def default_config_parameters(
                 if _is_azure(llm_type) and api_base is None:
                     raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
 
+                sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
+                if sleep_on_rate_limit is None:
+                    sleep_on_rate_limit = DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
+
                 llm_model = LLMParametersModel(
                     api_key=api_key,
                     api_base=api_base,
@@ -284,10 +293,7 @@ def default_config_parameters(
                     or DEFAULT_LLM_MAX_RETRIES,
                     max_retry_wait=reader.float(Fragment.max_retry_wait)
                     or DEFAULT_LLM_MAX_RETRY_WAIT,
-                    sleep_on_rate_limit_recommendation=reader.bool(
-                        Fragment.sleep_recommendation
-                    )
-                    or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+                    sleep_on_rate_limit_recommendation=sleep_on_rate_limit,
                     concurrent_requests=reader.int(Fragment.concurrent_requests)
                     or DEFAULT_LLM_CONCURRENT_REQUESTS,
                 )
@@ -320,7 +326,7 @@ def default_config_parameters(
             reader.use(values.get("embed_graph")),
         ):
             embed_graph_model = EmbedGraphConfigModel(
-                is_enabled=reader.bool(Fragment.enabled) or DEFAULT_NODE2VEC_IS_ENABLED,
+                enabled=reader.bool(Fragment.enabled) or DEFAULT_NODE2VEC_IS_ENABLED,
                 num_walks=reader.int("num_walks") or DEFAULT_NODE2VEC_NUM_WALKS,
                 walk_length=reader.int("walk_length") or DEFAULT_NODE2VEC_WALK_LENGTH,
                 window_size=reader.int("window_size") or DEFAULT_NODE2VEC_WINDOW_SIZE,
@@ -421,9 +427,9 @@ def default_config_parameters(
                 async_mode=hydrate_async_type(entity_extraction_config, async_mode),
                 entity_types=reader.list("entity_types")
                 or DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
-                max_gleanings=reader.int("max_gleanings")
+                max_gleanings=reader.int(Fragment.max_gleanings)
                 or DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
-                prompt=reader.str("prompt_file"),
+                prompt=reader.str("prompt", Fragment.prompt_file),
             )
 
         claim_extraction_config = values.get("claim_extraction") or {}
@@ -438,8 +444,8 @@ def default_config_parameters(
                 ),
                 async_mode=hydrate_async_type(claim_extraction_config, async_mode),
                 description=reader.str("description") or DEFAULT_CLAIM_DESCRIPTION,
-                prompt=reader.str("prompt_file"),
-                max_gleanings=reader.int("max_gleanings")
+                prompt=reader.str("prompt", Fragment.prompt_file),
+                max_gleanings=reader.int(Fragment.max_gleanings)
                 or DEFAULT_CLAIM_MAX_GLEANINGS,
             )
 
@@ -454,8 +460,8 @@ def default_config_parameters(
                     community_report_config, llm_parallelization_model
                 ),
                 async_mode=hydrate_async_type(community_report_config, async_mode),
-                prompt=reader.str("prompt_file"),
-                max_length=reader.int("max_length")
+                prompt=reader.str("prompt", Fragment.prompt_file),
+                max_length=reader.int(Fragment.max_length)
                 or DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
                 max_input_length=reader.int("max_input_length")
                 or DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
@@ -472,8 +478,8 @@ def default_config_parameters(
                     summarize_description_config, llm_parallelization_model
                 ),
                 async_mode=hydrate_async_type(summarize_description_config, async_mode),
-                prompt=reader.str("prompt_file"),
-                max_length=reader.int("max_length")
+                prompt=reader.str("prompt", Fragment.prompt_file),
+                max_length=reader.int(Fragment.max_length)
                 or DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
             )
 

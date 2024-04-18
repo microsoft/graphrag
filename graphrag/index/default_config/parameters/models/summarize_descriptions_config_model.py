@@ -2,6 +2,8 @@
 
 """Parameterization settings for the default configuration."""
 
+from pathlib import Path
+
 from pydantic import Field
 
 from graphrag.index.default_config.parameters.defaults import (
@@ -26,12 +28,14 @@ class SummarizeDescriptionsConfigModel(LLMConfigModel):
         description="The override strategy to use.", default=None
     )
 
-    def resolved_strategy(self) -> dict:
+    def resolved_strategy(self, root_dir: str) -> dict:
         """Get the resolved description summarization strategy."""
         return self.strategy or {
             "type": SummarizeStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
-            "summarize_prompt": self.prompt,
+            "summarize_prompt": (Path(root_dir) / self.prompt).read_text()
+            if self.prompt
+            else None,
             "max_summary_length": self.max_length,
         }
