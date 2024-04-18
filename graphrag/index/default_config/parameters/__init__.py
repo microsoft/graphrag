@@ -2,7 +2,6 @@
 
 """Configuration parameterization settings for the indexing pipeline."""
 
-from .default_config_parameters_model import DefaultConfigParametersModel
 from .errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -18,6 +17,7 @@ from .models import (
     ClaimExtractionConfigModel,
     ClusterGraphConfigModel,
     CommunityReportsConfigModel,
+    DefaultConfigParametersModel,
     EmbedGraphConfigModel,
     EntityExtractionConfigModel,
     InputConfigModel,

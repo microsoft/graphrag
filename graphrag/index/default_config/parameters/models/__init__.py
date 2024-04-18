@@ -7,6 +7,7 @@ from .chunking_config_model import ChunkingConfigModel
 from .claim_extraction_config_model import ClaimExtractionConfigModel
 from .cluster_graph_config_model import ClusterGraphConfigModel
 from .community_reports_config_model import CommunityReportsConfigModel
+from .default_config_parameters_model import DefaultConfigParametersModel
 from .embed_graph_config_model import EmbedGraphConfigModel
 from .entity_extraction_config_model import EntityExtractionConfigModel
 from .input_config_model import InputConfigModel
@@ -26,6 +27,7 @@ __all__ = [
     "ClaimExtractionConfigModel",
     "ClusterGraphConfigModel",
     "CommunityReportsConfigModel",
+    "DefaultConfigParametersModel",
     "EmbedGraphConfigModel",
     "EntityExtractionConfigModel",
     "InputConfigModel",
