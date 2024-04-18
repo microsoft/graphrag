@@ -190,12 +190,12 @@ def default_config_parameters(
             deployment_name = reader.str(Fragment.deployment_name)
 
             if api_key is None:
-                raise ApiKeyMissingError
+                raise ApiKeyMissingError(embedding=True)
             if _is_azure(api_type):
                 if api_base is None:
-                    raise AzureApiBaseMissingError
+                    raise AzureApiBaseMissingError(embedding=True)
                 if deployment_name is None:
-                    raise AzureDeploymentNameMissingError
+                    raise AzureDeploymentNameMissingError(embedding=True)
 
             sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
             if sleep_on_rate_limit is None:
@@ -264,12 +264,12 @@ def default_config_parameters(
                 deployment_name = reader.str(Fragment.deployment_name)
 
                 if api_key is None:
-                    raise ApiKeyMissingError(embedding=True)
+                    raise ApiKeyMissingError
                 if _is_azure(llm_type):
                     if api_base is None:
-                        raise AzureApiBaseMissingError(embedding=True)
+                        raise AzureApiBaseMissingError
                     if deployment_name is None:
-                        raise AzureDeploymentNameMissingError(embedding=True)
+                        raise AzureDeploymentNameMissingError
 
                 sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
                 if sleep_on_rate_limit is None:

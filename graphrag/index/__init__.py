@@ -58,6 +58,11 @@ from .default_config import (
     default_config,
     default_config_parameters,
 )
+from .errors import (
+    NoWorkflowsDefinedError,
+    UndefinedWorkflowError,
+    UnknownWorkflowError,
+)
 from .run import run_pipeline, run_pipeline_with_config
 from .storage import PipelineStorage
 
@@ -76,6 +81,7 @@ __all__ = [
     "InputConfigModel",
     "LLMConfigModel",
     "LLMParametersModel",
+    "NoWorkflowsDefinedError",
     "ParallelizationParametersModel",
     "PipelineBlobCacheConfig",
     "PipelineBlobCacheConfig",
@@ -114,6 +120,8 @@ __all__ = [
     "SummarizeDescriptionsConfigModel",
     "TextEmbeddingConfigModel",
     "UmapConfigModel",
+    "UndefinedWorkflowError",
+    "UnknownWorkflowError",
     "default_config",
     "default_config_parameters",
     "run_pipeline",

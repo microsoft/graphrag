@@ -113,9 +113,9 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CHUNK_SIZE": "500",
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
-    "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "claim_extraction_prompt_file.txt",
+    "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-a.txt",
     "GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH": "23456",
-    "GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE": "community_report_prompt_file.txt",
+    "GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-b.txt",
     "GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS": "17",
     "GRAPHRAG_EMBEDDING_BATCH_SIZE": "1000000",
     "GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS": "12",
@@ -134,7 +134,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_ENCODING_MODEL": "test123",
     "GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES": "cat,dog,elephant",
     "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
-    "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "entity_extraction_prompt_file.txt",
+    "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-c.txt",
     "GRAPHRAG_INPUT_BASE_DIR": "/some/input/dir",
     "GRAPHRAG_INPUT_CONNECTION_STRING": "input_cs",
     "GRAPHRAG_INPUT_CONTAINER_NAME": "input_cn",
@@ -182,7 +182,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_STORAGE_CONTAINER_NAME": "test_cn",
     "GRAPHRAG_STORAGE_TYPE": "blob",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
-    "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "summarize_prompt_file.txt",
+    "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-d.txt",
     "GRAPHRAG_UMAP_ENABLED": "true",
 }
 
@@ -201,13 +201,27 @@ class TestDefaultConfig(unittest.TestCase):
         assert config is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
-    def test_default_config_with_oai_key_passes(self):
+    def test_default_config_with_oai_key_passes_envvar(self):
         # doesn't throw
         config = default_config(default_config_parameters())
         assert config is not None
 
+    def test_default_config_with_oai_key_passes_obj(self):
+        # doesn't throw
+        config = default_config(default_config_parameters({"llm": {"api_key": "test"}}))
+        assert config is not None
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_LLM_TYPE": "azure_openai_chat"},
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_api_base_envvar(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters()
+
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
-    def test_throws_if_azure_is_used_without_api_base(self):
+    def test_throws_if_azure_is_used_without_api_base_obj(self):
         with pytest.raises(AzureApiBaseMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
@@ -215,8 +229,21 @@ class TestDefaultConfig(unittest.TestCase):
                 )
             )
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_API_BASE": "http://some/base",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_llm_deployment_name_envvar(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
+
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
-    def test_throws_if_azure_is_used_without_llm_deployment_name(self):
+    def test_throws_if_azure_is_used_without_llm_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
@@ -226,8 +253,50 @@ class TestDefaultConfig(unittest.TestCase):
                 )
             )
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
+            "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME": "x",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_embedding_api_base_envvar(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters()
+
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
-    def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
+    def test_throws_if_azure_is_used_without_embedding_api_base_obj(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    embeddings=TextEmbeddingConfigInputModel(
+                        llm=LLMParametersInputModel(
+                            type="azure_openai_embedding",
+                            deployment_name="x",
+                        )
+                    ),
+                )
+            )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_API_BASE": "http://some/base",
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "x",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_embedding_deployment_name_envvar(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_embedding_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
@@ -246,7 +315,7 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_minimim_azure_config_object(self):
-        default_config_parameters(
+        config = default_config_parameters(
             DefaultConfigParametersInputModel(
                 llm=LLMParametersInputModel(
                     type="azure_openai_chat",
@@ -261,33 +330,48 @@ class TestDefaultConfig(unittest.TestCase):
                 ),
             )
         )
+        assert config is not None
 
     @mock.patch.dict(
         os.environ,
         {
             "GRAPHRAG_API_KEY": "test",
-            "GRAPHRAG_API_BASE": "http://some/base",
-            "GRAPHRAG_LLM_API_TYPE": "azure_openai_chat",
-            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",
-            "GRAPHRAG_EMBEDDING_API_TYPE": "azure_openai_embedding",
-            "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME": "model-deployment-name",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "x",
         },
         clear=True,
     )
-    def test_minimim_azure_env_var(self):
-        # doesn't throw
-        config = default_config_parameters()
-        assert config is not None
+    def test_throws_if_azure_is_used_without_api_base(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters()
 
     @mock.patch.dict(
         os.environ,
-        {"GRAPHRAG_LLM_API_KEY": "test", "GRAPHRAG_EMBEDDING_API_KEY": "test"},
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_LLM_API_BASE": "http://some/base",
+        },
         clear=True,
     )
-    def test_default_config_with_llm_and_embedding_keys_passes(self):
-        # doesn't throw
-        config = default_config(default_config_parameters())
-        assert config is not None
+    def test_throws_if_azure_is_used_without_llm_deployment_name(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_API_BASE": "http://some/base",
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",
+            "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
@@ -307,15 +391,6 @@ class TestDefaultConfig(unittest.TestCase):
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
-
-    @mock.patch.dict(
-        os.environ,
-        {"GRAPHRAG_API_KEY": "test"},
-        clear=True,
-    )
-    def test_malformed_input_dict_throws(self):
-        with pytest.raises(ValidationError):
-            default_config_parameters(cast(Any, {"llm": 12}))
 
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
@@ -352,6 +427,15 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(
         os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_malformed_input_dict_throws(self):
+        with pytest.raises(ValidationError):
+            default_config_parameters(cast(Any, {"llm": 12}))
+
+    @mock.patch.dict(
+        os.environ,
         ALL_ENV_VARS,
         clear=True,
     )
@@ -367,10 +451,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.size == 500
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
-        assert parameters.claim_extraction.prompt == "claim_extraction_prompt_file.txt"
+        assert parameters.claim_extraction.prompt == "tests/unit/indexing/default_config/prompt-a.txt"
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
-        assert parameters.community_reports.prompt == "community_report_prompt_file.txt"
+        assert parameters.community_reports.prompt == "tests/unit/indexing/default_config/prompt-b.txt"
         assert parameters.embed_graph.enabled
         assert parameters.embed_graph.iterations == 878787
         assert parameters.embed_graph.num_walks == 5_000_000
@@ -397,7 +481,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
         assert (
-            parameters.entity_extraction.prompt == "entity_extraction_prompt_file.txt"
+            parameters.entity_extraction.prompt == "tests/unit/indexing/default_config/prompt-c.txt"
         )
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
@@ -444,7 +528,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.container_name == "test_cn"
         assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
-        assert parameters.summarize_descriptions.prompt == "summarize_prompt_file.txt"
+        assert parameters.summarize_descriptions.prompt == "tests/unit/indexing/default_config/prompt-d.txt"
         assert parameters.umap.enabled
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
