@@ -3,9 +3,9 @@
 """LLM Types."""
 
 from dataclasses import dataclass, field
-from typing import Generic, TypeVar
+from typing import Generic, TypedDict, TypeVar
 
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import NotRequired
 
 from .llm_callbacks import IsResponseValidFn
 
