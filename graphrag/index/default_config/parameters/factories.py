@@ -21,6 +21,11 @@ from graphrag.index.llm.types import LLMType
 
 from .default_config_parameters import DefaultConfigParametersDict
 from .default_config_parameters_model import DefaultConfigParametersModel
+from .errors import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
+)
 from .models import (
     CacheConfigModel,
     ChunkingConfigModel,
@@ -38,19 +43,6 @@ from .models import (
     SummarizeDescriptionsConfigModel,
     TextEmbeddingConfigModel,
     UmapConfigModel,
-)
-
-LLM_KEY_REQUIRED = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
-EMBEDDING_KEY_REQUIRED = "API Key is required for Embedding API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_EMBEDDING_API_KEY environment variable."
-AZURE_LLM_DEPLOYMENT_NAME_REQUIRED = (
-    "GRAPHRAG_LLM_MODEL or GRAPHRAG_LLM_DEPLOYMENT_NAME is required for Azure OpenAI."
-)
-AZURE_LLM_API_BASE_REQUIRED = (
-    "GRAPHRAG_API_BASE or GRAPHRAG_LLM_API_BASE is required for Azure OpenAI."
-)
-AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED = "GRAPHRAG_EMBEDDING_MODEL or GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME is required for Azure OpenAI."
-AZURE_EMBEDDING_API_BASE_REQUIRED = (
-    "GRAPHRAG_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
 )
 
 
@@ -103,7 +95,7 @@ def default_config_parameters_from_env_vars(
         with section(Section.llm):
             api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
             if api_key is None:
-                raise ValueError(LLM_KEY_REQUIRED)
+                raise ApiKeyMissingError
             llm_type = _str(Fragment.type)
             llm_type = LLMType(llm_type) if llm_type else None
             deployment_name = _str(Fragment.deployment_name)
@@ -112,9 +104,9 @@ def default_config_parameters_from_env_vars(
             is_azure = _is_azure(llm_type)
             api_base = _str(Fragment.api_base, _api_base)
             if is_azure and deployment_name is None and model is None:
-                raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
+                raise AzureDeploymentNameMissingError
             if is_azure and api_base is None:
-                raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+                raise AzureApiBaseMissingError
 
             llm_parameters = LLMParametersModel(
                 api_key=api_key,
@@ -143,7 +135,7 @@ def default_config_parameters_from_env_vars(
         with section(Section.embedding):
             api_key = _str(Fragment.api_key, _api_key)
             if api_key is None:
-                raise ValueError(EMBEDDING_KEY_REQUIRED)
+                raise ApiKeyMissingError(embedding=True)
 
             embedding_target = _str("TARGET")
             embedding_target = (
@@ -159,9 +151,9 @@ def default_config_parameters_from_env_vars(
             api_base = _str(Fragment.api_base, _api_base)
 
             if is_azure and deployment_name is None and model is None:
-                raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
+                raise AzureDeploymentNameMissingError(embedding=True)
             if is_azure and api_base is None:
-                raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
+                raise AzureApiBaseMissingError(embedding=True)
 
             text_embeddings = TextEmbeddingConfigModel(
                 parallelization=ParallelizationParametersModel(
@@ -172,7 +164,7 @@ def default_config_parameters_from_env_vars(
                 target=embedding_target,
                 batch_size=_int("BATCH_SIZE"),
                 batch_max_tokens=_int("BATCH_MAX_TOKENS"),
-                skip=_array_string("SKIP"),
+                skip=_array_string(_str("SKIP")),
                 llm=LLMParametersModel(
                     api_key=_str(Fragment.api_key, _api_key),
                     type=llm_type,
@@ -244,6 +236,8 @@ def default_config_parameters_from_env_vars(
                 storage_type=storage_type,
                 file_encoding=_str(Fragment.encoding),
                 base_dir=_str(Fragment.base_dir),
+                connection_string=_str(Fragment.conn_string),
+                container_name=_str(Fragment.container_name),
                 file_pattern=_str("FILE_PATTERN"),
                 source_column=_str("SOURCE_COLUMN"),
                 timestamp_column=_str("TIMESTAMP_COLUMN"),
@@ -294,6 +288,7 @@ def default_config_parameters_from_env_vars(
                 enabled=_bool(Fragment.enabled),
             )
 
+        async_mode = _str(Fragment.async_mode)
         async_mode_enum = AsyncType(async_mode) if async_mode else None
         return DefaultConfigParametersDict(
             DefaultConfigParametersModel(
