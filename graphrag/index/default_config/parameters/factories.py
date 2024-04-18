@@ -93,6 +93,7 @@ from .models import (
     ClaimExtractionConfigModel,
     ClusterGraphConfigModel,
     CommunityReportsConfigModel,
+    DefaultConfigParametersModel,
     EmbedGraphConfigModel,
     EntityExtractionConfigModel,
     InputConfigModel,
@@ -105,7 +106,6 @@ from .models import (
     TextEmbeddingConfigModel,
     UmapConfigModel,
 )
-from .models.default_config_parameters_model import DefaultConfigParametersModel
 
 InputModelValidator = TypeAdapter(DefaultConfigParametersInputModel)
 
