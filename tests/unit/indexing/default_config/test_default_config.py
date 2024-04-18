@@ -74,7 +74,7 @@ class TestDefaultConfig(unittest.TestCase):
         os.environ["GRAPHRAG_INPUT_TYPE"] = "text"
 
         with pytest.raises(ValidationError):
-            default_config_parameters(cast(Any, {"herp": True, "airplane": 123}))
+            default_config_parameters(cast(Any, {"llm": 12}))
 
     @mock.patch.dict(
         os.environ,

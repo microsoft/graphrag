@@ -126,7 +126,7 @@ def default_config_parameters(
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
     _token_replace(cast(dict, values))
-    InputModelValidator.validate_python(values)
+    InputModelValidator.validate_python(values, strict=True)
 
     reader = EnvironmentReader(env)
 
@@ -224,8 +224,10 @@ def default_config_parameters(
     ) -> ParallelizationParametersModel:
         with reader.use(config.get("parallelization")):
             return ParallelizationParametersModel(
-                num_threads=reader.int("num_threads", Fragment.thread_count) or base.num_threads,
-                stagger=reader.float("stagger", Fragment.thread_stagger) or base.stagger,
+                num_threads=reader.int("num_threads", Fragment.thread_count)
+                or base.num_threads,
+                stagger=reader.float("stagger", Fragment.thread_stagger)
+                or base.stagger,
             )
 
     fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY", None))
