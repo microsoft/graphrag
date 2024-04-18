@@ -451,10 +451,16 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.size == 500
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
-        assert parameters.claim_extraction.prompt == "tests/unit/indexing/default_config/prompt-a.txt"
+        assert (
+            parameters.claim_extraction.prompt
+            == "tests/unit/indexing/default_config/prompt-a.txt"
+        )
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
-        assert parameters.community_reports.prompt == "tests/unit/indexing/default_config/prompt-b.txt"
+        assert (
+            parameters.community_reports.prompt
+            == "tests/unit/indexing/default_config/prompt-b.txt"
+        )
         assert parameters.embed_graph.enabled
         assert parameters.embed_graph.iterations == 878787
         assert parameters.embed_graph.num_walks == 5_000_000
@@ -481,7 +487,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
         assert (
-            parameters.entity_extraction.prompt == "tests/unit/indexing/default_config/prompt-c.txt"
+            parameters.entity_extraction.prompt
+            == "tests/unit/indexing/default_config/prompt-c.txt"
         )
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
@@ -528,7 +535,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.container_name == "test_cn"
         assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
-        assert parameters.summarize_descriptions.prompt == "tests/unit/indexing/default_config/prompt-d.txt"
+        assert (
+            parameters.summarize_descriptions.prompt
+            == "tests/unit/indexing/default_config/prompt-d.txt"
+        )
         assert parameters.umap.enabled
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
