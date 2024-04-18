@@ -11,7 +11,7 @@ from pyaml_env import parse_config as parse_config_with_env
 from graphrag.index.config import PipelineConfig
 
 from .default_config import default_config
-from .parameters import default_config_parameters_from_env_vars, read_dotenv
+from .parameters import default_config_parameters, read_dotenv
 
 
 def load_pipeline_config(config_or_path: str | PipelineConfig) -> PipelineConfig:
@@ -19,7 +19,7 @@ def load_pipeline_config(config_or_path: str | PipelineConfig) -> PipelineConfig
     if isinstance(config_or_path, PipelineConfig):
         config = config_or_path
     elif config_or_path == "default":
-        config = default_config(default_config_parameters_from_env_vars("."))
+        config = default_config(default_config_parameters(root_dir="."))
     else:
         # Is there a .env file in the same directory as the config?
         read_dotenv(str(Path(config_or_path).parent))

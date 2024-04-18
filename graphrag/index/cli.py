@@ -16,7 +16,6 @@ from graphrag.index.config import PipelineConfig
 from graphrag.index.default_config import (
     default_config,
     default_config_parameters,
-    default_config_parameters_from_env_vars,
 )
 from graphrag.index.progress import (
     NullProgressReporter,
@@ -260,7 +259,7 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             return default_config_parameters(data, root)
 
     reporter.success("Reading settings from environment variables")
-    return default_config_parameters_from_env_vars(root)
+    return default_config_parameters(root_dir=root)
 
 
 def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:

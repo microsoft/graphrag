@@ -15,7 +15,6 @@ from graphrag.index import (
     PipelineStorageType,
     default_config,
     default_config_parameters,
-    default_config_parameters_from_env_vars,
 )
 from graphrag.index.config import (
     PipelineCSVInputConfig,
@@ -46,7 +45,7 @@ current_dir = os.path.dirname(__file__)
 class TestDefaultConfig(unittest.TestCase):
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
-        config = default_config(default_config_parameters_from_env_vars("/some/root"))
+        config = default_config(default_config_parameters(root_dir="/some/root"))
         assert config.root_dir == "/some/root"
 
         # Make sure the input is a CSV input
@@ -61,7 +60,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_text_input_returns_correct_config(self):
         os.environ["GRAPHRAG_INPUT_TYPE"] = "text"
 
-        config = default_config(default_config_parameters_from_env_vars("."))
+        config = default_config(default_config_parameters(root_dir="."))
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
@@ -115,7 +114,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_create_parameters_from_env_vars(self) -> None:
-        parameters = default_config_parameters_from_env_vars(".")
+        parameters = default_config_parameters()
         assert parameters.llm.api_key == "test"
         assert parameters.llm.model == "test-llm"
         assert parameters.parallelization.num_threads == 987

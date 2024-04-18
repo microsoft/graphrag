@@ -4,7 +4,6 @@
 
 from .factories import (
     default_config_parameters,
-    default_config_parameters_from_env_vars,
 )
 from .input_models import (
     CacheConfigInputModel,
@@ -86,6 +85,5 @@ __all__ = [
     "UmapConfigInputModel",
     "UmapConfigModel",
     "default_config_parameters",
-    "default_config_parameters_from_env_vars",
     "read_dotenv",
 ]

@@ -77,25 +77,10 @@ from .defaults import (
     DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
     DEFAULT_UMAP_ENABLED,
 )
+from .environment_reader import EnvironmentReader
 from .input_models import (
-    CacheConfigInputModel,
-    ChunkingConfigInputModel,
-    ClaimExtractionConfigInputModel,
-    ClusterGraphConfigInputModel,
-    CommunityReportsConfigInputModel,
     DefaultConfigParametersInputModel,
-    EmbedGraphConfigInputModel,
-    EntityExtractionConfigInputModel,
-    InputConfigInputModel,
     LLMConfigInputModel,
-    LLMParametersInputModel,
-    ParallelizationParametersInputModel,
-    ReportingConfigInputModel,
-    SnapshotsConfigInputModel,
-    StorageConfigInputModel,
-    SummarizeDescriptionsConfigInputModel,
-    TextEmbeddingConfigInputModel,
-    UmapConfigInputModel,
 )
 from .models import (
     CacheConfigModel,
@@ -134,598 +119,375 @@ InputModelValidator = TypeAdapter(DefaultConfigParametersInputModel)
 
 
 def default_config_parameters(
-    values: DefaultConfigParametersInputModel, root_dir: str | None = None
+    values: DefaultConfigParametersInputModel | None = None, root_dir: str | None = None
 ) -> DefaultConfigParametersModel:
     """Load Configuration Parameters from a dictionary."""
+    values = values or {}
     root_dir = root_dir or str(Path.cwd())
-    _make_env(root_dir)
+    env = _make_env(root_dir)
     _token_replace(cast(dict, values))
     InputModelValidator.validate_python(values)
 
-    def _async_type(input: LLMConfigInputModel) -> AsyncType:
+    reader = EnvironmentReader(env)
+
+    def hydrate_async_type(input: LLMConfigInputModel, base: AsyncType) -> AsyncType:
         value = input.get("async_mode")
-        return AsyncType(value) if value else DEFAULT_ASYNC_MODE
+        return AsyncType(value) if value else base
 
-    def hydrate_llm_params(config: LLMConfigInputModel) -> LLMParametersModel:
-        llm_settings = config.get("llm") or {}
-        root_settings = values.get("llm") or {}
+    def hydrate_llm_params(
+        config: LLMConfigInputModel, base: LLMParametersModel
+    ) -> LLMParametersModel:
+        with reader.use(config.get("llm")):
+            llm_type = reader.str("type")
+            llm_type = LLMType(llm_type) if llm_type else base.type
+            api_key = reader.str("api_key") or base.api_key
+            api_base = reader.str("api_base") or base.api_base
 
-        def _lookup(k: str):
-            return llm_settings.get(k) or root_settings.get(k)
+            if api_key is None:
+                raise ValueError(LLM_KEY_REQUIRED)
+            if _is_azure(llm_type) and api_base is None:
+                raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
 
-        llm_type = _lookup("type")
-        api_key = _lookup("api_key")
-        if api_key is None:
-            raise ValueError(LLM_KEY_REQUIRED)
-
-        return LLMParametersModel(
-            api_key=api_key,
-            type=LLMType(llm_type) if llm_type else DEFAULT_LLM_TYPE,
-            api_base=_lookup("api_base"),
-            api_version=_lookup("api_version"),
-            organization=_lookup("organization"),
-            proxy=_lookup("proxy"),
-            model=_lookup("model") or DEFAULT_LLM_MODEL,
-            max_tokens=_int(_lookup("max_tokens")) or DEFAULT_LLM_MAX_TOKENS,
-            model_supports_json=_bool(_lookup("model_supports_json")),
-            request_timeout=_float(_lookup("request_timeout"))
-            or DEFAULT_LLM_REQUEST_TIMEOUT,
-            deployment_name=_lookup("deployment_name"),
-            tokens_per_minute=_int(_lookup("tokens_per_minute"))
-            or DEFAULT_LLM_TOKENS_PER_MINUTE,
-            requests_per_minute=_int(_lookup("requests_per_minute"))
-            or DEFAULT_LLM_REQUESTS_PER_MINUTE,
-            max_retries=_int(_lookup("max_retries")) or DEFAULT_LLM_MAX_RETRIES,
-            max_retry_wait=_float(_lookup("max_retry_wait"))
-            or DEFAULT_LLM_MAX_RETRY_WAIT,
-            sleep_on_rate_limit_recommendation=_bool(
-                _lookup("sleep_on_rate_limit_recommendation"),
+            return LLMParametersModel(
+                api_key=api_key,
+                type=llm_type,
+                api_base=api_base,
+                api_version=reader.str("api_version") or base.api_version,
+                organization=reader.str("organization") or base.organization,
+                proxy=reader.str("proxy") or base.proxy,
+                model=reader.str("model") or base.model,
+                max_tokens=reader.int("max_tokens") or base.max_tokens,
+                model_supports_json=reader.bool("model_supports_json")
+                or base.model_supports_json,
+                request_timeout=reader.float("request_timeout") or base.request_timeout,
+                deployment_name=reader.str("deployment_name") or base.deployment_name,
+                tokens_per_minute=reader.int("tokens_per_minute")
+                or base.tokens_per_minute,
+                requests_per_minute=reader.int("requests_per_minute")
+                or base.requests_per_minute,
+                max_retries=reader.int("max_retries") or base.max_retries,
+                max_retry_wait=reader.float("max_retry_wait") or base.max_retry_wait,
+                sleep_on_rate_limit_recommendation=reader.bool(
+                    "sleep_on_rate_limit_recommendation"
+                )
+                or base.sleep_on_rate_limit_recommendation,
+                concurrent_requests=reader.int("concurrent_requests")
+                or base.concurrent_requests,
             )
-            or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
-            concurrent_requests=_int(_lookup("concurrent_requests"))
-            or DEFAULT_LLM_CONCURRENT_REQUESTS,
-        )
 
-    def hydrate_embeddings_params(config: LLMConfigInputModel) -> LLMParametersModel:
-        llm_settings = config.get("llm") or {}
-        root_settings = values.get("llm") or {}
+    def hydrate_embeddings_params(
+        config: LLMConfigInputModel, base: LLMParametersModel
+    ) -> LLMParametersModel:
+        with reader.use(config.get("llm")):
+            api_key = reader.str("api_key") or base.api_key
+            api_base = reader.str("api_base") or base.api_base
+            api_version = reader.str("api_version") or base.api_version
+            api_organization = reader.str("organization") or base.organization
+            api_proxy = reader.str("proxy") or base.proxy
 
-        def _lookup(k: str):
-            return llm_settings.get(k) or root_settings.get(k)
+            api_type = reader.str("type") or DEFAULT_EMBEDDING_TYPE
+            api_type = LLMType(api_type) if api_type else DEFAULT_LLM_TYPE
 
-        llm_type = _lookup("type")
-        api_key = _lookup("api_key")
-        if api_key is None:
-            raise ValueError(LLM_KEY_REQUIRED)
+            if api_key is None:
+                raise ValueError(LLM_KEY_REQUIRED)
+            if _is_azure(api_type) and api_base is None:
+                raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
 
-        return LLMParametersModel(
-            api_key=api_key,
-            type=LLMType(llm_type) if llm_type else DEFAULT_EMBEDDING_TYPE,
-            api_base=_lookup("api_base"),
-            api_version=_lookup("api_version"),
-            organization=_lookup("organization"),
-            proxy=_lookup("proxy"),
-            model=_lookup("model") or DEFAULT_EMBEDDING_MODEL,
-            model_supports_json=_bool(_lookup("model_supports_json")),
-            request_timeout=_float(
-                _lookup("request_timeout"),
+            return LLMParametersModel(
+                api_key=api_key,
+                type=api_type,
+                api_base=api_base,
+                api_version=api_version,
+                organization=api_organization,
+                proxy=api_proxy,
+                model=reader.str("model") or DEFAULT_EMBEDDING_MODEL,
+                request_timeout=reader.float("request_timeout")
+                or DEFAULT_LLM_REQUEST_TIMEOUT,
+                deployment_name=reader.str("deployment_name"),
+                tokens_per_minute=reader.int("tokens_per_minute")
+                or DEFAULT_LLM_TOKENS_PER_MINUTE,
+                requests_per_minute=reader.int("requests_per_minute")
+                or DEFAULT_LLM_REQUESTS_PER_MINUTE,
+                max_retries=reader.int("max_retries") or DEFAULT_LLM_MAX_RETRIES,
+                max_retry_wait=reader.float("max_retry_wait")
+                or DEFAULT_LLM_MAX_RETRY_WAIT,
+                sleep_on_rate_limit_recommendation=reader.bool(
+                    "sleep_on_rate_limit_recommendation"
+                )
+                or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+                concurrent_requests=reader.int("concurrent_requests")
+                or DEFAULT_LLM_CONCURRENT_REQUESTS,
             )
-            or DEFAULT_LLM_REQUEST_TIMEOUT,
-            deployment_name=_lookup("deployment_name"),
-            tokens_per_minute=_int(_lookup("tokens_per_minute"))
-            or DEFAULT_LLM_TOKENS_PER_MINUTE,
-            requests_per_minute=_int(_lookup("requests_per_minute"))
-            or DEFAULT_LLM_REQUESTS_PER_MINUTE,
-            max_retries=_int(_lookup("max_retries")) or DEFAULT_LLM_MAX_RETRIES,
-            max_retry_wait=_float(_lookup("max_retry_wait"))
-            or DEFAULT_LLM_MAX_RETRY_WAIT,
-            sleep_on_rate_limit_recommendation=_bool(
-                _lookup("sleep_on_rate_limit_recommendation")
-            )
-            or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
-            concurrent_requests=_int(_lookup("concurrent_requests"))
-            or DEFAULT_LLM_CONCURRENT_REQUESTS,
-        )
 
     def hydrate_parallelization_params(
-        config: LLMConfigInputModel,
+        config: LLMConfigInputModel, base: ParallelizationParametersModel
     ) -> ParallelizationParametersModel:
-        settings = config.get("parallelization") or {}
-        root_settings = values.get("parallelization") or {}
-
-        def lookup(key: str) -> str | None:
-            return settings.get(key) or root_settings.get(key)
-
-        return ParallelizationParametersModel(
-            num_threads=_int(
-                lookup("num_threads"),
+        with reader.use(config.get("parallelization")):
+            return ParallelizationParametersModel(
+                num_threads=reader.int("num_threads") or base.num_threads,
+                stagger=reader.float("thread_stagger") or base.stagger,
             )
-            or DEFAULT_PARALLELIZATION_NUM_THREADS,
-            stagger=_float(lookup("thread_stagger")) or DEFAULT_PARALLELIZATION_STAGGER,
-        )
 
-    embeddings_config: TextEmbeddingConfigInputModel = values.get("embeddings") or {}
-    embed_graph_config: EmbedGraphConfigInputModel = values.get("embed_graph") or {}
-    reporting_config: ReportingConfigInputModel = values.get("reporting") or {}
-    storage_config: StorageConfigInputModel = values.get("storage") or {}
-    cache_config: CacheConfigInputModel = values.get("cache") or {}
-    input_config: InputConfigInputModel = values.get("input") or {}
-    chunk_config: ChunkingConfigInputModel = values.get("chunks") or {}
-    snapshots_config: SnapshotsConfigInputModel = values.get("snapshots") or {}
-    entity_extraction_config: EntityExtractionConfigInputModel = (
-        values.get("entity_extraction") or {}
-    )
-    claim_extraction_config: ClaimExtractionConfigInputModel = (
-        values.get("claim_extraction") or {}
-    )
-    community_report_config: CommunityReportsConfigInputModel = (
-        values.get("community_reports") or {}
-    )
-    summarize_description_config: SummarizeDescriptionsConfigInputModel = (
-        values.get("summarize_descriptions") or {}
-    )
-    umap_config: UmapConfigInputModel = values.get("umap") or {}
-    cluster_graph_config: ClusterGraphConfigInputModel = (
-        values.get("cluster_graph") or {}
-    )
+    fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY"), None)
+    fallback_oai_org = env("OPENAI_ORG_ID", None)
+    fallback_oai_url = env("OPENAI_BASE_URL", None)
+    fallback_oai_version = env("OPENAI_API_VERSION", None)
 
-    reporting_type = reporting_config.get("type")
-    reporting_type = (
-        PipelineReportingType(reporting_type)
-        if reporting_type
-        else DEFAULT_REPORTING_TYPE
-    )
-    storage_type = storage_config.get("type")
-    storage_type = (
-        PipelineStorageType(storage_type) if storage_type else DEFAULT_STORAGE_TYPE
-    )
-    cache_type = cache_config.get("type")
-    cache_type = PipelineCacheType(cache_type) if cache_type else DEFAULT_CACHE_TYPE
-    input_type = input_config.get("type")
-    input_type = PipelineInputType(input_type) if input_type else DEFAULT_INPUT_TYPE
-    input_storage_type = input_config.get("storage_type")
-    input_storage_type = (
-        PipelineInputStorageType(input_storage_type)
-        if input_storage_type
-        else DEFAULT_INPUT_STORAGE_TYPE
-    )
-    embeddings_target = embeddings_config.get("target")
-    embeddings_target = (
-        TextEmbeddingTarget(embeddings_target)
-        if embeddings_target
-        else DEFAULT_EMBEDDING_TARGET
-    )
-    file_pattern = input_config.get("file_pattern") or (
-        DEFAULT_INPUT_TEXT_PATTERN
-        if input_type == PipelineInputType.text
-        else DEFAULT_INPUT_CSV_PATTERN
-    )
+    with reader.envvar_prefix(Section.graphrag), reader.use(values):
+        async_mode = reader.str("async_mode")
+        async_mode = AsyncType(async_mode) if async_mode else DEFAULT_ASYNC_MODE
+
+        with reader.envvar_prefix(Section.llm):
+            with reader.use(values.get("llm")):
+                llm_type = reader.str(Fragment.type)
+                llm_model = LLMParametersModel(
+                    api_key=reader.str(Fragment.api_key) or fallback_oai_key,
+                    api_base=reader.str(Fragment.api_base) or fallback_oai_url,
+                    api_version=reader.str(Fragment.api_version)
+                    or fallback_oai_version,
+                    organization=reader.str(Fragment.api_organization)
+                    or fallback_oai_org,
+                    type=LLMType(llm_type) if llm_type else DEFAULT_LLM_TYPE,
+                    model=reader.str(Fragment.model) or DEFAULT_LLM_MODEL,
+                    max_tokens=reader.int(Fragment.max_tokens)
+                    or DEFAULT_LLM_MAX_TOKENS,
+                    model_supports_json=reader.bool(Fragment.model_supports_json),
+                    request_timeout=reader.float(Fragment.request_timeout)
+                    or DEFAULT_LLM_REQUEST_TIMEOUT,
+                    proxy=reader.str(Fragment.api_proxy),
+                    deployment_name=reader.str(Fragment.deployment_name),
+                    tokens_per_minute=reader.int(Fragment.tpm)
+                    or DEFAULT_LLM_TOKENS_PER_MINUTE,
+                    requests_per_minute=reader.int(Fragment.rpm)
+                    or DEFAULT_LLM_REQUESTS_PER_MINUTE,
+                    max_retries=reader.int(Fragment.max_retries)
+                    or DEFAULT_LLM_MAX_RETRIES,
+                    max_retry_wait=reader.float(Fragment.max_retry_wait)
+                    or DEFAULT_LLM_MAX_RETRY_WAIT,
+                    sleep_on_rate_limit_recommendation=reader.bool(
+                        Fragment.sleep_recommendation
+                    )
+                    or DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+                    concurrent_requests=reader.int(Fragment.concurrent_requests)
+                    or DEFAULT_LLM_CONCURRENT_REQUESTS,
+                )
+            with reader.use(values.get("parallelization")):
+                llm_parallelization_model = ParallelizationParametersModel(
+                    stagger=reader.float(Fragment.thread_stagger)
+                    or DEFAULT_PARALLELIZATION_STAGGER,
+                    num_threads=reader.int(Fragment.thread_count)
+                    or DEFAULT_PARALLELIZATION_NUM_THREADS,
+                )
+        embeddings_config = values.get("embeddings") or {}
+        with reader.envvar_prefix(Section.embedding), reader.use(embeddings_config):
+            embeddings_target = reader.str("target")
+            embeddings_model = TextEmbeddingConfigModel(
+                llm=hydrate_embeddings_params(embeddings_config, llm_model),
+                parallelization=hydrate_parallelization_params(
+                    embeddings_config, llm_parallelization_model
+                ),
+                async_mode=hydrate_async_type(embeddings_config, async_mode),
+                target=TextEmbeddingTarget(embeddings_target)
+                if embeddings_target
+                else DEFAULT_EMBEDDING_TARGET,
+                batch_size=reader.int("batch_size") or DEFAULT_EMBEDDING_BATCH_SIZE,
+                batch_max_tokens=reader.int("batch_max_tokens")
+                or DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+                skip=reader.list("skip") or [],
+            )
+        with (
+            reader.envvar_prefix(Section.node2vec),
+            reader.use(values.get("embed_graph")),
+        ):
+            embed_graph_model = EmbedGraphConfigModel(
+                is_enabled=reader.bool(Fragment.enabled) or DEFAULT_NODE2VEC_IS_ENABLED,
+                num_walks=reader.int("num_walks") or DEFAULT_NODE2VEC_NUM_WALKS,
+                walk_length=reader.int("walk_length") or DEFAULT_NODE2VEC_WALK_LENGTH,
+                window_size=reader.int("window_size") or DEFAULT_NODE2VEC_WINDOW_SIZE,
+                iterations=reader.int("iterations") or DEFAULT_NODE2VEC_ITERATIONS,
+                random_seed=reader.int("random_seed") or DEFAULT_NODE2VEC_RANDOM_SEED,
+            )
+        with reader.envvar_prefix(Section.input), reader.use(values.get("input")):
+            input_type = reader.str(Fragment.type)
+            storage_type = reader.str("storage_type")
+            input_model = InputConfigModel(
+                type=PipelineInputType(input_type)
+                if input_type
+                else DEFAULT_INPUT_TYPE,
+                storage_type=PipelineInputStorageType(storage_type)
+                if storage_type
+                else DEFAULT_INPUT_STORAGE_TYPE,
+                file_encoding=reader.str("file_encoding", Fragment.encoding)
+                or DEFAULT_INPUT_FILE_ENCODING,
+                base_dir=reader.str(Fragment.base_dir) or DEFAULT_INPUT_BASE_DIR,
+                file_pattern=reader.str("file_pattern")
+                or (
+                    DEFAULT_INPUT_TEXT_PATTERN
+                    if input_type == PipelineInputType.text
+                    else DEFAULT_INPUT_CSV_PATTERN
+                ),
+                source_column=reader.str("source_column"),
+                timestamp_column=reader.str("timestamp_column"),
+                timestamp_format=reader.str("timestamp_format"),
+                text_column=reader.str("text_column") or DEFAULT_INPUT_TEXT_COLUMN,
+                title_column=reader.str("title_column"),
+                document_attribute_columns=reader.list("document_attribute_columns")
+                or [],
+                connection_string=reader.str(Fragment.conn_string),
+                container_name=reader.str(Fragment.container_name),
+            )
+        with reader.envvar_prefix(Section.cache), reader.use(values.get("cache")):
+            c_type = reader.str(Fragment.type)
+            cache_model = CacheConfigModel(
+                type=PipelineCacheType(c_type) if c_type else DEFAULT_CACHE_TYPE,
+                connection_string=reader.str(Fragment.conn_string),
+                container_name=reader.str(Fragment.container_name),
+                base_dir=reader.str(Fragment.base_dir) or DEFAULT_CACHE_BASE_DIR,
+            )
+        with (
+            reader.envvar_prefix(Section.reporting),
+            reader.use(values.get("reporting")),
+        ):
+            r_type = reader.str(Fragment.type)
+            reporting_model = ReportingConfigModel(
+                type=PipelineReportingType(r_type)
+                if r_type
+                else DEFAULT_REPORTING_TYPE,
+                connection_string=reader.str(Fragment.conn_string),
+                container_name=reader.str(Fragment.container_name),
+                base_dir=reader.str(Fragment.base_dir) or DEFAULT_REPORTING_BASE_DIR,
+            )
+        with reader.envvar_prefix(Section.storage), reader.use(values.get("storage")):
+            s_type = reader.str(Fragment.type)
+            storage_model = StorageConfigModel(
+                type=PipelineStorageType(s_type) if s_type else DEFAULT_STORAGE_TYPE,
+                connection_string=reader.str(Fragment.conn_string),
+                container_name=reader.str(Fragment.container_name),
+                base_dir=reader.str(Fragment.base_dir) or DEFAULT_STORAGE_BASE_DIR,
+            )
+        with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
+            chunks_model = ChunkingConfigModel(
+                size=reader.int("size") or DEFAULT_CHUNK_SIZE,
+                overlap=reader.int("overlap") or DEFAULT_CHUNK_OVERLAP,
+                group_by_columns=reader.list("group_by_columns", "BY_COLUMNS")
+                or DEFAULT_CHUNK_GROUP_BY_COLUMNS,
+            )
+        with (
+            reader.envvar_prefix(Section.snapshot),
+            reader.use(values.get("snapshots")),
+        ):
+            snapshots_model = SnapshotsConfigModel(
+                graphml=reader.bool("graphml") or DEFAULT_SNAPSHOTS_GRAPHML,
+                raw_entities=reader.bool("raw_entities")
+                or DEFAULT_SNAPSHOTS_RAW_ENTITIES,
+                top_level_nodes=reader.bool("top_level_nodes")
+                or DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
+            )
+        with reader.envvar_prefix(Section.umap), reader.use(values.get("umap")):
+            umap_model = UmapConfigModel(
+                enabled=reader.bool(Fragment.enabled) or DEFAULT_UMAP_ENABLED,
+            )
+
+        entity_extraction_config = values.get("entity_extraction") or {}
+        with (
+            reader.envvar_prefix(Section.entity_extraction),
+            reader.use(entity_extraction_config),
+        ):
+            entity_extraction_model = EntityExtractionConfigModel(
+                llm=hydrate_llm_params(entity_extraction_config, llm_model),
+                parallelization=hydrate_parallelization_params(
+                    entity_extraction_config, llm_parallelization_model
+                ),
+                async_mode=hydrate_async_type(entity_extraction_config, async_mode),
+                entity_types=reader.list("entity_types")
+                or DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
+                max_gleanings=reader.int("max_gleanings")
+                or DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
+                prompt=reader.str("prompt_file"),
+            )
+
+        claim_extraction_config = values.get("claim_extraction") or {}
+        with (
+            reader.envvar_prefix(Section.claim_extraction),
+            reader.use(claim_extraction_config),
+        ):
+            claim_extraction_model = ClaimExtractionConfigModel(
+                llm=hydrate_llm_params(claim_extraction_config, llm_model),
+                parallelization=hydrate_parallelization_params(
+                    claim_extraction_config, llm_parallelization_model
+                ),
+                async_mode=hydrate_async_type(claim_extraction_config, async_mode),
+                description=reader.str("description") or DEFAULT_CLAIM_DESCRIPTION,
+                prompt=reader.str("prompt_file"),
+                max_gleanings=reader.int("max_gleanings")
+                or DEFAULT_CLAIM_MAX_GLEANINGS,
+            )
+
+        community_report_config = values.get("community_reports") or {}
+        with (
+            reader.envvar_prefix(Section.community_report),
+            reader.use(community_report_config),
+        ):
+            community_reports_model = CommunityReportsConfigModel(
+                llm=hydrate_llm_params(community_report_config, llm_model),
+                parallelization=hydrate_parallelization_params(
+                    community_report_config, llm_parallelization_model
+                ),
+                async_mode=hydrate_async_type(community_report_config, async_mode),
+                prompt=reader.str("prompt_file"),
+                max_length=reader.int("max_length")
+                or DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+                max_input_length=reader.int("max_input_length")
+                or DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+            )
+
+        summarize_description_config = values.get("summarize_descriptions") or {}
+        with (
+            reader.envvar_prefix(Section.summarize_descriptions),
+            reader.use(values.get("summarize_descriptions")),
+        ):
+            summarize_descriptions_model = SummarizeDescriptionsConfigModel(
+                llm=hydrate_llm_params(summarize_description_config, llm_model),
+                parallelization=hydrate_parallelization_params(
+                    summarize_description_config, llm_parallelization_model
+                ),
+                async_mode=hydrate_async_type(summarize_description_config, async_mode),
+                prompt=reader.str("prompt_file"),
+                max_length=reader.int("max_length")
+                or DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
+            )
+
+        with reader.use(values.get("cluster_graph")):
+            cluster_graph_model = ClusterGraphConfigModel(
+                max_cluster_size=reader.int("max_cluster_size")
+                or DEFAULT_MAX_CLUSTER_SIZE
+            )
+
+        encoding_model = reader.str(Fragment.encoding_model) or DEFAULT_ENCODING_MODEL
+        skip_workflows = reader.list("skip_workflows") or []
 
     return DefaultConfigParametersModel(
         root_dir=root_dir,
-        llm=hydrate_llm_params(values),
-        parallelization=hydrate_parallelization_params(values),
-        async_mode=_async_type(values),
-        embeddings=TextEmbeddingConfigModel(
-            llm=hydrate_embeddings_params(embeddings_config),
-            parallelization=hydrate_parallelization_params(embeddings_config),
-            async_mode=_async_type(embeddings_config),
-            target=embeddings_target,
-            batch_size=_int(embeddings_config.get("batch_size"))
-            or DEFAULT_EMBEDDING_BATCH_SIZE,
-            batch_max_tokens=_int(
-                embeddings_config.get("batch_max_tokens"),
-            )
-            or DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
-            skip=_list(embeddings_config.get("skip")) or [],
-        ),
-        embed_graph=EmbedGraphConfigModel(
-            is_enabled=_bool(embed_graph_config.get("enabled"))
-            or DEFAULT_NODE2VEC_IS_ENABLED,
-            num_walks=_int(
-                embed_graph_config.get("num_walks"),
-            )
-            or DEFAULT_NODE2VEC_NUM_WALKS,
-            walk_length=_int(
-                embed_graph_config.get("walk_length"),
-            )
-            or DEFAULT_NODE2VEC_WALK_LENGTH,
-            window_size=_int(
-                embed_graph_config.get("window_size"),
-            )
-            or DEFAULT_NODE2VEC_WINDOW_SIZE,
-            iterations=_int(
-                embed_graph_config.get("iterations"),
-            )
-            or DEFAULT_NODE2VEC_ITERATIONS,
-            random_seed=_int(
-                embed_graph_config.get("random_seed"),
-            )
-            or DEFAULT_NODE2VEC_RANDOM_SEED,
-        ),
-        reporting=ReportingConfigModel(
-            type=reporting_type,
-            connection_string=reporting_config.get("connection_string"),
-            container_name=reporting_config.get("container_name"),
-            base_dir=reporting_config.get("base_dir") or DEFAULT_REPORTING_BASE_DIR,
-        ),
-        storage=StorageConfigModel(
-            type=storage_type,
-            connection_string=storage_config.get("connection_string"),
-            container_name=storage_config.get("container_name"),
-            base_dir=storage_config.get("base_dir") or DEFAULT_STORAGE_BASE_DIR,
-        ),
-        cache=CacheConfigModel(
-            type=cache_type,
-            connection_string=cache_config.get("connection_string"),
-            container_name=cache_config.get("container_name"),
-            base_dir=cache_config.get("base_dir") or DEFAULT_CACHE_BASE_DIR,
-        ),
-        input=InputConfigModel(
-            type=input_type,
-            storage_type=input_storage_type,
-            file_encoding=input_config.get("file_encoding")
-            or DEFAULT_INPUT_FILE_ENCODING,
-            base_dir=input_config.get("base_dir") or DEFAULT_INPUT_BASE_DIR,
-            file_pattern=file_pattern,
-            source_column=input_config.get("source_column"),
-            timestamp_column=input_config.get("timestamp_column"),
-            timestamp_format=input_config.get("timestamp_format"),
-            text_column=input_config.get("text_column") or DEFAULT_INPUT_TEXT_COLUMN,
-            title_column=input_config.get("title_column"),
-            document_attribute_columns=_list(
-                input_config.get("document_attribute_columns")
-            )
-            or [],
-            connection_string=input_config.get("connection_string"),
-            container_name=input_config.get("container_name"),
-        ),
-        chunks=ChunkingConfigModel(
-            size=_int(
-                chunk_config.get("size"),
-            )
-            or DEFAULT_CHUNK_SIZE,
-            overlap=_int(
-                chunk_config.get("overlap"),
-            )
-            or DEFAULT_CHUNK_OVERLAP,
-            group_by_columns=_list(
-                chunk_config.get("group_by_columns"),
-            )
-            or DEFAULT_CHUNK_GROUP_BY_COLUMNS,
-        ),
-        snapshots=SnapshotsConfigModel(
-            graphml=_bool(
-                snapshots_config.get("graphml"),
-            )
-            or DEFAULT_SNAPSHOTS_GRAPHML,
-            raw_entities=_bool(
-                snapshots_config.get("raw_entities"),
-            )
-            or DEFAULT_SNAPSHOTS_RAW_ENTITIES,
-            top_level_nodes=_bool(
-                snapshots_config.get("top_level_nodes"),
-            )
-            or DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
-        ),
-        entity_extraction=EntityExtractionConfigModel(
-            llm=hydrate_llm_params(entity_extraction_config),
-            parallelization=hydrate_parallelization_params(entity_extraction_config),
-            async_mode=_async_type(entity_extraction_config),
-            entity_types=_list(
-                entity_extraction_config.get("entity_types"),
-            )
-            or DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
-            max_gleanings=_int(
-                entity_extraction_config.get("max_gleanings"),
-            )
-            or DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
-            prompt=entity_extraction_config.get("prompt_file"),
-        ),
-        claim_extraction=ClaimExtractionConfigModel(
-            llm=hydrate_llm_params(claim_extraction_config),
-            parallelization=hydrate_parallelization_params(claim_extraction_config),
-            async_mode=_async_type(claim_extraction_config),
-            description=claim_extraction_config.get("description")
-            or DEFAULT_CLAIM_DESCRIPTION,
-            prompt=claim_extraction_config.get("prompt_file"),
-            max_gleanings=_int(claim_extraction_config.get("max_gleanings"))
-            or DEFAULT_CLAIM_MAX_GLEANINGS,
-        ),
-        community_reports=CommunityReportsConfigModel(
-            llm=hydrate_llm_params(community_report_config),
-            parallelization=hydrate_parallelization_params(community_report_config),
-            async_mode=_async_type(community_report_config),
-            prompt=community_report_config.get("prompt_file"),
-            max_length=_int(
-                community_report_config.get("max_length"),
-            )
-            or DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
-            max_input_length=_int(
-                community_report_config.get("max_input_length"),
-            )
-            or DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
-        ),
-        summarize_descriptions=SummarizeDescriptionsConfigModel(
-            llm=hydrate_llm_params(summarize_description_config),
-            parallelization=hydrate_parallelization_params(
-                summarize_description_config
-            ),
-            async_mode=_async_type(summarize_description_config),
-            prompt=summarize_description_config.get("prompt_file"),
-            max_length=_int(
-                summarize_description_config.get("max_length"),
-            )
-            or DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
-        ),
-        umap=UmapConfigModel(
-            enabled=_bool(umap_config.get("enabled")) or DEFAULT_UMAP_ENABLED,
-        ),
-        cluster_graph=ClusterGraphConfigModel(
-            max_cluster_size=_int(cluster_graph_config.get("max_cluster_size"))
-            or DEFAULT_MAX_CLUSTER_SIZE,
-        ),
-        encoding_model=values.get("encoding_model") or DEFAULT_ENCODING_MODEL,
-        skip_workflows=_list(values.get("skip_workflows")) or [],
+        llm=llm_model,
+        parallelization=llm_parallelization_model,
+        async_mode=async_mode,
+        embeddings=embeddings_model,
+        embed_graph=embed_graph_model,
+        reporting=reporting_model,
+        storage=storage_model,
+        cache=cache_model,
+        input=input_model,
+        chunks=chunks_model,
+        snapshots=snapshots_model,
+        entity_extraction=entity_extraction_model,
+        claim_extraction=claim_extraction_model,
+        community_reports=community_reports_model,
+        summarize_descriptions=summarize_descriptions_model,
+        umap=umap_model,
+        cluster_graph=cluster_graph_model,
+        encoding_model=encoding_model,
+        skip_workflows=skip_workflows,
     )
-
-
-def default_config_parameters_from_env_vars(
-    root_dir: str | None,
-) -> DefaultConfigParametersModel:
-    """Load Configuration Parameters from environment variables."""
-    root_dir = root_dir or str(Path.cwd())
-    env = _make_env(root_dir)
-
-    def _key(key: str | Fragment) -> str | None:
-        return key.value if isinstance(key, Fragment) else key
-
-    def _str(key: str | Fragment, default_value: str | None = None) -> str | None:
-        return env(_key(key), default_value)
-
-    def _int(key: str | Fragment, default_value: int | None = None) -> int | None:
-        return env.int(_key(key), default_value)
-
-    def _bool(key: str | Fragment, default_value: bool | None = None) -> bool | None:
-        return env.bool(_key(key), default_value)
-
-    def _float(key: str | Fragment, default_value: float | None = None) -> float | None:
-        return env.float(_key(key), default_value)
-
-    def section(key: Section):
-        return env.prefixed(f"{key.value}_")
-
-    fallback_oai_key = _str("OPENAI_API_KEY", _str("AZURE_OPENAI_API_KEY"))
-    fallback_oai_org = _str("OPENAI_ORG_ID")
-    fallback_oai_url = _str("OPENAI_BASE_URL")
-    fallback_oai_version = _str("OPENAI_API_VERSION")
-
-    with section(Section.graphrag):
-        _api_key = _str(Fragment.api_key, fallback_oai_key)
-        _api_base = _str(Fragment.api_base, fallback_oai_url)
-        _api_version = _str(Fragment.api_version, fallback_oai_version)
-        _organization = _str(Fragment.api_organization, fallback_oai_org)
-        _proxy = _str(Fragment.api_proxy)
-
-        with section(Section.llm):
-            api_key = _str(Fragment.api_key, _api_key or fallback_oai_key)
-            if api_key is None:
-                raise ValueError(LLM_KEY_REQUIRED)
-            llm_type = _str(Fragment.type)
-            llm_type = LLMType(llm_type) if llm_type else None
-            deployment_name = _str(Fragment.deployment_name)
-            model = _str(Fragment.model)
-
-            is_azure = _is_azure(llm_type)
-            api_base = _str(Fragment.api_base, _api_base)
-            if is_azure and deployment_name is None and model is None:
-                raise ValueError(AZURE_LLM_DEPLOYMENT_NAME_REQUIRED)
-            if is_azure and api_base is None:
-                raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
-
-            llm_parameters = LLMParametersInputModel(
-                api_key=api_key,
-                type=llm_type,
-                model=model,
-                max_tokens=_int(Fragment.max_tokens),
-                model_supports_json=_bool(Fragment.model_supports_json),
-                request_timeout=_float(Fragment.request_timeout),
-                api_base=api_base,
-                api_version=_str(Fragment.api_version, _api_version),
-                organization=_str(Fragment.api_organization, _organization),
-                proxy=_str(Fragment.api_proxy, _proxy),
-                deployment_name=deployment_name,
-                tokens_per_minute=_int(Fragment.tpm),
-                requests_per_minute=_int(Fragment.rpm),
-                max_retries=_int(Fragment.max_retries),
-                max_retry_wait=_float(Fragment.max_retry_wait),
-                sleep_on_rate_limit_recommendation=_bool(Fragment.sleep_recommendation),
-                concurrent_requests=_int(Fragment.concurrent_requests),
-            )
-            llm_parallelization = ParallelizationParametersInputModel(
-                stagger=_float(Fragment.thread_stagger),
-                num_threads=_int(Fragment.thread_count),
-            )
-
-        with section(Section.embedding):
-            api_key = _str(Fragment.api_key, _api_key)
-            if api_key is None:
-                raise ValueError(EMBEDDING_KEY_REQUIRED)
-
-            embedding_target = _str("TARGET")
-            embedding_target = (
-                TextEmbeddingTarget(embedding_target) if embedding_target else None
-            )
-            async_mode = _str(Fragment.async_mode)
-            async_mode_enum = AsyncType(async_mode) if async_mode else None
-            deployment_name = _str(Fragment.deployment_name)
-            model = _str(Fragment.model)
-            llm_type = _str(Fragment.type)
-            llm_type = LLMType(llm_type) if llm_type else None
-            is_azure = _is_azure(llm_type)
-            api_base = _str(Fragment.api_base, _api_base)
-
-            if is_azure and deployment_name is None and model is None:
-                raise ValueError(AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED)
-            if is_azure and api_base is None:
-                raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
-
-            text_embeddings = TextEmbeddingConfigInputModel(
-                parallelization=ParallelizationParametersInputModel(
-                    stagger=_float(Fragment.thread_stagger),
-                    num_threads=_int(Fragment.thread_count),
-                ),
-                async_mode=async_mode_enum,
-                target=embedding_target,
-                batch_size=_int("BATCH_SIZE"),
-                batch_max_tokens=_int("BATCH_MAX_TOKENS"),
-                skip=_array_string("SKIP"),
-                llm=LLMParametersInputModel(
-                    api_key=_str(Fragment.api_key, _api_key),
-                    type=llm_type,
-                    model=model,
-                    request_timeout=_float(Fragment.request_timeout),
-                    api_base=api_base,
-                    api_version=_str(Fragment.api_version, _api_version),
-                    organization=_str(Fragment.api_organization, _organization),
-                    proxy=_str(Fragment.api_proxy, _proxy),
-                    deployment_name=deployment_name,
-                    tokens_per_minute=_int(Fragment.tpm),
-                    requests_per_minute=_int(Fragment.rpm),
-                    max_retries=_int(Fragment.max_retries),
-                    max_retry_wait=_float(Fragment.max_retry_wait),
-                    sleep_on_rate_limit_recommendation=_bool(
-                        Fragment.sleep_recommendation
-                    ),
-                    concurrent_requests=_int(Fragment.concurrent_requests),
-                ),
-            )
-
-        with section(Section.node2vec):
-            embed_graph = EmbedGraphConfigInputModel(
-                is_enabled=_bool(Fragment.enabled),
-                num_walks=_int("NUM_WALKS"),
-                walk_length=_int("WALK_LENGTH"),
-                window_size=_int("WINDOW_SIZE"),
-                iterations=_int("ITERATIONS"),
-                random_seed=_int("RANDOM_SEED"),
-            )
-        with section(Section.reporting):
-            reporting_type = _str(Fragment.type)
-            reporting_type = (
-                PipelineReportingType(reporting_type) if reporting_type else None
-            )
-            reporting = ReportingConfigInputModel(
-                type=reporting_type,
-                connection_string=_str(Fragment.conn_string),
-                container_name=_str(Fragment.container_name),
-                base_dir=_str(Fragment.base_dir),
-            )
-        with section(Section.storage):
-            storage_type = _str(Fragment.type)
-            storage_type = PipelineStorageType(storage_type) if storage_type else None
-            storage = StorageConfigInputModel(
-                type=storage_type,
-                connection_string=_str(Fragment.conn_string),
-                container_name=_str(Fragment.container_name),
-                base_dir=_str(Fragment.base_dir),
-            )
-        with section(Section.cache):
-            cache_type = _str(Fragment.type)
-            cache_type = PipelineCacheType(cache_type) if cache_type else None
-            cache = CacheConfigInputModel(
-                type=cache_type,
-                connection_string=_str(Fragment.conn_string),
-                container_name=_str(Fragment.container_name),
-                base_dir=_str(Fragment.base_dir),
-            )
-        with section(Section.input):
-            input_type = _str(Fragment.type)
-            input_type = PipelineInputType(input_type) if input_type else None
-            storage_type = _str("STORAGE_TYPE")
-            storage_type = (
-                PipelineInputStorageType(storage_type) if storage_type else None
-            )
-            input = InputConfigInputModel(
-                type=input_type,
-                storage_type=storage_type,
-                file_encoding=_str(Fragment.encoding),
-                base_dir=_str(Fragment.base_dir),
-                file_pattern=_str("FILE_PATTERN"),
-                source_column=_str("SOURCE_COLUMN"),
-                timestamp_column=_str("TIMESTAMP_COLUMN"),
-                timestamp_format=_str("TIMESTAMP_FORMAT"),
-                text_column=_str("TEXT_COLUMN"),
-                title_column=_str("TITLE_COLUMN"),
-                document_attribute_columns=_array_string(
-                    _str("DOCUMENT_ATTRIBUTE_COLUMNS"),
-                ),
-            )
-        with section(Section.chunk):
-            chunks = ChunkingConfigInputModel(
-                size=_int("SIZE"),
-                overlap=_int("OVERLAP"),
-                group_by_columns=_array_string(_str("BY_COLUMNS")),
-            )
-        with section(Section.snapshot):
-            snapshots = SnapshotsConfigInputModel(
-                graphml=_bool("GRAPHML"),
-                raw_entities=_bool("RAW_ENTITIES"),
-                top_level_nodes=_bool("TOP_LEVEL_NODES"),
-            )
-        with section(Section.entity_extraction):
-            entity_extraction = EntityExtractionConfigInputModel(
-                entity_types=_array_string(_str("ENTITY_TYPES")),
-                max_gleanings=_int(Fragment.max_gleanings),
-                prompt=_str(Fragment.prompt_file),
-            )
-        with section(Section.claim_extraction):
-            claim_extraction = ClaimExtractionConfigInputModel(
-                description=_str(Fragment.description),
-                prompt=_str(Fragment.prompt_file),
-                max_gleanings=_int(Fragment.max_gleanings),
-            )
-        with section(Section.community_report):
-            community_reports = CommunityReportsConfigInputModel(
-                prompt=_str(Fragment.prompt_file),
-                max_length=_int(Fragment.max_length),
-                max_input_length=_int("MAX_INPUT_LENGTH"),
-            )
-        with section(Section.summarize_descriptions):
-            summarize_descriptions = SummarizeDescriptionsConfigInputModel(
-                prompt=_str(Fragment.prompt_file),
-                max_length=_int(Fragment.max_length),
-            )
-        with section(Section.umap):
-            umap = UmapConfigInputModel(
-                enabled=_bool(Fragment.enabled),
-            )
-
-        async_mode_enum = AsyncType(async_mode) if async_mode else None
-        input_model = DefaultConfigParametersInputModel(
-            llm=llm_parameters,
-            parallelization=llm_parallelization,
-            embeddings=text_embeddings,
-            embed_graph=embed_graph,
-            reporting=reporting,
-            storage=storage,
-            cache=cache,
-            input=input,
-            chunks=chunks,
-            snapshots=snapshots,
-            entity_extraction=entity_extraction,
-            claim_extraction=claim_extraction,
-            community_reports=community_reports,
-            summarize_descriptions=summarize_descriptions,
-            umap=umap,
-            async_mode=async_mode_enum,
-            cluster_graph=ClusterGraphConfigInputModel(
-                max_cluster_size=_int("MAX_CLUSTER_SIZE"),
-            ),
-            encoding_model=_str(Fragment.encoding_model),
-            skip_workflows=_array_string(_str("SKIP_WORKFLOWS")),
-        )
-        return default_config_parameters(input_model, root_dir)
 
 
 class Fragment(str, Enum):
@@ -799,17 +561,6 @@ def _make_env(root_dir: str) -> Env:
     return env
 
 
-def _array_string(
-    raw: str | None, default_value: list[str] | None = None
-) -> list[str] | None:
-    """Filter the array entries."""
-    if raw is None:
-        return default_value
-
-    result = [r.strip() for r in raw.split(",")]
-    return [r for r in result if r != ""]
-
-
 def _token_replace(data: dict):
     """Replace env-var tokens in a dictionary object."""
     for key, value in data.items():
@@ -817,29 +568,3 @@ def _token_replace(data: dict):
             _token_replace(value)
         elif isinstance(value, str):
             data[key] = os.path.expandvars(value)
-
-
-def _int(value: int | str | None) -> int | None:
-    """Parse an integer configuration value."""
-    return int(value) if value else None
-
-
-def _bool(value: bool | str | None) -> bool | None:
-    """Parse an boolean configuration value."""
-    return bool(value) if value else None
-
-
-def _float(value: float | str | None) -> float | None:
-    """Parse an float configuration value."""
-    return float(value) if value else None
-
-
-def _list(value: list | str | None) -> list | None:
-    """Parse an list configuration value."""
-    return (
-        value
-        if isinstance(value, list)
-        else [s.strip() for s in value.split(",")]
-        if value
-        else None
-    )

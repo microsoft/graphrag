@@ -42,7 +42,6 @@ from .parameters import (
     UmapConfigInputModel,
     UmapConfigModel,
     default_config_parameters,
-    default_config_parameters_from_env_vars,
 )
 
 __all__ = [
@@ -84,6 +83,5 @@ __all__ = [
     "UmapConfigModel",
     "default_config",
     "default_config_parameters",
-    "default_config_parameters_from_env_vars",
     "load_pipeline_config",
 ]
