@@ -160,7 +160,7 @@ cluster_graph:
   max_cluster_size: {DEFAULT_MAX_CLUSTER_SIZE}
 
 embed_graph:
-  is_enabled: false # if true, will generate node2vec embeddings for nodes
+  enabled: false # if true, will generate node2vec embeddings for nodes
   # num_walks: {DEFAULT_NODE2VEC_NUM_WALKS}
   # walk_length: {DEFAULT_NODE2VEC_WALK_LENGTH}
   # window_size: {DEFAULT_NODE2VEC_WINDOW_SIZE}
@@ -168,7 +168,7 @@ embed_graph:
   # random_seed: {DEFAULT_NODE2VEC_RANDOM_SEED}
 
 umap:
-  is_enabled: false # if true, will generate UMAP embeddings for nodes
+  enabled: false # if true, will generate UMAP embeddings for nodes
 
 snapshots:
   graphml: false

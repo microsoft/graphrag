@@ -159,7 +159,7 @@ This is the base LLM configuration section. Other steps may override this config
 
 ## embed_graph
 ### Fields
-* `is_enabled` **bool** - Whether to enable graph embeddings.
+* `enabled` **bool** - Whether to enable graph embeddings.
 * `num_walks` **int** - The node2vec number of walks.
 * `walk_length`  **int** - The node2vec walk length.
 * `window_size` **int** - The node2vec window size.
