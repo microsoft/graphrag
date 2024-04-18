@@ -42,7 +42,7 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 | `GRAPHRAG_INPUT_TIMESTAMP_COLUMN`  | The 'timestamp' column to use when reading CSV input files.                       | `str` | optional             | `None`    |
 | `GRAPHRAG_INPUT_TIMESTAMP_FORMAT`  | The timestamp format to use when parsing timestamps in the timestamp column       | `str` | optional             | `None`    |
 | `GRAPHRAG_INPUT_TEXT_COLUMN`       | The 'text' column to use when reading CSV input files.                            | `str` | optional             | `text`    |
-| `GRAPHRAG_INPUT_ATTRIBUTE_COLUMNS` | A list of CSV columns, comma-separated, to incorporate as document fields.        | `str` | optional             | `id`      |
+| `GRAPHRAG_INPUT_DOCUMENT_ATTRIBUTE_COLUMNS` | A list of CSV columns, comma-separated, to incorporate as document fields.        | `str` | optional             | `id`      |
 | `GRAPHRAG_INPUT_TITLE_COLUMN`      | The 'title' column to use when reading CSV input files.                           | `str` | optional             | `title`   |
 | `GRAPHRAG_INPUT_STORAGE_TYPE`      | The storage type to use when reading CSV input files.  (`file` or `blob`)         | `str` | optional             | `file`    |
 | `GRAPHRAG_INPUT_CONNECTION_STRING` | The connection string to use when reading CSV input files from Azure Blob Storage. | `str` | optional             | `None`    |
@@ -206,6 +206,5 @@ This section controls the reporting mechanism used by the pipeline, for common e
 | `GRAPHRAG_ASYNC_MODE`                | Which async mode to use. Either `asyncio` or `threaded`.              | `str`  | optional             | `asyncio`         |
 | `GRAPHRAG_ENCODING_MODEL`            | The text encoding model, used in tiktoken, to encode text.            | `str`  | optional             | `cl100k_base`     |
 | `GRAPHRAG_MAX_CLUSTER_SIZE`          | The maximum number of entities to include in a single Leiden cluster. | `int`  | optional             | 10                |
-| `GRAPHRAG_ENTITY_RESOLUTION_ENABLED` | Turn Entity Resolution ON or OFF.                                     | `bool` | optional             | False             |
 | `GRAPHRAG_SKIP_WORKFLOWS`            | A comma-separated list of workflow names to skip.                     | `str`  | optional             | `None`            |
 | `GRAPHRAG_UMAP_ENABLED`              | Whether to enable UMAP layouts                                        | `bool` | optional             | False             |
