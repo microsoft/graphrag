@@ -27,10 +27,11 @@ jobs:
       GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
       GRAPHRAG_LLM_MODEL: gpt-3.5-turbo-16k
       GRAPHRAG_EMBEDDING_MODEL: text-embedding-ada-002
-      GRAPHRAG_LLM_TPM: 120_000
-      GRAPHRAG_LLM_RPM: 720
-      GRAPHRAG_EMBEDDING_TPM: 350_000
-      GRAPHRAG_EMBEDDING_RPM: 2_100
+      # We have Windows + Linux runners in 3.10 and 3.11, so we need to divide the rate limits by 4
+      GRAPHRAG_LLM_TPM: 45_000 # 180,000 / 4
+      GRAPHRAG_LLM_RPM: 270 # 1,080 / 4
+      GRAPHRAG_EMBEDDING_TPM: 87_500 # 350,000 / 4
+      GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
 
     runs-on: ${{ matrix.os }}
     steps:
