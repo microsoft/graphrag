@@ -5,6 +5,9 @@
 from .default_config import default_config
 from .load import load_pipeline_config
 from .parameters import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
     CacheConfigModel,
     ChunkingConfigModel,
     ClaimExtractionConfigModel,
@@ -28,6 +31,9 @@ from .parameters import (
 )
 
 __all__ = [
+    "ApiKeyMissingError",
+    "AzureApiBaseMissingError",
+    "AzureDeploymentNameMissingError",
     "CacheConfigModel",
     "ChunkingConfigModel",
     "ClaimExtractionConfigModel",

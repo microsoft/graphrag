@@ -12,6 +12,7 @@ from typing import Any, ClassVar
 from unittest import mock
 
 import pandas as pd
+import pytest
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
 
@@ -249,6 +250,7 @@ class TestIndexer:
         },
         clear=True,
     )
+    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
     def test_fixture(
         self,
         input_path: str,

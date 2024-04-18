@@ -4,7 +4,7 @@
 
 from environs import Env
 
-from .default_config_parameters_model import DefaultConfigParametersModel
+from .models.default_config_parameters_model import DefaultConfigParametersModel
 from .sections import (
     CacheConfigSection,
     ChunkingConfigSection,
