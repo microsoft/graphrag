@@ -18,7 +18,8 @@ from .reporting_config_model import ReportingConfigModel
 from .snapshots_config_model import SnapshotsConfigModel
 from .storage_config_model import StorageConfigModel
 from .summarize_descriptions_config_model import SummarizeDescriptionsConfigModel
-from .text_embedding_config_model import TextEmbeddingConfigModel, TextEmbeddingTarget
+from .text_embedding_config_model import TextEmbeddingConfigModel
+from .types import TextEmbeddingTarget
 from .umap_config_model import UmapConfigModel
 
 __all__ = [

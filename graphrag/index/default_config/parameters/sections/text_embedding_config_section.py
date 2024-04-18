@@ -9,15 +9,15 @@ from environs import Env
 from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
     DEFAULT_EMBEDDING_BATCH_SIZE,
-    DEFAULT_EMBEDDING_CONCURRENT_REQUESTS,
-    DEFAULT_EMBEDDING_MAX_RETRIES,
-    DEFAULT_EMBEDDING_MAX_RETRY_WAIT,
     DEFAULT_EMBEDDING_MODEL,
-    DEFAULT_EMBEDDING_REQUESTS_PER_MINUTE,
-    DEFAULT_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
     DEFAULT_EMBEDDING_TARGET,
-    DEFAULT_EMBEDDING_TOKENS_PER_MINUTE,
     DEFAULT_EMBEDDING_TYPE,
+    DEFAULT_LLM_CONCURRENT_REQUESTS,
+    DEFAULT_LLM_MAX_RETRIES,
+    DEFAULT_LLM_MAX_RETRY_WAIT,
+    DEFAULT_LLM_REQUESTS_PER_MINUTE,
+    DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+    DEFAULT_LLM_TOKENS_PER_MINUTE,
 )
 from graphrag.index.default_config.parameters.models import (
     TextEmbeddingConfigModel,
@@ -68,24 +68,22 @@ class TextEmbeddingConfigSection(LLMConfigSection):
             "model": self.readopt(opts, "model", DEFAULT_EMBEDDING_MODEL),
             "encoding_model": opts.get("encoding_model", self._encoding_model),
             "tokens_per_minute": self.readopt(
-                opts, "tokens_per_minute", DEFAULT_EMBEDDING_TOKENS_PER_MINUTE
+                opts, "tokens_per_minute", DEFAULT_LLM_TOKENS_PER_MINUTE
             ),
             "requests_per_minute": self.readopt(
-                opts, "requests_per_minute", DEFAULT_EMBEDDING_REQUESTS_PER_MINUTE
+                opts, "requests_per_minute", DEFAULT_LLM_REQUESTS_PER_MINUTE
             ),
-            "max_retries": self.readopt(
-                opts, "max_retries", DEFAULT_EMBEDDING_MAX_RETRIES
-            ),
+            "max_retries": self.readopt(opts, "max_retries", DEFAULT_LLM_MAX_RETRIES),
             "max_retry_wait": self.readopt(
-                opts, "max_retry_wait", DEFAULT_EMBEDDING_MAX_RETRY_WAIT
+                opts, "max_retry_wait", DEFAULT_LLM_MAX_RETRY_WAIT
             ),
             "sleep_on_rate_limit_recommendation": self.readopt(
                 opts,
                 "sleep_on_rate_limit_recommendation",
-                DEFAULT_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+                DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
             ),
             "concurrent_requests": self.readopt(
-                opts, "concurrent_requests", DEFAULT_EMBEDDING_CONCURRENT_REQUESTS
+                opts, "concurrent_requests", DEFAULT_LLM_CONCURRENT_REQUESTS
             ),
         }
 

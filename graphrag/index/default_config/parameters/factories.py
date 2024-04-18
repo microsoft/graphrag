@@ -188,7 +188,7 @@ def default_config_parameters_from_env_vars(
 
         with section(Section.node2vec):
             embed_graph = EmbedGraphConfigModel(
-                is_enabled=_bool(Fragment.enabled),
+                enabled=_bool(Fragment.enabled),
                 num_walks=_int("NUM_WALKS"),
                 walk_length=_int("WALK_LENGTH"),
                 window_size=_int("WINDOW_SIZE"),
