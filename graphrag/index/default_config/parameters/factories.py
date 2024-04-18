@@ -224,8 +224,8 @@ def default_config_parameters(
     ) -> ParallelizationParametersModel:
         with reader.use(config.get("parallelization")):
             return ParallelizationParametersModel(
-                num_threads=reader.int("num_threads") or base.num_threads,
-                stagger=reader.float("thread_stagger") or base.stagger,
+                num_threads=reader.int("num_threads", Fragment.thread_count) or base.num_threads,
+                stagger=reader.float("stagger", Fragment.thread_stagger) or base.stagger,
             )
 
     fallback_oai_key = env("OPENAI_API_KEY", env("AZURE_OPENAI_API_KEY", None))
@@ -291,9 +291,9 @@ def default_config_parameters(
                 )
             with reader.use(values.get("parallelization")):
                 llm_parallelization_model = ParallelizationParametersModel(
-                    stagger=reader.float(Fragment.thread_stagger)
+                    stagger=reader.float("stagger", Fragment.thread_stagger)
                     or DEFAULT_PARALLELIZATION_STAGGER,
-                    num_threads=reader.int(Fragment.thread_count)
+                    num_threads=reader.int("num_threads", Fragment.thread_count)
                     or DEFAULT_PARALLELIZATION_NUM_THREADS,
                 )
         embeddings_config = values.get("embeddings") or {}
