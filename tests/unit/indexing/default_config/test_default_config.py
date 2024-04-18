@@ -77,7 +77,7 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_LLM_TOKENS_PER_MINUTE,
     DEFAULT_LLM_TYPE,
     DEFAULT_MAX_CLUSTER_SIZE,
-    DEFAULT_NODE2VEC_IS_ENABLED,
+    DEFAULT_NODE2VEC_ENABLED,
     DEFAULT_NODE2VEC_ITERATIONS,
     DEFAULT_NODE2VEC_NUM_WALKS,
     DEFAULT_NODE2VEC_RANDOM_SEED,
@@ -760,7 +760,7 @@ class TestDefaultConfig(unittest.TestCase):
         )
         assert parameters.llm.type == DEFAULT_LLM_TYPE
         assert parameters.cluster_graph.max_cluster_size == DEFAULT_MAX_CLUSTER_SIZE
-        assert parameters.embed_graph.enabled == DEFAULT_NODE2VEC_IS_ENABLED
+        assert parameters.embed_graph.enabled == DEFAULT_NODE2VEC_ENABLED
         assert parameters.embed_graph.iterations == DEFAULT_NODE2VEC_ITERATIONS
         assert parameters.embed_graph.num_walks == DEFAULT_NODE2VEC_NUM_WALKS
         assert parameters.embed_graph.random_seed == DEFAULT_NODE2VEC_RANDOM_SEED

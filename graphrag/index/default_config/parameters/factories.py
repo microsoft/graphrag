@@ -59,7 +59,7 @@ from .defaults import (
     DEFAULT_LLM_TOKENS_PER_MINUTE,
     DEFAULT_LLM_TYPE,
     DEFAULT_MAX_CLUSTER_SIZE,
-    DEFAULT_NODE2VEC_IS_ENABLED,
+    DEFAULT_NODE2VEC_ENABLED,
     DEFAULT_NODE2VEC_ITERATIONS,
     DEFAULT_NODE2VEC_NUM_WALKS,
     DEFAULT_NODE2VEC_RANDOM_SEED,
@@ -330,7 +330,7 @@ def default_config_parameters(
             reader.use(values.get("embed_graph")),
         ):
             embed_graph_model = EmbedGraphConfigModel(
-                enabled=reader.bool(Fragment.enabled) or DEFAULT_NODE2VEC_IS_ENABLED,
+                enabled=reader.bool(Fragment.enabled) or DEFAULT_NODE2VEC_ENABLED,
                 num_walks=reader.int("num_walks") or DEFAULT_NODE2VEC_NUM_WALKS,
                 walk_length=reader.int("walk_length") or DEFAULT_NODE2VEC_WALK_LENGTH,
                 window_size=reader.int("window_size") or DEFAULT_NODE2VEC_WINDOW_SIZE,

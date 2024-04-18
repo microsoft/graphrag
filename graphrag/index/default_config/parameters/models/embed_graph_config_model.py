@@ -5,7 +5,7 @@
 from pydantic import BaseModel, Field
 
 from graphrag.index.default_config.parameters.defaults import (
-    DEFAULT_NODE2VEC_IS_ENABLED,
+    DEFAULT_NODE2VEC_ENABLED,
     DEFAULT_NODE2VEC_ITERATIONS,
     DEFAULT_NODE2VEC_NUM_WALKS,
     DEFAULT_NODE2VEC_RANDOM_SEED,
@@ -20,7 +20,7 @@ class EmbedGraphConfigModel(BaseModel):
 
     enabled: bool = Field(
         description="A flag indicating whether to enable node2vec.",
-        default=DEFAULT_NODE2VEC_IS_ENABLED,
+        default=DEFAULT_NODE2VEC_ENABLED,
     )
     num_walks: int = Field(
         description="The node2vec number of walks.", default=DEFAULT_NODE2VEC_NUM_WALKS
