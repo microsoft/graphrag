@@ -20,7 +20,6 @@ from graphrag.index.default_config.parameters.read_dotenv import read_dotenv
 from graphrag.index.llm.types import LLMType
 
 from .default_config_parameters import DefaultConfigParametersDict
-from .default_config_parameters_model import DefaultConfigParametersModel
 from .errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -32,6 +31,7 @@ from .models import (
     ClaimExtractionConfigModel,
     ClusterGraphConfigModel,
     CommunityReportsConfigModel,
+    DefaultConfigParametersModel,
     EmbedGraphConfigModel,
     EntityExtractionConfigModel,
     InputConfigModel,
