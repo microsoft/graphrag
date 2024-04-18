@@ -4,6 +4,7 @@
 
 from environs import Env
 
+from .defaults import DEFAULT_ENCODING_MODEL
 from .models.default_config_parameters_model import DefaultConfigParametersModel
 from .sections import (
     CacheConfigSection,
@@ -162,7 +163,7 @@ class DefaultConfigParametersDict(LLMConfigSection):
     def encoding_model(self) -> str:
         """The encoding model to use."""
         # cl100k_base for gpt3.5-turbo and gpt-4, https://github.com/openai/openai-cookbook/blob/63f95154b1a736b6c3e4834434b4077d110dd97a/examples/How_to_count_tokens_with_tiktoken.ipynb
-        return self.replace(self._values.encoding_model, "cl100k_base")
+        return self.replace(self._values.encoding_model, DEFAULT_ENCODING_MODEL)
 
     @property
     def root_dir(self) -> str:

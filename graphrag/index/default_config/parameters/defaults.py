@@ -11,10 +11,12 @@ from graphrag.index.config import (
     PipelineReportingType,
     PipelineStorageType,
 )
-from graphrag.index.default_config.parameters.models import TextEmbeddingTarget
 from graphrag.index.llm.types import LLMType
 
+from .models.types import TextEmbeddingTarget
+
 DEFAULT_ASYNC_MODE = AsyncType.Threaded
+DEFAULT_ENCODING_MODEL = "cl100k_base"
 #
 # LLM Parameters
 #
@@ -34,12 +36,6 @@ DEFAULT_LLM_CONCURRENT_REQUESTS = 25
 #
 DEFAULT_EMBEDDING_TYPE = LLMType.OpenAIEmbedding
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
-DEFAULT_EMBEDDING_TOKENS_PER_MINUTE = 0
-DEFAULT_EMBEDDING_REQUESTS_PER_MINUTE = 0
-DEFAULT_EMBEDDING_MAX_RETRIES = 10
-DEFAULT_EMBEDDING_MAX_RETRY_WAIT = 10.0
-DEFAULT_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION = True
-DEFAULT_EMBEDDING_CONCURRENT_REQUESTS = 25
 DEFAULT_EMBEDDING_BATCH_SIZE = 16
 DEFAULT_EMBEDDING_BATCH_MAX_TOKENS = 8191
 DEFAULT_EMBEDDING_TARGET = TextEmbeddingTarget.required
