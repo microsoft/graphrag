@@ -11,16 +11,17 @@ import yaml
 from pydantic import ValidationError
 
 from graphrag.index import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
     PipelineCacheType,
+    PipelineCSVInputConfig,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
+    PipelineTextInputConfig,
     default_config,
     default_config_parameters,
-)
-from graphrag.index.config import (
-    PipelineCSVInputConfig,
-    PipelineTextInputConfig,
 )
 from graphrag.index.default_config import (
     CacheConfigInputModel,
@@ -187,6 +188,107 @@ ALL_ENV_VARS = {
 
 
 class TestDefaultConfig(unittest.TestCase):
+    @mock.patch.dict(os.environ, {}, clear=True)
+    def test_default_config_with_no_env_vars_throws(self):
+        with pytest.raises(ApiKeyMissingError):
+            # This should throw an error because the API key is missing
+            default_config(default_config_parameters())
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_default_config_with_api_key_passes(self):
+        # doesn't throw
+        config = default_config(default_config_parameters())
+        assert config is not None
+
+    @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
+    def test_default_config_with_oai_key_passes(self):
+        # doesn't throw
+        config = default_config(default_config_parameters())
+        assert config is not None
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_api_base(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(type="azure_openai_chat")
+                )
+            )
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_llm_deployment_name(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_chat", api_base="http://some/base"
+                    )
+                )
+            )
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_chat",
+                        api_base="http://some/base",
+                        deployment_name="model-deployment-name-x",
+                    ),
+                    embeddings=TextEmbeddingConfigInputModel(
+                        llm=LLMParametersInputModel(
+                            type="azure_openai_embedding",
+                        )
+                    ),
+                )
+            )
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_minimim_azure_config_object(self):
+        default_config_parameters(
+            DefaultConfigParametersInputModel(
+                llm=LLMParametersInputModel(
+                    type="azure_openai_chat",
+                    api_base="http://some/base",
+                    deployment_name="model-deployment-name-x",
+                ),
+                embeddings=TextEmbeddingConfigInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_embedding",
+                        deployment_name="model-deployment-name",
+                    )
+                ),
+            )
+        )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_API_BASE": "http://some/base",
+            "GRAPHRAG_LLM_API_TYPE": "azure_openai_chat",
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",
+            "GRAPHRAG_EMBEDDING_API_TYPE": "azure_openai_embedding",
+            "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME": "model-deployment-name",
+        },
+        clear=True,
+    )
+    def test_minimim_azure_env_var(self):
+        # doesn't throw
+        config = default_config_parameters()
+        assert config is not None
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_LLM_API_KEY": "test", "GRAPHRAG_EMBEDDING_API_KEY": "test"},
+        clear=True,
+    )
+    def test_default_config_with_llm_and_embedding_keys_passes(self):
+        # doesn't throw
+        config = default_config(default_config_parameters())
+        assert config is not None
+
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
         config = default_config(default_config_parameters(root_dir="/some/root"))

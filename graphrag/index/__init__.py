@@ -34,6 +34,9 @@ from .config import (
     PipelineWorkflowStep,
 )
 from .default_config import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
     CacheConfigModel,
     ChunkingConfigModel,
     ClaimExtractionConfigModel,
@@ -59,6 +62,9 @@ from .run import run_pipeline, run_pipeline_with_config
 from .storage import PipelineStorage
 
 __all__ = [
+    "ApiKeyMissingError",
+    "AzureApiBaseMissingError",
+    "AzureDeploymentNameMissingError",
     "CacheConfigModel",
     "ChunkingConfigModel",
     "ClaimExtractionConfigModel",

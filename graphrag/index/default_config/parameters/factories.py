@@ -78,6 +78,11 @@ from .defaults import (
     DEFAULT_UMAP_ENABLED,
 )
 from .environment_reader import EnvironmentReader
+from .errors import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
+)
 from .input_models import (
     DefaultConfigParametersInputModel,
     LLMConfigInputModel,
@@ -101,19 +106,6 @@ from .models import (
     UmapConfigModel,
 )
 from .models.default_config_parameters_model import DefaultConfigParametersModel
-
-LLM_KEY_REQUIRED = "API Key is required for Completion API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_LLM_API_KEY environment variable."
-EMBEDDING_KEY_REQUIRED = "API Key is required for Embedding API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or GRAPHRAG_EMBEDDING_API_KEY environment variable."
-AZURE_LLM_DEPLOYMENT_NAME_REQUIRED = (
-    "GRAPHRAG_LLM_MODEL or GRAPHRAG_LLM_DEPLOYMENT_NAME is required for Azure OpenAI."
-)
-AZURE_LLM_API_BASE_REQUIRED = (
-    "GRAPHRAG_API_BASE or GRAPHRAG_LLM_API_BASE is required for Azure OpenAI."
-)
-AZURE_EMBEDDING_DEPLOYMENT_NAME_REQUIRED = "GRAPHRAG_EMBEDDING_MODEL or GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME is required for Azure OpenAI."
-AZURE_EMBEDDING_API_BASE_REQUIRED = (
-    "GRAPHRAG_API_BASE or GRAPHRAG_EMBEDDING_API_BASE is required for Azure OpenAI."
-)
 
 InputModelValidator = TypeAdapter(DefaultConfigParametersInputModel)
 
@@ -142,11 +134,17 @@ def default_config_parameters(
             llm_type = LLMType(llm_type) if llm_type else base.type
             api_key = reader.str(Fragment.api_key) or base.api_key
             api_base = reader.str(Fragment.api_base) or base.api_base
+            deployment_name = (
+                reader.str(Fragment.deployment_name) or base.deployment_name
+            )
 
             if api_key is None:
-                raise ValueError(LLM_KEY_REQUIRED)
-            if _is_azure(llm_type) and api_base is None:
-                raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+                raise ApiKeyMissingError
+            if _is_azure(llm_type):
+                if api_base is None:
+                    raise AzureApiBaseMissingError
+                if deployment_name is None:
+                    raise AzureDeploymentNameMissingError
 
             sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
             if sleep_on_rate_limit is None:
@@ -165,8 +163,7 @@ def default_config_parameters(
                 or base.model_supports_json,
                 request_timeout=reader.float(Fragment.request_timeout)
                 or base.request_timeout,
-                deployment_name=reader.str(Fragment.deployment_name)
-                or base.deployment_name,
+                deployment_name=deployment_name,
                 tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or base.tokens_per_minute,
                 requests_per_minute=reader.int("requests_per_minute", Fragment.rpm)
@@ -188,14 +185,17 @@ def default_config_parameters(
             api_version = reader.str(Fragment.api_version) or base.api_version
             api_organization = reader.str("organization") or base.organization
             api_proxy = reader.str("proxy") or base.proxy
-
             api_type = reader.str(Fragment.type) or DEFAULT_EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else DEFAULT_LLM_TYPE
+            deployment_name = reader.str(Fragment.deployment_name)
 
             if api_key is None:
-                raise ValueError(LLM_KEY_REQUIRED)
-            if _is_azure(api_type) and api_base is None:
-                raise ValueError(AZURE_EMBEDDING_API_BASE_REQUIRED)
+                raise ApiKeyMissingError
+            if _is_azure(api_type):
+                if api_base is None:
+                    raise AzureApiBaseMissingError
+                if deployment_name is None:
+                    raise AzureDeploymentNameMissingError
 
             sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
             if sleep_on_rate_limit is None:
@@ -211,7 +211,7 @@ def default_config_parameters(
                 model=reader.str(Fragment.model) or DEFAULT_EMBEDDING_MODEL,
                 request_timeout=reader.float(Fragment.request_timeout)
                 or DEFAULT_LLM_REQUEST_TIMEOUT,
-                deployment_name=reader.str(Fragment.deployment_name),
+                deployment_name=deployment_name,
                 tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or DEFAULT_LLM_TOKENS_PER_MINUTE,
                 requests_per_minute=reader.int("requests_per_minute", Fragment.rpm)
@@ -261,11 +261,15 @@ def default_config_parameters(
                 api_base = reader.str(Fragment.api_base) or fallback_oai_base
                 api_version = reader.str(Fragment.api_version) or fallback_oai_version
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
+                deployment_name = reader.str(Fragment.deployment_name)
 
                 if api_key is None:
-                    raise ValueError(LLM_KEY_REQUIRED)
-                if _is_azure(llm_type) and api_base is None:
-                    raise ValueError(AZURE_LLM_API_BASE_REQUIRED)
+                    raise ApiKeyMissingError(embedding=True)
+                if _is_azure(llm_type):
+                    if api_base is None:
+                        raise AzureApiBaseMissingError(embedding=True)
+                    if deployment_name is None:
+                        raise AzureDeploymentNameMissingError(embedding=True)
 
                 sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
                 if sleep_on_rate_limit is None:
@@ -284,7 +288,7 @@ def default_config_parameters(
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or DEFAULT_LLM_REQUEST_TIMEOUT,
-                    deployment_name=reader.str(Fragment.deployment_name),
+                    deployment_name=deployment_name,
                     tokens_per_minute=reader.int(Fragment.tpm)
                     or DEFAULT_LLM_TOKENS_PER_MINUTE,
                     requests_per_minute=reader.int(Fragment.rpm)

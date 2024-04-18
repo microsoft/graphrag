@@ -2,6 +2,11 @@
 
 """Configuration parameterization settings for the indexing pipeline."""
 
+from .errors import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureDeploymentNameMissingError,
+)
 from .factories import (
     default_config_parameters,
 )
@@ -48,6 +53,9 @@ from .models import (
 from .read_dotenv import read_dotenv
 
 __all__ = [
+    "ApiKeyMissingError",
+    "AzureApiBaseMissingError",
+    "AzureDeploymentNameMissingError",
     "CacheConfigInputModel",
     "CacheConfigModel",
     "ChunkingConfigInputModel",
