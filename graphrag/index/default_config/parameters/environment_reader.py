@@ -30,6 +30,7 @@ class EnvironmentReader:
 
     def __init__(self, env: Env):
         self._env = env
+        self._config_stack = []
 
     @property
     def env(self):
