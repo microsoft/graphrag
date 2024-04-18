@@ -102,7 +102,7 @@ _pyright = "pyright"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
-fix_unsafe = "ruff --preview check --fix --unsafe-fixes ."
+fix_unsafe = "ruff check --preview --fix --unsafe-fixes ."
 
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
