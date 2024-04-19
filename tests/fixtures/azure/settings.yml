@@ -24,24 +24,24 @@ embeddings:
 input:
     type: text
     storage_type: blob
-    connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: input
 
 cache:
     type: blob
-    connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: cache
 
 storage:
     type: blob
-    connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: output
 
 reporting:
     type: blob
-    connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: reports
