@@ -97,6 +97,7 @@ def build_steps(
         {"verb": "copy", "args": {"column": "chunk_id", "to": "id"}},
         {
             # ELIMINATE EMPTY CHUNKS
+            "id": "result",
             "verb": "filter",
             "args": {
                 "column": chunk_column_name,
@@ -108,4 +109,12 @@ def build_steps(
                 ],
             },
         },
+        {
+            "verb": "hackerman",
+            "args": {},
+            "input": {
+                "input": "result",
+                "other": DEFAULT_INPUT_NAME
+            }
+        }
     ]

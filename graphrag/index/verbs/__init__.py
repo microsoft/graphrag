@@ -21,6 +21,7 @@ from .spread_json import spread_json
 from .text import chunk, text_embed, text_split, text_translate
 from .unzip import unzip
 from .zip import zip_verb
+from .hackerman import hackerman
 
 __all__ = [
     "aggregate",
