@@ -7,8 +7,8 @@ from __future__ import annotations
 from enum import Enum
 
 
-class PipelineCacheType(str, Enum):
-    """Represent the cache configuration type for the pipeline."""
+class CacheType(str, Enum):
+    """The cache configuration type for the pipeline."""
 
     file = "file"
     """The file cache configuration type."""
@@ -20,8 +20,8 @@ class PipelineCacheType(str, Enum):
     """The blob cache configuration type."""
 
 
-class PipelineInputType(str, Enum):
-    """Represent the input type for the pipeline."""
+class InputType(str, Enum):
+    """The input type for the pipeline."""
 
     csv = "csv"
     """The CSV input type."""
@@ -29,17 +29,8 @@ class PipelineInputType(str, Enum):
     """The text input type."""
 
 
-class PipelineInputStorageType(str, Enum):
-    """Represent the input storage type for the pipeline."""
-
-    file = "file"
-    """The local storage type."""
-    blob = "blob"
-    """The Azure Blob storage type."""
-
-
-class PipelineStorageType(str, Enum):
-    """Represent the storage type for the pipeline."""
+class StorageType(str, Enum):
+    """The storage type for the pipeline."""
 
     file = "file"
     """The file storage type."""
@@ -49,8 +40,8 @@ class PipelineStorageType(str, Enum):
     """The blob storage type."""
 
 
-class PipelineReportingType(str, Enum):
-    """Represent the reporting configuration type for the pipeline."""
+class ReportingType(str, Enum):
+    """The reporting configuration type for the pipeline."""
 
     file = "file"
     """The file reporting configuration type."""

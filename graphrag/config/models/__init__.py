@@ -2,42 +2,42 @@
 
 """Interfaces for Default Config parameterization."""
 
-from .cache_config_model import CacheConfigModel
-from .chunking_config_model import ChunkingConfigModel
-from .claim_extraction_config_model import ClaimExtractionConfigModel
-from .cluster_graph_config_model import ClusterGraphConfigModel
-from .community_reports_config_model import CommunityReportsConfigModel
-from .default_config_parameters_model import DefaultConfigParametersModel
-from .embed_graph_config_model import EmbedGraphConfigModel
-from .entity_extraction_config_model import EntityExtractionConfigModel
-from .input_config_model import InputConfigModel
-from .llm_config_model import LLMConfigModel
-from .llm_parameters_model import LLMParametersModel
-from .parallelization_parameters_model import ParallelizationParametersModel
-from .reporting_config_model import ReportingConfigModel
-from .snapshots_config_model import SnapshotsConfigModel
-from .storage_config_model import StorageConfigModel
-from .summarize_descriptions_config_model import SummarizeDescriptionsConfigModel
-from .text_embedding_config_model import TextEmbeddingConfigModel
-from .umap_config_model import UmapConfigModel
+from .cache_config import CacheConfig
+from .chunking_config import ChunkingConfig
+from .claim_extraction_config import ClaimExtractionConfig
+from .cluster_graph_config import ClusterGraphConfig
+from .community_reports_config import CommunityReportsConfig
+from .embed_graph_config import EmbedGraphConfig
+from .entity_extraction_config import EntityExtractionConfig
+from .graph_rag_config import GraphRagConfig
+from .input_config import InputConfig
+from .llm_config import LLMConfig
+from .llm_parameters import LLMParameters
+from .parallelization_parameters import ParallelizationParameters
+from .reporting_config import ReportingConfig
+from .snapshots_config import SnapshotsConfig
+from .storage_config import StorageConfig
+from .summarize_descriptions_config import SummarizeDescriptionsConfig
+from .text_embedding_config import TextEmbeddingConfig
+from .umap_config import UmapConfig
 
 __all__ = [
-    "CacheConfigModel",
-    "ChunkingConfigModel",
-    "ClaimExtractionConfigModel",
-    "ClusterGraphConfigModel",
-    "CommunityReportsConfigModel",
-    "DefaultConfigParametersModel",
-    "EmbedGraphConfigModel",
-    "EntityExtractionConfigModel",
-    "InputConfigModel",
-    "LLMConfigModel",
-    "LLMParametersModel",
-    "ParallelizationParametersModel",
-    "ReportingConfigModel",
-    "SnapshotsConfigModel",
-    "StorageConfigModel",
-    "SummarizeDescriptionsConfigModel",
-    "TextEmbeddingConfigModel",
-    "UmapConfigModel",
+    "CacheConfig",
+    "ChunkingConfig",
+    "ClaimExtractionConfig",
+    "ClusterGraphConfig",
+    "CommunityReportsConfig",
+    "EmbedGraphConfig",
+    "EntityExtractionConfig",
+    "GraphRagConfig",
+    "InputConfig",
+    "LLMConfig",
+    "LLMParameters",
+    "ParallelizationParameters",
+    "ReportingConfig",
+    "SnapshotsConfig",
+    "StorageConfig",
+    "SummarizeDescriptionsConfig",
+    "TextEmbeddingConfig",
+    "UmapConfig",
 ]

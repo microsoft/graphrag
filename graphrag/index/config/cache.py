@@ -9,7 +9,7 @@ from typing import Generic, Literal, TypeVar
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-from graphrag.config.enums import PipelineCacheType
+from graphrag.config.enums import CacheType
 
 T = TypeVar("T")
 
@@ -20,10 +20,10 @@ class PipelineCacheConfig(BaseModel, Generic[T]):
     type: T
 
 
-class PipelineFileCacheConfig(PipelineCacheConfig[Literal[PipelineCacheType.file]]):
+class PipelineFileCacheConfig(PipelineCacheConfig[Literal[CacheType.file]]):
     """Represent the file cache configuration for the pipeline."""
 
-    type: Literal[PipelineCacheType.file] = PipelineCacheType.file
+    type: Literal[CacheType.file] = CacheType.file
     """The type of cache."""
     base_dir: str | None = pydantic_Field(
         description="The base directory for the cache.", default=None
@@ -31,24 +31,24 @@ class PipelineFileCacheConfig(PipelineCacheConfig[Literal[PipelineCacheType.file
     """The base directory for the cache."""
 
 
-class PipelineMemoryCacheConfig(PipelineCacheConfig[Literal[PipelineCacheType.memory]]):
+class PipelineMemoryCacheConfig(PipelineCacheConfig[Literal[CacheType.memory]]):
     """Represent the memory cache configuration for the pipeline."""
 
-    type: Literal[PipelineCacheType.memory] = PipelineCacheType.memory
+    type: Literal[CacheType.memory] = CacheType.memory
     """The type of cache."""
 
 
-class PipelineNoneCacheConfig(PipelineCacheConfig[Literal[PipelineCacheType.none]]):
+class PipelineNoneCacheConfig(PipelineCacheConfig[Literal[CacheType.none]]):
     """Represent the none cache configuration for the pipeline."""
 
-    type: Literal[PipelineCacheType.none] = PipelineCacheType.none
+    type: Literal[CacheType.none] = CacheType.none
     """The type of cache."""
 
 
-class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[PipelineCacheType.blob]]):
+class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     """Represents the blob cache configuration for the pipeline."""
 
-    type: Literal[PipelineCacheType.blob] = PipelineCacheType.blob
+    type: Literal[CacheType.blob] = CacheType.blob
     """The type of cache."""
 
     base_dir: str | None = pydantic_Field(

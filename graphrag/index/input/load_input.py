@@ -9,7 +9,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config import PipelineInputStorageType
+from graphrag.config import StorageType
 from graphrag.index.config import PipelineInputConfig
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (
@@ -44,7 +44,7 @@ async def load_input(
         raise ValueError(msg)
 
     match config.storage_type:
-        case PipelineInputStorageType.blob:
+        case StorageType.blob:
             log.info("using blob storage input")
             if config.connection_string is None or config.container_name is None:
                 msg = "Connection string and container name required for blob storage"
@@ -54,7 +54,7 @@ async def load_input(
                 container_name=config.container_name,
                 path_prefix=config.base_dir,
             )
-        case PipelineInputStorageType.file:
+        case StorageType.file:
             log.info("using file storage for input")
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))

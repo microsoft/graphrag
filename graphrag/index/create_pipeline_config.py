@@ -7,15 +7,15 @@ import logging
 from pathlib import Path
 
 from graphrag.config.enums import (
-    PipelineCacheType,
-    PipelineInputType,
-    PipelineReportingType,
-    PipelineStorageType,
+    CacheType,
+    InputType,
+    ReportingType,
+    StorageType,
     TextEmbeddingTarget,
 )
 from graphrag.config.models import (
-    DefaultConfigParametersModel,
-    TextEmbeddingConfigModel,
+    GraphRagConfig,
+    TextEmbeddingConfig,
 )
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
@@ -104,9 +104,7 @@ builtin_document_attributes: set[str] = {
 }
 
 
-def create_pipeline_config(
-    settings: DefaultConfigParametersModel, verbose=False
-) -> PipelineConfig:
+def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineConfig:
     """Get the default config for the pipeline."""
     # relative to the root_dir
     if verbose:
@@ -136,7 +134,7 @@ def create_pipeline_config(
     return result
 
 
-def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
+def _get_embedded_fields(settings: GraphRagConfig) -> list[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
             return list(all_embeddings - {*settings.embeddings.skip})
@@ -147,7 +145,7 @@ def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
             raise ValueError(msg)
 
 
-def _determine_skip_workflows(settings: DefaultConfigParametersModel) -> list[str]:
+def _determine_skip_workflows(settings: GraphRagConfig) -> list[str]:
     skip_workflows = settings.skip_workflows
     if (
         create_final_covariates in skip_workflows
@@ -157,7 +155,7 @@ def _determine_skip_workflows(settings: DefaultConfigParametersModel) -> list[st
     return skip_workflows
 
 
-def _log_llm_settings(settings: DefaultConfigParametersModel) -> None:
+def _log_llm_settings(settings: GraphRagConfig) -> None:
     log.info(
         "Using LLM Config",
         json.dumps(
@@ -174,7 +172,7 @@ def _log_llm_settings(settings: DefaultConfigParametersModel) -> None:
 
 
 def _document_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_document_raw_content_embedding = (
         document_raw_content_embedding not in embedded_fields
@@ -202,7 +200,7 @@ def _document_workflows(
 
 
 def _text_unit_workflows(
-    settings: DefaultConfigParametersModel, skip_workflows: list[str]
+    settings: GraphRagConfig, skip_workflows: list[str]
 ) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
@@ -233,9 +231,7 @@ def _text_unit_workflows(
     ]
 
 
-def _get_embedding_settings(
-    settings: TextEmbeddingConfigModel, embedding_name: str
-) -> dict:
+def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) -> dict:
     vector_store_settings = settings.vector_store
     if vector_store_settings is None:
         return {"strategy": settings.resolved_strategy()}
@@ -256,7 +252,7 @@ def _get_embedding_settings(
 
 
 def _graph_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_entity_name_embedding = entity_name_embedding not in embedded_fields
     skip_entity_description_embedding = (
@@ -338,7 +334,7 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: list[str]
 ) -> list[PipelineWorkflowReference]:
     skip_community_title_embedding = community_title_embedding not in embedded_fields
     skip_community_summary_embedding = (
@@ -377,7 +373,7 @@ def _community_workflows(
 
 
 def _covariate_workflows(
-    settings: DefaultConfigParametersModel,
+    settings: GraphRagConfig,
 ) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
@@ -395,11 +391,11 @@ def _covariate_workflows(
 
 
 def _get_pipeline_input_config(
-    settings: DefaultConfigParametersModel,
+    settings: GraphRagConfig,
 ) -> PipelineInputConfigTypes:
     input_type = settings.input.type
     match input_type:
-        case PipelineInputType.csv:
+        case InputType.csv:
             return PipelineCSVInputConfig(
                 base_dir=settings.input.base_dir,
                 file_pattern=settings.input.file_pattern,
@@ -413,7 +409,7 @@ def _get_pipeline_input_config(
                 connection_string=settings.input.connection_string,
                 container_name=settings.input.container_name,
             )
-        case PipelineInputType.text:
+        case InputType.text:
             return PipelineTextInputConfig(
                 base_dir=settings.input.base_dir,
                 file_pattern=settings.input.file_pattern,
@@ -428,14 +424,14 @@ def _get_pipeline_input_config(
 
 
 def _get_reporting_config(
-    settings: DefaultConfigParametersModel,
+    settings: GraphRagConfig,
 ) -> PipelineReportingConfigTypes:
     """Get the reporting config from the settings."""
     match settings.reporting.type:
-        case PipelineReportingType.file:
+        case ReportingType.file:
             # relative to the root_dir
             return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
-        case PipelineReportingType.blob:
+        case ReportingType.blob:
             connection_string = settings.reporting.connection_string
             container_name = settings.reporting.container_name
             if connection_string is None or container_name is None:
@@ -446,7 +442,7 @@ def _get_reporting_config(
                 container_name=container_name,
                 base_dir=settings.reporting.base_dir,
             )
-        case PipelineReportingType.console:
+        case ReportingType.console:
             return PipelineConsoleReportingConfig()
         case _:
             # relative to the root_dir
@@ -454,21 +450,21 @@ def _get_reporting_config(
 
 
 def _get_storage_config(
-    settings: DefaultConfigParametersModel,
+    settings: GraphRagConfig,
 ) -> PipelineStorageConfigTypes:
     """Get the storage type from the settings."""
     root_dir = settings.root_dir
     match settings.storage.type:
-        case PipelineStorageType.memory:
+        case StorageType.memory:
             return PipelineMemoryStorageConfig()
-        case PipelineStorageType.file:
+        case StorageType.file:
             # relative to the root_dir
             base_dir = settings.storage.base_dir
             if base_dir is None:
                 msg = "Base directory must be provided for file storage."
                 raise ValueError(msg)
             return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
-        case PipelineStorageType.blob:
+        case StorageType.blob:
             connection_string = settings.storage.connection_string
             container_name = settings.storage.container_name
             if connection_string is None or container_name is None:
@@ -489,18 +485,18 @@ def _get_storage_config(
 
 
 def _get_cache_config(
-    settings: DefaultConfigParametersModel,
+    settings: GraphRagConfig,
 ) -> PipelineCacheConfigTypes:
     """Get the cache type from the settings."""
     match settings.cache.type:
-        case PipelineCacheType.memory:
+        case CacheType.memory:
             return PipelineMemoryCacheConfig()
-        case PipelineCacheType.file:
+        case CacheType.file:
             # relative to root dir
             return PipelineFileCacheConfig(base_dir=settings.cache.base_dir)
-        case PipelineCacheType.none:
+        case CacheType.none:
             return PipelineNoneCacheConfig()
-        case PipelineCacheType.blob:
+        case CacheType.blob:
             connection_string = settings.cache.connection_string
             container_name = settings.cache.container_name
             if connection_string is None or container_name is None:

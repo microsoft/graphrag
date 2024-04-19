@@ -14,26 +14,26 @@ from graphrag.config import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-    CacheConfigInputModel,
-    ChunkingConfigInputModel,
-    ClaimExtractionConfigInputModel,
-    ClusterGraphConfigInputModel,
-    CommunityReportsConfigInputModel,
+    CacheConfigInput,
+    CacheType,
+    ChunkingConfigInput,
+    ClaimExtractionConfigInput,
+    ClusterGraphConfigInput,
+    CommunityReportsConfigInput,
     DefaultConfigParametersInputModel,
-    EmbedGraphConfigInputModel,
-    EntityExtractionConfigInputModel,
-    InputConfigInputModel,
-    LLMParametersInputModel,
-    PipelineCacheType,
-    PipelineInputType,
-    PipelineReportingType,
-    PipelineStorageType,
-    ReportingConfigInputModel,
-    SnapshotsConfigInputModel,
-    StorageConfigInputModel,
-    SummarizeDescriptionsConfigInputModel,
-    TextEmbeddingConfigInputModel,
-    UmapConfigInputModel,
+    EmbedGraphConfigInput,
+    EntityExtractionConfigInput,
+    InputConfigInput,
+    InputType,
+    LLMParametersInput,
+    ReportingConfigInput,
+    ReportingType,
+    SnapshotsConfigInput,
+    StorageConfigInput,
+    StorageType,
+    SummarizeDescriptionsConfigInput,
+    TextEmbeddingConfigInput,
+    UmapConfigInput,
     default_config_parameters,
 )
 from graphrag.config.defaults import (
@@ -227,7 +227,7 @@ class TestDefaultConfig(unittest.TestCase):
         with pytest.raises(AzureApiBaseMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
-                    llm=LLMParametersInputModel(type="azure_openai_chat")
+                    llm=LLMParametersInput(type="azure_openai_chat")
                 )
             )
 
@@ -249,7 +249,7 @@ class TestDefaultConfig(unittest.TestCase):
         with pytest.raises(AzureDeploymentNameMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
-                    llm=LLMParametersInputModel(
+                    llm=LLMParametersInput(
                         type="azure_openai_chat", api_base="http://some/base"
                     )
                 )
@@ -273,8 +273,8 @@ class TestDefaultConfig(unittest.TestCase):
         with pytest.raises(AzureApiBaseMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
-                    embeddings=TextEmbeddingConfigInputModel(
-                        llm=LLMParametersInputModel(
+                    embeddings=TextEmbeddingConfigInput(
+                        llm=LLMParametersInput(
                             type="azure_openai_embedding",
                             deployment_name="x",
                         )
@@ -302,13 +302,13 @@ class TestDefaultConfig(unittest.TestCase):
         with pytest.raises(AzureDeploymentNameMissingError):
             default_config_parameters(
                 DefaultConfigParametersInputModel(
-                    llm=LLMParametersInputModel(
+                    llm=LLMParametersInput(
                         type="azure_openai_chat",
                         api_base="http://some/base",
                         deployment_name="model-deployment-name-x",
                     ),
-                    embeddings=TextEmbeddingConfigInputModel(
-                        llm=LLMParametersInputModel(
+                    embeddings=TextEmbeddingConfigInput(
+                        llm=LLMParametersInput(
                             type="azure_openai_embedding",
                         )
                     ),
@@ -319,13 +319,13 @@ class TestDefaultConfig(unittest.TestCase):
     def test_minimim_azure_config_object(self):
         config = default_config_parameters(
             DefaultConfigParametersInputModel(
-                llm=LLMParametersInputModel(
+                llm=LLMParametersInput(
                     type="azure_openai_chat",
                     api_base="http://some/base",
                     deployment_name="model-deployment-name-x",
                 ),
-                embeddings=TextEmbeddingConfigInputModel(
-                    llm=LLMParametersInputModel(
+                embeddings=TextEmbeddingConfigInput(
+                    llm=LLMParametersInput(
                         type="azure_openai_embedding",
                         deployment_name="model-deployment-name",
                     )
@@ -449,7 +449,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
-        assert parameters.cache.type == PipelineCacheType.blob
+        assert parameters.cache.type == CacheType.blob
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
@@ -506,7 +506,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.type == PipelineInputType.text
+        assert parameters.input.type == InputType.text
         assert parameters.llm.api_base == "http://some/base"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.api_version == "v1234"
@@ -529,7 +529,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
-        assert parameters.reporting.type == PipelineReportingType.blob
+        assert parameters.reporting.type == ReportingType.blob
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
@@ -537,7 +537,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
-        assert parameters.storage.type == PipelineStorageType.blob
+        assert parameters.storage.type == StorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
         assert (
             parameters.summarize_descriptions.prompt
@@ -549,27 +549,27 @@ class TestDefaultConfig(unittest.TestCase):
     def test_create_parameters(self) -> None:
         parameters = default_config_parameters(
             DefaultConfigParametersInputModel(
-                llm=LLMParametersInputModel(api_key="${API_KEY_X}", model="test-llm"),
-                storage=StorageConfigInputModel(
-                    type=PipelineStorageType.blob,
+                llm=LLMParametersInput(api_key="${API_KEY_X}", model="test-llm"),
+                storage=StorageConfigInput(
+                    type=StorageType.blob,
                     connection_string="test_cs",
                     container_name="test_cn",
                     base_dir="/some/storage/dir",
                 ),
-                cache=CacheConfigInputModel(
-                    type=PipelineCacheType.blob,
+                cache=CacheConfigInput(
+                    type=CacheType.blob,
                     connection_string="test_cs1",
                     container_name="test_cn1",
                     base_dir="/some/cache/dir",
                 ),
-                reporting=ReportingConfigInputModel(
-                    type=PipelineReportingType.blob,
+                reporting=ReportingConfigInput(
+                    type=ReportingType.blob,
                     connection_string="test_cs2",
                     container_name="test_cn2",
                     base_dir="/some/reporting/dir",
                 ),
-                input=InputConfigInputModel(
-                    type=PipelineInputType.text,
+                input=InputConfigInput(
+                    type=InputType.text,
                     file_encoding="utf-16",
                     document_attribute_columns=["test1", "test2"],
                     base_dir="/some/input/dir",
@@ -583,49 +583,49 @@ class TestDefaultConfig(unittest.TestCase):
                     title_column="test_title",
                     storage_type="blob",
                 ),
-                embed_graph=EmbedGraphConfigInputModel(
+                embed_graph=EmbedGraphConfigInput(
                     enabled=True,
                     num_walks=5_000_000,
                     iterations=878787,
                     random_seed=10101,
                     walk_length=555111,
                 ),
-                embeddings=TextEmbeddingConfigInputModel(
+                embeddings=TextEmbeddingConfigInput(
                     batch_size=1_000_000,
                     batch_max_tokens=8000,
                     skip=["a1", "b1", "c1"],
-                    llm=LLMParametersInputModel(model="text-embedding-2"),
+                    llm=LLMParametersInput(model="text-embedding-2"),
                 ),
-                chunks=ChunkingConfigInputModel(
+                chunks=ChunkingConfigInput(
                     size=500, overlap=12, group_by_columns=["a", "b"]
                 ),
-                snapshots=SnapshotsConfigInputModel(
+                snapshots=SnapshotsConfigInput(
                     graphml=True,
                     raw_entities=True,
                     top_level_nodes=True,
                 ),
-                entity_extraction=EntityExtractionConfigInputModel(
+                entity_extraction=EntityExtractionConfigInput(
                     max_gleanings=112,
                     entity_types=["cat", "dog", "elephant"],
                     prompt="entity_extraction_prompt_file.txt",
                 ),
-                summarize_descriptions=SummarizeDescriptionsConfigInputModel(
+                summarize_descriptions=SummarizeDescriptionsConfigInput(
                     max_length=12345, prompt="summarize_prompt_file.txt"
                 ),
-                community_reports=CommunityReportsConfigInputModel(
+                community_reports=CommunityReportsConfigInput(
                     max_length=23456,
                     prompt="community_report_prompt_file.txt",
                     max_input_length=12345,
                 ),
-                claim_extraction=ClaimExtractionConfigInputModel(
+                claim_extraction=ClaimExtractionConfigInput(
                     description="test 123",
                     max_gleanings=5000,
                     prompt="claim_extraction_prompt_file.txt",
                 ),
-                cluster_graph=ClusterGraphConfigInputModel(
+                cluster_graph=ClusterGraphConfigInput(
                     max_cluster_size=123,
                 ),
-                umap=UmapConfigInputModel(enabled=True),
+                umap=UmapConfigInput(enabled=True),
                 encoding_model="test123",
                 skip_workflows=["a", "b", "c"],
             ),
@@ -635,7 +635,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
-        assert parameters.cache.type == PipelineCacheType.blob
+        assert parameters.cache.type == CacheType.blob
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
@@ -673,13 +673,13 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.type == PipelineInputType.text
+        assert parameters.input.type == InputType.text
         assert parameters.llm.api_key == "test"
         assert parameters.llm.model == "test-llm"
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
-        assert parameters.reporting.type == PipelineReportingType.blob
+        assert parameters.reporting.type == ReportingType.blob
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
@@ -687,7 +687,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
-        assert parameters.storage.type == PipelineStorageType.blob
+        assert parameters.storage.type == StorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
         assert parameters.summarize_descriptions.prompt == "summarize_prompt_file.txt"
         assert parameters.umap.enabled

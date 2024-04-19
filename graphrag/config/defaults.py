@@ -5,12 +5,11 @@
 from datashaper import AsyncType
 
 from .enums import (
+    CacheType,
+    InputType,
     LLMType,
-    PipelineCacheType,
-    PipelineInputStorageType,
-    PipelineInputType,
-    PipelineReportingType,
-    PipelineStorageType,
+    ReportingType,
+    StorageType,
     TextEmbeddingTarget,
 )
 
@@ -39,7 +38,7 @@ DEFAULT_EMBEDDING_BATCH_SIZE = 16
 DEFAULT_EMBEDDING_BATCH_MAX_TOKENS = 8191
 DEFAULT_EMBEDDING_TARGET = TextEmbeddingTarget.required
 
-DEFAULT_CACHE_TYPE = PipelineCacheType.file
+DEFAULT_CACHE_TYPE = CacheType.file
 DEFAULT_CACHE_BASE_DIR = "cache"
 DEFAULT_CHUNK_SIZE = 300
 DEFAULT_CHUNK_OVERLAP = 100
@@ -53,8 +52,8 @@ DEFAULT_COMMUNITY_REPORT_MAX_LENGTH = 1500
 DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH = 12_000
 DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS = 0
-DEFAULT_INPUT_TYPE = PipelineInputType.csv
-DEFAULT_INPUT_STORAGE_TYPE = PipelineInputStorageType.file
+DEFAULT_INPUT_TYPE = InputType.csv
+DEFAULT_INPUT_STORAGE_TYPE = StorageType.file
 DEFAULT_INPUT_BASE_DIR = "input"
 DEFAULT_INPUT_FILE_ENCODING = "utf-8"
 DEFAULT_INPUT_TEXT_COLUMN = "text"
@@ -68,12 +67,12 @@ DEFAULT_NODE2VEC_WALK_LENGTH = 40
 DEFAULT_NODE2VEC_WINDOW_SIZE = 2
 DEFAULT_NODE2VEC_ITERATIONS = 3
 DEFAULT_NODE2VEC_RANDOM_SEED = 597832
-DEFAULT_REPORTING_TYPE = PipelineReportingType.file
+DEFAULT_REPORTING_TYPE = ReportingType.file
 DEFAULT_REPORTING_BASE_DIR = "output/${timestamp}/reports"
 DEFAULT_SNAPSHOTS_GRAPHML = False
 DEFAULT_SNAPSHOTS_RAW_ENTITIES = False
 DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES = False
-DEFAULT_STORAGE_TYPE = PipelineStorageType.file
+DEFAULT_STORAGE_TYPE = StorageType.file
 DEFAULT_STORAGE_BASE_DIR = "output/${timestamp}/artifacts"
 DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 DEFAULT_UMAP_ENABLED = False

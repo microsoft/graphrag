@@ -6,7 +6,7 @@ from typing import Any, cast
 import yaml
 
 from graphrag.config import (
-    DefaultConfigParametersModel,
+    GraphRagConfig,
     default_config_parameters,
 )
 from graphrag.index.init_content import INIT_YAML
@@ -15,7 +15,7 @@ from graphrag.index.init_content import INIT_YAML
 def test_init_yaml():
     data = yaml.load(INIT_YAML, Loader=yaml.FullLoader)
     config = default_config_parameters(data)
-    DefaultConfigParametersModel.model_validate(config, strict=True)
+    GraphRagConfig.model_validate(config, strict=True)
 
 
 def test_init_yaml_uncommented():
@@ -29,4 +29,4 @@ def test_init_yaml_uncommented():
     content = "\n".join([uncomment_line(line) for line in lines])
     data = yaml.load(content, Loader=yaml.FullLoader)
     config = default_config_parameters(data)
-    DefaultConfigParametersModel.model_validate(config, strict=True)
+    GraphRagConfig.model_validate(config, strict=True)
