@@ -132,7 +132,7 @@ def _log_llm_settings(settings: DefaultConfigParametersModel) -> None:
         ),
     )
     log.info(
-        "Using Embeddings Config",
+        "Using Embeddings Config %s",
         json.dumps(
             {**settings.embeddings.llm.model_dump(), "api_key": "*****"}, indent=4
         ),
