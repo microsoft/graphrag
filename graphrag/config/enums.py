@@ -84,3 +84,50 @@ class LLMType(str, Enum):
 
     # Debug
     StaticResponse = "static_response"
+
+
+class ChunkStrategyType(str, Enum):
+    """ChunkStrategy class definition."""
+
+    tokens = "tokens"
+    sentence = "sentence"
+
+
+class ExtractClaimsStrategyType(str, Enum):
+    """ExtractClaimsStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
+
+
+class ExtractEntityStrategyType(str, Enum):
+    """ExtractEntityStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
+    graph_intelligence_json = "graph_intelligence_json"
+    nltk = "nltk"
+
+
+class LayoutGraphStrategyType(str, Enum):
+    """LayoutGraphStrategyType class definition."""
+
+    umap = "umap"
+    zero = "zero"
+
+class SummarizeStrategyType(str, Enum):
+    """SummarizeStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
+
+class TextTranslateStrategyType(str, Enum):
+    """TextTranslateStrategyType class definition."""
+
+    openai = "openai"
+    mock = "mock"
+
+
+
+
+class EmbedGraphStrategyType(str, Enum):
+    """EmbedGraphStrategyType class definition."""
+
+    node2vec = "node2vec"

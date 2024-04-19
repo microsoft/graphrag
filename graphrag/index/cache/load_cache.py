@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+from graphrag.config.enums import PipelineCacheType
 from graphrag.index.config import (
     PipelineBlobCacheConfig,
-    PipelineCacheType,
     PipelineFileCacheConfig,
 )
 from graphrag.index.storage import BlobPipelineStorage, FilePipelineStorage

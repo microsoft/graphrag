@@ -6,16 +6,16 @@ import json
 import logging
 from pathlib import Path
 
-from graphrag.config import (
+from graphrag.config.enums import (
     PipelineCacheType,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
+    TextEmbeddingTarget,
 )
 from graphrag.config.models import (
     DefaultConfigParametersModel,
     TextEmbeddingConfigModel,
-    TextEmbeddingTarget,
 )
 from graphrag.index.config import (
     PipelineBlobCacheConfig,

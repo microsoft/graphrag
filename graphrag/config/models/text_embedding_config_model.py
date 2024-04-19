@@ -9,8 +9,8 @@ from graphrag.config.defaults import (
     DEFAULT_EMBEDDING_BATCH_SIZE,
     DEFAULT_EMBEDDING_TARGET,
 )
-from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 from graphrag.config.enums import TextEmbeddingTarget
+from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 
 from .llm_config_model import LLMConfigModel
 

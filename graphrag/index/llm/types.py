@@ -3,7 +3,6 @@
 """A module containing the 'LLMtype' model."""
 
 from collections.abc import Callable
-from enum import Enum
 from typing import TypeAlias
 
 TextSplitter: TypeAlias = Callable[[str], list[str]]

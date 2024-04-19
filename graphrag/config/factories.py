@@ -11,8 +11,6 @@ from datashaper import AsyncType
 from environs import Env
 from pydantic import TypeAdapter
 
-from graphrag.index.llm.types import LLMType
-
 from .defaults import (
     DEFAULT_ASYNC_MODE,
     DEFAULT_CACHE_BASE_DIR,
@@ -69,11 +67,13 @@ from .defaults import (
     DEFAULT_UMAP_ENABLED,
 )
 from .enums import (
+    LLMType,
     PipelineCacheType,
     PipelineInputStorageType,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
+    TextEmbeddingTarget,
 )
 from .environment_reader import EnvironmentReader
 from .errors import (
@@ -102,7 +102,6 @@ from .models import (
     StorageConfigModel,
     SummarizeDescriptionsConfigModel,
     TextEmbeddingConfigModel,
-    TextEmbeddingTarget,
     UmapConfigModel,
 )
 from .read_dotenv import read_dotenv

@@ -8,8 +8,9 @@ from typing import Any
 
 from datashaper import VerbCallbacks
 
+from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
-from graphrag.index.llm import LLMType, load_llm
+from graphrag.index.llm import load_llm
 from graphrag.index.text_splitting import TokenTextSplitter
 from graphrag.llm import CompletionLLM
 

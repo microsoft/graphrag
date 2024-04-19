@@ -5,13 +5,13 @@
 from datashaper import AsyncType
 
 from .enums import (
+    LLMType,
     PipelineCacheType,
     PipelineInputStorageType,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
     TextEmbeddingTarget,
-    LLMType
 )
 
 DEFAULT_ASYNC_MODE = AsyncType.Threaded
