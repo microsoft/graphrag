@@ -5,7 +5,7 @@ from typing import Any, cast
 
 import yaml
 
-from graphrag.index.default_config import (
+from graphrag.config import (
     DefaultConfigParametersModel,
     default_config_parameters,
 )

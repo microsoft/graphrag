@@ -4,24 +4,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
+from graphrag.config.enums import PipelineStorageType
+
 T = TypeVar("T")
-
-
-class PipelineStorageType(str, Enum):
-    """Represent the storage type for the pipeline."""
-
-    file = "file"
-    """The file storage type."""
-    memory = "memory"
-    """The memory storage type."""
-    blob = "blob"
-    """The blob storage type."""
 
 
 class PipelineStorageConfig(BaseModel, Generic[T]):

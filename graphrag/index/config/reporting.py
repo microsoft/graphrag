@@ -4,23 +4,12 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-
-class PipelineReportingType(str, Enum):
-    """Represent the reporting configuration type for the pipeline."""
-
-    file = "file"
-    """The file reporting configuration type."""
-    console = "console"
-    """The console reporting configuration type."""
-    blob = "blob"
-    """The blob reporting configuration type."""
-
+from graphrag.config.enums import PipelineReportingType
 
 T = TypeVar("T")
 

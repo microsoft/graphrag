@@ -4,32 +4,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
+from graphrag.config.enums import PipelineInputStorageType, PipelineInputType
+
 from .workflow import PipelineWorkflowStep
-
-
-class PipelineInputType(str, Enum):
-    """Represent the input type for the pipeline."""
-
-    csv = "csv"
-    """The CSV input type."""
-    text = "text"
-    """The text input type."""
-
-
-class PipelineInputStorageType(str, Enum):
-    """Represent the input storage type for the pipeline."""
-
-    file = "file"
-    """The local storage type."""
-    blob = "blob"
-    """The Azure Blob storage type."""
-
 
 T = TypeVar("T")
 

@@ -10,20 +10,10 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from graphrag.index import (
+from graphrag.config import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-    PipelineCacheType,
-    PipelineCSVInputConfig,
-    PipelineInputType,
-    PipelineReportingType,
-    PipelineStorageType,
-    PipelineTextInputConfig,
-    default_config,
-    default_config_parameters,
-)
-from graphrag.index.default_config import (
     CacheConfigInputModel,
     ChunkingConfigInputModel,
     ClaimExtractionConfigInputModel,
@@ -34,14 +24,19 @@ from graphrag.index.default_config import (
     EntityExtractionConfigInputModel,
     InputConfigInputModel,
     LLMParametersInputModel,
+    PipelineCacheType,
+    PipelineInputType,
+    PipelineReportingType,
+    PipelineStorageType,
     ReportingConfigInputModel,
     SnapshotsConfigInputModel,
     StorageConfigInputModel,
     SummarizeDescriptionsConfigInputModel,
     TextEmbeddingConfigInputModel,
     UmapConfigInputModel,
+    default_config_parameters,
 )
-from graphrag.index.default_config.parameters.defaults import (
+from graphrag.config.defaults import (
     DEFAULT_ASYNC_MODE,
     DEFAULT_CACHE_BASE_DIR,
     DEFAULT_CACHE_TYPE,
@@ -93,6 +88,11 @@ from graphrag.index.default_config.parameters.defaults import (
     DEFAULT_STORAGE_BASE_DIR,
     DEFAULT_STORAGE_TYPE,
     DEFAULT_UMAP_ENABLED,
+)
+from graphrag.index.config import (
+    PipelineCSVInputConfig,
+    PipelineTextInputConfig,
+    create_pipeline_config,
 )
 
 current_dir = os.path.dirname(__file__)
@@ -192,23 +192,25 @@ class TestDefaultConfig(unittest.TestCase):
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):
             # This should throw an error because the API key is missing
-            default_config(default_config_parameters())
+            create_pipeline_config(default_config_parameters())
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_default_config_with_api_key_passes(self):
         # doesn't throw
-        config = default_config(default_config_parameters())
+        config = create_pipeline_config(default_config_parameters())
         assert config is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
     def test_default_config_with_oai_key_passes_envvar(self):
         # doesn't throw
-        config = default_config(default_config_parameters())
+        config = create_pipeline_config(default_config_parameters())
         assert config is not None
 
     def test_default_config_with_oai_key_passes_obj(self):
         # doesn't throw
-        config = default_config(default_config_parameters({"llm": {"api_key": "test"}}))
+        config = create_pipeline_config(
+            default_config_parameters({"llm": {"api_key": "test"}})
+        )
         assert config is not None
 
     @mock.patch.dict(
@@ -375,7 +377,9 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
-        config = default_config(default_config_parameters(root_dir="/some/root"))
+        config = create_pipeline_config(
+            default_config_parameters(root_dir="/some/root")
+        )
         assert config.root_dir == "/some/root"
         # Make sure the input is a CSV input
         assert isinstance(config.input, PipelineCSVInputConfig)
@@ -387,7 +391,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_text_input_returns_correct_config(self):
-        config = default_config(default_config_parameters(root_dir="."))
+        config = create_pipeline_config(default_config_parameters(root_dir="."))
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
@@ -856,7 +860,7 @@ llm:
     assert parameters.llm.deployment_name == "test"
 
     # generate the pipeline from the default parameters
-    pipeline_config = default_config(parameters, True)
+    pipeline_config = create_pipeline_config(parameters, True)
 
     config_str = pipeline_config.model_dump_json()
     assert "${PIPELINE_LLM_API_KEY}" not in config_str

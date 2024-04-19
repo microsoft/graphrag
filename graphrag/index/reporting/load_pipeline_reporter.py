@@ -7,11 +7,11 @@ from typing import cast
 
 from datashaper import WorkflowCallbacks
 
+from graphrag.config import PipelineReportingType
 from graphrag.index.config import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
     PipelineReportingConfig,
-    PipelineReportingType,
 )
 
 from .blob_workflow_callbacks import BlobWorkflowCallbacks

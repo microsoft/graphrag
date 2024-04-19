@@ -40,9 +40,9 @@ from .config import (
     PipelineStorageConfigTypes,
     PipelineWorkflowReference,
     PipelineWorkflowStep,
+    load_pipeline_config,
 )
 from .context import PipelineRunContext, PipelineRunStats
-from .default_config import load_pipeline_config
 from .emit import TableEmitterType, create_table_emitters
 from .input import load_input
 from .progress import NullProgressReporter, ProgressReporter

@@ -4,25 +4,12 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-
-class PipelineCacheType(str, Enum):
-    """Represent the cache configuration type for the pipeline."""
-
-    file = "file"
-    """The file cache configuration type."""
-    memory = "memory"
-    """The memory cache configuration type."""
-    none = "none"
-    """The none cache configuration type."""
-    blob = "blob"
-    """The blob cache configuration type."""
-
+from graphrag.config.enums import PipelineCacheType
 
 T = TypeVar("T")
 

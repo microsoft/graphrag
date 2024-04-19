@@ -9,7 +9,8 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.index.config import PipelineInputConfig, PipelineInputStorageType
+from graphrag.config import PipelineInputStorageType
+from graphrag.index.config import PipelineInputConfig
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (
     BlobPipelineStorage,

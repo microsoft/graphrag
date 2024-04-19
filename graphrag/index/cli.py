@@ -11,12 +11,11 @@ import time
 import warnings
 from pathlib import Path
 
-from graphrag.index.cache import NoopPipelineCache
-from graphrag.index.config import PipelineConfig
-from graphrag.index.default_config import (
-    default_config,
+from graphrag.config import (
     default_config_parameters,
 )
+from graphrag.index.cache import NoopPipelineCache
+from graphrag.index.config import PipelineConfig, create_pipeline_config
 from graphrag.index.progress import (
     NullProgressReporter,
     PrintProgressReporter,
@@ -225,7 +224,7 @@ def _create_default_config(
 
     if verbose or dryrun:
         reporter.info(f"Using default configuration: {redact(parameters.model_dump())}")
-    result = default_config(parameters, verbose)
+    result = create_pipeline_config(parameters, verbose)
     if verbose or dryrun:
         reporter.info(f"Final Config: {redact(result.model_dump())}")
 

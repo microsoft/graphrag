@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """Content for the init CLI command."""
 
-from graphrag.index.default_config.parameters.defaults import (
+from graphrag.config.defaults import (
     DEFAULT_ASYNC_MODE,
     DEFAULT_CACHE_BASE_DIR,
     DEFAULT_CACHE_TYPE,
