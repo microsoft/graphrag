@@ -4,10 +4,7 @@ import unittest
 from typing import Any
 
 from graphrag.index.config import PipelineConfig
-from graphrag.index.default_config import (
-    default_config,
-    default_config_parameters_from_env_vars,
-)
+from graphrag.index.default_config import default_config, default_config_parameters
 
 
 def assert_contains_default_config(
@@ -28,7 +25,7 @@ def assert_contains_default_config(
     )
 
     actual_default_config = json.loads(
-        default_config(default_config_parameters_from_env_vars(".")).model_dump_json(
+        default_config(default_config_parameters()).model_dump_json(
             exclude_defaults=True, exclude_unset=True
         )
     )

@@ -3,43 +3,96 @@ import os
 import re
 import unittest
 from pathlib import Path
+from typing import Any, cast
 from unittest import mock
 
 import pytest
 import yaml
-from datashaper import AsyncType
+from pydantic import ValidationError
 
 from graphrag.index import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-    CacheConfigModel,
-    ChunkingConfigModel,
-    ClaimExtractionConfigModel,
-    ClusterGraphConfigModel,
-    CommunityReportsConfigModel,
-    DefaultConfigParametersModel,
-    EmbedGraphConfigModel,
-    EntityExtractionConfigModel,
-    InputConfigModel,
-    LLMParametersModel,
     PipelineCacheType,
+    PipelineCSVInputConfig,
     PipelineInputType,
     PipelineReportingType,
     PipelineStorageType,
-    ReportingConfigModel,
-    SnapshotsConfigModel,
-    StorageConfigModel,
-    SummarizeDescriptionsConfigModel,
-    TextEmbeddingConfigModel,
-    UmapConfigModel,
+    PipelineTextInputConfig,
     default_config,
     default_config_parameters,
-    default_config_parameters_from_env_vars,
 )
-from graphrag.index.config import (
-    PipelineCSVInputConfig,
-    PipelineTextInputConfig,
+from graphrag.index.default_config import (
+    CacheConfigInputModel,
+    ChunkingConfigInputModel,
+    ClaimExtractionConfigInputModel,
+    ClusterGraphConfigInputModel,
+    CommunityReportsConfigInputModel,
+    DefaultConfigParametersInputModel,
+    EmbedGraphConfigInputModel,
+    EntityExtractionConfigInputModel,
+    InputConfigInputModel,
+    LLMParametersInputModel,
+    ReportingConfigInputModel,
+    SnapshotsConfigInputModel,
+    StorageConfigInputModel,
+    SummarizeDescriptionsConfigInputModel,
+    TextEmbeddingConfigInputModel,
+    UmapConfigInputModel,
+)
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_ASYNC_MODE,
+    DEFAULT_CACHE_BASE_DIR,
+    DEFAULT_CACHE_TYPE,
+    DEFAULT_CHUNK_GROUP_BY_COLUMNS,
+    DEFAULT_CHUNK_OVERLAP,
+    DEFAULT_CHUNK_SIZE,
+    DEFAULT_CLAIM_DESCRIPTION,
+    DEFAULT_CLAIM_MAX_GLEANINGS,
+    DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+    DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+    DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+    DEFAULT_EMBEDDING_BATCH_SIZE,
+    DEFAULT_EMBEDDING_MODEL,
+    DEFAULT_EMBEDDING_TARGET,
+    DEFAULT_EMBEDDING_TYPE,
+    DEFAULT_ENCODING_MODEL,
+    DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
+    DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
+    DEFAULT_INPUT_BASE_DIR,
+    DEFAULT_INPUT_CSV_PATTERN,
+    DEFAULT_INPUT_FILE_ENCODING,
+    DEFAULT_INPUT_STORAGE_TYPE,
+    DEFAULT_INPUT_TEXT_COLUMN,
+    DEFAULT_INPUT_TYPE,
+    DEFAULT_LLM_CONCURRENT_REQUESTS,
+    DEFAULT_LLM_MAX_RETRIES,
+    DEFAULT_LLM_MAX_RETRY_WAIT,
+    DEFAULT_LLM_MAX_TOKENS,
+    DEFAULT_LLM_MODEL,
+    DEFAULT_LLM_REQUEST_TIMEOUT,
+    DEFAULT_LLM_REQUESTS_PER_MINUTE,
+    DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+    DEFAULT_LLM_TOKENS_PER_MINUTE,
+    DEFAULT_LLM_TYPE,
+    DEFAULT_MAX_CLUSTER_SIZE,
+    DEFAULT_NODE2VEC_ENABLED,
+    DEFAULT_NODE2VEC_ITERATIONS,
+    DEFAULT_NODE2VEC_NUM_WALKS,
+    DEFAULT_NODE2VEC_RANDOM_SEED,
+    DEFAULT_NODE2VEC_WALK_LENGTH,
+    DEFAULT_NODE2VEC_WINDOW_SIZE,
+    DEFAULT_PARALLELIZATION_NUM_THREADS,
+    DEFAULT_PARALLELIZATION_STAGGER,
+    DEFAULT_REPORTING_BASE_DIR,
+    DEFAULT_REPORTING_TYPE,
+    DEFAULT_SNAPSHOTS_GRAPHML,
+    DEFAULT_SNAPSHOTS_RAW_ENTITIES,
+    DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
+    DEFAULT_STORAGE_BASE_DIR,
+    DEFAULT_STORAGE_TYPE,
+    DEFAULT_UMAP_ENABLED,
 )
 
 current_dir = os.path.dirname(__file__)
@@ -139,18 +192,144 @@ class TestDefaultConfig(unittest.TestCase):
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):
             # This should throw an error because the API key is missing
-            default_config(default_config_parameters_from_env_vars("."))
+            default_config(default_config_parameters())
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_default_config_with_api_key_passes(self):
         # doesn't throw
-        config = default_config(default_config_parameters_from_env_vars("."))
+        config = default_config(default_config_parameters())
         assert config is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
-    def test_default_config_with_oai_key_passes(self):
+    def test_default_config_with_oai_key_passes_envvar(self):
         # doesn't throw
-        config = default_config(default_config_parameters_from_env_vars("."))
+        config = default_config(default_config_parameters())
+        assert config is not None
+
+    def test_default_config_with_oai_key_passes_obj(self):
+        # doesn't throw
+        config = default_config(default_config_parameters({"llm": {"api_key": "test"}}))
+        assert config is not None
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_LLM_TYPE": "azure_openai_chat"},
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_api_base_envvar(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_api_base_obj(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(type="azure_openai_chat")
+                )
+            )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_API_BASE": "http://some/base",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_llm_deployment_name_envvar(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_llm_deployment_name_obj(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_chat", api_base="http://some/base"
+                    )
+                )
+            )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
+            "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME": "x",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_embedding_api_base_envvar(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_embedding_api_base_obj(self):
+        with pytest.raises(AzureApiBaseMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    embeddings=TextEmbeddingConfigInputModel(
+                        llm=LLMParametersInputModel(
+                            type="azure_openai_embedding",
+                            deployment_name="x",
+                        )
+                    ),
+                )
+            )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_API_KEY": "test",
+            "GRAPHRAG_API_BASE": "http://some/base",
+            "GRAPHRAG_LLM_DEPLOYMENT_NAME": "x",
+            "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
+            "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
+        },
+        clear=True,
+    )
+    def test_throws_if_azure_is_used_without_embedding_deployment_name_envvar(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters()
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_throws_if_azure_is_used_without_embedding_deployment_name_obj(self):
+        with pytest.raises(AzureDeploymentNameMissingError):
+            default_config_parameters(
+                DefaultConfigParametersInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_chat",
+                        api_base="http://some/base",
+                        deployment_name="model-deployment-name-x",
+                    ),
+                    embeddings=TextEmbeddingConfigInputModel(
+                        llm=LLMParametersInputModel(
+                            type="azure_openai_embedding",
+                        )
+                    ),
+                )
+            )
+
+    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    def test_minimim_azure_config_object(self):
+        config = default_config_parameters(
+            DefaultConfigParametersInputModel(
+                llm=LLMParametersInputModel(
+                    type="azure_openai_chat",
+                    api_base="http://some/base",
+                    deployment_name="model-deployment-name-x",
+                ),
+                embeddings=TextEmbeddingConfigInputModel(
+                    llm=LLMParametersInputModel(
+                        type="azure_openai_embedding",
+                        deployment_name="model-deployment-name",
+                    )
+                ),
+            )
+        )
         assert config is not None
 
     @mock.patch.dict(
@@ -164,20 +343,20 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_api_base(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters_from_env_vars(".")
+            default_config_parameters()
 
     @mock.patch.dict(
         os.environ,
         {
             "GRAPHRAG_API_KEY": "test",
             "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
-            "GRAPHRAG_LLM_BASE": "http://some/base",
+            "GRAPHRAG_LLM_API_BASE": "http://some/base",
         },
         clear=True,
     )
     def test_throws_if_azure_is_used_without_llm_deployment_name(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters_from_env_vars(".")
+            default_config_parameters()
 
     @mock.patch.dict(
         os.environ,
@@ -192,13 +371,12 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters_from_env_vars(".")
+            default_config_parameters()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
-        config = default_config(default_config_parameters_from_env_vars("/some/root"))
+        config = default_config(default_config_parameters(root_dir="/some/root"))
         assert config.root_dir == "/some/root"
-
         # Make sure the input is a CSV input
         assert isinstance(config.input, PipelineCSVInputConfig)
         assert (config.input.file_pattern or "") == ".*\\.csv$"  # type: ignore
@@ -209,9 +387,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_text_input_returns_correct_config(self):
-        os.environ["GRAPHRAG_INPUT_TYPE"] = "text"
-
-        config = default_config(default_config_parameters_from_env_vars("."))
+        config = default_config(default_config_parameters(root_dir="."))
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
@@ -251,12 +427,21 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(
         os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_malformed_input_dict_throws(self):
+        with pytest.raises(ValidationError):
+            default_config_parameters(cast(Any, {"llm": 12}))
+
+    @mock.patch.dict(
+        os.environ,
         ALL_ENV_VARS,
         clear=True,
     )
     def test_create_parameters_from_env_vars(self) -> None:
-        parameters = default_config_parameters_from_env_vars(".")
-        assert parameters.async_mode == AsyncType.AsyncIO
+        parameters = default_config_parameters()
+        assert parameters.async_mode == "asyncio"
         assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
@@ -266,10 +451,16 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.size == 500
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
-        assert parameters.claim_extraction.prompt == "Hello, World! A"
+        assert (
+            parameters.claim_extraction.prompt
+            == "tests/unit/indexing/default_config/prompt-a.txt"
+        )
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
-        assert parameters.community_reports.prompt == "Hello, World! B"
+        assert (
+            parameters.community_reports.prompt
+            == "tests/unit/indexing/default_config/prompt-b.txt"
+        )
         assert parameters.embed_graph.enabled
         assert parameters.embed_graph.iterations == 878787
         assert parameters.embed_graph.num_walks == 5_000_000
@@ -278,24 +469,27 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.embed_graph.window_size == 12345
         assert parameters.embeddings.batch_max_tokens == 17
         assert parameters.embeddings.batch_size == 1_000_000
-        assert parameters.embeddings.llm["concurrent_requests"] == 12
-        assert parameters.embeddings.llm["deployment_name"] == "model-deployment-name"
-        assert parameters.embeddings.llm["max_retries"] == 3
-        assert parameters.embeddings.llm["max_retry_wait"] == 0.1123
-        assert parameters.embeddings.llm["model"] == "text-embedding-2"
-        assert parameters.embeddings.llm["requests_per_minute"] == 500
-        assert parameters.embeddings.llm["sleep_on_rate_limit_recommendation"] is False
-        assert parameters.embeddings.llm["tokens_per_minute"] == 7000
-        assert parameters.embeddings.llm["type"] == "azure_openai_embedding"
-        assert parameters.embeddings.parallelization["num_threads"] == 2345
-        assert parameters.embeddings.parallelization["stagger"] == 0.456
+        assert parameters.embeddings.llm.concurrent_requests == 12
+        assert parameters.embeddings.llm.deployment_name == "model-deployment-name"
+        assert parameters.embeddings.llm.max_retries == 3
+        assert parameters.embeddings.llm.max_retry_wait == 0.1123
+        assert parameters.embeddings.llm.model == "text-embedding-2"
+        assert parameters.embeddings.llm.requests_per_minute == 500
+        assert parameters.embeddings.llm.sleep_on_rate_limit_recommendation is False
+        assert parameters.embeddings.llm.tokens_per_minute == 7000
+        assert parameters.embeddings.llm.type == "azure_openai_embedding"
+        assert parameters.embeddings.parallelization.num_threads == 2345
+        assert parameters.embeddings.parallelization.stagger == 0.456
         assert parameters.embeddings.skip == ["a1", "b1", "c1"]
         assert parameters.embeddings.target == "all"
         assert parameters.encoding_model == "test123"
         assert parameters.entity_extraction.entity_types == ["cat", "dog", "elephant"]
-        assert parameters.entity_extraction.llm["api_base"] == "http://some/base"
+        assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
-        assert parameters.entity_extraction.prompt == "Hello, World! C"
+        assert (
+            parameters.entity_extraction.prompt
+            == "tests/unit/indexing/default_config/prompt-c.txt"
+        )
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
         assert parameters.input.container_name == "input_cn"
@@ -309,25 +503,25 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
         assert parameters.input.type == PipelineInputType.text
-        assert parameters.llm["api_base"] == "http://some/base"
-        assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["api_version"] == "v1234"
-        assert parameters.llm["concurrent_requests"] == 12
-        assert parameters.llm["deployment_name"] == "model-deployment-name-x"
-        assert parameters.llm["max_retries"] == 312
-        assert parameters.llm["max_retry_wait"] == 0.1122
-        assert parameters.llm["max_tokens"] == 15000
-        assert parameters.llm["model"] == "test-llm"
-        assert parameters.llm["model_supports_json"]
-        assert parameters.llm["organization"] == "test_org"
-        assert parameters.llm["proxy"] == "http://some/proxy"
-        assert parameters.llm["request_timeout"] == 12.7
-        assert parameters.llm["requests_per_minute"] == 900
-        assert parameters.llm["sleep_on_rate_limit_recommendation"] is False
-        assert parameters.llm["tokens_per_minute"] == 8000
-        assert parameters.llm["type"] == "azure_openai_chat"
-        assert parameters.parallelization["num_threads"] == 987
-        assert parameters.parallelization["stagger"] == 0.123
+        assert parameters.llm.api_base == "http://some/base"
+        assert parameters.llm.api_key == "test"
+        assert parameters.llm.api_version == "v1234"
+        assert parameters.llm.concurrent_requests == 12
+        assert parameters.llm.deployment_name == "model-deployment-name-x"
+        assert parameters.llm.max_retries == 312
+        assert parameters.llm.max_retry_wait == 0.1122
+        assert parameters.llm.max_tokens == 15000
+        assert parameters.llm.model == "test-llm"
+        assert parameters.llm.model_supports_json
+        assert parameters.llm.organization == "test_org"
+        assert parameters.llm.proxy == "http://some/proxy"
+        assert parameters.llm.request_timeout == 12.7
+        assert parameters.llm.requests_per_minute == 900
+        assert parameters.llm.sleep_on_rate_limit_recommendation is False
+        assert parameters.llm.tokens_per_minute == 8000
+        assert parameters.llm.type == "azure_openai_chat"
+        assert parameters.parallelization.num_threads == 987
+        assert parameters.parallelization.stagger == 0.123
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
@@ -341,97 +535,283 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.container_name == "test_cn"
         assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
-        assert parameters.summarize_descriptions.prompt == "Hello, World! D"
+        assert (
+            parameters.summarize_descriptions.prompt
+            == "tests/unit/indexing/default_config/prompt-d.txt"
+        )
         assert parameters.umap.enabled
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
     def test_create_parameters(self) -> None:
         parameters = default_config_parameters(
-            DefaultConfigParametersModel(
-                llm=LLMParametersModel(api_key="${API_KEY_X}", model="test-llm"),
-                storage=StorageConfigModel(
+            DefaultConfigParametersInputModel(
+                llm=LLMParametersInputModel(api_key="${API_KEY_X}", model="test-llm"),
+                storage=StorageConfigInputModel(
                     type=PipelineStorageType.blob,
                     connection_string="test_cs",
                     container_name="test_cn",
+                    base_dir="/some/storage/dir",
                 ),
-                cache=CacheConfigModel(
+                cache=CacheConfigInputModel(
                     type=PipelineCacheType.blob,
                     connection_string="test_cs1",
                     container_name="test_cn1",
+                    base_dir="/some/cache/dir",
                 ),
-                reporting=ReportingConfigModel(
+                reporting=ReportingConfigInputModel(
                     type=PipelineReportingType.blob,
                     connection_string="test_cs2",
                     container_name="test_cn2",
+                    base_dir="/some/reporting/dir",
                 ),
-                input=InputConfigModel(
+                input=InputConfigInputModel(
                     type=PipelineInputType.text,
                     file_encoding="utf-16",
                     document_attribute_columns=["test1", "test2"],
+                    base_dir="/some/input/dir",
+                    connection_string="input_cs",
+                    container_name="input_cn",
+                    file_pattern=".*\\test\\.txt$",
+                    source_column="test_source",
+                    text_column="test_text",
+                    timestamp_column="test_timestamp",
+                    timestamp_format="test_format",
+                    title_column="test_title",
+                    storage_type="blob",
                 ),
-                embed_graph=EmbedGraphConfigModel(
+                embed_graph=EmbedGraphConfigInputModel(
+                    enabled=True,
                     num_walks=5_000_000,
+                    iterations=878787,
+                    random_seed=10101,
+                    walk_length=555111,
                 ),
-                embeddings=TextEmbeddingConfigModel(
+                embeddings=TextEmbeddingConfigInputModel(
                     batch_size=1_000_000,
                     batch_max_tokens=8000,
                     skip=["a1", "b1", "c1"],
-                    llm=LLMParametersModel(model="text-embedding-2"),
+                    llm=LLMParametersInputModel(model="text-embedding-2"),
                 ),
-                chunks=ChunkingConfigModel(
+                chunks=ChunkingConfigInputModel(
                     size=500, overlap=12, group_by_columns=["a", "b"]
                 ),
-                snapshots=SnapshotsConfigModel(
+                snapshots=SnapshotsConfigInputModel(
                     graphml=True,
+                    raw_entities=True,
+                    top_level_nodes=True,
                 ),
-                entity_extraction=EntityExtractionConfigModel(max_gleanings=112),
-                summarize_descriptions=SummarizeDescriptionsConfigModel(
-                    max_length=12345,
+                entity_extraction=EntityExtractionConfigInputModel(
+                    max_gleanings=112,
+                    entity_types=["cat", "dog", "elephant"],
+                    prompt="entity_extraction_prompt_file.txt",
                 ),
-                community_reports=CommunityReportsConfigModel(
+                summarize_descriptions=SummarizeDescriptionsConfigInputModel(
+                    max_length=12345, prompt="summarize_prompt_file.txt"
+                ),
+                community_reports=CommunityReportsConfigInputModel(
                     max_length=23456,
+                    prompt="community_report_prompt_file.txt",
+                    max_input_length=12345,
                 ),
-                claim_extraction=ClaimExtractionConfigModel(description="test 123"),
-                cluster_graph=ClusterGraphConfigModel(
+                claim_extraction=ClaimExtractionConfigInputModel(
+                    description="test 123",
+                    max_gleanings=5000,
+                    prompt="claim_extraction_prompt_file.txt",
+                ),
+                cluster_graph=ClusterGraphConfigInputModel(
                     max_cluster_size=123,
                 ),
-                umap=UmapConfigModel(enabled=True),
+                umap=UmapConfigInputModel(enabled=True),
                 encoding_model="test123",
                 skip_workflows=["a", "b", "c"],
             ),
             ".",
         )
-        assert parameters.llm["api_key"] == "test"
-        assert parameters.llm["model"] == "test-llm"
-        assert parameters.encoding_model == "test123"
-        assert parameters.skip_workflows == ["a", "b", "c"]
-        assert parameters.storage.type == PipelineStorageType.blob
-        assert parameters.storage.connection_string == "test_cs"
-        assert parameters.storage.container_name == "test_cn"
-        assert parameters.cache.type == PipelineCacheType.blob
+
+        assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
-        assert parameters.reporting.type == PipelineReportingType.blob
+        assert parameters.cache.type == PipelineCacheType.blob
+        assert parameters.chunks.group_by_columns == ["a", "b"]
+        assert parameters.chunks.overlap == 12
+        assert parameters.chunks.size == 500
+        assert parameters.claim_extraction.description == "test 123"
+        assert parameters.claim_extraction.max_gleanings == 5000
+        assert parameters.claim_extraction.prompt == "claim_extraction_prompt_file.txt"
+        assert parameters.cluster_graph.max_cluster_size == 123
+        assert parameters.community_reports.max_input_length == 12345
+        assert parameters.community_reports.max_length == 23456
+        assert parameters.community_reports.prompt == "community_report_prompt_file.txt"
+        assert parameters.embed_graph.enabled
+        assert parameters.embed_graph.iterations == 878787
+        assert parameters.embed_graph.num_walks == 5_000_000
+        assert parameters.embed_graph.random_seed == 10101
+        assert parameters.embed_graph.walk_length == 555111
+        assert parameters.embeddings.batch_max_tokens == 8000
+        assert parameters.embeddings.batch_size == 1_000_000
+        assert parameters.embeddings.llm.model == "text-embedding-2"
+        assert parameters.embeddings.skip == ["a1", "b1", "c1"]
+        assert parameters.encoding_model == "test123"
+        assert parameters.entity_extraction.entity_types == ["cat", "dog", "elephant"]
+        assert parameters.entity_extraction.max_gleanings == 112
+        assert (
+            parameters.entity_extraction.prompt == "entity_extraction_prompt_file.txt"
+        )
+        assert parameters.input.base_dir == "/some/input/dir"
+        assert parameters.input.connection_string == "input_cs"
+        assert parameters.input.container_name == "input_cn"
+        assert parameters.input.document_attribute_columns == ["test1", "test2"]
+        assert parameters.input.file_encoding == "utf-16"
+        assert parameters.input.file_pattern == ".*\\test\\.txt$"
+        assert parameters.input.source_column == "test_source"
+        assert parameters.input.storage_type == "blob"
+        assert parameters.input.text_column == "test_text"
+        assert parameters.input.timestamp_column == "test_timestamp"
+        assert parameters.input.timestamp_format == "test_format"
+        assert parameters.input.title_column == "test_title"
+        assert parameters.input.type == PipelineInputType.text
+        assert parameters.llm.api_key == "test"
+        assert parameters.llm.model == "test-llm"
+        assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
-        assert parameters.input.type == PipelineInputType.text
-        assert parameters.input.file_encoding == "utf-16"
-        assert parameters.input.document_attribute_columns == ["test1", "test2"]
-        assert parameters.embed_graph.num_walks == 5_000_000
-        assert parameters.embeddings.batch_size == 1_000_000
-        assert parameters.embeddings.batch_max_tokens == 8000
-        assert parameters.embeddings.skip == ["a1", "b1", "c1"]
-        assert parameters.embeddings.llm["model"] == "text-embedding-2"
-        assert parameters.chunks.size == 500
-        assert parameters.chunks.overlap == 12
-        assert parameters.chunks.group_by_columns == ["a", "b"]
+        assert parameters.reporting.type == PipelineReportingType.blob
+        assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
-        assert parameters.entity_extraction.max_gleanings == 112
+        assert parameters.snapshots.raw_entities
+        assert parameters.snapshots.top_level_nodes
+        assert parameters.storage.base_dir == "/some/storage/dir"
+        assert parameters.storage.connection_string == "test_cs"
+        assert parameters.storage.container_name == "test_cn"
+        assert parameters.storage.type == PipelineStorageType.blob
         assert parameters.summarize_descriptions.max_length == 12345
-        assert parameters.community_reports.max_length == 23456
-        assert parameters.claim_extraction.description == "test 123"
-        assert parameters.cluster_graph.max_cluster_size == 123
+        assert parameters.summarize_descriptions.prompt == "summarize_prompt_file.txt"
         assert parameters.umap.enabled
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_default_values(self) -> None:
+        parameters = default_config_parameters()
+        assert parameters.async_mode == DEFAULT_ASYNC_MODE
+        assert parameters.cache.base_dir == DEFAULT_CACHE_BASE_DIR
+        assert parameters.cache.type == DEFAULT_CACHE_TYPE
+        assert parameters.cache.base_dir == DEFAULT_CACHE_BASE_DIR
+        assert parameters.chunks.group_by_columns == DEFAULT_CHUNK_GROUP_BY_COLUMNS
+        assert parameters.chunks.overlap == DEFAULT_CHUNK_OVERLAP
+        assert parameters.chunks.size == DEFAULT_CHUNK_SIZE
+        assert parameters.claim_extraction.description == DEFAULT_CLAIM_DESCRIPTION
+        assert parameters.claim_extraction.max_gleanings == DEFAULT_CLAIM_MAX_GLEANINGS
+        assert (
+            parameters.community_reports.max_input_length
+            == DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH
+        )
+        assert (
+            parameters.community_reports.max_length
+            == DEFAULT_COMMUNITY_REPORT_MAX_LENGTH
+        )
+        assert (
+            parameters.embeddings.batch_max_tokens == DEFAULT_EMBEDDING_BATCH_MAX_TOKENS
+        )
+        assert parameters.embeddings.batch_size == DEFAULT_EMBEDDING_BATCH_SIZE
+        assert parameters.embeddings.llm.model == DEFAULT_EMBEDDING_MODEL
+        assert parameters.embeddings.target == DEFAULT_EMBEDDING_TARGET
+        assert parameters.embeddings.llm.type == DEFAULT_EMBEDDING_TYPE
+        assert (
+            parameters.embeddings.llm.requests_per_minute
+            == DEFAULT_LLM_REQUESTS_PER_MINUTE
+        )
+        assert (
+            parameters.embeddings.llm.tokens_per_minute == DEFAULT_LLM_TOKENS_PER_MINUTE
+        )
+        assert (
+            parameters.embeddings.llm.sleep_on_rate_limit_recommendation
+            == DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
+        )
+        assert (
+            parameters.entity_extraction.entity_types
+            == DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES
+        )
+        assert (
+            parameters.entity_extraction.max_gleanings
+            == DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS
+        )
+        assert parameters.encoding_model == DEFAULT_ENCODING_MODEL
+        assert parameters.input.base_dir == DEFAULT_INPUT_BASE_DIR
+        assert parameters.input.file_pattern == DEFAULT_INPUT_CSV_PATTERN
+        assert parameters.input.file_encoding == DEFAULT_INPUT_FILE_ENCODING
+        assert parameters.input.storage_type == DEFAULT_INPUT_STORAGE_TYPE
+        assert parameters.input.base_dir == DEFAULT_INPUT_BASE_DIR
+        assert parameters.input.text_column == DEFAULT_INPUT_TEXT_COLUMN
+        assert parameters.input.type == DEFAULT_INPUT_TYPE
+        assert parameters.llm.concurrent_requests == DEFAULT_LLM_CONCURRENT_REQUESTS
+        assert parameters.llm.max_retries == DEFAULT_LLM_MAX_RETRIES
+        assert parameters.llm.max_retry_wait == DEFAULT_LLM_MAX_RETRY_WAIT
+        assert parameters.llm.max_tokens == DEFAULT_LLM_MAX_TOKENS
+        assert parameters.llm.model == DEFAULT_LLM_MODEL
+        assert parameters.llm.request_timeout == DEFAULT_LLM_REQUEST_TIMEOUT
+        assert parameters.llm.requests_per_minute == DEFAULT_LLM_REQUESTS_PER_MINUTE
+        assert parameters.llm.tokens_per_minute == DEFAULT_LLM_TOKENS_PER_MINUTE
+        assert (
+            parameters.llm.sleep_on_rate_limit_recommendation
+            == DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
+        )
+        assert parameters.llm.type == DEFAULT_LLM_TYPE
+        assert parameters.cluster_graph.max_cluster_size == DEFAULT_MAX_CLUSTER_SIZE
+        assert parameters.embed_graph.enabled == DEFAULT_NODE2VEC_ENABLED
+        assert parameters.embed_graph.iterations == DEFAULT_NODE2VEC_ITERATIONS
+        assert parameters.embed_graph.num_walks == DEFAULT_NODE2VEC_NUM_WALKS
+        assert parameters.embed_graph.random_seed == DEFAULT_NODE2VEC_RANDOM_SEED
+        assert parameters.embed_graph.walk_length == DEFAULT_NODE2VEC_WALK_LENGTH
+        assert parameters.embed_graph.window_size == DEFAULT_NODE2VEC_WINDOW_SIZE
+        assert (
+            parameters.parallelization.num_threads
+            == DEFAULT_PARALLELIZATION_NUM_THREADS
+        )
+        assert parameters.parallelization.stagger == DEFAULT_PARALLELIZATION_STAGGER
+        assert parameters.reporting.type == DEFAULT_REPORTING_TYPE
+        assert parameters.reporting.base_dir == DEFAULT_REPORTING_BASE_DIR
+        assert parameters.snapshots.graphml == DEFAULT_SNAPSHOTS_GRAPHML
+        assert parameters.snapshots.raw_entities == DEFAULT_SNAPSHOTS_RAW_ENTITIES
+        assert parameters.snapshots.top_level_nodes == DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES
+        assert parameters.storage.base_dir == DEFAULT_STORAGE_BASE_DIR
+        assert parameters.storage.type == DEFAULT_STORAGE_TYPE
+        assert parameters.umap.enabled == DEFAULT_UMAP_ENABLED
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_prompt_file_reading(self):
+        config = default_config_parameters({
+            "entity_extraction": {
+                "prompt": "tests/unit/indexing/default_config/prompt-a.txt"
+            },
+            "claim_extraction": {
+                "prompt": "tests/unit/indexing/default_config/prompt-b.txt"
+            },
+            "community_reports": {
+                "prompt": "tests/unit/indexing/default_config/prompt-c.txt"
+            },
+            "summarize_descriptions": {
+                "prompt": "tests/unit/indexing/default_config/prompt-d.txt"
+            },
+        })
+        strategy = config.entity_extraction.resolved_strategy(".", "abc123")
+        assert strategy["extraction_prompt"] == "Hello, World! A"
+        assert strategy["encoding_name"] == "abc123"
+
+        strategy = config.claim_extraction.resolved_strategy(".")
+        assert strategy["extraction_prompt"] == "Hello, World! B"
+
+        strategy = config.community_reports.resolved_strategy(".")
+        assert strategy["extraction_prompt"] == "Hello, World! C"
+
+        strategy = config.summarize_descriptions.resolved_strategy(".")
+        assert strategy["summarize_prompt"] == "Hello, World! D"
 
 
 @mock.patch.dict(
@@ -466,14 +846,14 @@ llm:
 """
     )
     # create default configuration pipeline parameters from the custom settings
-    model = DefaultConfigParametersModel.model_validate(config_dict)
+    model = config_dict
     parameters = default_config_parameters(model, ".")
 
-    assert parameters.llm["api_key"] == "test"
-    assert parameters.llm["model"] == "test-llm"
-    assert parameters.llm["api_base"] == "http://test"
-    assert parameters.llm["api_version"] == "v1"
-    assert parameters.llm["deployment_name"] == "test"
+    assert parameters.llm.api_key == "test"
+    assert parameters.llm.model == "test-llm"
+    assert parameters.llm.api_base == "http://test"
+    assert parameters.llm.api_version == "v1"
+    assert parameters.llm.deployment_name == "test"
 
     # generate the pipeline from the default parameters
     pipeline_config = default_config(parameters, True)

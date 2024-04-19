@@ -2,7 +2,15 @@
 
 """Parameterization settings for the default configuration."""
 
+from pathlib import Path
+
 from pydantic import Field
+
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+    DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+)
+from graphrag.index.verbs.graph.report import CreateCommunityReportsStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -13,13 +21,27 @@ class CommunityReportsConfigModel(LLMConfigModel):
     prompt: str | None = Field(
         description="The community report extraction prompt to use.", default=None
     )
-    max_length: int | None = Field(
-        description="The community report maximum length in tokens.", default=None
+    max_length: int = Field(
+        description="The community report maximum length in tokens.",
+        default=DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
     )
-    max_input_length: int | None = Field(
+    max_input_length: int = Field(
         description="The maximum input length in tokens to use when generating reports.",
-        default=None,
+        default=DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+
+    def resolved_strategy(self, root_dir) -> dict:
+        """Get the resolved community report extraction strategy."""
+        return self.strategy or {
+            "type": CreateCommunityReportsStrategyType.graph_intelligence,
+            "llm": self.llm.model_dump(),
+            **self.parallelization.model_dump(),
+            "extraction_prompt": (Path(root_dir) / self.prompt).read_text()
+            if self.prompt
+            else None,
+            "max_report_length": self.max_length,
+            "max_input_length": self.max_input_length,
+        }

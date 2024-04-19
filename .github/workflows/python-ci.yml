@@ -32,6 +32,8 @@ jobs:
       GRAPHRAG_LLM_RPM: 270 # 1,080 / 4
       GRAPHRAG_EMBEDDING_TPM: 87_500 # 350,000 / 4
       GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
+      GRAPHRAG_CHUNK_SIZE: 1200
+      GRAPHRAG_CHUNK_OVERLAP: 0
 
     runs-on: ${{ matrix.os }}
     steps:

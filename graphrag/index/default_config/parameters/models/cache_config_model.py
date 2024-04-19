@@ -5,16 +5,20 @@
 from pydantic import BaseModel, Field
 
 from graphrag.index.config import PipelineCacheType
+from graphrag.index.default_config.parameters.defaults import (
+    DEFAULT_CACHE_BASE_DIR,
+    DEFAULT_CACHE_TYPE,
+)
 
 
 class CacheConfigModel(BaseModel):
     """The default configuration section for Cache."""
 
-    type: PipelineCacheType | None = Field(
-        description="The cache type to use.", default=None
+    type: PipelineCacheType = Field(
+        description="The cache type to use.", default=DEFAULT_CACHE_TYPE
     )
-    base_dir: str | None = Field(
-        description="The base directory for the cache.", default=None
+    base_dir: str = Field(
+        description="The base directory for the cache.", default=DEFAULT_CACHE_BASE_DIR
     )
     connection_string: str | None = Field(
         description="The cache connection string to use.", default=None
