@@ -1,21 +1,4 @@
-llm:
-    type: ${GRAPHRAG_LLM_TYPE}
-    api_key: ${GRAPHRAG_API_KEY}
-    api_base: ${GRAPHRAG_API_BASE}
-    model: ${GRAPHRAG_LLM_MODEL}
-    deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
-    api_version: ${GRAPHRAG_API_VERSION}
-    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
-    requests_per_minute: ${GRAPHRAG_LLM_RPM}
-
 embeddings: 
-    llm:
-        type: ${GRAPHRAG_EMBEDDING_TYPE}
-        model: ${GRAPHRAG_EMBEDDING_MODEL}
-        deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
-        tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
-        requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
-
     vector_store:
       type: "qdrant"
       base:
@@ -62,7 +45,3 @@ reporting:
     connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
     container_name: dulceazure
     base_dir: reports
-
-chunks:
-    overlap: ${GRAPHRAG_CHUNK_OVERLAP}
-    size: ${GRAPHRAG_CHUNK_SIZE}
