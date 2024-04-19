@@ -12,7 +12,7 @@ import warnings
 from pathlib import Path
 
 from graphrag.config import (
-    default_config_parameters,
+    create_graphrag_config,
 )
 from graphrag.index import PipelineConfig, create_pipeline_config
 from graphrag.index.cache import NoopPipelineCache
@@ -247,7 +247,7 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import yaml
 
             data = yaml.safe_load(file)
-            return default_config_parameters(data, root)
+            return create_graphrag_config(data, root)
 
     if settings_json.exists():
         reporter.success(f"Reading settings from {settings_json}")
@@ -255,10 +255,10 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import json
 
             data = json.loads(file.read())
-            return default_config_parameters(data, root)
+            return create_graphrag_config(data, root)
 
     reporter.success("Reading settings from environment variables")
-    return default_config_parameters(root_dir=root)
+    return create_graphrag_config(root_dir=root)
 
 
 def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:

@@ -34,7 +34,7 @@ from graphrag.config import (
     SummarizeDescriptionsConfigInput,
     TextEmbeddingConfigInput,
     UmapConfigInput,
-    default_config_parameters,
+    create_graphrag_config,
 )
 from graphrag.config.defaults import (
     DEFAULT_ASYNC_MODE,
@@ -192,24 +192,24 @@ class TestDefaultConfig(unittest.TestCase):
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):
             # This should throw an error because the API key is missing
-            create_pipeline_config(default_config_parameters())
+            create_pipeline_config(create_graphrag_config())
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_default_config_with_api_key_passes(self):
         # doesn't throw
-        config = create_pipeline_config(default_config_parameters())
+        config = create_pipeline_config(create_graphrag_config())
         assert config is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
     def test_default_config_with_oai_key_passes_envvar(self):
         # doesn't throw
-        config = create_pipeline_config(default_config_parameters())
+        config = create_pipeline_config(create_graphrag_config())
         assert config is not None
 
     def test_default_config_with_oai_key_passes_obj(self):
         # doesn't throw
         config = create_pipeline_config(
-            default_config_parameters({"llm": {"api_key": "test"}})
+            create_graphrag_config({"llm": {"api_key": "test"}})
         )
         assert config is not None
 
@@ -220,12 +220,12 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_api_base_envvar(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_throws_if_azure_is_used_without_api_base_obj(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters(
+            create_graphrag_config(
                 DefaultConfigParametersInputModel(
                     llm=LLMParametersInput(type="azure_openai_chat")
                 )
@@ -242,12 +242,12 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_llm_deployment_name_envvar(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_throws_if_azure_is_used_without_llm_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters(
+            create_graphrag_config(
                 DefaultConfigParametersInputModel(
                     llm=LLMParametersInput(
                         type="azure_openai_chat", api_base="http://some/base"
@@ -266,12 +266,12 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_embedding_api_base_envvar(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_throws_if_azure_is_used_without_embedding_api_base_obj(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters(
+            create_graphrag_config(
                 DefaultConfigParametersInputModel(
                     embeddings=TextEmbeddingConfigInput(
                         llm=LLMParametersInput(
@@ -295,12 +295,12 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_embedding_deployment_name_envvar(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_throws_if_azure_is_used_without_embedding_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters(
+            create_graphrag_config(
                 DefaultConfigParametersInputModel(
                     llm=LLMParametersInput(
                         type="azure_openai_chat",
@@ -317,7 +317,7 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_minimim_azure_config_object(self):
-        config = default_config_parameters(
+        config = create_graphrag_config(
             DefaultConfigParametersInputModel(
                 llm=LLMParametersInput(
                     type="azure_openai_chat",
@@ -345,7 +345,7 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_api_base(self):
         with pytest.raises(AzureApiBaseMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(
         os.environ,
@@ -358,7 +358,7 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_llm_deployment_name(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(
         os.environ,
@@ -373,13 +373,11 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
         with pytest.raises(AzureDeploymentNameMissingError):
-            default_config_parameters()
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_csv_input_returns_correct_config(self):
-        config = create_pipeline_config(
-            default_config_parameters(root_dir="/some/root")
-        )
+        config = create_pipeline_config(create_graphrag_config(root_dir="/some/root"))
         assert config.root_dir == "/some/root"
         # Make sure the input is a CSV input
         assert isinstance(config.input, PipelineCSVInputConfig)
@@ -391,7 +389,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_text_input_returns_correct_config(self):
-        config = create_pipeline_config(default_config_parameters(root_dir="."))
+        config = create_pipeline_config(create_graphrag_config(root_dir="."))
         assert isinstance(config.input, PipelineTextInputConfig)
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
@@ -436,7 +434,7 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_malformed_input_dict_throws(self):
         with pytest.raises(ValidationError):
-            default_config_parameters(cast(Any, {"llm": 12}))
+            create_graphrag_config(cast(Any, {"llm": 12}))
 
     @mock.patch.dict(
         os.environ,
@@ -444,7 +442,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_create_parameters_from_env_vars(self) -> None:
-        parameters = default_config_parameters()
+        parameters = create_graphrag_config()
         assert parameters.async_mode == "asyncio"
         assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
@@ -547,7 +545,7 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
     def test_create_parameters(self) -> None:
-        parameters = default_config_parameters(
+        parameters = create_graphrag_config(
             DefaultConfigParametersInputModel(
                 llm=LLMParametersInput(api_key="${API_KEY_X}", model="test-llm"),
                 storage=StorageConfigInput(
@@ -698,7 +696,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_default_values(self) -> None:
-        parameters = default_config_parameters()
+        parameters = create_graphrag_config()
         assert parameters.async_mode == DEFAULT_ASYNC_MODE
         assert parameters.cache.base_dir == DEFAULT_CACHE_BASE_DIR
         assert parameters.cache.type == DEFAULT_CACHE_TYPE
@@ -790,7 +788,7 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_prompt_file_reading(self):
-        config = default_config_parameters({
+        config = create_graphrag_config({
             "entity_extraction": {
                 "prompt": "tests/unit/indexing/default_config/prompt-a.txt"
             },
@@ -851,7 +849,7 @@ llm:
     )
     # create default configuration pipeline parameters from the custom settings
     model = config_dict
-    parameters = default_config_parameters(model, ".")
+    parameters = create_graphrag_config(model, ".")
 
     assert parameters.llm.api_key == "test"
     assert parameters.llm.model == "test-llm"

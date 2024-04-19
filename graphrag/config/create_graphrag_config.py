@@ -108,7 +108,7 @@ from .read_dotenv import read_dotenv
 InputModelValidator = TypeAdapter(DefaultConfigParametersInputModel)
 
 
-def default_config_parameters(
+def create_graphrag_config(
     values: DefaultConfigParametersInputModel | None = None, root_dir: str | None = None
 ) -> GraphRagConfig:
     """Load Configuration Parameters from a dictionary."""

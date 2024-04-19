@@ -7,14 +7,14 @@ import yaml
 
 from graphrag.config import (
     GraphRagConfig,
-    default_config_parameters,
+    create_graphrag_config,
 )
 from graphrag.index.init_content import INIT_YAML
 
 
 def test_init_yaml():
     data = yaml.load(INIT_YAML, Loader=yaml.FullLoader)
-    config = default_config_parameters(data)
+    config = create_graphrag_config(data)
     GraphRagConfig.model_validate(config, strict=True)
 
 
@@ -28,5 +28,5 @@ def test_init_yaml_uncommented():
 
     content = "\n".join([uncomment_line(line) for line in lines])
     data = yaml.load(content, Loader=yaml.FullLoader)
-    config = default_config_parameters(data)
+    config = create_graphrag_config(data)
     GraphRagConfig.model_validate(config, strict=True)

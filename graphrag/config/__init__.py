@@ -2,6 +2,9 @@
 
 """The Indexing Engine default config package root."""
 
+from .create_graphrag_config import (
+    create_graphrag_config,
+)
 from .enums import (
     CacheType,
     InputType,
@@ -14,9 +17,6 @@ from .errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-)
-from .factories import (
-    default_config_parameters,
 )
 from .input_models import (
     CacheConfigInput,
@@ -107,6 +107,6 @@ __all__ = [
     "TextEmbeddingTarget",
     "UmapConfig",
     "UmapConfigInput",
-    "default_config_parameters",
+    "create_graphrag_config",
     "read_dotenv",
 ]

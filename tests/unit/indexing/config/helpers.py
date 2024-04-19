@@ -3,7 +3,7 @@ import json
 import unittest
 from typing import Any
 
-from graphrag.config import default_config_parameters
+from graphrag.config import create_graphrag_config
 from graphrag.index import PipelineConfig, create_pipeline_config
 
 
@@ -25,7 +25,7 @@ def assert_contains_default_config(
     )
 
     actual_default_config = json.loads(
-        create_pipeline_config(default_config_parameters()).model_dump_json(
+        create_pipeline_config(create_graphrag_config()).model_dump_json(
             exclude_defaults=True, exclude_unset=True
         )
     )
