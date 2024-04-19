@@ -69,7 +69,7 @@ async def text_embed(
             <...>
     ```
     """
-    vector_store_config = strategy.get("vector_store")
+    vector_store_config = kwargs.get("vector_store")
 
     if vector_store_config:
         embedding_name = kwargs["embedding_name"]
