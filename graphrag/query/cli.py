@@ -486,10 +486,12 @@ def _configure_paths_and_settings(
 
 def _infer_data_dir(root: str) -> str:
     output = Path(root) / "output"
+    # use the latest data-run folder
     if output.exists():
         folders = sorted(output.iterdir(), key=os.path.getmtime, reverse=True)
         if len(folders) > 0:
-            return str(folders[0].absolute())
+            folder = folders[0]
+            return str((folder / "artifacts").absolute())
     msg = f"Could not infer data directory from root={root}"
     raise ValueError(msg)
 

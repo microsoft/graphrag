@@ -222,14 +222,13 @@ class TestIndexer:
                 ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
-        data_dir = next((root / "output").iterdir()) / "artifacts"
         command = [
             "poetry",
             "run",
             "poe",
             "query",
-            "--data",
-            data_dir.absolute().as_posix(),
+            "--root",
+            root.absolute().as_posix(),
             "--method",
             query_config["method"],
             "--community_level",
