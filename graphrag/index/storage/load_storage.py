@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import cast
 
 from graphrag.config import PipelineStorageType
-from graphrag.index.config import (
+from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineStorageConfig,

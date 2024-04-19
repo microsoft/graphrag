@@ -19,9 +19,14 @@ from datashaper import (
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.verbs.covariates.typing import Covariate, CovariateExtractStrategy
-from graphrag.config.enums import ExtractClaimsStrategyType
 
 log = logging.getLogger(__name__)
+
+
+class ExtractClaimsStrategyType(str, Enum):
+    """ExtractClaimsStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]

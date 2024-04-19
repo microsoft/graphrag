@@ -10,7 +10,6 @@ from graphrag.config.defaults import (
     DEFAULT_EMBEDDING_TARGET,
 )
 from graphrag.config.enums import TextEmbeddingTarget
-from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -39,6 +38,8 @@ class TextEmbeddingConfigModel(LLMConfigModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved text embedding strategy."""
+        from graphrag.index.verbs.text.embed import TextEmbedStrategyType
+
         return self.strategy or {
             "type": TextEmbedStrategyType.openai,
             "llm": self.llm.model_dump(),

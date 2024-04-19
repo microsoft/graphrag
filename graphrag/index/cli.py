@@ -14,8 +14,8 @@ from pathlib import Path
 from graphrag.config import (
     default_config_parameters,
 )
+from graphrag.index import PipelineConfig, create_pipeline_config
 from graphrag.index.cache import NoopPipelineCache
-from graphrag.index.config import PipelineConfig, create_pipeline_config
 from graphrag.index.progress import (
     NullProgressReporter,
     PrintProgressReporter,

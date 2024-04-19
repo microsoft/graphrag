@@ -9,7 +9,6 @@ from pydantic import Field
 from graphrag.config.defaults import (
     DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
 )
-from graphrag.index.verbs.entities.summarize import SummarizeStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -30,6 +29,8 @@ class SummarizeDescriptionsConfigModel(LLMConfigModel):
 
     def resolved_strategy(self, root_dir: str) -> dict:
         """Get the resolved description summarization strategy."""
+        from graphrag.index.verbs.entities.summarize import SummarizeStrategyType
+
         return self.strategy or {
             "type": SummarizeStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),

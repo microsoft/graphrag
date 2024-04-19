@@ -9,7 +9,6 @@ from graphrag.config.defaults import (
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_SIZE,
 )
-from graphrag.index.verbs.text.chunk import ChunkStrategyType
 
 
 class ChunkingConfigModel(BaseModel):
@@ -30,6 +29,8 @@ class ChunkingConfigModel(BaseModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved chunking strategy."""
+        from graphrag.index.verbs.text.chunk import ChunkStrategyType
+
         return self.strategy or {
             "type": ChunkStrategyType.tokens,
             "size": self.size,

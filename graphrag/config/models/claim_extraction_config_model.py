@@ -10,7 +10,6 @@ from graphrag.config.defaults import (
     DEFAULT_CLAIM_DESCRIPTION,
     DEFAULT_CLAIM_MAX_GLEANINGS,
 )
-from graphrag.index.verbs.covariates.extract_covariates import ExtractClaimsStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -35,6 +34,10 @@ class ClaimExtractionConfigModel(LLMConfigModel):
 
     def resolved_strategy(self, root_dir: str) -> dict:
         """Get the resolved claim extraction strategy."""
+        from graphrag.index.verbs.covariates.extract_covariates import (
+            ExtractClaimsStrategyType,
+        )
+
         return self.strategy or {
             "type": ExtractClaimsStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),

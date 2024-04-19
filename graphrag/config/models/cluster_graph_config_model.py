@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 from graphrag.config.defaults import (
     DEFAULT_MAX_CLUSTER_SIZE,
 )
-from graphrag.index.verbs.graph.clustering import GraphCommunityStrategyType
 
 
 class ClusterGraphConfigModel(BaseModel):
@@ -22,6 +21,8 @@ class ClusterGraphConfigModel(BaseModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved cluster strategy."""
+        from graphrag.index.verbs.graph.clustering import GraphCommunityStrategyType
+
         return self.strategy or {
             "type": GraphCommunityStrategyType.leiden,
             "max_cluster_size": self.max_cluster_size,

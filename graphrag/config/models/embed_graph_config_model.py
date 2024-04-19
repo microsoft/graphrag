@@ -12,7 +12,6 @@ from graphrag.config.defaults import (
     DEFAULT_NODE2VEC_WALK_LENGTH,
     DEFAULT_NODE2VEC_WINDOW_SIZE,
 )
-from graphrag.index.verbs.graph.embed import EmbedGraphStrategyType
 
 
 class EmbedGraphConfigModel(BaseModel):
@@ -43,6 +42,8 @@ class EmbedGraphConfigModel(BaseModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved node2vec strategy."""
+        from graphrag.index.verbs.graph.embed import EmbedGraphStrategyType
+
         return self.strategy or {
             "type": EmbedGraphStrategyType.node2vec,
             "num_walks": self.num_walks,

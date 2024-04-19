@@ -17,24 +17,34 @@ from graphrag.config.models import (
     DefaultConfigParametersModel,
     TextEmbeddingConfigModel,
 )
-from graphrag.index.config import (
+from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
-    PipelineBlobReportingConfig,
-    PipelineBlobStorageConfig,
     PipelineCacheConfigTypes,
-    PipelineConfig,
-    PipelineConsoleReportingConfig,
-    PipelineCSVInputConfig,
     PipelineFileCacheConfig,
-    PipelineFileReportingConfig,
-    PipelineFileStorageConfig,
-    PipelineInputConfigTypes,
     PipelineMemoryCacheConfig,
-    PipelineMemoryStorageConfig,
     PipelineNoneCacheConfig,
-    PipelineReportingConfigTypes,
-    PipelineStorageConfigTypes,
+)
+from graphrag.index.config.input import (
+    PipelineCSVInputConfig,
+    PipelineInputConfigTypes,
     PipelineTextInputConfig,
+)
+from graphrag.index.config.pipeline import (
+    PipelineConfig,
+)
+from graphrag.index.config.reporting import (
+    PipelineBlobReportingConfig,
+    PipelineConsoleReportingConfig,
+    PipelineFileReportingConfig,
+    PipelineReportingConfigTypes,
+)
+from graphrag.index.config.storage import (
+    PipelineBlobStorageConfig,
+    PipelineFileStorageConfig,
+    PipelineMemoryStorageConfig,
+    PipelineStorageConfigTypes,
+)
+from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (

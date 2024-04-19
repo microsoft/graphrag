@@ -7,7 +7,7 @@ from typing import Any
 from unittest import mock
 
 from graphrag.config import default_config_parameters
-from graphrag.index.config import (
+from graphrag.index import (
     PipelineConfig,
     create_pipeline_config,
     load_pipeline_config,

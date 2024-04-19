@@ -10,7 +10,6 @@ from graphrag.config.defaults import (
     DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
     DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
 )
-from graphrag.index.verbs.graph.report import CreateCommunityReportsStrategyType
 
 from .llm_config_model import LLMConfigModel
 
@@ -35,6 +34,8 @@ class CommunityReportsConfigModel(LLMConfigModel):
 
     def resolved_strategy(self, root_dir) -> dict:
         """Get the resolved community report extraction strategy."""
+        from graphrag.index.verbs.graph.report import CreateCommunityReportsStrategyType
+
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),

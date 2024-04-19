@@ -89,7 +89,7 @@ from graphrag.config.defaults import (
     DEFAULT_STORAGE_TYPE,
     DEFAULT_UMAP_ENABLED,
 )
-from graphrag.index.config import (
+from graphrag.index import (
     PipelineCSVInputConfig,
     PipelineTextInputConfig,
     create_pipeline_config,
