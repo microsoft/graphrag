@@ -16,6 +16,7 @@ from graphrag.config import (
     LocalSearchConfig,
     create_graphrag_config,
 )
+from graphrag.index.progress import PrintProgressReporter
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.input.loaders.dfs import (
     read_community_reports,
@@ -41,18 +42,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores.qdrant import Qdrant
 
-_DEFAULT_LLM_MODEL = "gpt-4-turbo-preview"
-_DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
-
-
-def _env_with_fallback(key: str, fallback: list[str], required=True):
-    for k in [key, *fallback]:
-        if k in os.environ:
-            return os.environ[k]
-    if not required:
-        return None
-    msg = f"None of the following environment variables found: {key}, {fallback}"
-    raise ValueError(msg)
+reporter = PrintProgressReporter("")
 
 
 def __get_reports(data_dir: Path, community_level: int):
@@ -295,6 +285,11 @@ def __get_llm(config: GraphRagConfig):
         config.llm.type == LLMType.AzureOpenAIChat
         or config.llm.type == LLMType.AzureOpenAI
     )
+    llm_debug_info = {
+        **config.llm.model_dump(),
+        "api_key": f"REDACTED,len={len(config.llm.api_key)}",
+    }
+    reporter.info(f"creating llm client with {llm_debug_info}")
     return ChatOpenAI(
         api_key=config.llm.api_key,
         api_base=config.llm.api_base,
@@ -308,6 +303,11 @@ def __get_llm(config: GraphRagConfig):
 
 def __get_text_embedder(config: GraphRagConfig):
     is_azure_client = config.llm.type == LLMType.AzureOpenAIEmbedding
+    llm_debug_info = {
+        **config.embeddings.llm.model_dump(),
+        "api_key": f"REDACTED,len={len(config.embeddings.llm.api_key)}",
+    }
+    reporter.info(f"creating embedding llm client with {llm_debug_info}")
     return OpenAIEmbedding(
         api_key=config.embeddings.llm.api_key,
         api_base=config.embeddings.llm.api_base,
@@ -433,7 +433,7 @@ def run_global_search(
 
     result = search_engine.search(query=query)
 
-    print(result.response)  # noqa: T201
+    reporter.success(f"Global Search Response: {result.response}")
     return result.response
 
 
@@ -468,7 +468,7 @@ def run_local_search(
     )
 
     result = search_engine.search(query=query)
-    print(result.response)  # noqa: T201
+    reporter.success(f"Local Search Response: {result.response}")
     return result.response
 
 
@@ -509,7 +509,7 @@ def _read_config_parameters(root: str):
     settings_json = _root / "settings.json"
 
     if settings_yaml.exists():
-        print(f"Reading settings from {settings_yaml}")  # noqa: T201
+        reporter.info(f"Reading settings from {settings_yaml}")
         with settings_yaml.open("r") as file:
             import yaml
 
@@ -517,12 +517,12 @@ def _read_config_parameters(root: str):
             return create_graphrag_config(data, root)
 
     if settings_json.exists():
-        print(f"Reading settings from {settings_json}")  # noqa: T201
+        reporter.info(f"Reading settings from {settings_json}")
         with settings_json.open("r") as file:
             import json
 
             data = json.loads(file.read())
             return create_graphrag_config(data, root)
 
-    print("Reading settings from environment variables")  # noqa: T201
+    reporter.info("Reading settings from environment variables")
     return create_graphrag_config(root_dir=root)
