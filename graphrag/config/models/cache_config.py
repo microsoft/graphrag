@@ -4,10 +4,7 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_CACHE_BASE_DIR,
-    DEFAULT_CACHE_TYPE,
-)
+import graphrag.config.defaults as defs
 from graphrag.config.enums import CacheType
 
 
@@ -15,10 +12,10 @@ class CacheConfig(BaseModel):
     """The default configuration section for Cache."""
 
     type: CacheType = Field(
-        description="The cache type to use.", default=DEFAULT_CACHE_TYPE
+        description="The cache type to use.", default=defs.CACHE_TYPE
     )
     base_dir: str = Field(
-        description="The base directory for the cache.", default=DEFAULT_CACHE_BASE_DIR
+        description="The base directory for the cache.", default=defs.CACHE_BASE_DIR
     )
     connection_string: str | None = Field(
         description="The cache connection string to use.", default=None

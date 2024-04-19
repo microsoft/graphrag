@@ -6,10 +6,7 @@ from pathlib import Path
 
 from pydantic import Field
 
-from graphrag.config.defaults import (
-    DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
-    DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
-)
+import graphrag.config.defaults as defs
 
 from .llm_config import LLMConfig
 
@@ -22,11 +19,11 @@ class EntityExtractionConfig(LLMConfig):
     )
     entity_types: list[str] = Field(
         description="The entity extraction entity types to use.",
-        default=DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
+        default=defs.ENTITY_EXTRACTION_ENTITY_TYPES,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
-        default=DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
+        default=defs.ENTITY_EXTRACTION_MAX_GLEANINGS,
     )
     strategy: dict | None = Field(
         description="Override the default entity extraction strategy", default=None

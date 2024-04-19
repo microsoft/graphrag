@@ -6,10 +6,7 @@ from pathlib import Path
 
 from pydantic import Field
 
-from graphrag.config.defaults import (
-    DEFAULT_CLAIM_DESCRIPTION,
-    DEFAULT_CLAIM_MAX_GLEANINGS,
-)
+import graphrag.config.defaults as defs
 
 from .llm_config import LLMConfig
 
@@ -22,11 +19,11 @@ class ClaimExtractionConfig(LLMConfig):
     )
     description: str = Field(
         description="The claim description to use.",
-        default=DEFAULT_CLAIM_DESCRIPTION,
+        default=defs.CLAIM_DESCRIPTION,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
-        default=DEFAULT_CLAIM_MAX_GLEANINGS,
+        default=defs.CLAIM_MAX_GLEANINGS,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None

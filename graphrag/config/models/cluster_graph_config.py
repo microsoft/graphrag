@@ -4,16 +4,14 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_MAX_CLUSTER_SIZE,
-)
+import graphrag.config.defaults as defs
 
 
 class ClusterGraphConfig(BaseModel):
     """Configuration section for clustering graphs."""
 
     max_cluster_size: int = Field(
-        description="The maximum cluster size to use.", default=DEFAULT_MAX_CLUSTER_SIZE
+        description="The maximum cluster size to use.", default=defs.MAX_CLUSTER_SIZE
     )
     strategy: dict | None = Field(
         description="The cluster strategy to use.", default=None

@@ -4,14 +4,7 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_INPUT_BASE_DIR,
-    DEFAULT_INPUT_CSV_PATTERN,
-    DEFAULT_INPUT_FILE_ENCODING,
-    DEFAULT_INPUT_STORAGE_TYPE,
-    DEFAULT_INPUT_TEXT_COLUMN,
-    DEFAULT_INPUT_TYPE,
-)
+import graphrag.config.defaults as defs
 from graphrag.config.enums import InputType, StorageType
 
 
@@ -19,13 +12,13 @@ class InputConfig(BaseModel):
     """The default configuration section for Input."""
 
     type: InputType = Field(
-        description="The input type to use.", default=DEFAULT_INPUT_TYPE
+        description="The input type to use.", default=defs.INPUT_TYPE
     )
     storage_type: StorageType = Field(
-        description="The input storage type to use.", default=DEFAULT_INPUT_STORAGE_TYPE
+        description="The input storage type to use.", default=defs.INPUT_STORAGE_TYPE
     )
     base_dir: str = Field(
-        description="The input base directory to use.", default=DEFAULT_INPUT_BASE_DIR
+        description="The input base directory to use.", default=defs.INPUT_BASE_DIR
     )
     connection_string: str | None = Field(
         description="The azure blob storage connection string to use.", default=None
@@ -35,10 +28,10 @@ class InputConfig(BaseModel):
     )
     file_encoding: str | None = Field(
         description="The input file encoding to use.",
-        default=DEFAULT_INPUT_FILE_ENCODING,
+        default=defs.INPUT_FILE_ENCODING,
     )
     file_pattern: str = Field(
-        description="The input file pattern to use.", default=DEFAULT_INPUT_CSV_PATTERN
+        description="The input file pattern to use.", default=defs.INPUT_CSV_PATTERN
     )
     source_column: str | None = Field(
         description="The input source column to use.", default=None
@@ -50,7 +43,7 @@ class InputConfig(BaseModel):
         description="The input timestamp format to use.", default=None
     )
     text_column: str = Field(
-        description="The input text column to use.", default=DEFAULT_INPUT_TEXT_COLUMN
+        description="The input text column to use.", default=defs.INPUT_TEXT_COLUMN
     )
     title_column: str | None = Field(
         description="The input title column to use.", default=None

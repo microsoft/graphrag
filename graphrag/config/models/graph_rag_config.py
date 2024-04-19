@@ -4,7 +4,7 @@
 
 from pydantic import Field
 
-from graphrag.config.defaults import DEFAULT_ENCODING_MODEL
+import graphrag.config.defaults as defs
 
 from .cache_config import CacheConfig
 from .chunking_config import ChunkingConfig
@@ -13,8 +13,10 @@ from .cluster_graph_config import ClusterGraphConfig
 from .community_reports_config import CommunityReportsConfig
 from .embed_graph_config import EmbedGraphConfig
 from .entity_extraction_config import EntityExtractionConfig
+from .global_search_config import GlobalSearchConfig
 from .input_config import InputConfig
 from .llm_config import LLMConfig
+from .local_search_config import LocalSearchConfig
 from .reporting_config import ReportingConfig
 from .snapshots_config import SnapshotsConfig
 from .storage_config import StorageConfig
@@ -111,8 +113,18 @@ class GraphRagConfig(LLMConfig):
     )
     """The UMAP configuration to use."""
 
+    local_search: LocalSearchConfig = Field(
+        description="The local search configuration.", default=LocalSearchConfig()
+    )
+    """The local search configuration."""
+
+    global_search: GlobalSearchConfig = Field(
+        description="The global search configuration.", default=GlobalSearchConfig()
+    )
+    """The global search configuration."""
+
     encoding_model: str = Field(
-        description="The encoding model to use.", default=DEFAULT_ENCODING_MODEL
+        description="The encoding model to use.", default=defs.ENCODING_MODEL
     )
     """The encoding model to use."""
 

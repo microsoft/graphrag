@@ -11,8 +11,10 @@ from .cluster_graph_config_input import ClusterGraphConfigInput
 from .community_reports_config_input import CommunityReportsConfigInput
 from .embed_graph_config_input import EmbedGraphConfigInput
 from .entity_extraction_config_input import EntityExtractionConfigInput
+from .global_search_config_input import GlobalSearchConfigInput
 from .input_config_input import InputConfigInput
 from .llm_config_input import LLMConfigInput
+from .local_search_config_input import LocalSearchConfigInput
 from .reporting_config_input import ReportingConfigInput
 from .snapshots_config_input import SnapshotsConfigInput
 from .storage_config_input import StorageConfigInput
@@ -23,7 +25,7 @@ from .text_embedding_config_input import TextEmbeddingConfigInput
 from .umap_config_input import UmapConfigInput
 
 
-class DefaultConfigParametersInputModel(LLMConfigInput):
+class GraphRagConfigInput(LLMConfigInput):
     """Base class for the Default-Configuration parameterization settings."""
 
     reporting: NotRequired[ReportingConfigInput | None]
@@ -42,3 +44,5 @@ class DefaultConfigParametersInputModel(LLMConfigInput):
     umap: NotRequired[UmapConfigInput | None]
     encoding_model: NotRequired[str | None]
     skip_workflows: NotRequired[list[str] | str | None]
+    local_search: NotRequired[LocalSearchConfigInput | None]
+    global_search: NotRequired[GlobalSearchConfigInput | None]

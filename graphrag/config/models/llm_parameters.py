@@ -4,18 +4,7 @@
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_LLM_CONCURRENT_REQUESTS,
-    DEFAULT_LLM_MAX_RETRIES,
-    DEFAULT_LLM_MAX_RETRY_WAIT,
-    DEFAULT_LLM_MAX_TOKENS,
-    DEFAULT_LLM_MODEL,
-    DEFAULT_LLM_REQUEST_TIMEOUT,
-    DEFAULT_LLM_REQUESTS_PER_MINUTE,
-    DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
-    DEFAULT_LLM_TOKENS_PER_MINUTE,
-    DEFAULT_LLM_TYPE,
-)
+import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 
 
@@ -28,15 +17,15 @@ class LLMParameters(BaseModel):
         default=None,
     )
     type: LLMType = Field(
-        description="The type of LLM model to use.", default=DEFAULT_LLM_TYPE
+        description="The type of LLM model to use.", default=defs.LLM_TYPE
     )
-    model: str = Field(description="The LLM model to use.", default=DEFAULT_LLM_MODEL)
+    model: str = Field(description="The LLM model to use.", default=defs.LLM_MODEL)
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.",
-        default=DEFAULT_LLM_MAX_TOKENS,
+        default=defs.LLM_MAX_TOKENS,
     )
     request_timeout: float = Field(
-        description="The request timeout to use.", default=DEFAULT_LLM_REQUEST_TIMEOUT
+        description="The request timeout to use.", default=defs.LLM_REQUEST_TIMEOUT
     )
     api_base: str | None = Field(
         description="The base URL for the LLM API.", default=None
@@ -58,25 +47,25 @@ class LLMParameters(BaseModel):
     )
     tokens_per_minute: int = Field(
         description="The number of tokens per minute to use for the LLM service.",
-        default=DEFAULT_LLM_TOKENS_PER_MINUTE,
+        default=defs.LLM_TOKENS_PER_MINUTE,
     )
     requests_per_minute: int = Field(
         description="The number of requests per minute to use for the LLM service.",
-        default=DEFAULT_LLM_REQUESTS_PER_MINUTE,
+        default=defs.LLM_REQUESTS_PER_MINUTE,
     )
     max_retries: int = Field(
         description="The maximum number of retries to use for the LLM service.",
-        default=DEFAULT_LLM_MAX_RETRIES,
+        default=defs.LLM_MAX_RETRIES,
     )
     max_retry_wait: float = Field(
         description="The maximum retry wait to use for the LLM service.",
-        default=DEFAULT_LLM_MAX_RETRY_WAIT,
+        default=defs.LLM_MAX_RETRY_WAIT,
     )
     sleep_on_rate_limit_recommendation: bool = Field(
         description="Whether to sleep on rate limit recommendations.",
-        default=DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
+        default=defs.LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
     )
     concurrent_requests: int = Field(
         description="Whether to use concurrent requests for the LLM service.",
-        default=DEFAULT_LLM_CONCURRENT_REQUESTS,
+        default=defs.LLM_CONCURRENT_REQUESTS,
     )

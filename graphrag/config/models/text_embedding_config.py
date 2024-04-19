@@ -4,11 +4,7 @@
 
 from pydantic import Field
 
-from graphrag.config.defaults import (
-    DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
-    DEFAULT_EMBEDDING_BATCH_SIZE,
-    DEFAULT_EMBEDDING_TARGET,
-)
+import graphrag.config.defaults as defs
 from graphrag.config.enums import TextEmbeddingTarget
 
 from .llm_config import LLMConfig
@@ -18,15 +14,15 @@ class TextEmbeddingConfig(LLMConfig):
     """Configuration section for text embeddings."""
 
     batch_size: int = Field(
-        description="The batch size to use.", default=DEFAULT_EMBEDDING_BATCH_SIZE
+        description="The batch size to use.", default=defs.EMBEDDING_BATCH_SIZE
     )
     batch_max_tokens: int = Field(
         description="The batch max tokens to use.",
-        default=DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
+        default=defs.EMBEDDING_BATCH_MAX_TOKENS,
     )
     target: TextEmbeddingTarget = Field(
         description="The target to use. 'all' or 'required'.",
-        default=DEFAULT_EMBEDDING_TARGET,
+        default=defs.EMBEDDING_TARGET,
     )
     skip: list[str] = Field(description="The specific embeddings to skip.", default=[])
     vector_store: dict | None = Field(

@@ -4,7 +4,7 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import DEFAULT_UMAP_ENABLED
+import graphrag.config.defaults as defs
 
 
 class UmapConfig(BaseModel):
@@ -12,5 +12,5 @@ class UmapConfig(BaseModel):
 
     enabled: bool = Field(
         description="A flag indicating whether to enable UMAP.",
-        default=DEFAULT_UMAP_ENABLED,
+        default=defs.UMAP_ENABLED,
     )

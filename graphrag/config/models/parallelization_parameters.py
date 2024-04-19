@@ -4,10 +4,7 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_PARALLELIZATION_NUM_THREADS,
-    DEFAULT_PARALLELIZATION_STAGGER,
-)
+import graphrag.config.defaults as defs
 
 
 class ParallelizationParameters(BaseModel):
@@ -15,9 +12,9 @@ class ParallelizationParameters(BaseModel):
 
     stagger: float = Field(
         description="The stagger to use for the LLM service.",
-        default=DEFAULT_PARALLELIZATION_STAGGER,
+        default=defs.PARALLELIZATION_STAGGER,
     )
     num_threads: int = Field(
         description="The number of threads to use for the LLM service.",
-        default=DEFAULT_PARALLELIZATION_NUM_THREADS,
+        default=defs.PARALLELIZATION_NUM_THREADS,
     )

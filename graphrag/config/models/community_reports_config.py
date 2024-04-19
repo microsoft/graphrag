@@ -6,10 +6,7 @@ from pathlib import Path
 
 from pydantic import Field
 
-from graphrag.config.defaults import (
-    DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
-    DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
-)
+import graphrag.config.defaults as defs
 
 from .llm_config import LLMConfig
 
@@ -22,11 +19,11 @@ class CommunityReportsConfig(LLMConfig):
     )
     max_length: int = Field(
         description="The community report maximum length in tokens.",
-        default=DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
+        default=defs.COMMUNITY_REPORT_MAX_LENGTH,
     )
     max_input_length: int = Field(
         description="The maximum input length in tokens to use when generating reports.",
-        default=DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+        default=defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None

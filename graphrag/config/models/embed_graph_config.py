@@ -4,14 +4,7 @@
 
 from pydantic import BaseModel, Field
 
-from graphrag.config.defaults import (
-    DEFAULT_NODE2VEC_ENABLED,
-    DEFAULT_NODE2VEC_ITERATIONS,
-    DEFAULT_NODE2VEC_NUM_WALKS,
-    DEFAULT_NODE2VEC_RANDOM_SEED,
-    DEFAULT_NODE2VEC_WALK_LENGTH,
-    DEFAULT_NODE2VEC_WINDOW_SIZE,
-)
+import graphrag.config.defaults as defs
 
 
 class EmbedGraphConfig(BaseModel):
@@ -19,22 +12,22 @@ class EmbedGraphConfig(BaseModel):
 
     enabled: bool = Field(
         description="A flag indicating whether to enable node2vec.",
-        default=DEFAULT_NODE2VEC_ENABLED,
+        default=defs.NODE2VEC_ENABLED,
     )
     num_walks: int = Field(
-        description="The node2vec number of walks.", default=DEFAULT_NODE2VEC_NUM_WALKS
+        description="The node2vec number of walks.", default=defs.NODE2VEC_NUM_WALKS
     )
     walk_length: int = Field(
-        description="The node2vec walk length.", default=DEFAULT_NODE2VEC_WALK_LENGTH
+        description="The node2vec walk length.", default=defs.NODE2VEC_WALK_LENGTH
     )
     window_size: int = Field(
-        description="The node2vec window size.", default=DEFAULT_NODE2VEC_WINDOW_SIZE
+        description="The node2vec window size.", default=defs.NODE2VEC_WINDOW_SIZE
     )
     iterations: int = Field(
-        description="The node2vec iterations.", default=DEFAULT_NODE2VEC_ITERATIONS
+        description="The node2vec iterations.", default=defs.NODE2VEC_ITERATIONS
     )
     random_seed: int = Field(
-        description="The node2vec random seed.", default=DEFAULT_NODE2VEC_RANDOM_SEED
+        description="The node2vec random seed.", default=defs.NODE2VEC_RANDOM_SEED
     )
     strategy: dict | None = Field(
         description="The graph embedding strategy override.", default=None

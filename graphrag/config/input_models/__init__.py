@@ -7,12 +7,14 @@ from .chunking_config_input import ChunkingConfigInput
 from .claim_extraction_config_input import ClaimExtractionConfigInput
 from .cluster_graph_config_input import ClusterGraphConfigInput
 from .community_reports_config_input import CommunityReportsConfigInput
-from .default_config_parameters_input import DefaultConfigParametersInputModel
 from .embed_graph_config_input import EmbedGraphConfigInput
 from .entity_extraction_config_input import EntityExtractionConfigInput
+from .global_search_config_input import GlobalSearchConfigInput
+from .graphrag_config_input import GraphRagConfigInput
 from .input_config_input import InputConfigInput
 from .llm_config_input import LLMConfigInput
 from .llm_parameters_input import LLMParametersInput
+from .local_search_config_input import LocalSearchConfigInput
 from .parallelization_parameters_input import ParallelizationParametersInput
 from .reporting_config_input import ReportingConfigInput
 from .snapshots_config_input import SnapshotsConfigInput
@@ -29,12 +31,14 @@ __all__ = [
     "ClaimExtractionConfigInput",
     "ClusterGraphConfigInput",
     "CommunityReportsConfigInput",
-    "DefaultConfigParametersInputModel",
     "EmbedGraphConfigInput",
     "EntityExtractionConfigInput",
+    "GlobalSearchConfigInput",
+    "GraphRagConfigInput",
     "InputConfigInput",
     "LLMConfigInput",
     "LLMParametersInput",
+    "LocalSearchConfigInput",
     "ParallelizationParametersInput",
     "ReportingConfigInput",
     "SnapshotsConfigInput",

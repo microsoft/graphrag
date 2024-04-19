@@ -10,6 +10,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+import graphrag.config.defaults as defs
 from graphrag.config import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -20,9 +21,9 @@ from graphrag.config import (
     ClaimExtractionConfigInput,
     ClusterGraphConfigInput,
     CommunityReportsConfigInput,
-    DefaultConfigParametersInputModel,
     EmbedGraphConfigInput,
     EntityExtractionConfigInput,
+    GraphRagConfigInput,
     InputConfigInput,
     InputType,
     LLMParametersInput,
@@ -35,59 +36,6 @@ from graphrag.config import (
     TextEmbeddingConfigInput,
     UmapConfigInput,
     create_graphrag_config,
-)
-from graphrag.config.defaults import (
-    DEFAULT_ASYNC_MODE,
-    DEFAULT_CACHE_BASE_DIR,
-    DEFAULT_CACHE_TYPE,
-    DEFAULT_CHUNK_GROUP_BY_COLUMNS,
-    DEFAULT_CHUNK_OVERLAP,
-    DEFAULT_CHUNK_SIZE,
-    DEFAULT_CLAIM_DESCRIPTION,
-    DEFAULT_CLAIM_MAX_GLEANINGS,
-    DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH,
-    DEFAULT_COMMUNITY_REPORT_MAX_LENGTH,
-    DEFAULT_EMBEDDING_BATCH_MAX_TOKENS,
-    DEFAULT_EMBEDDING_BATCH_SIZE,
-    DEFAULT_EMBEDDING_MODEL,
-    DEFAULT_EMBEDDING_TARGET,
-    DEFAULT_EMBEDDING_TYPE,
-    DEFAULT_ENCODING_MODEL,
-    DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES,
-    DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS,
-    DEFAULT_INPUT_BASE_DIR,
-    DEFAULT_INPUT_CSV_PATTERN,
-    DEFAULT_INPUT_FILE_ENCODING,
-    DEFAULT_INPUT_STORAGE_TYPE,
-    DEFAULT_INPUT_TEXT_COLUMN,
-    DEFAULT_INPUT_TYPE,
-    DEFAULT_LLM_CONCURRENT_REQUESTS,
-    DEFAULT_LLM_MAX_RETRIES,
-    DEFAULT_LLM_MAX_RETRY_WAIT,
-    DEFAULT_LLM_MAX_TOKENS,
-    DEFAULT_LLM_MODEL,
-    DEFAULT_LLM_REQUEST_TIMEOUT,
-    DEFAULT_LLM_REQUESTS_PER_MINUTE,
-    DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
-    DEFAULT_LLM_TOKENS_PER_MINUTE,
-    DEFAULT_LLM_TYPE,
-    DEFAULT_MAX_CLUSTER_SIZE,
-    DEFAULT_NODE2VEC_ENABLED,
-    DEFAULT_NODE2VEC_ITERATIONS,
-    DEFAULT_NODE2VEC_NUM_WALKS,
-    DEFAULT_NODE2VEC_RANDOM_SEED,
-    DEFAULT_NODE2VEC_WALK_LENGTH,
-    DEFAULT_NODE2VEC_WINDOW_SIZE,
-    DEFAULT_PARALLELIZATION_NUM_THREADS,
-    DEFAULT_PARALLELIZATION_STAGGER,
-    DEFAULT_REPORTING_BASE_DIR,
-    DEFAULT_REPORTING_TYPE,
-    DEFAULT_SNAPSHOTS_GRAPHML,
-    DEFAULT_SNAPSHOTS_RAW_ENTITIES,
-    DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES,
-    DEFAULT_STORAGE_BASE_DIR,
-    DEFAULT_STORAGE_TYPE,
-    DEFAULT_UMAP_ENABLED,
 )
 from graphrag.index import (
     PipelineCSVInputConfig,
@@ -113,9 +61,9 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CHUNK_SIZE": "500",
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
-    "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-a.txt",
+    "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-a.txt",
     "GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH": "23456",
-    "GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-b.txt",
+    "GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE": "tests/unit/config/prompt-b.txt",
     "GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS": "17",
     "GRAPHRAG_EMBEDDING_BATCH_SIZE": "1000000",
     "GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS": "12",
@@ -134,7 +82,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_ENCODING_MODEL": "test123",
     "GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES": "cat,dog,elephant",
     "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
-    "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-c.txt",
+    "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-c.txt",
     "GRAPHRAG_INPUT_BASE_DIR": "/some/input/dir",
     "GRAPHRAG_INPUT_CONNECTION_STRING": "input_cs",
     "GRAPHRAG_INPUT_CONTAINER_NAME": "input_cn",
@@ -182,7 +130,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_STORAGE_CONTAINER_NAME": "test_cn",
     "GRAPHRAG_STORAGE_TYPE": "blob",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
-    "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/indexing/default_config/prompt-d.txt",
+    "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/config/prompt-d.txt",
     "GRAPHRAG_UMAP_ENABLED": "true",
 }
 
@@ -226,9 +174,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_throws_if_azure_is_used_without_api_base_obj(self):
         with pytest.raises(AzureApiBaseMissingError):
             create_graphrag_config(
-                DefaultConfigParametersInputModel(
-                    llm=LLMParametersInput(type="azure_openai_chat")
-                )
+                GraphRagConfigInput(llm=LLMParametersInput(type="azure_openai_chat"))
             )
 
     @mock.patch.dict(
@@ -248,7 +194,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_throws_if_azure_is_used_without_llm_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
             create_graphrag_config(
-                DefaultConfigParametersInputModel(
+                GraphRagConfigInput(
                     llm=LLMParametersInput(
                         type="azure_openai_chat", api_base="http://some/base"
                     )
@@ -272,7 +218,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_throws_if_azure_is_used_without_embedding_api_base_obj(self):
         with pytest.raises(AzureApiBaseMissingError):
             create_graphrag_config(
-                DefaultConfigParametersInputModel(
+                GraphRagConfigInput(
                     embeddings=TextEmbeddingConfigInput(
                         llm=LLMParametersInput(
                             type="azure_openai_embedding",
@@ -301,7 +247,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_throws_if_azure_is_used_without_embedding_deployment_name_obj(self):
         with pytest.raises(AzureDeploymentNameMissingError):
             create_graphrag_config(
-                DefaultConfigParametersInputModel(
+                GraphRagConfigInput(
                     llm=LLMParametersInput(
                         type="azure_openai_chat",
                         api_base="http://some/base",
@@ -318,7 +264,7 @@ class TestDefaultConfig(unittest.TestCase):
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_minimim_azure_config_object(self):
         config = create_graphrag_config(
-            DefaultConfigParametersInputModel(
+            GraphRagConfigInput(
                 llm=LLMParametersInput(
                     type="azure_openai_chat",
                     api_base="http://some/base",
@@ -455,13 +401,13 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.claim_extraction.max_gleanings == 5000
         assert (
             parameters.claim_extraction.prompt
-            == "tests/unit/indexing/default_config/prompt-a.txt"
+            == "tests/unit/config/prompt-a.txt"
         )
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
         assert (
             parameters.community_reports.prompt
-            == "tests/unit/indexing/default_config/prompt-b.txt"
+            == "tests/unit/config/prompt-b.txt"
         )
         assert parameters.embed_graph.enabled
         assert parameters.embed_graph.iterations == 878787
@@ -490,7 +436,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.max_gleanings == 112
         assert (
             parameters.entity_extraction.prompt
-            == "tests/unit/indexing/default_config/prompt-c.txt"
+            == "tests/unit/config/prompt-c.txt"
         )
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
@@ -539,14 +485,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.summarize_descriptions.max_length == 12345
         assert (
             parameters.summarize_descriptions.prompt
-            == "tests/unit/indexing/default_config/prompt-d.txt"
+            == "tests/unit/config/prompt-d.txt"
         )
         assert parameters.umap.enabled
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
     def test_create_parameters(self) -> None:
         parameters = create_graphrag_config(
-            DefaultConfigParametersInputModel(
+            GraphRagConfigInput(
                 llm=LLMParametersInput(api_key="${API_KEY_X}", model="test-llm"),
                 storage=StorageConfigInput(
                     type=StorageType.blob,
@@ -697,90 +643,84 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_default_values(self) -> None:
         parameters = create_graphrag_config()
-        assert parameters.async_mode == DEFAULT_ASYNC_MODE
-        assert parameters.cache.base_dir == DEFAULT_CACHE_BASE_DIR
-        assert parameters.cache.type == DEFAULT_CACHE_TYPE
-        assert parameters.cache.base_dir == DEFAULT_CACHE_BASE_DIR
-        assert parameters.chunks.group_by_columns == DEFAULT_CHUNK_GROUP_BY_COLUMNS
-        assert parameters.chunks.overlap == DEFAULT_CHUNK_OVERLAP
-        assert parameters.chunks.size == DEFAULT_CHUNK_SIZE
-        assert parameters.claim_extraction.description == DEFAULT_CLAIM_DESCRIPTION
-        assert parameters.claim_extraction.max_gleanings == DEFAULT_CLAIM_MAX_GLEANINGS
+        assert parameters.async_mode == defs.ASYNC_MODE
+        assert parameters.cache.base_dir == defs.CACHE_BASE_DIR
+        assert parameters.cache.type == defs.CACHE_TYPE
+        assert parameters.cache.base_dir == defs.CACHE_BASE_DIR
+        assert parameters.chunks.group_by_columns == defs.CHUNK_GROUP_BY_COLUMNS
+        assert parameters.chunks.overlap == defs.CHUNK_OVERLAP
+        assert parameters.chunks.size == defs.CHUNK_SIZE
+        assert parameters.claim_extraction.description == defs.CLAIM_DESCRIPTION
+        assert parameters.claim_extraction.max_gleanings == defs.CLAIM_MAX_GLEANINGS
         assert (
             parameters.community_reports.max_input_length
-            == DEFAULT_COMMUNITY_REPORT_MAX_INPUT_LENGTH
+            == defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH
         )
         assert (
-            parameters.community_reports.max_length
-            == DEFAULT_COMMUNITY_REPORT_MAX_LENGTH
+            parameters.community_reports.max_length == defs.COMMUNITY_REPORT_MAX_LENGTH
         )
-        assert (
-            parameters.embeddings.batch_max_tokens == DEFAULT_EMBEDDING_BATCH_MAX_TOKENS
-        )
-        assert parameters.embeddings.batch_size == DEFAULT_EMBEDDING_BATCH_SIZE
-        assert parameters.embeddings.llm.model == DEFAULT_EMBEDDING_MODEL
-        assert parameters.embeddings.target == DEFAULT_EMBEDDING_TARGET
-        assert parameters.embeddings.llm.type == DEFAULT_EMBEDDING_TYPE
+        assert parameters.embeddings.batch_max_tokens == defs.EMBEDDING_BATCH_MAX_TOKENS
+        assert parameters.embeddings.batch_size == defs.EMBEDDING_BATCH_SIZE
+        assert parameters.embeddings.llm.model == defs.EMBEDDING_MODEL
+        assert parameters.embeddings.target == defs.EMBEDDING_TARGET
+        assert parameters.embeddings.llm.type == defs.EMBEDDING_TYPE
         assert (
             parameters.embeddings.llm.requests_per_minute
-            == DEFAULT_LLM_REQUESTS_PER_MINUTE
+            == defs.LLM_REQUESTS_PER_MINUTE
         )
-        assert (
-            parameters.embeddings.llm.tokens_per_minute == DEFAULT_LLM_TOKENS_PER_MINUTE
-        )
+        assert parameters.embeddings.llm.tokens_per_minute == defs.LLM_TOKENS_PER_MINUTE
         assert (
             parameters.embeddings.llm.sleep_on_rate_limit_recommendation
-            == DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
+            == defs.LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
         )
         assert (
             parameters.entity_extraction.entity_types
-            == DEFAULT_ENTITY_EXTRACTION_ENTITY_TYPES
+            == defs.ENTITY_EXTRACTION_ENTITY_TYPES
         )
         assert (
             parameters.entity_extraction.max_gleanings
-            == DEFAULT_ENTITY_EXTRACTION_MAX_GLEANINGS
+            == defs.ENTITY_EXTRACTION_MAX_GLEANINGS
         )
-        assert parameters.encoding_model == DEFAULT_ENCODING_MODEL
-        assert parameters.input.base_dir == DEFAULT_INPUT_BASE_DIR
-        assert parameters.input.file_pattern == DEFAULT_INPUT_CSV_PATTERN
-        assert parameters.input.file_encoding == DEFAULT_INPUT_FILE_ENCODING
-        assert parameters.input.storage_type == DEFAULT_INPUT_STORAGE_TYPE
-        assert parameters.input.base_dir == DEFAULT_INPUT_BASE_DIR
-        assert parameters.input.text_column == DEFAULT_INPUT_TEXT_COLUMN
-        assert parameters.input.type == DEFAULT_INPUT_TYPE
-        assert parameters.llm.concurrent_requests == DEFAULT_LLM_CONCURRENT_REQUESTS
-        assert parameters.llm.max_retries == DEFAULT_LLM_MAX_RETRIES
-        assert parameters.llm.max_retry_wait == DEFAULT_LLM_MAX_RETRY_WAIT
-        assert parameters.llm.max_tokens == DEFAULT_LLM_MAX_TOKENS
-        assert parameters.llm.model == DEFAULT_LLM_MODEL
-        assert parameters.llm.request_timeout == DEFAULT_LLM_REQUEST_TIMEOUT
-        assert parameters.llm.requests_per_minute == DEFAULT_LLM_REQUESTS_PER_MINUTE
-        assert parameters.llm.tokens_per_minute == DEFAULT_LLM_TOKENS_PER_MINUTE
+        assert parameters.encoding_model == defs.ENCODING_MODEL
+        assert parameters.input.base_dir == defs.INPUT_BASE_DIR
+        assert parameters.input.file_pattern == defs.INPUT_CSV_PATTERN
+        assert parameters.input.file_encoding == defs.INPUT_FILE_ENCODING
+        assert parameters.input.storage_type == defs.INPUT_STORAGE_TYPE
+        assert parameters.input.base_dir == defs.INPUT_BASE_DIR
+        assert parameters.input.text_column == defs.INPUT_TEXT_COLUMN
+        assert parameters.input.type == defs.INPUT_TYPE
+        assert parameters.llm.concurrent_requests == defs.LLM_CONCURRENT_REQUESTS
+        assert parameters.llm.max_retries == defs.LLM_MAX_RETRIES
+        assert parameters.llm.max_retry_wait == defs.LLM_MAX_RETRY_WAIT
+        assert parameters.llm.max_tokens == defs.LLM_MAX_TOKENS
+        assert parameters.llm.model == defs.LLM_MODEL
+        assert parameters.llm.request_timeout == defs.LLM_REQUEST_TIMEOUT
+        assert parameters.llm.requests_per_minute == defs.LLM_REQUESTS_PER_MINUTE
+        assert parameters.llm.tokens_per_minute == defs.LLM_TOKENS_PER_MINUTE
         assert (
             parameters.llm.sleep_on_rate_limit_recommendation
-            == DEFAULT_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
+            == defs.LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION
         )
-        assert parameters.llm.type == DEFAULT_LLM_TYPE
-        assert parameters.cluster_graph.max_cluster_size == DEFAULT_MAX_CLUSTER_SIZE
-        assert parameters.embed_graph.enabled == DEFAULT_NODE2VEC_ENABLED
-        assert parameters.embed_graph.iterations == DEFAULT_NODE2VEC_ITERATIONS
-        assert parameters.embed_graph.num_walks == DEFAULT_NODE2VEC_NUM_WALKS
-        assert parameters.embed_graph.random_seed == DEFAULT_NODE2VEC_RANDOM_SEED
-        assert parameters.embed_graph.walk_length == DEFAULT_NODE2VEC_WALK_LENGTH
-        assert parameters.embed_graph.window_size == DEFAULT_NODE2VEC_WINDOW_SIZE
+        assert parameters.llm.type == defs.LLM_TYPE
+        assert parameters.cluster_graph.max_cluster_size == defs.MAX_CLUSTER_SIZE
+        assert parameters.embed_graph.enabled == defs.NODE2VEC_ENABLED
+        assert parameters.embed_graph.iterations == defs.NODE2VEC_ITERATIONS
+        assert parameters.embed_graph.num_walks == defs.NODE2VEC_NUM_WALKS
+        assert parameters.embed_graph.random_seed == defs.NODE2VEC_RANDOM_SEED
+        assert parameters.embed_graph.walk_length == defs.NODE2VEC_WALK_LENGTH
+        assert parameters.embed_graph.window_size == defs.NODE2VEC_WINDOW_SIZE
         assert (
-            parameters.parallelization.num_threads
-            == DEFAULT_PARALLELIZATION_NUM_THREADS
+            parameters.parallelization.num_threads == defs.PARALLELIZATION_NUM_THREADS
         )
-        assert parameters.parallelization.stagger == DEFAULT_PARALLELIZATION_STAGGER
-        assert parameters.reporting.type == DEFAULT_REPORTING_TYPE
-        assert parameters.reporting.base_dir == DEFAULT_REPORTING_BASE_DIR
-        assert parameters.snapshots.graphml == DEFAULT_SNAPSHOTS_GRAPHML
-        assert parameters.snapshots.raw_entities == DEFAULT_SNAPSHOTS_RAW_ENTITIES
-        assert parameters.snapshots.top_level_nodes == DEFAULT_SNAPSHOTS_TOP_LEVEL_NODES
-        assert parameters.storage.base_dir == DEFAULT_STORAGE_BASE_DIR
-        assert parameters.storage.type == DEFAULT_STORAGE_TYPE
-        assert parameters.umap.enabled == DEFAULT_UMAP_ENABLED
+        assert parameters.parallelization.stagger == defs.PARALLELIZATION_STAGGER
+        assert parameters.reporting.type == defs.REPORTING_TYPE
+        assert parameters.reporting.base_dir == defs.REPORTING_BASE_DIR
+        assert parameters.snapshots.graphml == defs.SNAPSHOTS_GRAPHML
+        assert parameters.snapshots.raw_entities == defs.SNAPSHOTS_RAW_ENTITIES
+        assert parameters.snapshots.top_level_nodes == defs.SNAPSHOTS_TOP_LEVEL_NODES
+        assert parameters.storage.base_dir == defs.STORAGE_BASE_DIR
+        assert parameters.storage.type == defs.STORAGE_TYPE
+        assert parameters.umap.enabled == defs.UMAP_ENABLED
 
     @mock.patch.dict(
         os.environ,
@@ -790,16 +730,16 @@ class TestDefaultConfig(unittest.TestCase):
     def test_prompt_file_reading(self):
         config = create_graphrag_config({
             "entity_extraction": {
-                "prompt": "tests/unit/indexing/default_config/prompt-a.txt"
+                "prompt": "tests/unit/config/prompt-a.txt"
             },
             "claim_extraction": {
-                "prompt": "tests/unit/indexing/default_config/prompt-b.txt"
+                "prompt": "tests/unit/config/prompt-b.txt"
             },
             "community_reports": {
-                "prompt": "tests/unit/indexing/default_config/prompt-c.txt"
+                "prompt": "tests/unit/config/prompt-c.txt"
             },
             "summarize_descriptions": {
-                "prompt": "tests/unit/indexing/default_config/prompt-d.txt"
+                "prompt": "tests/unit/config/prompt-d.txt"
             },
         })
         strategy = config.entity_extraction.resolved_strategy(".", "abc123")

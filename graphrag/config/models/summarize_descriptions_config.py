@@ -6,9 +6,7 @@ from pathlib import Path
 
 from pydantic import Field
 
-from graphrag.config.defaults import (
-    DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
-)
+import graphrag.config.defaults as defs
 
 from .llm_config import LLMConfig
 
@@ -21,7 +19,7 @@ class SummarizeDescriptionsConfig(LLMConfig):
     )
     max_length: int = Field(
         description="The description summarization maximum length.",
-        default=DEFAULT_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
+        default=defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
