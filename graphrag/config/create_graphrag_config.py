@@ -452,6 +452,8 @@ def create_graphrag_config(
                 or defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.LOCAL_SEARCH_MAX_TOKENS,
+                llm_max_tokens=reader.int("llm_max_tokens")
+                or defs.LOCAL_SEARCH_LLM_MAX_TOKENS,
             )
 
         with (

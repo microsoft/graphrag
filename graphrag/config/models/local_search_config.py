@@ -33,3 +33,6 @@ class LocalSearchConfig(BaseModel):
     max_tokens: int = Field(
         description="The maximum tokens.", default=defs.LOCAL_SEARCH_MAX_TOKENS
     )
+    llm_max_tokens: int = Field(
+        description="The LLM maximum tokens.", default=defs.LOCAL_SEARCH_LLM_MAX_TOKENS
+    )

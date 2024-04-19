@@ -32,6 +32,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--root",
+        help="The data project root.",
+        required=False,
+        type=str,
+    )
+
+    parser.add_argument(
         "--method",
         help="The method to run, one of: local or global",
         required=True,
@@ -65,11 +72,19 @@ if __name__ == "__main__":
     match args.method:
         case SearchType.LOCAL:
             run_local_search(
-                args.data, args.community_level, args.response_type, args.query[0]
+                args.data,
+                args.root,
+                args.community_level,
+                args.response_type,
+                args.query[0],
             )
         case SearchType.GLOBAL:
             run_global_search(
-                args.data, args.community_level, args.response_type, args.query[0]
+                args.data,
+                args.root,
+                args.community_level,
+                args.response_type,
+                args.query[0],
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)

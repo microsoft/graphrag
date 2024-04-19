@@ -14,3 +14,4 @@ class LocalSearchConfigInput(TypedDict):
     top_k_mapped_entities: NotRequired[int | str | None]
     top_k_mapped_relationships: NotRequired[int | str | None]
     max_tokens: NotRequired[int | str | None]
+    llm_max_tokens: NotRequired[int | str | None]
