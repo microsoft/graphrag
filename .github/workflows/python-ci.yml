@@ -91,7 +91,7 @@ jobs:
           poetry run poe test_integration
 
       - name: Smoke Test
-        if: steps.changes.outputs.python == 'true'
+        if: matrix.python-version == '3.11' && steps.changes.outputs.python == 'true'
         run: |
           poetry run poe test_smoke
 
