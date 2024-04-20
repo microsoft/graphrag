@@ -31,8 +31,8 @@ input:
 cache:
     type: blob
     connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
-    container_name: azurefixture
-    base_dir: cache
+    container_name: cicache
+    base_dir: cache_azure
 
 storage:
     type: blob
