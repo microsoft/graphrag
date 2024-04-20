@@ -4,7 +4,7 @@
     "workflow_config": {
         "skip_assert": true,
         "azure": {
-            "input_container": "dulceazure",
+            "input_container": "azurefixture",
             "input_base_dir": "input"
         }
     },
