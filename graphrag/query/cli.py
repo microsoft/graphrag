@@ -302,7 +302,7 @@ def __get_llm(config: GraphRagConfig):
 
 
 def __get_text_embedder(config: GraphRagConfig):
-    is_azure_client = config.llm.type == LLMType.AzureOpenAIEmbedding
+    is_azure_client = config.embeddings.llm.type == LLMType.AzureOpenAIEmbedding
     llm_debug_info = {
         **config.embeddings.llm.model_dump(),
         "api_key": f"REDACTED,len={len(config.embeddings.llm.api_key)}",
