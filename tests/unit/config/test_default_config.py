@@ -132,6 +132,18 @@ ALL_ENV_VARS = {
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/config/prompt-d.txt",
     "GRAPHRAG_UMAP_ENABLED": "true",
+    "GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP": "0.713",
+    "GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP": "0.1234",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS": "12",
+    "GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS": "15",
+    "GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES": "14",
+    "GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS": "2",
+    "GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS": "142435",
+    "GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS": "5123",
+    "GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS": "123",
+    "GRAPHRAG_GLOBAL_SEARCH_MAP_MAX_TOKENS": "4123",
+    "GRAPHRAG_GLOBAL_SEARCH_CONCURRENCY": "7",
+    "GRAPHRAG_GLOBAL_SEARCH_REDUCE_MAX_TOKENS": "15432",
 }
 
 
@@ -342,21 +354,23 @@ class TestDefaultConfig(unittest.TestCase):
 
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
-        env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
+        query_docs_path = Path("docsite/posts/query/3-cli.md")
 
-        def find_envvar_names(text):
+        env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
+        query_docs = query_docs_path.read_text(encoding="utf-8")
+
+        def find_envvar_names(text) -> set[str]:
             pattern = r"`(GRAPHRAG_[^`]+)`"
-            return re.findall(pattern, text)
+            found = re.findall(pattern, text)
+            found = {f for f in found if not f.endswith("_")}
+            return {*found}
 
-        env_var_docs_path = Path("docsite/posts/config/env_vars.md")
-        env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
-        graphrag_strings = find_envvar_names(env_var_docs)
+        graphrag_strings = find_envvar_names(env_var_docs) | find_envvar_names(
+            query_docs
+        )
 
-        missing = {
-            s for s in graphrag_strings if s not in ALL_ENV_VARS and not s.endswith("_")
-        }
-        # Remove configs covered by the base LLM connection configs
-        missing = missing - {
+        missing = {s for s in graphrag_strings if s not in ALL_ENV_VARS} - {
+            # Remove configs covered by the base LLM connection configs
             "GRAPHRAG_LLM_API_KEY",
             "GRAPHRAG_LLM_API_BASE",
             "GRAPHRAG_LLM_API_VERSION",
@@ -478,6 +492,18 @@ class TestDefaultConfig(unittest.TestCase):
             parameters.summarize_descriptions.prompt == "tests/unit/config/prompt-d.txt"
         )
         assert parameters.umap.enabled
+        assert parameters.local_search.text_unit_prop == 0.713
+        assert parameters.local_search.community_prop == 0.1234
+        assert parameters.local_search.llm_max_tokens == 12
+        assert parameters.local_search.top_k_relationships == 15
+        assert parameters.local_search.conversation_history_max_turns == 2
+        assert parameters.local_search.top_k_entities == 14
+        assert parameters.local_search.max_tokens == 142435
+        assert parameters.global_search.max_tokens == 5123
+        assert parameters.global_search.data_max_tokens == 123
+        assert parameters.global_search.map_max_tokens == 4123
+        assert parameters.global_search.concurrency == 7
+        assert parameters.global_search.reduce_max_tokens == 15432
 
     @mock.patch.dict(os.environ, {"API_KEY_X": "test"}, clear=True)
     def test_create_parameters(self) -> None:

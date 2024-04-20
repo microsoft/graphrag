@@ -37,9 +37,9 @@ You can further customize the execution by providing these environment variables
 - `GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP` - Proportion of context window dedicated to related text units. Default: `0.5`
 - `GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP` - Proportion of context window dedicated to community reports. Default: `0.1`
 - `GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS` - Maximum number of turns to include in the conversation history. Default: `5`
-- `GRAPHRAG_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES` - Number of related entities to retrieve from the entity description embedding store. Default: `10`
+- `GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES` - Number of related entities to retrieve from the entity description embedding store. Default: `10`
 - `GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS` - Control the number of out-of-network relationships to pull into the context window. Default: `10`
-- `GRAPHRAG_LOCAL_SEARCH_LOCAL_CONTEXT_MAX_TOKENS` - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: `12000`
+- `GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS` - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: `12000`
 - `GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS` - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500). Default: `2000`
 - `GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS` - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: `12000`
 - `GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS` - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: `12000`

@@ -22,11 +22,11 @@ class LocalSearchConfig(BaseModel):
         description="The conversation history maximum turns.",
         default=defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
     )
-    top_k_mapped_entities: int = Field(
+    top_k_entities: int = Field(
         description="The top k mapped entities.",
         default=defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
     )
-    top_k_mapped_relationships: int = Field(
+    top_k_relationships: int = Field(
         description="The top k mapped relations.",
         default=defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
     )

@@ -446,9 +446,9 @@ def create_graphrag_config(
                     "conversation_history_max_turns"
                 )
                 or defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
-                top_k_mapped_entities=reader.int("top_k_mapped_entities")
+                top_k_entities=reader.int("top_k_entities")
                 or defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
-                top_k_mapped_relationships=reader.int("top_k_mapped_relationships")
+                top_k_relationships=reader.int("top_k_relationships")
                 or defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.LOCAL_SEARCH_MAX_TOKENS,
