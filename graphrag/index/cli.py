@@ -263,9 +263,9 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
 
 def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
     if reporter_type is None or reporter_type == "rich":
-        return RichProgressReporter("Indexing Engine")
+        return RichProgressReporter("GraphRAG Indexer ")
     if reporter_type == "print":
-        return PrintProgressReporter("Indexing Engine")
+        return PrintProgressReporter("GraphRAG Indexer ")
     if reporter_type == "none":
         return NullProgressReporter()
 

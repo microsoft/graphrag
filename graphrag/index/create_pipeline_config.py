@@ -157,14 +157,14 @@ def _determine_skip_workflows(settings: GraphRagConfig) -> list[str]:
 
 def _log_llm_settings(settings: GraphRagConfig) -> None:
     log.info(
-        "Using LLM Config",
+        "Using LLM Config %s",
         json.dumps(
             {**settings.entity_extraction.llm.model_dump(), "api_key": "*****"},
             indent=4,
         ),
     )
     log.info(
-        "Using Embeddings Config",
+        "Using Embeddings Config %s",
         json.dumps(
             {**settings.embeddings.llm.model_dump(), "api_key": "*****"}, indent=4
         ),
