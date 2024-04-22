@@ -6,6 +6,7 @@ import logging
 from enum import Enum
 from typing import Any, cast
 
+import numpy as np
 import pandas as pd
 from datashaper import TableContainer, VerbCallbacks, VerbInput, verb
 
@@ -175,6 +176,7 @@ async def _text_embed_with_vector_store(
         vectors = result.embeddings or []
         documents: list[VectorStoreDocument] = []
         for id, text, title, vector in zip(ids, texts, titles, vectors, strict=True):
+            if type(vector) == np.ndarray: vector = vector.tolist()
             document = VectorStoreDocument(
                 id=id,
                 text=text,
@@ -182,8 +184,11 @@ async def _text_embed_with_vector_store(
                 attributes={"title": title},
             )
             documents.append(document)
-
-        vector_store.load_documents(documents, overwrite)
+            
+        if i == 0:
+            vector_store.load_documents(documents, overwrite)
+        else:
+            vector_store.load_documents(documents, False)
         starting_index += len(documents)
         i += 1
 
