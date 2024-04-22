@@ -4,24 +4,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
+from graphrag.config.enums import StorageType
+
 T = TypeVar("T")
-
-
-class PipelineStorageType(str, Enum):
-    """Represent the storage type for the pipeline."""
-
-    file = "file"
-    """The file storage type."""
-    memory = "memory"
-    """The memory storage type."""
-    blob = "blob"
-    """The blob storage type."""
 
 
 class PipelineStorageConfig(BaseModel, Generic[T]):
@@ -30,12 +20,10 @@ class PipelineStorageConfig(BaseModel, Generic[T]):
     type: T
 
 
-class PipelineFileStorageConfig(
-    PipelineStorageConfig[Literal[PipelineStorageType.file]]
-):
+class PipelineFileStorageConfig(PipelineStorageConfig[Literal[StorageType.file]]):
     """Represent the file storage configuration for the pipeline."""
 
-    type: Literal[PipelineStorageType.file] = PipelineStorageType.file
+    type: Literal[StorageType.file] = StorageType.file
     """The type of storage."""
 
     base_dir: str | None = pydantic_Field(
@@ -44,21 +32,17 @@ class PipelineFileStorageConfig(
     """The base directory for the storage."""
 
 
-class PipelineMemoryStorageConfig(
-    PipelineStorageConfig[Literal[PipelineStorageType.memory]]
-):
+class PipelineMemoryStorageConfig(PipelineStorageConfig[Literal[StorageType.memory]]):
     """Represent the memory storage configuration for the pipeline."""
 
-    type: Literal[PipelineStorageType.memory] = PipelineStorageType.memory
+    type: Literal[StorageType.memory] = StorageType.memory
     """The type of storage."""
 
 
-class PipelineBlobStorageConfig(
-    PipelineStorageConfig[Literal[PipelineStorageType.blob]]
-):
+class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]):
     """Represents the blob storage configuration for the pipeline."""
 
-    type: Literal[PipelineStorageType.blob] = PipelineStorageType.blob
+    type: Literal[StorageType.blob] = StorageType.blob
     """The type of storage."""
 
     connection_string: str = pydantic_Field(

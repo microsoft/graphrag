@@ -2,7 +2,7 @@
 
 """A file containing some default responses."""
 
-from graphrag.index.llm.types import LLMType
+from graphrag.config.enums import LLMType
 
 MOCK_LLM_RESPONSES = [
     """
