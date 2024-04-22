@@ -48,7 +48,7 @@ These settings control the text generation model used by the pipeline. Any setti
 | ---------------------------------- | ------------------------ | -------------------------------------------------------------------------------------- | ------- | ------------- |
 | `GRAPHRAG_LLM_TYPE`                | **For AOAI**             | The LLM operation type. Either `openai_chat` or `azure_openai_chat`                    | `str`   | `openai_chat` |
 | `GRAPHRAG_LLM_DEPLOYMENT_NAME`     | **For AOAI**             | The AOAI model deployment name.                                                        | `str`   | `None`        |
-| `GRAPHRAG_LLM_API_KEY`             | For AOAI (uses fallback) | The API key.                                                                           | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_KEY`             | Yes (uses fallback)      | The API key.                                                                           | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_BASE`            | For AOAI (uses fallback) | The API Base URL                                                                       | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_VERSION`         | For AOAI (uses fallback) | The AOAI API version.                                                                  | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_ORGANIZATION`    | For AOAI (uses fallback) | The AOAI organization.                                                                 | `str`   | `None`        |
@@ -75,7 +75,7 @@ These settings control the text embedding model used by the pipeline. Any settin
 | ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------| ------- | -------------------- |
 | `GRAPHRAG_EMBEDDING_TYPE`                 | **For AOAI**             | The embedding client to use. Either `openai_embedding` or `azure_openai_embedding`          | `str`   | `openai_embedding`   |
 | `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | **For AOAI**             | The AOAI deployment name.                                                                   | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_KEY`              | For AOAI (uses fallback) | The API key to use for the embedding client.                                                | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_KEY`              | Yes (uses fallback)      | The API key to use for the embedding client.                                                | `str`   | `None`               |
 | `GRAPHRAG_EMBEDDING_API_BASE`             | For AOAI (uses fallback) | The API base URL.                                                                           | `str`   | `None`               |
 | `GRAPHRAG_EMBEDDING_API_VERSION`          | For AOAI (uses fallback) | The AOAI API version to use for the embedding client.                                       | `str`   | `None`               |
 | `GRAPHRAG_EMBEDDING_API_ORGANIZATION`     | For AOAI (uses fallback) | The AOAI organization to use for the embedding client.                                      | `str`   | `None`               |
