@@ -44,7 +44,7 @@ async def prepare_community_reports(
     """Generate entities for each row, and optionally a graph of those entities."""
     strategy_args = {**strategy}
 
-    async def prepare_row(row) -> tuple[list[str], list[int], list[dict]]:
+    async def prepare_row(row) -> tuple[list[str], list[int], list[dict]]:  # noqa RUF029 async is required for interface
         claims = row[claims_column] if claims_column is not None else None
         graph_xml: str = cast(str, row[graph_column])
         level = row[level_column]

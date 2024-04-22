@@ -15,7 +15,7 @@ from .typing import Document, EntityExtractionResult, EntityTypes, StrategyConfi
 words.ensure_loaded()
 
 
-async def run(
+async def run(  # noqa RUF029 async is required for interface
     docs: list[Document],
     entity_types: EntityTypes,
     reporter: VerbCallbacks,  # noqa ARG001
