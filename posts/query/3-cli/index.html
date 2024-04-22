@@ -301,18 +301,18 @@ a {
 <li><code>GRAPHRAG_EMBEDDING_API_BASE</code> - The API Base URL. Default: <code>None</code></li>
 <li><code>GRAPHRAG_EMBEDDING_TYPE</code> - The embedding client to use. Either <code>openai_embedding</code> or <code>azure_openai_embedding</code>. Default: <code>openai_embedding</code></li>
 <li><code>GRAPHRAG_EMBEDDING_MAX_RETRIES</code> - The maximum number of retries to attempt when a request fails. Default: <code>20</code></li>
-<li><code>TEXT_UNIT_PROP</code> - Proportion of context window dedicated to related text units. Default: <code>0.5</code></li>
-<li><code>COMMUNITY_PROP</code> - Proportion of context window dedicated to community reports. Default: <code>0.1</code></li>
-<li><code>CONVERSATION_HISTORY_MAX_TURNS</code> - Maximum number of turns to include in the conversation history. Default: <code>5</code></li>
-<li><code>TOP_K_MAPPED_ENTITIES</code> - Number of related entities to retrieve from the entity description embedding store. Default: <code>10</code></li>
-<li><code>TOP_K_RELATIONSHIPS</code> - Control the number of out-of-network relationships to pull into the context window. Default: <code>10</code></li>
-<li><code>LOCAL_CONTEXT_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
-<li><code>GRAPHRAG_LLM_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500). Default: <code>2000</code></li>
-<li><code>CONTEXT_BUILDER_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
-<li><code>MAP_LLM_MAX_TOKENS</code> - Default: <code>500</code></li>
-<li><code>REDUCE_LLM_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500). Default: <code>2000</code></li>
-<li><code>SEARCH_ENGINE_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
-<li><code>SEARCH_ENGINE_CONCURRENCY</code> - Default: <code>32</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP</code> - Proportion of context window dedicated to related text units. Default: <code>0.5</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP</code> - Proportion of context window dedicated to community reports. Default: <code>0.1</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS</code> - Maximum number of turns to include in the conversation history. Default: <code>5</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES</code> - Number of related entities to retrieve from the entity description embedding store. Default: <code>10</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS</code> - Control the number of out-of-network relationships to pull into the context window. Default: <code>10</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500). Default: <code>2000</code></li>
+<li><code>GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000). Default: <code>12000</code></li>
+<li><code>GRAPHRAG_GLOBAL_SEARCH_MAP_MAX_TOKENS</code> - Default: <code>500</code></li>
+<li><code>GRAPHRAG_GLOBAL_SEARCH_REDUCE_MAX_TOKENS</code> - Change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500). Default: <code>2000</code></li>
+<li><code>GRAPHRAG_GLOBAL_SEARCH_CONCURRENCY</code> - Default: <code>32</code></li>
 </ul>
 
         </main>
