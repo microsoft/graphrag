@@ -87,9 +87,7 @@ def to_optional_list(
                     raise TypeError(msg)
         return value
 
-    msg = f"Column {column_name} not found in data"
-    raise ValueError(msg)
-
+    return None
 
 def to_int(data: pd.Series, column_name: str | None) -> int:
     """Convert and validate a value to an int."""
