@@ -271,7 +271,7 @@ def read_text_units(
     covariates_col: str | None = "covariate_ids",
     tokens_col: str | None = "n_tokens",
     document_ids_col: str | None = "document_ids",
-    embedding_col: str | None = "semantic_embedding",
+    embedding_col: str | None = "text_embedding",
     attributes_cols: list[str] | None = None,
 ) -> list[TextUnit]:
     """Read text units from a dataframe."""
