@@ -33,7 +33,7 @@ def build_steps(
     skip_summary_embedding = config.get("skip_summary_embedding", False)
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
 
-    result = [
+    return [
         {
             "verb": "prepare_community_reports",
             "args": {
@@ -81,39 +81,34 @@ def build_steps(
             "verb": "window",
             "args": {"to": "id", "operation": "uuid", "column": "community_id"},
         },
-    ]
-
-    if not skip_full_content_embedding:
-        result.append({
+        {
             "verb": "text_embed",
+            "enabled": not skip_full_content_embedding,
             "args": {
                 "embedding_name": "community_report_full_content",
                 "column": "full_content",
                 "to": "full_content_embedding",
                 **community_report_full_content_embed_config,
             },
-        })
-
-    if not skip_summary_embedding:
-        result.append({
+        },
+        {
             "verb": "text_embed",
+            "enabled": not skip_summary_embedding,
             "args": {
                 "embedding_name": "community_report_summary",
                 "column": "summary",
                 "to": "summary_embedding",
                 **community_report_summary_embed_config,
             },
-        })
-
-    if not skip_title_embedding:
-        result.append({
+        },
+        {
             "verb": "text_embed",
+            "enabled": not skip_title_embedding,
             "args": {
                 "embedding_name": "community_report_title",
                 "column": "title",
                 "to": "title_embedding",
                 **community_report_title_embed_config,
             },
-        })
-
-    return result
+        },
+    ]
