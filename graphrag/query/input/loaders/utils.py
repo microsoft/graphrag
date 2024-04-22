@@ -89,6 +89,7 @@ def to_optional_list(
 
     return None
 
+
 def to_int(data: pd.Series, column_name: str | None) -> int:
     """Convert and validate a value to an int."""
     if column_name is None:
