@@ -286,7 +286,7 @@ def read_text_units(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            text_embedding=to_list(row, embedding_col, item_type=float),  # type: ignore
+            text_embedding=to_optional_list(row, embedding_col, item_type=float),  # type: ignore
             n_tokens=to_optional_int(row, tokens_col),
             document_ids=to_optional_list(row, document_ids_col, item_type=str),
             attributes=(
