@@ -112,7 +112,7 @@ Here is an example using Local search to ask a more specific question about a pa
 
 ```sh
 python -m graphrag.query \
---data ./ragtest \
+--root ./ragtest \
 --method local \
 "Who is Scrooge, and what are his main relationships?"
 ```

@@ -26,6 +26,77 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with `GRAPHRAG_INPUT_` below. In general, CSV-based data provides the most customizeability. Each CSV should at least contain a `text` field (which can be mapped with environment variables), but it's helpful if they also have `title`, `timestamp`, and `source` fields. Additional fields can be included as well, which will land as extra fields on the `Document` table.
 
 
+## Base LLM Settings
+
+These are the primary settings for configuring LLM connectivity.
+
+| Parameter                   | Required?    | Description                                                                            | Type    | Default Value |
+| --------------------------- | ------------ | -------------------------------------------------------------------------------------- | ------- | ------------- |
+| `GRAPHRAG_API_KEY`          | **Yes**      | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | `None`        |
+| `GRAPHRAG_API_BASE`         | **For AOAI** | The API Base URL                                                                       | `str`   | `None`        |
+| `GRAPHRAG_API_VERSION`      | **For AOAI** | The AOAI API version.                                                                  | `str`   | `None`        |
+| `GRAPHRAG_API_ORGANIZATION` |              | The AOAI organization.                                                                 | `str`   | `None`        |
+| `GRAPHRAG_API_PROXY`        |              | The AOAI proxy.                                                                        | `str`   | `None`        |
+
+
+
+## Text Generation Settings
+
+These settings control the text generation model used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.
+
+| Parameter                          | Required?                | Description                                                                            | Type    | Default Value |
+| ---------------------------------- | ------------------------ | -------------------------------------------------------------------------------------- | ------- | ------------- |
+| `GRAPHRAG_LLM_TYPE`                | **For AOAI**             | The LLM operation type. Either `openai_chat` or `azure_openai_chat`                    | `str`   | `openai_chat` |
+| `GRAPHRAG_LLM_DEPLOYMENT_NAME`     | **For AOAI**             | The AOAI model deployment name.                                                        | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_KEY`             | For AOAI (uses fallback) | The API key.                                                                           | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_BASE`            | For AOAI (uses fallback) | The API Base URL                                                                       | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_VERSION`         | For AOAI (uses fallback) | The AOAI API version.                                                                  | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_ORGANIZATION`    | For AOAI (uses fallback) | The AOAI organization.                                                                 | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_PROXY`           |                          | The AOAI proxy.                                                                        | `str`   | `None`        |
+| `GRAPHRAG_LLM_MODEL`               |                          | The LLM model.                                                                         | `str`   | `gpt-4-turbo-preview`       |
+| `GRAPHRAG_LLM_MAX_TOKENS`          |                          | The maximum number of tokens.                                                          | `int`   | `4000`        |
+| `GRAPHRAG_LLM_REQUEST_TIMEOUT`     |                          | The maximum number of seconds to wait for a response from the chat client.             | `int`   | `180`         |
+| `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` |                          | Indicates whether the given model supports JSON output mode. `True` to enable.         | `str`   | `None`        |
+| `GRAPHRAG_LLM_THREAD_COUNT`        |                          | The number of threads to use for LLM parallelization.                                  | `int`   | 50            |
+| `GRAPHRAG_LLM_THREAD_STAGGER`      |                          | The time to wait (in seconds) between starting each thread.                            | `float` | 0.3           |
+| `GRAPHRAG_LLM_CONCURRENT_REQUESTS` |                          | The number of concurrent requests to allow for the embedding client.                   | `int`   | 25            |
+| `GRAPHRAG_LLM_TPM`                 |                          | The number of tokens per minute to allow for the LLM client. 0 = Bypass                | `int`   | 0             |
+| `GRAPHRAG_LLM_RPM`                 |                          | The number of requests per minute to allow for the LLM client. 0 = Bypass              | `int`   | 0             |
+| `GRAPHRAG_LLM_MAX_RETRIES`         |                          | The maximum number of retries to attempt when a request fails.                         | `int`   | 10            |
+| `GRAPHRAG_LLM_MAX_RETRY_WAIT`      |                          | The maximum number of seconds to wait between retries.                                 | `int`   | 10            |
+| `GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |           | Whether to sleep on rate limit recommendation. (Azure Only)                            | `bool`  | `True`        |
+
+
+## Text Embedding Settings
+
+These settings control the text embedding model used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.
+
+| Parameter                                 | Required ?               | Description                                                                                 | Type    | Default              |
+| ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------| ------- | -------------------- |
+| `GRAPHRAG_EMBEDDING_TYPE`                 | **For AOAI**             | The embedding client to use. Either `openai_embedding` or `azure_openai_embedding`          | `str`   | `openai_embedding`   |
+| `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | **For AOAI**             | The AOAI deployment name.                                                                   | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_KEY`              | For AOAI (uses fallback) | The API key to use for the embedding client.                                                | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_BASE`             | For AOAI (uses fallback) | The API base URL.                                                                           | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_VERSION`          | For AOAI (uses fallback) | The AOAI API version to use for the embedding client.                                       | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_ORGANIZATION`     | For AOAI (uses fallback) | The AOAI organization to use for the embedding client.                                      | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_PROXY`            |                          | The AOAI proxy to use for the embedding client.                                             | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_MODEL`                |                          | The model to use for the embedding client.                                                  | `str`   | `text-embedding-3-small` |
+| `GRAPHRAG_EMBEDDING_BATCH_SIZE`           |                          | The number of texts to embed at once. [(Azure limit is 16)]( https://learn.microsoft.com/en-us/azure/ai-ce)                  | `int` | 16 |
+| `GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS`     |                          | The maximum tokens per batch [(Azure limit is 8191)]( https://learn.microsoft.com/en-us/azure/ai-services/openai/reference)  | `int` | 8191 |
+| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                     | `str`   | `required`           |
+| `GRAPHRAG_EMBEDDING_SKIP`                 |                          | A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description') | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_THREAD_COUNT`         |                          | The number of threads to use for parallelization for embeddings.                            | `int`   |                      |
+| `GRAPHRAG_EMBEDDING_THREAD_STAGGER`       |                          | The time to wait (in seconds) between starting each thread for embeddings.                  | `float` | 50                   |
+| `GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS`  |                          | The number of concurrent requests to allow for the embedding client.                        | `int`   | 25                   |
+| `GRAPHRAG_EMBEDDING_TPM`                  |                          | The number of tokens per minute to allow for the embedding client. 0 = Bypass               | `int`   | 0                    |
+| `GRAPHRAG_EMBEDDING_RPM`                  |                          | The number of requests per minute to allow for the embedding client.  0 = Bypass            | `int`   | 0                    |
+| `GRAPHRAG_EMBEDDING_MAX_RETRIES`          |                          | The maximum number of retries to attempt when a request fails.                              | `int`   | 10                   |
+| `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`       |                          | The maximum number of seconds to wait between retries.                                      | `int`   | 10                   |
+| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                     | `str`   | `required`           |
+| `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |            | Whether to sleep on rate limit recommendation. (Azure Only)                                 | `bool`  | `True`               |
+
+
+
 ### Plaintext Input Data (`GRAPHRAG_INPUT_TYPE`=text)
 
 | Parameter                     | Description                                                                       | Type  | Required or Optional | Default   |
@@ -48,73 +119,6 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 | `GRAPHRAG_INPUT_CONNECTION_STRING` | The connection string to use when reading CSV input files from Azure Blob Storage. | `str` | optional             | `None`    |
 | `GRAPHRAG_INPUT_CONTAINER_NAME`    | The container name to use when reading CSV input files from Azure Blob Storage.    | `str` | optional             | `None`    |
 | `GRAPHRAG_INPUT_BASE_DIR`          | The base directory to read input files from.                                      | `str` | optional             | `None`    |
-
-## Base LLM Settings
-
-These settings control the base LLM arguments used by the pipeline. This is useful for API connection parameters.
-
-| Parameter                           | Description                                                                            | Type    | Required or Optional | Default Value |
-| ----------------------------------- | -------------------------------------------------------------------------------------- | ------- | -------------------- | ------------- |
-| `GRAPHRAG_API_KEY`             | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | required             | `None`        |
-| `GRAPHRAG_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_API_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_API_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
-
-
-## Text Generation Settings
-
-These settings control the text generation model used by the pipeline. These settings are layered on top of the base LLM settings, overriding any settings underneath.
-
-| Parameter                          | Description                                                                            | Type    | Required or Optional | Default Value |
-| ---------------------------------- | -------------------------------------------------------------------------------------- | ------- | -------------------- | ------------- |
-| `GRAPHRAG_LLM_TYPE`                | The LLM operation type. Either `openai_chat` or `azure_openai_chat`                    | `str`   | optional             | `openai_chat` |
-| `GRAPHRAG_LLM_API_KEY`             | The API key.                                                                           | `str`   | required             | `None`        |
-| `GRAPHRAG_LLM_API_BASE`            | The API Base URL                                                                       | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_LLM_API_VERSION`         | The AOAI API version.                                                                  | `str`   | required for AOAI    | `None`        |
-| `GRAPHRAG_LLM_API_ORGANIZATION`        | The AOAI organization.                                                                 | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_LLM_API_PROXY`               | The AOAI proxy.                                                                        | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_LLM_DEPLOYMENT_NAME`     | The AOAI deployment name.                                                              | `str`   | optional for AOAI    | `None`        |
-| `GRAPHRAG_LLM_MODEL`               | The model.                                                                             | `str`   | optional             | `gpt-4-turbo-preview`       |
-| `GRAPHRAG_LLM_MAX_TOKENS`          | The maximum number of tokens.                                                          | `int`   | optional             | `4000`        |
-| `GRAPHRAG_LLM_REQUEST_TIMEOUT`     | The maximum number of seconds to wait for a response from the chat client.             | `int`   | optional             | `180`         |
-| `GRAPHRAG_LLM_MODEL_SUPPORTS_JSON` | Indicates whether the given model supports JSON output mode. `True` to enable.         | `str`   | optional             | `None`        |
-| `GRAPHRAG_LLM_THREAD_COUNT`        | The number of threads to use for LLM parallelization.                                  | `int`   | optional             | 50            |
-| `GRAPHRAG_LLM_THREAD_STAGGER`      | The time to wait (in seconds) between starting each thread.                            | `float` | optional             | 0.3           |
-| `GRAPHRAG_LLM_CONCURRENT_REQUESTS` | The number of concurrent requests to allow for the embedding client.                   | `int`   | optional             | 25            |
-| `GRAPHRAG_LLM_TPM`                 | The number of tokens per minute to allow for the LLM client. 0 = Bypass                | `int`   | optional             | 0             |
-| `GRAPHRAG_LLM_RPM`                 | The number of requests per minute to allow for the LLM client. 0 = Bypass              | `int`   | optional             | 0             |
-| `GRAPHRAG_LLM_MAX_RETRIES`         | The maximum number of retries to attempt when a request fails.                         | `int`   | optional             | 10            |
-| `GRAPHRAG_LLM_MAX_RETRY_WAIT`      | The maximum number of seconds to wait between retries.                                 | `int`   | optional             | 10            |
-| `GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` | Whether to sleep on rate limit recommendation. (Azure Only)             | `bool`  | optional             | `True`        |
-
-## Text Embedding Settings
-
-These settings control the text embedding model used by the pipeline. These settings are layered on top of the base LLM settings, overriding any settings underneath.
-
-| Parameter                                 | Description                                                                                 | Type    | Required or Optional | Default                  |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------- | ------- | -------------------- | ------------------------ |
-| `GRAPHRAG_EMBEDDING_TYPE`                 | The embedding client to use. Either `openai_embedding` or `azure_openai_embedding`          | `str`   | optional             | `openai_embedding`       |
-| `GRAPHRAG_EMBEDDING_API_KEY`              | The API key to use for the embedding client.                                                | `str`   | required             | `None`                   |
-| `GRAPHRAG_EMBEDDING_API_BASE`             | The API base URL.                                                                           | `str`   | required for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_API_VERSION`          | The AOAI API version to use for the embedding client.                                       | `str`   | required for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_API_ORGANIZATION`         | The AOAI organization to use for the embedding client.                                      | `str`   | optional for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_API_PROXY`                | The AOAI proxy to use for the embedding client.                                             | `str`   | optional for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | The AOAI deployment name.                                                                   | `str`   | optional for AOAI    | `None`                   |
-| `GRAPHRAG_EMBEDDING_MODEL`                | The model to use for the embedding client.                                                  | `str`   | optional             | `text-embedding-3-small` |
-| `GRAPHRAG_EMBEDDING_BATCH_SIZE`           | The number of texts to embed at once. [(Azure limit is 16)]( https://learn.microsoft.com/en-us/azure/ai-services/openai/reference)                                   | `int`   | optional             | 16                       |
-| `GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS`     | The maximum tokens per batch [(Azure limit is 8191)]( https://learn.microsoft.com/en-us/azure/ai-services/openai/reference)                                          | `int`   | optional             | 8191                     |
-| `GRAPHRAG_EMBEDDING_TARGET`               | The target fields to embed. Either `required` or `all`.                                     | `str`   | optional             | `required`               |
-| `GRAPHRAG_EMBEDDING_SKIP`                 | A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description') | `str`   | optional             | `None`                   |
-| `GRAPHRAG_EMBEDDING_THREAD_COUNT`         | The number of threads to use for parallelization for embeddings.                            | `int`   | optional             |                          |
-| `GRAPHRAG_EMBEDDING_THREAD_STAGGER`       | The time to wait (in seconds) between starting each thread for embeddings.                  | `float` | optional             | 50                       |
-| `GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS`  | The number of concurrent requests to allow for the embedding client.                        | `int`   | optional             | 25                       |
-| `GRAPHRAG_EMBEDDING_TPM`                  | The number of tokens per minute to allow for the embedding client. 0 = Bypass               | `int`   | optional             | 0                        |
-| `GRAPHRAG_EMBEDDING_RPM`                  | The number of requests per minute to allow for the embedding client.  0 = Bypass            | `int`   | optional             | 0                        |
-| `GRAPHRAG_EMBEDDING_MAX_RETRIES`          | The maximum number of retries to attempt when a request fails.                              | `int`   | optional             | 10                       |
-| `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`       | The maximum number of seconds to wait between retries.                                      | `int`   | optional             | 10                       |
-| `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` | Whether to sleep on rate limit recommendation. (Azure Only)                   | `bool`  | optional             | `True`                   |
-| `GRAPHRAG_EMBEDDING_TARGET`               | The target fields to embed. Either `required` or `all`.                                     | `str`   | optional             | `required`               |
 
 ## Data Mapping Settings
 
