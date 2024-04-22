@@ -76,6 +76,7 @@ document_raw_content_embedding = "document.raw_content"
 community_title_embedding = "community.title"
 community_summary_embedding = "community.summary"
 community_full_content_embedding = "community.full_content"
+text_unit_text_embedding = "text_unit.text"
 
 all_embeddings: set[str] = {
     entity_name_embedding,
@@ -85,6 +86,7 @@ all_embeddings: set[str] = {
     community_title_embedding,
     community_summary_embedding,
     community_full_content_embedding,
+    text_unit_text_embedding,
 }
 required_embeddings: set[str] = {entity_description_embedding}
 
@@ -121,7 +123,7 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
         cache=_get_cache_config(settings),
         workflows=[
             *_document_workflows(settings, embedded_fields),
-            *_text_unit_workflows(settings, skip_workflows),
+            *_text_unit_workflows(settings, skip_workflows, embedded_fields),
             *_graph_workflows(settings, embedded_fields),
             *_community_workflows(settings, embedded_fields),
             *_covariate_workflows(settings),
@@ -134,12 +136,12 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
     return result
 
 
-def _get_embedded_fields(settings: GraphRagConfig) -> list[str]:
+def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return list(all_embeddings - {*settings.embeddings.skip})
+            return all_embeddings - {*settings.embeddings.skip}
         case TextEmbeddingTarget.required:
-            return list(required_embeddings)
+            return required_embeddings
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
@@ -172,7 +174,7 @@ def _log_llm_settings(settings: GraphRagConfig) -> None:
 
 
 def _document_workflows(
-    settings: GraphRagConfig, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_document_raw_content_embedding = (
         document_raw_content_embedding not in embedded_fields
@@ -200,8 +202,11 @@ def _document_workflows(
 
 
 def _text_unit_workflows(
-    settings: GraphRagConfig, skip_workflows: list[str]
+    settings: GraphRagConfig,
+    skip_workflows: list[str],
+    embedded_fields: set[str],
 ) -> list[PipelineWorkflowReference]:
+    skip_text_unit_embedding = text_unit_text_embedding not in embedded_fields
     return [
         PipelineWorkflowReference(
             name=create_base_text_units,
@@ -226,6 +231,7 @@ def _text_unit_workflows(
                     settings.embeddings, "text_unit_text"
                 ),
                 "covariates_enabled": create_final_covariates not in skip_workflows,
+                "skip_text_unit_embedding": skip_text_unit_embedding,
             },
         ),
     ]
@@ -252,7 +258,7 @@ def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) 
 
 
 def _graph_workflows(
-    settings: GraphRagConfig, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_entity_name_embedding = entity_name_embedding not in embedded_fields
     skip_entity_description_embedding = (
@@ -334,7 +340,7 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: GraphRagConfig, embedded_fields: list[str]
+    settings: GraphRagConfig, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_community_title_embedding = community_title_embedding not in embedded_fields
     skip_community_summary_embedding = (
