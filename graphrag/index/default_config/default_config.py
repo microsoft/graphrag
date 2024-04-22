@@ -61,6 +61,7 @@ from .constants import (
     entity_name_embedding,
     relationship_description_embedding,
     required_embeddings,
+    text_unit_text_embedding,
 )
 from .parameters import (
     DefaultConfigParametersModel,
@@ -89,7 +90,7 @@ def default_config(
         cache=_get_cache_config(settings),
         workflows=[
             *_document_workflows(settings, embedded_fields),
-            *_text_unit_workflows(settings, skip_workflows),
+            *_text_unit_workflows(settings, skip_workflows, embedded_fields),
             *_graph_workflows(settings, embedded_fields),
             *_community_workflows(settings, embedded_fields),
             *_covariate_workflows(settings),
@@ -102,12 +103,12 @@ def default_config(
     return result
 
 
-def _get_embedded_fields(settings: DefaultConfigParametersModel) -> list[str]:
+def _get_embedded_fields(settings: DefaultConfigParametersModel) -> set[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return list(all_embeddings - {*settings.embeddings.skip})
+            return all_embeddings - {*settings.embeddings.skip}
         case TextEmbeddingTarget.required:
-            return list(required_embeddings)
+            return required_embeddings
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
@@ -140,7 +141,7 @@ def _log_llm_settings(settings: DefaultConfigParametersModel) -> None:
 
 
 def _document_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_document_raw_content_embedding = (
         document_raw_content_embedding not in embedded_fields
@@ -168,8 +169,11 @@ def _document_workflows(
 
 
 def _text_unit_workflows(
-    settings: DefaultConfigParametersModel, skip_workflows: list[str]
+    settings: DefaultConfigParametersModel,
+    skip_workflows: list[str],
+    embedded_fields: set[str],
 ) -> list[PipelineWorkflowReference]:
+    skip_text_unit_embedding = text_unit_text_embedding not in embedded_fields
     return [
         PipelineWorkflowReference(
             name=create_base_text_units,
@@ -194,6 +198,7 @@ def _text_unit_workflows(
                     settings.embeddings, "text_unit_text"
                 ),
                 "covariates_enabled": create_final_covariates not in skip_workflows,
+                "skip_text_unit_embedding": skip_text_unit_embedding,
             },
         ),
     ]
@@ -222,7 +227,7 @@ def _get_embedding_settings(
 
 
 def _graph_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_entity_name_embedding = entity_name_embedding not in embedded_fields
     skip_entity_description_embedding = (
@@ -304,7 +309,7 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: DefaultConfigParametersModel, embedded_fields: list[str]
+    settings: DefaultConfigParametersModel, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_community_title_embedding = community_title_embedding not in embedded_fields
     skip_community_summary_embedding = (

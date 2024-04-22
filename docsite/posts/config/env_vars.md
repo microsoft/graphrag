@@ -12,7 +12,7 @@ By default, the GraphRAG indexer will only emit embeddings required for our quer
 If the embedding target is `all`, and you want to only embed a subset of these fields, you may specify which embeddings to skip using the  `GRAPHRAG_EMBEDDING_SKIP` argument described below.
 
 ### Embedded Fields
-* `text_unit.raw_text`
+* `text_unit.text`
 * `document.raw_content`
 * `entity.name`
 * `entity.description`
