@@ -286,6 +286,366 @@ a {
 </ul>
 <h2>Input Data</h2>
 <p>Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with <code>GRAPHRAG_INPUT_</code> below. In general, CSV-based data provides the most customizeability. Each CSV should at least contain a <code>text</code> field (which can be mapped with environment variables), but it's helpful if they also have <code>title</code>, <code>timestamp</code>, and <code>source</code> fields. Additional fields can be included as well, which will land as extra fields on the <code>Document</code> table.</p>
+<h2>Base LLM Settings</h2>
+<p>These are the primary settings for configuring LLM connectivity.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required?</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GRAPHRAG_API_KEY</code></td>
+<td><strong>Yes</strong></td>
+<td>The API key. (Note: `OPENAI_API_KEY is also used as a fallback)</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_API_BASE</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The API Base URL</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_API_VERSION</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The AOAI API version.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_API_ORGANIZATION</code></td>
+<td></td>
+<td>The AOAI organization.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_API_PROXY</code></td>
+<td></td>
+<td>The AOAI proxy.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Text Generation Settings</h2>
+<p>These settings control the text generation model used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required?</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GRAPHRAG_LLM_TYPE</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The LLM operation type. Either <code>openai_chat</code> or <code>azure_openai_chat</code></td>
+<td><code>str</code></td>
+<td><code>openai_chat</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_DEPLOYMENT_NAME</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The AOAI model deployment name.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_API_KEY</code></td>
+<td>Yes (uses fallback)</td>
+<td>The API key.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_API_BASE</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The API Base URL</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_API_VERSION</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The AOAI API version.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_API_ORGANIZATION</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The AOAI organization.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_API_PROXY</code></td>
+<td></td>
+<td>The AOAI proxy.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_MODEL</code></td>
+<td></td>
+<td>The LLM model.</td>
+<td><code>str</code></td>
+<td><code>gpt-4-turbo-preview</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_MAX_TOKENS</code></td>
+<td></td>
+<td>The maximum number of tokens.</td>
+<td><code>int</code></td>
+<td><code>4000</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_REQUEST_TIMEOUT</code></td>
+<td></td>
+<td>The maximum number of seconds to wait for a response from the chat client.</td>
+<td><code>int</code></td>
+<td><code>180</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_MODEL_SUPPORTS_JSON</code></td>
+<td></td>
+<td>Indicates whether the given model supports JSON output mode. <code>True</code> to enable.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_THREAD_COUNT</code></td>
+<td></td>
+<td>The number of threads to use for LLM parallelization.</td>
+<td><code>int</code></td>
+<td>50</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_THREAD_STAGGER</code></td>
+<td></td>
+<td>The time to wait (in seconds) between starting each thread.</td>
+<td><code>float</code></td>
+<td>0.3</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_CONCURRENT_REQUESTS</code></td>
+<td></td>
+<td>The number of concurrent requests to allow for the embedding client.</td>
+<td><code>int</code></td>
+<td>25</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_TPM</code></td>
+<td></td>
+<td>The number of tokens per minute to allow for the LLM client. 0 = Bypass</td>
+<td><code>int</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_RPM</code></td>
+<td></td>
+<td>The number of requests per minute to allow for the LLM client. 0 = Bypass</td>
+<td><code>int</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_MAX_RETRIES</code></td>
+<td></td>
+<td>The maximum number of retries to attempt when a request fails.</td>
+<td><code>int</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_MAX_RETRY_WAIT</code></td>
+<td></td>
+<td>The maximum number of seconds to wait between retries.</td>
+<td><code>int</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION</code></td>
+<td></td>
+<td>Whether to sleep on rate limit recommendation. (Azure Only)</td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Text Embedding Settings</h2>
+<p>These settings control the text embedding model used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required ?</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_TYPE</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The embedding client to use. Either <code>openai_embedding</code> or <code>azure_openai_embedding</code></td>
+<td><code>str</code></td>
+<td><code>openai_embedding</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</code></td>
+<td><strong>For AOAI</strong></td>
+<td>The AOAI deployment name.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_API_KEY</code></td>
+<td>Yes (uses fallback)</td>
+<td>The API key to use for the embedding client.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_API_BASE</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The API base URL.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_API_VERSION</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The AOAI API version to use for the embedding client.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_API_ORGANIZATION</code></td>
+<td>For AOAI (uses fallback)</td>
+<td>The AOAI organization to use for the embedding client.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_API_PROXY</code></td>
+<td></td>
+<td>The AOAI proxy to use for the embedding client.</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_MODEL</code></td>
+<td></td>
+<td>The model to use for the embedding client.</td>
+<td><code>str</code></td>
+<td><code>text-embedding-3-small</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_BATCH_SIZE</code></td>
+<td></td>
+<td>The number of texts to embed at once. <a href="https://learn.microsoft.com/en-us/azure/ai-ce">(Azure limit is 16)</a></td>
+<td><code>int</code></td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS</code></td>
+<td></td>
+<td>The maximum tokens per batch <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/reference">(Azure limit is 8191)</a></td>
+<td><code>int</code></td>
+<td>8191</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_TARGET</code></td>
+<td></td>
+<td>The target fields to embed. Either <code>required</code> or <code>all</code>.</td>
+<td><code>str</code></td>
+<td><code>required</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_SKIP</code></td>
+<td></td>
+<td>A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description')</td>
+<td><code>str</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_THREAD_COUNT</code></td>
+<td></td>
+<td>The number of threads to use for parallelization for embeddings.</td>
+<td><code>int</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_THREAD_STAGGER</code></td>
+<td></td>
+<td>The time to wait (in seconds) between starting each thread for embeddings.</td>
+<td><code>float</code></td>
+<td>50</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS</code></td>
+<td></td>
+<td>The number of concurrent requests to allow for the embedding client.</td>
+<td><code>int</code></td>
+<td>25</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_TPM</code></td>
+<td></td>
+<td>The number of tokens per minute to allow for the embedding client. 0 = Bypass</td>
+<td><code>int</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_RPM</code></td>
+<td></td>
+<td>The number of requests per minute to allow for the embedding client.  0 = Bypass</td>
+<td><code>int</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_MAX_RETRIES</code></td>
+<td></td>
+<td>The maximum number of retries to attempt when a request fails.</td>
+<td><code>int</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT</code></td>
+<td></td>
+<td>The maximum number of seconds to wait between retries.</td>
+<td><code>int</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_TARGET</code></td>
+<td></td>
+<td>The target fields to embed. Either <code>required</code> or <code>all</code>.</td>
+<td><code>str</code></td>
+<td><code>required</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION</code></td>
+<td></td>
+<td>Whether to sleep on rate limit recommendation. (Azure Only)</td>
+<td><code>bool</code></td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
 <h3>Plaintext Input Data (<code>GRAPHRAG_INPUT_TYPE</code>=text)</h3>
 <table>
 <thead>
@@ -395,366 +755,6 @@ a {
 <td><code>str</code></td>
 <td>optional</td>
 <td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Base LLM Settings</h2>
-<p>These settings control the base LLM arguments used by the pipeline. This is useful for API connection parameters.</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required or Optional</th>
-<th>Default Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>GRAPHRAG_API_KEY</code></td>
-<td>The API key. (Note: `OPENAI_API_KEY is also used as a fallback)</td>
-<td><code>str</code></td>
-<td>required</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_API_BASE</code></td>
-<td>The API Base URL</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_API_VERSION</code></td>
-<td>The AOAI API version.</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_API_ORGANIZATION</code></td>
-<td>The AOAI organization.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_API_PROXY</code></td>
-<td>The AOAI proxy.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Text Generation Settings</h2>
-<p>These settings control the text generation model used by the pipeline. These settings are layered on top of the base LLM settings, overriding any settings underneath.</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required or Optional</th>
-<th>Default Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>GRAPHRAG_LLM_TYPE</code></td>
-<td>The LLM operation type. Either <code>openai_chat</code> or <code>azure_openai_chat</code></td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>openai_chat</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_API_KEY</code></td>
-<td>The API key.</td>
-<td><code>str</code></td>
-<td>required</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_API_BASE</code></td>
-<td>The API Base URL</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_API_VERSION</code></td>
-<td>The AOAI API version.</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_API_ORGANIZATION</code></td>
-<td>The AOAI organization.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_API_PROXY</code></td>
-<td>The AOAI proxy.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_DEPLOYMENT_NAME</code></td>
-<td>The AOAI deployment name.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_MODEL</code></td>
-<td>The model.</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>gpt-4-turbo-preview</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_MAX_TOKENS</code></td>
-<td>The maximum number of tokens.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td><code>4000</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_REQUEST_TIMEOUT</code></td>
-<td>The maximum number of seconds to wait for a response from the chat client.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td><code>180</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_MODEL_SUPPORTS_JSON</code></td>
-<td>Indicates whether the given model supports JSON output mode. <code>True</code> to enable.</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_THREAD_COUNT</code></td>
-<td>The number of threads to use for LLM parallelization.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>50</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_THREAD_STAGGER</code></td>
-<td>The time to wait (in seconds) between starting each thread.</td>
-<td><code>float</code></td>
-<td>optional</td>
-<td>0.3</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_CONCURRENT_REQUESTS</code></td>
-<td>The number of concurrent requests to allow for the embedding client.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>25</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_TPM</code></td>
-<td>The number of tokens per minute to allow for the LLM client. 0 = Bypass</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_RPM</code></td>
-<td>The number of requests per minute to allow for the LLM client. 0 = Bypass</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_MAX_RETRIES</code></td>
-<td>The maximum number of retries to attempt when a request fails.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>10</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_MAX_RETRY_WAIT</code></td>
-<td>The maximum number of seconds to wait between retries.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>10</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION</code></td>
-<td>Whether to sleep on rate limit recommendation. (Azure Only)</td>
-<td><code>bool</code></td>
-<td>optional</td>
-<td><code>True</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Text Embedding Settings</h2>
-<p>These settings control the text embedding model used by the pipeline. These settings are layered on top of the base LLM settings, overriding any settings underneath.</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-<th>Type</th>
-<th>Required or Optional</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_TYPE</code></td>
-<td>The embedding client to use. Either <code>openai_embedding</code> or <code>azure_openai_embedding</code></td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>openai_embedding</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_API_KEY</code></td>
-<td>The API key to use for the embedding client.</td>
-<td><code>str</code></td>
-<td>required</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_API_BASE</code></td>
-<td>The API base URL.</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_API_VERSION</code></td>
-<td>The AOAI API version to use for the embedding client.</td>
-<td><code>str</code></td>
-<td>required for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_API_ORGANIZATION</code></td>
-<td>The AOAI organization to use for the embedding client.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_API_PROXY</code></td>
-<td>The AOAI proxy to use for the embedding client.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</code></td>
-<td>The AOAI deployment name.</td>
-<td><code>str</code></td>
-<td>optional for AOAI</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_MODEL</code></td>
-<td>The model to use for the embedding client.</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>text-embedding-3-small</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_BATCH_SIZE</code></td>
-<td>The number of texts to embed at once. <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/reference">(Azure limit is 16)</a></td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>16</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS</code></td>
-<td>The maximum tokens per batch <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/reference">(Azure limit is 8191)</a></td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>8191</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_TARGET</code></td>
-<td>The target fields to embed. Either <code>required</code> or <code>all</code>.</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>required</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_SKIP</code></td>
-<td>A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description')</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_THREAD_COUNT</code></td>
-<td>The number of threads to use for parallelization for embeddings.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_THREAD_STAGGER</code></td>
-<td>The time to wait (in seconds) between starting each thread for embeddings.</td>
-<td><code>float</code></td>
-<td>optional</td>
-<td>50</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS</code></td>
-<td>The number of concurrent requests to allow for the embedding client.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>25</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_TPM</code></td>
-<td>The number of tokens per minute to allow for the embedding client. 0 = Bypass</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_RPM</code></td>
-<td>The number of requests per minute to allow for the embedding client.  0 = Bypass</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>0</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_MAX_RETRIES</code></td>
-<td>The maximum number of retries to attempt when a request fails.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>10</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT</code></td>
-<td>The maximum number of seconds to wait between retries.</td>
-<td><code>int</code></td>
-<td>optional</td>
-<td>10</td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION</code></td>
-<td>Whether to sleep on rate limit recommendation. (Azure Only)</td>
-<td><code>bool</code></td>
-<td>optional</td>
-<td><code>True</code></td>
-</tr>
-<tr>
-<td><code>GRAPHRAG_EMBEDDING_TARGET</code></td>
-<td>The target fields to embed. Either <code>required</code> or <code>all</code>.</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>required</code></td>
 </tr>
 </tbody>
 </table>
