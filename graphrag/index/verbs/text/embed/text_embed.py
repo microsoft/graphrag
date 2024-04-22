@@ -176,7 +176,8 @@ async def _text_embed_with_vector_store(
         vectors = result.embeddings or []
         documents: list[VectorStoreDocument] = []
         for id, text, title, vector in zip(ids, texts, titles, vectors, strict=True):
-            if type(vector) == np.ndarray: vector = vector.tolist()
+            if type(vector) == np.ndarray: 
+                vector = vector.tolist()
             document = VectorStoreDocument(
                 id=id,
                 text=text,
