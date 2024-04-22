@@ -41,7 +41,7 @@ def build_steps(
                 "column": "clustered_graph",
                 "type": "nodes",
             },
-            "input": {"step": "workflow:create_base_entity_graph"},
+            "input": {"source": "workflow:create_base_entity_graph"},
         },
          {
             "id": "graph_edges",
@@ -50,7 +50,7 @@ def build_steps(
                 "column": "clustered_graph",
                 "type": "edges",
             },
-            "input": {"step": "workflow:create_base_entity_graph"},
+            "input": {"source": "workflow:create_base_entity_graph"},
         },
         {
             "verb": "create_community_reports_v2",
@@ -58,9 +58,9 @@ def build_steps(
                 "strategy": {},
             },
             "input": {
-                "nodes": {"step": "graph_nodes"},
-                "edges": {"step": "graph_edges"},
-                "claims": {"step": "workflow:create_final_covariates"},
+                "nodes": "graph_nodes",
+                "edges": "graph_edges",
+                "claims": "workflow:create_final_covariates",
             }
         },
         # {
