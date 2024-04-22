@@ -11,7 +11,7 @@ from graphrag.index.cache import PipelineCache
 from .typing import TextTranslationResult
 
 
-async def run(
+async def run(  # noqa RUF029 async is required for interface
     input: str | list[str],
     _args: dict[str, Any],
     _reporter: VerbCallbacks,
