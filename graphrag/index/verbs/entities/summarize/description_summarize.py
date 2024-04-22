@@ -200,13 +200,3 @@ def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy
         case _:
             msg = f"Unknown strategy: {strategy_type}"
             raise ValueError(msg)
-
-
-def iterate_nodes(graph):
-    """Iterate nodes in a graph."""
-    yield from graph.nodes()
-
-
-def iterate_edges(graph):
-    """Iterate edges in a graph."""
-    yield from graph.edges()
