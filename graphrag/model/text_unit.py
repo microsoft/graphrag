@@ -15,7 +15,7 @@ class TextUnit(Identified):
     text: str
     """The text of the unit."""
 
-    text_embedding: list[float] | None
+    text_embedding: list[float] | None = None
     """The text embedding for the text unit (optional)."""
 
     entity_ids: list[str] | None = None
