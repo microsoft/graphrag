@@ -140,7 +140,7 @@ def build_steps(
                 "columns": [
                     "id",
                     "text",
-                    "text_embedding",
+                    *([] if skip_text_unit_embedding else ["text_embedding"]),
                     "n_tokens",
                     "document_ids",
                     "entity_ids",
