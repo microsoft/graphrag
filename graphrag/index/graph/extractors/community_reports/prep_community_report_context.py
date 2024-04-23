@@ -6,10 +6,11 @@ import logging
 
 import pandas as pd
 
-import graphrag.index.verbs.graph.report.schemas as schemas
+import graphrag.index.graph.extractors.community_reports.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
-from .sort_context import build_mixed_context, sort_context
+from .build_mixed_context import build_mixed_context
+from .sort_context import sort_context
 
 log = logging.getLogger(__name__)
 

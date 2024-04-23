@@ -7,7 +7,7 @@ from typing import cast
 import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
-from .schemas import (
+from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
     CLAIM_ID,

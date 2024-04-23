@@ -83,42 +83,13 @@ def build_steps(
             },
         },
         {
-            "verb": "build_community_report_prompts",
+            "verb": "create_community_reports",
             "input": {
                 "source": "local_contexts",
                 "community_hierarchy": "community_hierarchy",
                 "nodes": "nodes",
             },
         },
-        {
-            "verb": "create_community_reports_v2",
-            "input": {
-                "source": "nodes",
-                "nodes": "nodes",
-                "edges": "edges",
-                "claims": "claims",
-                "community_hierarchy": "community_hierarchy",
-            },
-        },
-        # {
-        #     "verb": "prepare_community_reports",
-        #     "args": {
-        #         **create_community_reports_config,
-        #         "graph_column": "clustered_graph",
-        #         "async_mode": config.get("async_mode", AsyncType.AsyncIO),
-        #     },
-        #     "input": {"source": "workflow:create_base_entity_graph"},
-        # },
-        # {
-        #     "verb": "create_community_reports",
-        #     "args": {
-        #         **create_community_reports_config,
-        #         "to": "community_report",
-        #         "async_mode": create_community_reports_config.get(
-        #             "async_mode", AsyncType.AsyncIO
-        #         ),
-        #     },
-        # },
         # {
         #     "verb": "select",
         #     "args": {

@@ -7,7 +7,7 @@ from typing import cast
 import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
-from .schemas import (
+from graphrag.index.graph.extractors.community_reports.schemas import (
     EDGE_DEGREE,
     EDGE_DESCRIPTION,
     EDGE_DETAILS,
