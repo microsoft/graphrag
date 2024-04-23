@@ -23,7 +23,7 @@ ignorePaths:
   - tests/fixtures/
   - docsite/data/
   - docsite/posts/query/notebooks/inputs/
-  - example_notebooks/inputs/
+  - examples_notebooks/inputs/
   - "*.csv"
   - "*.parquet"
   - "*.faiss"
