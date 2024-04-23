@@ -12,10 +12,6 @@ import graphrag.index.graph.extractors.community_reports.schemas as schemas
 
 log = logging.getLogger(__name__)
 
-_COMMUNITY_LEVEL = "level"
-_SUB_COMMUNITY = "sub_community"
-_SUB_COMMUNITY_SIZE = "sub_community_size"
-
 
 @verb(name="restore_community_hierarchy")
 def restore_community_hierarchy(
@@ -67,9 +63,9 @@ def restore_community_hierarchy(
                 if set(next_entities).issubset(set(current_entities)):
                     community_hierarchy.append({
                         node_community_column: current_community,
-                        _COMMUNITY_LEVEL: level,
-                        _SUB_COMMUNITY: next_level_community,
-                        _SUB_COMMUNITY_SIZE: len(next_entities),
+                        schemas.COMMUNITY_LEVEL: level,
+                        schemas.SUB_COMMUNITY: next_level_community,
+                        schemas.SUB_COMMUNITY_SIZE: len(next_entities),
                     })
 
                     entities_found += len(next_entities)
