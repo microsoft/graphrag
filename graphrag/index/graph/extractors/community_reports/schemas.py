@@ -1,5 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """Common field name definitions for community reports."""
+
 # POST-PREP NODE TABLE SCHEMA
 NODE_ID = "human_readable_id"
 NODE_NAME = "title"

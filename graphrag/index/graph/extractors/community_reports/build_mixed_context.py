@@ -1,5 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 """A module containing the build_mixed_context method definition."""
+
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
