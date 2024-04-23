@@ -36,13 +36,18 @@ def build_steps(
         # Subworkflow: Augment Edges
         #
         {
+            "id": "edges_with_degree",
             "verb": "compute_edge_combined_degree",
             "input": {
                 "source": "workflow:create_final_relationships",
                 "nodes": "nodes",
             },
         },
-        {"id": "edges", "verb": "prepare_community_reports_edges"},
+        {
+            "id": "edges",
+            "verb": "prepare_community_reports_edges",
+            "input": {"source": "edges_with_degree"},
+        },
         #
         # Subworkflow: Prepare Claims Table
         #
