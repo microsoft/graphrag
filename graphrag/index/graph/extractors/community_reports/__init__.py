@@ -13,8 +13,8 @@ from .sort_context import sort_context
 __all__ = [
     "COMMUNITY_REPORT_PROMPT",
     "CommunityReportsExtractor",
-    "sort_context",
     "build_mixed_context",
     "prep_community_report_context",
     "schemas",
+    "sort_context",
 ]

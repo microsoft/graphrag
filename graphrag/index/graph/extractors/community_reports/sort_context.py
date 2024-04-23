@@ -1,6 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+"""Sort context by degree in descending order."""
 import pandas as pd
 
-import graphrag.index.verbs.graph.report.schemas as schemas
+import graphrag.index.graph.extractors.community_reports.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
 

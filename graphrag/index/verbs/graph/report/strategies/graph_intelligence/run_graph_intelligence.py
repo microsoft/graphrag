@@ -26,8 +26,9 @@ log = logging.getLogger(__name__)
 
 
 async def run(
-    community: str,
-    input: dict,
+    community: str | int,
+    input: str,
+    level: str | int,
     reporter: VerbCallbacks,
     pipeline_cache: PipelineCache,
     args: StrategyConfig,
@@ -40,13 +41,14 @@ async def run(
     llm = load_llm(
         "community_reporting", llm_type, reporter, pipeline_cache, llm_config
     )
-    return await _run_extractor(llm, community, input, args, reporter)
+    return await _run_extractor(llm, community, input, level, args, reporter)
 
 
 async def _run_extractor(
     llm: CompletionLLM,
-    community: str,
-    input: dict,
+    community: str | int,
+    input: str,
+    level: str | int,
     args: StrategyConfig,
     reporter: VerbCallbacks,
 ) -> CommunityReport | None:
@@ -88,6 +90,7 @@ async def _run_extractor(
                 "rank": rank,
                 "rank_explanation": rank_explanation,
                 "findings": findings,
+                "level": level,
                 "full_content_json": json.dumps(report, indent=4),
             }
             return CommunityReport(**report_dict)

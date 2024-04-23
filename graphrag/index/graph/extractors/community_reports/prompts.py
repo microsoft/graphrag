@@ -25,11 +25,11 @@ Return output as a well-formed JSON-formatted string with the following format:
         "rating_explanation": <rating_explanation>,
         "findings": [
             {{
-                "summary":<insight_1_summary>, 
+                "summary":<insight_1_summary>,
                 "explanation": <insight_1_explanation>
-            }}, 
+            }},
             {{
-                "summary":<insight_2_summary>, 
+                "summary":<insight_2_summary>,
                 "explanation": <insight_2_explanation>
             }}
         ]
@@ -131,11 +131,11 @@ Return output as a well-formed JSON-formatted string with the following format:
         "rating_explanation": <rating_explanation>,
         "findings": [
             {{
-                "summary":<insight_1_summary>, 
+                "summary":<insight_1_summary>,
                 "explanation": <insight_1_explanation>
-            }}, 
+            }},
             {{
-                "summary":<insight_2_summary>, 
+                "summary":<insight_2_summary>,
                 "explanation": <insight_2_explanation>
             }}
         ]

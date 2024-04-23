@@ -18,22 +18,22 @@ from datashaper import (
     verb,
 )
 
+import graphrag.config.defaults as defaults
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
     prep_community_report_context,
 )
-from graphrag.index.llm import load_llm
-from graphrag.llm import CompletionLLM
+
+from .strategies.typing import CommunityReport, CommunityReportsStrategy
 
 log = logging.getLogger(__name__)
 
 _NAMED_INPUTS_REQUIRED = "Named inputs are required"
 
 
-class CreateCommunityReportsStrategyType(str, Enum):
-    """CreateCommunityReportsStrategyType class definition."""
+class CommunityReportsStrategyType(str, Enum):
+    """CommunityReportsStrategyType class definition."""
 
     graph_intelligence = "graph_intelligence"
 
@@ -45,7 +45,6 @@ async def create_community_reports(
     cache: PipelineCache,
     strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
-    max_tokens: int = 16_000,
     num_threads: int = 4,
     **_kwargs,
 ) -> TableContainer:
@@ -67,25 +66,30 @@ async def create_community_reports(
     local_contexts = cast(pd.DataFrame, input.get_input())
     levels = sorted(nodes[schemas.NODE_LEVEL].unique(), reverse=True)
 
-    reports: list[dict | None] = []
+    reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
 
-    llm = get_llm(callbacks, cache, strategy.get("llm") or {})
+    runner = load_strategy(strategy["type"])
 
     for level in levels:
         level_contexts = prep_community_report_context(
             local_context_df=local_contexts,
             community_hierarchy_df=community_hierarchy,
             level=level,
-            max_tokens=max_tokens,
+            max_tokens=strategy.get(
+                "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
+            ),
         )
 
         async def run_generate(record):
             result = await _generate_report(
-                llm=llm,
+                runner,
                 community_id=record[schemas.NODE_COMMUNITY],
                 community_level=record[schemas.COMMUNITY_LEVEL],
                 community_context=record[schemas.CONTEXT_STRING],
+                cache=cache,
+                callbacks=callbacks,
+                strategy=strategy,
             )
             tick()
             return result
@@ -99,61 +103,37 @@ async def create_community_reports(
         )
         reports.extend(local_reports)
 
-    return TableContainer(table=pd.DataFrame(reports))
-
-
-def get_llm(
-    reporter: VerbCallbacks,
-    pipeline_cache: PipelineCache,
-    llm_config: dict,
-) -> CompletionLLM:
-    """Get the LLM instance."""
-    llm_type = llm_config.get("type", LLMType.OpenAIChat)
-    return load_llm("community_reports", llm_type, reporter, pipeline_cache, llm_config)
+    return TableContainer(
+        table=pd.DataFrame([
+            report.__dict__ for report in reports if report is not None
+        ])
+    )
 
 
 async def _generate_report(
-    llm: CompletionLLM,
+    runner: CommunityReportsStrategy,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    strategy: dict,
     community_id: int | str,
     community_level: int | str,
     community_context: str,
-) -> dict:
+) -> CommunityReport | None:
     """Generate a report for a single community."""
-
-    def finding_summary(finding: dict):
-        if isinstance(finding, str):
-            return finding
-        return finding.get("summary")
-
-    def finding_explanation(finding: dict):
-        if isinstance(finding, str):
-            return ""
-        return finding.get("explanation")
-
-    response = await llm(
-        extraction_prompt, variables={"input_text": community_context}, json=True
+    return await runner(
+        community_id, community_context, community_level, callbacks, cache, strategy
     )
-    response = response.json or {}
 
-    title = response.get("title", "Report")
-    summary = response.get("summary", "")
-    findings = response.get("findings", [])
-    rating = response.get("rating", 0.0)
-    rating_explanation = response.get("rating_explanation", "")
-    report_sections = "\n\n".join(
-        f"## {finding_summary(f)}\n\n{finding_explanation(f)}" for f in findings
-    )
-    full_content = f"# {title}\n\n{summary}\n\n{report_sections}"
-    return {
-        schemas.REPORT_ID: str(community_id),
-        schemas.COMMUNITY_ID: community_id,
-        schemas.COMMUNITY_LEVEL: community_level,
-        schemas.TITLE: title,
-        schemas.SUMMARY: summary,
-        schemas.FINDINGS: findings,
-        schemas.RATING: rating,
-        schemas.EXPLANATION: rating_explanation,
-        schemas.FULL_CONTENT: full_content,
-        schemas.FULL_CONTENT_JSON: response,
-        schemas.CONTEXT_STRING: community_context,
-    }
+
+def load_strategy(
+    strategy: CommunityReportsStrategyType,
+) -> CommunityReportsStrategy:
+    """Load strategy method definition."""
+    match strategy:
+        case CommunityReportsStrategyType.graph_intelligence:
+            from .strategies.graph_intelligence import run
+
+            return run
+        case _:
+            msg = f"Unknown strategy: {strategy}"
+            raise ValueError(msg)

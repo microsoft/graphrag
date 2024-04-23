@@ -2,8 +2,6 @@
 
 """A module containing build_steps method definition."""
 
-from datashaper import AsyncType
-
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_final_community_reports"
@@ -84,68 +82,48 @@ def build_steps(
         },
         {
             "verb": "create_community_reports",
+            "args": {
+                **create_community_reports_config,
+            },
             "input": {
                 "source": "local_contexts",
                 "community_hierarchy": "community_hierarchy",
                 "nodes": "nodes",
             },
         },
-        # {
-        #     "verb": "select",
-        #     "args": {
-        #         "columns": [
-        #             "level",
-        #             "community_report",
-        #         ]
-        #     },
-        # },
-        # {
-        #     "verb": "spread_json",
-        #     "args": {
-        #         "column": "community_report",
-        #     },
-        # },
-        # {
-        #     "verb": "rename",
-        #     "args": {
-        #         "columns": {
-        #             "community": "community_id",
-        #         },
-        #     },
-        # },
-        # {
-        #     # Generate a unique ID for each community report distinct from the community ID
-        #     "verb": "window",
-        #     "args": {"to": "id", "operation": "uuid", "column": "community_id"},
-        # },
-        # {
-        #     "verb": "text_embed",
-        #     "enabled": not skip_full_content_embedding,
-        #     "args": {
-        #         "embedding_name": "community_report_full_content",
-        #         "column": "full_content",
-        #         "to": "full_content_embedding",
-        #         **community_report_full_content_embed_config,
-        #     },
-        # },
-        # {
-        #     "verb": "text_embed",
-        #     "enabled": not skip_summary_embedding,
-        #     "args": {
-        #         "embedding_name": "community_report_summary",
-        #         "column": "summary",
-        #         "to": "summary_embedding",
-        #         **community_report_summary_embed_config,
-        #     },
-        # },
-        # {
-        #     "verb": "text_embed",
-        #     "enabled": not skip_title_embedding,
-        #     "args": {
-        #         "embedding_name": "community_report_title",
-        #         "column": "title",
-        #         "to": "title_embedding",
-        #         **community_report_title_embed_config,
-        #     },
-        # },
+        {
+            # Generate a unique ID for each community report distinct from the community ID
+            "verb": "window",
+            "args": {"to": "id", "operation": "uuid", "column": "community_id"},
+        },
+        {
+            "verb": "text_embed",
+            "enabled": not skip_full_content_embedding,
+            "args": {
+                "embedding_name": "community_report_full_content",
+                "column": "full_content",
+                "to": "full_content_embedding",
+                **community_report_full_content_embed_config,
+            },
+        },
+        {
+            "verb": "text_embed",
+            "enabled": not skip_summary_embedding,
+            "args": {
+                "embedding_name": "community_report_summary",
+                "column": "summary",
+                "to": "summary_embedding",
+                **community_report_summary_embed_config,
+            },
+        },
+        {
+            "verb": "text_embed",
+            "enabled": not skip_title_embedding,
+            "args": {
+                "embedding_name": "community_report_title",
+                "column": "title",
+                "to": "title_embedding",
+                **community_report_title_embed_config,
+            },
+        },
     ]

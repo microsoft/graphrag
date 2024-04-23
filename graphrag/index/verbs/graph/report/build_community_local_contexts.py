@@ -15,10 +15,9 @@ from datashaper import (
     verb,
 )
 
-import graphrag.index.verbs.graph.report.schemas as schemas
+import graphrag.index.graph.extractors.community_reports.schemas as schemas
+from graphrag.index.graph.extractors.community_reports import sort_context
 from graphrag.query.llm.text_utils import num_tokens
-
-from .sort_context import sort_context
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +34,7 @@ _DEFAULT_MISSING_DESCRIPTION_TEXT = "No Description"
 
 
 @verb(name="build_community_local_contexts")
-async def build_community_local_contexts(
+def build_community_local_contexts(
     input: VerbInput,
     callbacks: VerbCallbacks,
     max_tokens: int = 16_000,

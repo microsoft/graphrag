@@ -15,6 +15,7 @@ __all__ = [
     "DEFAULT_EDGE_ATTRIBUTES",
     "DEFAULT_NODE_ATTRIBUTES",
     "cluster_graph",
+    "compute_edge_combined_degree",
     "create_community_reports",
     "create_graph",
     "embed_graph",
@@ -22,5 +23,4 @@ __all__ = [
     "merge_graphs",
     "prepare_community_reports",
     "unpack_graph",
-    "compute_edge_combined_degree",
 ]

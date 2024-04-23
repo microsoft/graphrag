@@ -29,20 +29,22 @@ class Finding:
 class CommunityReport:
     """Community report class definition."""
 
-    community: str
+    community: str | int
     title: str
     summary: str
     full_content: str
     full_content_json: str
     rank: float | None
+    level: str | int | None
     rank_explanation: str | None
     findings: list[Finding]
 
 
 CommunityReportsStrategy = Callable[
     [
+        str | int,
         str,
-        dict,
+        str | int,
         VerbCallbacks,
         PipelineCache,
         StrategyConfig,
