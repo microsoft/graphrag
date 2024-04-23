@@ -32,14 +32,8 @@ def build_steps(
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
 
     return [
-        # Subworkflow: Unpack Nodes
-        {
-            "id": "nodes",
-            "verb": "noop",
-            "input": {"source": "workflow:create_final_entities"},
-        },
         #
-        # Subworkflow: Unpack & Augment Edges
+        # Subworkflow: Augment Edges
         #
         {
             "verb": "compute_edge_combined_degree",
@@ -65,7 +59,7 @@ def build_steps(
         {
             "id": "community_hierarchy",
             "verb": "restore_community_hierarchy",
-            "input": {"source": "nodes"},
+            "input": {"source": "workflow:create_final_entities"},
         },
         #
         # Main Workflow: Create Community Reports
@@ -74,8 +68,8 @@ def build_steps(
             "id": "local_contexts",
             "verb": "build_community_local_contexts",
             "input": {
-                "source": "nodes",
-                "nodes": "nodes",
+                "source": "workflow:create_final_entities",
+                "nodes": "workflow:create_final_entities",
                 "edges": "edges",
                 "claims": "claims",
             },
