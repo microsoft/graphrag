@@ -59,7 +59,7 @@ def build_steps(
         {
             "id": "community_hierarchy",
             "verb": "restore_community_hierarchy",
-            "input": {"source": "workflow:create_final_entities"},
+            "input": {"source": "workflow:create_final_nodes"},
         },
         #
         # Main Workflow: Create Community Reports
@@ -68,8 +68,8 @@ def build_steps(
             "id": "local_contexts",
             "verb": "build_community_local_contexts",
             "input": {
-                "source": "workflow:create_final_entities",
-                "nodes": "workflow:create_final_entities",
+                "source": "workflow:create_final_nodes",
+                "nodes": "workflow:create_final_nodes",
                 "edges": "edges",
                 "claims": "claims",
             },
