@@ -5,10 +5,10 @@
 import networkx as nx
 from datashaper import VerbCallbacks
 
+from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.graph import GraphExtractor
 from graphrag.index.llm import load_llm
-from graphrag.index.llm.types import LLMType
 from graphrag.index.text_splitting import (
     NoopTextSplitter,
     TextSplitter,

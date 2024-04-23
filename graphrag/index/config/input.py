@@ -4,32 +4,14 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
+from graphrag.config.enums import InputType, StorageType
+
 from .workflow import PipelineWorkflowStep
-
-
-class PipelineInputType(str, Enum):
-    """Represent the input type for the pipeline."""
-
-    csv = "csv"
-    """The CSV input type."""
-    text = "text"
-    """The text input type."""
-
-
-class PipelineInputStorageType(str, Enum):
-    """Represent the input storage type for the pipeline."""
-
-    file = "file"
-    """The local storage type."""
-    blob = "blob"
-    """The Azure Blob storage type."""
-
 
 T = TypeVar("T")
 
@@ -40,7 +22,7 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     type: T
     """The type of input."""
 
-    storage_type: PipelineInputStorageType | None = pydantic_Field(
+    storage_type: StorageType | None = pydantic_Field(
         description="The storage type to use.", default=None
     )
     """The storage type to use."""
@@ -81,10 +63,10 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     """The encoding for the input files."""
 
 
-class PipelineCSVInputConfig(PipelineInputConfig[Literal[PipelineInputType.csv]]):
+class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputType.csv]]):
     """Represent the configuration for a CSV input."""
 
-    type: Literal[PipelineInputType.csv] = PipelineInputType.csv
+    type: Literal[InputType.csv] = InputType.csv
 
     source_column: str | None = pydantic_Field(
         description="The column to use as the source of the document.", default=None
@@ -113,10 +95,10 @@ class PipelineCSVInputConfig(PipelineInputConfig[Literal[PipelineInputType.csv]]
     """The column to use as the title of the document."""
 
 
-class PipelineTextInputConfig(PipelineInputConfig[Literal[PipelineInputType.text]]):
+class PipelineTextInputConfig(PipelineInputConfig[Literal[InputType.text]]):
     """Represent the configuration for a text input."""
 
-    type: Literal[PipelineInputType.text] = PipelineInputType.text
+    type: Literal[InputType.text] = InputType.text
 
     # Text Specific
     title_text_length: int | None = pydantic_Field(

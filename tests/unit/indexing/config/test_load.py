@@ -6,12 +6,10 @@ from pathlib import Path
 from typing import Any
 from unittest import mock
 
-from graphrag.index.config import (
+from graphrag.config import create_graphrag_config
+from graphrag.index import (
     PipelineConfig,
-)
-from graphrag.index.default_config import (
-    default_config,
-    default_config_parameters,
+    create_pipeline_config,
     load_pipeline_config,
 )
 
@@ -84,9 +82,9 @@ class TestLoadPipelineConfig(unittest.TestCase):
         )
 
         actual_default_config = json.loads(
-            default_config(default_config_parameters(root_dir=".")).model_dump_json(
-                exclude_defaults=True, exclude_unset=True
-            )
+            create_pipeline_config(
+                create_graphrag_config(root_dir=".")
+            ).model_dump_json(exclude_defaults=True, exclude_unset=True)
         )
         props_to_ignore = ["root_dir", "extends"]
 

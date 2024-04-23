@@ -4,23 +4,12 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from typing import Generic, Literal, TypeVar
 
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-
-class PipelineReportingType(str, Enum):
-    """Represent the reporting configuration type for the pipeline."""
-
-    file = "file"
-    """The file reporting configuration type."""
-    console = "console"
-    """The console reporting configuration type."""
-    blob = "blob"
-    """The blob reporting configuration type."""
-
+from graphrag.config.enums import ReportingType
 
 T = TypeVar("T")
 
@@ -31,12 +20,10 @@ class PipelineReportingConfig(BaseModel, Generic[T]):
     type: T
 
 
-class PipelineFileReportingConfig(
-    PipelineReportingConfig[Literal[PipelineReportingType.file]]
-):
+class PipelineFileReportingConfig(PipelineReportingConfig[Literal[ReportingType.file]]):
     """Represent the file reporting configuration for the pipeline."""
 
-    type: Literal[PipelineReportingType.file] = PipelineReportingType.file
+    type: Literal[ReportingType.file] = ReportingType.file
     """The type of reporting."""
 
     base_dir: str | None = pydantic_Field(
@@ -46,20 +33,18 @@ class PipelineFileReportingConfig(
 
 
 class PipelineConsoleReportingConfig(
-    PipelineReportingConfig[Literal[PipelineReportingType.console]]
+    PipelineReportingConfig[Literal[ReportingType.console]]
 ):
     """Represent the console reporting configuration for the pipeline."""
 
-    type: Literal[PipelineReportingType.console] = PipelineReportingType.console
+    type: Literal[ReportingType.console] = ReportingType.console
     """The type of reporting."""
 
 
-class PipelineBlobReportingConfig(
-    PipelineReportingConfig[Literal[PipelineReportingType.blob]]
-):
+class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.blob]]):
     """Represents the blob reporting configuration for the pipeline."""
 
-    type: Literal[PipelineReportingType.blob] = PipelineReportingType.blob
+    type: Literal[ReportingType.blob] = ReportingType.blob
     """The type of reporting."""
 
     connection_string: str = pydantic_Field(
