@@ -1,22 +1,13 @@
----
-title: Local Search Notebook
-navtitle: Local Search
-layout: page
-tags: [post, notebooks]
-date: 2024-04-23
----
-
 ```python
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 ```
+
 
 ```python
 import os
 
 import pandas as pd
 import tiktoken
-
-from typing import cast
 
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.input.loaders.dfs import (
@@ -51,6 +42,7 @@ Local search method generates answers by combining relevant data from the AI-ext
 
 ### Load tables to dataframes
 
+
 ```python
 INPUT_DIR = "./inputs/operation dulce"
 
@@ -64,6 +56,7 @@ COMMUNITY_LEVEL = 2
 ```
 
 #### Read entities
+
 
 ```python
 # read nodes table to get community and degree data
@@ -133,6 +126,7 @@ entity_df.head()
 
 #### Read relationships
 
+
 ```python
 relationship_df = pd.read_parquet(f"{INPUT_DIR}/{RELATIONSHIP_TABLE}.parquet")
 relationship_df = relationship_df[
@@ -173,23 +167,26 @@ print(f"Relationship count: {len(relationship_df)}")
 relationship_df.head()
 ```
 
+
 ```python
 try:
     covariate_df = pd.read_parquet(f"{INPUT_DIR}/{COVARIATE_TABLE}.parquet")
-    covariate_df = covariate_df[
-        [
-            "id",
-            "human_readable_id",
-            "type",
-            "subject_id",
-            "subject_type",
-            "object_id",
-            "status",
-            "start_date",
-            "end_date",
-            "description",
-        ]
-    ],
+    covariate_df = (
+        covariate_df[
+            [
+                "id",
+                "human_readable_id",
+                "type",
+                "subject_id",
+                "subject_type",
+                "object_id",
+                "status",
+                "start_date",
+                "end_date",
+                "description",
+            ]
+        ],
+    )
 
 except:  # noqa: E722
     columns = [
@@ -231,6 +228,7 @@ covariates = {"claims": claims}
 
 #### Read community reports
 
+
 ```python
 # get a list of communities from entity table
 community_df = entity_df[["community"]].copy()
@@ -238,6 +236,7 @@ community_df["community_id"] = community_df["community"].apply(lambda x: str(x[0
 community_df = community_df[["community_id"]].drop_duplicates(subset=["community_id"])
 print(f"Community records: {len(community_df)}")
 ```
+
 
 ```python
 report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
@@ -267,6 +266,7 @@ report_df.head()
 
 #### Read text units
 
+
 ```python
 text_unit_df = pd.read_parquet(f"{INPUT_DIR}/{TEXT_UNIT_TABLE}.parquet")
 
@@ -283,6 +283,7 @@ text_units = read_text_units(
 print(f"Text unit records: {len(text_unit_df)}")
 text_unit_df.head()
 ```
+
 
 ```python
 api_key = os.environ["GRAPHRAG_API_KEY"]
@@ -310,6 +311,7 @@ text_embedder = OpenAIEmbedding(
 
 ### Create local search context builder
 
+
 ```python
 context_builder = LocalSearchMixedContext(
     community_reports=reports,
@@ -325,6 +327,7 @@ context_builder = LocalSearchMixedContext(
 ```
 
 ### Create local search engine
+
 
 ```python
 # text_unit_prop: proportion of context window dedicated to related text units
@@ -355,14 +358,15 @@ local_context_params = {
     "include_community_rank": False,
     "return_candidate_context": False,
     "embedding_vectorstore_key": EntityVectorStoreKey.ID,  # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-    "max_tokens": 12000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+    "max_tokens": 12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
 }
 
 llm_params = {
-    "max_tokens": 2000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
+    "max_tokens": 2_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
     "temperature": 0.0,
 }
 ```
+
 
 ```python
 search_engine = LocalSearch(
@@ -377,10 +381,12 @@ search_engine = LocalSearch(
 
 ### Run local search on sample queries
 
+
 ```python
 result = await search_engine.asearch("Tell me about Agent Mercer")
 print(result.response)
 ```
+
 
 ```python
 question = "Tell me about Dr. Jordan Hayes"
@@ -390,17 +396,21 @@ print(result.response)
 
 #### Inspecting the context data used to generate the response
 
+
 ```python
 result.context_data["entities"].head()
 ```
+
 
 ```python
 result.context_data["relationships"].head()
 ```
 
+
 ```python
 result.context_data["reports"].head()
 ```
+
 
 ```python
 result.context_data["sources"].head()
@@ -409,6 +419,7 @@ result.context_data["sources"].head()
 ### Question Generation
 
 This function takes a list of user queries and generates the next candidate questions.
+
 
 ```python
 question_generator = LocalQuestionGen(
@@ -419,6 +430,7 @@ question_generator = LocalQuestionGen(
     context_builder_params=local_context_params,
 )
 ```
+
 
 ```python
 question_history = [

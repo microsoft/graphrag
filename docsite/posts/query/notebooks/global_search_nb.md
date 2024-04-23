@@ -1,11 +1,3 @@
----
-title: Global Search Notebook
-navtitle: Global Search
-layout: page
-tags: [post, notebooks]
-date: 2024-04-23
----
-
 ```python
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 ```
@@ -131,7 +123,7 @@ context_builder_params = {
     "shuffle_data": True,
     "include_community_rank": True,
     "min_community_rank": 0,
-    "max_tokens": 12000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+    "max_tokens": 12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
     "context_name": "Reports",
 }
 
@@ -152,7 +144,7 @@ search_engine = GlobalSearch(
     llm=llm,
     context_builder=context_builder,
     token_encoder=token_encoder,
-    max_data_tokens=16000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+    max_data_tokens=16_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
     map_llm_params=map_llm_params,
     reduce_llm_params=reduce_llm_params,
     context_builder_params=context_builder_params,
