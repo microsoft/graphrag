@@ -40,7 +40,7 @@ def build_steps(
             "verb": "compute_edge_combined_degree",
             "input": {
                 "source": "workflow:create_final_relationships",
-                "nodes": "nodes",
+                "nodes": "workflow:create_final_nodes",
             },
         },
         {
