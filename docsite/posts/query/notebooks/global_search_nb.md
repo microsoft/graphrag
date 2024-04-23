@@ -1,3 +1,11 @@
+---
+title: Global Search Notebook
+navtitle: Global Search
+layout: page
+tags: [post, notebooks]
+date: 2024-04-23
+---
+
 ```python
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 ```

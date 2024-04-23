@@ -1,7 +1,14 @@
+---
+title: Local Search Notebook
+navtitle: Local Search
+layout: page
+tags: [post, notebooks]
+date: 2024-04-23
+---
+
 ```python
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 ```
-
 
 ```python
 import os
@@ -44,7 +51,6 @@ Local search method generates answers by combining relevant data from the AI-ext
 
 ### Load tables to dataframes
 
-
 ```python
 INPUT_DIR = "./inputs/operation dulce"
 
@@ -58,7 +64,6 @@ COMMUNITY_LEVEL = 2
 ```
 
 #### Read entities
-
 
 ```python
 # read nodes table to get community and degree data
@@ -128,7 +133,6 @@ entity_df.head()
 
 #### Read relationships
 
-
 ```python
 relationship_df = pd.read_parquet(f"{INPUT_DIR}/{RELATIONSHIP_TABLE}.parquet")
 relationship_df = relationship_df[
@@ -168,7 +172,6 @@ relationships = calculate_relationship_combined_rank(
 print(f"Relationship count: {len(relationship_df)}")
 relationship_df.head()
 ```
-
 
 ```python
 try:
@@ -228,7 +231,6 @@ covariates = {"claims": claims}
 
 #### Read community reports
 
-
 ```python
 # get a list of communities from entity table
 community_df = entity_df[["community"]].copy()
@@ -236,7 +238,6 @@ community_df["community_id"] = community_df["community"].apply(lambda x: str(x[0
 community_df = community_df[["community_id"]].drop_duplicates(subset=["community_id"])
 print(f"Community records: {len(community_df)}")
 ```
-
 
 ```python
 report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
@@ -266,7 +267,6 @@ report_df.head()
 
 #### Read text units
 
-
 ```python
 text_unit_df = pd.read_parquet(f"{INPUT_DIR}/{TEXT_UNIT_TABLE}.parquet")
 
@@ -283,7 +283,6 @@ text_units = read_text_units(
 print(f"Text unit records: {len(text_unit_df)}")
 text_unit_df.head()
 ```
-
 
 ```python
 api_key = os.environ["GRAPHRAG_API_KEY"]
@@ -311,7 +310,6 @@ text_embedder = OpenAIEmbedding(
 
 ### Create local search context builder
 
-
 ```python
 context_builder = LocalSearchMixedContext(
     community_reports=reports,
@@ -327,7 +325,6 @@ context_builder = LocalSearchMixedContext(
 ```
 
 ### Create local search engine
-
 
 ```python
 # text_unit_prop: proportion of context window dedicated to related text units
@@ -367,7 +364,6 @@ llm_params = {
 }
 ```
 
-
 ```python
 search_engine = LocalSearch(
     llm=llm,
@@ -381,12 +377,10 @@ search_engine = LocalSearch(
 
 ### Run local search on sample queries
 
-
 ```python
 result = await search_engine.asearch("Tell me about Agent Mercer")
 print(result.response)
 ```
-
 
 ```python
 question = "Tell me about Dr. Jordan Hayes"
@@ -396,21 +390,17 @@ print(result.response)
 
 #### Inspecting the context data used to generate the response
 
-
 ```python
 result.context_data["entities"].head()
 ```
-
 
 ```python
 result.context_data["relationships"].head()
 ```
 
-
 ```python
 result.context_data["reports"].head()
 ```
-
 
 ```python
 result.context_data["sources"].head()
@@ -419,7 +409,6 @@ result.context_data["sources"].head()
 ### Question Generation
 
 This function takes a list of user queries and generates the next candidate questions.
-
 
 ```python
 question_generator = LocalQuestionGen(
@@ -430,7 +419,6 @@ question_generator = LocalQuestionGen(
     context_builder_params=local_context_params,
 )
 ```
-
 
 ```python
 question_history = [
