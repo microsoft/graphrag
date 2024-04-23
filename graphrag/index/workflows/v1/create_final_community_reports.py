@@ -34,34 +34,71 @@ def build_steps(
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
 
     return [
-         {
-             "id": "graph_nodes",
-            "verb": "unpack_graph",
-            "args": {
-                "column": "clustered_graph",
-                "type": "nodes",
-            },
-            "input": {"source": "workflow:create_base_entity_graph"},
+        # Subworkflow: Unpack Nodes
+        {
+            "id": "nodes",
+            "verb": "noop",
+            "input": {"source": "workflow:create_final_entities"},
         },
-         {
-            "id": "graph_edges",
-            "verb": "unpack_graph",
-            "args": {
-                "column": "clustered_graph",
-                "type": "edges",
+        #
+        # Subworkflow: Unpack & Augment Edges
+        #
+        {
+            "verb": "compute_edge_combined_degree",
+            "input": {
+                "source": "workflow:create_final_relationships",
+                "nodes": "nodes",
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+        },
+        {"id": "edges", "verb": "prepare_community_reports_edges"},
+        #
+        # Subworkflow: Prepare Claims Table
+        #
+        {
+            "id": "claims",
+            "verb": "prepare_community_reports_claims",
+            "input": {
+                "source": "workflow:create_final_covariates",
+            },
+        },
+        #
+        # Subworkflow: Get Community Hierarchy
+        #
+        {
+            "id": "community_hierarchy",
+            "verb": "restore_community_hierarchy",
+            "input": {"source": "nodes"},
+        },
+        #
+        # Main Workflow: Create Community Reports
+        #
+        {
+            "id": "local_contexts",
+            "verb": "build_community_local_contexts",
+            "input": {
+                "source": "nodes",
+                "nodes": "nodes",
+                "edges": "edges",
+                "claims": "claims",
+            },
+        },
+        {
+            "verb": "build_community_report_prompts",
+            "input": {
+                "source": "local_contexts",
+                "community_hierarchy": "community_hierarchy",
+                "nodes": "nodes",
+            },
         },
         {
             "verb": "create_community_reports_v2",
-            "args": {
-                "strategy": {},
-            },
             "input": {
-                "nodes": "graph_nodes",
-                "edges": "graph_edges",
-                "claims": "workflow:create_final_covariates",
-            }
+                "source": "nodes",
+                "nodes": "nodes",
+                "edges": "edges",
+                "claims": "claims",
+                "community_hierarchy": "community_hierarchy",
+            },
         },
         # {
         #     "verb": "prepare_community_reports",

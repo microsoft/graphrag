@@ -2,16 +2,24 @@
 
 """The Indexing Engine graph report package root."""
 
+from .build_community_local_contexts import build_community_local_contexts
 from .create_community_reports import (
     CreateCommunityReportsStrategyType,
     create_community_reports,
 )
 from .create_community_reports_v2 import create_community_reports_v2
 from .prepare_community_reports import prepare_community_reports
+from .prepare_community_reports_claims import prepare_community_reports_claims
+from .prepare_community_reports_edges import prepare_community_reports_edges
+from .restore_community_hierarchy import restore_community_hierarchy
 
 __all__ = [
     "CreateCommunityReportsStrategyType",
     "create_community_reports",
     "create_community_reports_v2",
     "prepare_community_reports",
+    "prepare_community_reports_edges",
+    "prepare_community_reports_claims",
+    "restore_community_hierarchy",
+    "build_community_local_contexts",
 ]

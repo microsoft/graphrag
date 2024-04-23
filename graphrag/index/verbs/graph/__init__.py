@@ -3,6 +3,7 @@
 """The Indexing Engine graph package root."""
 
 from .clustering import cluster_graph
+from .compute_edge_combined_degree import compute_edge_combined_degree
 from .create import DEFAULT_EDGE_ATTRIBUTES, DEFAULT_NODE_ATTRIBUTES, create_graph
 from .embed import embed_graph
 from .layout import layout_graph
@@ -21,4 +22,5 @@ __all__ = [
     "merge_graphs",
     "prepare_community_reports",
     "unpack_graph",
+    "compute_edge_combined_degree",
 ]
