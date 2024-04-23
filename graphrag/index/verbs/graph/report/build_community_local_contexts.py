@@ -94,7 +94,7 @@ def build_community_local_contexts(
         claim_df: pd.DataFrame,
         max_tokens: int,
     ) -> pd.DataFrame:
-        levels = sorted(node_df[node_level_column].unique().tolist())
+        levels = sorted(node_df[node_level_column].notna().unique().astype(int).tolist())
         dfs = []
         for level in progress_iterable(levels, callbacks.progress, len(levels)):
             level_node_df = cast(

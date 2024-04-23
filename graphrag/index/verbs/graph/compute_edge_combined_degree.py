@@ -15,7 +15,7 @@ _NODES_INPUT_REQUIRED = "Nodes input is required"
 def compute_edge_combined_degree(
     input: VerbInput,
     to: str = "combined_degree",
-    node_name_column: str = "label",
+    node_name_column: str = "title",
     node_degree_column: str = "degree",
     edge_source_column: str = "source",
     edge_target_column: str = "target",
