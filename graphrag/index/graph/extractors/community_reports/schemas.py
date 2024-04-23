@@ -7,7 +7,7 @@ NODE_NAME = "title"
 NODE_DESCRIPTION = "description"
 NODE_DEGREE = "degree"
 NODE_DETAILS = "node_details"
-NODE_COMMUNITY = "cluster"
+NODE_COMMUNITY = "community"
 NODE_LEVEL = "_raw_level_"
 
 # POST-PREP EDGE TABLE SCHEMA

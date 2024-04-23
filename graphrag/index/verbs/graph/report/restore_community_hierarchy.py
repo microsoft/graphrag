@@ -8,6 +8,8 @@ from typing import cast
 import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
+import graphrag.index.graph.extractors.community_reports.schemas as schemas
+
 log = logging.getLogger(__name__)
 
 _COMMUNITY_LEVEL = "level"
@@ -18,9 +20,9 @@ _SUB_COMMUNITY_SIZE = "sub_community_size"
 @verb(name="restore_community_hierarchy")
 def restore_community_hierarchy(
     input: VerbInput,
-    node_name_column: str = "label",
-    node_community_column: str = "cluster",
-    node_level_column: str = "_raw_level_",
+    node_name_column: str = schemas.NODE_NAME,
+    node_community_column: str = schemas.NODE_COMMUNITY,
+    node_level_column: str = schemas.NODE_LEVEL,
     **_kwargs,
 ) -> TableContainer:
     """Restore the community hierarchy from the node data."""
