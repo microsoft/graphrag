@@ -91,11 +91,6 @@ def build_steps(
             },
         },
         {
-            # Generate a unique ID for each community report distinct from the community ID
-            "verb": "window",
-            "args": {"to": "id", "operation": "uuid", "column": "community_id"},
-        },
-        {
             "verb": "text_embed",
             "enabled": not skip_full_content_embedding,
             "args": {

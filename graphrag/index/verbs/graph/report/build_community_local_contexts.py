@@ -142,7 +142,7 @@ def build_community_local_contexts(
                 .agg({node_details_column: "first", edge_details_column: list})
                 .reset_index()
             )
-            
+
             # concat all claim details per node
             if claim_df is not None:
                 level_claim_df = claim_df[claim_df[claim_subject_column].isin(nodes)]

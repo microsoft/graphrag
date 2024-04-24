@@ -20,7 +20,7 @@ ignorePaths:
   - pyproject.toml
   - entity_extraction.txt
   - package.json
-  - tests/fixtures/
+  - tests/
   - docsite/data/
   - docsite/posts/query/notebooks/inputs/
   - '*.csv'

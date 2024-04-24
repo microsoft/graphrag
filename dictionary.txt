@@ -82,6 +82,7 @@ itertuples
 isin
 nocache
 nbconvert
+notna
 
 # Verbs
 binarize
@@ -143,6 +144,9 @@ abilas
 payus
 POKRALLY
 dulce
+Sylvia
+Marek
+Vicktor
 
 # English
 skippable

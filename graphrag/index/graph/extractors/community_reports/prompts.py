@@ -68,7 +68,7 @@ id,source,target,description
 38,ABILA CITY PARK,POK,POK is holding a rally in Abila City Park
 39,ABILA CITY PARK,POKRALLY,The POKRally is taking place at Abila City Park
 40,ABILA CITY PARK,CENTRAL BULLETIN,Central Bulletin is reporting on the POK rally taking place in Abila City Park
-41,ABILA CITY PARK,SYLIVA MAREK,Syliva Marek is speaking at Abila City Park about the rally
+41,ABILA CITY PARK,SYLVIA MAREK,Sylvia Marek is speaking at Abila City Park about the rally
 42,ABILA CITY PARK,VICKTOR-K,Vicktor-K is performing at Abila City Park during the rally
 43,POK,POKRALLY,POK is organizing the POKRally
 

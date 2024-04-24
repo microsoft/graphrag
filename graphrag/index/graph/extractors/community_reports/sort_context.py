@@ -27,6 +27,7 @@ def sort_context(
 
     If max tokens is provided, we will return the context string that fits within the token limit.
     """
+
     def _get_context_string(
         entities: list[dict],
         edges: list[dict],
@@ -109,7 +110,7 @@ def sort_context(
     edges = []
     node_details = {}
     claim_details = {}
-    
+
     for record in local_context:
         node_name = record[node_name_column]
         record_edges = record.get(edge_details_column, [])

@@ -64,7 +64,9 @@ async def create_community_reports(
     nodes = get_table("nodes")
     community_hierarchy = get_table("community_hierarchy")
     local_contexts = cast(pd.DataFrame, input.get_input())
-    levels = sorted(nodes[schemas.NODE_LEVEL].unique(), reverse=True)
+    levels = sorted(
+        nodes[schemas.NODE_LEVEL].notna().astype(int).unique().tolist(), reverse=True
+    )
 
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
@@ -73,6 +75,7 @@ async def create_community_reports(
 
     for level in levels:
         level_contexts = prep_community_report_context(
+            pd.DataFrame(reports),
             local_context_df=local_contexts,
             community_hierarchy_df=community_hierarchy,
             level=level,
@@ -103,11 +106,7 @@ async def create_community_reports(
         )
         reports.extend(local_reports)
 
-    return TableContainer(
-        table=pd.DataFrame([
-            report.__dict__ for report in reports if report is not None
-        ])
-    )
+    return TableContainer(table=pd.DataFrame(reports))
 
 
 async def _generate_report(
