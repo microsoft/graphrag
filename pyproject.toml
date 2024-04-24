@@ -74,6 +74,7 @@ azure-storage-blob = "^12.19.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.3.2"
+devtools = "*"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"

@@ -2,6 +2,7 @@
 
 """Parameterization settings for the default configuration."""
 
+from devtools import debug
 from pydantic import Field
 
 import graphrag.config.defaults as defs
@@ -29,6 +30,12 @@ from .umap_config import UmapConfig
 
 class GraphRagConfig(LLMConfig):
     """Base class for the Default-Configuration parameterization settings."""
+
+    def __repr__(self):
+        return str(debug.format(self))
+
+    def __str__(self):
+        return self.__repr__()
 
     root_dir: str = Field(
         description="The root directory for the configuration.", default=None
