@@ -31,6 +31,10 @@ class ExtractEntityStrategyType(str, Enum):
     graph_intelligence_json = "graph_intelligence_json"
     nltk = "nltk"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 

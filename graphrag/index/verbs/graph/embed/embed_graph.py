@@ -19,6 +19,10 @@ class EmbedGraphStrategyType(str, Enum):
 
     node2vec = "node2vec"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="embed_graph")
 async def embed_graph(

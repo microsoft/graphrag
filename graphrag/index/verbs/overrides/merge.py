@@ -20,6 +20,10 @@ class MergeStrategyType(str, Enum):
     json = "json"
     datashaper = "datashaper"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 # TODO: This thing is kinda gross
 # Also, it diverges from the original aggregate verb, since it doesn't support the same syntax

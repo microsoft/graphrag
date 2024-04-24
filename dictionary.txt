@@ -19,6 +19,7 @@ asdict
 isna
 getcwd
 fillna
+noqa
 
 # Azure
 abfs

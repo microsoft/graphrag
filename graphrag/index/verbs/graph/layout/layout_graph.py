@@ -20,6 +20,10 @@ class LayoutGraphStrategyType(str, Enum):
     umap = "umap"
     zero = "zero"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="layout_graph")
 def layout_graph(

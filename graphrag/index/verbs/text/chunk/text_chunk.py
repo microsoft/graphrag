@@ -35,6 +35,10 @@ class ChunkStrategyType(str, Enum):
     tokens = "tokens"
     sentence = "sentence"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="chunk")
 def chunk(
