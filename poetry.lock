@@ -1011,22 +1011,6 @@ files = [
 packaging = "*"
 
 [[package]]
-name = "devtools"
-version = "0.12.2"
-description = "Python's missing debug print command, and more."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "devtools-0.12.2-py3-none-any.whl", hash = "sha256:c366e3de1df4cdd635f1ad8cbcd3af01a384d7abda71900e68d43b04eb6aaca7"},
-    {file = "devtools-0.12.2.tar.gz", hash = "sha256:efceab184cb35e3a11fa8e602cc4fadacaa2e859e920fc6f87bf130b69885507"},
-]
-
-[package.dependencies]
-asttokens = ">=2.0.0,<3.0.0"
-executing = ">=1.1.1"
-pygments = ">=2.15.0"
-
-[[package]]
 name = "diskcache"
 version = "5.6.3"
 description = "Disk Cache -- Disk and file backed persistent cache."
@@ -3630,13 +3614,13 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pyright"
-version = "1.1.359"
+version = "1.1.360"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.359-py3-none-any.whl", hash = "sha256:5582777be7eab73512277ac7da7b41e15bc0737f488629cb9babd96e0769be61"},
-    {file = "pyright-1.1.359.tar.gz", hash = "sha256:f0eab50f3dafce8a7302caeafd6a733f39901a2bf5170bb23d77fd607c8a8dbc"},
+    {file = "pyright-1.1.360-py3-none-any.whl", hash = "sha256:7637f75451ac968b7cf1f8c51cfefb6d60ac7d086eb845364bc8ac03a026efd7"},
+    {file = "pyright-1.1.360.tar.gz", hash = "sha256:784ddcda9745e9f5610483d7b963e9aa8d4f50d7755a9dffb28ccbeb27adce32"},
 ]
 
 [package.dependencies]
@@ -4029,13 +4013,13 @@ test = ["pytest (>=3.0)", "pytest-asyncio"]
 
 [[package]]
 name = "referencing"
-version = "0.34.0"
+version = "0.35.0"
 description = "JSON Referencing + Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "referencing-0.34.0-py3-none-any.whl", hash = "sha256:d53ae300ceddd3169f1ffa9caf2cb7b769e92657e4fafb23d34b93679116dfd4"},
-    {file = "referencing-0.34.0.tar.gz", hash = "sha256:5773bd84ef41799a5a8ca72dc34590c041eb01bf9aa02632b4a973fb0181a844"},
+    {file = "referencing-0.35.0-py3-none-any.whl", hash = "sha256:8080727b30e364e5783152903672df9b6b091c926a146a759080b62ca3126cd6"},
+    {file = "referencing-0.35.0.tar.gz", hash = "sha256:191e936b0c696d0af17ad7430a3dc68e88bc11be6514f4757dc890f04ab05889"},
 ]
 
 [package.dependencies]
@@ -5212,4 +5196,4 @@ lancedb = ["lancedb"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "f3d0a3f530ac5fcc9c26b40d1909c78bea9557c96a9e315d9953cf7b89723d5d"
+content-hash = "1197411797c8a612e8be5304409c11f4c377e90922e0a0aa2c41198c22921601"
