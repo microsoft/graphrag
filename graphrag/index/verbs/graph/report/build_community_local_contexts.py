@@ -94,11 +94,13 @@ def build_community_local_contexts(
         claim_df: pd.DataFrame,
         max_tokens: int,
     ) -> pd.DataFrame:
-        levels = sorted(node_df[node_level_column].notna().unique().astype(int).tolist())
+        levels = sorted(
+            node_df[node_level_column].notna().astype(int).unique().tolist()
+        )
         dfs = []
         for level in progress_iterable(levels, callbacks.progress, len(levels)):
             level_node_df = cast(
-                pd.DataFrame, node_df[node_df[node_level_column] == level]
+                pd.DataFrame, node_df[node_df[node_level_column] == str(level)]
             )
             level_node_df = _prep_node_details(level_node_df)
             log.info("Number of nodes at level %s", len(level_node_df))
@@ -135,11 +137,12 @@ def build_community_local_contexts(
                     node_name_column,
                     node_community_column,
                     node_degree_column,
+                    node_level_column,
                 ])
                 .agg({node_details_column: "first", edge_details_column: list})
                 .reset_index()
             )
-
+            
             # concat all claim details per node
             if claim_df is not None:
                 level_claim_df = claim_df[claim_df[claim_subject_column].isin(nodes)]
@@ -219,6 +222,7 @@ def build_community_local_contexts(
     nodes = get_table("nodes")
     edges = get_table("edges")
     claims = get_table("claims")
+
     # build initial local context for all communities
     local_contexts = _prep_local_context(nodes, edges, claims, max_tokens)
     return TableContainer(table=local_contexts)

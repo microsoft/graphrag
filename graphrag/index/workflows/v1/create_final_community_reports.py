@@ -87,7 +87,7 @@ def build_steps(
             "input": {
                 "source": "local_contexts",
                 "community_hierarchy": "community_hierarchy",
-                "nodes": "nodes",
+                "nodes": "workflow:create_final_nodes",
             },
         },
         {
