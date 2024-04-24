@@ -2,6 +2,7 @@
 
 """OpenAI Configuration class definition."""
 
+import json
 from collections.abc import Hashable
 from typing import Any, cast
 
@@ -262,7 +263,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
 
     def __str__(self) -> str:
         """Str method definition."""
-        return f"OpenAIConfiguration({self._raw_config})"
+        return json.dumps(self.raw_config, indent=4)
 
     def __repr__(self) -> str:
         """Repr method definition."""

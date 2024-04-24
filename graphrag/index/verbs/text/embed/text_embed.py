@@ -28,6 +28,10 @@ class TextEmbedStrategyType(str, Enum):
     openai = "openai"
     mock = "mock"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="text_embed")
 async def text_embed(

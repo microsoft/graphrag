@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+import json
 import os
 import re
 import unittest
@@ -15,31 +16,56 @@ from graphrag.config import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
+    CacheConfig,
     CacheConfigInput,
     CacheType,
+    ChunkingConfig,
     ChunkingConfigInput,
+    ClaimExtractionConfig,
     ClaimExtractionConfigInput,
+    ClusterGraphConfig,
     ClusterGraphConfigInput,
+    CommunityReportsConfig,
     CommunityReportsConfigInput,
+    EmbedGraphConfig,
     EmbedGraphConfigInput,
+    EntityExtractionConfig,
     EntityExtractionConfigInput,
+    GlobalSearchConfig,
+    GraphRagConfig,
     GraphRagConfigInput,
+    InputConfig,
     InputConfigInput,
     InputType,
+    LLMParameters,
     LLMParametersInput,
+    LocalSearchConfig,
+    ParallelizationParameters,
+    ReportingConfig,
     ReportingConfigInput,
     ReportingType,
+    SnapshotsConfig,
     SnapshotsConfigInput,
+    StorageConfig,
     StorageConfigInput,
     StorageType,
+    SummarizeDescriptionsConfig,
     SummarizeDescriptionsConfigInput,
+    TextEmbeddingConfig,
     TextEmbeddingConfigInput,
+    UmapConfig,
     UmapConfigInput,
     create_graphrag_config,
 )
 from graphrag.index import (
+    PipelineConfig,
     PipelineCSVInputConfig,
+    PipelineFileCacheConfig,
+    PipelineFileReportingConfig,
+    PipelineFileStorageConfig,
+    PipelineInputConfig,
     PipelineTextInputConfig,
+    PipelineWorkflowReference,
     create_pipeline_config,
 )
 
@@ -148,6 +174,62 @@ ALL_ENV_VARS = {
 
 
 class TestDefaultConfig(unittest.TestCase):
+    def test_clear_warnings(self):
+        """Just clearing unused import warnings"""
+        assert CacheConfig is not None
+        assert ChunkingConfig is not None
+        assert ClaimExtractionConfig is not None
+        assert ClusterGraphConfig is not None
+        assert CommunityReportsConfig is not None
+        assert EmbedGraphConfig is not None
+        assert EntityExtractionConfig is not None
+        assert GlobalSearchConfig is not None
+        assert GraphRagConfig is not None
+        assert InputConfig is not None
+        assert LLMParameters is not None
+        assert LocalSearchConfig is not None
+        assert ParallelizationParameters is not None
+        assert ReportingConfig is not None
+        assert SnapshotsConfig is not None
+        assert StorageConfig is not None
+        assert SummarizeDescriptionsConfig is not None
+        assert TextEmbeddingConfig is not None
+        assert UmapConfig is not None
+        assert PipelineConfig is not None
+        assert PipelineFileReportingConfig is not None
+        assert PipelineFileStorageConfig is not None
+        assert PipelineInputConfig is not None
+        assert PipelineFileCacheConfig is not None
+        assert PipelineWorkflowReference is not None
+
+    @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
+    def test_string_repr(self):
+        # __str__ can be json loaded
+        config = create_graphrag_config()
+        string_repr = str(config)
+        assert string_repr is not None
+        assert json.loads(string_repr) is not None
+
+        # __repr__ can be eval()'d
+        repr_str = config.__repr__()
+        # TODO: add __repr__ to datashaper enum
+        repr_str = repr_str.replace("async_mode=<AsyncType.Threaded: 'threaded'>,", "")
+        assert eval(repr_str) is not None
+
+        # Pipeline config __str__ can be json loaded
+        pipeline_config = create_pipeline_config(config)
+        string_repr = str(pipeline_config)
+        assert string_repr is not None
+        assert json.loads(string_repr) is not None
+
+        # Pipeline config __repr__ can be eval()'d
+        repr_str = pipeline_config.__repr__()
+        # TODO: add __repr__ to datashaper enum
+        repr_str = repr_str.replace(
+            "'async_mode': <AsyncType.Threaded: 'threaded'>,", ""
+        )
+        assert eval(repr_str) is not None
+
     @mock.patch.dict(os.environ, {}, clear=True)
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):

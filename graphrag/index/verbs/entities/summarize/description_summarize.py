@@ -37,6 +37,10 @@ class SummarizeStrategyType(str, Enum):
 
     graph_intelligence = "graph_intelligence"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="summarize_descriptions")
 async def summarize_descriptions(

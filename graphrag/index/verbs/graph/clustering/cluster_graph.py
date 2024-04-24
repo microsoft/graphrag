@@ -144,6 +144,10 @@ class GraphCommunityStrategyType(str, Enum):
 
     leiden = "leiden"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 def run_layout(
     strategy: dict[str, Any], graphml_or_graph: str | nx.Graph
