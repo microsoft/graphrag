@@ -34,7 +34,7 @@
                 "end_date",
                 "source_text"
             ],
-            "subworkflows": 4,
+            "subworkflows": 5,
             "max_runtime": 300
         },
         "create_summarized_entities": {
