@@ -19,9 +19,11 @@ class PipelineConfig(BaseModel):
     """Represent the configuration for a pipeline."""
 
     def __repr__(self):
+        """Get a string representation."""
         return str(debug.format(self))
 
     def __str__(self):
+        """Get a string representation."""
         return self.__repr__()
 
     extends: list[str] | str | None = pydantic_Field(

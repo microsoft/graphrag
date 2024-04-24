@@ -32,9 +32,11 @@ class GraphRagConfig(LLMConfig):
     """Base class for the Default-Configuration parameterization settings."""
 
     def __repr__(self):
+        """Get a string representation."""
         return str(debug.format(self))
 
     def __str__(self):
+        """Get a string representation."""
         return self.__repr__()
 
     root_dir: str = Field(
