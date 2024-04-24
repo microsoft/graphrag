@@ -28,6 +28,10 @@ class ExtractClaimsStrategyType(str, Enum):
 
     graph_intelligence = "graph_intelligence"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 

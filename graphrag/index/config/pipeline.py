@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from devtools import pformat
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
@@ -17,13 +18,13 @@ from .workflow import PipelineWorkflowReference
 class PipelineConfig(BaseModel):
     """Represent the configuration for a pipeline."""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Get a string representation."""
-        return str(self.model_dump_json(indent=4))
+        return pformat(self, highlight=False)
 
     def __str__(self):
         """Get a string representation."""
-        return self.__repr__()
+        return str(self.model_dump_json(indent=4))
 
     extends: list[str] | str | None = pydantic_Field(
         description="Extends another pipeline configuration", default=None

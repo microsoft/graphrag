@@ -71,6 +71,7 @@ pydantic = "^2"
 rich = "^13.6.0"
 textual = "^0.57.1"
 azure-storage-blob = "^12.19.0"
+devtools = "^0.12.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.3.2"

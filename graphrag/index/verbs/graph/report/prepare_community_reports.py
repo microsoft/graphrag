@@ -29,6 +29,10 @@ class CreateCommunityReportsStrategyType(str, Enum):
 
     graph_intelligence = "graph_intelligence"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="prepare_community_reports")
 async def prepare_community_reports(

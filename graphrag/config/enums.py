@@ -19,6 +19,10 @@ class CacheType(str, Enum):
     blob = "blob"
     """The blob cache configuration type."""
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 class InputType(str, Enum):
     """The input type for the pipeline."""
@@ -27,6 +31,10 @@ class InputType(str, Enum):
     """The CSV input type."""
     text = "text"
     """The text input type."""
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
 
 
 class StorageType(str, Enum):
@@ -39,6 +47,10 @@ class StorageType(str, Enum):
     blob = "blob"
     """The blob storage type."""
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 class ReportingType(str, Enum):
     """The reporting configuration type for the pipeline."""
@@ -50,12 +62,20 @@ class ReportingType(str, Enum):
     blob = "blob"
     """The blob reporting configuration type."""
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 class TextEmbeddingTarget(str, Enum):
     """The target to use for text embeddings."""
 
     all = "all"
     required = "required"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
 
 
 class LLMType(str, Enum):
@@ -75,3 +95,7 @@ class LLMType(str, Enum):
 
     # Debug
     StaticResponse = "static_response"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
