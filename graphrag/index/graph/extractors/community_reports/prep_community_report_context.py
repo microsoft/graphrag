@@ -8,10 +8,10 @@ from typing import cast
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.query.llm.text_utils import num_tokens
 
 from .build_mixed_context import build_mixed_context
 from .sort_context import sort_context
+from .utils import set_context_size
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ def prep_community_report_context(
 
     def drop_community_level(df: pd.DataFrame) -> pd.DataFrame:
         return df.drop([schemas.COMMUNITY_LEVEL], axis=1)
-    
+
     def at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
         return cast(pd.DataFrame, df[df[schemas.COMMUNITY_LEVEL] == level])
 
@@ -45,7 +45,9 @@ def prep_community_report_context(
     def within_context(df: pd.DataFrame) -> pd.DataFrame:
         return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 0])
 
-    def sort_and_trim_context(df: pd.DataFrame, max_tokens: int = max_tokens) -> pd.Series:
+    def sort_and_trim_context(
+        df: pd.DataFrame, max_tokens: int = max_tokens
+    ) -> pd.Series:
         return cast(
             pd.Series,
             df[schemas.ALL_CONTEXT].apply(
@@ -56,11 +58,6 @@ def prep_community_report_context(
     def drop_merge_leftover(df: pd.DataFrame) -> pd.DataFrame:
         return cast(
             pd.DataFrame, df[df["_merge"] == "left_only"].drop("_merge", axis=1)
-        )
-
-    def measure_context(df: pd.DataFrame) -> pd.Series:
-        return cast(
-            pd.Series, df[schemas.CONTEXT_STRING].apply(lambda x: num_tokens(x))
         )
 
     level = int(level)
@@ -74,10 +71,10 @@ def prep_community_report_context(
         return valid_context_df
 
     if report_df.empty:
-        invalid_context_df[schemas.CONTEXT_STRING] = sort_and_trim_context(invalid_context_df)
-        invalid_context_df[schemas.CONTEXT_SIZE] = measure_context(
+        invalid_context_df[schemas.CONTEXT_STRING] = sort_and_trim_context(
             invalid_context_df
         )
+        set_context_size(invalid_context_df)
         invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
         return pd.concat([valid_context_df, invalid_context_df])
 
@@ -144,6 +141,6 @@ def prep_community_report_context(
     remaining_df[schemas.CONTEXT_STRING] = sort_and_trim_context(remaining_df)
 
     result = pd.concat([valid_context_df, community_df, remaining_df])
-    result[schemas.CONTEXT_SIZE] = measure_context(result)
+    set_context_size(result)
     result[schemas.CONTEXT_EXCEED_FLAG] = 0
     return result

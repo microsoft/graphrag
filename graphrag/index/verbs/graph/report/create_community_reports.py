@@ -22,6 +22,7 @@ import graphrag.config.defaults as defaults
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
+    get_levels,
     prep_community_report_context,
 )
 
@@ -64,10 +65,7 @@ async def create_community_reports(
     nodes = get_table("nodes")
     community_hierarchy = get_table("community_hierarchy")
     local_contexts = cast(pd.DataFrame, input.get_input())
-    levels = sorted(
-        nodes[schemas.NODE_LEVEL].notna().astype(int).unique().tolist(), reverse=True
-    )
-
+    levels = get_levels(nodes)
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
 

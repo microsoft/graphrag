@@ -9,12 +9,16 @@ from .community_reports_extractor import CommunityReportsExtractor
 from .prep_community_report_context import prep_community_report_context
 from .prompts import COMMUNITY_REPORT_PROMPT
 from .sort_context import sort_context
+from .utils import get_levels, set_context_exceeds_flag, set_context_size
 
 __all__ = [
     "COMMUNITY_REPORT_PROMPT",
     "CommunityReportsExtractor",
     "build_mixed_context",
+    "get_levels",
     "prep_community_report_context",
     "schemas",
+    "set_context_exceeds_flag",
+    "set_context_size",
     "sort_context",
 ]

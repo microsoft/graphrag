@@ -16,8 +16,12 @@ from datashaper import (
 )
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.graph.extractors.community_reports import sort_context
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.index.graph.extractors.community_reports import (
+    get_levels,
+    set_context_exceeds_flag,
+    set_context_size,
+    sort_context,
+)
 
 log = logging.getLogger(__name__)
 
@@ -94,9 +98,7 @@ def build_community_local_contexts(
         claim_df: pd.DataFrame,
         max_tokens: int,
     ) -> pd.DataFrame:
-        levels = sorted(
-            node_df[node_level_column].notna().astype(int).unique().tolist()
-        )
+        levels = get_levels(node_df, node_level_column)
         dfs = []
         for level in progress_iterable(levels, callbacks.progress, len(levels)):
             level_node_df = cast(
@@ -207,12 +209,8 @@ def build_community_local_contexts(
                     community_id_column=community_id_column,
                 )
             )
-            community_df[schemas.CONTEXT_SIZE] = community_df[
-                schemas.CONTEXT_STRING
-            ].apply(lambda x: num_tokens(x))
-            community_df[schemas.CONTEXT_EXCEED_FLAG] = community_df[
-                schemas.CONTEXT_SIZE
-            ].apply(lambda x: x > max_tokens)
+            set_context_size(community_df)
+            set_context_exceeds_flag(community_df, max_tokens)
             community_df[schemas.COMMUNITY_LEVEL] = level
             dfs.append(community_df)
 
