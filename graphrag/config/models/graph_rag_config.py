@@ -2,7 +2,6 @@
 
 """Parameterization settings for the default configuration."""
 
-from devtools import debug
 from pydantic import Field
 
 import graphrag.config.defaults as defs
@@ -33,7 +32,7 @@ class GraphRagConfig(LLMConfig):
 
     def __repr__(self):
         """Get a string representation."""
-        return str(debug.format(self))
+        return self.model_dump_json(indent=4)
 
     def __str__(self):
         """Get a string representation."""

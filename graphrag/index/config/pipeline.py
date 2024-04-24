@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from devtools import debug
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
@@ -20,7 +19,7 @@ class PipelineConfig(BaseModel):
 
     def __repr__(self):
         """Get a string representation."""
-        return str(debug.format(self))
+        return str(self.model_dump_json(indent=4))
 
     def __str__(self):
         """Get a string representation."""

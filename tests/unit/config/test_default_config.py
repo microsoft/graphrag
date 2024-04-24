@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+import json
 import os
 import re
 import unittest
@@ -148,6 +149,19 @@ ALL_ENV_VARS = {
 
 
 class TestDefaultConfig(unittest.TestCase):
+    @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
+    def test_string_repr(self):
+        # doesn't throw
+        config = create_graphrag_config()
+        string_repr = str(config)
+        assert string_repr is not None
+        assert json.loads(string_repr) is not None
+
+        pipeline_config = create_pipeline_config(config)
+        string_repr = str(pipeline_config)
+        assert string_repr is not None
+        assert json.loads(string_repr) is not None
+
     @mock.patch.dict(os.environ, {}, clear=True)
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):
