@@ -14,7 +14,7 @@ _NODES_INPUT_REQUIRED = "Nodes input is required"
 @verb(name="compute_edge_combined_degree")
 def compute_edge_combined_degree(
     input: VerbInput,
-    to: str = "combined_degree",
+    to: str = "rank",
     node_name_column: str = "title",
     node_degree_column: str = "degree",
     edge_source_column: str = "source",
@@ -29,7 +29,7 @@ def compute_edge_combined_degree(
     - nodes: The nodes table.
 
     Args:
-    - to: The name of the column to output the combined degree to. Default="combined_degree"
+    - to: The name of the column to output the combined degree to. Default="rank"
     """
     edge_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
     if to in edge_df.columns:

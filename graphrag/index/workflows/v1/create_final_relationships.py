@@ -61,9 +61,36 @@ def build_steps(
         },
         {
             "verb": "compute_edge_combined_degree",
+            "args": {
+                "to": "rank"
+            },
             "input": {
                 "source": "pruned_edges",
                 "nodes": "workflow:create_final_nodes",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "human_readable_id",
+                "type": "string",
+                "to": "human_readable_id",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "weight",
+                "type": "float",
+                "to": "weight",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "text_unit_ids",
+                "type": "array",
+                "to": "text_unit_ids",
             },
         },
     ]
