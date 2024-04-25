@@ -59,9 +59,7 @@ def __get_reports(data_dir: Path, community_level: int):
 
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
     entity_df["community"] = entity_df["community"].astype(str)
-    filtered_community_df = entity_df.rename(columns={"community": "community_id"})[
-        "community_id"
-    ].drop_duplicates()
+    filtered_community_df = entity_df["community"].drop_duplicates()
 
     report_df: pd.DataFrame = pd.read_parquet(
         data_dir / "create_final_community_reports.parquet"
@@ -69,17 +67,13 @@ def __get_reports(data_dir: Path, community_level: int):
     report_df = cast(
         pd.DataFrame, report_df[report_df.level <= f"level_{community_level}"]
     )
-
-    report_df["rank"] = report_df["rank"].fillna(-1)
-    report_df["rank"] = report_df["rank"].astype(int)
-
-    report_df = report_df.merge(filtered_community_df, on="community_id", how="inner")
+    report_df = report_df.merge(filtered_community_df, on="community", how="inner")
 
     return read_community_reports(
         df=report_df,
-        id_col="community_id",
-        short_id_col="community_id",
-        community_col="community_id",
+        id_col="community",
+        short_id_col="community",
+        community_col="community",
         title_col="title",
         summary_col="summary",
         content_col="full_content",
