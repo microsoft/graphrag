@@ -44,23 +44,43 @@ def build_steps(
                 ],
             },
         },
-        *(
-            []
-            if skip_description_embedding
-            else [
-                {
-                    "verb": "text_embed",
-                    "args": {
-                        "embedding_name": "relationship_description",
-                        "column": "description",
-                        "to": "description_embedding",
-                        **relationship_description_embed_config,
-                    },
-                }
-            ]
-        ),
         {
+            "verb": "text_embed",
+            "enabled": not skip_description_embedding,
+            "args": {
+                "embedding_name": "relationship_description",
+                "column": "description",
+                "to": "description_embedding",
+                **relationship_description_embed_config,
+            },
+        },
+        {
+            "id": "pruned_edges",
             "verb": "drop",
             "args": {"columns": ["level"]},
+        },
+        {
+            "verb": "compute_edge_combined_degree",
+            "args": {"to": "rank"},
+            "input": {
+                "source": "pruned_edges",
+                "nodes": "workflow:create_final_nodes",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "human_readable_id",
+                "type": "string",
+                "to": "human_readable_id",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "text_unit_ids",
+                "type": "array",
+                "to": "text_unit_ids",
+            },
         },
     ]

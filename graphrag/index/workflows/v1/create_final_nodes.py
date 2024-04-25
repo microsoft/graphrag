@@ -109,13 +109,6 @@ def build_steps(
             },
         },
         {
-            "verb": "fill",
-            "args": {
-                "to": "type",
-                "value": "entity",
-            },
-        },
-        {
             "verb": "rename",
             "args": {"columns": {"label": "title", "cluster": "community"}},
         },
