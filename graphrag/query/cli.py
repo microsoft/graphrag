@@ -57,7 +57,9 @@ def run_global_search(
         data_path / "create_final_community_reports.parquet"
     )
 
-    reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
+    reports = read_indexer_reports(
+        final_community_reports, final_nodes, community_level
+    )
     search_engine = get_global_search_engine(
         config,
         reports=reports,
@@ -102,7 +104,9 @@ def run_local_search(
 
     search_engine = get_local_search_engine(
         config,
-        reports=read_indexer_reports(final_community_reports, final_nodes, community_level),
+        reports=read_indexer_reports(
+            final_community_reports, final_nodes, community_level
+        ),
         text_units=read_indexer_text_units(final_text_units),
         entities=entities,
         relationships=read_indexer_relationships(final_relationships),

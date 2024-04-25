@@ -61,9 +61,7 @@ def build_steps(
         },
         {
             "verb": "compute_edge_combined_degree",
-            "args": {
-                "to": "rank"
-            },
+            "args": {"to": "rank"},
             "input": {
                 "source": "pruned_edges",
                 "nodes": "workflow:create_final_nodes",
