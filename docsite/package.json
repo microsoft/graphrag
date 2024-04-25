@@ -3,9 +3,10 @@
     "version": "0.0.1",
     "private": true,
     "scripts": {
+        "copy_notebooks": "shx cp ../examples_notebooks/*.ipynb ./posts/query/notebooks/",
         "start": "eleventy --serve",
         "build": "eleventy && touch _site/.nojekyll",
-        "build:docs": "yarn build",
+        "build:docs": "yarn copy_notebooks && yarn build",
         "start:docs": "yarn start"
     },
     "dependencies": {
@@ -14,5 +15,8 @@
         "@kevingimbel/eleventy-plugin-mermaid": "^2.2.1",
         "eleventy-plugin-code-clipboard": "^0.1.1",
         "markdown-it": "^14.1.0"
+    },
+    "devDependencies": {
+        "shx": "^0.3.4"
     }
 }

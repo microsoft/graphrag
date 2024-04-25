@@ -1,2 +1,3 @@
 _site
 _posts
+posts/query/notebooks/*.ipynb
