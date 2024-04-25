@@ -55,7 +55,15 @@ def build_steps(
             },
         },
         {
+            "id": "pruned_edges",
             "verb": "drop",
             "args": {"columns": ["level"]},
+        },
+        {
+            "verb": "compute_edge_combined_degree",
+            "input": {
+                "source": "pruned_edges",
+                "nodes": "workflow:create_final_nodes",
+            },
         },
     ]

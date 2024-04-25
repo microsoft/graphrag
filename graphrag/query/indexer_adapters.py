@@ -1,5 +1,9 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
-"""Indexing-Engine to Query Read Adapters. These should eventually go away, users should use the read_x functions instead."""
+"""Indexing-Engine to Query Read Adapters.
+
+The parts of these functions that do type adaptation, renaming, collating, etc. should eventually go away.
+Ideally this is just a straight read-thorugh into the object model.
+"""
 
 from typing import cast
 
@@ -18,50 +22,20 @@ from graphrag.query.input.retrieval.relationships import (
 )
 
 
-def read_raw_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
+def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
+    """Read in the Text Units from the raw indexing outputs."""
+    return read_text_units(
+        df=final_text_units,
+        short_id_col=None,
+        # expects a covariate map of type -> ids
+        covariates_col=None,
+    )
+
+def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
     """Read in the Claims from the raw indexing outputs."""
-    covariate_df = final_covariates
-    covariate_df["human_readable_id"] = covariate_df["human_readable_id"].astype(str)
-    try:
-        covariate_df = cast(
-            pd.DataFrame,
-            covariate_df[
-                [
-                    "id",
-                    "human_readable_id",
-                    "type",
-                    "subject_id",
-                    "subject_type",
-                    "object_id",
-                    "status",
-                    "start_date",
-                    "end_date",
-                    "description",
-                ]
-            ],
-        )
-
-    except:  # noqa: E722
-        columns = [
-            "id",
-            "human_readable_id",
-            "type",
-            "subject_id",
-            "object_id",
-            "status",
-            "start_date",
-            "end_date",
-            "description",
-        ]
-        covariate_df = pd.DataFrame({column: [] for column in columns})
-
     return read_covariates(
-        df=covariate_df,
-        id_col="id",
+        df=final_covariates,
         short_id_col="human_readable_id",
-        subject_col="subject_id",
-        subject_type_col=None,
-        covariate_type_col="type",
         attributes_cols=[
             "object_id",
             "status",
@@ -70,11 +44,9 @@ def read_raw_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
             "description",
         ],
         text_unit_ids_col=None,
-        document_ids_col=None,
     )
 
-
-def read_raw_reports(
+def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
     community_level: int | None,
@@ -82,26 +54,15 @@ def read_raw_reports(
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
     entity_df = final_nodes
-
     if community_level is not None:
-        entity_df = cast(
-            pd.DataFrame,
-            entity_df[
-                (entity_df.type == "entity")
-                & (entity_df.level <= f"level_{community_level}")
-            ],
-        )
+        entity_df = _filter_entities_under_community_level(entity_df, community_level)
+        report_df = _filter_reports_under_community_level(report_df, community_level)
+
     entity_df["community"] = entity_df["community"].fillna(-1)
     entity_df["community"] = entity_df["community"].astype(int)
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
     entity_df["community"] = entity_df["community"].astype(str)
     filtered_community_df = entity_df["community"].drop_duplicates()
-
-    if community_level is not None:
-        report_df = cast(
-            pd.DataFrame,
-            report_df[report_df.level <= community_level],
-        )
 
     report_df["rank"] = report_df["rank"].fillna(-1)
     report_df["rank"] = report_df["rank"].astype(int)
@@ -121,21 +82,7 @@ def read_raw_reports(
     )
 
 
-def read_raw_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
-    """Read in the Text Units from the raw indexing outputs."""
-    return read_text_units(
-        df=final_text_units,
-        id_col="id",
-        short_id_col=None,
-        text_col="text",
-        embedding_col="text_embedding",
-        entities_col=None,
-        relationships_col=None,
-        covariates_col=None,
-    )
-
-
-def read_raw_entities(
+def read_indexer_entities(
     final_nodes: pd.DataFrame,
     final_entities: pd.DataFrame,
     community_level: int | None = None,
@@ -145,13 +92,8 @@ def read_raw_entities(
     entity_embedding_df = final_entities
 
     if community_level is not None:
-        entity_df = cast(
-            pd.DataFrame,
-            entity_df[
-                (entity_df.type == "entity")
-                & (entity_df.level <= f"level_{community_level}")
-            ],
-        )
+        entity_df = _filter_entities_under_community_level(entity_df, community_level)
+
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
     )
@@ -203,7 +145,7 @@ def read_raw_entities(
     )
 
 
-def read_raw_relationships(
+def read_indexer_relationships(
     final_relationships: pd.DataFrame, entities: list[Entity]
 ) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
@@ -245,4 +187,21 @@ def read_raw_relationships(
     # TODO: compute combined rank in indexer output
     return calculate_relationship_combined_rank(
         relationships=relationships, entities=entities, ranking_attribute="rank"
+    )
+
+
+def _filter_entities_under_community_level(
+    nodes: pd.DataFrame, community_level: int | None
+) -> pd.DataFrame:
+    return cast(
+        pd.DataFrame,
+        nodes[nodes.level <= f"level_{community_level}"],
+    )
+
+def _filter_reports_under_community_level(
+    reports: pd.DataFrame, community_level: int | None
+) -> pd.DataFrame:
+    return cast(
+        pd.DataFrame,
+        reports[reports.level <= community_level],
     )

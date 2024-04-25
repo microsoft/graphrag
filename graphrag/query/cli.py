@@ -20,11 +20,11 @@ from graphrag.vector_stores.qdrant import Qdrant
 
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
-    read_raw_covariates,
-    read_raw_entities,
-    read_raw_relationships,
-    read_raw_reports,
-    read_raw_text_units,
+    read_indexer_covariates,
+    read_indexer_entities,
+    read_indexer_relationships,
+    read_indexer_reports,
+    read_indexer_text_units,
 )
 
 reporter = PrintProgressReporter("")
@@ -57,7 +57,7 @@ def run_global_search(
         data_path / "create_final_community_reports.parquet"
     )
 
-    reports = read_raw_reports(final_community_reports, final_nodes, community_level)
+    reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
@@ -94,18 +94,18 @@ def run_local_search(
     final_covariates = pd.read_parquet(data_path / "create_final_covariates.parquet")
 
     description_embedding_store = __get_embedding_description_store()
-    entities = read_raw_entities(final_nodes, final_entities, community_level)
+    entities = read_indexer_entities(final_nodes, final_entities, community_level)
     store_entity_semantic_embeddings(
         entities=entities, vectorstore=description_embedding_store
     )
-    covariates = read_raw_covariates(final_covariates)
+    covariates = read_indexer_covariates(final_covariates)
 
     search_engine = get_local_search_engine(
         config,
-        reports=read_raw_reports(final_community_reports, final_nodes, community_level),
-        text_units=read_raw_text_units(final_text_units),
+        reports=read_indexer_reports(final_community_reports, final_nodes, community_level),
+        text_units=read_indexer_text_units(final_text_units),
         entities=entities,
-        relationships=read_raw_relationships(final_relationships, entities),
+        relationships=read_indexer_relationships(final_relationships, entities),
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
         response_type=response_type,

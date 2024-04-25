@@ -49,6 +49,14 @@ def build_steps(
             },
         },
         {
+            "verb": "convert",
+            "args": {
+                "column": "human_readable_id",
+                "type": "string",
+                "to": "human_readable_id",
+            },
+        },
+        {
             "verb": "rename",
             "args": {
                 "columns": {
