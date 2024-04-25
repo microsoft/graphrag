@@ -44,21 +44,16 @@ def build_steps(
                 ],
             },
         },
-        *(
-            []
-            if skip_description_embedding
-            else [
-                {
-                    "verb": "text_embed",
-                    "args": {
-                        "embedding_name": "relationship_description",
-                        "column": "description",
-                        "to": "description_embedding",
-                        **relationship_description_embed_config,
-                    },
-                }
-            ]
-        ),
+        {
+            "verb": "text_embed",
+            "enabled": not skip_description_embedding,
+            "args": {
+                "embedding_name": "relationship_description",
+                "column": "description",
+                "to": "description_embedding",
+                **relationship_description_embed_config,
+            },
+        },
         {
             "verb": "drop",
             "args": {"columns": ["level"]},
