@@ -41,6 +41,22 @@ def build_steps(
             "args": {"to": "id", "operation": "uuid", "column": "covariate_type"},
         },
         {
+            "verb": "window",
+            "args": {
+                "to": "human_readable_id",
+                "operation": "row_number",
+                "column": "covariate_type",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "human_readable_id",
+                "type": "string",
+                "to": "human_readable_id",
+            },
+        },
+        {
             "verb": "rename",
             "args": {
                 "columns": {
@@ -53,6 +69,7 @@ def build_steps(
             "args": {
                 "columns": [
                     "id",
+                    "human_readable_id",
                     "covariate_type",
                     "type",
                     "description",
