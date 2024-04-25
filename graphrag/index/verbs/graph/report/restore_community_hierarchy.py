@@ -16,25 +16,27 @@ log = logging.getLogger(__name__)
 @verb(name="restore_community_hierarchy")
 def restore_community_hierarchy(
     input: VerbInput,
-    node_name_column: str = schemas.NODE_NAME,
-    node_community_column: str = schemas.NODE_COMMUNITY,
-    node_level_column: str = schemas.NODE_LEVEL,
+    name_column: str = schemas.NODE_NAME,
+    community_column: str = schemas.NODE_COMMUNITY,
+    level_column: str = schemas.NODE_LEVEL,
     **_kwargs,
 ) -> TableContainer:
     """Restore the community hierarchy from the node data."""
     node_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
     community_df = (
-        node_df.groupby([node_community_column, node_level_column])
-        .agg({node_name_column: list})
+        node_df.groupby([community_column, level_column])
+        .agg({name_column: list})
         .reset_index()
     )
     community_levels = {}
     for _, row in community_df.iterrows():
-        if community_levels.get(row[node_level_column]) is None:
-            community_levels[row[node_level_column]] = {}
-        community_levels[row[node_level_column]][row[node_community_column]] = row[
-            node_name_column
-        ]
+        level = row[level_column]
+        name = row[name_column]
+        community = row[community_column]
+
+        if community_levels.get(level) is None:
+            community_levels[level] = {}
+        community_levels[level][community] = name
 
     # get unique levels, sorted in ascending order
     levels = sorted(community_levels.keys())
@@ -62,7 +64,7 @@ def restore_community_hierarchy(
                 next_entities = next_level_communities[next_level_community]
                 if set(next_entities).issubset(set(current_entities)):
                     community_hierarchy.append({
-                        node_community_column: current_community,
+                        community_column: current_community,
                         schemas.COMMUNITY_LEVEL: level,
                         schemas.SUB_COMMUNITY: next_level_community,
                         schemas.SUB_COMMUNITY_SIZE: len(next_entities),

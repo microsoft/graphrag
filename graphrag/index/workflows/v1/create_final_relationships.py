@@ -78,14 +78,6 @@ def build_steps(
         {
             "verb": "convert",
             "args": {
-                "column": "weight",
-                "type": "float",
-                "to": "weight",
-            },
-        },
-        {
-            "verb": "convert",
-            "args": {
                 "column": "text_unit_ids",
                 "type": "array",
                 "to": "text_unit_ids",
