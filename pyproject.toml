@@ -101,6 +101,8 @@ _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
 _ruff_check = 'ruff check . --preview'
 _pyright = "pyright"
+_convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --to markdown examples_notebooks/local_search.ipynb'
+_convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --to markdown examples_notebooks/global_search.ipynb'
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
@@ -114,6 +116,10 @@ index = "python -m graphrag.index"
 query = "python -m graphrag.query"
 # Pass in a test pattern
 test_only = "pytest -s -k"
+
+[[tool.poe.tasks.convert_docsite_notebooks]]
+sequence = ['_convert_local_search_nb', '_convert_global_search_nb']
+ignore_fail = 'return_non_zero'
 
 [[tool.poe.tasks.format]]
 sequence = ['_sort_imports', '_format_code']
