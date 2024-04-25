@@ -62,7 +62,7 @@ def read_indexer_reports(
     community_level: int,
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
-    report_df = _filter_reports_under_community_level(
+    report_df = _filter_under_community_level_str(
         final_community_reports, community_level
     )
     filtered_community_df = _entity_communities_under_level(
@@ -89,7 +89,7 @@ def read_indexer_entities(
     entity_df = final_nodes
     entity_embedding_df = final_entities
 
-    entity_df = _filter_entities_under_community_level(entity_df, community_level)
+    entity_df = _filter_under_community_level_str(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
     )
@@ -141,28 +141,19 @@ def read_indexer_entities(
     )
 
 
-def _filter_entities_under_community_level(
-    nodes: pd.DataFrame, community_level: int
+def _filter_under_community_level_str(
+    df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
     return cast(
         pd.DataFrame,
-        nodes[nodes.level <= f"level_{community_level}"],
-    )
-
-
-def _filter_reports_under_community_level(
-    reports: pd.DataFrame, community_level: int
-) -> pd.DataFrame:
-    return cast(
-        pd.DataFrame,
-        reports[reports.level <= community_level],
+        df[df.level <= f"level_{community_level}"],
     )
 
 
 def _entity_communities_under_level(
     nodes: pd.DataFrame, community_level: int
 ) -> pd.Series:
-    entity_df = _filter_entities_under_community_level(nodes, community_level)
+    entity_df = _filter_under_community_level_str(nodes, community_level)
     entity_df["community"] = entity_df["community"].fillna(-1)
     entity_df["community"] = entity_df["community"].astype(int)
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
