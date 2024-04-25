@@ -3,7 +3,6 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-from dataclasses import asdict
 from enum import Enum
 from typing import Any, cast
 
@@ -39,7 +38,6 @@ async def create_community_reports(
     input: VerbInput,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
-    to: str,
     strategy: dict[str, Any],
     community_column: str = "community",
     level_column: str = "level",
@@ -54,13 +52,16 @@ async def create_community_reports(
     )
     strategy_exec = load_strategy(strategy_type)
     strategy_args = {**strategy}
-    levels = input.get_input()[level_column]
 
     async def run_strategy(row):
-        community = await strategy_exec(
-            row[community_column], row[input_column], callbacks, cache, strategy_args
+        return await strategy_exec(
+            row[community_column],
+            row[input_column],
+            row[level_column],
+            callbacks,
+            cache,
+            strategy_args,
         )
-        return asdict(cast(Any, community)) if community else None
 
     reports = await derive_from_rows(
         cast(pd.DataFrame, input.get_input()),
@@ -69,7 +70,7 @@ async def create_community_reports(
         scheduling_type=async_mode,
         num_threads=kwargs.get("num_threads", 4),
     )
-    output = pd.DataFrame({to: reports, level_column: levels})
+    output = pd.DataFrame(reports)
     return TableContainer(table=output)
 
 
