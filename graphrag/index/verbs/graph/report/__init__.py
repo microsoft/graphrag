@@ -9,6 +9,7 @@ from .create_community_reports import (
 )
 from .prepare_community_reports_claims import prepare_community_reports_claims
 from .prepare_community_reports_edges import prepare_community_reports_edges
+from .prepare_community_reports_nodes import prepare_community_reports_nodes
 from .restore_community_hierarchy import restore_community_hierarchy
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "create_community_reports",
     "prepare_community_reports_claims",
     "prepare_community_reports_edges",
+    "prepare_community_reports_nodes",
     "restore_community_hierarchy",
 ]

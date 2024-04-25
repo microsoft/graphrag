@@ -33,6 +33,14 @@ def build_steps(
 
     return [
         #
+        # Subworkflow: Prepare Nodes
+        #
+        {
+            "id": "nodes",
+            "verb": "prepare_community_reports_nodes",
+            "input": {"source": "workflow:create_final_nodes"},
+        },
+        #
         # Subworkflow: Prepare Edges
         #
         {
@@ -56,7 +64,7 @@ def build_steps(
         {
             "id": "community_hierarchy",
             "verb": "restore_community_hierarchy",
-            "input": {"source": "workflow:create_final_nodes"},
+            "input": {"source": "nodes"},
         },
         #
         # Main Workflow: Create Community Reports
@@ -65,8 +73,8 @@ def build_steps(
             "id": "local_contexts",
             "verb": "build_community_local_contexts",
             "input": {
-                "source": "workflow:create_final_nodes",
-                "nodes": "workflow:create_final_nodes",
+                "source": "nodes",
+                "nodes": "nodes",
                 "edges": "edges",
                 "claims": "claims",
             },
@@ -79,7 +87,7 @@ def build_steps(
             "input": {
                 "source": "local_contexts",
                 "community_hierarchy": "community_hierarchy",
-                "nodes": "workflow:create_final_nodes",
+                "nodes": "nodes",
             },
         },
         {

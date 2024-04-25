@@ -2,6 +2,8 @@
 
 """A module containing community report generation utilities."""
 
+from typing import cast
+
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
@@ -23,3 +25,27 @@ def set_context_exceeds_flag(df: pd.DataFrame, max_tokens: int) -> None:
 def get_levels(df: pd.DataFrame, level_column: str = schemas.NODE_LEVEL) -> list[int]:
     """Get the levels of the communities."""
     return sorted(df[level_column].notna().astype(int).unique().tolist(), reverse=True)
+
+
+def filter_nodes_to_level(node_df: pd.DataFrame, level: int) -> pd.DataFrame:
+    """Filter nodes to level."""
+    return cast(pd.DataFrame, node_df[node_df[schemas.NODE_LEVEL] == str(level)])
+
+
+def filter_edges_to_nodes(edge_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:
+    """Filter edges to nodes."""
+    return cast(
+        pd.DataFrame,
+        edge_df[
+            edge_df[schemas.EDGE_SOURCE].isin(nodes)
+            & edge_df[schemas.EDGE_TARGET].isin(nodes)
+        ],
+    )
+
+
+def filter_claims_to_nodes(claims_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:
+    """Filter edges to nodes."""
+    return cast(
+        pd.DataFrame,
+        claims_df[claims_df[schemas.CLAIM_SUBJECT].isin(nodes)],
+    )
