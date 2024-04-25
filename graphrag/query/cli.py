@@ -163,13 +163,13 @@ def __get_relationships(data_dir: Path):
     relationship_df: pd.DataFrame = pd.read_parquet(
         data_dir / "create_final_relationships.parquet"
     )
-    
+
     return read_relationships(
         df=relationship_df,
         short_id_col="human_readable_id",
         description_embedding_col=None,
         document_ids_col=None,
-        attributes_cols=["rank"]
+        attributes_cols=["rank"],
     )
 
 
