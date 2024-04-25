@@ -8,6 +8,7 @@ dictionaryDefinitions:
 dictionaries:
   - dictionary
 ignorePaths:
+  - cspell.config.yaml
   - node_modules
   - _site
   - /project-words.txt
@@ -22,6 +23,7 @@ ignorePaths:
   - package.json
   - tests/
   - docsite/data/
+  - docsite/nbdocsite_template/
   - docsite/posts/query/notebooks/inputs/
   - examples_notebooks/inputs/
   - "*.csv"
