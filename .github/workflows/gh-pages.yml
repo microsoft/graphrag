@@ -43,6 +43,9 @@ jobs:
       - name: Install Poetry dependencies
         run: poetry install
 
+      - name: Build Jupyter Notebooks
+        run: poetry run poe convert_docsite_notebooks
+
       - name: Build docsite
         run: yarn build
         working-directory: docsite
