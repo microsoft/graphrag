@@ -26,7 +26,6 @@ def cluster_graph(
     column: str,
     to: str,
     level_to: str | None = None,
-    level_name_format="level_{level}",
     **_kwargs,
 ) -> TableContainer:
     """
@@ -72,12 +71,12 @@ def cluster_graph(
     num_total = len(output_df)
 
     # Go through each of the rows
-    graph_level_pairs_column: list[list[tuple[str, str]]] = []
+    graph_level_pairs_column: list[list[tuple[int, str]]] = []
     for _, row in progress_iterable(
         output_df.iterrows(), callbacks.progress, num_total
     ):
         levels = row[level_to]
-        graph_level_pairs: list[tuple[str, str]] = []
+        graph_level_pairs: list[tuple[int, str]] = []
 
         # For each of the levels, get the graph and add it to the list
         for level in levels:
@@ -90,7 +89,7 @@ def cluster_graph(
                     )
                 )
             )
-            graph_level_pairs.append((level_name_format.format(level=level), graph))
+            graph_level_pairs.append((level, graph))
         graph_level_pairs_column.append(graph_level_pairs)
     output_df[to] = graph_level_pairs_column
 
@@ -120,7 +119,7 @@ def apply_clustering(
         if level == community_level:
             for node in nodes:
                 graph.nodes[node]["cluster"] = community_id
-                graph.nodes[node]["_raw_level_"] = str(level)
+                graph.nodes[node]["level"] = level
 
     # add node degree
     for node_degree in graph.degree:
@@ -135,7 +134,7 @@ def apply_clustering(
     for index, edge in enumerate(graph.edges()):
         graph.edges[edge]["id"] = str(gen_uuid(random))
         graph.edges[edge]["human_readable_id"] = index
-        graph.edges[edge]["_raw_level_"] = str(level)
+        graph.edges[edge]["level"] = level
     return graph
 
 

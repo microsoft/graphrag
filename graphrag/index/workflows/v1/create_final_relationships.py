@@ -39,9 +39,7 @@ def build_steps(
             "verb": "filter",
             "args": {
                 "column": "level",
-                "criteria": [
-                    {"type": "value", "operator": "equals", "value": "level_0"}
-                ],
+                "criteria": [{"type": "value", "operator": "equals", "value": 0}],
             },
         },
         {

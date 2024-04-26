@@ -32,7 +32,7 @@ def build_steps(
                     {
                         "type": "value",
                         "operator": "equals",
-                        "value": config.get("level_for_node_positions", "level_0"),
+                        "value": config.get("level_for_node_positions", 0),
                     }
                 ],
             },

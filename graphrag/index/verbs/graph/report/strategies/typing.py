@@ -33,7 +33,7 @@ class CommunityReport(TypedDict):
     full_content: str
     full_content_json: str
     rank: float
-    level: str | int
+    level: int
     rank_explanation: str
     findings: list[Finding]
 
@@ -42,7 +42,7 @@ CommunityReportsStrategy = Callable[
     [
         str | int,
         str,
-        str | int,
+        int,
         VerbCallbacks,
         PipelineCache,
         StrategyConfig,
