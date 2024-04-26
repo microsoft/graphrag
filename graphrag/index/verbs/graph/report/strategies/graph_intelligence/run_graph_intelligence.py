@@ -55,10 +55,10 @@ async def _run_extractor(
     extractor = CommunityReportsExtractor(
         llm,
         extraction_prompt=args.get("extraction_prompt", None),
+        max_report_length=args.get("max_report_length", None),
         on_error=lambda e, stack, _data: reporter.error(
             "Community Report Extraction Error", e, stack
         ),
-        max_report_length=args.get("max_report_length", None),
     )
 
     try:
