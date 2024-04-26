@@ -28,8 +28,6 @@ from graphrag.index.utils.ds_util import get_required_input_table
 
 log = logging.getLogger(__name__)
 
-_NAMED_INPUTS_REQUIRED = "Named inputs are required"
-
 
 @verb(name="prepare_community_reports")
 def prepare_community_reports(
