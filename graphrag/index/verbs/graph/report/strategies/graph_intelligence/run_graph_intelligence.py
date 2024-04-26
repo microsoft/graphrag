@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 async def run(
     community: str | int,
     input: str,
-    level: str | int,
+    level: int,
     reporter: VerbCallbacks,
     pipeline_cache: PipelineCache,
     args: StrategyConfig,
@@ -48,7 +48,7 @@ async def _run_extractor(
     llm: CompletionLLM,
     community: str | int,
     input: str,
-    level: str | int,
+    level: int,
     args: StrategyConfig,
     reporter: VerbCallbacks,
 ) -> CommunityReport | None:
