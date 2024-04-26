@@ -34,48 +34,43 @@ def compute_edge_combined_degree(
     edge_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
     if to in edge_df.columns:
         return TableContainer(table=edge_df)
-    node_df = _get_nodes_table(input)
+    node_degree_df = _get_node_degree_table(input, node_name_column, node_degree_column)
 
-    node_degree_df = cast(pd.DataFrame, node_df[[node_name_column, node_degree_column]])
-    combined_degree_df = edge_df.merge(
-        node_degree_df.rename(
-            columns={
-                node_name_column: edge_source_column,
-                node_degree_column: f"{edge_source_column}_degree",
-            }
-        ),
-        on=edge_source_column,
-        how="left",
-    )
-    combined_degree_df = combined_degree_df.merge(
-        node_degree_df.rename(
-            columns={
-                node_name_column: edge_target_column,
-                node_degree_column: f"{edge_target_column}_degree",
-            }
-        ),
-        on=edge_target_column,
-        how="left",
-    )
-    combined_degree_df[f"{edge_source_column}_degree"] = combined_degree_df[
-        f"{edge_source_column}_degree"
-    ].fillna(0)
-    combined_degree_df[f"{edge_target_column}_degree"] = combined_degree_df[
-        f"{edge_target_column}_degree"
-    ].fillna(0)
+    def join_to_degree(df: pd.DataFrame, column: str) -> pd.DataFrame:
+        degree_column = _degree_colname(column)
+        result = df.merge(
+            node_degree_df.rename(
+                columns={node_name_column: column, node_degree_column: degree_column}
+            ),
+            on=column,
+            how="left",
+        )
+        result[degree_column] = result[degree_column].fillna(0)
+        return result
+
+    combined_degree_df = join_to_degree(edge_df, edge_source_column)
+    combined_degree_df = join_to_degree(combined_degree_df, edge_target_column)
     combined_degree_df[to] = (
-        combined_degree_df[f"{edge_source_column}_degree"]
-        + combined_degree_df[f"{edge_target_column}_degree"]
+        combined_degree_df[_degree_colname(edge_source_column)]
+        + combined_degree_df[_degree_colname(edge_target_column)]
     )
 
     return TableContainer(table=combined_degree_df)
 
 
-def _get_nodes_table(input: VerbInput) -> pd.DataFrame:
+def _degree_colname(column: str) -> str:
+    return f"{column}_degree"
+
+
+def _get_node_degree_table(
+    input: VerbInput, node_name_column: str, node_degree_column: str
+) -> pd.DataFrame:
     named_inputs = input.named
     if named_inputs is None:
         raise ValueError(_NAMED_INPUTS_REQUIRED)
     nodes = named_inputs.get("nodes")
     if nodes is None:
         raise ValueError(_NODES_INPUT_REQUIRED)
-    return cast(pd.DataFrame, nodes.table)
+
+    nodes = cast(pd.DataFrame, nodes.table)
+    return cast(pd.DataFrame, nodes[[node_name_column, node_degree_column]])
