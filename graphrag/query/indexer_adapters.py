@@ -132,7 +132,7 @@ def read_indexer_entities(
 
 
 def _filter_under_community_level(
-    df: pd.DataFrame, community_level: int | str
+    df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
     return cast(
         pd.DataFrame,
