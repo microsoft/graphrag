@@ -17,9 +17,6 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
-from graphrag.query.input.retrieval.relationships import (
-    calculate_relationship_combined_rank,
-)
 
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
@@ -50,35 +47,10 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
     )
 
 
-def read_indexer_relationships(
-    final_relationships: pd.DataFrame, entities: list[Entity]
-) -> list[Relationship]:
+def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
-    relationship_df = final_relationships
-    relationship_df["id"] = relationship_df["id"].astype(str)
-    relationship_df["human_readable_id"] = relationship_df["human_readable_id"].astype(
-        str
-    )
-    relationship_df["weight"] = relationship_df["weight"].astype(float)
-    relationship_df["text_unit_ids"] = relationship_df["text_unit_ids"].apply(
-        lambda x: x.split(",")
-    )
-    relationship_df = cast(
-        pd.DataFrame,
-        relationship_df[
-            [
-                "id",
-                "human_readable_id",
-                "source",
-                "target",
-                "description",
-                "weight",
-                "text_unit_ids",
-            ]
-        ],
-    )
-    relationships = read_relationships(
-        df=relationship_df,
+    return read_relationships(
+        df=final_relationships,
         id_col="id",
         short_id_col="human_readable_id",
         source_col="source",
@@ -88,9 +60,6 @@ def read_indexer_relationships(
         description_embedding_col=None,
         text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
-    )
-    return calculate_relationship_combined_rank(
-        relationships=relationships, entities=entities, ranking_attribute="rank"
     )
 
 
@@ -102,13 +71,7 @@ def read_indexer_reports(
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
     entity_df = final_nodes
-    entity_df = cast(
-        pd.DataFrame,
-        entity_df[
-            (entity_df.type == "entity")
-            & (entity_df.level <= f"level_{community_level}")
-        ],
-    )
+    entity_df = _filter_under_community_level_str(entity_df, community_level)
     entity_df["community"] = entity_df["community"].fillna(-1)
     entity_df["community"] = entity_df["community"].astype(int)
 
@@ -118,13 +81,7 @@ def read_indexer_reports(
         "community_id"
     ].drop_duplicates()
 
-    report_df = cast(
-        pd.DataFrame, report_df[report_df.level <= f"level_{community_level}"]
-    )
-
-    report_df["rank"] = report_df["rank"].fillna(-1)
-    report_df["rank"] = report_df["rank"].astype(int)
-
+    report_df = _filter_under_community_level_str(report_df, community_level)
     report_df = report_df.merge(filtered_community_df, on="community_id", how="inner")
 
     return read_community_reports(
@@ -150,13 +107,7 @@ def read_indexer_entities(
     entity_df = final_nodes
     entity_embedding_df = final_entities
 
-    entity_df = cast(
-        pd.DataFrame,
-        entity_df[
-            (entity_df.type == "entity")
-            & (entity_df.level <= f"level_{community_level}")
-        ],
-    )
+    entity_df = _filter_under_community_level_str(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
     )
@@ -212,14 +163,3 @@ def _filter_under_community_level_str(
         pd.DataFrame,
         df[df.level <= f"level_{community_level}"],
     )
-
-
-def _entity_communities_under_level(
-    nodes: pd.DataFrame, community_level: int
-) -> pd.Series:
-    entity_df = _filter_under_community_level_str(nodes, community_level)
-    entity_df["community"] = entity_df["community"].fillna(-1)
-    entity_df["community"] = entity_df["community"].astype(int)
-    entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-    entity_df["community"] = entity_df["community"].astype(str)
-    return cast(pd.Series, entity_df["community"].drop_duplicates())

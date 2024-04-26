@@ -244,7 +244,7 @@ def read_community_reports(
             community_id=to_str(row, community_col),
             summary=to_str(row, summary_col),
             full_content=to_str(row, content_col),
-            rank=to_optional_int(row, rank_col),
+            rank=to_optional_float(row, rank_col),
             summary_embedding=to_optional_list(
                 row, summary_embedding_col, item_type=float
             ),

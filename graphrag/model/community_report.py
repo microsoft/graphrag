@@ -21,7 +21,7 @@ class CommunityReport(Named):
     full_content: str = ""
     """Full content of the report."""
 
-    rank: int | None = 1
+    rank: float | None = 1.0
     """Rank of the report, used for sorting (optional). Higher means more important"""
 
     summary_embedding: list[float] | None = None

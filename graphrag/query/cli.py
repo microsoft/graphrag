@@ -109,7 +109,7 @@ def run_local_search(
         ),
         text_units=read_indexer_text_units(final_text_units),
         entities=entities,
-        relationships=read_indexer_relationships(final_relationships, entities),
+        relationships=read_indexer_relationships(final_relationships),
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
         response_type=response_type,

@@ -26,8 +26,9 @@ log = logging.getLogger(__name__)
 
 
 async def run(
-    community: str,
-    input: dict,
+    community: str | int,
+    input: str,
+    level: str | int,
     reporter: VerbCallbacks,
     pipeline_cache: PipelineCache,
     args: StrategyConfig,
@@ -40,58 +41,54 @@ async def run(
     llm = load_llm(
         "community_reporting", llm_type, reporter, pipeline_cache, llm_config
     )
-    return await _run_extractor(llm, community, input, args, reporter)
+    return await _run_extractor(llm, community, input, level, args, reporter)
 
 
 async def _run_extractor(
     llm: CompletionLLM,
-    community: str,
-    input: dict,
+    community: str | int,
+    input: str,
+    level: str | int,
     args: StrategyConfig,
     reporter: VerbCallbacks,
 ) -> CommunityReport | None:
     extractor = CommunityReportsExtractor(
         llm,
         extraction_prompt=args.get("extraction_prompt", None),
+        max_report_length=args.get("max_report_length", None),
         on_error=lambda e, stack, _data: reporter.error(
             "Community Report Extraction Error", e, stack
         ),
-        max_report_length=args.get("max_report_length", None),
     )
 
     try:
-        chain_results = await extractor({
-            "input_text": input,
-        })
+        results = await extractor({"input_text": input})
+        report = results.structured_output
+        if report is None or len(report.keys()) == 0:
+            log.warning("No report found for community: %s", community)
+            return None
 
-        text_report = chain_results.output
-        report = chain_results.structured_output
-
-        if report is not None and len(report.keys()) > 0:
-            title = report.get("title", f"Community Report: {community}")
-            summary = report.get("summary", "")
-            rank = report.get("rating", -1)
-            rank_explanation = report.get("rating_explanation")
-            findings = report.get("findings", [])
-
-            try:
-                rank = float(rank)
-            except ValueError:
-                log.exception("Error parsing rank: %s defaulting to -1", rank)
-                rank = -1
-
-            report_dict = {
-                "community": community,
-                "title": title,
-                "full_content": text_report,
-                "summary": summary,
-                "rank": rank,
-                "rank_explanation": rank_explanation,
-                "findings": findings,
-                "full_content_json": json.dumps(report, indent=4),
-            }
-            return CommunityReport(**report_dict)
+        return CommunityReport(
+            community=community,
+            full_content=results.output,
+            level=level,
+            rank=_parse_rank(report),
+            title=report.get("title", f"Community Report: {community}"),
+            rank_explanation=report.get("rating_explanation", ""),
+            summary=report.get("summary", ""),
+            findings=report.get("findings", []),
+            full_content_json=json.dumps(report, indent=4),
+        )
     except Exception as e:
         log.exception("Error processing community: %s", community)
         reporter.error("Community Report Extraction Error", e, traceback.format_exc())
         return None
+
+
+def _parse_rank(report: dict) -> float:
+    rank = report.get("rating", -1)
+    try:
+        return float(rank)
+    except ValueError:
+        log.exception("Error parsing rank: %s defaulting to -1", rank)
+        return -1
