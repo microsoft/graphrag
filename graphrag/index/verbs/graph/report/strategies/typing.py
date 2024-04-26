@@ -34,7 +34,7 @@ class CommunityReport(TypedDict):
     full_content_json: str
     rank: float
     level: str | int
-    rank_explanation: str | None
+    rank_explanation: str
     findings: list[Finding]
 
 

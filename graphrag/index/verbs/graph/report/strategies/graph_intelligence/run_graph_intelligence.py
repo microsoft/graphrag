@@ -74,7 +74,7 @@ async def _run_extractor(
             level=level,
             rank=_parse_rank(report),
             title=report.get("title", f"Community Report: {community}"),
-            rank_explanation=report.get("rating_explanation"),
+            rank_explanation=report.get("rating_explanation", ""),
             summary=report.get("summary", ""),
             findings=report.get("findings", []),
             full_content_json=json.dumps(report, indent=4),
