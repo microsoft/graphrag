@@ -92,7 +92,7 @@
                 "description",
                 "graph_embedding",
                 "community",
-                "_raw_level_"
+                "level"
             ],
             "subworkflows": 10,
             "max_runtime": 10

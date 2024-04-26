@@ -8,7 +8,7 @@ NODE_DESCRIPTION = "description"
 NODE_DEGREE = "degree"
 NODE_DETAILS = "node_details"
 NODE_COMMUNITY = "community"
-NODE_LEVEL = "_raw_level_"
+NODE_LEVEL = "level"
 
 # POST-PREP EDGE TABLE SCHEMA
 EDGE_ID = "human_readable_id"
