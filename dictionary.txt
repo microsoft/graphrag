@@ -142,6 +142,7 @@ Morad
 Tahbaz
 payus
 dulce
+Asadi
 
 # English
 skippable
