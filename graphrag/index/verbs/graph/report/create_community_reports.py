@@ -70,8 +70,7 @@ async def create_community_reports(
         scheduling_type=async_mode,
         num_threads=kwargs.get("num_threads", 4),
     )
-    output = pd.DataFrame(reports)
-    return TableContainer(table=output)
+    return TableContainer(table=pd.DataFrame(reports))
 
 
 def load_strategy(
