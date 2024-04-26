@@ -136,6 +136,7 @@ def _filter_under_community_level_str(
 ) -> pd.DataFrame:
     return _filter_under_community_level(df, f"level_{community_level}")
 
+
 def _filter_under_community_level(
     df: pd.DataFrame, community_level: int | str
 ) -> pd.DataFrame:
