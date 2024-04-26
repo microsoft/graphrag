@@ -75,7 +75,7 @@ jobs:
       - name: Generate Indexer Outputs
         run: |
           poetry run poe test_smoke
-          cp -r tests/fixtures/min-csv/output/*/artifacts/*.parquet './docsite/data/operation_dulce'
+          zip -jrm docsite/data/operation_dulce/dataset.zip tests/fixtures/min-csv/output/*/artifacts/*.parquet
         
       - name: Build Jupyter Notebooks
         run: poetry run poe convert_docsite_notebooks
