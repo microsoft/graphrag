@@ -286,16 +286,15 @@ a {
 <span class="token keyword">import</span> tiktoken
 
 <span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>context_builder<span class="token punctuation">.</span>entity_extraction <span class="token keyword">import</span> EntityVectorStoreKey
-<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span><span class="token builtin">input</span><span class="token punctuation">.</span>loaders<span class="token punctuation">.</span>dfs <span class="token keyword">import</span> <span class="token punctuation">(</span>
-    read_community_reports<span class="token punctuation">,</span>
-    read_covariates<span class="token punctuation">,</span>
-    read_entities<span class="token punctuation">,</span>
-    read_relationships<span class="token punctuation">,</span>
-    read_text_units<span class="token punctuation">,</span>
-    store_entity_semantic_embeddings<span class="token punctuation">,</span>
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>indexer_adapters <span class="token keyword">import</span> <span class="token punctuation">(</span>
+    read_indexer_covariates<span class="token punctuation">,</span>
+    read_indexer_entities<span class="token punctuation">,</span>
+    read_indexer_relationships<span class="token punctuation">,</span>
+    read_indexer_reports<span class="token punctuation">,</span>
+    read_indexer_text_units<span class="token punctuation">,</span>
 <span class="token punctuation">)</span>
-<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span><span class="token builtin">input</span><span class="token punctuation">.</span>retrieval<span class="token punctuation">.</span>relationships <span class="token keyword">import</span> <span class="token punctuation">(</span>
-    calculate_relationship_combined_rank<span class="token punctuation">,</span>
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span><span class="token builtin">input</span><span class="token punctuation">.</span>loaders<span class="token punctuation">.</span>dfs <span class="token keyword">import</span> <span class="token punctuation">(</span>
+    store_entity_semantic_embeddings<span class="token punctuation">,</span>
 <span class="token punctuation">)</span>
 <span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>llm<span class="token punctuation">.</span>oai<span class="token punctuation">.</span>chat_openai <span class="token keyword">import</span> ChatOpenAI
 <span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>llm<span class="token punctuation">.</span>oai<span class="token punctuation">.</span>embedding <span class="token keyword">import</span> OpenAIEmbedding
@@ -339,54 +338,9 @@ COMMUNITY_LEVEL <span class="token operator">=</span> <span class="token number"
 <div style="position: relative">
   <pre class="language-python"><code id="code-25" class="language-python"><span class="token comment"># read nodes table to get community and degree data</span>
 entity_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>ENTITY_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
-entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">[</span>
-    <span class="token punctuation">(</span>entity_df<span class="token punctuation">.</span><span class="token builtin">type</span> <span class="token operator">==</span> <span class="token string">"entity"</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span> <span class="token punctuation">(</span>entity_df<span class="token punctuation">.</span>level <span class="token operator">&lt;=</span> <span class="token string-interpolation"><span class="token string">f"level_</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_LEVEL<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
-<span class="token punctuation">]</span>
-entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"title"</span><span class="token punctuation">,</span> <span class="token string">"degree"</span><span class="token punctuation">,</span> <span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">.</span>rename<span class="token punctuation">(</span>
-    columns<span class="token operator">=</span><span class="token punctuation">{</span><span class="token string">"title"</span><span class="token punctuation">:</span> <span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"degree"</span><span class="token punctuation">:</span> <span class="token string">"rank"</span><span class="token punctuation">}</span>
-<span class="token punctuation">)</span>
-
-entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>fillna<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
-entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-entity_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-
-<span class="token comment"># for duplicate entities, keep the one with the highest community level</span>
-entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">.</span>groupby<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token string">"rank"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">.</span>agg<span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token string">"community"</span><span class="token punctuation">:</span> <span class="token string">"max"</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span>reset_index<span class="token punctuation">(</span><span class="token punctuation">)</span>
-entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span> <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">apply</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-
 entity_embedding_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>ENTITY_EMBEDDING_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
-entity_embedding_df <span class="token operator">=</span> entity_embedding_df<span class="token punctuation">[</span>
-    <span class="token punctuation">[</span>
-        <span class="token string">"id"</span><span class="token punctuation">,</span>
-        <span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"name"</span><span class="token punctuation">,</span>
-        <span class="token string">"type"</span><span class="token punctuation">,</span>
-        <span class="token string">"description"</span><span class="token punctuation">,</span>
-        <span class="token string">"description_embedding"</span><span class="token punctuation">,</span>
-        <span class="token string">"text_unit_ids"</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span>
-<span class="token punctuation">]</span>
 
-entity_df <span class="token operator">=</span> entity_df<span class="token punctuation">.</span>merge<span class="token punctuation">(</span>
-    entity_embedding_df<span class="token punctuation">,</span> on<span class="token operator">=</span><span class="token string">"name"</span><span class="token punctuation">,</span> how<span class="token operator">=</span><span class="token string">"inner"</span>
-<span class="token punctuation">)</span><span class="token punctuation">.</span>drop_duplicates<span class="token punctuation">(</span>subset<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"name"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-
-<span class="token comment"># read entity dataframe to knowledge model objects</span>
-entities <span class="token operator">=</span> read_entities<span class="token punctuation">(</span>
-    df<span class="token operator">=</span>entity_df<span class="token punctuation">,</span>
-    id_col<span class="token operator">=</span><span class="token string">"id"</span><span class="token punctuation">,</span>
-    title_col<span class="token operator">=</span><span class="token string">"name"</span><span class="token punctuation">,</span>
-    type_col<span class="token operator">=</span><span class="token string">"type"</span><span class="token punctuation">,</span>
-    short_id_col<span class="token operator">=</span><span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-    description_col<span class="token operator">=</span><span class="token string">"description"</span><span class="token punctuation">,</span>
-    community_col<span class="token operator">=</span><span class="token string">"community"</span><span class="token punctuation">,</span>
-    rank_col<span class="token operator">=</span><span class="token string">"rank"</span><span class="token punctuation">,</span>
-    name_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    description_embedding_col<span class="token operator">=</span><span class="token string">"description_embedding"</span><span class="token punctuation">,</span>
-    graph_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    text_unit_ids_col<span class="token operator">=</span><span class="token string">"text_unit_ids"</span><span class="token punctuation">,</span>
-    document_ids_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-<span class="token punctuation">)</span>
+entities <span class="token operator">=</span> read_indexer_entities<span class="token punctuation">(</span>entity_df<span class="token punctuation">,</span> entity_embedding_df<span class="token punctuation">,</span> COMMUNITY_LEVEL<span class="token punctuation">)</span>
 
 <span class="token comment"># load description embeddings to an in-memory qdrant vectorstore</span>
 <span class="token comment"># to connect to a remote db, specify url and port values.</span>
@@ -409,39 +363,7 @@ entity_df<span class="token punctuation">.</span>head<span class="token punctuat
 
 <div style="position: relative">
   <pre class="language-python"><code id="code-29" class="language-python">relationship_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>RELATIONSHIP_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
-relationship_df <span class="token operator">=</span> relationship_df<span class="token punctuation">[</span>
-    <span class="token punctuation">[</span>
-        <span class="token string">"id"</span><span class="token punctuation">,</span>
-        <span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"source"</span><span class="token punctuation">,</span>
-        <span class="token string">"target"</span><span class="token punctuation">,</span>
-        <span class="token string">"description"</span><span class="token punctuation">,</span>
-        <span class="token string">"weight"</span><span class="token punctuation">,</span>
-        <span class="token string">"text_unit_ids"</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span>
-<span class="token punctuation">]</span>
-relationship_df<span class="token punctuation">[</span><span class="token string">"id"</span><span class="token punctuation">]</span> <span class="token operator">=</span> relationship_df<span class="token punctuation">[</span><span class="token string">"id"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">)</span>
-relationship_df<span class="token punctuation">[</span><span class="token string">"human_readable_id"</span><span class="token punctuation">]</span> <span class="token operator">=</span> relationship_df<span class="token punctuation">[</span><span class="token string">"human_readable_id"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">)</span>
-relationship_df<span class="token punctuation">[</span><span class="token string">"weight"</span><span class="token punctuation">]</span> <span class="token operator">=</span> relationship_df<span class="token punctuation">[</span><span class="token string">"weight"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">float</span><span class="token punctuation">)</span>
-relationship_df<span class="token punctuation">[</span><span class="token string">"text_unit_ids"</span><span class="token punctuation">]</span> <span class="token operator">=</span> relationship_df<span class="token punctuation">[</span><span class="token string">"text_unit_ids"</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">apply</span><span class="token punctuation">(</span>
-    <span class="token keyword">lambda</span> x<span class="token punctuation">:</span> x<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">","</span><span class="token punctuation">)</span>
-<span class="token punctuation">)</span>
-
-relationships <span class="token operator">=</span> read_relationships<span class="token punctuation">(</span>
-    df<span class="token operator">=</span>relationship_df<span class="token punctuation">,</span>
-    id_col<span class="token operator">=</span><span class="token string">"id"</span><span class="token punctuation">,</span>
-    short_id_col<span class="token operator">=</span><span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-    source_col<span class="token operator">=</span><span class="token string">"source"</span><span class="token punctuation">,</span>
-    target_col<span class="token operator">=</span><span class="token string">"target"</span><span class="token punctuation">,</span>
-    description_col<span class="token operator">=</span><span class="token string">"description"</span><span class="token punctuation">,</span>
-    weight_col<span class="token operator">=</span><span class="token string">"weight"</span><span class="token punctuation">,</span>
-    description_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    text_unit_ids_col<span class="token operator">=</span><span class="token string">"text_unit_ids"</span><span class="token punctuation">,</span>
-    document_ids_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-<span class="token punctuation">)</span>
-relationships <span class="token operator">=</span> calculate_relationship_combined_rank<span class="token punctuation">(</span>
-    relationships<span class="token operator">=</span>relationships<span class="token punctuation">,</span> entities<span class="token operator">=</span>entities<span class="token punctuation">,</span> ranking_attribute<span class="token operator">=</span><span class="token string">"rank"</span>
-<span class="token punctuation">)</span>
+relationships <span class="token operator">=</span> read_indexer_relationships<span class="token punctuation">(</span>relationship_df<span class="token punctuation">)</span>
 
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Relationship count: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>relationship_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 relationship_df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
@@ -452,59 +374,10 @@ relationship_df<span class="token punctuation">.</span>head<span class="token pu
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-30" class="language-python"><span class="token keyword">try</span><span class="token punctuation">:</span>
-    covariate_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COVARIATE_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
-    covariate_df <span class="token operator">=</span> <span class="token punctuation">(</span>
-        covariate_df<span class="token punctuation">[</span>
-            <span class="token punctuation">[</span>
-                <span class="token string">"id"</span><span class="token punctuation">,</span>
-                <span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-                <span class="token string">"type"</span><span class="token punctuation">,</span>
-                <span class="token string">"subject_id"</span><span class="token punctuation">,</span>
-                <span class="token string">"subject_type"</span><span class="token punctuation">,</span>
-                <span class="token string">"object_id"</span><span class="token punctuation">,</span>
-                <span class="token string">"status"</span><span class="token punctuation">,</span>
-                <span class="token string">"start_date"</span><span class="token punctuation">,</span>
-                <span class="token string">"end_date"</span><span class="token punctuation">,</span>
-                <span class="token string">"description"</span><span class="token punctuation">,</span>
-            <span class="token punctuation">]</span>
-        <span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token punctuation">)</span>
+  <pre class="language-python"><code id="code-30" class="language-python">covariate_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COVARIATE_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
 
-<span class="token keyword">except</span><span class="token punctuation">:</span>  <span class="token comment"># noqa: E722</span>
-    columns <span class="token operator">=</span> <span class="token punctuation">[</span>
-        <span class="token string">"id"</span><span class="token punctuation">,</span>
-        <span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"type"</span><span class="token punctuation">,</span>
-        <span class="token string">"subject_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"object_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"status"</span><span class="token punctuation">,</span>
-        <span class="token string">"start_date"</span><span class="token punctuation">,</span>
-        <span class="token string">"end_date"</span><span class="token punctuation">,</span>
-        <span class="token string">"description"</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span>
-    covariate_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>DataFrame<span class="token punctuation">(</span><span class="token punctuation">{</span>column<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token keyword">for</span> column <span class="token keyword">in</span> columns<span class="token punctuation">}</span><span class="token punctuation">)</span>
+claims <span class="token operator">=</span> read_indexer_covariates<span class="token punctuation">(</span>covariate_df<span class="token punctuation">)</span>
 
-covariate_df<span class="token punctuation">[</span><span class="token string">"id"</span><span class="token punctuation">]</span> <span class="token operator">=</span> covariate_df<span class="token punctuation">[</span><span class="token string">"id"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">)</span>
-covariate_df<span class="token punctuation">[</span><span class="token string">"human_readable_id"</span><span class="token punctuation">]</span> <span class="token operator">=</span> covariate_df<span class="token punctuation">[</span><span class="token string">"human_readable_id"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">)</span>
-
-claims <span class="token operator">=</span> read_covariates<span class="token punctuation">(</span>
-    df<span class="token operator">=</span>covariate_df<span class="token punctuation">,</span>
-    id_col<span class="token operator">=</span><span class="token string">"id"</span><span class="token punctuation">,</span>
-    short_id_col<span class="token operator">=</span><span class="token string">"human_readable_id"</span><span class="token punctuation">,</span>
-    subject_col<span class="token operator">=</span><span class="token string">"subject_id"</span><span class="token punctuation">,</span>
-    subject_type_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    covariate_type_col<span class="token operator">=</span><span class="token string">"type"</span><span class="token punctuation">,</span>
-    attributes_cols<span class="token operator">=</span><span class="token punctuation">[</span>
-        <span class="token string">"object_id"</span><span class="token punctuation">,</span>
-        <span class="token string">"status"</span><span class="token punctuation">,</span>
-        <span class="token string">"start_date"</span><span class="token punctuation">,</span>
-        <span class="token string">"end_date"</span><span class="token punctuation">,</span>
-        <span class="token string">"description"</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span><span class="token punctuation">,</span>
-    text_unit_ids_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    document_ids_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Claim records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>claims<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 covariates <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"claims"</span><span class="token punctuation">:</span> claims<span class="token punctuation">}</span></code></pre>
 
@@ -515,71 +388,32 @@ covariates <span class="token operator">=</span> <span class="token punctuation"
 <h4>Read community reports</h4>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-34" class="language-python"><span class="token comment"># get a list of communities from entity table</span>
-community_df <span class="token operator">=</span> entity_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
-community_df<span class="token punctuation">[</span><span class="token string">"community_id"</span><span class="token punctuation">]</span> <span class="token operator">=</span> community_df<span class="token punctuation">[</span><span class="token string">"community"</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token builtin">apply</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-community_df <span class="token operator">=</span> community_df<span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token string">"community_id"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">.</span>drop_duplicates<span class="token punctuation">(</span>subset<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"community_id"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Community records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>community_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-34" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-
-<div style="position: relative">
-  <pre class="language-python"><code id="code-35" class="language-python">report_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_REPORT_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
-report_df <span class="token operator">=</span> report_df<span class="token punctuation">[</span>report_df<span class="token punctuation">.</span>level <span class="token operator">&lt;=</span> <span class="token string-interpolation"><span class="token string">f"level_</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_LEVEL<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">]</span>
-
-report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span> <span class="token operator">=</span> report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>fillna<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
-report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span> <span class="token operator">=</span> report_df<span class="token punctuation">[</span><span class="token string">"rank"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>astype<span class="token punctuation">(</span><span class="token builtin">int</span><span class="token punctuation">)</span>
-
-report_df <span class="token operator">=</span> report_df<span class="token punctuation">.</span>merge<span class="token punctuation">(</span>community_df<span class="token punctuation">,</span> on<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span> how<span class="token operator">=</span><span class="token string">"inner"</span><span class="token punctuation">)</span>
-
-reports <span class="token operator">=</span> read_community_reports<span class="token punctuation">(</span>
-    df<span class="token operator">=</span>report_df<span class="token punctuation">,</span>
-    id_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
-    short_id_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
-    community_col<span class="token operator">=</span><span class="token string">"community_id"</span><span class="token punctuation">,</span>
-    title_col<span class="token operator">=</span><span class="token string">"title"</span><span class="token punctuation">,</span>
-    summary_col<span class="token operator">=</span><span class="token string">"summary"</span><span class="token punctuation">,</span>
-    content_col<span class="token operator">=</span><span class="token string">"full_content"</span><span class="token punctuation">,</span>
-    rank_col<span class="token operator">=</span><span class="token string">"rank"</span><span class="token punctuation">,</span>
-    summary_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    content_embedding_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-<span class="token punctuation">)</span>
+  <pre class="language-python"><code id="code-34" class="language-python">report_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_REPORT_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+reports <span class="token operator">=</span> read_indexer_reports<span class="token punctuation">(</span>report_df<span class="token punctuation">,</span> entity_df<span class="token punctuation">,</span> COMMUNITY_LEVEL<span class="token punctuation">)</span>
 
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Report records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>report_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 report_df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-35" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-34" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <h4>Read text units</h4>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-39" class="language-python">text_unit_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>TEXT_UNIT_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+  <pre class="language-python"><code id="code-38" class="language-python">text_unit_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>TEXT_UNIT_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+text_units <span class="token operator">=</span> read_indexer_text_units<span class="token punctuation">(</span>text_unit_df<span class="token punctuation">)</span>
 
-text_units <span class="token operator">=</span> read_text_units<span class="token punctuation">(</span>
-    df<span class="token operator">=</span>text_unit_df<span class="token punctuation">,</span>
-    id_col<span class="token operator">=</span><span class="token string">"id"</span><span class="token punctuation">,</span>
-    short_id_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    text_col<span class="token operator">=</span><span class="token string">"text"</span><span class="token punctuation">,</span>
-    embedding_col<span class="token operator">=</span><span class="token string">"text_embedding"</span><span class="token punctuation">,</span>
-    entities_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    relationships_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-    covariates_col<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
-<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Text unit records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>text_unit_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
 text_unit_df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-39" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-38" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-40" class="language-python">api_key <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_API_KEY"</span><span class="token punctuation">]</span>
+  <pre class="language-python"><code id="code-39" class="language-python">api_key <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_API_KEY"</span><span class="token punctuation">]</span>
 llm_model <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="token punctuation">]</span>
 embedding_model <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="token punctuation">]</span>
 
@@ -601,14 +435,14 @@ text_embedder <span class="token operator">=</span> OpenAIEmbedding<span class="
     max_retries<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">,</span>
 <span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-40" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-39" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <h3>Create local search context builder</h3>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-44" class="language-python">context_builder <span class="token operator">=</span> LocalSearchMixedContext<span class="token punctuation">(</span>
+  <pre class="language-python"><code id="code-43" class="language-python">context_builder <span class="token operator">=</span> LocalSearchMixedContext<span class="token punctuation">(</span>
     community_reports<span class="token operator">=</span>reports<span class="token punctuation">,</span>
     text_units<span class="token operator">=</span>text_units<span class="token punctuation">,</span>
     entities<span class="token operator">=</span>entities<span class="token punctuation">,</span>
@@ -620,14 +454,14 @@ text_embedder <span class="token operator">=</span> OpenAIEmbedding<span class="
     token_encoder<span class="token operator">=</span>token_encoder<span class="token punctuation">,</span>
 <span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-44" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-43" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <h3>Create local search engine</h3>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-48" class="language-python"><span class="token comment"># text_unit_prop: proportion of context window dedicated to related text units</span>
+  <pre class="language-python"><code id="code-47" class="language-python"><span class="token comment"># text_unit_prop: proportion of context window dedicated to related text units</span>
 <span class="token comment"># community_prop: proportion of context window dedicated to community reports.</span>
 <span class="token comment"># The remaining proportion is dedicated to entities and relationships. Sum of text_unit_prop and community_prop should be &lt;= 1</span>
 <span class="token comment"># conversation_history_max_turns: maximum number of turns to include in the conversation history.</span>
@@ -663,13 +497,13 @@ llm_params <span class="token operator">=</span> <span class="token punctuation"
     <span class="token string">"temperature"</span><span class="token punctuation">:</span> <span class="token number">0.0</span><span class="token punctuation">,</span>
 <span class="token punctuation">}</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-48" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-47" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-49" class="language-python">search_engine <span class="token operator">=</span> LocalSearch<span class="token punctuation">(</span>
+  <pre class="language-python"><code id="code-48" class="language-python">search_engine <span class="token operator">=</span> LocalSearch<span class="token punctuation">(</span>
     llm<span class="token operator">=</span>llm<span class="token punctuation">,</span>
     context_builder<span class="token operator">=</span>context_builder<span class="token punctuation">,</span>
     token_encoder<span class="token operator">=</span>token_encoder<span class="token punctuation">,</span>
@@ -678,34 +512,42 @@ llm_params <span class="token operator">=</span> <span class="token punctuation"
     response_type<span class="token operator">=</span><span class="token string">"multiple paragraphs"</span><span class="token punctuation">,</span>  <span class="token comment"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
 <span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-49" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-48" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <h3>Run local search on sample queries</h3>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-53" class="language-python">result <span class="token operator">=</span> <span class="token keyword">await</span> search_engine<span class="token punctuation">.</span>asearch<span class="token punctuation">(</span><span class="token string">"Tell me about Agent Mercer"</span><span class="token punctuation">)</span>
+  <pre class="language-python"><code id="code-52" class="language-python">result <span class="token operator">=</span> <span class="token keyword">await</span> search_engine<span class="token punctuation">.</span>asearch<span class="token punctuation">(</span><span class="token string">"Tell me about Agent Mercer"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-52" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-53" class="language-python">question <span class="token operator">=</span> <span class="token string">"Tell me about Dr. Jordan Hayes"</span>
+result <span class="token operator">=</span> <span class="token keyword">await</span> search_engine<span class="token punctuation">.</span>asearch<span class="token punctuation">(</span>question<span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-53" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
-
-<div style="position: relative">
-  <pre class="language-python"><code id="code-54" class="language-python">question <span class="token operator">=</span> <span class="token string">"Tell me about Dr. Jordan Hayes"</span>
-result <span class="token operator">=</span> <span class="token keyword">await</span> search_engine<span class="token punctuation">.</span>asearch<span class="token punctuation">(</span>question<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-54" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
 <h4>Inspecting the context data used to generate the response</h4>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-58" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"entities"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+  <pre class="language-python"><code id="code-57" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"entities"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-57" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-58" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"relationships"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-58" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
@@ -713,7 +555,7 @@ result <span class="token operator">=</span> <span class="token keyword">await</
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-59" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"relationships"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+  <pre class="language-python"><code id="code-59" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"reports"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-59" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
@@ -721,17 +563,9 @@ result <span class="token operator">=</span> <span class="token keyword">await</
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-60" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"reports"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+  <pre class="language-python"><code id="code-60" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"sources"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-60" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-
-<div style="position: relative">
-  <pre class="language-python"><code id="code-61" class="language-python">result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"sources"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-61" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
@@ -739,7 +573,7 @@ result <span class="token operator">=</span> <span class="token keyword">await</
 <p>This function takes a list of user queries and generates the next candidate questions.</p>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-68" class="language-python">question_generator <span class="token operator">=</span> LocalQuestionGen<span class="token punctuation">(</span>
+  <pre class="language-python"><code id="code-67" class="language-python">question_generator <span class="token operator">=</span> LocalQuestionGen<span class="token punctuation">(</span>
     llm<span class="token operator">=</span>llm<span class="token punctuation">,</span>
     context_builder<span class="token operator">=</span>context_builder<span class="token punctuation">,</span>
     token_encoder<span class="token operator">=</span>token_encoder<span class="token punctuation">,</span>
@@ -747,13 +581,13 @@ result <span class="token operator">=</span> <span class="token keyword">await</
     context_builder_params<span class="token operator">=</span>local_context_params<span class="token punctuation">,</span>
 <span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-68" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-67" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-69" class="language-python">question_history <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <pre class="language-python"><code id="code-68" class="language-python">question_history <span class="token operator">=</span> <span class="token punctuation">[</span>
     <span class="token string">"Tell me about Agent Mercer"</span><span class="token punctuation">,</span>
     <span class="token string">"What happens in Dulce military base?"</span><span class="token punctuation">,</span>
 <span class="token punctuation">]</span>
@@ -762,7 +596,7 @@ candidate_questions <span class="token operator">=</span> <span class="token key
 <span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>candidate_questions<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-69" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-68" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
