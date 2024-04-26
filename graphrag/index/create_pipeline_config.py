@@ -251,6 +251,7 @@ def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) 
         "strategy": settings.resolved_strategy(),
         "embedding_name": embedding_name,
         "vector_store": {
+            "type": vector_store_settings.get("type"),
             **(vector_store_settings.get("base") or {}),
             **(vector_store_settings.get(embedding_name) or {}),
         },

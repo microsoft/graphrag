@@ -262,6 +262,7 @@ def create_graphrag_config(
                 parallelization=hydrate_parallelization_params(
                     embeddings_config, llm_parallelization_model
                 ),
+                vector_store=embeddings_config.get("vector_store", None),
                 async_mode=hydrate_async_type(embeddings_config, async_mode),
                 target=TextEmbeddingTarget(embeddings_target)
                 if embeddings_target
