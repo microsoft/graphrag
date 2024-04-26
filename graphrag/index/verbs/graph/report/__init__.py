@@ -4,13 +4,13 @@
 
 from .build_community_local_contexts import build_community_local_contexts
 from .create_community_reports import (
+    CreateCommunityReportsStrategyType,
     create_community_reports,
 )
 from .prepare_community_reports_claims import prepare_community_reports_claims
 from .prepare_community_reports_edges import prepare_community_reports_edges
 from .prepare_community_reports_nodes import prepare_community_reports_nodes
 from .restore_community_hierarchy import restore_community_hierarchy
-from .types import CreateCommunityReportsStrategyType
 
 __all__ = [
     "CreateCommunityReportsStrategyType",
