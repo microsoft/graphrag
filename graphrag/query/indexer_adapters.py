@@ -60,6 +60,7 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
         description_embedding_col=None,
         text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
+        attributes_cols=["rank"],
     )
 
 
@@ -77,22 +78,15 @@ def read_indexer_reports(
 
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
     entity_df["community"] = entity_df["community"].astype(str)
-    filtered_community_df = entity_df.rename(columns={"community": "community_id"})[
-        "community_id"
-    ].drop_duplicates()
+    filtered_community_df = entity_df["community"].drop_duplicates()
 
     report_df = _filter_under_community_level_str(report_df, community_level)
-    report_df = report_df.merge(filtered_community_df, on="community_id", how="inner")
+    report_df = report_df.merge(filtered_community_df, on="community", how="inner")
 
     return read_community_reports(
         df=report_df,
-        id_col="community_id",
-        short_id_col="community_id",
-        community_col="community_id",
-        title_col="title",
-        summary_col="summary",
-        content_col="full_content",
-        rank_col="rank",
+        id_col="community",
+        short_id_col="community",
         summary_embedding_col=None,
         content_embedding_col=None,
     )
