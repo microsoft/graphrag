@@ -3,7 +3,6 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-from enum import Enum
 from typing import cast
 
 import pandas as pd
@@ -29,12 +28,6 @@ from graphrag.index.graph.extractors.community_reports import (
 log = logging.getLogger(__name__)
 
 _NAMED_INPUTS_REQUIRED = "Named inputs are required"
-
-
-class CreateCommunityReportsStrategyType(str, Enum):
-    """CreateCommunityReportsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
 
 
 @verb(name="build_community_local_contexts")

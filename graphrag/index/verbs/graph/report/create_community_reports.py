@@ -3,7 +3,6 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-from enum import Enum
 from typing import cast
 
 import pandas as pd
@@ -28,18 +27,9 @@ from graphrag.index.graph.extractors.community_reports import (
 from graphrag.index.utils.ds_util import get_required_input_table
 
 from .strategies.typing import CommunityReport, CommunityReportsStrategy
+from .types import CreateCommunityReportsStrategyType
 
 log = logging.getLogger(__name__)
-
-
-class CommunityReportsStrategyType(str, Enum):
-    """CommunityReportsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
 
 
 @verb(name="create_community_reports")
@@ -117,11 +107,11 @@ async def _generate_report(
 
 
 def load_strategy(
-    strategy: CommunityReportsStrategyType,
+    strategy: CreateCommunityReportsStrategyType,
 ) -> CommunityReportsStrategy:
     """Load strategy method definition."""
     match strategy:
-        case CommunityReportsStrategyType.graph_intelligence:
+        case CreateCommunityReportsStrategyType.graph_intelligence:
             from .strategies.graph_intelligence import run
 
             return run
