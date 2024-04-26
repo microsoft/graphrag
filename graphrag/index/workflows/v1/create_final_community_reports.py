@@ -47,39 +47,15 @@ def build_steps(
             "verb": "create_community_reports",
             "args": {
                 **create_community_reports_config,
-                "to": "community_report",
                 "async_mode": create_community_reports_config.get(
                     "async_mode", AsyncType.AsyncIO
                 ),
             },
         },
         {
-            "verb": "select",
-            "args": {
-                "columns": [
-                    "level",
-                    "community_report",
-                ]
-            },
-        },
-        {
-            "verb": "spread_json",
-            "args": {
-                "column": "community_report",
-            },
-        },
-        {
-            "verb": "rename",
-            "args": {
-                "columns": {
-                    "community": "community_id",
-                },
-            },
-        },
-        {
             # Generate a unique ID for each community report distinct from the community ID
             "verb": "window",
-            "args": {"to": "id", "operation": "uuid", "column": "community_id"},
+            "args": {"to": "id", "operation": "uuid", "column": "community"},
         },
         {
             "verb": "text_embed",
