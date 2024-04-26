@@ -25,12 +25,11 @@ from graphrag.index.graph.extractors.community_reports import (
     get_levels,
     prep_community_report_context,
 )
+from graphrag.index.utils.ds_util import get_required_input_table
 
 from .strategies.typing import CommunityReport, CommunityReportsStrategy
 
 log = logging.getLogger(__name__)
-
-_NAMED_INPUTS_REQUIRED = "Named inputs are required"
 
 
 class CommunityReportsStrategyType(str, Enum):
@@ -55,24 +54,15 @@ async def create_community_reports(
 ) -> TableContainer:
     """Generate entities for each row, and optionally a graph of those entities."""
     log.debug("create_community_reports strategy=%s", strategy)
-    named_inputs = input.named
-    if named_inputs is None:
-        raise ValueError(_NAMED_INPUTS_REQUIRED)
-
-    def get_table(name: str) -> pd.DataFrame:
-        container = named_inputs.get(name)
-        if container is None:
-            msg = f"Missing input: {name}"
-            raise ValueError(msg)
-        return cast(pd.DataFrame, container.table)
-
-    nodes = get_table("nodes")
-    community_hierarchy = get_table("community_hierarchy")
     local_contexts = cast(pd.DataFrame, input.get_input())
+    nodes_ctr = get_required_input_table(input, "nodes")
+    nodes = cast(pd.DataFrame, nodes_ctr.table)
+    community_hierarchy_ctr = get_required_input_table(input, "community_hierarchy")
+    community_hierarchy = cast(pd.DataFrame, community_hierarchy_ctr.table)
+
     levels = get_levels(nodes)
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
-
     runner = load_strategy(strategy["type"])
 
     for level in levels:

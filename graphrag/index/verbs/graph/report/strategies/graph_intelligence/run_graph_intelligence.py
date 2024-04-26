@@ -55,37 +55,26 @@ async def _run_extractor(
     extractor = CommunityReportsExtractor(
         llm,
         extraction_prompt=args.get("extraction_prompt", None),
+        max_report_length=args.get("max_report_length", None),
         on_error=lambda e, stack, _data: reporter.error(
             "Community Report Extraction Error", e, stack
         ),
-        max_report_length=args.get("max_report_length", None),
     )
 
     try:
-        results = await extractor({
-            "input_text": input,
-        })
-
-        text_report = results.output
+        results = await extractor({"input_text": input})
         report = results.structured_output
         if report is None or len(report.keys()) == 0:
             log.warning("No report found for community: %s", community)
             return None
 
-        rank = report.get("rating", -1)
-        try:
-            rank = float(rank)
-        except ValueError:
-            log.exception("Error parsing rank: %s defaulting to -1", rank)
-            rank = -1
-
         return CommunityReport(
             community=community,
-            full_content=text_report,
+            full_content=results.output,
             level=level,
-            rank=rank,
+            rank=_parse_rank(report),
             title=report.get("title", f"Community Report: {community}"),
-            rank_explanation=report.get("rating_explanation"),
+            rank_explanation=report.get("rating_explanation", ""),
             summary=report.get("summary", ""),
             findings=report.get("findings", []),
             full_content_json=json.dumps(report, indent=4),
@@ -94,3 +83,12 @@ async def _run_extractor(
         log.exception("Error processing community: %s", community)
         reporter.error("Community Report Extraction Error", e, traceback.format_exc())
         return None
+
+
+def _parse_rank(report: dict) -> float:
+    rank = report.get("rating", -1)
+    try:
+        return float(rank)
+    except ValueError:
+        log.exception("Error parsing rank: %s defaulting to -1", rank)
+        return -1
