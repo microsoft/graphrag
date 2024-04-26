@@ -67,6 +67,10 @@ jobs:
 
       - name: Install Poetry dependencies
         run: poetry install
+
+      - name: Install Azurite
+        id: azuright
+        uses: potatoqualitee/azuright@v1.1
   
       - name: Generate Indexer Outputs
         run: |
