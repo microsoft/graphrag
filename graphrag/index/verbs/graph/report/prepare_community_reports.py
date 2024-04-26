@@ -30,8 +30,8 @@ log = logging.getLogger(__name__)
 _NAMED_INPUTS_REQUIRED = "Named inputs are required"
 
 
-@verb(name="build_community_local_contexts")
-def build_community_local_contexts(
+@verb(name="prepare_community_reports")
+def prepare_community_reports(
     input: VerbInput,
     callbacks: VerbCallbacks,
     max_tokens: int = 16_000,

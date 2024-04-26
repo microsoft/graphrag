@@ -107,7 +107,7 @@ async def _generate_report(
     callbacks: VerbCallbacks,
     strategy: dict,
     community_id: int | str,
-    community_level: int | str,
+    community_level: int,
     community_context: str,
 ) -> CommunityReport | None:
     """Generate a report for a single community."""

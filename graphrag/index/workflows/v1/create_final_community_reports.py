@@ -71,7 +71,7 @@ def build_steps(
         #
         {
             "id": "local_contexts",
-            "verb": "build_community_local_contexts",
+            "verb": "prepare_community_reports",
             "input": {
                 "source": "nodes",
                 "nodes": "nodes",
