@@ -19,6 +19,7 @@ from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
 log = logging.getLogger(__name__)
 
 debug = os.environ.get("DEBUG") is not None
+gh_pages = os.environ.get("GH_PAGES") is not None
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
@@ -28,7 +29,8 @@ def _load_fixtures():
     """Load all fixtures from the tests/data folder."""
     params = []
     fixtures_path = Path("./tests/fixtures/")
-    subfolders = sorted(os.listdir(fixtures_path))
+    # use the min-csv smoke test to hydrate the docsite parquet artifacts (see gh-pages.yml)
+    subfolders = sorted(os.listdir(fixtures_path)) if gh_pages else ["min-csv"]
 
     for subfolder in subfolders:
         if not os.path.isdir(fixtures_path / subfolder):
