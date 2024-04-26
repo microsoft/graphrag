@@ -101,10 +101,7 @@ def __get_entities(
     entity_df: pd.DataFrame = pd.read_parquet(data_dir / "create_final_nodes.parquet")
     entity_df = cast(
         pd.DataFrame,
-        entity_df[
-            (entity_df.type == "entity")
-            & (entity_df.level <= f"level_{community_level}")
-        ],
+        entity_df[entity_df.level <= f"level_{community_level}"],
     )
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
