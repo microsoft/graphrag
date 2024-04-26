@@ -36,10 +36,9 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
     """Read in the Claims from the raw indexing outputs."""
     covariate_df = final_covariates
     covariate_df["id"] = covariate_df["id"].astype(str)
-    covariate_df["human_readable_id"] = covariate_df["human_readable_id"].astype(str)
     return read_covariates(
         df=covariate_df,
-        short_id_col="human_readable_id",
+        short_id_col=None,
         attributes_cols=[
             "object_id",
             "status",
@@ -55,9 +54,18 @@ def read_indexer_relationships(
     final_relationships: pd.DataFrame, entities: list[Entity]
 ) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
+    relationship_df = final_relationships
+    relationship_df["id"] = relationship_df["id"].astype(str)
+    relationship_df["human_readable_id"] = relationship_df["human_readable_id"].astype(
+        str
+    )
+    relationship_df["weight"] = relationship_df["weight"].astype(float)
+    relationship_df["text_unit_ids"] = relationship_df["text_unit_ids"].apply(
+        lambda x: x.split(",")
+    )
     relationship_df = cast(
         pd.DataFrame,
-        final_relationships[
+        relationship_df[
             [
                 "id",
                 "human_readable_id",
@@ -69,15 +77,6 @@ def read_indexer_relationships(
             ]
         ],
     )
-    relationship_df["id"] = relationship_df["id"].astype(str)
-    relationship_df["human_readable_id"] = relationship_df["human_readable_id"].astype(
-        str
-    )
-    relationship_df["weight"] = relationship_df["weight"].astype(float)
-    relationship_df["text_unit_ids"] = relationship_df["text_unit_ids"].apply(
-        lambda x: x.split(",")
-    )
-
     relationships = read_relationships(
         df=relationship_df,
         id_col="id",
