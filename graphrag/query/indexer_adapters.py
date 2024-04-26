@@ -35,7 +35,7 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
     covariate_df["id"] = covariate_df["id"].astype(str)
     return read_covariates(
         df=covariate_df,
-        short_id_col=None,
+        short_id_col="human_readable_id",
         attributes_cols=[
             "object_id",
             "status",
@@ -51,14 +51,8 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
     """Read in the Relationships from the raw indexing outputs."""
     return read_relationships(
         df=final_relationships,
-        id_col="id",
         short_id_col="human_readable_id",
-        source_col="source",
-        target_col="target",
-        description_col="description",
-        weight_col="weight",
         description_embedding_col=None,
-        text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
         attributes_cols=["rank"],
     )
@@ -115,19 +109,6 @@ def read_indexer_entities(
         entity_df.groupby(["name", "rank"]).agg({"community": "max"}).reset_index()
     )
     entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
-
-    entity_embedding_df = entity_embedding_df[
-        [
-            "id",
-            "human_readable_id",
-            "name",
-            "type",
-            "description",
-            "description_embedding",
-            "text_unit_ids",
-        ]
-    ]
-
     entity_df = entity_df.merge(
         entity_embedding_df, on="name", how="inner"
     ).drop_duplicates(subset=["name"])
@@ -153,7 +134,13 @@ def read_indexer_entities(
 def _filter_under_community_level_str(
     df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
+    return _filter_under_community_level(df, f"level_{community_level}")
+
+
+def _filter_under_community_level(
+    df: pd.DataFrame, community_level: int | str
+) -> pd.DataFrame:
     return cast(
         pd.DataFrame,
-        df[df.level <= f"level_{community_level}"],
+        df[df.level <= community_level],
     )
