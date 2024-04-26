@@ -48,14 +48,14 @@ def compute_edge_combined_degree(
         result[degree_column] = result[degree_column].fillna(0)
         return result
 
-    combined_degree_df = join_to_degree(edge_df, edge_source_column)
-    combined_degree_df = join_to_degree(combined_degree_df, edge_target_column)
-    combined_degree_df[to] = (
-        combined_degree_df[_degree_colname(edge_source_column)]
-        + combined_degree_df[_degree_colname(edge_target_column)]
+    edge_df = join_to_degree(edge_df, edge_source_column)
+    edge_df = join_to_degree(edge_df, edge_target_column)
+    edge_df[to] = (
+        edge_df[_degree_colname(edge_source_column)]
+        + edge_df[_degree_colname(edge_target_column)]
     )
 
-    return TableContainer(table=combined_degree_df)
+    return TableContainer(table=edge_df)
 
 
 def _degree_colname(column: str) -> str:
