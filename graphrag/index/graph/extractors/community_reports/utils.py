@@ -24,12 +24,13 @@ def set_context_exceeds_flag(df: pd.DataFrame, max_tokens: int) -> None:
 
 def get_levels(df: pd.DataFrame, level_column: str = schemas.NODE_LEVEL) -> list[int]:
     """Get the levels of the communities."""
-    return sorted(df[level_column].notna().astype(int).unique().tolist(), reverse=True)
+    result = sorted(df[level_column].fillna(-1).unique().tolist(), reverse=True)
+    return [r for r in result if r != -1]
 
 
 def filter_nodes_to_level(node_df: pd.DataFrame, level: int) -> pd.DataFrame:
     """Filter nodes to level."""
-    return cast(pd.DataFrame, node_df[node_df[schemas.NODE_LEVEL] == str(level)])
+    return cast(pd.DataFrame, node_df[node_df[schemas.NODE_LEVEL] == level])
 
 
 def filter_edges_to_nodes(edge_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:

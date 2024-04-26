@@ -83,7 +83,6 @@ itertuples
 isin
 nocache
 nbconvert
-notna
 
 # Verbs
 binarize
