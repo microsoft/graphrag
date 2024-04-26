@@ -131,7 +131,7 @@ def read_indexer_entities(
     )
 
 
-def _filter_under_community_level_str(
+def _filter_under_community_level(
     df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
     return _filter_under_community_level(df, f"level_{community_level}")

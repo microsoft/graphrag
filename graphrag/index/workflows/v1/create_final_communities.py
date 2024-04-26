@@ -65,9 +65,9 @@ def build_steps(
             "args": {
                 # level_1 is the left side of the join
                 # level_2 is the right side of the join
-                "column": "level_1",
+                "column": "1",
                 "criteria": [
-                    {"type": "column", "operator": "equals", "value": "level_2"}
+                    {"type": "column", "operator": "equals", "value": "2"}
                 ],
             },
             "input": {"source": "concatenated_clusters"},
@@ -78,7 +78,7 @@ def build_steps(
             "args": {
                 "groupby": [
                     "cluster",
-                    "level_1",  # level_1 is the left side of the join
+                    "1",  # level_1 is the left side of the join
                 ],
                 "aggregations": [
                     {
@@ -118,7 +118,7 @@ def build_steps(
                 # level_1 is the right side of the join
                 "column": "level",
                 "criteria": [
-                    {"type": "column", "operator": "equals", "value": "level_1"}
+                    {"type": "column", "operator": "equals", "value": "1"}
                 ],
             },
         },

@@ -40,7 +40,7 @@ def build_steps(
             "args": {
                 "column": "level",
                 "criteria": [
-                    {"type": "value", "operator": "equals", "value": "level_0"}
+                    {"type": "value", "operator": "equals", "value": 0}
                 ],
             },
         },
