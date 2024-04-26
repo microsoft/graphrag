@@ -4,7 +4,7 @@
 
 from .build_community_local_contexts import build_community_local_contexts
 from .create_community_reports import (
-    CommunityReportsStrategyType,
+    CreateCommunityReportsStrategyType,
     create_community_reports,
 )
 from .prepare_community_reports_claims import prepare_community_reports_claims
@@ -13,7 +13,7 @@ from .prepare_community_reports_nodes import prepare_community_reports_nodes
 from .restore_community_hierarchy import restore_community_hierarchy
 
 __all__ = [
-    "CommunityReportsStrategyType",
+    "CreateCommunityReportsStrategyType",
     "build_community_local_contexts",
     "create_community_reports",
     "create_community_reports",

@@ -32,8 +32,8 @@ from .strategies.typing import CommunityReport, CommunityReportsStrategy
 log = logging.getLogger(__name__)
 
 
-class CommunityReportsStrategyType(str, Enum):
-    """CommunityReportsStrategyType class definition."""
+class CreateCommunityReportsStrategyType(str, Enum):
+    """CreateCommunityReportsStrategyType class definition."""
 
     graph_intelligence = "graph_intelligence"
 
@@ -117,11 +117,11 @@ async def _generate_report(
 
 
 def load_strategy(
-    strategy: CommunityReportsStrategyType,
+    strategy: CreateCommunityReportsStrategyType,
 ) -> CommunityReportsStrategy:
     """Load strategy method definition."""
     match strategy:
-        case CommunityReportsStrategyType.graph_intelligence:
+        case CreateCommunityReportsStrategyType.graph_intelligence:
             from .strategies.graph_intelligence import run
 
             return run
