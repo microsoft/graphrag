@@ -26,9 +26,6 @@ from graphrag.query.input.loaders.dfs import (
     read_text_units,
     store_entity_semantic_embeddings,
 )
-from graphrag.query.input.retrieval.relationships import (
-    calculate_relationship_combined_rank,
-)
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
@@ -162,47 +159,17 @@ def __get_entities(
     return entities
 
 
-def __get_relationships(data_dir: Path, entities):
+def __get_relationships(data_dir: Path):
     relationship_df: pd.DataFrame = pd.read_parquet(
         data_dir / "create_final_relationships.parquet"
     )
-    relationship_df = cast(
-        pd.DataFrame,
-        relationship_df[
-            [
-                "id",
-                "human_readable_id",
-                "source",
-                "target",
-                "description",
-                "weight",
-                "text_unit_ids",
-            ]
-        ],
-    )
-    relationship_df["id"] = relationship_df["id"].astype(str)
-    relationship_df["human_readable_id"] = relationship_df["human_readable_id"].astype(
-        str
-    )
-    relationship_df["weight"] = relationship_df["weight"].astype(float)
-    relationship_df["text_unit_ids"] = relationship_df["text_unit_ids"].apply(
-        lambda x: x.split(",")
-    )
 
-    relationships = read_relationships(
+    return read_relationships(
         df=relationship_df,
-        id_col="id",
         short_id_col="human_readable_id",
-        source_col="source",
-        target_col="target",
-        description_col="description",
-        weight_col="weight",
         description_embedding_col=None,
-        text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
-    )
-    return calculate_relationship_combined_rank(
-        relationships=relationships, entities=entities, ranking_attribute="rank"
+        attributes_cols=["rank"],
     )
 
 
@@ -459,7 +426,7 @@ def run_local_search(
         reports=__get_reports(data_dir=Path(data_dir), community_level=community_level),
         text_units=__get_text_units(data_dir=Path(data_dir)),
         entities=entities,
-        relationships=__get_relationships(data_dir=Path(data_dir), entities=entities),
+        relationships=__get_relationships(data_dir=Path(data_dir)),
         covariates=__get_claims(data_dir=Path(data_dir)),
         description_embedding_store=description_embedding_store,
         text_embedder=__get_text_embedder(config),
