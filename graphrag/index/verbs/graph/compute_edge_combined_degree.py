@@ -7,8 +7,7 @@ from typing import cast
 import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
-_NAMED_INPUTS_REQUIRED = "Named inputs are required"
-_NODES_INPUT_REQUIRED = "Nodes input is required"
+from graphrag.index.utils.ds_util import get_required_input_table
 
 
 @verb(name="compute_edge_combined_degree")
@@ -65,12 +64,6 @@ def _degree_colname(column: str) -> str:
 def _get_node_degree_table(
     input: VerbInput, node_name_column: str, node_degree_column: str
 ) -> pd.DataFrame:
-    named_inputs = input.named
-    if named_inputs is None:
-        raise ValueError(_NAMED_INPUTS_REQUIRED)
-    nodes = named_inputs.get("nodes")
-    if nodes is None:
-        raise ValueError(_NODES_INPUT_REQUIRED)
-
-    nodes = cast(pd.DataFrame, nodes.table)
+    nodes_container = get_required_input_table(input, "nodes")
+    nodes = cast(pd.DataFrame, nodes_container.table)
     return cast(pd.DataFrame, nodes[[node_name_column, node_degree_column]])
