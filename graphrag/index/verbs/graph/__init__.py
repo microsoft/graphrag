@@ -8,7 +8,13 @@ from .create import DEFAULT_EDGE_ATTRIBUTES, DEFAULT_NODE_ATTRIBUTES, create_gra
 from .embed import embed_graph
 from .layout import layout_graph
 from .merge import merge_graphs
-from .report import create_community_reports, prepare_community_reports
+from .report import (
+    create_community_reports,
+    prepare_community_reports,
+    prepare_community_reports_claims,
+    prepare_community_reports_edges,
+    restore_community_hierarchy,
+)
 from .unpack import unpack_graph
 
 __all__ = [
@@ -22,5 +28,8 @@ __all__ = [
     "layout_graph",
     "merge_graphs",
     "prepare_community_reports",
+    "prepare_community_reports_claims",
+    "prepare_community_reports_edges",
+    "restore_community_hierarchy",
     "unpack_graph",
 ]

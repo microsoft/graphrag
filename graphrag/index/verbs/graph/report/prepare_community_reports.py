@@ -2,130 +2,164 @@
 
 """A module containing create_community_reports and load_strategy methods definition."""
 
-from enum import Enum
-from random import Random
-from typing import Any, cast
+import logging
+from typing import cast
 
-import networkx as nx
 import pandas as pd
 from datashaper import (
-    AsyncType,
     TableContainer,
     VerbCallbacks,
     VerbInput,
-    derive_from_rows,
+    progress_iterable,
     verb,
 )
 
-from graphrag.index.graph.extractors import prep_community_reports_data
-from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.utils import gen_uuid, load_graph
+import graphrag.index.graph.extractors.community_reports.schemas as schemas
+from graphrag.index.graph.extractors.community_reports import (
+    filter_claims_to_nodes,
+    filter_edges_to_nodes,
+    filter_nodes_to_level,
+    get_levels,
+    set_context_exceeds_flag,
+    set_context_size,
+    sort_context,
+)
+from graphrag.index.utils.ds_util import get_required_input_table
 
-DEFAULT_INPUT_LENGTH = 12_000
-
-
-class CreateCommunityReportsStrategyType(str, Enum):
-    """CreateCommunityReportsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
+log = logging.getLogger(__name__)
 
 
 @verb(name="prepare_community_reports")
-async def prepare_community_reports(
+def prepare_community_reports(
     input: VerbInput,
     callbacks: VerbCallbacks,
-    graph_column: str,
-    strategy: dict[str, Any],
-    level_column: str = "level",
-    claims_column: str | None = None,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    **kwargs,
+    max_tokens: int = 16_000,
+    community_id_column: str = schemas.COMMUNITY_ID,
+    node_id_column: str = schemas.NODE_ID,
+    node_name_column: str = schemas.NODE_NAME,
+    node_details_column: str = schemas.NODE_DETAILS,
+    node_level_column: str = schemas.NODE_LEVEL,
+    node_degree_column: str = schemas.NODE_DEGREE,
+    node_community_column: str = schemas.NODE_COMMUNITY,
+    edge_id_column: str = schemas.EDGE_ID,
+    edge_source_column: str = schemas.EDGE_SOURCE,
+    edge_target_column: str = schemas.EDGE_TARGET,
+    edge_degree_column: str = schemas.EDGE_DEGREE,
+    edge_details_column: str = schemas.EDGE_DETAILS,
+    claim_id_column: str = schemas.CLAIM_ID,
+    claim_subject_column: str = schemas.CLAIM_SUBJECT,
+    claim_details_column: str = schemas.CLAIM_DETAILS,
+    **_kwargs,
 ) -> TableContainer:
     """Generate entities for each row, and optionally a graph of those entities."""
-    strategy_args = {**strategy}
+    # Prepare Community Reports
+    node_df = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
+    edge_df = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
+    claim_df = cast(pd.DataFrame, get_required_input_table(input, "claims").table)
 
-    async def prepare_row(row) -> tuple[list[str], list[int], list[dict]]:  # noqa RUF029 async is required for interface
-        claims = row[claims_column] if claims_column is not None else None
-        graph_xml: str = cast(str, row[graph_column])
-        level = row[level_column]
-        graph = load_graph(graph_xml)
-
-        nodes, edges = _load_nodes_edges_for_claim_chain(
-            graph, strategy_args.get("use_lcc", True)
-        )
-        max_input_length = strategy_args.get("max_input_length", DEFAULT_INPUT_LENGTH)
-        input_data = prep_community_reports_data(
-            nodes=nodes,
-            edges=edges,
-            claims=cast(list[dict] | None, claims),
-            max_tokens=max_input_length,
+    def get_edge_details(node_df: pd.DataFrame, edge_df: pd.DataFrame, name_col: str):
+        return node_df.merge(
+            cast(
+                pd.DataFrame,
+                edge_df[[name_col, edge_details_column]],
+            ).rename(columns={name_col: node_name_column}),
+            on=node_name_column,
+            how="left",
         )
 
-        excluded_communities = strategy_args.get("excluded_communities", [])
-        communities = sorted([c for c in input_data if c not in excluded_communities])
-        levels = [level] * len(communities)
-        input = [input_data[community] for community in communities]
-        return communities, levels, input
+    levels = get_levels(node_df, node_level_column)
+    dfs = []
 
-    results = await derive_from_rows(
-        cast(pd.DataFrame, input.get_input()),
-        prepare_row,
-        callbacks,
-        scheduling_type=async_mode,
-        num_threads=kwargs.get("num_threads", 4),
-    )
+    for level in progress_iterable(levels, callbacks.progress, len(levels)):
+        level_node_df = filter_nodes_to_level(node_df, level)
+        log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
+        nodes = level_node_df[node_name_column].tolist()
 
-    all_communities: list[str] = []
-    all_levels: list[int] = []
-    all_input: list[dict] = []
-    for t in results:
-        if t is not None:
-            t_communities, t_levels, t_in = t
-            all_communities += t_communities
-            all_levels += t_levels
-            all_input += t_in
+        # Filter edges & claims to those containing the target nodes
+        level_edge_df = filter_edges_to_nodes(edge_df, nodes)
+        level_claim_df = filter_claims_to_nodes(claim_df, nodes)
 
-    return TableContainer(
-        table=pd.DataFrame({
-            "community": all_communities,
-            "input": all_input,
-            "level": all_levels,
-        })
-    )
+        # concat all edge details per node
+        merged_node_df = pd.concat(
+            [
+                get_edge_details(level_node_df, level_edge_df, edge_source_column),
+                get_edge_details(level_node_df, level_edge_df, edge_target_column),
+            ],
+            axis=0,
+        )
+        merged_node_df = (
+            merged_node_df.groupby([
+                node_name_column,
+                node_community_column,
+                node_degree_column,
+                node_level_column,
+            ])
+            .agg({node_details_column: "first", edge_details_column: list})
+            .reset_index()
+        )
 
+        # concat claim details per node
+        merged_node_df = merged_node_df.merge(
+            cast(
+                pd.DataFrame,
+                level_claim_df[[claim_subject_column, claim_details_column]],
+            ).rename(columns={claim_subject_column: node_name_column}),
+            on=node_name_column,
+            how="left",
+        )
+        merged_node_df = (
+            merged_node_df.groupby([
+                node_name_column,
+                node_community_column,
+                node_level_column,
+                node_degree_column,
+            ])
+            .agg({
+                node_details_column: "first",
+                edge_details_column: "first",
+                claim_details_column: list,
+            })
+            .reset_index()
+        )
 
-def _load_nodes_edges_for_claim_chain(
-    graph: nx.Graph,
-    use_lcc: bool,
-    seed: int = 0xD3ADF00D,
-) -> tuple[list[dict], list[dict]]:
-    nodes = []
-    random = Random(seed)  # noqa S311
+        # concat all node details, including name, degree, node_details, edge_details, and claim_details
+        merged_node_df[schemas.ALL_CONTEXT] = merged_node_df.apply(
+            lambda x: {
+                node_name_column: x[node_name_column],
+                node_degree_column: x[node_degree_column],
+                node_details_column: x[node_details_column],
+                edge_details_column: x[edge_details_column],
+                claim_details_column: x[claim_details_column],
+            },
+            axis=1,
+        )
 
-    if use_lcc:
-        graph = stable_largest_connected_component(graph)
+        # group all node details by community
+        community_df = (
+            merged_node_df.groupby(node_community_column)
+            .agg({schemas.ALL_CONTEXT: list})
+            .reset_index()
+        )
+        community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
+            lambda x: sort_context(
+                x,
+                node_id_column=node_id_column,
+                node_name_column=node_name_column,
+                node_details_column=node_details_column,
+                edge_id_column=edge_id_column,
+                edge_details_column=edge_details_column,
+                edge_degree_column=edge_degree_column,
+                edge_source_column=edge_source_column,
+                edge_target_column=edge_target_column,
+                claim_id_column=claim_id_column,
+                claim_details_column=claim_details_column,
+                community_id_column=community_id_column,
+            )
+        )
+        set_context_size(community_df)
+        set_context_exceeds_flag(community_df, max_tokens)
+        community_df[schemas.COMMUNITY_LEVEL] = level
+        dfs.append(community_df)
 
-    # The extra "sorted" here, ensures that if we run the same graph twice, we get the same results
-    for index, node in enumerate(sorted(graph.nodes(data=True), key=lambda x: x[0])):
-        if node is not None:
-            node_attributes = node[1] or {}
-            node_attributes["label"] = node[0]
-            node_attributes["record_id"] = index
-            nodes.append(node_attributes)
-
-    edges = []
-
-    # The extra "sorted" here, ensures that if we run the same graph twice, we get the same results
-    for index, edge in enumerate(sorted(graph.edges(data=True), key=lambda x: x[0])):
-        if edge is not None:
-            edge_attributes = edge[2] or {}  # type: ignore
-            edge_attributes["source"] = edge[0]
-            edge_attributes["target"] = edge[1]
-            edge_attributes["record_id"] = index
-            edge_attributes["id"] = gen_uuid(random)
-            edges.append(edge_attributes)
-    return nodes, edges
+    # build initial local context for all communities
+    return TableContainer(table=pd.concat(dfs))

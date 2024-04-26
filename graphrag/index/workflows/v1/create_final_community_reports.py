@@ -2,8 +2,6 @@
 
 """A module containing build_steps method definition."""
 
-from datashaper import AsyncType
-
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_final_community_reports"
@@ -34,22 +32,62 @@ def build_steps(
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
 
     return [
+        #
+        # Subworkflow: Prepare Nodes
+        #
         {
-            "verb": "prepare_community_reports",
-            "args": {
-                **create_community_reports_config,
-                "graph_column": "clustered_graph",
-                "async_mode": config.get("async_mode", AsyncType.AsyncIO),
+            "id": "nodes",
+            "verb": "prepare_community_reports_nodes",
+            "input": {"source": "workflow:create_final_nodes"},
+        },
+        #
+        # Subworkflow: Prepare Edges
+        #
+        {
+            "id": "edges",
+            "verb": "prepare_community_reports_edges",
+            "input": {"source": "workflow:create_final_relationships"},
+        },
+        #
+        # Subworkflow: Prepare Claims Table
+        #
+        {
+            "id": "claims",
+            "verb": "prepare_community_reports_claims",
+            "input": {
+                "source": "workflow:create_final_covariates",
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+        },
+        #
+        # Subworkflow: Get Community Hierarchy
+        #
+        {
+            "id": "community_hierarchy",
+            "verb": "restore_community_hierarchy",
+            "input": {"source": "nodes"},
+        },
+        #
+        # Main Workflow: Create Community Reports
+        #
+        {
+            "id": "local_contexts",
+            "verb": "prepare_community_reports",
+            "input": {
+                "source": "nodes",
+                "nodes": "nodes",
+                "edges": "edges",
+                "claims": "claims",
+            },
         },
         {
             "verb": "create_community_reports",
             "args": {
                 **create_community_reports_config,
-                "async_mode": create_community_reports_config.get(
-                    "async_mode", AsyncType.AsyncIO
-                ),
+            },
+            "input": {
+                "source": "local_contexts",
+                "community_hierarchy": "community_hierarchy",
+                "nodes": "nodes",
             },
         },
         {
