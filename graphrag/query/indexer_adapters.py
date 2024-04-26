@@ -31,8 +31,10 @@ def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
 
 def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
     """Read in the Claims from the raw indexing outputs."""
+    covariate_df = final_covariates
+    covariate_df["id"] = covariate_df["id"].astype(str)
     return read_covariates(
-        df=final_covariates,
+        df=covariate_df,
         short_id_col="human_readable_id",
         attributes_cols=[
             "object_id",
@@ -62,19 +64,23 @@ def read_indexer_reports(
     community_level: int,
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
-    report_df = _filter_reports_under_community_level(
-        final_community_reports, community_level
-    )
-    filtered_community_df = _entity_communities_under_level(
-        final_nodes, community_level
-    )
+    report_df = final_community_reports
+    entity_df = final_nodes
+    entity_df = _filter_under_community_level_str(entity_df, community_level)
+    entity_df["community"] = entity_df["community"].fillna(-1)
+    entity_df["community"] = entity_df["community"].astype(int)
+
+    entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
+    entity_df["community"] = entity_df["community"].astype(str)
+    filtered_community_df = entity_df["community"].drop_duplicates()
+
+    report_df = _filter_under_community_level_str(report_df, community_level)
     report_df = report_df.merge(filtered_community_df, on="community", how="inner")
 
     return read_community_reports(
         df=report_df,
         id_col="community",
         short_id_col="community",
-        community_col="community",
         summary_embedding_col=None,
         content_embedding_col=None,
     )
@@ -89,7 +95,7 @@ def read_indexer_entities(
     entity_df = final_nodes
     entity_embedding_df = final_entities
 
-    entity_df = _filter_entities_under_community_level(entity_df, community_level)
+    entity_df = _filter_under_community_level_str(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
     )
@@ -103,22 +109,6 @@ def read_indexer_entities(
         entity_df.groupby(["name", "rank"]).agg({"community": "max"}).reset_index()
     )
     entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
-
-    entity_embedding_df = cast(
-        pd.DataFrame,
-        entity_embedding_df[
-            [
-                "id",
-                "human_readable_id",
-                "name",
-                "type",
-                "description",
-                "description_embedding",
-                "text_unit_ids",
-            ]
-        ],
-    )
-
     entity_df = entity_df.merge(
         entity_embedding_df, on="name", how="inner"
     ).drop_duplicates(subset=["name"])
@@ -141,30 +131,10 @@ def read_indexer_entities(
     )
 
 
-def _filter_entities_under_community_level(
-    nodes: pd.DataFrame, community_level: int
+def _filter_under_community_level_str(
+    df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
     return cast(
         pd.DataFrame,
-        nodes[nodes.level <= f"level_{community_level}"],
+        df[df.level <= f"level_{community_level}"],
     )
-
-
-def _filter_reports_under_community_level(
-    reports: pd.DataFrame, community_level: int
-) -> pd.DataFrame:
-    return cast(
-        pd.DataFrame,
-        reports[reports.level <= community_level],
-    )
-
-
-def _entity_communities_under_level(
-    nodes: pd.DataFrame, community_level: int
-) -> pd.Series:
-    entity_df = _filter_entities_under_community_level(nodes, community_level)
-    entity_df["community"] = entity_df["community"].fillna(-1)
-    entity_df["community"] = entity_df["community"].astype(int)
-    entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-    entity_df["community"] = entity_df["community"].astype(str)
-    return cast(pd.Series, entity_df["community"].drop_duplicates())
