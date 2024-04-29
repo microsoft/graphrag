@@ -23,6 +23,8 @@ noqa
 
 # Azure
 abfs
+Hnsw
+odata
 
 # NLTK Terms
 chunker
