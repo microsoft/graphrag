@@ -2268,17 +2268,17 @@ files = [
 
 [[package]]
 name = "lancedb"
-version = "0.6.10"
+version = "0.6.11"
 description = "lancedb"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "lancedb-0.6.10-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:c7e10eb5f5fdb22452d7678e9bf3df14e2463331868607067aba4ba19a0f4022"},
-    {file = "lancedb-0.6.10-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:3a1548bf3820ff606e4efce840bd0e979206eb1815915fff9f738c1d8e337293"},
-    {file = "lancedb-0.6.10-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3874f8aee55c5b4f41b953f4eac28d69c8a9bc10ad992fc7fd2b699a1f4b88ed"},
-    {file = "lancedb-0.6.10-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:73c0909ac7ae95d8128d25936fc0ff670cf6d9ae1b44e06ec48f3a60081d61ca"},
-    {file = "lancedb-0.6.10-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:750fb23a6eaa7daea241a124be3970447d45ace1c4f894df197e9869d677b6ba"},
-    {file = "lancedb-0.6.10-cp38-abi3-win_amd64.whl", hash = "sha256:06a299d91e1d9d2663fea7086efc784bf8643f51ff1532617c4910ec63cd2004"},
+    {file = "lancedb-0.6.11-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:79dbc2a79dac7b843e328a3b7eecb1b42f38ad524742111a38efbeaa1f58ddfe"},
+    {file = "lancedb-0.6.11-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:bfc6661e1fe5dd75346b4a1980243b4ccecd2b0ad991f8becc6e506a608c2d8a"},
+    {file = "lancedb-0.6.11-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0998c2dae676c24b95d492358f80ef6e5100b86335b96bf402af3f28f7ec4f3b"},
+    {file = "lancedb-0.6.11-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:b6b289599c4c6a61a70da89d4c3201abec7483d0e03573506014af2dcddfe0c4"},
+    {file = "lancedb-0.6.11-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:d789d5a181c4bc42650567cb63ce2772ed902046b08e8e401970df284a4df1c1"},
+    {file = "lancedb-0.6.11-cp38-abi3-win_amd64.whl", hash = "sha256:ea12fc94545afb03933d080cce593491e593ab95cbfddf05ab7183bce2bc8d62"},
 ]
 
 [package.dependencies]
@@ -5214,4 +5214,4 @@ lancedb = ["lancedb"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "f08b2f3bf2cfc8a0dbc920a3f818145dc61a2bb9f50fb5c5987d3ef5f2e90ce6"
+content-hash = "e8b4978dcf624772b3c50ebc582b9fbfeb01ecc675fe1b0640e3ec7e1cc997fb"
