@@ -118,10 +118,10 @@ def sort_context(
         record_node_details = record[node_details_column]
         record_claims = record.get(claim_details_column, [])
         record_claims = [c for c in record_claims if not pd.isna(c)]
-        claim_details[node_name] = record_claims
 
         edges.extend(record_edges)
         node_details[node_name] = record_node_details
+        claim_details[node_name] = record_claims
 
     edges = [edge for edge in edges if isinstance(edge, dict)]
     edges = sorted(edges, key=lambda x: x[edge_degree_column], reverse=True)
