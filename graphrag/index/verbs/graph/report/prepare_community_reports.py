@@ -166,7 +166,6 @@ def _prepare_reports_at_level(
     community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
         lambda x: sort_context(
             x,
-            claims_enabled=claim_df is not None,
             node_id_column=node_id_column,
             node_name_column=node_name_column,
             node_details_column=node_details_column,

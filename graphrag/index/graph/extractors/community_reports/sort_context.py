@@ -9,7 +9,6 @@ from graphrag.query.llm.text_utils import num_tokens
 
 def sort_context(
     local_context: list[dict],
-    claims_enabled: bool,
     sub_community_reports: list[dict] | None = None,
     max_tokens: int | None = None,
     node_id_column: str = schemas.NODE_ID,
@@ -117,10 +116,9 @@ def sort_context(
         record_edges = record.get(edge_details_column, [])
         record_edges = [e for e in record_edges if not pd.isna(e)]
         record_node_details = record[node_details_column]
-        if claims_enabled:
-            record_claims = record.get(claim_details_column, [])
-            record_claims = [c for c in record_claims if not pd.isna(c)]
-            claim_details[node_name] = record_claims
+        record_claims = record.get(claim_details_column, [])
+        record_claims = [c for c in record_claims if not pd.isna(c)]
+        claim_details[node_name] = record_claims
 
         edges.extend(record_edges)
         node_details[node_name] = record_node_details
