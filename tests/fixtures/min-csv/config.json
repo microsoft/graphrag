@@ -18,25 +18,6 @@
             "subworkflows": 2,
             "max_runtime": 300
         },
-        "create_final_covariates": {
-            "row_range": [
-                1,
-                2000
-            ],
-            "nan_allowed_columns": [
-                "type",
-                "description",
-                "subject_type",
-                "object_id",
-                "object_type",
-                "status",
-                "start_date",
-                "end_date",
-                "source_text"
-            ],
-            "subworkflows": 6,
-            "max_runtime": 300
-        },
         "create_summarized_entities": {
             "row_range": [
                 1,
