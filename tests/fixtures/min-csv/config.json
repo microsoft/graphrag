@@ -121,7 +121,7 @@
                 "relationship_ids",
                 "entity_ids"
             ],
-            "subworkflows": 7,
+            "subworkflows": 6,
             "max_runtime": 100
         },
         "create_base_documents": {
