@@ -264,9 +264,11 @@ def create_graphrag_config(
                 ),
                 vector_store=embeddings_config.get("vector_store", None),
                 async_mode=hydrate_async_type(embeddings_config, async_mode),
-                target=TextEmbeddingTarget(embeddings_target)
-                if embeddings_target
-                else defs.EMBEDDING_TARGET,
+                target=(
+                    TextEmbeddingTarget(embeddings_target)
+                    if embeddings_target
+                    else defs.EMBEDDING_TARGET
+                ),
                 batch_size=reader.int("batch_size") or defs.EMBEDDING_BATCH_SIZE,
                 batch_max_tokens=reader.int("batch_max_tokens")
                 or defs.EMBEDDING_BATCH_MAX_TOKENS,
@@ -289,9 +291,11 @@ def create_graphrag_config(
             storage_type = reader.str("storage_type")
             input_model = InputConfig(
                 type=InputType(input_type) if input_type else defs.INPUT_TYPE,
-                storage_type=StorageType(storage_type)
-                if storage_type
-                else defs.INPUT_STORAGE_TYPE,
+                storage_type=(
+                    StorageType(storage_type)
+                    if storage_type
+                    else defs.INPUT_STORAGE_TYPE
+                ),
                 file_encoding=reader.str("file_encoding", Fragment.encoding)
                 or defs.INPUT_FILE_ENCODING,
                 base_dir=reader.str(Fragment.base_dir) or defs.INPUT_BASE_DIR,
