@@ -45,6 +45,17 @@ def prep_community_report_context(
     def within_context(df: pd.DataFrame) -> pd.DataFrame:
         return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 0])
 
+    def merge_existing_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
+        result = df.merge(
+            reports[[schemas.NODE_COMMUNITY]],
+            on=schemas.NODE_COMMUNITY,
+            how="outer",
+            indicator=True,
+        )
+        if "_merge" in result.columns:
+            result = df[df["_merge"] == "left_only"].drop("_merge", axis=1)
+        return cast(pd.DataFrame, result)
+
     def sort_and_trim_context(
         df: pd.DataFrame, max_tokens: int = max_tokens
     ) -> pd.Series:
@@ -54,12 +65,6 @@ def prep_community_report_context(
                 lambda x: sort_context(x, max_tokens=max_tokens)
             ),
         )
-
-    def drop_merge_leftover(df: pd.DataFrame) -> pd.DataFrame:
-        result = df
-        if "_merge" in df.columns:
-            result = df[df["_merge"] == "left_only"].drop("_merge", axis=1)
-        return cast(pd.DataFrame, result)
 
     level = int(level)
     level_context_df = at_level(level, local_context_df)
@@ -79,7 +84,7 @@ def prep_community_report_context(
         invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
         return pd.concat([valid_context_df, invalid_context_df])
 
-    level_context_df = drop_merge_leftover(level_context_df)
+    level_context_df = merge_existing_reports(level_context_df, report_df)
 
     # for each invalid context, we will try to substitute with sub-community reports
     # first get local context and report (if available) for each sub-community
@@ -132,13 +137,7 @@ def prep_community_report_context(
 
     # handle any remaining invalid records that can't be subsituted with sub-community reports
     # this should be rare, but if it happens, we will just trim the local context to fit the limit
-    remaining_df = invalid_context_df.merge(
-        community_df[[schemas.NODE_COMMUNITY]],
-        on=schemas.NODE_COMMUNITY,
-        how="outer",
-        indicator=True,
-    )
-    remaining_df = drop_merge_leftover(remaining_df)
+    remaining_df = merge_existing_reports(invalid_context_df, community_df)
     remaining_df[schemas.CONTEXT_STRING] = sort_and_trim_context(remaining_df)
 
     result = pd.concat([valid_context_df, community_df, remaining_df])
