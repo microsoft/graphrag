@@ -77,7 +77,7 @@ async def text_embed(
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
-        embedding_name = kwargs["embedding_name"]
+        embedding_name = kwargs.get("embedding_name", "default")
         collection_name = _get_collection_name(vector_store_config, embedding_name)
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, collection_name
@@ -230,7 +230,7 @@ def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
     collection_name = vector_store_config.get("collection_name")
     if not collection_name:
         collection_names = vector_store_config.get("collection_names", {})
-        collection_name = collection_names.get(embedding_name) or embedding_name
+        collection_name = collection_names.get(embedding_name, embedding_name)
 
     msg = f"using {vector_store_config.get('type')} collection_name {collection_name} for embedding {embedding_name}"
     log.info(msg)
