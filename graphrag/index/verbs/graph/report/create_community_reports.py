@@ -96,7 +96,7 @@ async def create_community_reports(
             num_threads=num_threads,
             scheduling_type=async_mode,
         )
-        reports.extend(local_reports)
+        reports.extend([lr for lr in local_reports if lr is not None])
 
     return TableContainer(table=pd.DataFrame(reports))
 
