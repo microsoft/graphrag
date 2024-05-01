@@ -93,7 +93,7 @@
                 "rank_explanation",
                 "findings"
             ],
-            "subworkflows": 7,
+            "subworkflows": 6,
             "max_runtime": 300
         },
         "join_text_units_to_entity_ids": {
