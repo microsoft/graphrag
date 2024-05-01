@@ -29,8 +29,10 @@ def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
     )
 
 
-def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
+def read_indexer_covariates(final_covariates: pd.DataFrame | None) -> list[Covariate]:
     """Read in the Claims from the raw indexing outputs."""
+    if final_covariates is None:
+        return []
     covariate_df = final_covariates
     covariate_df["id"] = covariate_df["id"].astype(str)
     return read_covariates(
