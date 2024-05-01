@@ -56,9 +56,10 @@ def prep_community_report_context(
         )
 
     def drop_merge_leftover(df: pd.DataFrame) -> pd.DataFrame:
-        return cast(
-            pd.DataFrame, df[df["_merge"] == "left_only"].drop("_merge", axis=1)
-        )
+        result = df
+        if "_merge" in df.columns:
+            result = df[df["_merge"] == "left_only"].drop("_merge", axis=1)
+        return cast(pd.DataFrame, result)
 
     level = int(level)
     level_context_df = at_level(level, local_context_df)
