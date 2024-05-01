@@ -105,7 +105,7 @@ def run_local_search(
     store_entity_semantic_embeddings(
         entities=entities, vectorstore=description_embedding_store
     )
-    covariates = read_indexer_covariates(final_covariates)
+    covariates = read_indexer_covariates(final_covariates) if final_covariates else []
 
     search_engine = get_local_search_engine(
         config,
