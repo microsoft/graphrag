@@ -225,9 +225,9 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=join_text_units_to_relationship_ids,
         ),
-        PipelineWorkflowReference(
+        *([PipelineWorkflowReference(
             name=join_text_units_to_covariate_ids,
-        ),
+        )] if covariates_enabled else []),
         PipelineWorkflowReference(
             name=create_final_text_units,
             config={

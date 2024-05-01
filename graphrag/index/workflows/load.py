@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, NamedTuple, cast
+import logging
 
 from datashaper import Workflow
 
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
 anonymous_workflow_count = 0
 
 VerbFn = Callable[..., Any]
+log = logging.getLogger(__name__)
 
 
 class LoadWorkflowResult(NamedTuple):
@@ -111,6 +113,7 @@ def load_workflows(
     task_graph = {name: filter_wf_dependencies(name) for name in workflow_graph}
     workflow_run_order = topological_sort(task_graph)
     workflows = [workflow_graph[name] for name in workflow_run_order]
+    log.info("Workflow Run Order: %s", workflow_run_order)
     return LoadWorkflowResult(workflows=workflows, dependencies=task_graph)
 
 
