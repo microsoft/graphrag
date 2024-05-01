@@ -53,7 +53,7 @@ def prep_community_report_context(
             indicator=True,
         )
         if "_merge" in result.columns:
-            result = df[df["_merge"] == "left_only"].drop("_merge", axis=1)
+            result = result[result["_merge"] == "left_only"].drop("_merge", axis=1)
         return cast(pd.DataFrame, result)
 
     def sort_and_trim_context(
