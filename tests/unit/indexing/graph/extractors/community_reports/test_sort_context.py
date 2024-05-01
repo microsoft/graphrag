@@ -199,5 +199,5 @@ def test_sort_context():
         },
     ]
 
-    ctx = sort_context(context)
+    ctx = sort_context(context, True)
     assert ctx is not None
