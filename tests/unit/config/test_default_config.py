@@ -85,6 +85,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CHUNK_BY_COLUMNS": "a,b",
     "GRAPHRAG_CHUNK_OVERLAP": "12",
     "GRAPHRAG_CHUNK_SIZE": "500",
+    "GRAPHRAG_CLAIM_EXTRACTION_ENABLED": "True",
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
     "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-a.txt",
@@ -493,6 +494,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
+        assert parameters.claim_extraction.enabled
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
         assert parameters.claim_extraction.prompt == "tests/unit/config/prompt-a.txt"

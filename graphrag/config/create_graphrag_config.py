@@ -384,6 +384,7 @@ def create_graphrag_config(
             reader.use(claim_extraction_config),
         ):
             claim_extraction_model = ClaimExtractionConfig(
+                enabled=reader.bool(Fragment.enabled) or defs.CLAIM_EXTRACTION_ENABLED,
                 llm=hydrate_llm_params(claim_extraction_config, llm_model),
                 parallelization=hydrate_parallelization_params(
                     claim_extraction_config, llm_parallelization_model

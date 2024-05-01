@@ -16,6 +16,7 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_entity_graph`
     """
+    covariates_enabled = config.get("covariates_enabled", False)
     create_community_reports_config = config.get("create_community_reports", {})
     base_text_embed = config.get("text_embed", {})
     community_report_full_content_embed_config = config.get(
@@ -53,10 +54,13 @@ def build_steps(
         #
         {
             "id": "claims",
+            "enabled": covariates_enabled,
             "verb": "prepare_community_reports_claims",
             "input": {
                 "source": "workflow:create_final_covariates",
-            },
+            }
+            if covariates_enabled
+            else {},
         },
         #
         # Subworkflow: Get Community Hierarchy
@@ -76,7 +80,7 @@ def build_steps(
                 "source": "nodes",
                 "nodes": "nodes",
                 "edges": "edges",
-                "claims": "claims",
+                **({"claims": "claims"} if covariates_enabled else {}),
             },
         },
         {

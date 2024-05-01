@@ -93,14 +93,23 @@ def run_local_search(
     )
     final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
     final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
-    final_covariates = pd.read_parquet(data_path / "create_final_covariates.parquet")
+    final_covariates_path = data_path / "create_final_covariates.parquet"
+    final_covariates = (
+        pd.read_parquet(final_covariates_path)
+        if final_covariates_path.exists()
+        else None
+    )
 
     description_embedding_store = __get_embedding_description_store()
     entities = read_indexer_entities(final_nodes, final_entities, community_level)
     store_entity_semantic_embeddings(
         entities=entities, vectorstore=description_embedding_store
     )
-    covariates = read_indexer_covariates(final_covariates)
+    covariates = (
+        read_indexer_covariates(final_covariates)
+        if final_covariates is not None
+        else []
+    )
 
     search_engine = get_local_search_engine(
         config,
