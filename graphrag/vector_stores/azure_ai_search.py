@@ -142,13 +142,12 @@ class AzureAISearch(BaseVectorStore):
 
         response = self.db_connection.search(
             vector_queries=[vectorized_query],
-            index=self.collection_name,
         )
 
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
-                    id=doc.get("@search.id", ""),
+                    id=doc.get("id", ""),
                     text=doc.get("text", ""),
                     vector=doc.get("vector", []),
                     attributes=(json.loads(doc.get("attributes", "{}"))),
