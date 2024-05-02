@@ -82,6 +82,9 @@ async def text_embed(
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, collection_name
         )
+        vector_store_workflow_config = vector_store_config.get(
+            embedding_name, vector_store_config
+        )
         return await _text_embed_with_vector_store(
             input,
             callbacks,
@@ -89,7 +92,7 @@ async def text_embed(
             column,
             strategy,
             vector_store,
-            vector_store_config,
+            vector_store_workflow_config,
         )
 
     return await _text_embed_in_memory(
