@@ -107,7 +107,9 @@ class GraphRagConfig(LLMConfig):
 
     claim_extraction: ClaimExtractionConfig = Field(
         description="The claim extraction configuration to use.",
-        default=ClaimExtractionConfig(),
+        default=ClaimExtractionConfig(
+            enabled=defs.CLAIM_EXTRACTION_ENABLED,
+        ),
     )
     """The claim extraction configuration to use."""
 

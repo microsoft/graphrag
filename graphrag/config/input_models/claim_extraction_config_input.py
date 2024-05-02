@@ -10,6 +10,7 @@ from .llm_config_input import LLMConfigInput
 class ClaimExtractionConfigInput(LLMConfigInput):
     """Configuration section for claim extraction."""
 
+    enabled: NotRequired[bool | None]
     prompt: NotRequired[str | None]
     description: NotRequired[str | None]
     max_gleanings: NotRequired[int | str | None]

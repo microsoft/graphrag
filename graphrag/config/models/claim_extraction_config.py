@@ -14,6 +14,9 @@ from .llm_config import LLMConfig
 class ClaimExtractionConfig(LLMConfig):
     """Configuration section for claim extraction."""
 
+    enabled: bool = Field(
+        description="Whether claim extraction is enabled.",
+    )
     prompt: str | None = Field(
         description="The claim extraction prompt to use.", default=None
     )

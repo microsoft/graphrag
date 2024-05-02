@@ -114,6 +114,10 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
 
     skip_workflows = _determine_skip_workflows(settings)
     embedded_fields = _get_embedded_fields(settings)
+    covariates_enabled = (
+        settings.claim_extraction.enabled
+        and create_final_covariates not in skip_workflows
+    )
 
     result = PipelineConfig(
         root_dir=settings.root_dir,
@@ -123,10 +127,10 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
         cache=_get_cache_config(settings),
         workflows=[
             *_document_workflows(settings, embedded_fields),
-            *_text_unit_workflows(settings, skip_workflows, embedded_fields),
+            *_text_unit_workflows(settings, covariates_enabled, embedded_fields),
             *_graph_workflows(settings, embedded_fields),
-            *_community_workflows(settings, embedded_fields),
-            *_covariate_workflows(settings),
+            *_community_workflows(settings, covariates_enabled, embedded_fields),
+            *(_covariate_workflows(settings) if covariates_enabled else []),
         ],
     )
 
@@ -203,7 +207,7 @@ def _document_workflows(
 
 def _text_unit_workflows(
     settings: GraphRagConfig,
-    skip_workflows: list[str],
+    covariates_enabled: bool,
     embedded_fields: set[str],
 ) -> list[PipelineWorkflowReference]:
     skip_text_unit_embedding = text_unit_text_embedding not in embedded_fields
@@ -221,8 +225,14 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=join_text_units_to_relationship_ids,
         ),
-        PipelineWorkflowReference(
-            name=join_text_units_to_covariate_ids,
+        *(
+            [
+                PipelineWorkflowReference(
+                    name=join_text_units_to_covariate_ids,
+                )
+            ]
+            if covariates_enabled
+            else []
         ),
         PipelineWorkflowReference(
             name=create_final_text_units,
@@ -230,7 +240,7 @@ def _text_unit_workflows(
                 "text_unit_text_embed": _get_embedding_settings(
                     settings.embeddings, "text_unit_text"
                 ),
-                "covariates_enabled": create_final_covariates not in skip_workflows,
+                "covariates_enabled": covariates_enabled,
                 "skip_text_unit_embedding": skip_text_unit_embedding,
             },
         ),
@@ -341,7 +351,7 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: GraphRagConfig, embedded_fields: set[str]
+    settings: GraphRagConfig, covariates_enabled: bool, embedded_fields: set[str]
 ) -> list[PipelineWorkflowReference]:
     skip_community_title_embedding = community_title_embedding not in embedded_fields
     skip_community_summary_embedding = (
@@ -355,6 +365,7 @@ def _community_workflows(
         PipelineWorkflowReference(
             name=create_final_community_reports,
             config={
+                "covariates_enabled": covariates_enabled,
                 "skip_title_embedding": skip_community_title_embedding,
                 "skip_summary_embedding": skip_community_summary_embedding,
                 "skip_full_content_embedding": skip_community_full_content_embedding,
