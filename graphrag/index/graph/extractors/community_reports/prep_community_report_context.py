@@ -33,43 +33,13 @@ def prep_community_report_context(
     if report_df is None:
         report_df = pd.DataFrame()
 
-    def drop_community_level(df: pd.DataFrame) -> pd.DataFrame:
-        return df.drop([schemas.COMMUNITY_LEVEL], axis=1)
-
-    def at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
-        return cast(pd.DataFrame, df[df[schemas.COMMUNITY_LEVEL] == level])
-
-    def exceeding_context(df: pd.DataFrame) -> pd.DataFrame:
-        return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 1])
-
-    def within_context(df: pd.DataFrame) -> pd.DataFrame:
-        return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 0])
-
-    def merge_existing_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
-        result = df.merge(
-            reports[[schemas.NODE_COMMUNITY]],
-            on=schemas.NODE_COMMUNITY,
-            how="outer",
-            indicator=True,
-        )
-        if "_merge" in result.columns:
-            result = result[result["_merge"] == "left_only"].drop("_merge", axis=1)
-        return cast(pd.DataFrame, result)
-
-    def sort_and_trim_context(
-        df: pd.DataFrame, max_tokens: int = max_tokens
-    ) -> pd.Series:
-        return cast(
-            pd.Series,
-            df[schemas.ALL_CONTEXT].apply(
-                lambda x: sort_context(x, max_tokens=max_tokens)
-            ),
-        )
-
+    
+    
+   
     level = int(level)
-    level_context_df = at_level(level, local_context_df)
-    valid_context_df = within_context(level_context_df)
-    invalid_context_df = exceeding_context(level_context_df)
+    level_context_df = _at_level(level, local_context_df)
+    valid_context_df = _within_context(level_context_df)
+    invalid_context_df = _exceeding_context(level_context_df)
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
@@ -77,34 +47,90 @@ def prep_community_report_context(
         return valid_context_df
 
     if report_df.empty:
-        invalid_context_df[schemas.CONTEXT_STRING] = sort_and_trim_context(
-            invalid_context_df
+        invalid_context_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
+            invalid_context_df, max_tokens
         )
         set_context_size(invalid_context_df)
         invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
         return pd.concat([valid_context_df, invalid_context_df])
 
-    level_context_df = merge_existing_reports(level_context_df, report_df)
+    level_context_df = _antijoin_reports(level_context_df, report_df)
 
     # for each invalid context, we will try to substitute with sub-community reports
     # first get local context and report (if available) for each sub-community
-    sub_report_df = drop_community_level(at_level(level + 1, report_df))
-    sub_context_df = at_level(level + 1, local_context_df)
+    sub_context_df = _get_subcontext_df(level + 1, report_df, local_context_df)
+    community_df = _get_community_df(level, invalid_context_df, sub_context_df, community_hierarchy_df, max_tokens)
+
+    # handle any remaining invalid records that can't be subsituted with sub-community reports
+    # this should be rare, but if it happens, we will just trim the local context to fit the limit
+    remaining_df = _antijoin_reports(invalid_context_df, community_df)
+    remaining_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(remaining_df, max_tokens)
+
+    result = pd.concat([valid_context_df, community_df, remaining_df])
+    set_context_size(result)
+    result[schemas.CONTEXT_EXCEED_FLAG] = 0
+    return result
+
+def _drop_community_level(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop the community level column from the dataframe."""
+    return df.drop([schemas.COMMUNITY_LEVEL], axis=1)
+
+def _at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
+    """Return records at the given level."""
+    return cast(pd.DataFrame, df[df[schemas.COMMUNITY_LEVEL] == level])
+
+def _exceeding_context(df: pd.DataFrame) -> pd.DataFrame:
+    """Return records where the context exceeds the limit."""
+    return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 1])
+
+def _within_context(df: pd.DataFrame) -> pd.DataFrame:
+    """Return records where the context is within the limit."""
+    return cast(pd.DataFrame, df[df[schemas.CONTEXT_EXCEED_FLAG] == 0])
+
+def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
+    """Return records in df that are not in reports."""
+    result = df.merge(
+        reports[[schemas.NODE_COMMUNITY]],
+        on=schemas.NODE_COMMUNITY,
+        how="outer",
+        indicator=True,
+    )
+    if "_merge" in result.columns:
+        result = result[result["_merge"] == "left_only"].drop("_merge", axis=1)
+    return cast(pd.DataFrame, result)
+
+def _sort_and_trim_context(
+    df: pd.DataFrame, max_tokens: int
+) -> pd.Series:
+    """Sort and trim context to fit the limit."""
+    return cast(
+        pd.Series,
+        df[schemas.ALL_CONTEXT].apply(
+            lambda x: sort_context(x, max_tokens=max_tokens)
+        ),
+    )
+
+def _get_subcontext_df(level: int, report_df: pd.DataFrame, local_context_df: pd.DataFrame) -> pd.DataFrame:
+    """Get sub-community context for each community."""
+    sub_report_df = _drop_community_level(_at_level(level, report_df))
+    sub_context_df = _at_level(level, local_context_df)
     sub_context_df = sub_context_df.merge(
         sub_report_df, on=schemas.NODE_COMMUNITY, how="left"
     )
     sub_context_df.rename(
         columns={schemas.NODE_COMMUNITY: schemas.SUB_COMMUNITY}, inplace=True
     )
+    return sub_context_df
 
+def _get_community_df(level: int, invalid_context_df: pd.DataFrame, sub_context_df: pd.DataFrame, community_hierarchy_df: pd.DataFrame, max_tokens: int) -> pd.DataFrame:
+    """Get community context for each community."""
     # collect all sub communities' contexts for each community
-    community_df = drop_community_level(at_level(level, community_hierarchy_df))
+    community_df = _drop_community_level(_at_level(level, community_hierarchy_df))
     community_df = community_df.merge(
         invalid_context_df[[schemas.NODE_COMMUNITY]],
         on=schemas.NODE_COMMUNITY,
         how="inner",
-    )
-    community_df = community_df.merge(
+    ).merge(
         sub_context_df[
             [
                 schemas.SUB_COMMUNITY,
@@ -134,13 +160,4 @@ def prep_community_report_context(
         lambda x: build_mixed_context(x, max_tokens)
     )
     community_df[schemas.COMMUNITY_LEVEL] = level
-
-    # handle any remaining invalid records that can't be subsituted with sub-community reports
-    # this should be rare, but if it happens, we will just trim the local context to fit the limit
-    remaining_df = merge_existing_reports(invalid_context_df, community_df)
-    remaining_df[schemas.CONTEXT_STRING] = sort_and_trim_context(remaining_df)
-
-    result = pd.concat([valid_context_df, community_df, remaining_df])
-    set_context_size(result)
-    result[schemas.CONTEXT_EXCEED_FLAG] = 0
-    return result
+    return community_df
