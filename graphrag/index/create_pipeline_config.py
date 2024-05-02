@@ -257,14 +257,14 @@ def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) 
     # settings.vector_store.base contains connection information, or may be undefined
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
+    strategy = settings.resolved_strategy()  # get the default strategy
+    strategy.update({
+        "vector_store": vector_store_settings
+    })  # update the default strategy with the vector store settings
+    # This ensures the vector store config is part of the strategy and not the global config
     return {
-        "strategy": settings.resolved_strategy(),
+        "strategy": strategy,
         "embedding_name": embedding_name,
-        "vector_store": {
-            "type": vector_store_settings.get("type"),
-            **(vector_store_settings.get("base") or {}),
-            **(vector_store_settings.get(embedding_name) or {}),
-        },
     }
 
 

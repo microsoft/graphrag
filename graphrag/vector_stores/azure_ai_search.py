@@ -10,6 +10,7 @@ from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
+    SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
@@ -29,13 +30,13 @@ from .base import (
 )
 
 
-class AzureSearch(BaseVectorStore):
+class AzureAISearch(BaseVectorStore):
     """The Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
 
     def connect(self, **kwargs: Any) -> Any:
-        """Connect to the Qdrant vector store."""
+        """Connect to the AzureAI vector store."""
         url = kwargs.get("url", None)
         api_key = kwargs.get("api_key", None)
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
@@ -60,7 +61,7 @@ class AzureSearch(BaseVectorStore):
     ) -> None:
         """Load documents into the Azure AI Search index."""
         if overwrite:
-            if self.index_client.get_index(self.collection_name):
+            if self.collection_name in self.index_client.list_index_names():
                 self.index_client.delete_index(self.collection_name)
 
             # Configure the vector search profile
@@ -81,27 +82,15 @@ class AzureSearch(BaseVectorStore):
                         name="id",
                         type=SearchFieldDataType.String,
                         key=True,
-                        searchable=True,
-                        filterable=True,
-                        sortable=True,
-                        facetable=True,
-                        retrievable=True,
                     ),
                     SearchField(
                         name="vector",
-                        fields=[
-                            SimpleField(
-                                name="value",
-                                type=SearchFieldDataType.Collection(
-                                    SearchFieldDataType.Single
-                                ),
-                                searchable=True,
-                                vector_search_dimensions=self.vector_size,
-                                vector_search_profile_name=self.vector_search_profile_name,
-                            )
-                        ],
+                        type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                        searchable=True,
+                        vector_search_dimensions=self.vector_size,
+                        vector_search_profile_name=self.vector_search_profile_name,
                     ),
-                    SearchField(name="text", type=SearchFieldDataType.String),
+                    SearchableField(name="text", type=SearchFieldDataType.String),
                     SimpleField(
                         name="attributes",
                         type=SearchFieldDataType.String,
@@ -110,7 +99,7 @@ class AzureSearch(BaseVectorStore):
                 vector_search=vector_search,
             )
 
-            self.index_client.create_index(
+            self.index_client.create_or_update_index(
                 index,
             )
 
@@ -153,13 +142,12 @@ class AzureSearch(BaseVectorStore):
 
         response = self.db_connection.search(
             vector_queries=[vectorized_query],
-            index=self.collection_name,
         )
 
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
-                    id=doc.get("@search.id", ""),
+                    id=doc.get("id", ""),
                     text=doc.get("text", ""),
                     vector=doc.get("vector", []),
                     attributes=(json.loads(doc.get("attributes", "{}"))),

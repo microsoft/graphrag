@@ -23,7 +23,10 @@ def build_steps(
     )
     skip_name_embedding = config.get("skip_name_embedding", False)
     skip_description_embedding = config.get("skip_description_embedding", False)
-    is_using_vector_store = entity_name_embed_config.get("vector_store") is not None
+    is_using_vector_store = (
+        entity_name_embed_config.get("strategy", {}).get("vector_store", None)
+        is not None
+    )
 
     return [
         {
