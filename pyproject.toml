@@ -118,6 +118,15 @@ test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
 index = "python -m graphrag.index"
 query = "python -m graphrag.query"
+
+#
+# Release Scripts
+# 
+major = "semversioner add-change -t major -d"
+minor = "semversioner add-change -t minor -d"
+patch = "semversioner add-change -t patch -d"
+release = "semversioner release"
+
 # Pass in a test pattern
 test_only = "pytest -s -k"
 
