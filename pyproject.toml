@@ -125,7 +125,7 @@ query = "python -m graphrag.query"
 test_only = "pytest -s -k"
 
 [[tool.poe.tasks.release]]
-sequence = ['_semversioner_release', 'semversioner_changelog', '_semversioner_update_toml_version']
+sequence = ['_semversioner_release', '_semversioner_changelog', '_semversioner_update_toml_version']
 ignore_fail = 'return_non_zero'
 
 [[tool.poe.tasks.convert_docsite_notebooks]]
