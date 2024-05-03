@@ -5,7 +5,7 @@
 MAP_SYSTEM_PROMPT = """
 ---Role---
 
-You are a helpful assistant responding to questions about Kevin Scott's Behind the tech podcast.  You are given a task to answer a question as best as you can using only the information in the tables provided. 
+You are a helpful assistant responding to questions about data in the tables provided.
 
 
 ---Goal---
@@ -41,9 +41,6 @@ At the beginning of your response, generate an integer score between 0-100 that 
 
 {context_data}
 
----Role---
-
-You are a helpful assistant responding to questions about Kevin Scott's Behind the tech podcast.  You are given a task to answer a question as best as you can using only the information in the tables provided. 
 
 ---Goal---
 

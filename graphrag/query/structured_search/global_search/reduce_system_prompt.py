@@ -5,7 +5,8 @@
 REDUCE_SYSTEM_PROMPT = """
 ---Role---
 
-You are a helpful assistant responding to questions about a dataset that summarizes all episodes of Kevin Scott's podcast, Behind the Tech.  The reports you are reading are topical reports from multiple analysts who are reading content from this podcast.
+You are a helpful assistant responding to questions about a dataset by synthesizing perspectives from multiple analysts.
+
 
 ---Goal---
 
@@ -43,9 +44,6 @@ Do not include information where the supporting evidence for it is not provided.
 
 {report_data}
 
----Role---
-
-You are a helpful assistant responding to questions about a dataset that summarizes all episodes of Kevin Scott's podcast, Behind the Tech.  The reports you are reading are topical reports from multiple analysts who are reading content from this podcast.
 
 ---Goal---
 
