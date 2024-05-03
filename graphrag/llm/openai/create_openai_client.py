@@ -2,12 +2,17 @@
 
 """Create OpenAI client instance."""
 
+import logging
 from functools import cache
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 
 from .openai_configuration import OpenAIConfiguration
 from .types import OpenAIClientTypes
+
+log = logging.getLogger(__name__)
+
+API_BASE_REQUIRED_FOR_AZURE = "api_base is required for Azure OpenAI client"
 
 
 @cache
@@ -18,8 +23,13 @@ def create_openai_client(
     if azure:
         api_base = configuration.api_base
         if api_base is None:
-            raise ValueError
+            raise ValueError(API_BASE_REQUIRED_FOR_AZURE)
 
+        log.info(
+            "Creating Azure OpenAI client api_base=%s, deployment_name=%s",
+            api_base,
+            configuration.deployment_name,
+        )
         return AsyncAzureOpenAI(
             api_key=configuration.api_key,
             organization=configuration.organization,
@@ -31,6 +41,8 @@ def create_openai_client(
             timeout=configuration.request_timeout or 180.0,
             max_retries=0,
         )
+
+    log.info("Creating OpenAI client base_url=%s", configuration.api_base)
     return AsyncOpenAI(
         api_key=configuration.api_key,
         base_url=configuration.api_base,

@@ -18,8 +18,11 @@ def build_steps(
     * `workflow:create_final_entities`
     * `workflow:create_final_communities`
     """
-    text_embed_config = config.get("text_embed", {})
+    base_text_embed = config.get("text_embed", {})
+    text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
     covariates_enabled = config.get("covariates_enabled", False)
+    skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
+
     return [
         {
             "verb": "select",
@@ -123,10 +126,11 @@ def build_steps(
         {
             "id": "embedded_text_units",
             "verb": "text_embed",
+            "enabled": not skip_text_unit_embedding,
             "args": {
                 "column": config.get("column", "text"),
                 "to": config.get("to", "text_embedding"),
-                **text_embed_config,
+                **text_unit_text_embed_config,
             },
         },
         {
@@ -136,7 +140,7 @@ def build_steps(
                 "columns": [
                     "id",
                     "text",
-                    "text_embedding",
+                    *([] if skip_text_unit_embedding else ["text_embedding"]),
                     "n_tokens",
                     "document_ids",
                     "entity_ids",

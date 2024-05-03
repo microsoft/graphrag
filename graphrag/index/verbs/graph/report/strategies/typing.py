@@ -6,7 +6,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 from datashaper import VerbCallbacks
-from pydantic.dataclasses import dataclass
+from typing_extensions import TypedDict
 
 from graphrag.index.cache import PipelineCache
 
@@ -17,32 +17,32 @@ EntityTypes = list[str]
 Claim = dict[str, Any]
 
 
-@dataclass
-class Finding:
+class Finding(TypedDict):
     """Finding class definition."""
 
     summary: str
     explanation: str
 
 
-@dataclass
-class CommunityReport:
+class CommunityReport(TypedDict):
     """Community report class definition."""
 
-    community: str
+    community: str | int
     title: str
     summary: str
     full_content: str
     full_content_json: str
-    rank: float | None
-    rank_explanation: str | None
+    rank: float
+    level: int
+    rank_explanation: str
     findings: list[Finding]
 
 
 CommunityReportsStrategy = Callable[
     [
+        str | int,
         str,
-        dict,
+        int,
         VerbCallbacks,
         PipelineCache,
         StrategyConfig,

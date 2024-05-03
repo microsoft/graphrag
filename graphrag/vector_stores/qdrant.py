@@ -10,7 +10,12 @@ from qdrant_client.models import Distance, VectorParams  # type: ignore
 
 from graphrag.model.types import TextEmbedder
 
-from .base import BaseVectorStore, VectorStoreDocument, VectorStoreSearchResult
+from .base import (
+    DEFAULT_VECTOR_SIZE,
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreSearchResult,
+)
 
 
 class Qdrant(BaseVectorStore):
@@ -23,7 +28,7 @@ class Qdrant(BaseVectorStore):
 
         api_key = kwargs.get("api_key", None)
         timeout = kwargs.get("timeout", 1000)
-        self.vector_size = kwargs.get("vector_size", 1536)
+        self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
 
         if url:
             https = kwargs.get("https", "https://" in url)

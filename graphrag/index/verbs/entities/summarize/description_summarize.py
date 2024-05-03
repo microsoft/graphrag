@@ -1,8 +1,9 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
 
-"""A module containing extract_claims, load_strategy and create_row_from_claim_data methods definition."""
+"""A module containing the summarize_descriptions verb."""
 
 import asyncio
+import logging
 from enum import Enum
 from typing import Any, NamedTuple, cast
 
@@ -22,6 +23,8 @@ from graphrag.index.utils import load_graph
 
 from .strategies.typing import SummarizationStrategy
 
+log = logging.getLogger(__name__)
+
 
 class DescriptionSummarizeRow(NamedTuple):
     """DescriptionSummarizeRow class definition."""
@@ -33,6 +36,10 @@ class SummarizeStrategyType(str, Enum):
     """SummarizeStrategyType class definition."""
 
     graph_intelligence = "graph_intelligence"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
 
 
 @verb(name="summarize_descriptions")
@@ -102,6 +109,7 @@ async def summarize_descriptions(
             proxy: !ENV ${GRAPHRAG_OPENAI_PROXY} # The proxy to use for azure
     ```
     """
+    log.debug("summarize_descriptions strategy=%s", strategy)
     output = cast(pd.DataFrame, input.get_input())
     strategy = strategy or {}
     strategy_exec = load_strategy(
@@ -196,15 +204,3 @@ def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy
         case _:
             msg = f"Unknown strategy: {strategy_type}"
             raise ValueError(msg)
-
-
-async def iterate_nodes(graph):
-    """Iterate nodes in a graph."""
-    for node in graph.nodes():
-        yield node
-
-
-async def iterate_edges(graph):
-    """Iterate edges in a graph."""
-    for edge in graph.edges():
-        yield edge

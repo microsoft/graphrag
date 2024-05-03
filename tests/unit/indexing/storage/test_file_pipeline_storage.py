@@ -3,6 +3,7 @@
 
 import os
 import re
+from pathlib import Path
 
 from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 
@@ -19,7 +20,7 @@ async def test_find():
             file_filter=None,
         )
     )
-    assert items == [("tests/fixtures/text/input/dulce.txt", {})]
+    assert items == [(str(Path("tests/fixtures/text/input/dulce.txt")), {})]
     output = await storage.get("tests/fixtures/text/input/dulce.txt")
     assert len(output) > 0
 
@@ -35,7 +36,7 @@ async def test_child():
     storage = FilePipelineStorage()
     storage = storage.child("tests/fixtures/text")
     items = list(storage.find(re.compile(r".*\.txt$")))
-    assert items == [("input/dulce.txt", {})]
+    assert items == [(str(Path("input/dulce.txt")), {})]
 
     output = await storage.get("input/dulce.txt")
     assert len(output) > 0

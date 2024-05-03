@@ -33,8 +33,9 @@ environs = "^11.0.0"
 datashaper = "^0.0.49"
 
 # Vector Stores
-lancedb = { version = "^0.6.6", optional = true }
+lancedb = { version = "^0.6.11", optional = true }
 qdrant-client = "^1.8.2"
+azure-search-documents = "^11.4.0"
 
 # Event Loops
 uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
@@ -45,7 +46,7 @@ aiolimiter = "^1.1.0"
 aiofiles = "^23.2.1"
 
 # LLM
-openai = "^1.1.1"
+openai = "^1.23.2"
 nltk = "3.8.1"
 tiktoken = "^0.6.0"
 
@@ -64,29 +65,33 @@ pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
 # Network
-httpx = "^0.25.1"
 tenacity = "^8.2.3"
 
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.55.1"
+textual = "^0.57.1"
+devtools = "^0.12.2"
+
+#Azure
 azure-storage-blob = "^12.19.0"
 tabulate = "^0.9.0"
+azure-identity = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.2.2"
-poethepoet = "^0.25.0"
-typing-extensions = "^4.5.0"
 coverage = "^7.3.2"
-pytest = "^7.4.2"
-pyright = "^1.1.352"
-pytest-asyncio = "^0.23.4"
-semversioner = "^2.0.2"
-update-toml = "^0.0.3"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
+poethepoet = "^0.26.0"
+pyright = "^1.1.352"
+pytest = "^8.2.0"
+pytest-asyncio = "^0.23.4"
+pytest-timeout = "^2.3.1"
+ruff = "^0.4.1"
+semversioner = "^2.0.2"
+typing-extensions = "^4.5.0"
+update-toml = "^0.0.3"
 
 
 [tool.poetry.extras]
@@ -101,20 +106,25 @@ _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
 _ruff_check = 'ruff check . --preview'
 _pyright = "pyright"
+_convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
+_convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
-fix_unsafe = "ruff --preview check --fix --unsafe-fixes ."
+fix_unsafe = "ruff check --preview --fix --unsafe-fixes ."
 
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
 test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
-build_docs = "python -m graphrag.build_docs"
 index = "python -m graphrag.index"
 query = "python -m graphrag.query"
 # Pass in a test pattern
 test_only = "pytest -s -k"
+
+[[tool.poe.tasks.convert_docsite_notebooks]]
+sequence = ['_convert_local_search_nb', '_convert_global_search_nb']
+ignore_fail = 'return_non_zero'
 
 [[tool.poe.tasks.format]]
 sequence = ['_sort_imports', '_format_code']
@@ -223,5 +233,6 @@ exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+timeout = 600
 # log_cli = true
 # log_cli_level = "INFO"

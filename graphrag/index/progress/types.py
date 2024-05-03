@@ -120,8 +120,8 @@ class PrintProgressReporter(ProgressReporter):
 
     def info(self, message: str) -> None:
         """Report information."""
-        print("\n{self.prefix}INFO: {message}")  # noqa T201
+        print(f"\n{self.prefix}INFO: {message}")  # noqa T201
 
     def success(self, message: str) -> None:
         """Report success."""
-        print("\n{self.prefix}SUCCESS: {message}")  # noqa T201
+        print(f"\n{self.prefix}SUCCESS: {message}")  # noqa T201

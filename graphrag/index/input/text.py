@@ -47,7 +47,8 @@ async def load(
         )
     )
     if len(files) == 0:
-        msg = "No text files found in %s" % config.base_dir
+        msg = f"No text files found in {config.base_dir}"
         raise ValueError(msg)
-    log.info("found text files from %s, found %s", config.base_dir, files)
+    found_files = f"found text files from {config.base_dir}, found {files}"
+    log.info(found_files)
     return pd.DataFrame([await load_file(file, group) for file, group in files])

@@ -244,7 +244,7 @@ def read_community_reports(
             community_id=to_str(row, community_col),
             summary=to_str(row, summary_col),
             full_content=to_str(row, content_col),
-            rank=to_optional_int(row, rank_col),
+            rank=to_optional_float(row, rank_col),
             summary_embedding=to_optional_list(
                 row, summary_embedding_col, item_type=float
             ),
@@ -271,7 +271,7 @@ def read_text_units(
     covariates_col: str | None = "covariate_ids",
     tokens_col: str | None = "n_tokens",
     document_ids_col: str | None = "document_ids",
-    embedding_col: str | None = "semantic_embedding",
+    embedding_col: str | None = "text_embedding",
     attributes_cols: list[str] | None = None,
 ) -> list[TextUnit]:
     """Read text units from a dataframe."""
@@ -286,7 +286,7 @@ def read_text_units(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            text_embedding=to_list(row, embedding_col, item_type=float),  # type: ignore
+            text_embedding=to_optional_list(row, embedding_col, item_type=float),  # type: ignore
             n_tokens=to_optional_int(row, tokens_col),
             document_ids=to_optional_list(row, document_ids_col, item_type=str),
             attributes=(

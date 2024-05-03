@@ -1,13 +1,14 @@
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
-version: '0.2'
+version: "0.2"
 allowCompoundWords: true
 dictionaryDefinitions:
   - name: dictionary
-    path: './dictionary.txt'
+    path: "./dictionary.txt"
     addWords: true
 dictionaries:
   - dictionary
 ignorePaths:
+  - cspell.config.yaml
   - node_modules
   - _site
   - /project-words.txt
@@ -22,9 +23,11 @@ ignorePaths:
   - package.json
   - tests/fixtures/
   - docsite/data/
+  - docsite/nbdocsite_template/
   - docsite/posts/query/notebooks/inputs/
-  - '*.csv'
-  - '*.parquet'
-  - '*.faiss'
-  - '*.ipynb'
-  - '*.log'
+  - examples_notebooks/inputs/
+  - "*.csv"
+  - "*.parquet"
+  - "*.faiss"
+  - "*.ipynb"
+  - "*.log"

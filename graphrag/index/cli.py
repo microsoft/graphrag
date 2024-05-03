@@ -3,20 +3,19 @@
 """Main definition."""
 
 import asyncio
+import json
+import logging
 import platform
-import re
 import sys
+import time
 import warnings
 from pathlib import Path
 
-from graphrag.index.cache import NoopPipelineCache
-from graphrag.index.config import PipelineConfig
-from graphrag.index.default_config import (
-    DefaultConfigParametersModel,
-    default_config,
-    default_config_parameters,
-    default_config_parameters_from_env_vars,
+from graphrag.config import (
+    create_graphrag_config,
 )
+from graphrag.index import PipelineConfig, create_pipeline_config
+from graphrag.index.cache import NoopPipelineCache
 from graphrag.index.progress import (
     NullProgressReporter,
     PrintProgressReporter,
@@ -26,24 +25,51 @@ from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType
+from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
+from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
+from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
+from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
+from .init_content import INIT_DOTENV, INIT_YAML
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
+log = logging.getLogger(__name__)
 
-def redact(input: str) -> str:
+
+def redact(input: dict) -> str:
     """Sanitize the config json."""
+
     # Redact any sensitive configuration
-    result = re.sub(r'"api_key": ".*?"', '"api_key": "REDACTED"', input)
-    result = re.sub(
-        r'"connection_string": ".*?"', '"connection_string": "REDACTED"', result
-    )
-    result = re.sub(r'"organization": ".*?"', '"organization": "REDACTED"', result)
-    return re.sub(r'"container_name": ".*?"', '"container_name": "REDACTED"', result)
+    def redact_dict(input: dict) -> dict:
+        if not isinstance(input, dict):
+            return input
+
+        result = {}
+        for key, value in input.items():
+            if key in {
+                "api_key",
+                "connection_string",
+                "container_name",
+                "organization",
+            }:
+                if value is not None:
+                    result[key] = f"REDACTED, length {len(value)}"
+            elif isinstance(value, dict):
+                result[key] = redact_dict(value)
+            elif isinstance(value, list):
+                result[key] = [redact_dict(i) for i in value]
+            else:
+                result[key] = value
+        return result
+
+    redacted_dict = redact_dict(input)
+    return json.dumps(redacted_dict, indent=4)
 
 
 def index_cli(
-    root: str,
+    root: str | None,
+    init: bool,
     verbose: bool,
     resume: str | None,
     memprofile: bool,
@@ -51,18 +77,24 @@ def index_cli(
     reporter: str | None,
     config: str | None,
     emit: str | None,
+    dryrun: bool,
     cli: bool = False,
-    dryrun: bool = False,
 ):
     """Run the pipeline with the given config."""
+    root = root or ""
+    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
+    if init:
+        _initialize_project_at(root, progress_reporter)
+        sys.exit(0)
     pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, dryrun, progress_reporter
+        root, verbose, dryrun or False, progress_reporter
     )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
-
     encountered_errors = False
+    resume = resume or time.strftime("%Y%m%d-%H%M%S")
 
     def _run_workflow_async() -> None:
         import signal
@@ -85,12 +117,10 @@ def index_cli(
             nonlocal encountered_errors
             async for output in run_pipeline_with_config(
                 pipeline_config,
-                debug=verbose,
-                resume=resume,
+                run_id=run_id,
                 memory_profile=memprofile,
                 cache=cache,
                 progress_reporter=progress_reporter,
-                enable_logging=True,
                 emit=[TableEmitterType(e) for e in pipeline_emit]
                 if pipeline_emit
                 else None,
@@ -133,26 +163,70 @@ def index_cli(
         sys.exit(1 if encountered_errors else 0)
 
 
+def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
+    """Initialize the project at the given path."""
+    reporter.info(f"Initializing project at {path}")
+    root = Path(path)
+    if not root.exists():
+        root.mkdir(parents=True, exist_ok=True)
+
+    settings_yaml = root / "settings.yaml"
+    if settings_yaml.exists():
+        msg = f"Project already initialized at {root}"
+        raise ValueError(msg)
+
+    dotenv = root / ".env"
+    if not dotenv.exists():
+        with settings_yaml.open("w") as file:
+            file.write(INIT_YAML)
+
+    with dotenv.open("w") as file:
+        file.write(INIT_DOTENV)
+
+    prompts_dir = root / "prompts"
+    if not prompts_dir.exists():
+        prompts_dir.mkdir(parents=True, exist_ok=True)
+
+    entity_extraction = prompts_dir / "entity_extraction.txt"
+    if not entity_extraction.exists():
+        with entity_extraction.open("w") as file:
+            file.write(GRAPH_EXTRACTION_PROMPT)
+
+    summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
+    if not summarize_descriptions.exists():
+        with summarize_descriptions.open("w") as file:
+            file.write(SUMMARIZE_PROMPT)
+
+    claim_extraction = prompts_dir / "claim_extraction.txt"
+    if not claim_extraction.exists():
+        with claim_extraction.open("w") as file:
+            file.write(CLAIM_EXTRACTION_PROMPT)
+
+    community_report = prompts_dir / "community_report.txt"
+    if not community_report.exists():
+        with community_report.open("w") as file:
+            file.write(COMMUNITY_REPORT_PROMPT)
+
+
 def _create_default_config(
     root: str, verbose: bool, dryrun: bool, reporter: ProgressReporter
 ) -> PipelineConfig:
     """Create a default config if none is provided."""
-    import json
-
     if not Path(root).exists():
         msg = f"Root directory {root} does not exist"
         raise ValueError(msg)
 
     parameters = _read_config_parameters(root, reporter)
+    log.info(
+        "using default configuration: %s",
+        redact(parameters.model_dump()),
+    )
+
     if verbose or dryrun:
-        reporter.info(
-            f"Using default configuration: {redact(json.dumps(parameters.to_dict(), indent=4))}"
-        )
-    result = default_config(parameters, verbose)
+        reporter.info(f"Using default configuration: {redact(parameters.model_dump())}")
+    result = create_pipeline_config(parameters, verbose)
     if verbose or dryrun:
-        reporter.info(
-            f"Final Config: {redact(json.dumps(result.model_dump(), indent=4))}"
-        )
+        reporter.info(f"Final Config: {redact(result.model_dump())}")
 
     if dryrun:
         reporter.info("dry run complete, exiting...")
@@ -173,8 +247,7 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import yaml
 
             data = yaml.safe_load(file)
-            model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(model, root)
+            return create_graphrag_config(data, root)
 
     if settings_json.exists():
         reporter.success(f"Reading settings from {settings_json}")
@@ -182,20 +255,36 @@ def _read_config_parameters(root: str, reporter: ProgressReporter):
             import json
 
             data = json.loads(file.read())
-            model = DefaultConfigParametersModel.model_validate(data)
-            return default_config_parameters(data, root)
+            return create_graphrag_config(data, root)
 
     reporter.success("Reading settings from environment variables")
-    return default_config_parameters_from_env_vars(root)
+    return create_graphrag_config(root_dir=root)
 
 
 def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
     if reporter_type is None or reporter_type == "rich":
-        return RichProgressReporter("Indexing Engine")
+        return RichProgressReporter("GraphRAG Indexer ")
     if reporter_type == "print":
-        return PrintProgressReporter("Indexing Engine")
+        return PrintProgressReporter("GraphRAG Indexer ")
     if reporter_type == "none":
         return NullProgressReporter()
 
     msg = f"Invalid progress reporter type: {reporter_type}"
     raise ValueError(msg)
+
+
+def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
+    logging_file = (
+        Path(root_dir) / "output" / run_id / "reports" / "indexing-engine.log"
+    )
+    logging_file.parent.mkdir(parents=True, exist_ok=True)
+
+    logging_file.touch(exist_ok=True)
+
+    logging.basicConfig(
+        filename=str(logging_file),
+        filemode="a",
+        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%H:%M:%S",
+        level=logging.DEBUG if verbose else logging.INFO,
+    )

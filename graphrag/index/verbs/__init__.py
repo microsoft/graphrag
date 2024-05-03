@@ -2,7 +2,7 @@
 
 """A module containing get_default_verbs method definition."""
 
-from .covariates import extract_claims
+from .covariates import extract_covariates
 from .entities import entity_extract, summarize_descriptions
 from .genid import genid
 from .graph import (
@@ -32,7 +32,7 @@ __all__ = [
     "create_graph",
     "embed_graph",
     "entity_extract",
-    "extract_claims",
+    "extract_covariates",
     "genid",
     "layout_graph",
     "merge",

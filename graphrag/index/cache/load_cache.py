@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from graphrag.index.config import (
+from graphrag.config.enums import CacheType
+from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
-    PipelineCacheType,
     PipelineFileCacheConfig,
 )
 from graphrag.index.storage import BlobPipelineStorage, FilePipelineStorage
@@ -29,15 +29,15 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
         return NoopPipelineCache()
 
     match config.type:
-        case PipelineCacheType.none:
+        case CacheType.none:
             return NoopPipelineCache()
-        case PipelineCacheType.memory:
+        case CacheType.memory:
             return create_memory_cache()
-        case PipelineCacheType.file:
+        case CacheType.file:
             config = cast(PipelineFileCacheConfig, config)
             storage = FilePipelineStorage(root_dir).child(config.base_dir)
             return JsonPipelineCache(storage)
-        case PipelineCacheType.blob:
+        case CacheType.blob:
             config = cast(PipelineBlobCacheConfig, config)
             storage = BlobPipelineStorage(
                 config.connection_string, config.container_name

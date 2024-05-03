@@ -19,9 +19,12 @@ asdict
 isna
 getcwd
 fillna
+noqa
 
 # Azure
 abfs
+Hnsw
+odata
 
 # NLTK Terms
 chunker
@@ -138,11 +141,9 @@ Shargi
 Evin
 Morad
 Tahbaz
-abila
-abilas
 payus
-POKRALLY
 dulce
+Asadi
 
 # English
 skippable

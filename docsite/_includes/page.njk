@@ -93,29 +93,12 @@ title: GraphRAG
                   {%- endfor -%}
 
                   <li>
-                    {{link_to("/posts/index/workflows/overview/", "Workflows")}}
-                    <ul {% if not "/posts/index/workflows" in page.url %} hidden {% endif %}>
-                        {%- for post in collections.workflow | sortByNavtitle-%}
-                        <li>{{link_to(post.url, post.data.navtitle)}}</li>
-                        {%- endfor -%}
-                    </ul>
-                  </li>
-
-                  <li>
-                    {{link_to("/posts/index/verbs/overview/", "Verbs")}}
-                    <ul {% if not "/posts/index/verbs" in page.url %} hidden {% endif %}>
-                      {%- for post in collections.verb | sortByNavtitle-%}
-                      <li>{{link_to(post.url, post.data.navtitle)}}</li>
-                      {%- endfor -%}
-                    </ul>
-                  </li>
-
-                  <li>
                     {{link_to("/posts/config/overview/", "Configuration")}}
                     <ul>
                       <li>{{link_to("/posts/config/env_vars", "Using Env Vars")}}</li>
                       <li>{{link_to("/posts/config/json_yaml", "Using JSON or YAML")}}</li>
                       <li>{{link_to("/posts/config/custom", "Fully Custom")}}</li>
+                      <li>{{link_to("/posts/config/template", "Template")}}</li>
                     </ul>
                   </li>
                 </ul>

@@ -119,11 +119,12 @@ async def load(
     )
 
     if len(files) == 0:
-        msg = "No CSV files found in %s" % config.base_dir
+        msg = f"No CSV files found in {config.base_dir}"
         raise ValueError(msg)
 
     files = [await load_file(file, group) for file, group in files]
     log.info("loading %d csv files", len(files))
     result = pd.concat(files)
-    log.info("Total number of unfiltered csv rows: %d", len(result))
+    total_files_log = f"Total number of unfiltered csv rows: {len(result)}"
+    log.info(total_files_log)
     return result

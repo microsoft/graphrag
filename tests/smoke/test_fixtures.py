@@ -12,12 +12,14 @@ from typing import Any, ClassVar
 from unittest import mock
 
 import pandas as pd
+import pytest
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
 
 log = logging.getLogger(__name__)
 
 debug = os.environ.get("DEBUG") is not None
+gh_pages = os.environ.get("GH_PAGES") is not None
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
@@ -27,7 +29,8 @@ def _load_fixtures():
     """Load all fixtures from the tests/data folder."""
     params = []
     fixtures_path = Path("./tests/fixtures/")
-    subfolders = sorted(os.listdir(fixtures_path))
+    # use the min-csv smoke test to hydrate the docsite parquet artifacts (see gh-pages.yml)
+    subfolders = ["min-csv"] if gh_pages else sorted(os.listdir(fixtures_path))
 
     for subfolder in subfolders:
         if not os.path.isdir(fixtures_path / subfolder):
@@ -100,7 +103,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     csv_files = list((root / "input").glob("*.csv"))
     data_files = txt_files + csv_files
     for data_file in data_files:
-        with data_file.open() as f:
+        with data_file.open(encoding="utf8") as f:
             text = f.read()
         file_path = (
             str(Path(input_base_dir) / data_file.name)
@@ -130,6 +133,8 @@ class TestIndexer:
             "--verbose" if debug else None,
             "--root",
             root.absolute().as_posix(),
+            "--reporter",
+            "print",
         ]
         command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
@@ -219,14 +224,13 @@ class TestIndexer:
                 ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
-        data_dir = next((root / "output").iterdir()) / "artifacts"
         command = [
             "poetry",
             "run",
             "poe",
             "query",
-            "--data",
-            data_dir.absolute().as_posix(),
+            "--root",
+            root.absolute().as_posix(),
             "--method",
             query_config["method"],
             "--community_level",
@@ -241,12 +245,16 @@ class TestIndexer:
         os.environ,
         {
             **os.environ,
-            "BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
+            "BLOB_STORAGE_CONNECTION_STRING": os.getenv(
+                "GRAPHRAG_CACHE_CONNECTION_STRING", WELL_KNOWN_AZURITE_CONNECTION_STRING
+            ),
+            "LOCAL_BLOB_STORAGE_CONNECTION_STRING": WELL_KNOWN_AZURITE_CONNECTION_STRING,
             "GRAPHRAG_CHUNK_SIZE": "1200",
             "GRAPHRAG_CHUNK_OVERLAP": "0",
         },
         clear=True,
     )
+    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
     def test_fixture(
         self,
         input_path: str,
@@ -278,6 +286,7 @@ class TestIndexer:
         print("running queries")
         for query in query_config:
             result = self.__run_query(root, query)
+            print(f"Query: {query}\nResponse: {result.stdout}")
 
             assert result.stderr == "", f"Query failed with error: {result.stderr}"
             assert result.stdout is not None, "Query returned no output"

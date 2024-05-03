@@ -25,27 +25,36 @@ def build_steps(
 
     return [
         {
-            "id": "extract_claims",
-            "verb": "extract_claims",
+            "verb": "extract_covariates",
             "args": {
                 "column": config.get("chunk_column", "chunk"),
                 "id_column": config.get("chunk_id_column", "chunk_id"),
                 "resolved_entities_column": "resolved_entities",
+                "covariate_type": "claim",
                 "async_mode": config.get("async_mode", AsyncType.AsyncIO),
                 **claim_extract_config,
             },
             "input": input,
         },
         {
-            "verb": "impute",
-            "args": {
-                "column": "covariate_type",
-                "value": "claim",
-            },
+            "verb": "window",
+            "args": {"to": "id", "operation": "uuid", "column": "covariate_type"},
         },
         {
             "verb": "window",
-            "args": {"to": "id", "operation": "uuid", "column": "covariate_type"},
+            "args": {
+                "to": "human_readable_id",
+                "operation": "row_number",
+                "column": "covariate_type",
+            },
+        },
+        {
+            "verb": "convert",
+            "args": {
+                "column": "human_readable_id",
+                "type": "string",
+                "to": "human_readable_id",
+            },
         },
         {
             "verb": "rename",
@@ -60,6 +69,7 @@ def build_steps(
             "args": {
                 "columns": [
                     "id",
+                    "human_readable_id",
                     "covariate_type",
                     "type",
                     "description",

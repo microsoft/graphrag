@@ -6,7 +6,6 @@ from .claims import CLAIM_EXTRACTION_PROMPT, ClaimExtractor
 from .community_reports import (
     COMMUNITY_REPORT_PROMPT,
     CommunityReportsExtractor,
-    prep_community_reports_data,
 )
 from .graph import GraphExtractionResult, GraphExtractor
 
@@ -17,5 +16,4 @@ __all__ = [
     "CommunityReportsExtractor",
     "GraphExtractionResult",
     "GraphExtractor",
-    "prep_community_reports_data",
 ]

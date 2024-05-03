@@ -8,6 +8,7 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Any
 
+from graphrag.config.enums import LLMType
 from graphrag.llm import (
     CompletionLLM,
     EmbeddingLLM,
@@ -21,8 +22,6 @@ from graphrag.llm import (
     create_openai_embedding_llm,
     create_tpm_rpm_limiters,
 )
-
-from .types import LLMType
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks

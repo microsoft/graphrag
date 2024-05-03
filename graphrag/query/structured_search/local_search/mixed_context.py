@@ -1,5 +1,4 @@
 # Copyright (c) 2024 Microsoft Corporation. All rights reserved.
-
 """Algorithms to build context data for local search prompt."""
 
 import logging
@@ -399,7 +398,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         entity_context, entity_context_data = build_entity_context(
             selected_entities=selected_entities,
             token_encoder=self.token_encoder,
-            max_tokens=int(max_tokens * 0.3),
+            max_tokens=max_tokens,
             column_delimiter=column_delimiter,
             single_batch=True,
             include_entity_rank=include_entity_rank,
@@ -427,7 +426,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 selected_entities=added_entities,
                 relationships=list(self.relationships.values()),
                 token_encoder=self.token_encoder,
-                max_tokens=int(max_tokens * 0.3),
+                max_tokens=max_tokens,
                 column_delimiter=column_delimiter,
                 single_batch=True,
                 top_k_relationships=top_k_relationships,
@@ -437,19 +436,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
             )
             current_context.append(relationship_context)
             current_context_data["relationships"] = relationship_context_data
-            relationship_context_tokens = num_tokens(
+            total_tokens = entity_tokens + num_tokens(
                 relationship_context, self.token_encoder
             )
-            total_tokens = entity_tokens + relationship_context_tokens
-
-            if total_tokens > max_tokens:
-                log.warning(
-                    "token limit reached limit=%d, entity=%d rel=%d",
-                    max_tokens,
-                    entity_tokens,
-                    relationship_context_tokens,
-                )
-                break
 
             # build covariate context
             for covariate in self.covariates:
@@ -462,15 +451,12 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     single_batch=True,
                     context_name=covariate,
                 )
-                current_tokens = num_tokens(covariate_context, self.token_encoder)
-
-                if total_tokens + current_tokens <= max_tokens:
-                    total_tokens += current_tokens
-                    current_context.append(covariate_context)
-                    current_context_data[covariate.lower()] = covariate_context_data
+                total_tokens += num_tokens(covariate_context, self.token_encoder)
+                current_context.append(covariate_context)
+                current_context_data[covariate.lower()] = covariate_context_data
 
             if total_tokens > max_tokens:
-                log.warning("token limit reached")
+                log.info("Reached token limit - reverting to previous context state")
                 break
 
             final_context = current_context

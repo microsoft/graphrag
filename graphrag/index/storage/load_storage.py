@@ -6,11 +6,11 @@ from __future__ import annotations
 
 from typing import cast
 
-from graphrag.index.config import (
+from graphrag.config import StorageType
+from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineStorageConfig,
-    PipelineStorageType,
 )
 
 from .blob_pipeline_storage import create_blob_storage
@@ -21,14 +21,14 @@ from .memory_pipeline_storage import create_memory_storage
 def load_storage(config: PipelineStorageConfig):
     """Load the storage for a pipeline."""
     match config.type:
-        case PipelineStorageType.memory:
+        case StorageType.memory:
             return create_memory_storage()
-        case PipelineStorageType.blob:
+        case StorageType.blob:
             config = cast(PipelineBlobStorageConfig, config)
             return create_blob_storage(
                 config.connection_string, config.container_name, config.base_dir
             )
-        case PipelineStorageType.file:
+        case StorageType.file:
             config = cast(PipelineFileStorageConfig, config)
             return create_file_storage(config.base_dir)
         case _:

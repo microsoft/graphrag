@@ -7,11 +7,11 @@ from typing import cast
 
 from datashaper import WorkflowCallbacks
 
+from graphrag.config import ReportingType
 from graphrag.index.config import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
     PipelineReportingConfig,
-    PipelineReportingType,
 )
 
 from .blob_workflow_callbacks import BlobWorkflowCallbacks
@@ -26,14 +26,14 @@ def load_pipeline_reporter(
     config = config or PipelineFileReportingConfig(base_dir="reports")
 
     match config.type:
-        case PipelineReportingType.file:
+        case ReportingType.file:
             config = cast(PipelineFileReportingConfig, config)
             return FileWorkflowCallbacks(
                 str(Path(root_dir or "") / (config.base_dir or ""))
             )
-        case PipelineReportingType.console:
+        case ReportingType.console:
             return ConsoleWorkflowCallbacks()
-        case PipelineReportingType.blob:
+        case ReportingType.blob:
             config = cast(PipelineBlobReportingConfig, config)
             return BlobWorkflowCallbacks(
                 config.connection_string,

@@ -8,6 +8,8 @@ from typing import Any
 
 from graphrag.model.types import TextEmbedder
 
+DEFAULT_VECTOR_SIZE: int = 1536
+
 
 @dataclass
 class VectorStoreDocument:

@@ -1,6 +1,6 @@
 _site
-posts/index/verbs/*.md
-posts/index/workflows/*.md
-!posts/index/verbs/overview.md
-!posts/index/workflows/overview.md
 _posts
+posts/query/notebooks/*.ipynb
+posts/query/notebooks/*_nb.md
+*.parquet
+*.zip

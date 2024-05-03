@@ -19,6 +19,10 @@ class EmbedGraphStrategyType(str, Enum):
 
     node2vec = "node2vec"
 
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 @verb(name="embed_graph")
 async def embed_graph(
@@ -63,7 +67,7 @@ async def embed_graph(
     strategy_type = strategy.get("type", EmbedGraphStrategyType.node2vec)
     strategy_args = {**strategy}
 
-    async def run_strategy(row):
+    async def run_strategy(row):  # noqa RUF029 async is required for interface
         return run_embeddings(strategy_type, cast(Any, row[column]), strategy_args)
 
     results = await derive_from_rows(

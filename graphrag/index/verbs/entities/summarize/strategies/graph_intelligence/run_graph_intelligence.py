@@ -4,9 +4,10 @@
 
 from datashaper import VerbCallbacks
 
+from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
-from graphrag.index.llm import LLMType, load_llm
+from graphrag.index.llm import load_llm
 from graphrag.index.verbs.entities.summarize.strategies.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
