@@ -41,11 +41,10 @@ def build_steps(
             "args": {"to": "id", "operation": "uuid", "column": "covariate_type"},
         },
         {
-            "verb": "window",
+            "verb": "genid",
             "args": {
                 "to": "human_readable_id",
-                "operation": "row_number",
-                "column": "covariate_type",
+                "method": "increment",
             },
         },
         {
