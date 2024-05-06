@@ -2931,13 +2931,13 @@ files = [
 
 [[package]]
 name = "openai"
-version = "1.23.6"
+version = "1.25.2"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.23.6-py3-none-any.whl", hash = "sha256:f406c76ba279d16b9aca5a89cee0d968488e39f671f4dc6f0d690ac3c6f6fca1"},
-    {file = "openai-1.23.6.tar.gz", hash = "sha256:612de2d54cf580920a1156273f84aada6b3dca26d048f62eb5364a4314d7f449"},
+    {file = "openai-1.25.2-py3-none-any.whl", hash = "sha256:8df66384343e81ae49f5b9ee7d2d67df3b98d578d1e3a50994111e1c6062bf5e"},
+    {file = "openai-1.25.2.tar.gz", hash = "sha256:a2b4a6ae9afb8b5578b5b69315ecc6c01564d4c8dbe18fe2375bb9547ff5038c"},
 ]
 
 [package.dependencies]
@@ -5302,4 +5302,4 @@ lancedb = ["lancedb"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "8394259d9fa8a0952d7b6c1831d7ad257872168979a716b6f22199ce646908e8"
+content-hash = "68f2d378c2f4a1fc505ec7777013a7a14dcfb0bf6fc49d2933a00a1f35c09744"
