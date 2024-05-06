@@ -43,6 +43,9 @@ jobs:
       GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
       GRAPHRAG_CHUNK_SIZE: 1200
       GRAPHRAG_CHUNK_OVERLAP: 0
+      # Azure AI Search config
+      AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
+      AZURE_AI_SEARCH_API_KEY: ${{ secrets.AZURE_AI_SEARCH_API_KEY }}
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -60,6 +63,7 @@ jobs:
               - '**/*.toml'
               - '**/*.ipynb'
               - '.github/workflows/python*.yml'
+              - 'tests/smoke/*'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
