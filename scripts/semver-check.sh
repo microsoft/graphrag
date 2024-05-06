@@ -1,5 +1,5 @@
 #!/bin/sh
-changes=$(git diff --name-only main)
+changes=$(git diff --name-only main) || $(git diff --name-only origin/main)
 has_change_doc=$(echo $changes | grep .semversioner/next-release)
 has_impacting_changes=$(echo $changes | grep graphrag)
 
