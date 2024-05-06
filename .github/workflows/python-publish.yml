@@ -29,18 +29,16 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        working-directory: ./python/graphrag
         run: poetry install
 
       - name: Build Distributable
         shell: bash
-        working-directory: ./python/graphrag
         run: poetry build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: python/graphrag/dist
+          packages-dir: dist
           skip-existing: true
           verbose: true
       

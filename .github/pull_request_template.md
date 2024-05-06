@@ -26,13 +26,10 @@ Feel free to discard it if you need to (e.g. when you just fix a typo). -->
 
 ## Checklist
 
-- [ ] I ran the linter and fixed any issues.
 - [ ] I have tested these changes locally.
 - [ ] I have reviewed the code changes.
 - [ ] I have updated the documentation (if necessary).
 - [ ] I have added appropriate unit tests (if applicable).
-- [ ] I have assigned the pull request to the appropriate reviewer(s).
-- [ ] I have run `poetry run semversioner add-change` to create a semver-impact file.
 
 ## Additional Notes
 

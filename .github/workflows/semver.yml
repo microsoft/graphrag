@@ -1,0 +1,15 @@
+name: Semver Check
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+    semver:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+    
+        - name: Check Semver
+          run: ./scripts/semver-check.sh
