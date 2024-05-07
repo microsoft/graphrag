@@ -29,7 +29,7 @@ style = "semver"
 bump = true
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.12"
 environs = "^11.0.0"
 datashaper = "^0.0.49"
 
