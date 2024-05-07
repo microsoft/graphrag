@@ -58,11 +58,20 @@ def build_steps(
             "args": {"columns": ["level"]},
         },
         {
+            "id": "filtered_nodes",
+            "verb": "filter",
+            "args": {
+                "column": "level",
+                "criteria": [{"type": "value", "operator": "equals", "value": 0}],
+            },
+            "input": "workflow:create_final_nodes",
+        },
+        {
             "verb": "compute_edge_combined_degree",
             "args": {"to": "rank"},
             "input": {
                 "source": "pruned_edges",
-                "nodes": "workflow:create_final_nodes",
+                "nodes": "filtered_nodes",
             },
         },
         {

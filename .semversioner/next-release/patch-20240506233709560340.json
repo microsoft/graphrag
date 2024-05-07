@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "fix issue where relationships table emitted duplicates on the order of len(communities)^2"
+}
