@@ -8,24 +8,34 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport
+from graphrag.model import CommunityReport, Entity
 from graphrag.query.llm.text_utils import num_tokens
 
 
 def build_community_context(
     community_reports: list[CommunityReport],
+    entities: list[Entity] | None = None,
     token_encoder: tiktoken.Encoding | None = None,
     use_community_summary: bool = True,
     column_delimiter: str = "|",
     shuffle_data: bool = True,
     include_community_rank: bool = False,
     min_community_rank: int = 0,
+    community_rank_name: str = "rank",
+    community_weight_name: str = "weight",
     max_tokens: int = 8000,
     single_batch: bool = True,
     context_name: str = "Reports",
     random_state: int = 86,
 ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
-    """Prepare community report data table as context data for system prompt."""
+    """
+    Prepare community report data table as context data for system prompt.
+    If entities are provided, the community weight is calculated as the count of text units associated with entities within the community.
+    The calculated weight is added as an attribute to the community reports and added to the context data table.
+    """
+    if entities and len(community_reports) > 0 and community_weight_name not in community_reports[0].attributes:
+        community_reports = _compute_community_weights(community_reports, entities)
+
     selected_reports = [
         report
         for report in community_reports
@@ -52,8 +62,8 @@ def build_community_context(
     header.extend(attribute_cols)
     header.append("summary" if use_community_summary else "content")
     if include_community_rank:
-        header.append("rank")
-
+        header.append(community_rank_name)
+    
     current_context_text += column_delimiter.join(header) + "\n"
     current_tokens = num_tokens(current_context_text, token_encoder)
     results = []
@@ -85,6 +95,11 @@ def build_community_context(
                         all_context_records[1:-1],
                         columns=cast(Any, all_context_records[0]),
                     )
+                    record_df = _rank_report_context(
+                        report_df=record_df,
+                        weight_column=community_weight_name if entities else None,
+                        rank_column=community_rank_name if include_community_rank else None,
+                    )
                 else:
                     record_df = pd.DataFrame()
                 return current_context_text, {context_name.lower(): record_df}
@@ -108,6 +123,42 @@ def build_community_context(
         record_df = pd.DataFrame(
             all_context_records[1:], columns=cast(Any, all_context_records[0])
         )
+        record_df = _rank_report_context(
+            report_df=record_df,
+            weight_column=community_weight_name if entities else None,
+            rank_column=community_rank_name if include_community_rank else None,
+        )
     else:
         record_df = pd.DataFrame()
     return results, {context_name.lower(): record_df}
+
+def _compute_community_weights(
+        community_reports: list[CommunityReport],
+        entities: list[Entity],
+        weight_attribute: str = "weight"     
+) -> list[CommunityReport]:
+    """Calculate a community's weight as count of text units associated with entities within the community"""
+    community_text_units = {}
+    for entity in entities:
+        for community_id in entity.community_ids:
+            if community_id not in community_text_units:
+                community_text_units[community_id] = []
+            community_text_units[community_id].extend(entity.text_unit_ids)
+    for report in community_reports:
+        report.attributes[weight_attribute] = len(set(community_text_units.get(report.community_id, [])))
+    return community_reports
+
+def _rank_report_context(
+        report_df: pd.DataFrame,
+        weight_column: str | None = "weight",
+        rank_column: str | None = "rank",
+) -> pd.DataFrame:
+    """Rank and sort report context by community weight and rank if exist."""
+    rank_attributes = []
+    if weight_column:
+        rank_attributes.append(weight_column)
+    if rank_column:
+        rank_attributes.append(rank_column)
+    if len(rank_attributes) > 0:
+        report_df.sort_values(by=rank_attributes, ascending=False, inplace=True)
+    return report_df
