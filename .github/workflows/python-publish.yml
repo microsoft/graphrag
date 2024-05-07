@@ -9,7 +9,6 @@ jobs:
   publish:
     strategy:
       matrix:
-        os: [ubuntu-latest]
         python-version: ['3.10']
         poetry-version: ['1.8.2']
     name: Upload release to PyPI
