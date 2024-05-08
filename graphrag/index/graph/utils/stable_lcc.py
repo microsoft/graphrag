@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """A module for producing a stable largest connected component, i.e. same input graph == same output lcc."""
 

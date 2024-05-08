@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """Contains algorithms to build context data for global search prompt."""
 

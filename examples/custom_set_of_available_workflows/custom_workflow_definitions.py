@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 from graphrag.index.workflows import WorkflowDefinitions
 
 # Sets up the list of custom workflows that can be used in a pipeline

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """A module containing read_dotenv, load_pipeline_config, _parse_yaml and _create_include_constructor methods definition."""
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
 

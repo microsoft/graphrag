@@ -1,3 +1,3 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """Functions to build context for system prompt to generate responses for a user query."""

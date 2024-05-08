@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 mock_verbs = {
     "mock_verb": lambda x: x,
     "mock_verb_2": lambda x: x,

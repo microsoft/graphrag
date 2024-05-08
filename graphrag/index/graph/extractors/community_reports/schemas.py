@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 """Common field name definitions for community reports."""
 
 # POST-PREP NODE TABLE SCHEMA

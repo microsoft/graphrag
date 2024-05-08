@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 """A module containing run_gi,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 

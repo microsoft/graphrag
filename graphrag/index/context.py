@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
 
 # isort: skip_file
 """A module containing the 'PipelineRunStats' and 'PipelineRunContext' models."""

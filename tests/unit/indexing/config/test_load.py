@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.s
+# Copyright (c) 2024 Microsoft Corporation.s
 import json
 import os
 import unittest
