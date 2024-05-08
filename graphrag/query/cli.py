@@ -17,7 +17,7 @@ from graphrag.index.progress import PrintProgressReporter
 from graphrag.query.input.loaders.dfs import (
     store_entity_semantic_embeddings,
 )
-from graphrag.vector_stores.qdrant import Qdrant
+from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
@@ -31,12 +31,25 @@ from .indexer_adapters import (
 reporter = PrintProgressReporter("")
 
 
-def __get_embedding_description_store():
-    description_embedding_store = Qdrant(
-        collection_name="entity_description_embeddings",
-    )
-    description_embedding_store.connect()
+def __get_embedding_description_store(
+    vector_store_type: str = VectorStoreType.LanceDB, config_args: dict | None = None
+):
+    """Get the embedding description store."""
+    if not config_args:
+        config_args = {}
 
+    config_args.update({
+        "collection_name": config_args.get(
+            "query_collection_name",
+            config_args.get("collection_name", "description_embedding"),
+        ),
+    })
+
+    description_embedding_store = VectorStoreFactory.get_vector_store(
+        vector_store_type=vector_store_type, kwargs=config_args
+    )
+
+    description_embedding_store.connect(**config_args)
     return description_embedding_store
 
 
@@ -101,7 +114,15 @@ def run_local_search(
         else None
     )
 
-    description_embedding_store = __get_embedding_description_store()
+    vector_store_args = (
+        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+
+    description_embedding_store = __get_embedding_description_store(
+        vector_store_type=vector_store_type,
+        config_args=vector_store_args,
+    )
     entities = read_indexer_entities(final_nodes, final_entities, community_level)
     store_entity_semantic_embeddings(
         entities=entities, vectorstore=description_embedding_store

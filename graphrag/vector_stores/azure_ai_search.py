@@ -115,7 +115,8 @@ class AzureAISearch(BaseVectorStore):
             if doc.vector is not None
         ]
 
-        self.db_connection.upload_documents(batch)
+        if batch and len(batch) > 0:
+            self.db_connection.upload_documents(batch)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by a list of ids."""

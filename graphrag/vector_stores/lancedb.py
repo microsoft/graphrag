@@ -3,13 +3,19 @@
 
 """The LanceDB vector storage implementation package."""
 
-from typing import Any
-
-import lancedb
-
+import lancedb as lancedb  # noqa: I001 (Ruff was breaking on this file imports, even tho they were sorted and passed local tests)
 from graphrag.model.types import TextEmbedder
 
-from .base import BaseVectorStore, VectorStoreDocument, VectorStoreSearchResult
+import json
+from typing import Any
+
+import pyarrow as pa
+
+from .base import (
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreSearchResult,
+)
 
 
 class LanceDBVectorStore(BaseVectorStore):
@@ -17,7 +23,7 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
-        db_uri = kwargs.get("db_uri", None)
+        db_uri = kwargs.get("db_uri", "./lancedb")
         self.db_connection = lancedb.connect(db_uri)  # type: ignore
 
     def load_documents(
@@ -29,20 +35,37 @@ class LanceDBVectorStore(BaseVectorStore):
                 "id": document.id,
                 "text": document.text,
                 "vector": document.vector,
-                **document.attributes,
+                "attributes": json.dumps(document.attributes),
             }
             for document in documents
+            if document.vector is not None
         ]
+
+        if len(data) == 0:
+            data = None
+
+        schema = pa.schema([
+            pa.field("id", pa.string()),
+            pa.field("text", pa.string()),
+            pa.field("vector", pa.list_(pa.float64())),
+            pa.field("attributes", pa.string()),
+        ])
         if overwrite:
-            self.document_collection = self.db_connection.create_table(
-                self.collection_name, data=data, mode="overwrite"
-            )
+            if data:
+                self.document_collection = self.db_connection.create_table(
+                    self.collection_name, data=data, mode="overwrite"
+                )
+            else:
+                self.document_collection = self.db_connection.create_table(
+                    self.collection_name, schema=schema, mode="overwrite"
+                )
         else:
             # add data to existing table
             self.document_collection = self.db_connection.open_table(
                 self.collection_name
             )
-            self.document_collection.add(data)
+            if data:
+                self.document_collection.add(data)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
@@ -81,11 +104,7 @@ class LanceDBVectorStore(BaseVectorStore):
                     id=doc["id"],
                     text=doc["text"],
                     vector=doc["vector"],
-                    attributes={
-                        k: v
-                        for k, v in doc.items()
-                        if k not in ["id", "text", "vector"]
-                    },
+                    attributes=json.loads(doc["attributes"]),
                 ),
                 score=1 - abs(float(doc["_distance"])),
             )

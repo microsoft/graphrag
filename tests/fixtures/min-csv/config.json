@@ -44,7 +44,7 @@
                 "description",
                 "graph_embedding"
             ],
-            "subworkflows": 12,
+            "subworkflows": 11,
             "max_runtime": 300
         },
         "create_final_relationships": {
@@ -150,7 +150,6 @@
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
             "method": "global"
         }
-
     ],
     "slow": false
 }

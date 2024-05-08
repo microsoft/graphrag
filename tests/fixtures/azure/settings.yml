@@ -1,50 +1,38 @@
 claim_extraction:
-    enabled: true
-    
-embeddings: 
-    vector_store:
-      type: "qdrant"
-      base:
-        # url: "https://qdrant:6333"
-        # port: 6333
-        # api_key: ${QDRANT_API_KEY}
-        # vector_size: 12345
-        # https: true
-        # no-url, in-memory mode
-      
-      entity_name_description: 
-        title_column: "name"
-        # id_column: "id"
-        # overwrite: true
-      # entity_name: ...
-      # relationship_description: ...
-      # community_report_full_content: ...
-      # community_report_summary: ...
-      # community_report_title: ...
-      # document_raw_content: ...
-      # text_unit_text: ...
+  enabled: true
+
+embeddings:
+  vector_store:
+    type: "azure_ai_search"
+    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+    api_key: ${AZURE_AI_SEARCH_API_KEY}
+    collection_name: "azure_ci"
+    query_collection_name: "azure_ci_query"
+
+    entity_name_description:
+      title_column: "name"
 
 input:
-    type: text
-    storage_type: blob
-    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
-    container_name: azurefixture
-    base_dir: input
+  type: text
+  storage_type: blob
+  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
+  container_name: azurefixture
+  base_dir: input
 
 cache:
-    type: blob
-    connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
-    container_name: cicache
-    base_dir: cache_azure
+  type: blob
+  connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+  container_name: cicache
+  base_dir: cache_azure_ai
 
 storage:
-    type: blob
-    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
-    container_name: azurefixture
-    base_dir: output
+  type: blob
+  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
+  container_name: azurefixture
+  base_dir: output
 
 reporting:
-    type: blob
-    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
-    container_name: azurefixture
-    base_dir: reports
+  type: blob
+  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
+  container_name: azurefixture
+  base_dir: reports

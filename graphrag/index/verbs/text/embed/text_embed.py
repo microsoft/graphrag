@@ -12,7 +12,11 @@ import pandas as pd
 from datashaper import TableContainer, VerbCallbacks, VerbInput, verb
 
 from graphrag.index.cache import PipelineCache
-from graphrag.vector_stores import BaseVectorStore, VectorStoreDocument
+from graphrag.vector_stores import (
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreFactory,
+)
 
 from .strategies.typing import TextEmbeddingStrategy
 
@@ -71,7 +75,7 @@ async def text_embed(
             max_tokens: !ENV ${GRAPHRAG_MAX_TOKENS:6000} # The max tokens to use for openai
             organization: !ENV ${GRAPHRAG_OPENAI_ORGANIZATION} # The organization to use for openai
         vector_store: # The optional configuration for the vector store
-            type: qdrant # The type of vector store to use, available options are: qdrant, lancedb
+            type: lancedb # The type of vector store to use, available options are: azure_ai_search, lancedb
             <...>
     ```
     """
@@ -94,6 +98,8 @@ async def text_embed(
             strategy,
             vector_store,
             vector_store_workflow_config,
+            vector_store_config.get("store_in_table", False),
+            kwargs.get("to", f"{column}_embedding"),
         )
 
     return await _text_embed_in_memory(
@@ -135,6 +141,8 @@ async def _text_embed_with_vector_store(
     strategy: dict[str, Any],
     vector_store: BaseVectorStore,
     vector_store_config: dict,
+    store_in_table: bool = False,
+    to: str = "",
 ):
     output_df = cast(pd.DataFrame, input.get_input())
     strategy_type = strategy["type"]
@@ -168,6 +176,9 @@ async def _text_embed_with_vector_store(
 
     i = 0
     starting_index = 0
+
+    all_results = []
+
     while insert_batch_size * i < input.get_input().shape[0]:
         batch = input.get_input().iloc[
             insert_batch_size * i : insert_batch_size * (i + 1)
@@ -181,6 +192,12 @@ async def _text_embed_with_vector_store(
             cache,
             strategy_args,
         )
+        if store_in_table and result.embeddings:
+            embeddings = [
+                embedding for embedding in result.embeddings if embedding is not None
+            ]
+            all_results.extend(embeddings)
+
         vectors = result.embeddings or []
         documents: list[VectorStoreDocument] = []
         for id, text, title, vector in zip(ids, texts, titles, vectors, strict=True):
@@ -198,36 +215,25 @@ async def _text_embed_with_vector_store(
         starting_index += len(documents)
         i += 1
 
+    if store_in_table:
+        output_df[to] = all_results
+
     return TableContainer(table=output_df)
 
 
 def _create_vector_store(
     vector_store_config: dict, collection_name: str
 ) -> BaseVectorStore:
-    vector_store_type = vector_store_config.get("type")
+    vector_store_type: str = str(vector_store_config.get("type"))
     if collection_name:
         vector_store_config.update({"collection_name": collection_name})
 
-    result: BaseVectorStore
-    match vector_store_type:
-        case "qdrant":
-            from graphrag.vector_stores.qdrant import Qdrant
+    vector_store = VectorStoreFactory.get_vector_store(
+        vector_store_type, kwargs=vector_store_config
+    )
 
-            result = Qdrant(**vector_store_config)
-        case "lancedb":
-            from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-            result = LanceDBVectorStore(**vector_store_config)
-        case "azure_ai_search":
-            from graphrag.vector_stores.azure_ai_search import AzureAISearch
-
-            result = AzureAISearch(**vector_store_config)
-        case _:
-            msg = f"Unknown vector store type: {vector_store_config.get('type')}"
-            raise ValueError(msg)
-
-    result.connect(**vector_store_config)
-    return result
+    vector_store.connect(**vector_store_config)
+    return vector_store
 
 
 def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
