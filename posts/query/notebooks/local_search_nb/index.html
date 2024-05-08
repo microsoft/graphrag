@@ -305,7 +305,7 @@ a {
     LocalSearchMixedContext<span class="token punctuation">,</span>
 <span class="token punctuation">)</span>
 <span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>query<span class="token punctuation">.</span>structured_search<span class="token punctuation">.</span>local_search<span class="token punctuation">.</span>search <span class="token keyword">import</span> LocalSearch
-<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>vector_stores<span class="token punctuation">.</span>qdrant <span class="token keyword">import</span> Qdrant</code></pre>
+<span class="token keyword">from</span> graphrag<span class="token punctuation">.</span>vector_stores<span class="token punctuation">.</span>lancedb <span class="token keyword">import</span> LanceDBVectorStore</code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-1" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
@@ -321,6 +321,7 @@ a {
 
 <div style="position: relative">
   <pre class="language-python"><code id="code-21" class="language-python">INPUT_DIR <span class="token operator">=</span> <span class="token string">"./inputs/operation dulce"</span>
+LANCEDB_URI <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/lancedb"</span></span>
 
 COMMUNITY_REPORT_TABLE <span class="token operator">=</span> <span class="token string">"create_final_community_reports"</span>
 ENTITY_TABLE <span class="token operator">=</span> <span class="token string">"create_final_nodes"</span>
@@ -343,12 +344,12 @@ entity_embedding_df <span class="token operator">=</span> pd<span class="token p
 
 entities <span class="token operator">=</span> read_indexer_entities<span class="token punctuation">(</span>entity_df<span class="token punctuation">,</span> entity_embedding_df<span class="token punctuation">,</span> COMMUNITY_LEVEL<span class="token punctuation">)</span>
 
-<span class="token comment"># load description embeddings to an in-memory qdrant vectorstore</span>
+<span class="token comment"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="token comment"># to connect to a remote db, specify url and port values.</span>
-description_embedding_store <span class="token operator">=</span> Qdrant<span class="token punctuation">(</span>
+description_embedding_store <span class="token operator">=</span> LanceDBVectorStore<span class="token punctuation">(</span>
     collection_name<span class="token operator">=</span><span class="token string">"entity_description_embeddings"</span><span class="token punctuation">,</span>
 <span class="token punctuation">)</span>
-description_embedding_store<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+description_embedding_store<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>db_uri<span class="token operator">=</span>LANCEDB_URI<span class="token punctuation">)</span>
 entity_description_embeddings <span class="token operator">=</span> store_entity_semantic_embeddings<span class="token punctuation">(</span>
     entities<span class="token operator">=</span>entities<span class="token punctuation">,</span> vectorstore<span class="token operator">=</span>description_embedding_store
 <span class="token punctuation">)</span>
