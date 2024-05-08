@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A file containing DEFAULT_CHUNK_SIZE and MOCK_RESPONSES definitions."""
 

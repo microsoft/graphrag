@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing text_embed, load_strategy and create_row_from_embedding_data methods definition."""
 
