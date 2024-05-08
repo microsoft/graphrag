@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A mock ChatLLM that returns the given responses."""
 

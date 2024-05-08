@@ -1,8 +1,10 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing concat method definition."""
 
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 from typing import cast
 
 import pandas as pd

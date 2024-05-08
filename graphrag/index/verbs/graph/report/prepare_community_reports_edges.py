@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing create_graph, _get_node_attributes, _get_edge_attributes and _get_attribute_column_mapping methods definition."""
 

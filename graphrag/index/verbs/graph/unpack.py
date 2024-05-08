@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing unpack_graph, _run_unpack, _unpack_nodes and _unpack_edges methods definition."""
 

@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 # Use this for now instead of a wrapper
 """A module containing 'NodePosition' model."""

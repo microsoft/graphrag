@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """Utility functions for the OpenAI API."""
 

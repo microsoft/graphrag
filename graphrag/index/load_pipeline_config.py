@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing read_dotenv, load_pipeline_config, _parse_yaml and _create_include_constructor methods definition."""
 

@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing compute_umap_positions and visualize_embedding method definition."""
 

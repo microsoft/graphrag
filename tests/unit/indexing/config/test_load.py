@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation.s
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT Licenses
 import json
 import os
 import unittest

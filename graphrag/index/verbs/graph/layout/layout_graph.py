@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing layout_graph, _run_layout and _apply_layout_to_graph methods definition."""
 

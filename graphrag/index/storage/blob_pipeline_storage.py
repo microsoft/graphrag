@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """Azure Blob Storage implementation of PipelineStorage."""
 

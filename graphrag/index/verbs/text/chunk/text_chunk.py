@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
 

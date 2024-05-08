@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing load_workflows, create_workflow, _get_steps_for_workflow and _remove_disabled_steps methods definition."""
 

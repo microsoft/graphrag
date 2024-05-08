@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 import math
 
 from graphrag.index.graph.extractors.community_reports import sort_context

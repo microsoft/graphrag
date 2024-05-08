@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing run, _run_extractor and _load_nodes_edges_for_claim_chain methods definition."""
 

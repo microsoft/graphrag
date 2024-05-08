@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 """Algorithms to build context data for local search prompt."""
 
 import logging

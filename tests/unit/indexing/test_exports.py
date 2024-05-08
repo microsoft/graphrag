@@ -1,4 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 from graphrag.index import (
     create_pipeline_config,
     run_pipeline,
