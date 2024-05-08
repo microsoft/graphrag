@@ -24,7 +24,8 @@ packages = [{ include = "graphrag" }]
 
 [tool.poetry-dynamic-versioning]
 enable = true
-format = "v{base}+{commit}"
+vcs = "git"
+style = "semver"
 bump = true
 
 [tool.poetry.dependencies]
