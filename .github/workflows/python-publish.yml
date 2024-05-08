@@ -2,20 +2,17 @@ name: Python Publish
 on:
   release:
     types: [created]
-
-  #
-  # This trigger will generate pre-release versions from builds on `main`
-  # 
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   publish:
     strategy:
       matrix:
         python-version: ['3.10']
-        poetry-version: ['1.8.2']        
-    name: Publish to PyPI
+        poetry-version: ['1.8.2']
+    name: Upload release to PyPI
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: pypi
