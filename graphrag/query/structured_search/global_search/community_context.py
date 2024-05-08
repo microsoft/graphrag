@@ -7,7 +7,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport
+from graphrag.model import CommunityReport, Entity
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -23,10 +23,12 @@ class GlobalCommunityContext(GlobalContextBuilder):
     def __init__(
         self,
         community_reports: list[CommunityReport],
+        entities: list[Entity] | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
+        self.entities = entities
         self.token_encoder = token_encoder
         self.random_state = random_state
 
@@ -38,6 +40,9 @@ class GlobalCommunityContext(GlobalContextBuilder):
         shuffle_data: bool = True,
         include_community_rank: bool = False,
         min_community_rank: int = 0,
+        community_rank_name: str = "rank",
+        include_community_weight: bool = True,
+        community_weight_name: str = "weight",
         max_tokens: int = 8000,
         context_name: str = "Reports",
         conversation_history_user_turns_only: bool = True,
@@ -64,12 +69,16 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
         community_context, community_context_data = build_community_context(
             community_reports=self.community_reports,
+            entities=self.entities,
             token_encoder=self.token_encoder,
             use_community_summary=use_community_summary,
             column_delimiter=column_delimiter,
             shuffle_data=shuffle_data,
             include_community_rank=include_community_rank,
             min_community_rank=min_community_rank,
+            community_rank_name=community_rank_name,
+            include_community_weight=include_community_weight,
+            community_weight_name=community_weight_name,
             max_tokens=max_tokens,
             single_batch=False,
             context_name=context_name,
