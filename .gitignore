@@ -35,6 +35,7 @@ examples_notebooks/*/data
 tests/fixtures/cache
 tests/fixtures/*/cache
 tests/fixtures/*/output
+lancedb/
 
 # Random
 .DS_Store
@@ -53,8 +54,11 @@ __pycache__
 
 .pipeline
 
+# Azurite
 temp_azurite/
 __azurite*.json
+__blobstorage*.json
+__blobstorage__/
 
 # Getting started example
 ragtest/

@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A package containing the Azure AI Search  vector store implementation."""
 
@@ -10,12 +11,14 @@ from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
+    HnswParameters,
     SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
     SimpleField,
     VectorSearch,
+    VectorSearchAlgorithmMetric,
     VectorSearchProfile,
 )
 from azure.search.documents.models import VectorizedQuery
@@ -66,7 +69,14 @@ class AzureAISearch(BaseVectorStore):
 
             # Configure the vector search profile
             vector_search = VectorSearch(
-                algorithms=[HnswAlgorithmConfiguration(name="HnswAlg")],
+                algorithms=[
+                    HnswAlgorithmConfiguration(
+                        name="HnswAlg",
+                        parameters=HnswParameters(
+                            metric=VectorSearchAlgorithmMetric.COSINE
+                        ),
+                    )
+                ],
                 profiles=[
                     VectorSearchProfile(
                         name=self.vector_search_profile_name,
@@ -114,7 +124,8 @@ class AzureAISearch(BaseVectorStore):
             if doc.vector is not None
         ]
 
-        self.db_connection.upload_documents(batch)
+        if batch and len(batch) > 0:
+            self.db_connection.upload_documents(batch)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by a list of ids."""
@@ -152,7 +163,9 @@ class AzureAISearch(BaseVectorStore):
                     vector=doc.get("vector", []),
                     attributes=(json.loads(doc.get("attributes", "{}"))),
                 ),
-                score=1 - abs(doc["@search.score"]),
+                # Cosine similarity between 0.333 and 1.000
+                # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
+                score=doc["@search.score"],
             )
             for doc in response
         ]

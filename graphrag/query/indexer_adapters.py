@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 """Indexing-Engine to Query Read Adapters.
 
 The parts of these functions that do type adaptation, renaming, collating, etc. should eventually go away.

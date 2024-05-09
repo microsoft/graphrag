@@ -24,7 +24,8 @@ packages = [{ include = "graphrag" }]
 
 [tool.poetry-dynamic-versioning]
 enable = true
-format = "v{base}+{commit}"
+vcs = "git"
+style = "semver"
 bump = true
 
 [tool.poetry.dependencies]
@@ -33,9 +34,8 @@ environs = "^11.0.0"
 datashaper = "^0.0.49"
 
 # Vector Stores
-lancedb = { version = "^0.6.11", optional = true }
-qdrant-client = "^1.8.2"
 azure-search-documents = "^11.4.0"
+lancedb = "^0.6.11"
 
 # Event Loops
 uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
@@ -92,10 +92,6 @@ semversioner = "^2.0.2"
 typing-extensions = "^4.5.0"
 update-toml = "^0.0.3"
 
-
-[tool.poetry.extras]
-lancedb = ["lancedb"]
-
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
@@ -125,7 +121,11 @@ query = "python -m graphrag.query"
 test_only = "pytest -s -k"
 
 [[tool.poe.tasks.release]]
-sequence = ['_semversioner_release', '_semversioner_changelog', '_semversioner_update_toml_version']
+sequence = [
+    '_semversioner_release',
+    '_semversioner_changelog',
+    '_semversioner_update_toml_version',
+]
 ignore_fail = 'return_non_zero'
 
 [[tool.poe.tasks.convert_docsite_notebooks]]

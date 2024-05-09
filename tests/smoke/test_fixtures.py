@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 import asyncio
 import json
 import logging
@@ -237,6 +238,7 @@ class TestIndexer:
             str(query_config.get("community_level", 2)),
             query_config["query"],
         ]
+
         log.info("running command ", " ".join(command))
         return subprocess.run(command, capture_output=True, text=True)
 
@@ -288,6 +290,11 @@ class TestIndexer:
             result = self.__run_query(root, query)
             print(f"Query: {query}\nResponse: {result.stdout}")
 
-            assert result.stderr == "", f"Query failed with error: {result.stderr}"
+            # Check stderr because lancedb logs path creating as WARN which leads to false negatives
+            stderror = (
+                result.stderr if "No existing dataset at" not in result.stderr else ""
+            )
+
+            assert stderror == "", f"Query failed with error: {stderror}"
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"

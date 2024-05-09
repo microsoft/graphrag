@@ -1,4 +1,5 @@
-# Copyright (c) 2024 Microsoft Corporation. All rights reserved.
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
 
 """A module containing run method definition."""
 
@@ -67,7 +68,6 @@ def _get_splitter(
     config: OpenAIConfiguration, batch_max_tokens: int
 ) -> TokenTextSplitter:
     return TokenTextSplitter(
-        model_name=config.model,
         encoding_name=config.encoding_model or "cl100k_base",
         chunk_size=batch_max_tokens,
     )

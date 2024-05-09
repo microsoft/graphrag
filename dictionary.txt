@@ -54,8 +54,6 @@ poethepoet
 pyodbc
 lancedb
 httpx
-qdrant
-Qdrant
 pymongo
 uvloop
 aiofiles
