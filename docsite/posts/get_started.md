@@ -58,10 +58,15 @@ Let's set the base environment variables.
 
 ```sh
 export GRAPHRAG_API_KEY="<api_key>" && \
-export GRAPHRAG_LLM_MODEL="<chat_completions_model>" && \
-export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True" && \
-export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>" && \
 export GRAPHRAG_INPUT_TYPE="text"
+
+# Recommended, but not required. 
+# JSON output mode is only available with some completion models.
+# export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True"
+
+# You may use these env vars to specify which model to use.
+# export GRAPHRAG_LLM_MODEL="<chat_completions_model>"
+# export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>"
 ```
 
 #### <ins>Azure OpenAI</ins>
