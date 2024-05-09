@@ -11,15 +11,15 @@ from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration,
+    HnswParameters,
     SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
     SimpleField,
     VectorSearch,
-    VectorSearchProfile,
-    HnswParameters,
     VectorSearchAlgorithmMetric,
+    VectorSearchProfile,
 )
 from azure.search.documents.models import VectorizedQuery
 
