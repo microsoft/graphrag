@@ -163,7 +163,9 @@ class AzureAISearch(BaseVectorStore):
                     vector=doc.get("vector", []),
                     attributes=(json.loads(doc.get("attributes", "{}"))),
                 ),
-                score=1 - abs(doc["@search.score"]),
+                # Cosine similarity between 0.333 and 1.000
+                # https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking#scores-in-a-hybrid-search-results
+                score=doc["@search.score"],
             )
             for doc in response
         ]
