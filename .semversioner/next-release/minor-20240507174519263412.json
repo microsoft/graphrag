@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Remove Qdrant from vector store implementations and default to lancedb for local solution"
-}
