@@ -18,6 +18,8 @@ from azure.search.documents.indexes.models import (
     SimpleField,
     VectorSearch,
     VectorSearchProfile,
+    HnswParameters,
+    VectorSearchAlgorithmMetric,
 )
 from azure.search.documents.models import VectorizedQuery
 
@@ -67,7 +69,14 @@ class AzureAISearch(BaseVectorStore):
 
             # Configure the vector search profile
             vector_search = VectorSearch(
-                algorithms=[HnswAlgorithmConfiguration(name="HnswAlg")],
+                algorithms=[
+                    HnswAlgorithmConfiguration(
+                        name="HnswAlg",
+                        parameters=HnswParameters(
+                            metric=VectorSearchAlgorithmMetric.COSINE
+                        ),
+                    )
+                ],
                 profiles=[
                     VectorSearchProfile(
                         name=self.vector_search_profile_name,
