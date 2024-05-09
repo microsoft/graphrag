@@ -318,10 +318,15 @@ It shows how to use the system to index some text, and then use the indexed data
 
 <div style="position: relative">
   <pre class="language-sh"><code id="code-57" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_KEY</span><span class="token operator">=</span><span class="token string">"&lt;api_key>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_MODEL</span><span class="token operator">=</span><span class="token string">"&lt;chat_completions_model>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_MODEL_SUPPORTS_JSON</span><span class="token operator">=</span><span class="token string">"True"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_MODEL</span><span class="token operator">=</span><span class="token string">"&lt;embeddings_model>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span></code></pre>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span>
+
+<span class="token comment"># Recommended, but not required. </span>
+<span class="token comment"># JSON output mode is only available with some completion models.</span>
+<span class="token comment"># export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True"</span>
+
+<span class="token comment"># You may use these env vars to specify which model to use.</span>
+<span class="token comment"># export GRAPHRAG_LLM_MODEL="&lt;chat_completions_model>"</span>
+<span class="token comment"># export GRAPHRAG_EMBEDDING_MODEL="&lt;embeddings_model>"</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-57" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
