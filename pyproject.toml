@@ -74,7 +74,7 @@ textual = "^0.58.1"
 devtools = "^0.12.2"
 
 #Azure
-azure-storage-blob = "^12.19.0"
+azure-storage-blob = "^12.20.0"
 azure-identity = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
