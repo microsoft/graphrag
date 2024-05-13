@@ -7,6 +7,7 @@ import json
 from typing import Any
 
 from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
@@ -49,12 +50,20 @@ class AzureAISearch(BaseVectorStore):
         )
 
         if url:
-            self.db_connection = SearchClient(
-                url, self.collection_name, AzureKeyCredential(api_key)
-            )
-            self.index_client = SearchIndexClient(
-                endpoint=url, credential=AzureKeyCredential(api_key)
-            )
+            if api_key: 
+                self.db_connection = SearchClient(
+                    url, self.collection_name, AzureKeyCredential(api_key)
+                )
+                self.index_client = SearchIndexClient(
+                    endpoint=url, credential=AzureKeyCredential(api_key)
+                )
+            else:
+                self.db_connection = SearchClient(
+                    url, self.collection_name, DefaultAzureCredential()
+                )
+                self.index_client = SearchIndexClient(
+                    endpoint=url, credential=DefaultAzureCredential()
+                )
         else:
             not_supported_error = "AAISearchDBClient is not supported on local host."
             raise ValueError(not_supported_error)
