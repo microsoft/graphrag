@@ -24,7 +24,8 @@ def build_community_context(
     min_community_rank: int = 0,
     community_rank_name: str = "rank",
     include_community_weight: bool = True,
-    community_weight_name: str = "weight",
+    community_weight_name: str = "occurrence",
+    normalize_community_weight: bool = True,
     max_tokens: int = 8000,
     single_batch: bool = True,
     context_name: str = "Reports",
@@ -47,7 +48,12 @@ def build_community_context(
         )
     ):
         print("Computing community weights...")
-        community_reports = _compute_community_weights(community_reports, entities)
+        community_reports = _compute_community_weights(
+            community_reports=community_reports, 
+            entities=entities,
+            weight_attribute=community_weight_name,
+            normalize=normalize_community_weight,
+        )
 
     selected_reports = [
         report
@@ -157,7 +163,8 @@ def build_community_context(
 def _compute_community_weights(
     community_reports: list[CommunityReport],
     entities: list[Entity],
-    weight_attribute: str = "weight",
+    weight_attribute: str = "occurrence",
+    normalize: bool = True,
 ) -> list[CommunityReport]:
     """Calculate a community's weight as count of text units associated with entities within the community."""
     community_text_units = {}
@@ -173,12 +180,21 @@ def _compute_community_weights(
         report.attributes[weight_attribute] = len(
             set(community_text_units.get(report.community_id, []))
         )
+    if normalize:
+        # normalize by max weight
+        max_weight = max(
+            [report.attributes[weight_attribute] for report in community_reports]
+        )
+        for report in community_reports:
+            report.attributes[weight_attribute] = (
+                report.attributes[weight_attribute] / max_weight
+            )
     return community_reports
 
 
 def _rank_report_context(
     report_df: pd.DataFrame,
-    weight_column: str | None = "weight",
+    weight_column: str | None = "occcurence",
     rank_column: str | None = "rank",
 ) -> pd.DataFrame:
     """Sort report context by community weight and rank if exist."""
