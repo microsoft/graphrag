@@ -60,6 +60,10 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The base directory for the storage."""
 
+    storage_account_name: str | None = pydantic_Field(
+        description="The blob storage account name.", default=None
+    )
+    """The blob storage account name."""
 
 PipelineStorageConfigTypes = (
     PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig
