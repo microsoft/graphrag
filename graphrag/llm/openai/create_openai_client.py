@@ -33,7 +33,7 @@ def create_openai_client(
             api_base,
             configuration.deployment_name,
         )
-        try:
+        if configuration.api_key is None:
             token_provider = get_bearer_token_provider(
                DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
             )       
@@ -48,7 +48,7 @@ def create_openai_client(
                 timeout=configuration.request_timeout or 180.0,
                 max_retries=0,
             )
-        except:
+        else:
             return AsyncAzureOpenAI(
                 api_key=configuration.api_key,
                 organization=configuration.organization,

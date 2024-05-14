@@ -9,6 +9,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
@@ -26,6 +27,7 @@ class BlobPipelineStorage(PipelineStorage):
     _container_name: str
     _path_prefix: str
     _encoding: str
+    _storage_account_name: str
 
     def __init__(
         self,
@@ -33,15 +35,23 @@ class BlobPipelineStorage(PipelineStorage):
         container_name: str,
         encoding: str | None = None,
         path_prefix: str | None = None,
+        storage_account_name: str | None = None,
     ):
         """Create a new BlobStorage instance."""
-        self._blob_service_client = BlobServiceClient.from_connection_string(
-            connection_string
-        )
+        if storage_account is None:
+            self._blob_service_client = BlobServiceClient.from_connection_string(
+                connection_string
+            )
+        else:
+            self._blob_service_client = BlobServiceClient(
+                account_url=f"https://{storage_account}.blob.core.windows.net",
+                credential=DefaultAzureCredential(),
+            )
         self._encoding = encoding or "utf-8"
         self._container_name = container_name
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
+        self._storage_account_name = storage_account_name or ""
         log.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
@@ -187,23 +197,39 @@ class BlobPipelineStorage(PipelineStorage):
 
     def set_df_json(self, key: str, dataframe: Any) -> None:
         """Set a json dataframe."""
-        connection_string = self._connection_string
-        dataframe.to_json(
-            self._abfs_url(key),
-            storage_options={"connection_string": connection_string},
-            orient="records",
-            lines=True,
-            force_ascii=False,
-        )
+        if self._connection_string is None:
+            storage_account_name = self._storage_account_name
+            dataframe.to_json(
+                self._abfs_url(key),
+                storage_options={"account_name":storage_account_name, "credential": DefaultAzureCredential()},
+                orient="records",
+                lines=True,
+                force_ascii=False,
+            )
+        else:
+            connection_string = self._connection_string
+            dataframe.to_json(
+                self._abfs_url(key),
+                storage_options={"connection_string": connection_string},
+                orient="records",
+                lines=True,
+                force_ascii=False,
+            )
 
     def set_df_parquet(self, key: str, dataframe: Any) -> None:
         """Set a parquet dataframe."""
-        connection_string = self._connection_string
-
-        dataframe.to_parquet(
-            self._abfs_url(key),
-            storage_options={"connection_string": connection_string},
-        )
+        if self._connection_string is None:
+            storage_account_name = self._storage_account_name
+            dataframe.to_parquet(
+                self._abfs_url(key),
+                storage_options={"account_name": storage_account_name, "credential": DefaultAzureCredential()},
+            )
+        else:
+            connection_string = self._connection_string
+            dataframe.to_parquet(
+                self._abfs_url(key),
+                storage_options={"connection_string": connection_string},
+            )
 
     async def has(self, key: str) -> bool:
         """Check if a key exists in the cache."""
