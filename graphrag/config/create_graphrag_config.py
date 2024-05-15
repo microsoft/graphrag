@@ -86,7 +86,7 @@ def create_graphrag_config(
                 reader.str(Fragment.deployment_name) or base.deployment_name
             )
 
-            if api_key is None:
+            if api_key is None and not _is_azure(llm_type):
                 raise ApiKeyMissingError
             if _is_azure(llm_type):
                 if api_base is None:
@@ -137,7 +137,7 @@ def create_graphrag_config(
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
             deployment_name = reader.str(Fragment.deployment_name)
 
-            if api_key is None:
+            if api_key is None and not _is_azure(api_type):
                 raise ApiKeyMissingError(embedding=True)
             if _is_azure(api_type):
                 if api_base is None:
@@ -211,7 +211,7 @@ def create_graphrag_config(
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
                 deployment_name = reader.str(Fragment.deployment_name)
 
-                if api_key is None:
+                if api_key is None and not _is_azure(llm_type):
                     raise ApiKeyMissingError
                 if _is_azure(llm_type):
                     if api_base is None:

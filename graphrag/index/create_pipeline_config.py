@@ -453,8 +453,8 @@ def _get_reporting_config(
         case ReportingType.blob:
             connection_string = settings.reporting.connection_string
             container_name = settings.reporting.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob reporting."
+            if container_name is None:
+                msg = "Container name must be provided for blob reporting."
                 raise ValueError(msg)
             return PipelineBlobReportingConfig(
                 connection_string=connection_string,
@@ -486,8 +486,8 @@ def _get_storage_config(
         case StorageType.blob:
             connection_string = settings.storage.connection_string
             container_name = settings.storage.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob storage."
+            if container_name is None:
+                msg = "Container name must be provided for blob storage."
                 raise ValueError(msg)
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
@@ -518,8 +518,8 @@ def _get_cache_config(
         case CacheType.blob:
             connection_string = settings.cache.connection_string
             container_name = settings.cache.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob cache."
+            if container_name is None:
+                msg = "Container name must be provided for blob cache."
                 raise ValueError(msg)
             return PipelineBlobCacheConfig(
                 connection_string=connection_string,

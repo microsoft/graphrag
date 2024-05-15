@@ -46,7 +46,7 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     type: Literal[StorageType.blob] = StorageType.blob
     """The type of storage."""
 
-    connection_string: str = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The blob storage connection string for the storage.", default=None
     )
     """The blob storage connection string for the storage."""

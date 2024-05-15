@@ -13,7 +13,7 @@ class LLMParameters(BaseModel):
     """LLM Parameters model."""
 
     model_config = ConfigDict(protected_namespaces=(), extra="allow")
-    api_key: str = Field(
+    api_key: str | None = Field(
         description="The API key to use for the LLM service.",
         default=None,
     )

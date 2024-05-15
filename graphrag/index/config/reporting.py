@@ -48,7 +48,7 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     type: Literal[ReportingType.blob] = ReportingType.blob
     """The type of reporting."""
 
-    connection_string: str = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The blob reporting connection string for the reporting.",
         default=None,
     )

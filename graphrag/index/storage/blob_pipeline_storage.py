@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 class BlobPipelineStorage(PipelineStorage):
     """The Blob-Storage implementation."""
 
-    _connection_string: str
+    _connection_string: str | None
     _container_name: str
     _path_prefix: str
     _encoding: str
@@ -31,20 +31,20 @@ class BlobPipelineStorage(PipelineStorage):
 
     def __init__(
         self,
-        connection_string: str,
+        connection_string: str | None,
         container_name: str,
         encoding: str | None = None,
         path_prefix: str | None = None,
         storage_account_name: str | None = None,
     ):
         """Create a new BlobStorage instance."""
-        if storage_account is None:
+        if connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(
                 connection_string
             )
         else:
             self._blob_service_client = BlobServiceClient(
-                account_url=f"https://{storage_account}.blob.core.windows.net",
+                account_url=f"https://{storage_account_name}.blob.core.windows.net",
                 credential=DefaultAzureCredential(),
             )
         self._encoding = encoding or "utf-8"
@@ -272,13 +272,10 @@ class BlobPipelineStorage(PipelineStorage):
 
 
 def create_blob_storage(
-    connection_string: str, container_name: str, base_dir: str | None
+    connection_string: str | None, container_name: str, base_dir: str | None
 ) -> PipelineStorage:
     """Create a blob based storage."""
     log.info("Creating blob storage at %s", container_name)
-    if connection_string is None:
-        msg = "No connection string provided for blob storage."
-        raise ValueError(msg)
     if container_name is None:
         msg = "No container name provided for blob storage."
         raise ValueError(msg)

@@ -57,7 +57,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The base directory for the cache."""
 
-    connection_string: str = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The blob cache connection string for the cache.", default=None
     )
     """The blob cache connection string for the cache."""

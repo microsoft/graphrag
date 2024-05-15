@@ -33,6 +33,11 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     )
     """The blob cache connection string for the cache."""
 
+    storage_account_name: str | None = pydantic_Field(
+        description="The storage account name for the cache.", default=None
+    )
+    """The storage account name for the cache."""
+
     container_name: str | None = pydantic_Field(
         description="The container name for cache", default=None
     )
