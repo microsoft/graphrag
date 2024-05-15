@@ -31,22 +31,27 @@ class PipelineConfig(BaseModel):
         description="Extends another pipeline configuration", default=None
     )
     """Extends another pipeline configuration"""
+
     input: PipelineInputConfigTypes | None = pydantic_Field(
         default=None, discriminator="type"
     )
     """The input configuration for the pipeline."""
+
     reporting: PipelineReportingConfigTypes | None = pydantic_Field(
         default=None, discriminator="type"
     )
     """The reporting configuration for the pipeline."""
+
     storage: PipelineStorageConfigTypes | None = pydantic_Field(
         default=None, discriminator="type"
     )
     """The storage configuration for the pipeline."""
+
     cache: PipelineCacheConfigTypes | None = pydantic_Field(
         default=None, discriminator="type"
     )
     """The cache configuration for the pipeline."""
+
     root_dir: str | None = pydantic_Field(
         description="The root directory for the pipeline. All other paths will be based on this root_dir.",
         default=None,
