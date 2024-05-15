@@ -29,19 +29,19 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     """The storage type to use."""
 
     connection_string: str | None = pydantic_Field(
-        description="The blob cache connection string for the cache.", default=None
+        description="The blob cache connection string for the input files.", default=None
     )
-    """The blob cache connection string for the cache."""
+    """The blob cache connection string for the input files."""
 
     storage_account_name: str | None = pydantic_Field(
-        description="The storage account name for the cache.", default=None
+        description="The storage account name for the input files.", default=None
     )
-    """The storage account name for the cache."""
+    """The storage account name for the input files."""
 
     container_name: str | None = pydantic_Field(
-        description="The container name for cache", default=None
+        description="The container name for input files.", default=None
     )
-    """The container name for cache"""
+    """The container name for the input files."""
 
     base_dir: str | None = pydantic_Field(
         description="The base directory for the input files.", default=None

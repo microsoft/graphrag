@@ -59,6 +59,11 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     )
     """The container name for reporting"""
 
+    storage_account_name: str = pydantic_Field(
+        description="The storage account name for reporting", default=None
+    )
+    """The storage account name for reporting"""
+
     base_dir: str | None = pydantic_Field(
         description="The base directory for the reporting.", default=None
     )

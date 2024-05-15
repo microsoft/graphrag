@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import NoopWorkflowCallbacks
 
@@ -25,18 +26,26 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         container_name: str,
         blob_name: str = "",
         base_dir: str | None = None,
+        storage_account_name: str | None = None,
     ):  # type: ignore
         """Create a new instance of the BlobStorageReporter class."""
-        if connection_string is None:
-            msg = "No connection string provided for blob storage."
+        if connection_string is None and storage_account_name is None:
+            msg = "No connection string or storage account name provided for blob storage."
             raise ValueError(msg)
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
         self._connection_string = connection_string
-        self._blob_service_client = BlobServiceClient.from_connection_string(
-            self._connection_string
-        )
+        self._storage_account_name = storage_account_name
+        if self._connection_string is None:
+            self._blob_service_client = BlobServiceClient(
+                f"https://{storage_account_name}.blob.core.windows.net",
+                credential=DefaultAzureCredential(),
+            )
+        else:
+            self._blob_service_client = BlobServiceClient(
+                self._connection_string
+            )
 
         if blob_name == "":
             blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
@@ -56,7 +65,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         if (
             self._num_blocks >= self._max_block_count
         ):  # Check if block count exceeds 25k
-            self.__init__(self._connection_string, self._container_name)
+            self.__init__(self._connection_string, self._container_name, storage_account_name=self._storage_account_name)
 
         blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name

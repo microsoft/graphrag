@@ -25,3 +25,6 @@ class StorageConfig(BaseModel):
     container_name: str | None = Field(
         description="The storage container name to use.", default=None
     )
+    storage_account_name: str | None = Field(
+        description="The storage account name to use.", default=None
+    )
