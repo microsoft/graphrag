@@ -22,7 +22,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
 
     def __init__(
         self,
-        connection_string: str,
+        connection_string: str | None,
         container_name: str,
         blob_name: str = "",
         base_dir: str | None = None,
@@ -37,13 +37,13 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
             raise ValueError(msg)
         self._connection_string = connection_string
         self._storage_account_name = storage_account_name
-        if self._connection_string is None:
+        if self._connection_string:
+            self._blob_service_client = BlobServiceClient.from_connection_string(self._connection_string)
+        else:
             self._blob_service_client = BlobServiceClient(
                 f"https://{storage_account_name}.blob.core.windows.net",
                 credential=DefaultAzureCredential(),
             )
-        else:
-            self._blob_service_client = BlobServiceClient(self._connection_string)
 
         if blob_name == "":
             blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"

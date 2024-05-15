@@ -67,7 +67,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The container name for cache"""
 
-    storage_account_name: str = pydantic_Field(
+    storage_account_name: str | None = pydantic_Field(
         description="The storage account name for cache", default=None
     )
     """The storage account name for cache"""
