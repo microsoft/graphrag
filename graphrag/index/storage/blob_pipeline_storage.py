@@ -201,7 +201,10 @@ class BlobPipelineStorage(PipelineStorage):
             storage_account_name = self._storage_account_name
             dataframe.to_json(
                 self._abfs_url(key),
-                storage_options={"account_name":storage_account_name, "credential": DefaultAzureCredential()},
+                storage_options={
+                    "account_name": storage_account_name,
+                    "credential": DefaultAzureCredential(),
+                },
                 orient="records",
                 lines=True,
                 force_ascii=False,
@@ -222,7 +225,10 @@ class BlobPipelineStorage(PipelineStorage):
             storage_account_name = self._storage_account_name
             dataframe.to_parquet(
                 self._abfs_url(key),
-                storage_options={"account_name": storage_account_name, "credential": DefaultAzureCredential()},
+                storage_options={
+                    "account_name": storage_account_name,
+                    "credential": DefaultAzureCredential(),
+                },
             )
         else:
             connection_string = self._connection_string
@@ -258,7 +264,11 @@ class BlobPipelineStorage(PipelineStorage):
             return self
         path = str(Path(self._path_prefix) / name)
         return BlobPipelineStorage(
-            self._connection_string, self._container_name, self._encoding, path, self._storage_account_name
+            self._connection_string,
+            self._container_name,
+            self._encoding,
+            path,
+            self._storage_account_name,
         )
 
     def _keyname(self, key: str) -> str:
@@ -272,15 +282,22 @@ class BlobPipelineStorage(PipelineStorage):
 
 
 def create_blob_storage(
-        connection_string: str | None, storage_account_name: str | None, container_name: str, base_dir: str | None
+    connection_string: str | None,
+    storage_account_name: str | None,
+    container_name: str,
+    base_dir: str | None,
 ) -> PipelineStorage:
     """Create a blob based storage."""
     log.info("Creating blob storage at %s", container_name)
     if container_name is None and storage_account_name is None:
         msg = "No container name or storage account name provided for blob storage."
         raise ValueError(msg)
-    return BlobPipelineStorage(connection_string, container_name, path_prefix=base_dir, 
-            storage_account_name=storage_account_name)
+    return BlobPipelineStorage(
+        connection_string,
+        container_name,
+        path_prefix=base_dir,
+        storage_account_name=storage_account_name,
+    )
 
 
 def validate_blob_container_name(container_name: str):

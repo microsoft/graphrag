@@ -41,7 +41,9 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
         case CacheType.blob:
             config = cast(PipelineBlobCacheConfig, config)
             storage = BlobPipelineStorage(
-                config.connection_string, config.container_name, storage_account_name=config.storage_account_name,
+                config.connection_string,
+                config.container_name,
+                storage_account_name=config.storage_account_name,
             ).child(config.base_dir)
             return JsonPipelineCache(storage)
         case _:

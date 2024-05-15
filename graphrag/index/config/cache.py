@@ -72,6 +72,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The storage account name for cache"""
 
+
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig
     | PipelineMemoryCacheConfig

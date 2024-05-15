@@ -39,8 +39,8 @@ def create_openai_client(
             cognitive_services_endpoint = configuration.cognitive_services_endpoint
         if configuration.api_key is None:
             token_provider = get_bearer_token_provider(
-               DefaultAzureCredential(), cognitive_services_endpoint
-            )       
+                DefaultAzureCredential(), cognitive_services_endpoint
+            )
             return AsyncAzureOpenAI(
                 azure_ad_token_provider=token_provider,
                 organization=configuration.organization,

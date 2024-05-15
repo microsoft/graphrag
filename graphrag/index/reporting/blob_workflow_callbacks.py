@@ -43,9 +43,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
                 credential=DefaultAzureCredential(),
             )
         else:
-            self._blob_service_client = BlobServiceClient(
-                self._connection_string
-            )
+            self._blob_service_client = BlobServiceClient(self._connection_string)
 
         if blob_name == "":
             blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
@@ -65,7 +63,11 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         if (
             self._num_blocks >= self._max_block_count
         ):  # Check if block count exceeds 25k
-            self.__init__(self._connection_string, self._container_name, storage_account_name=self._storage_account_name)
+            self.__init__(
+                self._connection_string,
+                self._container_name,
+                storage_account_name=self._storage_account_name,
+            )
 
         blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
@@ -83,13 +85,15 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         details: dict | None = None,
     ):
         """Report an error."""
-        self._write_log({
-            "type": "error",
-            "data": message,
-            "cause": str(cause),
-            "stack": stack,
-            "details": details,
-        })
+        self._write_log(
+            {
+                "type": "error",
+                "data": message,
+                "cause": str(cause),
+                "stack": stack,
+                "details": details,
+            }
+        )
 
     def on_warning(self, message: str, details: dict | None = None):
         """Report a warning."""

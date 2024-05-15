@@ -29,7 +29,8 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     """The storage type to use."""
 
     connection_string: str | None = pydantic_Field(
-        description="The blob cache connection string for the input files.", default=None
+        description="The blob cache connection string for the input files.",
+        default=None,
     )
     """The blob cache connection string for the input files."""
 

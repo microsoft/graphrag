@@ -50,7 +50,7 @@ class AzureAISearch(BaseVectorStore):
         )
 
         if url:
-            if api_key: 
+            if api_key:
                 self.db_connection = SearchClient(
                     url, self.collection_name, AzureKeyCredential(api_key)
                 )

@@ -65,6 +65,7 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The storage account name."""
 
+
 PipelineStorageConfigTypes = (
     PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig
 )
