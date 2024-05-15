@@ -27,7 +27,7 @@ class BlobPipelineStorage(PipelineStorage):
     _container_name: str
     _path_prefix: str
     _encoding: str
-    _storage_account_name: str
+    _storage_account_name: str | None
 
     def __init__(
         self,
@@ -51,7 +51,7 @@ class BlobPipelineStorage(PipelineStorage):
         self._container_name = container_name
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
-        self._storage_account_name = storage_account_name or ""
+        self._storage_account_name = storage_account_name
         log.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
