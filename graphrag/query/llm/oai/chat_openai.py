@@ -3,7 +3,7 @@
 
 """Chat-based OpenAI LLM implementation."""
 
-from typing import Any
+from typing import Any, Callable
 
 from tenacity import (
     AsyncRetrying,
@@ -28,8 +28,9 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
 
     def __init__(
         self,
-        api_key: str,
-        model: str,
+        api_key: str | None = None,
+        model: str | None = None,
+        azure_ad_token_provider: Callable | None = None,
         deployment_name: str | None = None,
         api_base: str | None = None,
         api_version: str | None = None,
@@ -43,6 +44,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         OpenAILLMImpl.__init__(
             self=self,
             api_key=api_key,
+            azure_ad_token_provider=azure_ad_token_provider,
             deployment_name=deployment_name,
             api_base=api_base,
             api_version=api_version,

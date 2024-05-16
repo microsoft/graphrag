@@ -4,7 +4,7 @@
 """OpenAI Embedding model implementation."""
 
 import asyncio
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import tiktoken
@@ -32,7 +32,8 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str | None = None,
+        azure_ad_token_provider: Callable | None = None,
         model: str = "text-embedding-3-small",
         deployment_name: str | None = None,
         api_base: str | None = None,
@@ -49,6 +50,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         OpenAILLMImpl.__init__(
             self=self,
             api_key=api_key,
+            azure_ad_token_provider=azure_ad_token_provider,
             deployment_name=deployment_name,
             api_base=api_base,
             api_version=api_version,
