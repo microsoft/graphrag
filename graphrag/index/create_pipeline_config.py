@@ -459,6 +459,9 @@ def _get_reporting_config(
             if container_name is None:
                 msg = "Container name must be provided for blob reporting."
                 raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob reporting."
+                raise ValueError(msg)
             return PipelineBlobReportingConfig(
                 connection_string=connection_string,
                 container_name=container_name,
@@ -494,6 +497,9 @@ def _get_storage_config(
             if container_name is None:
                 msg = "Container name must be provided for blob storage."
                 raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob storage."
+                raise ValueError(msg)
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
                 container_name=container_name,
@@ -527,6 +533,9 @@ def _get_cache_config(
             container_name = settings.cache.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob cache."
+                raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob cache."
                 raise ValueError(msg)
             return PipelineBlobCacheConfig(
                 connection_string=connection_string,

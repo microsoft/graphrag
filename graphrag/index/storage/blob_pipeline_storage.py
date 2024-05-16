@@ -52,7 +52,7 @@ class BlobPipelineStorage(PipelineStorage):
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
         self._storage_account_blob_url = storage_account_blob_url
-        self._storage_account_name = storage_account_blob_url.split("//")[1].split(".")[0]
+        self._storage_account_name = storage_account_blob_url.split("//")[1].split(".")[0] if storage_account_blob_url else None
         log.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
@@ -198,12 +198,11 @@ class BlobPipelineStorage(PipelineStorage):
 
     def set_df_json(self, key: str, dataframe: Any) -> None:
         """Set a json dataframe."""
-        if self._connection_string is None:
-            storage_account_name = self._storage_account_name
+        if self._connection_string is None and self._storage_account_name:
             dataframe.to_json(
                 self._abfs_url(key),
                 storage_options={
-                    "account_name": storage_account_name,
+                    "account_name": self._storage_account_name,
                     "credential": DefaultAzureCredential(),
                 },
                 orient="records",
@@ -211,10 +210,9 @@ class BlobPipelineStorage(PipelineStorage):
                 force_ascii=False,
             )
         else:
-            connection_string = self._connection_string
             dataframe.to_json(
                 self._abfs_url(key),
-                storage_options={"connection_string": connection_string},
+                storage_options={"connection_string": self._connection_string},
                 orient="records",
                 lines=True,
                 force_ascii=False,
@@ -222,20 +220,18 @@ class BlobPipelineStorage(PipelineStorage):
 
     def set_df_parquet(self, key: str, dataframe: Any) -> None:
         """Set a parquet dataframe."""
-        if self._connection_string is None:
-            storage_account_name = self._storage_account_name
+        if self._connection_string is None and self._storage_account_name:
             dataframe.to_parquet(
                 self._abfs_url(key),
                 storage_options={
-                    "account_name": storage_account_name,
+                    "account_name": self._storage_account_name,
                     "credential": DefaultAzureCredential(),
                 },
             )
         else:
-            connection_string = self._connection_string
             dataframe.to_parquet(
                 self._abfs_url(key),
-                storage_options={"connection_string": connection_string},
+                storage_options={"connection_string": self._connection_string},
             )
 
     async def has(self, key: str) -> bool:
@@ -290,8 +286,11 @@ def create_blob_storage(
 ) -> PipelineStorage:
     """Create a blob based storage."""
     log.info("Creating blob storage at %s", container_name)
-    if container_name is None and storage_account_blob_url is None:
-        msg = "No container name or storage account blob url provided for blob storage."
+    if container_name is None:
+        msg = "No container name provided for blob storage."
+        raise ValueError(msg)
+    if connection_string is None and storage_account_blob_url is None:
+        msg = "No storage account blob url provided for blob storage."
         raise ValueError(msg)
     return BlobPipelineStorage(
         connection_string,

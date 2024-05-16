@@ -29,11 +29,11 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         storage_account_blob_url: str | None = None,
     ):  # type: ignore
         """Create a new instance of the BlobStorageReporter class."""
-        if connection_string is None and storage_account_blob_url is None:
-            msg = "No connection string or storage account blob url provided for blob storage."
-            raise ValueError(msg)
         if container_name is None:
             msg = "No container name provided for blob storage."
+            raise ValueError(msg)
+        if connection_string is None and storage_account_blob_url is None:
+            msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
         self._connection_string = connection_string
         self._storage_account_blob_url = storage_account_blob_url
@@ -85,15 +85,13 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         details: dict | None = None,
     ):
         """Report an error."""
-        self._write_log(
-            {
-                "type": "error",
-                "data": message,
-                "cause": str(cause),
-                "stack": stack,
-                "details": details,
-            }
-        )
+        self._write_log({
+            "type": "error",
+            "data": message,
+            "cause": str(cause),
+            "stack": stack,
+            "details": details,
+        })
 
     def on_warning(self, message: str, details: dict | None = None):
         """Report a warning."""
