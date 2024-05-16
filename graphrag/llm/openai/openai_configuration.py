@@ -26,7 +26,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
 
     _api_base: str | None
     _api_version: str | None
-    _cognitive_serivces_endpoint: str | None
+    _cognitive_services_endpoint: str | None
     _deployment_name: str | None
     _organization: str | None
     _proxy: str | None
