@@ -40,7 +40,7 @@ def load_pipeline_reporter(
                 config.connection_string,
                 config.container_name,
                 base_dir=config.base_dir,
-                storage_account_name=config.storage_account_name,
+                storage_account_blob_url=config.storage_account_blob_url,
             )
         case _:
             msg = f"Unknown reporting type: {config.type}"

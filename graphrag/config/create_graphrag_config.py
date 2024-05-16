@@ -314,7 +314,7 @@ def create_graphrag_config(
                 document_attribute_columns=reader.list("document_attribute_columns")
                 or [],
                 connection_string=reader.str(Fragment.conn_string),
-                storage_account_name=reader.str(Fragment.storage_account_name),
+                storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
             )
         with reader.envvar_prefix(Section.cache), reader.use(values.get("cache")):
@@ -322,7 +322,7 @@ def create_graphrag_config(
             cache_model = CacheConfig(
                 type=CacheType(c_type) if c_type else defs.CACHE_TYPE,
                 connection_string=reader.str(Fragment.conn_string),
-                storage_account_name=reader.str(Fragment.storage_account_name),
+                storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.CACHE_BASE_DIR,
             )
@@ -334,7 +334,7 @@ def create_graphrag_config(
             reporting_model = ReportingConfig(
                 type=ReportingType(r_type) if r_type else defs.REPORTING_TYPE,
                 connection_string=reader.str(Fragment.conn_string),
-                storage_account_name=reader.str(Fragment.storage_account_name),
+                storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.REPORTING_BASE_DIR,
             )
@@ -343,7 +343,7 @@ def create_graphrag_config(
             storage_model = StorageConfig(
                 type=StorageType(s_type) if s_type else defs.STORAGE_TYPE,
                 connection_string=reader.str(Fragment.conn_string),
-                storage_account_name=reader.str(Fragment.storage_account_name),
+                storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
             )
@@ -540,7 +540,7 @@ class Fragment(str, Enum):
     request_timeout = "REQUEST_TIMEOUT"
     rpm = "RPM"
     sleep_recommendation = "SLEEP_ON_RATE_LIMIT_RECOMMENDATION"
-    storage_account_name = "STORAGE_ACCOUNT_NAME"
+    storage_account_blob_url = "STORAGE_ACCOUNT_BLOB_URL"
     thread_count = "THREAD_COUNT"
     thread_stagger = "THREAD_STAGGER"
     tpm = "TPM"

@@ -28,7 +28,7 @@ def load_storage(config: PipelineStorageConfig):
             config = cast(PipelineBlobStorageConfig, config)
             return create_blob_storage(
                 config.connection_string,
-                config.storage_account_name,
+                config.storage_account_blob_url,
                 config.container_name,
                 config.base_dir,
             )

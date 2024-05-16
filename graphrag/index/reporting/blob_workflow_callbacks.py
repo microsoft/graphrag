@@ -26,22 +26,22 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         container_name: str,
         blob_name: str = "",
         base_dir: str | None = None,
-        storage_account_name: str | None = None,
+        storage_account_blob_url: str | None = None,
     ):  # type: ignore
         """Create a new instance of the BlobStorageReporter class."""
-        if connection_string is None and storage_account_name is None:
-            msg = "No connection string or storage account name provided for blob storage."
+        if connection_string is None and storage_account_blob_url is None:
+            msg = "No connection string or storage account blob url provided for blob storage."
             raise ValueError(msg)
         if container_name is None:
             msg = "No container name provided for blob storage."
             raise ValueError(msg)
         self._connection_string = connection_string
-        self._storage_account_name = storage_account_name
+        self._storage_account_blob_url = storage_account_blob_url
         if self._connection_string:
             self._blob_service_client = BlobServiceClient.from_connection_string(self._connection_string)
         else:
             self._blob_service_client = BlobServiceClient(
-                f"https://{storage_account_name}.blob.core.windows.net",
+                storage_account_blob_url,
                 credential=DefaultAzureCredential(),
             )
 
@@ -66,7 +66,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
             self.__init__(
                 self._connection_string,
                 self._container_name,
-                storage_account_name=self._storage_account_name,
+                storage_account_blob_url=self._storage_account_blob_url,
             )
 
         blob_client = self._blob_service_client.get_blob_client(
