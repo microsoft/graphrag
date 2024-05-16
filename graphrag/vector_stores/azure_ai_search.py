@@ -53,11 +53,15 @@ class AzureAISearch(BaseVectorStore):
             self.db_connection = SearchClient(
                 endpoint=url,
                 index_name=self.collection_name,
-                credential=AzureKeyCredential(api_key) if api_key else DefaultAzureCredential(),
+                credential=AzureKeyCredential(api_key)
+                if api_key
+                else DefaultAzureCredential(),
             )
             self.index_client = SearchIndexClient(
                 endpoint=url,
-                credential=AzureKeyCredential(api_key) if api_key else DefaultAzureCredential(),
+                credential=AzureKeyCredential(api_key)
+                if api_key
+                else DefaultAzureCredential(),
             )
         else:
             not_supported_error = "AAISearchDBClient is not supported on local host."
