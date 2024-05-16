@@ -4,7 +4,8 @@
 """OpenAI Embedding model implementation."""
 
 import asyncio
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 import tiktoken

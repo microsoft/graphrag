@@ -7,7 +7,6 @@ import logging
 from functools import cache
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 
 from .openai_configuration import OpenAIConfiguration

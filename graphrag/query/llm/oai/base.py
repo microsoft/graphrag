@@ -4,14 +4,13 @@
 """Base classes for LLM and Embedding models."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 from graphrag.query.progress import ConsoleStatusReporter, StatusReporter
-
-from typing import Callable
 
 
 class BaseOpenAILLM(ABC):
