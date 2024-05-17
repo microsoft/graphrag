@@ -23,6 +23,8 @@ from graphrag.query.llm.oai.typing import (
 )
 from graphrag.query.progress import StatusReporter
 
+_MODEL_REQUIRED_MSG = "model is required"
+
 
 class ChatOpenAI(BaseLLM, OpenAILLMImpl):
     """Wrapper for OpenAI ChatCompletion models."""
@@ -127,8 +129,11 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
         response = self.sync_client.chat.completions.create(  # type: ignore
-            model=self.model,
+            model=model,
             messages=messages,  # type: ignore
             stream=streaming,
             **kwargs,
@@ -160,8 +165,11 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
         response = await self.async_client.chat.completions.create(  # type: ignore
-            model=self.model,
+            model=model,
             messages=messages,  # type: ignore
             stream=streaming,
             **kwargs,
