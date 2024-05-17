@@ -43,6 +43,10 @@ class BlobPipelineStorage(PipelineStorage):
                 connection_string
             )
         else:
+            if storage_account_blob_url is None:
+                msg = "Either connection_string or storage_account_blob_url must be provided."
+                raise ValueError(msg)
+
             self._blob_service_client = BlobServiceClient(
                 account_url=storage_account_blob_url,
                 credential=DefaultAzureCredential(),
@@ -52,7 +56,11 @@ class BlobPipelineStorage(PipelineStorage):
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
         self._storage_account_blob_url = storage_account_blob_url
-        self._storage_account_name = storage_account_blob_url.split("//")[1].split(".")[0] if storage_account_blob_url else None
+        self._storage_account_name = (
+            storage_account_blob_url.split("//")[1].split(".")[0]
+            if storage_account_blob_url
+            else None
+        )
         log.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,

@@ -38,8 +38,14 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         self._connection_string = connection_string
         self._storage_account_blob_url = storage_account_blob_url
         if self._connection_string:
-            self._blob_service_client = BlobServiceClient.from_connection_string(self._connection_string)
+            self._blob_service_client = BlobServiceClient.from_connection_string(
+                self._connection_string
+            )
         else:
+            if storage_account_blob_url is None:
+                msg = "Either connection_string or storage_account_blob_url must be provided."
+                raise ValueError(msg)
+
             self._blob_service_client = BlobServiceClient(
                 storage_account_blob_url,
                 credential=DefaultAzureCredential(),
