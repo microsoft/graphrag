@@ -79,6 +79,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_API_PROXY": "http://some/proxy",
     "GRAPHRAG_API_VERSION": "v1234",
     "GRAPHRAG_ASYNC_MODE": "asyncio",
+    "GRAPHRAG_CACHE_STORAGE_ACCOUNT_BLOB_URL": "cache_account_blob_url",
     "GRAPHRAG_CACHE_BASE_DIR": "/some/cache/dir",
     "GRAPHRAG_CACHE_CONNECTION_STRING": "test_cs1",
     "GRAPHRAG_CACHE_CONTAINER_NAME": "test_cn1",
@@ -108,6 +109,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_EMBEDDING_TPM": "7000",
     "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
     "GRAPHRAG_ENCODING_MODEL": "test123",
+    "GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL": "input_account_blob_url",
     "GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES": "cat,dog,elephant",
     "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
     "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-c.txt",
@@ -145,6 +147,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_NODE2VEC_RANDOM_SEED": "010101",
     "GRAPHRAG_NODE2VEC_WALK_LENGTH": "555111",
     "GRAPHRAG_NODE2VEC_WINDOW_SIZE": "12345",
+    "GRAPHRAG_REPORTING_STORAGE_ACCOUNT_BLOB_URL": "reporting_account_blob_url",
     "GRAPHRAG_REPORTING_BASE_DIR": "/some/reporting/dir",
     "GRAPHRAG_REPORTING_CONNECTION_STRING": "test_cs2",
     "GRAPHRAG_REPORTING_CONTAINER_NAME": "test_cn2",
@@ -153,6 +156,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_SNAPSHOT_GRAPHML": "true",
     "GRAPHRAG_SNAPSHOT_RAW_ENTITIES": "true",
     "GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES": "true",
+    "GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL": "storage_account_blob_url",
     "GRAPHRAG_STORAGE_BASE_DIR": "/some/storage/dir",
     "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
     "GRAPHRAG_STORAGE_CONTAINER_NAME": "test_cn",
@@ -488,6 +492,7 @@ class TestDefaultConfig(unittest.TestCase):
     def test_create_parameters_from_env_vars(self) -> None:
         parameters = create_graphrag_config()
         assert parameters.async_mode == "asyncio"
+        assert parameters.cache.storage_account_blob_url == "cache_account_blob_url"
         assert parameters.cache.base_dir == "/some/cache/dir"
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
@@ -528,6 +533,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
         assert parameters.entity_extraction.prompt == "tests/unit/config/prompt-c.txt"
+        assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
         assert parameters.input.container_name == "input_cn"
@@ -560,6 +566,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.llm.type == "azure_openai_chat"
         assert parameters.parallelization.num_threads == 987
         assert parameters.parallelization.stagger == 0.123
+        assert (
+            parameters.reporting.storage_account_blob_url
+            == "reporting_account_blob_url"
+        )
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
@@ -568,6 +578,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
@@ -600,18 +611,21 @@ class TestDefaultConfig(unittest.TestCase):
                     connection_string="test_cs",
                     container_name="test_cn",
                     base_dir="/some/storage/dir",
+                    storage_account_blob_url="storage_account_blob_url",
                 ),
                 cache=CacheConfigInput(
                     type=CacheType.blob,
                     connection_string="test_cs1",
                     container_name="test_cn1",
                     base_dir="/some/cache/dir",
+                    storage_account_blob_url="cache_account_blob_url",
                 ),
                 reporting=ReportingConfigInput(
                     type=ReportingType.blob,
                     connection_string="test_cs2",
                     container_name="test_cn2",
                     base_dir="/some/reporting/dir",
+                    storage_account_blob_url="reporting_account_blob_url",
                 ),
                 input=InputConfigInput(
                     type=InputType.text,
@@ -627,6 +641,7 @@ class TestDefaultConfig(unittest.TestCase):
                     timestamp_format="test_format",
                     title_column="test_title",
                     storage_type="blob",
+                    storage_account_blob_url="input_account_blob_url",
                 ),
                 embed_graph=EmbedGraphConfigInput(
                     enabled=True,
@@ -681,6 +696,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.cache.connection_string == "test_cs1"
         assert parameters.cache.container_name == "test_cn1"
         assert parameters.cache.type == CacheType.blob
+        assert parameters.cache.storage_account_blob_url == "cache_account_blob_url"
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
@@ -719,12 +735,17 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
         assert parameters.input.type == InputType.text
+        assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.model == "test-llm"
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
         assert parameters.reporting.type == ReportingType.blob
+        assert (
+            parameters.reporting.storage_account_blob_url
+            == "reporting_account_blob_url"
+        )
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
@@ -733,6 +754,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
         assert parameters.storage.type == StorageType.blob
+        assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
         assert parameters.summarize_descriptions.max_length == 12345
         assert parameters.summarize_descriptions.prompt == "summarize_prompt_file.txt"
         assert parameters.umap.enabled
