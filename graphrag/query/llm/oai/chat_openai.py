@@ -3,6 +3,7 @@
 
 """Chat-based OpenAI LLM implementation."""
 
+from collections.abc import Callable
 from typing import Any
 
 from tenacity import (
@@ -22,14 +23,17 @@ from graphrag.query.llm.oai.typing import (
 )
 from graphrag.query.progress import StatusReporter
 
+_MODEL_REQUIRED_MSG = "model is required"
+
 
 class ChatOpenAI(BaseLLM, OpenAILLMImpl):
     """Wrapper for OpenAI ChatCompletion models."""
 
     def __init__(
         self,
-        api_key: str,
-        model: str,
+        api_key: str | None = None,
+        model: str | None = None,
+        azure_ad_token_provider: Callable | None = None,
         deployment_name: str | None = None,
         api_base: str | None = None,
         api_version: str | None = None,
@@ -43,6 +47,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         OpenAILLMImpl.__init__(
             self=self,
             api_key=api_key,
+            azure_ad_token_provider=azure_ad_token_provider,
             deployment_name=deployment_name,
             api_base=api_base,
             api_version=api_version,
@@ -124,8 +129,11 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
         response = self.sync_client.chat.completions.create(  # type: ignore
-            model=self.model,
+            model=model,
             messages=messages,  # type: ignore
             stream=streaming,
             **kwargs,
@@ -157,8 +165,11 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
         response = await self.async_client.chat.completions.create(  # type: ignore
-            model=self.model,
+            model=model,
             messages=messages,  # type: ignore
             stream=streaming,
             **kwargs,

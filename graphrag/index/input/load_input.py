@@ -47,10 +47,14 @@ async def load_input(
     match config.storage_type:
         case StorageType.blob:
             log.info("using blob storage input")
+            if config.container_name is None:
+                msg = "Container name required for blob storage"
+                raise ValueError(msg)
             if (
-                config.connection_string is None and config.storage_account_blob_url is None
-            ) or config.container_name is None:
-                msg = "(Connection string or storage account blob url) and container name required for blob storage"
+                config.connection_string is None
+                and config.storage_account_blob_url is None
+            ):
+                msg = "Connection string or storage account blob url required for blob storage"
                 raise ValueError(msg)
             storage = BlobPipelineStorage(
                 connection_string=config.connection_string,

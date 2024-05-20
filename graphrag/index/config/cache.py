@@ -26,6 +26,7 @@ class PipelineFileCacheConfig(PipelineCacheConfig[Literal[CacheType.file]]):
 
     type: Literal[CacheType.file] = CacheType.file
     """The type of cache."""
+
     base_dir: str | None = pydantic_Field(
         description="The base directory for the cache.", default=None
     )

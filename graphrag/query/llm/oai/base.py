@@ -4,6 +4,7 @@
 """Base classes for LLM and Embedding models."""
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
@@ -90,7 +91,8 @@ class OpenAILLMImpl(BaseOpenAILLM):
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str | None = None,
+        azure_ad_token_provider: Callable | None = None,
         deployment_name: str | None = None,
         api_base: str | None = None,
         api_version: str | None = None,
@@ -101,6 +103,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         reporter: StatusReporter | None = None,
     ):
         self.api_key = api_key
+        self.azure_ad_token_provider = azure_ad_token_provider
         self.deployment_name = deployment_name
         self.api_base = api_base
         self.api_version = api_version
@@ -129,6 +132,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
 
             sync_client = AzureOpenAI(
                 api_key=self.api_key,
+                azure_ad_token_provider=self.azure_ad_token_provider,
                 organization=self.organization,
                 # Azure-Specifics
                 api_version=self.api_version,
@@ -141,6 +145,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
 
             async_client = AsyncAzureOpenAI(
                 api_key=self.api_key,
+                azure_ad_token_provider=self.azure_ad_token_provider,
                 organization=self.organization,
                 # Azure-Specifics
                 api_version=self.api_version,
