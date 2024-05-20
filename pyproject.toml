@@ -24,9 +24,16 @@ packages = [{ include = "graphrag" }]
 
 [tool.poetry-dynamic-versioning]
 enable = true
-vcs = "git"
 style = "pep440"
+vcs = "git"
 bump = true
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(base, stage, revision, dev=distance) }}
+    {%- endif -%}
+"""
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
