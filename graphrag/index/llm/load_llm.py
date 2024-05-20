@@ -182,10 +182,7 @@ def _load_azure_openai_embeddings_llm(
 
 
 def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
-    api_key = config.get("api_key") or None
-    if api_key is None:
-        msg = 'OpenAI api key required for OpenAI LLM, use "api_key": "<key>"'
-        raise ValueError(msg)
+    api_key = config.get("api_key")
 
     return {
         # Pass in all parameterized values

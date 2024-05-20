@@ -40,6 +40,7 @@ API_KEY=some_api_key
 * `connection_string` **str** - (blob only) The Azure Storage connection string.
 * `container_name` **str** - (blob only) The Azure Storage container name.
 * `base_dir` **str** - The base directory to read input from, relative to the root.
+* `storage_account_blob_url` **str** - The storage account blob URL to use.
   
 ## llm
 
@@ -98,6 +99,7 @@ This is the base LLM configuration section. Other steps may override this config
 * `connection_string` **str** - (blob only) The Azure Storage connection string.
 * `container_name` **str** - (blob only) The Azure Storage container name.
 * `base_dir` **str** - The base directory to write cache to, relative to the root.
+* `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ## storage
 ### Fields
@@ -105,6 +107,7 @@ This is the base LLM configuration section. Other steps may override this config
 * `connection_string` **str** - (blob only) The Azure Storage connection string.
 * `container_name` **str** - (blob only) The Azure Storage container name.
 * `base_dir` **str** - The base directory to write reports to, relative to the root.
+* `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ## reporting
 ### Fields
@@ -112,6 +115,7 @@ This is the base LLM configuration section. Other steps may override this config
 * `connection_string` **str** - (blob only) The Azure Storage connection string.
 * `container_name` **str** - (blob only) The Azure Storage container name.
 * `base_dir` **str** - The base directory to write reports to, relative to the root.
+* `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ## entity_extraction
 ### Fields

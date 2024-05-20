@@ -426,6 +426,7 @@ def _get_pipeline_input_config(
                 title_column=settings.input.title_column,
                 storage_type=settings.input.storage_type,
                 connection_string=settings.input.connection_string,
+                storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
             )
         case InputType.text:
@@ -435,6 +436,7 @@ def _get_pipeline_input_config(
                 encoding=settings.input.file_encoding,
                 storage_type=settings.input.storage_type,
                 connection_string=settings.input.connection_string,
+                storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
             )
         case _:
@@ -452,14 +454,19 @@ def _get_reporting_config(
             return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
         case ReportingType.blob:
             connection_string = settings.reporting.connection_string
+            storage_account_blob_url = settings.reporting.storage_account_blob_url
             container_name = settings.reporting.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob reporting."
+            if container_name is None:
+                msg = "Container name must be provided for blob reporting."
+                raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob reporting."
                 raise ValueError(msg)
             return PipelineBlobReportingConfig(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.reporting.base_dir,
+                storage_account_blob_url=storage_account_blob_url,
             )
         case ReportingType.console:
             return PipelineConsoleReportingConfig()
@@ -485,14 +492,19 @@ def _get_storage_config(
             return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
         case StorageType.blob:
             connection_string = settings.storage.connection_string
+            storage_account_blob_url = settings.storage.storage_account_blob_url
             container_name = settings.storage.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob storage."
+            if container_name is None:
+                msg = "Container name must be provided for blob storage."
+                raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob storage."
                 raise ValueError(msg)
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.storage.base_dir,
+                storage_account_blob_url=storage_account_blob_url,
             )
         case _:
             # relative to the root_dir
@@ -517,14 +529,19 @@ def _get_cache_config(
             return PipelineNoneCacheConfig()
         case CacheType.blob:
             connection_string = settings.cache.connection_string
+            storage_account_blob_url = settings.cache.storage_account_blob_url
             container_name = settings.cache.container_name
-            if connection_string is None or container_name is None:
-                msg = "Connection string and container name must be provided for blob cache."
+            if container_name is None:
+                msg = "Container name must be provided for blob cache."
+                raise ValueError(msg)
+            if connection_string is None and storage_account_blob_url is None:
+                msg = "Connection string or storage account blob url must be provided for blob cache."
                 raise ValueError(msg)
             return PipelineBlobCacheConfig(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.cache.base_dir,
+                storage_account_blob_url=storage_account_blob_url,
             )
         case _:
             # relative to root dir

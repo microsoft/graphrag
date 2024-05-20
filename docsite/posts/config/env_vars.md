@@ -30,13 +30,13 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 
 These are the primary settings for configuring LLM connectivity.
 
-| Parameter                   | Required?    | Description                                                                            | Type    | Default Value |
-| --------------------------- | ------------ | -------------------------------------------------------------------------------------- | ------- | ------------- |
-| `GRAPHRAG_API_KEY`          | **Yes**      | The API key. (Note: `OPENAI_API_KEY is also used as a fallback)                        | `str`   | `None`        |
-| `GRAPHRAG_API_BASE`         | **For AOAI** | The API Base URL                                                                       | `str`   | `None`        |
-| `GRAPHRAG_API_VERSION`      | **For AOAI** | The AOAI API version.                                                                  | `str`   | `None`        |
-| `GRAPHRAG_API_ORGANIZATION` |              | The AOAI organization.                                                                 | `str`   | `None`        |
-| `GRAPHRAG_API_PROXY`        |              | The AOAI proxy.                                                                        | `str`   | `None`        |
+| Parameter                   | Required?                             | Description                                                                                                                     | Type    | Default Value |
+| --------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------- |
+| `GRAPHRAG_API_KEY`          | **Yes for OpenAI. Optional for AOAI** | The API key. (Note: `OPENAI_API_KEY is also used as a fallback). If not defined when using AOAI, managed identity will be used. | `str`   | `None`        |
+| `GRAPHRAG_API_BASE`         | **For AOAI**                          | The API Base URL                                                                                                                | `str`   | `None`        |
+| `GRAPHRAG_API_VERSION`      | **For AOAI**                          | The AOAI API version.                                                                                                           | `str`   | `None`        |
+| `GRAPHRAG_API_ORGANIZATION` |                                       | The AOAI organization.                                                                                                          | `str`   | `None`        |
+| `GRAPHRAG_API_PROXY`        |                                       | The AOAI proxy.                                                                                                                 | `str`   | `None`        |
 
 
 
@@ -48,7 +48,7 @@ These settings control the text generation model used by the pipeline. Any setti
 | ---------------------------------- | ------------------------ | -------------------------------------------------------------------------------------- | ------- | ------------- |
 | `GRAPHRAG_LLM_TYPE`                | **For AOAI**             | The LLM operation type. Either `openai_chat` or `azure_openai_chat`                    | `str`   | `openai_chat` |
 | `GRAPHRAG_LLM_DEPLOYMENT_NAME`     | **For AOAI**             | The AOAI model deployment name.                                                        | `str`   | `None`        |
-| `GRAPHRAG_LLM_API_KEY`             | Yes (uses fallback)      | The API key.                                                                           | `str`   | `None`        |
+| `GRAPHRAG_LLM_API_KEY`             | Yes (uses fallback)      | The API key. If not defined when using AOAI, managed identity will be used.            | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_BASE`            | For AOAI (uses fallback) | The API Base URL                                                                       | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_VERSION`         | For AOAI (uses fallback) | The AOAI API version.                                                                  | `str`   | `None`        |
 | `GRAPHRAG_LLM_API_ORGANIZATION`    | For AOAI (uses fallback) | The AOAI organization.                                                                 | `str`   | `None`        |
@@ -71,31 +71,33 @@ These settings control the text generation model used by the pipeline. Any setti
 
 These settings control the text embedding model used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.
 
-| Parameter                                 | Required ?               | Description                                                                                 | Type    | Default              |
-| ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------| ------- | -------------------- |
-| `GRAPHRAG_EMBEDDING_TYPE`                 | **For AOAI**             | The embedding client to use. Either `openai_embedding` or `azure_openai_embedding`          | `str`   | `openai_embedding`   |
-| `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | **For AOAI**             | The AOAI deployment name.                                                                   | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_KEY`              | Yes (uses fallback)      | The API key to use for the embedding client.                                                | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_BASE`             | For AOAI (uses fallback) | The API base URL.                                                                           | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_VERSION`          | For AOAI (uses fallback) | The AOAI API version to use for the embedding client.                                       | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_ORGANIZATION`     | For AOAI (uses fallback) | The AOAI organization to use for the embedding client.                                      | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_API_PROXY`            |                          | The AOAI proxy to use for the embedding client.                                             | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_MODEL`                |                          | The model to use for the embedding client.                                                  | `str`   | `text-embedding-3-small` |
+| Parameter                                 | Required ?               | Description                                                                                                 | Type    | Default              |
+| ----------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- | ------- | -------------------- |
+| `GRAPHRAG_EMBEDDING_TYPE`                 | **For AOAI**             | The embedding client to use. Either `openai_embedding` or `azure_openai_embedding`                          | `str`   | `openai_embedding`   |
+| `GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME`      | **For AOAI**             | The AOAI deployment name.                                                                                   | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_KEY`              | Yes (uses fallback)      | The API key to use for the embedding client. If not defined when using AOAI, managed identity will be used. | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_BASE`             | For AOAI (uses fallback) | The API base URL.                                                                                           | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_VERSION`          | For AOAI (uses fallback) | The AOAI API version to use for the embedding client.                                                       | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_ORGANIZATION`     | For AOAI (uses fallback) | The AOAI organization to use for the embedding client.                                                      | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_API_PROXY`            |                          | The AOAI proxy to use for the embedding client.                                                             | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_MODEL`                |                          | The model to use for the embedding client.                                                                  | `str`   | `text-embedding-3-small` |
 | `GRAPHRAG_EMBEDDING_BATCH_SIZE`           |                          | The number of texts to embed at once. [(Azure limit is 16)]( https://learn.microsoft.com/en-us/azure/ai-ce)                  | `int` | 16 |
 | `GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS`     |                          | The maximum tokens per batch [(Azure limit is 8191)]( https://learn.microsoft.com/en-us/azure/ai-services/openai/reference)  | `int` | 8191 |
-| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                     | `str`   | `required`           |
-| `GRAPHRAG_EMBEDDING_SKIP`                 |                          | A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description') | `str`   | `None`               |
-| `GRAPHRAG_EMBEDDING_THREAD_COUNT`         |                          | The number of threads to use for parallelization for embeddings.                            | `int`   |                      |
-| `GRAPHRAG_EMBEDDING_THREAD_STAGGER`       |                          | The time to wait (in seconds) between starting each thread for embeddings.                  | `float` | 50                   |
-| `GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS`  |                          | The number of concurrent requests to allow for the embedding client.                        | `int`   | 25                   |
-| `GRAPHRAG_EMBEDDING_TPM`                  |                          | The number of tokens per minute to allow for the embedding client. 0 = Bypass               | `int`   | 0                    |
-| `GRAPHRAG_EMBEDDING_RPM`                  |                          | The number of requests per minute to allow for the embedding client.  0 = Bypass            | `int`   | 0                    |
-| `GRAPHRAG_EMBEDDING_MAX_RETRIES`          |                          | The maximum number of retries to attempt when a request fails.                              | `int`   | 10                   |
-| `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`       |                          | The maximum number of seconds to wait between retries.                                      | `int`   | 10                   |
-| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                     | `str`   | `required`           |
-| `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |            | Whether to sleep on rate limit recommendation. (Azure Only)                                 | `bool`  | `True`               |
+| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                                     | `str`   | `required`           |
+| `GRAPHRAG_EMBEDDING_SKIP`                 |                          | A comma-separated list of fields to skip embeddings for . (e.g. 'relationship.description')                 | `str`   | `None`               |
+| `GRAPHRAG_EMBEDDING_THREAD_COUNT`         |                          | The number of threads to use for parallelization for embeddings.                                            | `int`   |                      |
+| `GRAPHRAG_EMBEDDING_THREAD_STAGGER`       |                          | The time to wait (in seconds) between starting each thread for embeddings.                                  | `float` | 50                   |
+| `GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS`  |                          | The number of concurrent requests to allow for the embedding client.                                        | `int`   | 25                   |
+| `GRAPHRAG_EMBEDDING_TPM`                  |                          | The number of tokens per minute to allow for the embedding client. 0 = Bypass                               | `int`   | 0                    |
+| `GRAPHRAG_EMBEDDING_RPM`                  |                          | The number of requests per minute to allow for the embedding client.  0 = Bypass                            | `int`   | 0                    |
+| `GRAPHRAG_EMBEDDING_MAX_RETRIES`          |                          | The maximum number of retries to attempt when a request fails.                                              | `int`   | 10                   |
+| `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`       |                          | The maximum number of seconds to wait between retries.                                                      | `int`   | 10                   |
+| `GRAPHRAG_EMBEDDING_TARGET`               |                          | The target fields to embed. Either `required` or `all`.                                                     | `str`   | `required`           |
+| `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |            | Whether to sleep on rate limit recommendation. (Azure Only)                                                 | `bool`  | `True`               |
 
 
+## Input Settings
+These settings control the data input used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.
 
 ### Plaintext Input Data (`GRAPHRAG_INPUT_TYPE`=text)
 
@@ -106,19 +108,20 @@ These settings control the text embedding model used by the pipeline. Any settin
 
 ### CSV Input Data (`GRAPHRAG_INPUT_TYPE`=csv)
 
-| Parameter                          | Description                                                                       | Type  | Required or Optional | Default   |
-| ---------------------------------- | --------------------------------------------------------------------------------- | ----- | -------------------- | --------- |
-| `GRAPHRAG_INPUT_FILE_PATTERN`      | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.csv$` |
-| `GRAPHRAG_INPUT_SOURCE_COLUMN`     | The 'source' column to use when reading CSV input files.                          | `str` | optional             | `source`  |
-| `GRAPHRAG_INPUT_TIMESTAMP_COLUMN`  | The 'timestamp' column to use when reading CSV input files.                       | `str` | optional             | `None`    |
-| `GRAPHRAG_INPUT_TIMESTAMP_FORMAT`  | The timestamp format to use when parsing timestamps in the timestamp column       | `str` | optional             | `None`    |
-| `GRAPHRAG_INPUT_TEXT_COLUMN`       | The 'text' column to use when reading CSV input files.                            | `str` | optional             | `text`    |
-| `GRAPHRAG_INPUT_DOCUMENT_ATTRIBUTE_COLUMNS` | A list of CSV columns, comma-separated, to incorporate as document fields.        | `str` | optional             | `id`      |
-| `GRAPHRAG_INPUT_TITLE_COLUMN`      | The 'title' column to use when reading CSV input files.                           | `str` | optional             | `title`   |
-| `GRAPHRAG_INPUT_STORAGE_TYPE`      | The storage type to use when reading CSV input files.  (`file` or `blob`)         | `str` | optional             | `file`    |
-| `GRAPHRAG_INPUT_CONNECTION_STRING` | The connection string to use when reading CSV input files from Azure Blob Storage. | `str` | optional             | `None`    |
-| `GRAPHRAG_INPUT_CONTAINER_NAME`    | The container name to use when reading CSV input files from Azure Blob Storage.    | `str` | optional             | `None`    |
-| `GRAPHRAG_INPUT_BASE_DIR`          | The base directory to read input files from.                                      | `str` | optional             | `None`    |
+| Parameter                                   | Description                                                                                                                                                          | Type  | Required or Optional | Default    |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------------------- | ---------- |
+| `GRAPHRAG_INPUT_FILE_PATTERN`               | The file pattern regexp to use when reading input files from the input directory.                                                                                    | `str` | optional             | `.*\.csv$` |
+| `GRAPHRAG_INPUT_SOURCE_COLUMN`              | The 'source' column to use when reading CSV input files.                                                                                                             | `str` | optional             | `source`   |
+| `GRAPHRAG_INPUT_TIMESTAMP_COLUMN`           | The 'timestamp' column to use when reading CSV input files.                                                                                                          | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_TIMESTAMP_FORMAT`           | The timestamp format to use when parsing timestamps in the timestamp column.                                                                                         | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_TEXT_COLUMN`                | The 'text' column to use when reading CSV input files.                                                                                                               | `str` | optional             | `text`     |
+| `GRAPHRAG_INPUT_DOCUMENT_ATTRIBUTE_COLUMNS` | A list of CSV columns, comma-separated, to incorporate as document fields.                                                                                           | `str` | optional             | `id`       |
+| `GRAPHRAG_INPUT_TITLE_COLUMN`               | The 'title' column to use when reading CSV input files.                                                                                                              | `str` | optional             | `title`    |
+| `GRAPHRAG_INPUT_STORAGE_TYPE`               | The storage type to use when reading CSV input files.  (`file` or `blob`)                                                                                            | `str` | optional             | `file`     |
+| `GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL`   | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity.  Will have the format `https://<storage_account_name>.blob.core.windows.net`  | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_CONNECTION_STRING`          | The connection string to use when reading CSV input files from Azure Blob Storage.                                                                                   | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_CONTAINER_NAME`             | The container name to use when reading CSV input files from Azure Blob Storage.                                                                                      | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_BASE_DIR`                   | The base directory to read input files from.                                                                                                                         | `str` | optional             | `None`     |
 
 ## Data Mapping Settings
 
@@ -137,53 +140,56 @@ These settings control the text embedding model used by the pipeline. Any settin
 
 ## Prompting Overrides
 
-| Parameter                                          | Description                                                                                      | Type     | Required or Optional | Default                                                          |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------- | -------------------- | ---------------------------------------------------------------- |
-| `GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE`             | The path (relative to the root) of an entity extraction prompt template text file.             | `str`    | optional             | `None`                                                           |
-| `GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS`           | The maximum number of redrives (gleanings) to invoke when extracting entities in a loop.       | `int`    | optional             | 0                                                                |
-| `GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES`            | A comma-separated list of entity types to extract.                                             | `str`    | optional             | `organization,person,event,geo`                                  |
-| `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE`        | The path (relative to the root) of an description summarization prompt template text file.     | `str`    | optional             | `None`                                                           |
-| `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH`         | The maximum number of tokens to generate per description summarization.                        | `int`    | optional             | 500                                                              |  
-| `GRAPHRAG_CLAIM_EXTRACTION_ENABLED`             | Whether claim extraction is enabled for this pipeline.             | `bool`    | optional             | `False`          
-| `GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION`              | The claim_description prompting argument to utilize.                                           | `string` | optional             | "Any claims or facts that could be relevant to threat analysis." |
-| `GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE`              | The claim extraction prompt to utilize.                                                        | `string` | optional             | `None`                                                           |
-| `GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS`            | The maximum number of redrives (gleanings) to invoke when extracting claims in a loop.         | `int`    | optional             | 0                                                                |
-| `GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE`   | The community report extraction prompt to utilize.                                             | `string` | optional             | `None`                                                           |
-| `GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH`               | The maximum number of tokens to generate per community report.                                 | `int`    | optional             | 1500                                                             |
+| Parameter                                          | Description                                                                                | Type     | Required or Optional | Default                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------- | -------------------- | ---------------------------------------------------------------- |
+| `GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE`           | The path (relative to the root) of an entity extraction prompt template text file.         | `str`    | optional             | `None`                                                           |
+| `GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS`         | The maximum number of redrives (gleanings) to invoke when extracting entities in a loop.   | `int`    | optional             | 0                                                                |
+| `GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES`          | A comma-separated list of entity types to extract.                                         | `str`    | optional             | `organization,person,event,geo`                                  |
+| `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE`      | The path (relative to the root) of an description summarization prompt template text file. | `str`    | optional             | `None`                                                           |
+| `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH`       | The maximum number of tokens to generate per description summarization.                    | `int`    | optional             | 500                                                              |
+| `GRAPHRAG_CLAIM_EXTRACTION_ENABLED`                | Whether claim extraction is enabled for this pipeline.                                     | `bool`   | optional             | `False`                                                          |
+| `GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION`            | The claim_description prompting argument to utilize.                                       | `string` | optional             | "Any claims or facts that could be relevant to threat analysis." |
+| `GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE`            | The claim extraction prompt to utilize.                                                    | `string` | optional             | `None`                                                           |
+| `GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS`          | The maximum number of redrives (gleanings) to invoke when extracting claims in a loop.     | `int`    | optional             | 0                                                                |
+| `GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE`            | The community report extraction prompt to utilize.                                         | `string` | optional             | `None`                                                           |
+| `GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH`             | The maximum number of tokens to generate per community report.                             | `int`    | optional             | 1500                                                             |
 
 
 ## Storage
 
 This section controls the storage mechanism used by the pipeline used for emitting output tables.
 
-| Parameter                            | Description                                                           | Type  | Required or Optional | Default |
-| ------------------------------------ | --------------------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_STORAGE_TYPE`              | The type of reporter to use. Options are `file`, `memory`, or `blob`  | `str` | optional             | `file`  |
-| `GRAPHRAG_STORAGE_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.       | `str` | optional             | None    |
-| `GRAPHRAG_STORAGE_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.          | `str` | optional             | None    |
-| `GRAPHRAG_STORAGE_BASE_DIR`          | The base path to data outputs outputs.                               | `str` | optional             | None    |
+| Parameter                            | Description                                                                                                                                                          | Type  | Required or Optional | Default |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------------------- | ------- |
+| `GRAPHRAG_STORAGE_TYPE`              | The type of reporter to use. Options are `file`, `memory`, or `blob`                                                                                                 | `str` | optional             | `file`  |
+| `GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL`  | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity.  Will have the format `https://<storage_account_name>.blob.core.windows.net`  | `str` | optional             | None    |
+| `GRAPHRAG_STORAGE_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.                                                                                                      | `str` | optional             | None    |
+| `GRAPHRAG_STORAGE_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.                                                                                                         | `str` | optional             | None    |
+| `GRAPHRAG_STORAGE_BASE_DIR`          | The base path to data outputs outputs.                                                                                                                               | `str` | optional             | None    |
 
 ## Cache
 
 This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results. 
 
-| Parameter                              | Description                                                           | Type  | Required or Optional | Default |
-| -------------------------------------- | --------------------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_CACHE_TYPE`              | The type of cache to use. Options are `file`, `memory`, `none` or `blob`  | `str` | optional             | `file`  |
-| `GRAPHRAG_CACHE_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.           | `str` | optional             | None    |
-| `GRAPHRAG_CACHE_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.              | `str` | optional             | None    |
-| `GRAPHRAG_CACHE_BASE_DIR`          | The base path to the reporting outputs.                               | `str` | optional             | None    |
+| Parameter                          | Description                                                                                                                                                        | Type  | Required or Optional | Default |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------------------- | ------- |
+| `GRAPHRAG_CACHE_TYPE`              | The type of cache to use. Options are `file`, `memory`, `none` or `blob`                                                                                           | `str` | optional             | `file`  |
+| `GRAPHRAG_CACHE_STORAGE_ACCOUNT_BLOB_URL`  | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity.  Will have the format `https://<storage_account_name>.blob.core.windows.net`  | `str` | optional             | None    |
+| `GRAPHRAG_CACHE_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.                                                                                                    | `str` | optional             | None    |
+| `GRAPHRAG_CACHE_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.                                                                                                       | `str` | optional             | None    |
+| `GRAPHRAG_CACHE_BASE_DIR`          | The base path to the reporting outputs.                                                                                                                            | `str` | optional             | None    |
 
 ## Reporting
 
 This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.
 
-| Parameter                              | Description                                                           | Type  | Required or Optional | Default |
-| -------------------------------------- | --------------------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_REPORTING_TYPE`              | The type of reporter to use. Options are `file`, `console`, or `blob` | `str` | optional             | `file`  |
-| `GRAPHRAG_REPORTING_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.       | `str` | optional             | None    |
-| `GRAPHRAG_REPORTING_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.          | `str` | optional             | None    |
-| `GRAPHRAG_REPORTING_BASE_DIR`          | The base path to the reporting outputs.                               | `str` | optional             | None    |
+| Parameter                              | Description                                                                                                                                                          | Type  | Required or Optional | Default |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------------------- | ------- |
+| `GRAPHRAG_REPORTING_TYPE`              | The type of reporter to use. Options are `file`, `console`, or `blob`                                                                                                | `str` | optional             | `file`  |
+| `GRAPHRAG_REPORTING_STORAGE_ACCOUNT_BLOB_URL`  | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity.  Will have the format `https://<storage_account_name>.blob.core.windows.net`  | `str` | optional             | None    |
+| `GRAPHRAG_REPORTING_CONNECTION_STRING` | The Azure Storage connection string to use when in `blob` mode.                                                                                                      | `str` | optional             | None    |
+| `GRAPHRAG_REPORTING_CONTAINER_NAME`    | The Azure Storage container name to use when in `blob` mode.                                                                                                         | `str` | optional             | None    |
+| `GRAPHRAG_REPORTING_BASE_DIR`          | The base path to the reporting outputs.                                                                                                                              | `str` | optional             | None    |
 
 ## Node2Vec Parameters
 

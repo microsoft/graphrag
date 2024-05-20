@@ -9,6 +9,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
@@ -22,26 +23,44 @@ log = logging.getLogger(__name__)
 class BlobPipelineStorage(PipelineStorage):
     """The Blob-Storage implementation."""
 
-    _connection_string: str
+    _connection_string: str | None
     _container_name: str
     _path_prefix: str
     _encoding: str
+    _storage_account_blob_url: str | None
 
     def __init__(
         self,
-        connection_string: str,
+        connection_string: str | None,
         container_name: str,
         encoding: str | None = None,
         path_prefix: str | None = None,
+        storage_account_blob_url: str | None = None,
     ):
         """Create a new BlobStorage instance."""
-        self._blob_service_client = BlobServiceClient.from_connection_string(
-            connection_string
-        )
+        if connection_string:
+            self._blob_service_client = BlobServiceClient.from_connection_string(
+                connection_string
+            )
+        else:
+            if storage_account_blob_url is None:
+                msg = "Either connection_string or storage_account_blob_url must be provided."
+                raise ValueError(msg)
+
+            self._blob_service_client = BlobServiceClient(
+                account_url=storage_account_blob_url,
+                credential=DefaultAzureCredential(),
+            )
         self._encoding = encoding or "utf-8"
         self._container_name = container_name
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
+        self._storage_account_blob_url = storage_account_blob_url
+        self._storage_account_name = (
+            storage_account_blob_url.split("//")[1].split(".")[0]
+            if storage_account_blob_url
+            else None
+        )
         log.info(
             "creating blob storage at container=%s, path=%s",
             self._container_name,
@@ -187,23 +206,41 @@ class BlobPipelineStorage(PipelineStorage):
 
     def set_df_json(self, key: str, dataframe: Any) -> None:
         """Set a json dataframe."""
-        connection_string = self._connection_string
-        dataframe.to_json(
-            self._abfs_url(key),
-            storage_options={"connection_string": connection_string},
-            orient="records",
-            lines=True,
-            force_ascii=False,
-        )
+        if self._connection_string is None and self._storage_account_name:
+            dataframe.to_json(
+                self._abfs_url(key),
+                storage_options={
+                    "account_name": self._storage_account_name,
+                    "credential": DefaultAzureCredential(),
+                },
+                orient="records",
+                lines=True,
+                force_ascii=False,
+            )
+        else:
+            dataframe.to_json(
+                self._abfs_url(key),
+                storage_options={"connection_string": self._connection_string},
+                orient="records",
+                lines=True,
+                force_ascii=False,
+            )
 
     def set_df_parquet(self, key: str, dataframe: Any) -> None:
         """Set a parquet dataframe."""
-        connection_string = self._connection_string
-
-        dataframe.to_parquet(
-            self._abfs_url(key),
-            storage_options={"connection_string": connection_string},
-        )
+        if self._connection_string is None and self._storage_account_name:
+            dataframe.to_parquet(
+                self._abfs_url(key),
+                storage_options={
+                    "account_name": self._storage_account_name,
+                    "credential": DefaultAzureCredential(),
+                },
+            )
+        else:
+            dataframe.to_parquet(
+                self._abfs_url(key),
+                storage_options={"connection_string": self._connection_string},
+            )
 
     async def has(self, key: str) -> bool:
         """Check if a key exists in the cache."""
@@ -232,7 +269,11 @@ class BlobPipelineStorage(PipelineStorage):
             return self
         path = str(Path(self._path_prefix) / name)
         return BlobPipelineStorage(
-            self._connection_string, self._container_name, self._encoding, path
+            self._connection_string,
+            self._container_name,
+            self._encoding,
+            path,
+            self._storage_account_blob_url,
         )
 
     def _keyname(self, key: str) -> str:
@@ -246,17 +287,25 @@ class BlobPipelineStorage(PipelineStorage):
 
 
 def create_blob_storage(
-    connection_string: str, container_name: str, base_dir: str | None
+    connection_string: str | None,
+    storage_account_blob_url: str | None,
+    container_name: str,
+    base_dir: str | None,
 ) -> PipelineStorage:
     """Create a blob based storage."""
     log.info("Creating blob storage at %s", container_name)
-    if connection_string is None:
-        msg = "No connection string provided for blob storage."
-        raise ValueError(msg)
     if container_name is None:
         msg = "No container name provided for blob storage."
         raise ValueError(msg)
-    return BlobPipelineStorage(connection_string, container_name, path_prefix=base_dir)
+    if connection_string is None and storage_account_blob_url is None:
+        msg = "No storage account blob url provided for blob storage."
+        raise ValueError(msg)
+    return BlobPipelineStorage(
+        connection_string,
+        container_name,
+        path_prefix=base_dir,
+        storage_account_blob_url=storage_account_blob_url,
+    )
 
 
 def validate_blob_container_name(container_name: str):

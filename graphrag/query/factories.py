@@ -37,9 +37,10 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         config.llm.type == LLMType.AzureOpenAIChat
         or config.llm.type == LLMType.AzureOpenAI
     )
+    debug_llm_key = config.llm.api_key or ""
     llm_debug_info = {
         **config.llm.model_dump(),
-        "api_key": f"REDACTED,len={len(config.llm.api_key)}",
+        "api_key": f"REDACTED,len={len(debug_llm_key)}",
     }
     print(f"creating llm client with {llm_debug_info}")  # noqa T201
     return ChatOpenAI(
@@ -56,9 +57,10 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
 def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     """Get the LLM client for embeddings."""
     is_azure_client = config.embeddings.llm.type == LLMType.AzureOpenAIEmbedding
+    debug_embedding_api_key = config.embeddings.llm.api_key or ""
     llm_debug_info = {
         **config.embeddings.llm.model_dump(),
-        "api_key": f"REDACTED,len={len(config.embeddings.llm.api_key)}",
+        "api_key": f"REDACTED,len={len(debug_embedding_api_key)}",
     }
     print(f"creating embedding llm client with {llm_debug_info}")  # noqa T201
     return OpenAIEmbedding(

@@ -48,7 +48,7 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     type: Literal[ReportingType.blob] = ReportingType.blob
     """The type of reporting."""
 
-    connection_string: str = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The blob reporting connection string for the reporting.",
         default=None,
     )
@@ -58,6 +58,11 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
         description="The container name for reporting", default=None
     )
     """The container name for reporting"""
+
+    storage_account_blob_url: str | None = pydantic_Field(
+        description="The storage account blob url for reporting", default=None
+    )
+    """The storage account blob url for reporting"""
 
     base_dir: str | None = pydantic_Field(
         description="The base directory for the reporting.", default=None
