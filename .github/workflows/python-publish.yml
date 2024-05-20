@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.10']
-        poetry-version: ['1.8.2']
+        poetry-version: ['1.8.3']
     name: Upload release to PyPI
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
