@@ -82,10 +82,13 @@ def create_graphrag_config(
             llm_type = LLMType(llm_type) if llm_type else base.type
             api_key = reader.str(Fragment.api_key) or base.api_key
             api_base = reader.str(Fragment.api_base) or base.api_base
+            cognitive_services_endpoint = (
+                reader.str(Fragment.cognitive_services_endpoint) or
+                base.cognitive_services_endpoint
+            )
             deployment_name = (
                 reader.str(Fragment.deployment_name) or base.deployment_name
             )
-
             if api_key is None and not _is_azure(llm_type):
                 raise ApiKeyMissingError
             if _is_azure(llm_type):
@@ -111,6 +114,7 @@ def create_graphrag_config(
                 or base.model_supports_json,
                 request_timeout=reader.float(Fragment.request_timeout)
                 or base.request_timeout,
+                cognitive_services_endpoint=cognitive_services_endpoint,
                 deployment_name=deployment_name,
                 tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or base.tokens_per_minute,
@@ -135,6 +139,10 @@ def create_graphrag_config(
             api_proxy = reader.str("proxy") or base.proxy
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
+            cognitive_services_endpoint = (
+                    reader.str(Fragment.cognitive_services_endpoint) or 
+                    base.cognitive_services_endpoint
+            )
             deployment_name = reader.str(Fragment.deployment_name)
 
             if api_key is None and not _is_azure(api_type):
@@ -159,6 +167,7 @@ def create_graphrag_config(
                 model=reader.str(Fragment.model) or defs.EMBEDDING_MODEL,
                 request_timeout=reader.float(Fragment.request_timeout)
                 or defs.LLM_REQUEST_TIMEOUT,
+                cognitive_services_endpoint=cognitive_services_endpoint,
                 deployment_name=deployment_name,
                 tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
                 or defs.LLM_TOKENS_PER_MINUTE,
@@ -209,6 +218,7 @@ def create_graphrag_config(
                 api_base = reader.str(Fragment.api_base) or fallback_oai_base
                 api_version = reader.str(Fragment.api_version) or fallback_oai_version
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
+                cognitive_services_endpoint = reader.str(Fragment.cognitive_services_endpoint)
                 deployment_name = reader.str(Fragment.deployment_name)
 
                 if api_key is None and not _is_azure(llm_type):
@@ -235,6 +245,7 @@ def create_graphrag_config(
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or defs.LLM_REQUEST_TIMEOUT,
+                    cognitive_services_endpoint=cognitive_services_endpoint,
                     deployment_name=deployment_name,
                     tokens_per_minute=reader.int(Fragment.tpm)
                     or defs.LLM_TOKENS_PER_MINUTE,
@@ -521,6 +532,7 @@ class Fragment(str, Enum):
     api_organization = "API_ORGANIZATION"
     api_proxy = "API_PROXY"
     async_mode = "ASYNC_MODE"
+    cognitive_services_endpoint = "COGNITIVE_SERVICES_ENDPOINT"
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"
     container_name = "CONTAINER_NAME"

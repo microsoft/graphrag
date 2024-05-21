@@ -189,7 +189,6 @@ def _load_azure_openai_embeddings_llm(
 
 def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
     api_key = config.get("api_key", None)
-
     return {
         # Pass in all parameterized values
         **config,
@@ -204,6 +203,7 @@ def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
         "model_supports_json": config.get("model_supports_json"),
         "concurrent_requests": config.get("concurrent_requests", 4),
         "encoding_model": config.get("encoding_model", "cl100k_base"),
+        "cognitive_services_endpoint": config.get("cognitive_services_endpoint", None),
     }
 
 
