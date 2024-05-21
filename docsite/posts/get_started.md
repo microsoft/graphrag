@@ -76,7 +76,7 @@ In addition, Azure OpenAI users should set the following env-vars.
 ```sh
 export GRAPHRAG_API_BASE="https://<domain>.openai.azure.com" && \
 export GRAPHRAG_API_VERSION="2024-02-15-preview" && \
-export GRAPHRAG_LLM_API_TYPE = "azure_openai_chat" && \
+export GRAPHRAG_LLM_TYPE = "azure_openai_chat" && \
 export GRAPHRAG_LLM_DEPLOYMENT_NAME="<chat_completions_deployment_name>" && \
 export GRAPHRAG_EMBEDDING_API_TYPE = "azure_openai_embedding" && \
 export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME="<embeddings_deployment_name>"
