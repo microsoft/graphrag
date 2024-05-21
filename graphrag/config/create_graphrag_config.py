@@ -89,7 +89,7 @@ def create_graphrag_config(
             deployment_name = (
                 reader.str(Fragment.deployment_name) or base.deployment_name
             )
-            
+
             if api_key is None and not _is_azure(llm_type):
                 raise ApiKeyMissingError
             if _is_azure(llm_type):
@@ -141,7 +141,7 @@ def create_graphrag_config(
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
             cognitive_services_endpoint = (
-                    reader.str(Fragment.cognitive_services_endpoint) or 
+                    reader.str(Fragment.cognitive_services_endpoint) or
                     base.cognitive_services_endpoint
             )
             deployment_name = reader.str(Fragment.deployment_name)

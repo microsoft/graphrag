@@ -259,9 +259,9 @@ def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) 
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
     strategy = settings.resolved_strategy()  # get the default strategy
-    strategy.update(
-        {"vector_store": vector_store_settings}
-    )  # update the default strategy with the vector store settings
+    strategy.update({
+        "vector_store": vector_store_settings
+    })  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {
         "strategy": strategy,
@@ -458,12 +458,9 @@ def _get_reporting_config(
             container_name = settings.reporting.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob reporting."
-<<<<<<< HEAD
-=======
                 raise ValueError(msg)
             if connection_string is None and storage_account_blob_url is None:
                 msg = "Connection string or storage account blob url must be provided for blob reporting."
->>>>>>> 7aecfc5 (feature/add-azure-managed-identity (#231))
                 raise ValueError(msg)
             return PipelineBlobReportingConfig(
                 connection_string=connection_string,
@@ -499,12 +496,9 @@ def _get_storage_config(
             container_name = settings.storage.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob storage."
-<<<<<<< HEAD
-=======
                 raise ValueError(msg)
             if connection_string is None and storage_account_blob_url is None:
                 msg = "Connection string or storage account blob url must be provided for blob storage."
->>>>>>> 7aecfc5 (feature/add-azure-managed-identity (#231))
                 raise ValueError(msg)
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
@@ -539,12 +533,9 @@ def _get_cache_config(
             container_name = settings.cache.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob cache."
-<<<<<<< HEAD
-=======
                 raise ValueError(msg)
             if connection_string is None and storage_account_blob_url is None:
                 msg = "Connection string or storage account blob url must be provided for blob cache."
->>>>>>> 7aecfc5 (feature/add-azure-managed-identity (#231))
                 raise ValueError(msg)
             return PipelineBlobCacheConfig(
                 connection_string=connection_string,

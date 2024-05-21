@@ -62,7 +62,7 @@ class AzureAISearch(BaseVectorStore):
                 credential=AzureKeyCredential(api_key)
                 if api_key
                 else DefaultAzureCredential(),
-            )    
+            )
         else:
             not_supported_error = "AAISearchDBClient is not supported on local host."
             raise ValueError(not_supported_error)
