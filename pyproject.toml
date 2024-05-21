@@ -24,9 +24,16 @@ packages = [{ include = "graphrag" }]
 
 [tool.poetry-dynamic-versioning]
 enable = true
+style = "pep440"
 vcs = "git"
-style = "semver"
 bump = true
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(base, stage, revision, dev=distance) }}
+    {%- endif -%}
+"""
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
@@ -76,6 +83,7 @@ devtools = "^0.12.2"
 #Azure
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.16.0"
+poetry = "^1.8.3"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.3.2"
@@ -83,7 +91,7 @@ ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
 poethepoet = "^0.26.0"
-pyright = "^1.1.361"
+pyright = "^1.1.363"
 pytest = "^8.2.0"
 pytest-asyncio = "^0.23.4"
 pytest-timeout = "^2.3.1"

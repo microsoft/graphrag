@@ -34,7 +34,7 @@ To address this, the tech community is working to develop methods that extend an
 
 ## The GraphRAG Process 🤖
 
-GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart) and [tooling](https://github.com/microsoft/graspologic) using graph machine learning. The basic steps of the GraphRAG process are as follows:
+GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart) and [tooling](https://github.com/graspologic-org/graspologic) using graph machine learning. The basic steps of the GraphRAG process are as follows:
 
 ### Index
 
