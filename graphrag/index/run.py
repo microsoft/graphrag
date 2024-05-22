@@ -305,11 +305,6 @@ async def run_pipeline(
             workflow_name: str = workflow.name
             last_workflow = workflow_name
 
-            log.info("Running workflow: %s...", workflow_name)
-            if await storage.has(f"{workflow_to_run.workflow.name}.parquet"):
-                log.info("Skipping %s because it already exists", workflow_name)
-                continue
-
             stats.workflows[workflow_name] = {"overall": 0.0}
             await inject_workflow_data_dependencies(workflow)
 
