@@ -6,13 +6,15 @@ on:
 permissions:
   contents: write
 
+env:
+  POETRY_VERSION: 1.8.3
+
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.11"]
-        poetry-version: ["1.8.3"]
         node-version: ["18.x"]
 
     env:
@@ -49,10 +51,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry ${{ matrix.poetry-version }}
+      - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: ${{ matrix.poetry-version }}
+          poetry-version: $POETRY_VERSION
 
       - name: Use Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
