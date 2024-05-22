@@ -305,9 +305,11 @@ async def run_pipeline(
             workflow_name: str = workflow.name
             last_workflow = workflow_name
 
+            log.info("Running workflow: %s...", workflow_name)
+            
             stats.workflows[workflow_name] = {"overall": 0.0}
             await inject_workflow_data_dependencies(workflow)
-
+            
             workflow_start_time = time.time()
             result = await workflow.run(context, callbacks)
             await write_workflow_stats(workflow, result, workflow_start_time)
