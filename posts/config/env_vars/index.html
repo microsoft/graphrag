@@ -301,8 +301,8 @@ a {
 <tbody>
 <tr>
 <td><code>GRAPHRAG_API_KEY</code></td>
-<td><strong>Yes</strong></td>
-<td>The API key. (Note: `OPENAI_API_KEY is also used as a fallback)</td>
+<td><strong>Yes for OpenAI. Optional for AOAI</strong></td>
+<td>The API key. (Note: `OPENAI_API_KEY is also used as a fallback). If not defined when using AOAI, managed identity will be used.</td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
@@ -366,7 +366,7 @@ a {
 <tr>
 <td><code>GRAPHRAG_LLM_API_KEY</code></td>
 <td>Yes (uses fallback)</td>
-<td>The API key.</td>
+<td>The API key. If not defined when using AOAI, managed identity will be used.</td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
@@ -514,7 +514,7 @@ a {
 <tr>
 <td><code>GRAPHRAG_EMBEDDING_API_KEY</code></td>
 <td>Yes (uses fallback)</td>
-<td>The API key to use for the embedding client.</td>
+<td>The API key to use for the embedding client. If not defined when using AOAI, managed identity will be used.</td>
 <td><code>str</code></td>
 <td><code>None</code></td>
 </tr>
@@ -646,6 +646,8 @@ a {
 </tr>
 </tbody>
 </table>
+<h2>Input Settings</h2>
+<p>These settings control the data input used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.</p>
 <h3>Plaintext Input Data (<code>GRAPHRAG_INPUT_TYPE</code>=text)</h3>
 <table>
 <thead>
@@ -702,7 +704,7 @@ a {
 </tr>
 <tr>
 <td><code>GRAPHRAG_INPUT_TIMESTAMP_FORMAT</code></td>
-<td>The timestamp format to use when parsing timestamps in the timestamp column</td>
+<td>The timestamp format to use when parsing timestamps in the timestamp column.</td>
 <td><code>str</code></td>
 <td>optional</td>
 <td><code>None</code></td>
@@ -734,6 +736,13 @@ a {
 <td><code>str</code></td>
 <td>optional</td>
 <td><code>file</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL</code></td>
+<td>The Azure Storage blob endpoint to use when in <code>blob</code> mode and using managed identity.  Will have the format <code>https://&lt;storage_account_name&gt;.blob.core.windows.net</code></td>
+<td><code>str</code></td>
+<td>optional</td>
+<td><code>None</code></td>
 </tr>
 <tr>
 <td><code>GRAPHRAG_INPUT_CONNECTION_STRING</code></td>
@@ -933,6 +942,13 @@ a {
 <td><code>file</code></td>
 </tr>
 <tr>
+<td><code>GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL</code></td>
+<td>The Azure Storage blob endpoint to use when in <code>blob</code> mode and using managed identity.  Will have the format <code>https://&lt;storage_account_name&gt;.blob.core.windows.net</code></td>
+<td><code>str</code></td>
+<td>optional</td>
+<td>None</td>
+</tr>
+<tr>
 <td><code>GRAPHRAG_STORAGE_CONNECTION_STRING</code></td>
 <td>The Azure Storage connection string to use when in <code>blob</code> mode.</td>
 <td><code>str</code></td>
@@ -976,6 +992,13 @@ a {
 <td><code>file</code></td>
 </tr>
 <tr>
+<td><code>GRAPHRAG_CACHE_STORAGE_ACCOUNT_BLOB_URL</code></td>
+<td>The Azure Storage blob endpoint to use when in <code>blob</code> mode and using managed identity.  Will have the format <code>https://&lt;storage_account_name&gt;.blob.core.windows.net</code></td>
+<td><code>str</code></td>
+<td>optional</td>
+<td>None</td>
+</tr>
+<tr>
 <td><code>GRAPHRAG_CACHE_CONNECTION_STRING</code></td>
 <td>The Azure Storage connection string to use when in <code>blob</code> mode.</td>
 <td><code>str</code></td>
@@ -1017,6 +1040,13 @@ a {
 <td><code>str</code></td>
 <td>optional</td>
 <td><code>file</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_REPORTING_STORAGE_ACCOUNT_BLOB_URL</code></td>
+<td>The Azure Storage blob endpoint to use when in <code>blob</code> mode and using managed identity.  Will have the format <code>https://&lt;storage_account_name&gt;.blob.core.windows.net</code></td>
+<td><code>str</code></td>
+<td>optional</td>
+<td>None</td>
 </tr>
 <tr>
 <td><code>GRAPHRAG_REPORTING_CONNECTION_STRING</code></td>

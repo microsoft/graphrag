@@ -271,7 +271,7 @@ a {
         <main>
             <h1>Get Started</h1>
             <h2>Requirements</h2>
-<p><a href="https://www.python.org/downloads/">Python 3.10 or 3.11</a></p>
+<p><a href="https://www.python.org/downloads/">Python 3.10-3.12</a></p>
 <p>To get started with the GraphRAG system, you have a few options:</p>
 <p>👉 <a href="https://pypi.org/project/graphrag/">Install from pypi</a>. <br>
 👉 <a href="/graphrag/posts/developing">Use it from source</a><br></p>
@@ -338,7 +338,7 @@ It shows how to use the system to index some text, and then use the indexed data
 <div style="position: relative">
   <pre class="language-sh"><code id="code-64" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_BASE</span><span class="token operator">=</span><span class="token string">"https://&lt;domain>.openai.azure.com"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
 <span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_VERSION</span><span class="token operator">=</span><span class="token string">"2024-02-15-preview"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> GRAPHRAG_LLM_API_TYPE <span class="token operator">=</span> <span class="token string">"azure_openai_chat"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
+<span class="token builtin class-name">export</span> GRAPHRAG_LLM_TYPE <span class="token operator">=</span> <span class="token string">"azure_openai_chat"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
 <span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token string">"&lt;chat_completions_deployment_name>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
 <span class="token builtin class-name">export</span> GRAPHRAG_EMBEDDING_API_TYPE <span class="token operator">=</span> <span class="token string">"azure_openai_embedding"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
 <span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token string">"&lt;embeddings_deployment_name>"</span></code></pre>
