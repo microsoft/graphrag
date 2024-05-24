@@ -268,7 +268,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             include_community_rank=include_community_rank,
             min_community_rank=min_community_rank,
             max_tokens=max_tokens,
-
+            single_batch=True,
             context_name=context_name,
         )
         if isinstance(context_text, list) and len(context_text) > 0:
