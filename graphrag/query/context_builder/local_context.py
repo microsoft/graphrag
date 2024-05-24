@@ -31,7 +31,6 @@ def build_entity_context(
     max_tokens: int = 8000,
     include_entity_rank: bool = True,
     rank_description: str = "number of relationships",
-    single_batch: bool = True,
     column_delimiter: str = "|",
     context_name="Entities",
 ) -> tuple[str, pd.DataFrame]:
@@ -53,7 +52,6 @@ def build_entity_context(
     current_context_text += column_delimiter.join(header) + "\n"
     current_tokens = num_tokens(current_context_text, token_encoder)
 
-    results = []
     all_context_records = [header]
     for entity in selected_entities:
         new_context = [
@@ -73,30 +71,7 @@ def build_entity_context(
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
         if current_tokens + new_tokens > max_tokens:
-            if single_batch:
-                if len(all_context_records) > 1:
-                    record_df = pd.DataFrame(
-                        all_context_records[1:],
-                        columns=cast(Any, all_context_records[0]),
-                    )
-                else:
-                    record_df = pd.DataFrame()
-                    return current_context_text, record_df
-                record_df = pd.DataFrame(
-                    all_context_records[1:], columns=cast(Any, all_context_records[0])
-                )
-                return current_context_text, record_df
-
-            results.append(current_context_text)
-
-            # start a new batch
-            current_context_text = (
-                f"-----{context_name}-----"
-                + "\n"
-                + column_delimiter.join(header)
-                + "\n"
-            )
-            current_tokens = num_tokens(current_context_text, token_encoder)
+            break
         else:
             current_context_text += new_context_text
             all_context_records.append(new_context)
@@ -117,7 +92,6 @@ def build_covariates_context(
     covariates: list[Covariate],
     token_encoder: tiktoken.Encoding | None = None,
     max_tokens: int = 8000,
-    single_batch: bool = True,
     column_delimiter: str = "|",
     context_name: str = "Covariates",
 ) -> tuple[str, pd.DataFrame]:
@@ -135,72 +109,47 @@ def build_covariates_context(
     # add header
     header = ["id", "entity"]
     attributes = (
-        selected_covariates[0].attributes or {} if len(selected_covariates) > 0 else {}
+        covariates[0].attributes or {} if len(covariates) > 0 else {}
     )
-    attribute_cols = list(attributes.keys()) if len(selected_covariates) > 0 else []
+    attribute_cols = list(attributes.keys()) if len(covariates) > 0 else []
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
     current_tokens = num_tokens(current_context_text, token_encoder)
 
-    results = []
     all_context_records = [header]
     for entity in selected_entities:
         selected_covariates.extend([
             cov for cov in covariates if cov.subject_id == entity.title
         ])
 
-        for covariate in selected_covariates:
-            new_context = [
-                covariate.short_id if covariate.short_id else "",
-                covariate.subject_id,
-            ]
-            for field in attribute_cols:
-                field_value = (
-                    str(covariate.attributes.get(field))
-                    if covariate.attributes and covariate.attributes.get(field)
-                    else ""
-                )
-                new_context.append(field_value)
+    for covariate in selected_covariates:
+        new_context = [
+            covariate.short_id if covariate.short_id else "",
+            covariate.subject_id,
+        ]
+        for field in attribute_cols:
+            field_value = (
+                str(covariate.attributes.get(field))
+                if covariate.attributes and covariate.attributes.get(field)
+                else ""
+            )
+            new_context.append(field_value)
 
-            new_context_text = column_delimiter.join(new_context) + "\n"
-            new_tokens = num_tokens(new_context_text, token_encoder)
-            if current_tokens + new_tokens > max_tokens:
-                if single_batch:
-                    if len(all_context_records) > 1:
-                        record_df = pd.DataFrame(
-                            all_context_records[1:],
-                            columns=cast(Any, all_context_records[0]),
-                        )
-                    else:
-                        record_df = pd.DataFrame()
-                        return current_context_text, record_df
-                    record_df = pd.DataFrame(
-                        all_context_records[1:],
-                        columns=cast(Any, all_context_records[0]),
-                    )
-                    return current_context_text, record_df
+        new_context_text = column_delimiter.join(new_context) + "\n"
+        new_tokens = num_tokens(new_context_text, token_encoder)
+        if current_tokens + new_tokens > max_tokens:
+            break
+        else:
+            current_context_text += new_context_text
+            all_context_records.append(new_context)
+            current_tokens += new_tokens
 
-                results.append(current_context_text)
-
-                # start a new batch
-                current_context_text = (
-                    f"-----{context_name}-----"
-                    + "\n"
-                    + column_delimiter.join(header)
-                    + "\n"
-                )
-                current_tokens = num_tokens(current_context_text, token_encoder)
-            else:
-                current_context_text += new_context_text
-                all_context_records.append(new_context)
-                current_tokens += new_tokens
-
-            if len(all_context_records) > 1:
-                record_df = pd.DataFrame(
-                    all_context_records[1:], columns=cast(Any, all_context_records[0])
-                )
-            else:
-                record_df = pd.DataFrame()
+        if len(all_context_records) > 1:
+            record_df = pd.DataFrame(
+                all_context_records[1:], columns=cast(Any, all_context_records[0])
+            )
+        else:
+            record_df = pd.DataFrame()
 
     return current_context_text, record_df
 
@@ -213,7 +162,6 @@ def build_relationship_context(
     max_tokens: int = 8000,
     top_k_relationships: int = 10,
     relationship_ranking_attribute: str = "rank",
-    single_batch: bool = True,
     column_delimiter: str = "|",
     context_name: str = "Relationships",
 ) -> tuple[str, pd.DataFrame]:
@@ -244,7 +192,6 @@ def build_relationship_context(
     current_context_text += column_delimiter.join(header) + "\n"
     current_tokens = num_tokens(current_context_text, token_encoder)
 
-    results = []
     all_context_records = [header]
     for rel in selected_relationships:
         new_context = [
@@ -265,30 +212,14 @@ def build_relationship_context(
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
         if current_tokens + new_tokens > max_tokens:
-            if single_batch:
-                if len(all_context_records) > 1:
-                    record_df = pd.DataFrame(
-                        all_context_records[1:],
-                        columns=cast(Any, all_context_records[0]),
-                    )
-                else:
-                    record_df = pd.DataFrame()
-                    return current_context_text, record_df
+            if len(all_context_records) > 1:
                 record_df = pd.DataFrame(
-                    all_context_records[1:], columns=cast(Any, all_context_records[0])
+                    all_context_records[1:],
+                    columns=cast(Any, all_context_records[0]),
                 )
-                return current_context_text, record_df
-
-            results.append(current_context_text)
-
-            # start a new batch
-            current_context_text = (
-                f"-----{context_name}-----"
-                + "\n"
-                + column_delimiter.join(header)
-                + "\n"
-            )
-            current_tokens = num_tokens(current_context_text, token_encoder)
+            else:
+                record_df = pd.DataFrame()
+            return current_context_text, record_df
         else:
             current_context_text += new_context_text
             all_context_records.append(new_context)
