@@ -72,10 +72,9 @@ def build_entity_context(
         new_tokens = num_tokens(new_context_text, token_encoder)
         if current_tokens + new_tokens > max_tokens:
             break
-        else:
-            current_context_text += new_context_text
-            all_context_records.append(new_context)
-            current_tokens += new_tokens
+        current_context_text += new_context_text
+        all_context_records.append(new_context)
+        current_tokens += new_tokens
 
     if len(all_context_records) > 1:
         record_df = pd.DataFrame(
@@ -108,9 +107,7 @@ def build_covariates_context(
 
     # add header
     header = ["id", "entity"]
-    attributes = (
-        covariates[0].attributes or {} if len(covariates) > 0 else {}
-    )
+    attributes = covariates[0].attributes or {} if len(covariates) > 0 else {}
     attribute_cols = list(attributes.keys()) if len(covariates) > 0 else []
     header.extend(attribute_cols)
     current_context_text += column_delimiter.join(header) + "\n"
@@ -139,10 +136,9 @@ def build_covariates_context(
         new_tokens = num_tokens(new_context_text, token_encoder)
         if current_tokens + new_tokens > max_tokens:
             break
-        else:
-            current_context_text += new_context_text
-            all_context_records.append(new_context)
-            current_tokens += new_tokens
+        current_context_text += new_context_text
+        all_context_records.append(new_context)
+        current_tokens += new_tokens
 
         if len(all_context_records) > 1:
             record_df = pd.DataFrame(
@@ -212,18 +208,10 @@ def build_relationship_context(
         new_context_text = column_delimiter.join(new_context) + "\n"
         new_tokens = num_tokens(new_context_text, token_encoder)
         if current_tokens + new_tokens > max_tokens:
-            if len(all_context_records) > 1:
-                record_df = pd.DataFrame(
-                    all_context_records[1:],
-                    columns=cast(Any, all_context_records[0]),
-                )
-            else:
-                record_df = pd.DataFrame()
-            return current_context_text, record_df
-        else:
-            current_context_text += new_context_text
-            all_context_records.append(new_context)
-            current_tokens += new_tokens
+            break
+        current_context_text += new_context_text
+        all_context_records.append(new_context)
+        current_tokens += new_tokens
 
     if len(all_context_records) > 1:
         record_df = pd.DataFrame(

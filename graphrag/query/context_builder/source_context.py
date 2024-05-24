@@ -63,11 +63,11 @@ def build_text_unit_context(
 
         if current_tokens + new_tokens > max_tokens:
             break
-        else:
-            current_context_text += new_context_text
-            all_context_records.append(new_context)
-            current_tokens += new_tokens
-            
+
+        current_context_text += new_context_text
+        all_context_records.append(new_context)
+        current_tokens += new_tokens
+
     if len(all_context_records) > 1:
         record_df = pd.DataFrame(
             all_context_records[1:], columns=cast(Any, all_context_records[0])
