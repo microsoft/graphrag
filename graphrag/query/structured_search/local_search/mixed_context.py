@@ -354,9 +354,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             context_name=context_name,
             column_delimiter=column_delimiter,
         )
-        if isinstance(context_text, list) and len(context_text) > 0:
-            context_text = "\n\n".join(context_text)
-
+        
         if return_candidate_context:
             candidate_context_data = get_candidate_text_units(
                 selected_entities=selected_entities,

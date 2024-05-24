@@ -28,7 +28,7 @@ def build_text_unit_context(
 ) -> tuple[str, dict[str, pd.DataFrame]]:
     """Prepare text-unit data table as context data for system prompt."""
     if text_units is None or len(text_units) == 0:
-        return ([], {})
+        return ("", {})
 
     if shuffle_data:
         random.seed(random_state)
