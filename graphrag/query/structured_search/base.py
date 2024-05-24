@@ -24,7 +24,7 @@ from graphrag.query.llm.base import BaseLLM
 class SearchResult:
     """A Structured Search Result."""
 
-    response: str | dict[str, Any]
+    response: str | dict[str, Any] | list[dict[str, Any]]
     context_data: str | list[pd.DataFrame] | dict[str, pd.DataFrame]
     # actual text strings that are in the context window, built from context_data
     context_text: str | list[str] | dict[str, str]

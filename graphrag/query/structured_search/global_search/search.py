@@ -12,6 +12,7 @@ from typing import Any
 
 import pandas as pd
 import tiktoken
+import json
 
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
@@ -31,12 +32,14 @@ from graphrag.query.structured_search.global_search.reduce_system_prompt import 
 )
 
 DEFAULT_MAP_LLM_PARAMS = {
-    "max_tokens": 500,
+    "max_tokens": 1000,
     "temperature": 0.0,
+    "response_format": {"type": "json_object"}
+
 }
 
 DEFAULT_REDUCE_LLM_PARAMS = {
-    "max_tokens": 1500,
+    "max_tokens": 2000,
     "temperature": 0.0,
 }
 log = logging.getLogger(__name__)
@@ -62,6 +65,7 @@ class GlobalSearch(BaseSearch):
         map_system_prompt: str = MAP_SYSTEM_PROMPT,
         reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
         response_type: str = "multiple paragraphs",
+        json_mode: bool = True,
         callbacks: list[GlobalSearchLLMCallback] | None = None,
         max_data_tokens: int = 8000,
         map_llm_params: dict[str, Any] = DEFAULT_MAP_LLM_PARAMS,
@@ -80,8 +84,15 @@ class GlobalSearch(BaseSearch):
         self.response_type = response_type
         self.callbacks = callbacks
         self.max_data_tokens = max_data_tokens
+
         self.map_llm_params = map_llm_params
         self.reduce_llm_params = reduce_llm_params
+        if json_mode:
+            self.map_llm_params["response_format"] = {"type": "json_object"}
+        else:
+            # remove response_format key if json_mode is False
+            self.map_llm_params.pop("response_format", None)
+
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
 
     async def asearch(
@@ -151,7 +162,6 @@ class GlobalSearch(BaseSearch):
         self,
         context_data: str,
         query: str,
-        ranking_delimiter: str = "</ANSWER_HELPFULNESS>",
         **llm_kwargs,
     ) -> SearchResult:
         """Generate answer for a single chunk of community reports."""
@@ -159,7 +169,7 @@ class GlobalSearch(BaseSearch):
         search_prompt = ""
         try:
             search_prompt = self.map_system_prompt.format(
-                context_data=context_data, response_type=self.response_type
+                context_data=context_data
             )
             search_messages = [
                 {"role": "system", "content": search_prompt},
@@ -169,20 +179,19 @@ class GlobalSearch(BaseSearch):
                 search_response = await self.llm.agenerate(
                     messages=search_messages, streaming=False, **llm_kwargs
                 )
-                parsed_response = search_response.split(ranking_delimiter)
+                print(search_response)
             try:
-                if len(parsed_response) > 1:
-                    processed_response = {
-                        "answer": parsed_response[1].strip(),
-                        "score": int(re.findall("\\d+", parsed_response[0])[0]),
-                    }
-                else:
-                    processed_response = {
-                        "answer": search_response,
-                        "score": 50,  # default to mean score
-                    }
+                # parse search response json
+                parsed_elements = json.loads(search_response)["points"]
+                processed_response = []
+                for element in parsed_elements:
+                    processed_response.append({
+                        "answer": element["description"],
+                        "score": int(element["score"])
+                    })
             except Exception:  # noqa BLE001
-                processed_response = {"answer": search_response, "score": 50}
+                print("Error parsing search response json")
+                processed_response = []
 
             return SearchResult(
                 response=processed_response,
@@ -196,7 +205,7 @@ class GlobalSearch(BaseSearch):
         except Exception:
             log.exception("Exception in _map_response_single_batch")
             return SearchResult(
-                response={"answer": "", "score": 0},
+                response=[{"answer": "", "score": 0}],
                 context_data=context_data,
                 context_text=context_data,
                 completion_time=time.time() - start_time,
@@ -215,27 +224,43 @@ class GlobalSearch(BaseSearch):
         search_prompt = ""
         start_time = time.time()
         try:
+            # collect all key points into a single list to prepare for sorting
+            key_points = []
+            for index, response in enumerate(map_responses):
+                if not isinstance(response.response, list):
+                    continue
+                for element in response.response:
+                    if not isinstance(element, dict):
+                        continue
+                    if "answer" not in element or "score" not in element:
+                        continue
+                    key_points.append({
+                        "analyst": index,
+                        "answer": element["answer"],
+                        "score": element["score"],
+                    })
+
             # filter response with score = 0 and rank responses by descending order of score
-            filtered_map_responses = [
-                response
-                for response in map_responses
-                if response.response["score"] > 0  # type: ignore
+            filtered_key_points = [
+                point
+                for point in key_points
+                if point["score"] > 0  # type: ignore
             ]
-            filtered_map_responses = sorted(
-                filtered_map_responses,
-                key=lambda x: x.response["score"],  # type: ignore
+            filtered_key_points = sorted(
+                filtered_key_points,
+                key=lambda x: x["score"],  # type: ignore
                 reverse=True,  # type: ignore
             )
 
             data = []
             total_tokens = 0
-            for index, response in enumerate(filtered_map_responses):
+            for point in filtered_key_points:
                 formatted_response_data = []
-                formatted_response_data.append(f"-----Analyst {index + 1}-----")
+                formatted_response_data.append(f'----Analyst {point["analyst"] + 1}----')
                 formatted_response_data.append(
-                    f'Helpfulness Score: {response.response["score"]}'  # type: ignore
+                    f'Importance Score: {point["score"]}'  # type: ignore
                 )
-                formatted_response_data.append(response.response["answer"])  # type: ignore
+                formatted_response_data.append(point["answer"])  # type: ignore
                 formatted_response_text = "\n".join(formatted_response_data)
                 if (
                     total_tokens
