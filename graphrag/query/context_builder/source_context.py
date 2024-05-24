@@ -23,10 +23,9 @@ def build_text_unit_context(
     column_delimiter: str = "|",
     shuffle_data: bool = True,
     max_tokens: int = 8000,
-    single_batch: bool = True,
     context_name: str = "Sources",
     random_state: int = 86,
-) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+) -> tuple[str, dict[str, pd.DataFrame]]:
     """Prepare text-unit data table as context data for system prompt."""
     if text_units is None or len(text_units) == 0:
         return ([], {})
@@ -48,7 +47,6 @@ def build_text_unit_context(
 
     current_context_text += column_delimiter.join(header) + "\n"
     current_tokens = num_tokens(current_context_text, token_encoder)
-    results = []
     all_context_records = [header]
 
     for unit in text_units:
@@ -61,43 +59,22 @@ def build_text_unit_context(
             ],
         ]
         new_context_text = column_delimiter.join(new_context) + "\n"
-        all_context_records.append(new_context)
-
         new_tokens = num_tokens(new_context_text, token_encoder)
+
         if current_tokens + new_tokens > max_tokens:
-            if single_batch:
-                # convert all_context_records to pandas dataframe
-                if len(all_context_records) > 1:
-                    record_df = pd.DataFrame(
-                        all_context_records[1:-1],
-                        columns=cast(Any, all_context_records[0]),
-                    )
-                else:
-                    record_df = pd.DataFrame()
-                return current_context_text, {context_name.lower(): record_df}
-
-            results.append(current_context_text)
-
-            # start a new batch
-            current_context_text = (
-                f"-----{context_name}-----"
-                + "\n"
-                + column_delimiter.join(header)
-                + "\n"
-            )
-            current_tokens = num_tokens(current_context_text, token_encoder)
+            break
         else:
             current_context_text += new_context_text
+            all_context_records.append(new_context)
             current_tokens += new_tokens
-    if current_context_text not in results:
-        results.append(current_context_text)
+            
     if len(all_context_records) > 1:
         record_df = pd.DataFrame(
             all_context_records[1:], columns=cast(Any, all_context_records[0])
         )
     else:
         record_df = pd.DataFrame()
-    return results, {context_name.lower(): record_df}
+    return current_context_text, {context_name.lower(): record_df}
 
 
 def count_relationships(
