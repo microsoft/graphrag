@@ -55,7 +55,7 @@ aiofiles = "^23.2.1"
 # LLM
 openai = "^1.30.3"
 nltk = "3.8.1"
-tiktoken = "^0.6.0"
+tiktoken = "^0.7.0"
 
 # Data-Sci
 numba = "0.59.1"
