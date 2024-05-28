@@ -3,28 +3,25 @@
 
 """Command line interface for the fine_tune module."""
 
-import os
 from pathlib import Path
-from typing import cast
 
-from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
+from datashaper import NoopVerbCallbacks
 
 from graphrag.fine_tune.generator import generate_entity_relationship_examples
-from graphrag.fine_tune.loader.config import _read_config_parameters
+from graphrag.fine_tune.loader import read_config_parameters
 
 
-from graphrag.fine_tune.loader.input import load_docs_in_chunks
+from graphrag.fine_tune.loader import MIN_CHUNK_SIZE, load_docs_in_chunks
 from graphrag.index.llm import load_llm
-
-import pandas as pd
 
 
 from graphrag.index.progress import PrintProgressReporter
-from graphrag.fine_tune.generator import generate_entity_types
 from graphrag.fine_tune.generator import (
     generate_persona,
     generate_domain,
     create_entity_extraction_prompt,
+    generate_entity_types,
+    MAX_TOKEN_COUNT,
 )
 
 reporter = PrintProgressReporter("")
@@ -35,14 +32,21 @@ async def fine_tune(
     domain: str,
     select: str = "top",
     limit: int = 5,
+    max_tokens: int = MAX_TOKEN_COUNT,
+    chunk_size: int = MIN_CHUNK_SIZE,
     output: str = "prompts",
     **kwargs,
 ):
     """Fine tune the model."""
-    config = _read_config_parameters(root, reporter)
+    config = read_config_parameters(root, reporter)
 
     doc_list = await load_docs_in_chunks(
-        root=root, config=config, limit=limit, select_method=select, reporter=reporter
+        root=root,
+        config=config,
+        limit=limit,
+        select_method=select,
+        reporter=reporter,
+        chunk_size=chunk_size,
     )
 
     # Create LLM from config
@@ -86,6 +90,7 @@ async def fine_tune(
         json_mode=config.llm.model_supports_json or False,
         model_name=config.llm.model,
         output_path=Path(config.root_dir) / output,
+        max_token_count=max_tokens,
     )
 
     print(prompt)

@@ -7,6 +7,9 @@ import argparse
 import asyncio
 from enum import Enum
 
+from graphrag.fine_tune.generator import MAX_TOKEN_COUNT
+from graphrag.fine_tune.loader import MIN_CHUNK_SIZE
+
 from .cli import fine_tune
 
 
@@ -58,6 +61,22 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--max_tokens",
+        help="Max token count for prompt generation",
+        type=int,
+        required=False,
+        default=MAX_TOKEN_COUNT,
+    )
+
+    parser.add_argument(
+        "--chunk_size",
+        help="Max token count for prompt generation",
+        type=int,
+        required=False,
+        default=MIN_CHUNK_SIZE,
+    )
+
+    parser.add_argument(
         "--output",
         help="Folder to save the generated prompts to",
         type=str,
@@ -70,5 +89,13 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     loop.run_until_complete(
-        fine_tune(args.root, args.domain, str(args.method), args.limit, args.output)
+        fine_tune(
+            args.root,
+            args.domain,
+            str(args.method),
+            args.limit,
+            args.max_tokens,
+            args.chunk_size,
+            args.output,
+        )
     )

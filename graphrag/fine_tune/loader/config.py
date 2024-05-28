@@ -8,7 +8,7 @@ from graphrag.config import create_graphrag_config
 from graphrag.index.progress.types import ProgressReporter
 
 
-def _read_config_parameters(root: str, reporter: ProgressReporter):
+def read_config_parameters(root: str, reporter: ProgressReporter):
     _root = Path(root)
     settings_yaml = _root / "settings.yaml"
     if not settings_yaml.exists():

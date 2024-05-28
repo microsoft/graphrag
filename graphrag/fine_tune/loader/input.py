@@ -10,7 +10,7 @@ from graphrag.index.progress.types import ProgressReporter
 from graphrag.index.verbs import chunk
 
 
-MIN_CHUNK_SIZE = 400
+MIN_CHUNK_SIZE = 200
 MIN_CHUNK_OVERLAP = 0
 
 
@@ -20,6 +20,7 @@ async def load_docs_in_chunks(
     select_method: str,
     limit: int,
     reporter: ProgressReporter,
+    chunk_size: int = MIN_CHUNK_SIZE,
 ) -> list[str]:
     """Load docs for generating prompts."""
     dataset = await load_input(config.input, reporter, root)
@@ -29,7 +30,7 @@ async def load_docs_in_chunks(
     chunk_strategy = config.chunks.resolved_strategy()
 
     # Use smaller chunks, to avoid huge prompts
-    chunk_strategy["chunk_size"] = min(chunk_strategy["chunk_size"], MIN_CHUNK_SIZE)
+    chunk_strategy["chunk_size"] = chunk_size
     chunk_strategy["chunk_overlap"] = MIN_CHUNK_OVERLAP
 
     dataset_chunks_table_container = chunk(

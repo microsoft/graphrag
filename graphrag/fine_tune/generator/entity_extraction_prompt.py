@@ -8,7 +8,6 @@ from graphrag.fine_tune.template import (
     EXAMPLE_EXTRACTION_TEMPLATE,
 )
 
-from graphrag.fine_tune.generator.defaults import MAX_TOKEN_COUNT
 from graphrag.index.utils.tokens import num_tokens_from_string
 
 ENTITY_EXTRACTION_FILENAME = "entity_extraction_prompt.txt"
@@ -19,6 +18,7 @@ def create_entity_extraction_prompt(
     docs: list[str],
     examples: list[str],
     model_name: str,
+    max_token_count: int,
     json_mode: bool = False,
     output_path: Path | None = None,
 ) -> str:
@@ -28,7 +28,7 @@ def create_entity_extraction_prompt(
         entity_types = ", ".join(entity_types)
 
     tokens_left = (
-        MAX_TOKEN_COUNT
+        max_token_count
         - num_tokens_from_string(prompt, model=model_name)
         - num_tokens_from_string(entity_types, model=model_name)
     )
