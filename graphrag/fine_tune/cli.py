@@ -85,7 +85,7 @@ async def fine_tune(
         examples=examples,
         json_mode=config.llm.model_supports_json or False,
         model_name=config.llm.model,
-        output_path=Path(config.root_dir) / output / "entity_extraction_prompt.txt",
+        output_path=Path(config.root_dir) / output,
     )
 
     print(prompt)

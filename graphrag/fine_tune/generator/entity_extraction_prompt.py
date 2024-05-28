@@ -7,7 +7,6 @@ from graphrag.fine_tune.template import (
     GRAPH_EXTRACTION_JSON_PROMPT,
     EXAMPLE_EXTRACTION_TEMPLATE,
 )
-import tiktoken
 
 from graphrag.fine_tune.generator.defaults import MAX_TOKEN_COUNT
 from graphrag.index.utils.tokens import num_tokens_from_string
