@@ -53,9 +53,9 @@ aiolimiter = "^1.1.0"
 aiofiles = "^23.2.1"
 
 # LLM
-openai = "^1.25.2"
+openai = "^1.30.3"
 nltk = "3.8.1"
-tiktoken = "^0.6.0"
+tiktoken = "^0.7.0"
 
 # Data-Sci
 numba = "0.59.1"
@@ -86,7 +86,7 @@ azure-identity = "^1.16.0"
 poetry = "^1.8.3"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.3.2"
+coverage = "^7.5.2"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
@@ -95,9 +95,9 @@ pyright = "^1.1.363"
 pytest = "^8.2.0"
 pytest-asyncio = "^0.23.4"
 pytest-timeout = "^2.3.1"
-ruff = "^0.4.3"
+ruff = "^0.4.5"
 semversioner = "^2.0.2"
-typing-extensions = "^4.5.0"
+typing-extensions = "^4.12.0"
 update-toml = "^0.0.3"
 
 [build-system]
