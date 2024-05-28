@@ -354,7 +354,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             context_name=context_name,
             column_delimiter=column_delimiter,
         )
-        
+
         if return_candidate_context:
             candidate_context_data = get_candidate_text_units(
                 selected_entities=selected_entities,
