@@ -125,6 +125,7 @@ test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
 index = "python -m graphrag.index"
 query = "python -m graphrag.query"
+fine_tune = "python -m graphrag.fine_tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
 

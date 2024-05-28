@@ -37,6 +37,9 @@ class InputConfig(BaseModel):
     file_pattern: str = Field(
         description="The input file pattern to use.", default=defs.INPUT_CSV_PATTERN
     )
+    file_filter: dict[str, str] | None = Field(
+        description="The optional file filter for the input files.", default=None
+    )
     source_column: str | None = Field(
         description="The input source column to use.", default=None
     )
