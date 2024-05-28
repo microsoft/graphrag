@@ -416,7 +416,7 @@ text_unit_df<span class="token punctuation">.</span>head<span class="token punct
 
 <div style="position: relative">
   <pre class="language-python"><code id="code-39" class="language-python">api_key <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_API_KEY"</span><span class="token punctuation">]</span>
-llm_model <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="token punctuation">]</span>
+llm_model <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_LLM_MODEL"</span><span class="token punctuation">]</span>
 embedding_model <span class="token operator">=</span> os<span class="token punctuation">.</span>environ<span class="token punctuation">[</span><span class="token string">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="token punctuation">]</span>
 
 llm <span class="token operator">=</span> ChatOpenAI<span class="token punctuation">(</span>
@@ -571,11 +571,20 @@ result <span class="token operator">=</span> <span class="token keyword">await</
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
+
+<div style="position: relative">
+  <pre class="language-python"><code id="code-61" class="language-python"><span class="token keyword">if</span> <span class="token string">"claims"</span> <span class="token keyword">in</span> result<span class="token punctuation">.</span>context_data<span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>context_data<span class="token punctuation">[</span><span class="token string">"claims"</span><span class="token punctuation">]</span><span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-61" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
 <h3>Question Generation</h3>
 <p>This function takes a list of user queries and generates the next candidate questions.</p>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-67" class="language-python">question_generator <span class="token operator">=</span> LocalQuestionGen<span class="token punctuation">(</span>
+  <pre class="language-python"><code id="code-68" class="language-python">question_generator <span class="token operator">=</span> LocalQuestionGen<span class="token punctuation">(</span>
     llm<span class="token operator">=</span>llm<span class="token punctuation">,</span>
     context_builder<span class="token operator">=</span>context_builder<span class="token punctuation">,</span>
     token_encoder<span class="token operator">=</span>token_encoder<span class="token punctuation">,</span>
@@ -583,13 +592,13 @@ result <span class="token operator">=</span> <span class="token keyword">await</
     context_builder_params<span class="token operator">=</span>local_context_params<span class="token punctuation">,</span>
 <span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-67" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-68" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-68" class="language-python">question_history <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <pre class="language-python"><code id="code-69" class="language-python">question_history <span class="token operator">=</span> <span class="token punctuation">[</span>
     <span class="token string">"Tell me about Agent Mercer"</span><span class="token punctuation">,</span>
     <span class="token string">"What happens in Dulce military base?"</span><span class="token punctuation">,</span>
 <span class="token punctuation">]</span>
@@ -598,7 +607,7 @@ candidate_questions <span class="token operator">=</span> <span class="token key
 <span class="token punctuation">)</span>
 <span class="token keyword">print</span><span class="token punctuation">(</span>candidate_questions<span class="token punctuation">.</span>response<span class="token punctuation">)</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-68" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-69" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
