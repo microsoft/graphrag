@@ -83,8 +83,8 @@ def create_graphrag_config(
             api_key = reader.str(Fragment.api_key) or base.api_key
             api_base = reader.str(Fragment.api_base) or base.api_base
             cognitive_services_endpoint = (
-                reader.str(Fragment.cognitive_services_endpoint) or
-                base.cognitive_services_endpoint
+                reader.str(Fragment.cognitive_services_endpoint)
+                or base.cognitive_services_endpoint
             )
             deployment_name = (
                 reader.str(Fragment.deployment_name) or base.deployment_name
@@ -141,8 +141,8 @@ def create_graphrag_config(
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
             cognitive_services_endpoint = (
-                    reader.str(Fragment.cognitive_services_endpoint) or
-                    base.cognitive_services_endpoint
+                reader.str(Fragment.cognitive_services_endpoint)
+                or base.cognitive_services_endpoint
             )
             deployment_name = reader.str(Fragment.deployment_name)
 
@@ -219,7 +219,9 @@ def create_graphrag_config(
                 api_base = reader.str(Fragment.api_base) or fallback_oai_base
                 api_version = reader.str(Fragment.api_version) or fallback_oai_version
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
-                cognitive_services_endpoint = reader.str(Fragment.cognitive_services_endpoint)
+                cognitive_services_endpoint = reader.str(
+                    Fragment.cognitive_services_endpoint
+                )
                 deployment_name = reader.str(Fragment.deployment_name)
 
                 if api_key is None and not _is_azure(llm_type):
