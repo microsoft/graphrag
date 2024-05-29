@@ -7,9 +7,12 @@ from .entity_extraction import (
     GRAPH_EXTRACTION_JSON_PROMPT,
 )
 
+from .entity_summarization import ENTITY_SUMMARIZATION_PROMPT
+
 
 __all__ = [
     "EXAMPLE_EXTRACTION_TEMPLATE",
     "GRAPH_EXTRACTION_PROMPT",
     "GRAPH_EXTRACTION_JSON_PROMPT",
+    "ENTITY_SUMMARIZATION_PROMPT",
 ]

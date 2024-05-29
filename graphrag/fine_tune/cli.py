@@ -21,6 +21,7 @@ from graphrag.fine_tune.generator import (
     generate_domain,
     create_entity_extraction_prompt,
     generate_entity_types,
+    create_entity_summarization_prompt,
     MAX_TOKEN_COUNT,
 )
 
@@ -39,6 +40,8 @@ async def fine_tune(
 ):
     """Fine tune the model."""
     config = read_config_parameters(root, reporter)
+
+    output_path = Path(config.root_dir) / output
 
     doc_list = await load_docs_in_chunks(
         root=root,
@@ -89,8 +92,13 @@ async def fine_tune(
         examples=examples,
         json_mode=config.llm.model_supports_json or False,
         model_name=config.llm.model,
-        output_path=Path(config.root_dir) / output,
+        output_path=output_path,
         max_token_count=max_tokens,
     )
 
     print(prompt)
+
+    prompt = create_entity_summarization_prompt(
+        persona=persona,
+        output_path=output_path,
+    )

@@ -7,6 +7,7 @@ from .persona import generate_persona
 from .domain import generate_domain
 from .entity_extraction_prompt import create_entity_extraction_prompt
 from .defaults import MAX_TOKEN_COUNT
+from .entity_summarization_prompt import create_entity_summarization_prompt
 
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "generate_persona",
     "generate_domain",
     "create_entity_extraction_prompt",
+    "create_entity_summarization_prompt",
     "MAX_TOKEN_COUNT",
 ]
