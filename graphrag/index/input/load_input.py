@@ -73,13 +73,13 @@ async def load_input(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
             )
 
-    if config.type in loaders:
+    if config.file_type in loaders:
         progress = progress_reporter.child(
-            f"Loading Input ({config.type})", transient=False
+            f"Loading Input ({config.file_type})", transient=False
         )
-        loader = loaders[config.type]
+        loader = loaders[config.file_type]
         results = await loader(config, progress, storage)
         return cast(pd.DataFrame, results)
 
-    msg = f"Unknown input type {config.type}"
+    msg = f"Unknown input type {config.file_type}"
     raise ValueError(msg)

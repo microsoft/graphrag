@@ -99,14 +99,14 @@ These settings control the text embedding model used by the pipeline. Any settin
 ## Input Settings
 These settings control the data input used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.
 
-### Plaintext Input Data (`GRAPHRAG_INPUT_TYPE`=text)
+### Plaintext Input Data (`GRAPHRAG_INPUT_FILE_TYPE`=text)
 
 | Parameter                     | Description                                                                       | Type  | Required or Optional | Default   |
 | ----------------------------- | --------------------------------------------------------------------------------- | ----- | -------------------- | --------- |
 | `GRAPHRAG_INPUT_FILE_PATTERN` | The file pattern regexp to use when reading input files from the input directory. | `str` | optional             | `.*\.txt$` |
 
 
-### CSV Input Data (`GRAPHRAG_INPUT_TYPE`=csv)
+### CSV Input Data (`GRAPHRAG_INPUT_FILE_TYPE`=csv)
 
 | Parameter                                   | Description                                                                                                                                                          | Type  | Required or Optional | Default    |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | -------------------- | ---------- |
@@ -127,7 +127,7 @@ These settings control the data input used by the pipeline. Any settings with a 
 
 | Parameter                 | Description                                              | Type  | Required or Optional | Default |
 | ------------------------- | -------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_INPUT_TYPE`     | The type of input data, `csv` or `text`                  | `str` | optional             | `csv`   |
+| `GRAPHRAG_INPUT_FILE_TYPE`| The type of input data, `csv` or `text`                  | `str` | optional             | `csv`   |
 | `GRAPHRAG_INPUT_ENCODING` | The encoding to apply when reading CSV/text input files. | `str` | optional             | `utf-8` |
 
 ## Data Chunking

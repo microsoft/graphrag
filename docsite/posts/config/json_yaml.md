@@ -27,7 +27,7 @@ API_KEY=some_api_key
 
 ### Fields
 
-* `type` **text|csv** - The type of input data to load. Either `text` or `csv`. Default is `csv`
+* `file_type` **text|csv** - The type of input data to load. Either `text` or `csv`. Default is `csv`
 * `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
 * `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
 * `source_column` **str** - (CSV Mode Only) The source column name.
@@ -36,7 +36,7 @@ API_KEY=some_api_key
 * `text_column` **str** - (CSV Mode Only) The text column name.
 * `title_column` **str** - (CSV Mode Only) The title column name.
 * `document_attribute_columns` **list[str]** - (CSV Mode Only) The additional document attributes to include.
-* `storage_type` **file|blob** - The input storage type to use. Default=`file`
+* `type` **file|blob** - The input storage type to use. Default=`file`
 * `connection_string` **str** - (blob only) The Azure Storage connection string.
 * `container_name` **str** - (blob only) The Azure Storage container name.
 * `base_dir` **str** - The base directory to read input from, relative to the root.

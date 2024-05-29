@@ -20,8 +20,8 @@ T = TypeVar("T")
 class PipelineInputConfig(BaseModel, Generic[T]):
     """Represent the configuration for an input."""
 
-    type: T
-    """The type of input."""
+    file_type: T
+    """The file type of input."""
 
     storage_type: StorageType | None = pydantic_Field(
         description="The storage type to use.", default=None
@@ -73,7 +73,7 @@ class PipelineInputConfig(BaseModel, Generic[T]):
 class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputType.csv]]):
     """Represent the configuration for a CSV input."""
 
-    type: Literal[InputType.csv] = InputType.csv
+    file_type: Literal[InputType.csv] = InputType.csv
 
     source_column: str | None = pydantic_Field(
         description="The column to use as the source of the document.", default=None
@@ -105,7 +105,7 @@ class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputType.csv]]):
 class PipelineTextInputConfig(PipelineInputConfig[Literal[InputType.text]]):
     """Represent the configuration for a text input."""
 
-    type: Literal[InputType.text] = InputType.text
+    file_type: Literal[InputType.text] = InputType.text
 
     # Text Specific
     title_text_length: int | None = pydantic_Field(

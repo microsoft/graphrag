@@ -412,8 +412,8 @@ def _covariate_workflows(
 def _get_pipeline_input_config(
     settings: GraphRagConfig,
 ) -> PipelineInputConfigTypes:
-    input_type = settings.input.type
-    match input_type:
+    file_type = settings.input.file_type
+    match file_type:
         case InputType.csv:
             return PipelineCSVInputConfig(
                 base_dir=settings.input.base_dir,
@@ -440,7 +440,7 @@ def _get_pipeline_input_config(
                 container_name=settings.input.container_name,
             )
         case _:
-            msg = f"Unknown input type: {input_type}"
+            msg = f"Unknown input type: {file_type}"
             raise ValueError(msg)
 
 

@@ -11,7 +11,7 @@ from graphrag.config.enums import InputType, StorageType
 class InputConfigInput(TypedDict):
     """The default configuration section for Input."""
 
-    type: NotRequired[InputType | str | None]
+    file_type: NotRequired[InputType | str | None]
     storage_type: NotRequired[StorageType | str | None]
     base_dir: NotRequired[str | None]
     connection_string: NotRequired[str | None]

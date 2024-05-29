@@ -12,8 +12,8 @@ from graphrag.config.enums import InputType, StorageType
 class InputConfig(BaseModel):
     """The default configuration section for Input."""
 
-    type: InputType = Field(
-        description="The input type to use.", default=defs.INPUT_TYPE
+    file_type: InputType = Field(
+        description="The input file type to use.", default=defs.INPUT_FILE_TYPE
     )
     storage_type: StorageType = Field(
         description="The input storage type to use.", default=defs.INPUT_STORAGE_TYPE
