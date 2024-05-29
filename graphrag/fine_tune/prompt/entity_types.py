@@ -18,21 +18,21 @@ EXAMPLE 1
 Task: Determine the connections and organizational hierarchy within the specified community.
 Text: Example_Org_A is a company in Sweden. Example_Org_A's director is Example_Individual_B.
 RESPONSE:
-{{organization, person}}
+organization, person
 END OF EXAMPLE 1
 
 EXAMPLE 2
 Task: Identify the key concepts, principles, and arguments shared among different philosophical schools of thought, and trace the historical or ideological influences they have on each other.
 Text: Rationalism, epitomized by thinkers such as René Descartes, holds that reason is the primary source of knowledge. Key concepts within this school include the emphasis on the deductive method of reasoning.
 RESPONSE:
-{{concept, person, school of thought}}
+concept, person, school of thought
 END OF EXAMPLE 2
 
 EXAMPLE 3
 Task: Identify the full range of basic forces, factors, and trends that would indirectly shape an issue.
 Text: Industry leaders such as Panasonic are vying for supremacy in the battery production sector. They are investing heavily in research and development and are exploring new technologies to gain a competitive edge.
 RESPONSE:
-{{organization, technology, sectors, investment strategies}}
+organization, technology, sectors, investment strategies
 END OF EXAMPLE 3
 ======================================================================
 

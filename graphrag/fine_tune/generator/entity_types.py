@@ -27,7 +27,7 @@ async def generate_entity_types(
     """
     formatted_task = task.format(domain=domain)
 
-    docs_str = " ".join(docs) if isinstance(docs, list) else docs
+    docs_str = "\n".join(docs) if isinstance(docs, list) else docs
 
     entity_types_prompt = (
         ENTITY_TYPE_GENERATION_JSON_PROMPT
