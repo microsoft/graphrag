@@ -4,20 +4,20 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
+env:
+  NODE_VERSION: 18.x
+
 jobs:
   javascript-ci:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        node-version:
-          - 18.x
-
     steps:
-      - name: Use Node ${{ matrix.node-version }}
+      - name: Use Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
 
       - uses: actions/checkout@v4
 
