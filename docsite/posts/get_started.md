@@ -7,7 +7,7 @@ tags: [post]
 
 ## Requirements
 
-[Python 3.10 or 3.11](https://www.python.org/downloads/)
+[Python 3.10-3.12](https://www.python.org/downloads/)
 
 To get started with the GraphRAG system, you have a few options:
 
