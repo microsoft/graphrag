@@ -115,6 +115,7 @@ workflows:
 
 # > input
 
+- `type`: The type of input to use. Options are `file` or `blob`.
 - `file_type`: The file input type field discriminates between the different input types. Options are `csv` and `text`.
 - `base_dir`: The base directory to read the input files from. This is relative to the config file.
 - `file_pattern`: A regex to match the input files. The regex must have named groups for each of the fields in the file_filter.
@@ -126,6 +127,7 @@ workflows:
 
 ```yaml
 input:
+  type: file
   file_type: csv
   base_dir: ../data/csv # the directory containing the CSV files, this is relative to the config file
   file_pattern: '.*[\/](?P<source>[^\/]+)[\/](?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})_(?P<author>[^_]+)_\d+\.csv$' # a regex to match the CSV files
@@ -148,7 +150,8 @@ input:
 
 ```yaml
 input:
-  file_type: text
+  type: file
+  file_type: csv
   base_dir: ../data/csv # the directory containing the CSV files, this is relative to the config file
   file_pattern: '.*[\/](?P<source>[^\/]+)[\/](?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})_(?P<author>[^_]+)_\d+\.csv$' # a regex to match the CSV files
   # An additional file filter which uses the named groups from the file_pattern to further filter the files

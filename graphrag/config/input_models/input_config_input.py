@@ -5,14 +5,14 @@
 
 from typing_extensions import NotRequired, TypedDict
 
-from graphrag.config.enums import InputType, StorageType
+from graphrag.config.enums import InputFileType, InputType
 
 
 class InputConfigInput(TypedDict):
     """The default configuration section for Input."""
 
-    file_type: NotRequired[InputType | str | None]
-    storage_type: NotRequired[StorageType | str | None]
+    type: NotRequired[InputType | str | None]
+    file_type: NotRequired[InputFileType | str | None]
     base_dir: NotRequired[str | None]
     connection_string: NotRequired[str | None]
     container_name: NotRequired[str | None]

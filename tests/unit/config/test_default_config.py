@@ -37,7 +37,7 @@ from graphrag.config import (
     GraphRagConfigInput,
     InputConfig,
     InputConfigInput,
-    InputType,
+    InputFileType,
     LLMParameters,
     LLMParametersInput,
     LocalSearchConfig,
@@ -541,12 +541,12 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.file_encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
         assert parameters.input.source_column == "test_source"
-        assert parameters.input.storage_type == "blob"
+        assert parameters.input.type == "blob"
         assert parameters.input.text_column == "test_text"
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.file_type == InputType.text
+        assert parameters.input.file_type == InputFileType.text
         assert parameters.llm.api_base == "http://some/base"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.api_version == "v1234"
@@ -628,7 +628,7 @@ class TestDefaultConfig(unittest.TestCase):
                     storage_account_blob_url="reporting_account_blob_url",
                 ),
                 input=InputConfigInput(
-                    type=InputType.text,
+                    file_type=InputFileType.text,
                     file_encoding="utf-16",
                     document_attribute_columns=["test1", "test2"],
                     base_dir="/some/input/dir",
@@ -640,7 +640,7 @@ class TestDefaultConfig(unittest.TestCase):
                     timestamp_column="test_timestamp",
                     timestamp_format="test_format",
                     title_column="test_title",
-                    storage_type="blob",
+                    type="blob",
                     storage_account_blob_url="input_account_blob_url",
                 ),
                 embed_graph=EmbedGraphConfigInput(
@@ -729,12 +729,12 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.file_encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
         assert parameters.input.source_column == "test_source"
-        assert parameters.input.storage_type == "blob"
+        assert parameters.input.type == "blob"
         assert parameters.input.text_column == "test_text"
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.file_type == InputType.text
+        assert parameters.input.file_type == InputFileType.text
         assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.model == "test-llm"
@@ -808,7 +808,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.file_pattern == defs.INPUT_CSV_PATTERN
         assert parameters.input.file_encoding == defs.INPUT_FILE_ENCODING
-        assert parameters.input.storage_type == defs.INPUT_STORAGE_TYPE
+        assert parameters.input.type == defs.INPUT_TYPE
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.text_column == defs.INPUT_TEXT_COLUMN
         assert parameters.input.file_type == defs.INPUT_FILE_TYPE

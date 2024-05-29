@@ -6,17 +6,17 @@
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import InputType, StorageType
+from graphrag.config.enums import InputFileType, InputType
 
 
 class InputConfig(BaseModel):
     """The default configuration section for Input."""
 
-    file_type: InputType = Field(
-        description="The input file type to use.", default=defs.INPUT_FILE_TYPE
+    type: InputType = Field(
+        description="The input type to use.", default=defs.INPUT_TYPE
     )
-    storage_type: StorageType = Field(
-        description="The input storage type to use.", default=defs.INPUT_STORAGE_TYPE
+    file_type: InputFileType = Field(
+        description="The input file type to use.", default=defs.INPUT_FILE_TYPE
     )
     base_dir: str = Field(
         description="The input base directory to use.", default=defs.INPUT_BASE_DIR

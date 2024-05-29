@@ -9,7 +9,7 @@ from pathlib import Path
 
 from graphrag.config.enums import (
     CacheType,
-    InputType,
+    InputFileType,
     ReportingType,
     StorageType,
     TextEmbeddingTarget,
@@ -414,7 +414,7 @@ def _get_pipeline_input_config(
 ) -> PipelineInputConfigTypes:
     file_type = settings.input.file_type
     match file_type:
-        case InputType.csv:
+        case InputFileType.csv:
             return PipelineCSVInputConfig(
                 base_dir=settings.input.base_dir,
                 file_pattern=settings.input.file_pattern,
@@ -424,17 +424,17 @@ def _get_pipeline_input_config(
                 timestamp_format=settings.input.timestamp_format,
                 text_column=settings.input.text_column,
                 title_column=settings.input.title_column,
-                storage_type=settings.input.storage_type,
+                type=settings.input.type,
                 connection_string=settings.input.connection_string,
                 storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
             )
-        case InputType.text:
+        case InputFileType.text:
             return PipelineTextInputConfig(
                 base_dir=settings.input.base_dir,
                 file_pattern=settings.input.file_pattern,
                 encoding=settings.input.file_encoding,
-                storage_type=settings.input.storage_type,
+                type=settings.input.type,
                 connection_string=settings.input.connection_string,
                 storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
