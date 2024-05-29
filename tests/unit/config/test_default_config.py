@@ -540,13 +540,13 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.document_attribute_columns == ["test1", "test2"]
         assert parameters.input.file_encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
+        assert parameters.input.file_type == InputFileType.text
         assert parameters.input.source_column == "test_source"
-        assert parameters.input.type == "blob"
         assert parameters.input.text_column == "test_text"
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.file_type == InputFileType.text
+        assert parameters.input.type == "blob"
         assert parameters.llm.api_base == "http://some/base"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.api_version == "v1234"
