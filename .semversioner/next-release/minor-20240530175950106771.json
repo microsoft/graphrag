@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Fixing issue with summarization prompt overflow via truncation."
+}

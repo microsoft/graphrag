@@ -6,6 +6,8 @@
 import json
 from dataclasses import dataclass
 
+import tiktoken
+
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.llm import CompletionLLM
 
@@ -29,6 +31,8 @@ class SummarizeExtractor:
     _summarization_prompt: str
     _on_error: ErrorHandlerFn
     _max_summary_length: int
+    _encoding_model: str
+    _truncate: bool
 
     def __init__(
         self,
@@ -38,6 +42,8 @@ class SummarizeExtractor:
         summarization_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,
         max_summary_length: int | None = None,
+        encoding_model: str | None = None,
+        truncate: bool = True,
     ):
         """Init method definition."""
         # TODO: streamline construction
@@ -49,6 +55,9 @@ class SummarizeExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length or 500
 
+        self._encoding_model = encoding_model
+        self._truncate = truncate
+        
     async def __call__(
         self,
         items: str | tuple[str, str],
@@ -66,6 +75,22 @@ class SummarizeExtractor:
             # Safety check, should always be a list
             if not isinstance(descriptions, list):
                 descriptions = [descriptions]
+            
+            # Truncation of descriptions
+            if self._truncate:
+                max_description_length = 126000 #Buffer for different tokenizers
+                encoder = tiktoken.get_encoding(self._encoding_model or "cl100k_base")
+                max_description_length -= len(encoder.encode(self._summarization_prompt))
+                max_description_length -= len(encoder.encode(json.dumps(sorted_items)))
+                descriptions = sorted(descriptions)
+                description_lengths = [len(encoder.encode(x)) + 3 for x in descriptions]
+                if sum(description_lengths) > max_description_length:
+                    new_descriptions = []
+                    while True:
+                        if sum(description_lengths[:len(new_descriptions)+1]) > max_description_length:
+                            break
+                        new_descriptions += [descriptions[len(new_descriptions)]]
+                    descriptions = new_descriptions
 
             response = await self._llm(
                 self._summarization_prompt,
