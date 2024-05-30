@@ -42,7 +42,6 @@ class SummarizeExtractor:
         summarization_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,
         max_summary_length: int | None = None,
-        encoding_model: str | None = None,
         truncate: bool = True,
     ):
         """Init method definition."""
@@ -55,7 +54,7 @@ class SummarizeExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length or 500
 
-        self._encoding_model = encoding_model
+        self._encoding_model = self._llm._delegate._delegate._delegate._config.encoding_model
         self._truncate = truncate
         
     async def __call__(
@@ -79,7 +78,7 @@ class SummarizeExtractor:
             # Truncation of descriptions
             if self._truncate:
                 max_description_length = 126000 #Buffer for different tokenizers
-                encoder = tiktoken.get_encoding(self._encoding_model or "cl100k_base")
+                encoder = tiktoken.get_encoding(self._encoding_model)
                 max_description_length -= len(encoder.encode(self._summarization_prompt))
                 max_description_length -= len(encoder.encode(json.dumps(sorted_items)))
                 descriptions = sorted(descriptions)
