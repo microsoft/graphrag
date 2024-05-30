@@ -54,7 +54,7 @@ class SummarizeExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
         self._max_summary_length = max_summary_length or 500
 
-        self._encoding_model = self._llm._delegate._delegate._delegate._config.encoding_model
+        self._encoding_model = self._llm._delegate._delegate._delegate._delegate._config.encoding_model
         self._truncate = truncate
         
     async def __call__(
