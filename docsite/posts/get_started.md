@@ -7,7 +7,7 @@ tags: [post]
 
 ## Requirements
 
-[Python 3.10 or 3.11](https://www.python.org/downloads/)
+[Python 3.10-3.12](https://www.python.org/downloads/)
 
 To get started with the GraphRAG system, you have a few options:
 
@@ -58,10 +58,15 @@ Let's set the base environment variables.
 
 ```sh
 export GRAPHRAG_API_KEY="<api_key>" && \
-export GRAPHRAG_LLM_MODEL="<chat_completions_model>" && \
-export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True" && \
-export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>" && \
 export GRAPHRAG_INPUT_TYPE="text"
+
+# Recommended, but not required. 
+# JSON output mode is only available with some completion models.
+# export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True"
+
+# You may use these env vars to specify which model to use.
+# export GRAPHRAG_LLM_MODEL="<chat_completions_model>"
+# export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>"
 ```
 
 #### <ins>Azure OpenAI</ins>
@@ -71,7 +76,7 @@ In addition, Azure OpenAI users should set the following env-vars.
 ```sh
 export GRAPHRAG_API_BASE="https://<domain>.openai.azure.com" && \
 export GRAPHRAG_API_VERSION="2024-02-15-preview" && \
-export GRAPHRAG_LLM_API_TYPE = "azure_openai_chat" && \
+export GRAPHRAG_LLM_TYPE = "azure_openai_chat" && \
 export GRAPHRAG_LLM_DEPLOYMENT_NAME="<chat_completions_deployment_name>" && \
 export GRAPHRAG_EMBEDDING_API_TYPE = "azure_openai_embedding" && \
 export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME="<embeddings_deployment_name>"

@@ -6,15 +6,14 @@ on:
 permissions:
   contents: write
 
+env:
+  POETRY_VERSION: 1.8.3
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: 18.x
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-        poetry-version: ["1.6.1"]
-        node-version: ["18.x"]
-
     env:
       GH_PAGES: 1
       DEBUG: 1
@@ -38,26 +37,29 @@ jobs:
       GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
       GRAPHRAG_CHUNK_SIZE: 1200
       GRAPHRAG_CHUNK_OVERLAP: 0
+      # Azure AI Search config
+      AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
+      AZURE_AI_SEARCH_API_KEY: ${{ secrets.AZURE_AI_SEARCH_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry ${{ matrix.poetry-version }}
+      - name: Install Poetry ${{ env.POETRY_VERSION }}
         uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: ${{ matrix.poetry-version }}
+          poetry-version: ${{ env.POETRY_VERSION }}
 
-      - name: Use Node ${{ matrix.node-version }}
+      - name: Use Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Yarn dependencies
         run: yarn install
@@ -88,7 +90,7 @@ jobs:
         run: find docsite/_site
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.6.0
+        uses: JamesIves/github-pages-deploy-action@v4.6.1
         with:
           branch: gh-pages
           folder: docsite/_site

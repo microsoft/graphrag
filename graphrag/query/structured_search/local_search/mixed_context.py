@@ -351,12 +351,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
             token_encoder=self.token_encoder,
             max_tokens=max_tokens,
             shuffle_data=False,
-            single_batch=True,
             context_name=context_name,
             column_delimiter=column_delimiter,
         )
-        if isinstance(context_text, list) and len(context_text) > 0:
-            context_text = "\n\n".join(context_text)
 
         if return_candidate_context:
             candidate_context_data = get_candidate_text_units(
@@ -401,7 +398,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
             token_encoder=self.token_encoder,
             max_tokens=max_tokens,
             column_delimiter=column_delimiter,
-            single_batch=True,
             include_entity_rank=include_entity_rank,
             rank_description=rank_description,
             context_name="Entities",
@@ -429,7 +425,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 token_encoder=self.token_encoder,
                 max_tokens=max_tokens,
                 column_delimiter=column_delimiter,
-                single_batch=True,
                 top_k_relationships=top_k_relationships,
                 include_relationship_weight=include_relationship_weight,
                 relationship_ranking_attribute=relationship_ranking_attribute,
@@ -449,7 +444,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     token_encoder=self.token_encoder,
                     max_tokens=max_tokens,
                     column_delimiter=column_delimiter,
-                    single_batch=True,
                     context_name=covariate,
                 )
                 total_tokens += num_tokens(covariate_context, self.token_encoder)

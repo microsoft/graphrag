@@ -26,6 +26,7 @@ class PipelineFileCacheConfig(PipelineCacheConfig[Literal[CacheType.file]]):
 
     type: Literal[CacheType.file] = CacheType.file
     """The type of cache."""
+
     base_dir: str | None = pydantic_Field(
         description="The base directory for the cache.", default=None
     )
@@ -57,7 +58,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The base directory for the cache."""
 
-    connection_string: str = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The blob cache connection string for the cache.", default=None
     )
     """The blob cache connection string for the cache."""
@@ -66,6 +67,11 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
         description="The container name for cache", default=None
     )
     """The container name for cache"""
+
+    storage_account_blob_url: str | None = pydantic_Field(
+        description="The storage account blob url for cache", default=None
+    )
+    """The storage account blob url for cache"""
 
 
 PipelineCacheConfigTypes = (

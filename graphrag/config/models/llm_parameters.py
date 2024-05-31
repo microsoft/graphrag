@@ -13,7 +13,7 @@ class LLMParameters(BaseModel):
     """LLM Parameters model."""
 
     model_config = ConfigDict(protected_namespaces=(), extra="allow")
-    api_key: str = Field(
+    api_key: str | None = Field(
         description="The API key to use for the LLM service.",
         default=None,
     )
@@ -39,6 +39,9 @@ class LLMParameters(BaseModel):
     )
     proxy: str | None = Field(
         description="The proxy to use for the LLM service.", default=None
+    )
+    cognitive_services_endpoint: str | None = Field(
+        description="The endpoint to reach cognitives services.", default=None
     )
     deployment_name: str | None = Field(
         description="The deployment name to use for the LLM service.", default=None

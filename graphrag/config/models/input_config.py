@@ -24,6 +24,9 @@ class InputConfig(BaseModel):
     connection_string: str | None = Field(
         description="The azure blob storage connection string to use.", default=None
     )
+    storage_account_blob_url: str | None = Field(
+        description="The storage account blob url to use.", default=None
+    )
     container_name: str | None = Field(
         description="The azure blob storage container name to use.", default=None
     )
