@@ -22,6 +22,8 @@ from graphrag.fine_tune.generator import (
     create_entity_extraction_prompt,
     generate_entity_types,
     create_entity_summarization_prompt,
+    generate_community_reporter_role,
+    create_community_summarization_prompt,
     MAX_TOKEN_COUNT,
 )
 
@@ -102,3 +104,15 @@ async def fine_tune(
         persona=persona,
         output_path=output_path,
     )
+
+    community_reporter_role = await generate_community_reporter_role(
+        llm, domain=domain, persona=persona, docs=doc_list
+    )
+
+    print(community_reporter_role)
+
+    prompt = create_community_summarization_prompt(
+        persona=persona, role=community_reporter_role, output_path=output_path
+    )
+
+    print(prompt)
