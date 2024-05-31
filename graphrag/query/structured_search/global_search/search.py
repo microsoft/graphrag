@@ -44,6 +44,7 @@ DEFAULT_REDUCE_LLM_PARAMS = {
 }
 log = logging.getLogger(__name__)
 
+DEFAULT_NO_DATA_ANSWER = "I am sorry but I am unable to answer this question given the provided data."
 
 @dataclass
 class GlobalSearchResult(SearchResult):
@@ -246,6 +247,18 @@ class GlobalSearch(BaseSearch):
                 for point in key_points
                 if point["score"] > 0  # type: ignore
             ]
+
+            if len(filtered_key_points) == 0:
+                # return no data answer if no key points are found
+                return SearchResult(
+                    response=DEFAULT_NO_DATA_ANSWER,
+                    context_data="",
+                    context_text="",
+                    completion_time=time.time() - start_time,
+                    llm_calls=0,
+                    prompt_tokens=0,
+                )
+            
             filtered_key_points = sorted(
                 filtered_key_points,
                 key=lambda x: x["score"],  # type: ignore

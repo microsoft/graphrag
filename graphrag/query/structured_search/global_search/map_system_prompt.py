@@ -11,10 +11,10 @@ You are a helpful assistant responding to questions about data in the tables pro
 
 ---Goal---
 
-Generate a response consisting of a list of key points that responds to the user's question, summarize all relevant information in the input data tables, and incorporate any relevant general knowledge.
-You should use the data provided in the data tables below as the primary context for generating the response.
+Generate a response consisting of a list of key points that responds to the user's question, summarize all relevant information in the input data tables.
 
-If you don't know the answer, just say so. Do not make anything up.
+You should use the data provided in the data tables below as the primary context for generating the response.
+If you don't know the answer or if the input data tables do not contain sufficient information to provide an answer, just say so. Do not make anything up.
 
 Each key point in the response should have the following element:
 - Description: A compprehensive description of the point.
@@ -50,9 +50,9 @@ Do not include information where the supporting evidence for it is not provided.
 ---Goal---
 
 Generate a response consisting of a list of key points that responds to the user's question, summarize all relevant information in the input data tables, and incorporate any relevant general knowledge.
-You should use the data provided in the data tables below as the primary context for generating the response.
 
-If you don't know the answer, just say so. Do not make anything up.
+You should use the data provided in the data tables below as the primary context for generating the response.
+If you don't know the answer or if the input data tables do not contain sufficient information to provide an answer, just say so. Do not make anything up.
 
 Each key point in the response should have the following element:
 - Description: A compprehensive description of the point.
