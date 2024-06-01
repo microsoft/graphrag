@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Fine-tuning prompts for entity summarization."""
+
 ENTITY_SUMMARIZATION_PROMPT = """
 {persona}
 Using your expertise, you're asked to generate a comprehensive summary of the data provided below.

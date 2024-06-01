@@ -1,14 +1,17 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Input loading module."""
+
 from typing import cast
-from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
+
 import pandas as pd
+from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
+
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
 from graphrag.index.progress.types import ProgressReporter
 from graphrag.index.verbs import chunk
-
 
 MIN_CHUNK_SIZE = 200
 MIN_CHUNK_OVERLAP = 0
@@ -22,7 +25,7 @@ async def load_docs_in_chunks(
     reporter: ProgressReporter,
     chunk_size: int = MIN_CHUNK_SIZE,
 ) -> list[str]:
-    """Load docs for generating prompts."""
+    """Load docs into chunks for generating prompts."""
     dataset = await load_input(config.input, reporter, root)
 
     # covert to text units
@@ -44,7 +47,7 @@ async def load_docs_in_chunks(
     dataset_chunks = cast(pd.DataFrame, dataset_chunks_table_container.table)
 
     # Select chunks into a new df and explode it
-    chunks_df = pd.DataFrame(dataset_chunks["chunks"].explode())
+    chunks_df = pd.DataFrame(dataset_chunks["chunks"].explode())  # type: ignore
 
     # Depending on the select method, build the dataset
     if select_method == "top":
@@ -53,6 +56,4 @@ async def load_docs_in_chunks(
         chunks_df = chunks_df.sample(n=limit)
 
     # Convert the dataset to list form, so we have a list of documents
-    doc_list = chunks_df["chunks"].tolist()
-
-    return doc_list
+    return chunks_df["chunks"].tolist()

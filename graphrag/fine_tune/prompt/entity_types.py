@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Fine-tuning prompts for entity types generation."""
+
 ENTITY_TYPE_GENERATION_PROMPT = """
 The goal is to study the connections and relations between the entity types and their features in order to understand all available information from the text.
 The user's task is to {task}.

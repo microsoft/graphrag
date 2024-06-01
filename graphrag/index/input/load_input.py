@@ -10,7 +10,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config import StorageType, InputConfig
+from graphrag.config import InputConfig, StorageType
 from graphrag.index.config import PipelineInputConfig
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (

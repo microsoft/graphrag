@@ -1,6 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Config loading, parsing and handling module."""
 
 from pathlib import Path
 
@@ -9,6 +10,13 @@ from graphrag.index.progress.types import ProgressReporter
 
 
 def read_config_parameters(root: str, reporter: ProgressReporter):
+    """Read the configuration parameters from the settings file or environment variables.
+
+    Parameters
+    ----------
+    - root: The root directory where the parameters are.
+    - reporter: The progress reporter.
+    """
     _root = Path(root)
     settings_yaml = _root / "settings.yaml"
     if not settings_yaml.exists():

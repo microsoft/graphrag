@@ -1,14 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Entity type generation module for fine-tuning."""
 
-import json
-from graphrag.llm.types.llm_types import CompletionLLM
 from graphrag.fine_tune.generator.defaults import DEFAULT_TASK
 from graphrag.fine_tune.prompt.entity_types import (
     ENTITY_TYPE_GENERATION_JSON_PROMPT,
     ENTITY_TYPE_GENERATION_PROMPT,
 )
+from graphrag.llm.types.llm_types import CompletionLLM
 
 
 async def generate_entity_types(
@@ -20,7 +20,7 @@ async def generate_entity_types(
     json_mode: bool = False,
 ) -> str | list[str]:
     """
-    Generates entity type categories from a given set of (small) documents.
+    Generate entity type categories from a given set of (small) documents.
 
     Example Output:
     "entity_types": ['military unit', 'organization', 'person', 'location', 'event', 'date', 'equipment']
@@ -41,5 +41,5 @@ async def generate_entity_types(
 
     if json_mode:
         return (response.json or {}).get("entity_types", [])
-    else:
-        return str(response.output)
+
+    return str(response.output)

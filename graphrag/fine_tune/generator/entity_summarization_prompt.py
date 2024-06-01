@@ -1,19 +1,26 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Entity summarization prompt generation module."""
+
 from pathlib import Path
+
 from graphrag.fine_tune.template import ENTITY_SUMMARIZATION_PROMPT
 
-from graphrag.index.utils.tokens import num_tokens_from_string
-
-ENTITY_SUMMARIZATION_FILENAME = "entity_summarization_prompt.txt"
+ENTITY_SUMMARIZATION_FILENAME = "summarize_descriptions.txt"
 
 
 def create_entity_summarization_prompt(
     persona: str,
     output_path: Path | None = None,
 ) -> str:
+    """Create a prompt for entity summarization. If output_path is provided, write the prompt to a file.
 
+    Parameters
+    ----------
+    - persona (str): The persona to use for the entity summarization prompt
+    - output_path (Path | None): The path to write the prompt to. Default is None. If None, the prompt is not written to a file. Default is None.
+    """
     prompt = ENTITY_SUMMARIZATION_PROMPT.format(persona=persona)
 
     if output_path:

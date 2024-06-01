@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+"""Fine-tuning prompts for community report summarization."""
+
 COMMUNITY_REPORT_SUMMARIZATION_PROMPT = """
 {persona}
 
@@ -10,7 +12,7 @@ reputation, and noteworthy claims.
 
 # Report Structure
 The report should include the following sections:
-- TITLE: community's name that represents its key entities - title should be short but specific. When possible, include representative named entities in the title. 
+- TITLE: community's name that represents its key entities - title should be short but specific. When possible, include representative named entities in the title.
 - SUMMARY: An executive summary of the community's overall structure, how its entities are related to each other, and significant threats associated with its entities.
 - THREAT SEVERITY RATING: a float score between 0-10 that represents the potential global impact to humanity as posed by entities within the community.
 - RATING EXPLANATION: Give a single sentence explanation of the threat severity rating.

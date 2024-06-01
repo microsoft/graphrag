@@ -7,27 +7,27 @@ from pathlib import Path
 
 from datashaper import NoopVerbCallbacks
 
-from graphrag.fine_tune.generator import generate_entity_relationship_examples
-from graphrag.fine_tune.loader import read_config_parameters
-
-
-from graphrag.fine_tune.loader import MIN_CHUNK_SIZE, load_docs_in_chunks
-from graphrag.index.llm import load_llm
-
-
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.fine_tune.generator import (
-    generate_persona,
-    generate_domain,
+    MAX_TOKEN_COUNT,
+    create_community_summarization_prompt,
     create_entity_extraction_prompt,
-    generate_entity_types,
     create_entity_summarization_prompt,
     generate_community_reporter_role,
-    create_community_summarization_prompt,
-    MAX_TOKEN_COUNT,
+    generate_domain,
+    generate_entity_relationship_examples,
+    generate_entity_types,
+    generate_persona,
 )
-
-reporter = PrintProgressReporter("")
+from graphrag.fine_tune.loader import (
+    MIN_CHUNK_SIZE,
+    load_docs_in_chunks,
+    read_config_parameters,
+)
+from graphrag.index.llm import load_llm
+from graphrag.index.progress import PrintProgressReporter
+from graphrag.index.progress.types import ProgressReporter
+from graphrag.llm.types.llm_types import CompletionLLM
 
 
 async def fine_tune(
@@ -38,9 +38,20 @@ async def fine_tune(
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
     output: str = "prompts",
-    **kwargs,
 ):
-    """Fine tune the model."""
+    """Fine tune the model.
+
+    Parameters
+    ----------
+    - root: The root directory.
+    - domain: The domain to map the input documents to.
+    - select: The chunk selection method.
+    - limit: The limit of chunks to load.
+    - max_tokens: The maximum number of tokens to use on entity extraction prompts.
+    - chunk_size: The chunk token size to use.
+    - output: The output folder to store the prompts.
+    """
+    reporter = PrintProgressReporter("")
     config = read_config_parameters(root, reporter)
 
     output_path = Path(config.root_dir) / output
@@ -63,13 +74,42 @@ async def fine_tune(
         config.llm.model_dump(),
     )
 
+    await generate_indexing_prompts(
+        llm, config, doc_list, output_path, reporter, domain, max_tokens
+    )
+
+
+async def generate_indexing_prompts(
+    llm: CompletionLLM,
+    config: GraphRagConfig,
+    doc_list: list[str],
+    output_path: Path,
+    reporter: ProgressReporter,
+    domain: str | None = None,
+    max_tokens: int = MAX_TOKEN_COUNT,
+):
+    """Generate indexing prompts.
+
+    Parameters
+    ----------
+    - llm: The LLM model to use.
+    - config: The GraphRag configuration.
+    - doc_list: The list of documents to use.
+    - output_path: The path to store the prompts.
+    - reporter: The progress reporter.
+    - domain: The domain to map the input documents to.
+    - max_tokens: The maximum number of tokens to use on entity extraction prompts
+    """
     if not domain:
+        reporter.info("Generating domain...")
         domain = await generate_domain(llm, doc_list)
-    print(domain)
+        reporter.info(f"Generated domain: {domain}")
 
+    reporter.info("Generating persona...")
     persona = await generate_persona(llm, domain)
-    print(persona)
+    reporter.info(f"Generated persona: {persona}")
 
+    reporter.info("Generating entity types")
     entity_types = await generate_entity_types(
         llm,
         domain=domain,
@@ -77,42 +117,49 @@ async def fine_tune(
         docs=doc_list,
         json_mode=config.llm.model_supports_json or False,
     )
-    print(entity_types)
+    reporter.info(f"Generated entity types: {entity_types}")
 
+    reporter.info("Generating entity relationship examples...")
     examples = await generate_entity_relationship_examples(
         llm,
         persona=persona,
         entity_types=entity_types,
         docs=doc_list,
-        json_mode=config.llm.model_supports_json or False,
+        json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
     )
-    print(examples)
+    reporter.info("Done generating entity relationship examples")
 
-    prompt = create_entity_extraction_prompt(
+    reporter.info("Generating entity extraction prompt...")
+    create_entity_extraction_prompt(
         entity_types=entity_types,
         docs=doc_list,
         examples=examples,
-        json_mode=config.llm.model_supports_json or False,
+        json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
         model_name=config.llm.model,
         output_path=output_path,
         max_token_count=max_tokens,
     )
+    reporter.info(f"Generated entity extraction prompt, stored in folder {output_path}")
 
-    print(prompt)
-
-    prompt = create_entity_summarization_prompt(
+    reporter.info("Generating entity summarization prompt...")
+    create_entity_summarization_prompt(
         persona=persona,
         output_path=output_path,
     )
+    reporter.info(
+        f"Generated entity summarization prompt, stored in folder {output_path}"
+    )
 
+    reporter.info("Generating community reporter role...")
     community_reporter_role = await generate_community_reporter_role(
         llm, domain=domain, persona=persona, docs=doc_list
     )
+    reporter.info(f"Generated community reporter role: {community_reporter_role}")
 
-    print(community_reporter_role)
-
-    prompt = create_community_summarization_prompt(
+    reporter.info("Generating community summarization prompt...")
+    create_community_summarization_prompt(
         persona=persona, role=community_reporter_role, output_path=output_path
     )
-
-    print(prompt)
+    reporter.info(
+        f"Generated community summarization prompt, stored in folder {output_path}"
+    )

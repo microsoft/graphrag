@@ -1,16 +1,24 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.llm.types.llm_types import CompletionLLM
+"""Persona generating module for fine-tuning GraphRAG prompts."""
+
 from graphrag.fine_tune.generator.defaults import DEFAULT_TASK
 from graphrag.fine_tune.prompt import GENERATE_PERSONA_PROMPT
+from graphrag.llm.types.llm_types import CompletionLLM
 
 
 async def generate_persona(
     llm: CompletionLLM, domain: str, task: str = DEFAULT_TASK
 ) -> str:
-    """Provided a domain and a task, generate an LLM persona to use for GraphRAG prompts"""
+    """Generate an LLM persona to use for GraphRAG prompts.
 
+    Parameters
+    ----------
+    - llm (CompletionLLM): The LLM to use for generation
+    - domain (str): The domain to generate a persona for
+    - task (str): The task to generate a persona for. Default is DEFAULT_TASK
+    """
     formatted_task = task.format(domain=domain)
     persona_prompt = GENERATE_PERSONA_PROMPT.format(sample_task=formatted_task)
 
