@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--domain",
-        help="The domain your input data is related to. For example 'space science', 'microbiology', 'enviromental news'.",
+        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'.",
         required=False,
         default="",
         type=str,
