@@ -20,13 +20,13 @@ T = TypeVar("T")
 class PipelineInputConfig(BaseModel, Generic[T]):
     """Represent the configuration for an input."""
 
-    type: InputType | None = pydantic_Field(
-        description="The input type to use.", default=None
-    )
-    """The input type to use."""
-
     file_type: T
     """The file type of input."""
+
+    type: InputType | None = pydantic_Field(
+        description="The input type to use.", default=None,
+    )
+    """The input type to use."""
 
     connection_string: str | None = pydantic_Field(
         description="The blob cache connection string for the input files.",
