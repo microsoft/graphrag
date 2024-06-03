@@ -67,6 +67,9 @@ def run_global_search(
     final_nodes: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_nodes.parquet"
     )
+    final_entities: pd.DataFrame = pd.read_parquet(
+        data_path / "create_final_entities.parquet"
+    )
     final_community_reports: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_community_reports.parquet"
     )
@@ -74,9 +77,11 @@ def run_global_search(
     reports = read_indexer_reports(
         final_community_reports, final_nodes, community_level
     )
+    entities = read_indexer_entities(final_nodes, final_entities, community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
+        entities=entities,
         response_type=response_type,
     )
 

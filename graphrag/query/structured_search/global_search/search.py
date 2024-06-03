@@ -4,15 +4,14 @@
 """The GlobalSearch Implementation."""
 
 import asyncio
+import json
 import logging
-import re
 import time
 from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
 import tiktoken
-import json
 
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
@@ -28,23 +27,24 @@ from graphrag.query.structured_search.global_search.map_system_prompt import (
     MAP_SYSTEM_PROMPT,
 )
 from graphrag.query.structured_search.global_search.reduce_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+    NO_DATA_ANSWER,
     REDUCE_SYSTEM_PROMPT,
 )
 
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,
     "temperature": 0.0,
-    "response_format": {"type": "json_object"}
-
+    "response_format": {"type": "json_object"},
 }
 
 DEFAULT_REDUCE_LLM_PARAMS = {
     "max_tokens": 2000,
     "temperature": 0.0,
 }
+
 log = logging.getLogger(__name__)
 
-DEFAULT_NO_DATA_ANSWER = "I am sorry but I am unable to answer this question given the provided data."
 
 @dataclass
 class GlobalSearchResult(SearchResult):
@@ -62,10 +62,12 @@ class GlobalSearch(BaseSearch):
         self,
         llm: BaseLLM,
         context_builder: GlobalContextBuilder,
-        token_encoder: tiktoken.Encoding | None = None,  # type: ignore
+        token_encoder: tiktoken.Encoding | None = None,
         map_system_prompt: str = MAP_SYSTEM_PROMPT,
         reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
         response_type: str = "multiple paragraphs",
+        allow_general_knowledge: bool = False,
+        general_knowledge_inclusion_prompt: str = GENERAL_KNOWLEDGE_INSTRUCTION,
         json_mode: bool = True,
         callbacks: list[GlobalSearchLLMCallback] | None = None,
         max_data_tokens: int = 8000,
@@ -83,6 +85,8 @@ class GlobalSearch(BaseSearch):
         self.map_system_prompt = map_system_prompt
         self.reduce_system_prompt = reduce_system_prompt
         self.response_type = response_type
+        self.allow_general_knowledge = allow_general_knowledge
+        self.general_knowledge_inclusion_prompt = general_knowledge_inclusion_prompt
         self.callbacks = callbacks
         self.max_data_tokens = max_data_tokens
 
@@ -169,9 +173,7 @@ class GlobalSearch(BaseSearch):
         start_time = time.time()
         search_prompt = ""
         try:
-            search_prompt = self.map_system_prompt.format(
-                context_data=context_data
-            )
+            search_prompt = self.map_system_prompt.format(context_data=context_data)
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
@@ -180,18 +182,19 @@ class GlobalSearch(BaseSearch):
                 search_response = await self.llm.agenerate(
                     messages=search_messages, streaming=False, **llm_kwargs
                 )
-                print(search_response)
+                log.info("Map response: %s", search_response)
             try:
                 # parse search response json
                 parsed_elements = json.loads(search_response)["points"]
-                processed_response = []
-                for element in parsed_elements:
-                    processed_response.append({
+                processed_response = [
+                    {
                         "answer": element["description"],
-                        "score": int(element["score"])
-                    })
-            except Exception:  # noqa BLE001
-                print("Error parsing search response json")
+                        "score": int(element["score"]),
+                    }
+                    for element in parsed_elements
+                ]
+            except Exception:
+                log.exception("Error parsing search response json")
                 processed_response = []
 
             return SearchResult(
@@ -248,17 +251,17 @@ class GlobalSearch(BaseSearch):
                 if point["score"] > 0  # type: ignore
             ]
 
-            if len(filtered_key_points) == 0:
+            if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
                 # return no data answer if no key points are found
                 return SearchResult(
-                    response=DEFAULT_NO_DATA_ANSWER,
+                    response=NO_DATA_ANSWER,
                     context_data="",
                     context_text="",
                     completion_time=time.time() - start_time,
                     llm_calls=0,
                     prompt_tokens=0,
                 )
-            
+
             filtered_key_points = sorted(
                 filtered_key_points,
                 key=lambda x: x["score"],  # type: ignore
@@ -269,7 +272,9 @@ class GlobalSearch(BaseSearch):
             total_tokens = 0
             for point in filtered_key_points:
                 formatted_response_data = []
-                formatted_response_data.append(f'----Analyst {point["analyst"] + 1}----')
+                formatted_response_data.append(
+                    f'----Analyst {point["analyst"] + 1}----'
+                )
                 formatted_response_data.append(
                     f'Importance Score: {point["score"]}'  # type: ignore
                 )
@@ -284,9 +289,12 @@ class GlobalSearch(BaseSearch):
                 data.append(formatted_response_text)
                 total_tokens += num_tokens(formatted_response_text, self.token_encoder)
             text_data = "\n\n".join(data)
+
             search_prompt = self.reduce_system_prompt.format(
                 report_data=text_data, response_type=self.response_type
             )
+            if self.allow_general_knowledge:
+                search_prompt += "\n" + self.general_knowledge_inclusion_prompt
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},

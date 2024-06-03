@@ -128,7 +128,10 @@ def get_local_search_engine(
 
 
 def get_global_search_engine(
-    config: GraphRagConfig, reports: list[CommunityReport], response_type: str
+    config: GraphRagConfig,
+    reports: list[CommunityReport],
+    entities: list[Entity],
+    response_type: str,
 ):
     """Create a global search engine based on data + configuration."""
     token_encoder = tiktoken.get_encoding(config.encoding_model)
@@ -137,23 +140,29 @@ def get_global_search_engine(
     return GlobalSearch(
         llm=get_llm(config),
         context_builder=GlobalCommunityContext(
-            community_reports=reports, token_encoder=token_encoder
+            community_reports=reports, entities=entities, token_encoder=token_encoder
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
         map_llm_params={
             "max_tokens": gs_config.map_max_tokens,
             "temperature": 0.0,
+            "response_format": {"type": "json_object"},
         },
         reduce_llm_params={
             "max_tokens": gs_config.reduce_max_tokens,
             "temperature": 0.0,
         },
+        allow_general_knowledge=False,
         context_builder_params={
             "use_community_summary": False,
             "shuffle_data": True,
             "include_community_rank": True,
             "min_community_rank": 0,
+            "community_rank_name": "rank",
+            "include_community_weight": True,
+            "community_weight_name": "occurrence weight",
+            "normalize_community_weight": True,
             "max_tokens": gs_config.max_tokens,
             "context_name": "Reports",
         },

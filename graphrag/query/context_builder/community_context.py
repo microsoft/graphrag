@@ -3,6 +3,7 @@
 
 """Community Context."""
 
+import logging
 import random
 from typing import Any, cast
 
@@ -11,6 +12,8 @@ import tiktoken
 
 from graphrag.model import CommunityReport, Entity
 from graphrag.query.llm.text_utils import num_tokens
+
+log = logging.getLogger(__name__)
 
 
 def build_community_context(
@@ -24,7 +27,7 @@ def build_community_context(
     min_community_rank: int = 0,
     community_rank_name: str = "rank",
     include_community_weight: bool = True,
-    community_weight_name: str = "occurrence",
+    community_weight_name: str = "occurrence weight",
     normalize_community_weight: bool = True,
     max_tokens: int = 8000,
     single_batch: bool = True,
@@ -47,9 +50,9 @@ def build_community_context(
             or community_weight_name not in community_reports[0].attributes
         )
     ):
-        print("Computing community weights...")
+        log.info("Computing community weights...")
         community_reports = _compute_community_weights(
-            community_reports=community_reports, 
+            community_reports=community_reports,
             entities=entities,
             weight_attribute=community_weight_name,
             normalize=normalize_community_weight,
@@ -114,14 +117,16 @@ def build_community_context(
                 record_df = _convert_report_context_to_df(
                     context_records=current_context_records[1:],
                     header=current_context_records[0],
-                    weight_column=community_weight_name if entities and include_community_weight else None,
+                    weight_column=community_weight_name
+                    if entities and include_community_weight
+                    else None,
                     rank_column=community_rank_name if include_community_rank else None,
                 )
-                
+
             else:
                 record_df = pd.DataFrame()
             current_context_text = record_df.to_csv(index=False, sep=column_delimiter)
-            
+
             if single_batch:
                 return current_context_text, {context_name.lower(): record_df}
 
@@ -141,23 +146,27 @@ def build_community_context(
             current_context_text += new_context_text
             current_tokens += new_tokens
             current_context_records.append(new_context)
-    
+
     # add the last batch if it has not been added
     if current_context_text not in all_context_text:
         if len(current_context_records) > 1:
             record_df = _convert_report_context_to_df(
-                        context_records=current_context_records[1:],
-                        header=current_context_records[0],
-                        weight_column=community_weight_name if entities and include_community_weight else None,
-                        rank_column=community_rank_name if include_community_rank else None,
-                    )
+                context_records=current_context_records[1:],
+                header=current_context_records[0],
+                weight_column=community_weight_name
+                if entities and include_community_weight
+                else None,
+                rank_column=community_rank_name if include_community_rank else None,
+            )
         else:
             record_df = pd.DataFrame()
         all_context_records.append(record_df)
         current_context_text = record_df.to_csv(index=False, sep=column_delimiter)
         all_context_text.append(current_context_text)
 
-    return all_context_text, {context_name.lower(): pd.concat(all_context_records, ignore_index=True)}
+    return all_context_text, {
+        context_name.lower(): pd.concat(all_context_records, ignore_index=True)
+    }
 
 
 def _compute_community_weights(
@@ -182,19 +191,23 @@ def _compute_community_weights(
         )
     if normalize:
         # normalize by max weight
-        max_weight = max(
-            [report.attributes[weight_attribute] for report in community_reports]
-        )
+        all_weights = [
+            report.attributes[weight_attribute]
+            for report in community_reports
+            if report.attributes
+        ]
+        max_weight = max(all_weights)
         for report in community_reports:
-            report.attributes[weight_attribute] = (
-                report.attributes[weight_attribute] / max_weight
-            )
+            if report.attributes:
+                report.attributes[weight_attribute] = (
+                    report.attributes[weight_attribute] / max_weight
+                )
     return community_reports
 
 
 def _rank_report_context(
     report_df: pd.DataFrame,
-    weight_column: str | None = "occcurence",
+    weight_column: str | None = "occcurence weight",
     rank_column: str | None = "rank",
 ) -> pd.DataFrame:
     """Sort report context by community weight and rank if exist."""
@@ -209,20 +222,20 @@ def _rank_report_context(
         report_df.sort_values(by=rank_attributes, ascending=False, inplace=True)
     return report_df
 
+
 def _convert_report_context_to_df(
-        context_records: list[list[str]],
-        header: list[str],
-        weight_column: str | None = None,
-        rank_column: str | None = None,
+    context_records: list[list[str]],
+    header: list[str],
+    weight_column: str | None = None,
+    rank_column: str | None = None,
 ) -> pd.DataFrame:
     """Convert report context records to pandas dataframe and sort by weight and rank if exist."""
     record_df = pd.DataFrame(
         context_records,
         columns=cast(Any, header),
     )
-    record_df = _rank_report_context(
+    return _rank_report_context(
         report_df=record_df,
         weight_column=weight_column,
         rank_column=rank_column,
     )
-    return record_df

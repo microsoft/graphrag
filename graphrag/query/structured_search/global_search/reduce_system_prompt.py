@@ -48,7 +48,7 @@ Do not include information where the supporting evidence for it is not provided.
 
 ---Goal---
 
-Generate a response of the target length and format that responds to the user's question, summarize all the reports from multiple analysts who focused on different parts of the dataset, and incorporate any relevant general knowledge.
+Generate a response of the target length and format that responds to the user's question, summarize all the reports from multiple analysts who focused on different parts of the dataset.
 
 Note that the analysts' reports provided below are ranked in the **descending order of importance**.
 
@@ -76,4 +76,13 @@ Do not include information where the supporting evidence for it is not provided.
 {response_type}
 
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown.
+"""
+
+NO_DATA_ANSWER = (
+    "I am sorry but I am unable to answer this question given the provided data."
+)
+
+GENERAL_KNOWLEDGE_INSTRUCTION = """
+The response may also include relevant real-world knowledge outside the dataset, but it must be explicitly annotated with a verification tag [LLM: verify]. For example:
+"This is an example sentence supported by real-world knowledge [LLM: verify]."
 """
