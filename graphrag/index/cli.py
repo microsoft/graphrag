@@ -95,7 +95,6 @@ def index_cli(
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
-    # resume = resume or time.strftime("%Y%m%d-%H%M%S")
 
     def _run_workflow_async() -> None:
         import signal
