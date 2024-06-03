@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Global search improvements: added elementwise ranking, occurrence-based community weight, and flag for general knowledge inclusion"
+}
