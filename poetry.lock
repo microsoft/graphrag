@@ -2387,17 +2387,16 @@ files = [
 
 [[package]]
 name = "lancedb"
-version = "0.6.13"
+version = "0.8.1"
 description = "lancedb"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "lancedb-0.6.13-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:4667353ca7fa187e94cb0ca4c5f9577d65eb5160f6f3fe9e57902d86312c3869"},
-    {file = "lancedb-0.6.13-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:2e22533fe6f6b2d7037dcdbbb4019a62402bbad4ce18395be68f4aa007bf8bc0"},
-    {file = "lancedb-0.6.13-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:837eaceafb87e3ae4c261eef45c4f73715f892a36165572c3da621dbdb45afcf"},
-    {file = "lancedb-0.6.13-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:61af2d72b2a2f0ea419874c3f32760fe5e51530da3be2d65251a0e6ded74419b"},
-    {file = "lancedb-0.6.13-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:31b24e57ee313f4ce6255e45d42e8bee19b90ddcd13a9e07030ac04f76e7dfde"},
-    {file = "lancedb-0.6.13-cp38-abi3-win_amd64.whl", hash = "sha256:b851182d8492b1e5b57a441af64c95da65ca30b045d6618dc7d203c6d60d70fa"},
+    {file = "lancedb-0.8.1-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:d4ed9339fce4928307050cbf2031031c50bcd6a16b9fe4266bba2085a34bed09"},
+    {file = "lancedb-0.8.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:fb1930b5402b29fb08e0698281df5487421db9e7b35adbcee87f465d9d79ee57"},
+    {file = "lancedb-0.8.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4d1e85a85b70e59f6df46c91052cf2e36e932c4662fef871d4224389807102cd"},
+    {file = "lancedb-0.8.1-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:531f2a90c0d6f63dc268d3466baac3504b0dbd7695b7c37b91605b82560ad95a"},
+    {file = "lancedb-0.8.1-cp38-abi3-win_amd64.whl", hash = "sha256:7f0aa79454f0cc28b1d90e738513e0cbeb16468b13ca44ebf62d5d5f14a5604f"},
 ]
 
 [package.dependencies]
@@ -2405,12 +2404,12 @@ attrs = ">=21.3.0"
 cachetools = "*"
 deprecation = "*"
 overrides = ">=0.7"
+packaging = "*"
 pydantic = ">=1.10"
-pylance = "0.10.12"
+pylance = "0.11.1"
 ratelimiter = ">=1.0,<2.0"
 requests = ">=2.31.0"
 retry = ">=0.9.2"
-semver = "*"
 tqdm = ">=4.27.0"
 
 [package.extras]
@@ -2418,7 +2417,7 @@ azure = ["adlfs (>=2024.2.0)"]
 clip = ["open-clip", "pillow", "torch"]
 dev = ["pre-commit", "ruff"]
 docs = ["mkdocs", "mkdocs-jupyter", "mkdocs-material", "mkdocstrings[python]"]
-embeddings = ["awscli (>=1.29.57)", "boto3 (>=1.28.57)", "botocore (>=1.31.57)", "cohere", "google-generativeai", "huggingface-hub", "instructorembedding", "open-clip-torch", "openai (>=1.6.1)", "pillow", "sentence-transformers", "torch"]
+embeddings = ["awscli (>=1.29.57)", "boto3 (>=1.28.57)", "botocore (>=1.31.57)", "cohere", "google-generativeai", "huggingface-hub", "instructorembedding", "ollama", "open-clip-torch", "openai (>=1.6.1)", "pillow", "sentence-transformers", "torch"]
 tests = ["aiohttp", "boto3", "duckdb", "pandas (>=1.4)", "polars (>=0.19)", "pytest", "pytest-asyncio", "pytest-mock", "pytz", "tantivy"]
 
 [[package]]
@@ -3887,17 +3886,17 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "pylance"
-version = "0.10.12"
+version = "0.11.1"
 description = "python wrapper for Lance columnar format"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "pylance-0.10.12-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:30cbcca078edeb37e11ae86cf9287d81ce6c0c07ba77239284b369a4b361497b"},
-    {file = "pylance-0.10.12-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:e558163ff6035d518706cc66848497219ccc755e2972b8f3b1706a3e1fd800fd"},
-    {file = "pylance-0.10.12-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:75afb39f71d7f12429f9b4d380eb6cf6aed179ae5a1c5d16cc768373a1521f87"},
-    {file = "pylance-0.10.12-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:3de391dfc3a99bdb245fd1e27ef242be769a94853f802ef57f246e9a21358d32"},
-    {file = "pylance-0.10.12-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:34a5278b90f4cbcf21261353976127aa2ffbbd7d068810f0a2b0c1aa0334022a"},
-    {file = "pylance-0.10.12-cp38-abi3-win_amd64.whl", hash = "sha256:6cef5975d513097fd2c22692296c9a5a138928f38d02cd34ab63a7369abc1463"},
+    {file = "pylance-0.11.1-cp39-abi3-macosx_10_15_x86_64.whl", hash = "sha256:2fa54e00850a2c7ce29663977f11591c7836dadbdda161fbea26188ea4757729"},
+    {file = "pylance-0.11.1-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:0aaa3625cb3e2c45a2f4c99f0fc0e21562eb7b63f1df8a35004561d1af57d288"},
+    {file = "pylance-0.11.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d26790bda4c6373f6d7fe20ed8896d76cadd1e7e3d7ca8764a6454a98a1fe3cf"},
+    {file = "pylance-0.11.1-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:901755d0b0725463336c839ddd8cc44153556af2cb3fa630de0ce0db4ed3a495"},
+    {file = "pylance-0.11.1-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ad05b8f4d82cfdb6adc02ff4e5d093eca4be460a46a3845b378e03c5c9758b88"},
+    {file = "pylance-0.11.1-cp39-abi3-win_amd64.whl", hash = "sha256:103eaae271a0e16d4f5deb4f450c180a4ef217b6f98668434224a569af20ea7c"},
 ]
 
 [package.dependencies]
@@ -3906,7 +3905,7 @@ pyarrow = ">=12,<15.0.1"
 
 [package.extras]
 benchmarks = ["pytest-benchmark"]
-dev = ["ruff (==0.2.2)"]
+dev = ["ruff (==0.4.1)"]
 ray = ["ray[data]"]
 tests = ["boto3", "datasets", "duckdb", "h5py (<3.11)", "ml-dtypes", "pandas", "pillow", "polars[pandas,pyarrow]", "pytest", "tensorflow", "tqdm"]
 torch = ["torch"]
@@ -4900,17 +4899,6 @@ cryptography = ">=2.0"
 jeepney = ">=0.6"
 
 [[package]]
-name = "semver"
-version = "3.0.2"
-description = "Python helper for Semantic Versioning (https://semver.org)"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "semver-3.0.2-py3-none-any.whl", hash = "sha256:b1ea4686fe70b981f85359eda33199d60c53964284e0cfb4977d243e37cf4bf4"},
-    {file = "semver-3.0.2.tar.gz", hash = "sha256:6253adb39c70f6e51afed2fa7152bcd414c411286088fb4b9effb133885ab4cc"},
-]
-
-[[package]]
 name = "semversioner"
 version = "2.0.2"
 description = "Manage properly semver in your repository"
@@ -5761,4 +5749,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "9513cca5dd5158d67eb56c5e7629b39293077a8dbe28028c59e2da58de06da55"
+content-hash = "68f80f8b20e1f0019b7817d405479586d4b7f678fe7297541b732189cb424ae9"
