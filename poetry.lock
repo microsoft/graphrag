@@ -5406,19 +5406,17 @@ tbb = ["tbb (>=2019.0)"]
 
 [[package]]
 name = "update-toml"
-version = "0.0.3"
+version = "0.2.1"
 description = "Update a toml value from a CLI"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "update_toml-0.0.3-py2.py3-none-any.whl", hash = "sha256:1d6f8a6a27d6254afacaeb8ba1cffb5d3ddda658a5811c152c56b222196e59f3"},
+    {file = "update_toml-0.2.1-py3-none-any.whl", hash = "sha256:90d5d9d2efbe2f273328ec78394912c33c0f741dc3b0ae744cfc4ddbe27051f7"},
+    {file = "update_toml-0.2.1.tar.gz", hash = "sha256:92870b2ef8591eeffa32df674d9b4c4fce59a428f65063e138dee253bdb5d372"},
 ]
 
 [package.dependencies]
-tomlkit = "*"
-
-[package.extras]
-dev = ["black", "build", "flake8", "isort", "mypy", "pytest"]
+tomlkit = ">=0.12.5,<0.13.0"
 
 [[package]]
 name = "uri-template"
@@ -5749,4 +5747,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "08fc2967959af68f174c80b142c696de28f7053b070e085217f0221a64ed77d1"
+content-hash = "7e6434527a0d57f42903f7ac16950e24fe25bfb67fb5a863b8aa1f601971a766"
