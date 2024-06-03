@@ -4900,13 +4900,13 @@ jeepney = ">=0.6"
 
 [[package]]
 name = "semversioner"
-version = "2.0.2"
+version = "2.0.3"
 description = "Manage properly semver in your repository"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "semversioner-2.0.2-py2.py3-none-any.whl", hash = "sha256:c27dbeec8b822d5bae41b11bb42f9a9fb1b0cbbfd890515cb9a63096ad957205"},
-    {file = "semversioner-2.0.2.tar.gz", hash = "sha256:0acb88f2046b1bb7131bd7fbe0ba012deed01247e092b96e9fa39caded0591e9"},
+    {file = "semversioner-2.0.3-py2.py3-none-any.whl", hash = "sha256:8dc214661e5d4fd88c125fb0351f5218880601d17f17606915fc531c09326848"},
+    {file = "semversioner-2.0.3.tar.gz", hash = "sha256:192030a47c8b3ba46c03e75db4d2aa603034ba0ce54257b5f2065c86b7bfa153"},
 ]
 
 [package.dependencies]
@@ -5749,4 +5749,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "68f80f8b20e1f0019b7817d405479586d4b7f678fe7297541b732189cb424ae9"
+content-hash = "08fc2967959af68f174c80b142c696de28f7053b070e085217f0221a64ed77d1"
