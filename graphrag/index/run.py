@@ -81,7 +81,6 @@ async def run_pipeline_with_config(
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     run_id: str | None = None,
-    skip_disk_cached_tables: bool = False,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -163,7 +162,6 @@ async def run_pipeline_with_config(
         additional_workflows=additional_workflows,
         progress_reporter=progress_reporter,
         emit=emit,
-        skip_disk_cached_tables=skip_disk_cached_tables,
     ):
         yield table
 
@@ -180,7 +178,6 @@ async def run_pipeline(
     additional_workflows: WorkflowDefinitions | None = None,
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
-    skip_disk_cached_tables: bool = False,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run the pipeline.
@@ -309,11 +306,6 @@ async def run_pipeline(
             last_workflow = workflow_name
 
             log.info("Running workflow: %s...", workflow_name)
-            if skip_disk_cached_tables and await storage.has(
-                f"{workflow_to_run.workflow.name}.parquet"
-            ):
-                log.info("Skipping %s because it already exists", workflow_name)
-                continue
 
             stats.workflows[workflow_name] = {"overall": 0.0}
             await inject_workflow_data_dependencies(workflow)

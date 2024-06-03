@@ -125,7 +125,6 @@ def index_cli(
                 emit=[TableEmitterType(e) for e in pipeline_emit]
                 if pipeline_emit
                 else None,
-                skip_disk_cached_tables=True,
             ):
                 if output.errors and len(output.errors) > 0:
                     encountered_errors = True
