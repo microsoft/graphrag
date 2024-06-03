@@ -24,7 +24,8 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     """The file type of input."""
 
     type: InputType | None = pydantic_Field(
-        description="The input type to use.", default=None,
+        description="The input type to use.",
+        default=None,
     )
     """The input type to use."""
 

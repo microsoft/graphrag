@@ -292,12 +292,10 @@ def create_graphrag_config(
             input_type = reader.str("type")
             file_type = reader.str(Fragment.file_type)
             input_model = InputConfig(
-                file_type=InputFileType(file_type) if file_type else defs.INPUT_FILE_TYPE,
-                type=(
-                    InputType(input_type)
-                    if input_type
-                    else defs.INPUT_TYPE
-                ),
+                file_type=InputFileType(file_type)
+                if file_type
+                else defs.INPUT_FILE_TYPE,
+                type=(InputType(input_type) if input_type else defs.INPUT_TYPE),
                 file_encoding=reader.str("file_encoding", Fragment.encoding)
                 or defs.INPUT_FILE_ENCODING,
                 base_dir=reader.str(Fragment.base_dir) or defs.INPUT_BASE_DIR,
