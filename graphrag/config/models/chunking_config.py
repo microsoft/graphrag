@@ -30,7 +30,7 @@ class ChunkingConfig(BaseModel):
 
         return self.strategy or {
             "type": ChunkStrategyType.tokens,
-            "size": self.size,
-            "overlap": self.overlap,
+            "chunk_size": self.size,
+            "chunk_overlap": self.overlap,
             "group_by_columns": self.group_by_columns,
         }
