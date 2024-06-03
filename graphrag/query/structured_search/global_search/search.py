@@ -35,7 +35,6 @@ from graphrag.query.structured_search.global_search.reduce_system_prompt import 
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,
     "temperature": 0.0,
-    "response_format": {"type": "json_object"},
 }
 
 DEFAULT_REDUCE_LLM_PARAMS = {

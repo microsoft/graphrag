@@ -147,13 +147,13 @@ def get_global_search_engine(
         map_llm_params={
             "max_tokens": gs_config.map_max_tokens,
             "temperature": 0.0,
-            "response_format": {"type": "json_object"},
         },
         reduce_llm_params={
             "max_tokens": gs_config.reduce_max_tokens,
             "temperature": 0.0,
         },
         allow_general_knowledge=False,
+        json_mode=False,
         context_builder_params={
             "use_community_summary": False,
             "shuffle_data": True,
