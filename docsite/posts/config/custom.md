@@ -116,7 +116,7 @@ workflows:
 # > input
 
 - `type`: The type of input to use. Options are `file` or `blob`.
-- `file_type`: The file input type field discriminates between the different input types. Options are `csv` and `text`.
+- `file_type`: The file type field discriminates between the different input types. Options are `csv` and `text`.
 - `base_dir`: The base directory to read the input files from. This is relative to the config file.
 - `file_pattern`: A regex to match the input files. The regex must have named groups for each of the fields in the file_filter.
 - `post_process`: A DataShaper workflow definition to apply to the input before executing the primary workflow.
