@@ -10,7 +10,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config import StorageType
+from graphrag.config import InputConfig, StorageType
 from graphrag.index.config import PipelineInputConfig
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (
@@ -31,7 +31,7 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 
 async def load_input(
-    config: PipelineInputConfig,
+    config: PipelineInputConfig | InputConfig,
     progress_reporter: ProgressReporter | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:

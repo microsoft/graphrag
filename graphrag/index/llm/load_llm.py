@@ -40,7 +40,7 @@ def load_llm(
     name: str,
     llm_type: LLMType,
     callbacks: VerbCallbacks,
-    cache: PipelineCache,
+    cache: PipelineCache | None,
     llm_config: dict[str, Any] | None = None,
     chat_only=False,
 ) -> CompletionLLM:
@@ -65,7 +65,7 @@ def load_llm_embeddings(
     name: str,
     llm_type: LLMType,
     callbacks: VerbCallbacks,
-    cache: PipelineCache,
+    cache: PipelineCache | None,
     llm_config: dict[str, Any] | None = None,
     chat_only=False,
 ) -> EmbeddingLLM:
