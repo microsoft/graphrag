@@ -17,7 +17,7 @@ You should use the data provided in the data tables below as the primary context
 If you don't know the answer or if the input data tables do not contain sufficient information to provide an answer, just say so. Do not make anything up.
 
 Each key point in the response should have the following element:
-- Description: A compprehensive description of the point.
+- Description: A comprehensive description of the point.
 - Importance Score: An integer score between 0-100 that indicates how important the point is in answering the user's question. An 'I don't know' type of response should have a score of 0.
 
 The response should be JSON formatted as follows:
@@ -55,7 +55,7 @@ You should use the data provided in the data tables below as the primary context
 If you don't know the answer or if the input data tables do not contain sufficient information to provide an answer, just say so. Do not make anything up.
 
 Each key point in the response should have the following element:
-- Description: A compprehensive description of the point.
+- Description: A comprehensive description of the point.
 - Importance Score: An integer score between 0-100 that indicates how important the point is in answering the user's question. An 'I don't know' type of response should have a score of 0.
 
 The response shall preserve the original meaning and use of modal verbs such as "shall", "may" or "will".

@@ -207,7 +207,7 @@ def _compute_community_weights(
 
 def _rank_report_context(
     report_df: pd.DataFrame,
-    weight_column: str | None = "occcurence weight",
+    weight_column: str | None = "occurrence weight",
     rank_column: str | None = "rank",
 ) -> pd.DataFrame:
     """Sort report context by community weight and rank if exist."""
