@@ -38,6 +38,7 @@ if __name__ == "__main__":
         help="Resume a given data run leveraging Parquet output files.",
         # Only required if config is not defined
         required=False,
+        default=None,
         type=str,
     )
     parser.add_argument(
