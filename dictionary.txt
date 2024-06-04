@@ -142,6 +142,9 @@ Tahbaz
 payus
 dulce
 Asadi
+ABILA
+Abila
+POKRALLY
 
 # English
 skippable
