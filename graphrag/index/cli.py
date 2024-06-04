@@ -126,7 +126,7 @@ def index_cli(
                     if pipeline_emit
                     else None
                 ),
-                is_resume_run=True if resume else False,
+                is_resume_run= bool(resume),
             ):
                 if output.errors and len(output.errors) > 0:
                     encountered_errors = True
