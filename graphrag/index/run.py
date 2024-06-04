@@ -81,7 +81,7 @@ async def run_pipeline_with_config(
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     run_id: str | None = None,
-    resume_flag: bool = False,
+    is_resume_run: bool = False,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -163,7 +163,7 @@ async def run_pipeline_with_config(
         additional_workflows=additional_workflows,
         progress_reporter=progress_reporter,
         emit=emit,
-        resume_flag=resume_flag,
+        is_resume_run=is_resume_run,
     ):
         yield table
 
@@ -180,7 +180,7 @@ async def run_pipeline(
     additional_workflows: WorkflowDefinitions | None = None,
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
-    resume_flag: bool = False,
+    is_resume_run: bool = False,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run the pipeline.
@@ -310,7 +310,7 @@ async def run_pipeline(
 
             log.info("Running workflow: %s...", workflow_name)
 
-            if resume_flag and await storage.has(
+            if is_resume_run and await storage.has(
                 f"{workflow_to_run.workflow.name}.parquet"
             ):
                 log.info("Skipping %s because it already exists", workflow_name)
