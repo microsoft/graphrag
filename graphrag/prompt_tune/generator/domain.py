@@ -3,8 +3,8 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 from graphrag.llm.types.llm_types import CompletionLLM
+from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
 
 async def generate_domain(llm: CompletionLLM, docs: str | list[str]) -> str:

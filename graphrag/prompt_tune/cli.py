@@ -8,6 +8,10 @@ from pathlib import Path
 from datashaper import NoopVerbCallbacks
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.llm import load_llm
+from graphrag.index.progress import PrintProgressReporter
+from graphrag.index.progress.types import ProgressReporter
+from graphrag.llm.types.llm_types import CompletionLLM
 from graphrag.prompt_tune.generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
@@ -24,10 +28,6 @@ from graphrag.prompt_tune.loader import (
     load_docs_in_chunks,
     read_config_parameters,
 )
-from graphrag.index.llm import load_llm
-from graphrag.index.progress import PrintProgressReporter
-from graphrag.index.progress.types import ProgressReporter
-from graphrag.llm.types.llm_types import CompletionLLM
 
 
 async def fine_tune(

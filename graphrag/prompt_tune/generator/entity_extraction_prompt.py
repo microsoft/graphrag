@@ -5,12 +5,12 @@
 
 from pathlib import Path
 
+from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.prompt_tune.template import (
     EXAMPLE_EXTRACTION_TEMPLATE,
     GRAPH_EXTRACTION_JSON_PROMPT,
     GRAPH_EXTRACTION_PROMPT,
 )
-from graphrag.index.utils.tokens import num_tokens_from_string
 
 ENTITY_EXTRACTION_FILENAME = "entity_extraction.txt"
 
