@@ -5,7 +5,7 @@
 
 from pathlib import Path
 
-from graphrag.fine_tune.template import (
+from graphrag.prompt_tune.template import (
     EXAMPLE_EXTRACTION_TEMPLATE,
     GRAPH_EXTRACTION_JSON_PROMPT,
     GRAPH_EXTRACTION_PROMPT,

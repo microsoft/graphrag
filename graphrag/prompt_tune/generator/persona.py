@@ -3,8 +3,8 @@
 
 """Persona generating module for fine-tuning GraphRAG prompts."""
 
-from graphrag.fine_tune.generator.defaults import DEFAULT_TASK
-from graphrag.fine_tune.prompt import GENERATE_PERSONA_PROMPT
+from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
+from graphrag.prompt_tune.prompt import GENERATE_PERSONA_PROMPT
 from graphrag.llm.types.llm_types import CompletionLLM
 
 

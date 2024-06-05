@@ -6,7 +6,7 @@
 import asyncio
 import json
 
-from graphrag.fine_tune.prompt import (
+from graphrag.prompt_tune.prompt import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
