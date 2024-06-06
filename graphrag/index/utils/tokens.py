@@ -15,8 +15,7 @@ def num_tokens_from_string(
     elif encoding_name is not None:
         encoding = tiktoken.get_encoding(encoding_name)
     else:
-        msg = "Either model or encoding_name must be specified."
-        raise ValueError(msg)
+        encoding = tiktoken.get_encoding("cl100k_base")
     return len(encoding.encode(string))
 
 
