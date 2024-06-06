@@ -6,11 +6,11 @@
 import asyncio
 import json
 
-from graphrag.fine_tune.prompt import (
+from graphrag.llm.types.llm_types import CompletionLLM
+from graphrag.prompt_tune.prompt import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
-from graphrag.llm.types.llm_types import CompletionLLM
 
 
 async def generate_entity_relationship_examples(

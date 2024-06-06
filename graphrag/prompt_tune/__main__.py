@@ -7,8 +7,8 @@ import argparse
 import asyncio
 from enum import Enum
 
-from graphrag.fine_tune.generator import MAX_TOKEN_COUNT
-from graphrag.fine_tune.loader import MIN_CHUNK_SIZE
+from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
+from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 
 from .cli import fine_tune
 
