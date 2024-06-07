@@ -38,6 +38,7 @@ from graphrag.config import (
     InputConfig,
     InputConfigInput,
     InputFileType,
+    InputType,
     LLMParameters,
     LLMParametersInput,
     LocalSearchConfig,
@@ -546,7 +547,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.type == "blob"
+        assert parameters.input.type == InputType.blob
         assert parameters.llm.api_base == "http://some/base"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.api_version == "v1234"

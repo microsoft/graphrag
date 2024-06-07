@@ -124,7 +124,7 @@ class TestIndexer:
     def __run_indexer(
         self,
         root: Path,
-        input_type: str,
+        input_file_type: str,
     ):
         command = [
             "poetry",
@@ -140,7 +140,7 @@ class TestIndexer:
         command = [arg for arg in command if arg]
         log.info("running command ", " ".join(command))
         completion = subprocess.run(
-            command, env={**os.environ, "GRAPHRAG_INPUT_TYPE": input_type}
+            command, env={**os.environ, "GRAPHRAG_INPUT_FILE_TYPE": input_file_type}
         )
         assert (
             completion.returncode == 0
@@ -262,7 +262,7 @@ class TestIndexer:
     def test_fixture(
         self,
         input_path: str,
-        input_type: str,
+        input_file_type: str,
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
@@ -277,7 +277,7 @@ class TestIndexer:
             dispose = asyncio.run(prepare_azurite_data(input_path, azure))
 
         print("running indexer")
-        self.__run_indexer(root, input_type)
+        self.__run_indexer(root, input_file_type)
         print("indexer complete")
 
         if dispose is not None:
