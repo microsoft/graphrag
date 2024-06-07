@@ -120,12 +120,12 @@ ALL_ENV_VARS = {
     "GRAPHRAG_INPUT_ENCODING": "utf-16",
     "GRAPHRAG_INPUT_FILE_PATTERN": ".*\\test\\.txt$",
     "GRAPHRAG_INPUT_SOURCE_COLUMN": "test_source",
-    "GRAPHRAG_INPUT_STORAGE_TYPE": "blob",
+    "GRAPHRAG_INPUT_TYPE": "blob",
     "GRAPHRAG_INPUT_TEXT_COLUMN": "test_text",
     "GRAPHRAG_INPUT_TIMESTAMP_COLUMN": "test_timestamp",
     "GRAPHRAG_INPUT_TIMESTAMP_FORMAT": "test_format",
     "GRAPHRAG_INPUT_TITLE_COLUMN": "test_title",
-    "GRAPHRAG_INPUT_TYPE": "text",
+    "GRAPHRAG_INPUT_FILE_TYPE": "text",
     "GRAPHRAG_LLM_CONCURRENT_REQUESTS": "12",
     "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",
     "GRAPHRAG_LLM_MAX_RETRIES": "312",
@@ -431,7 +431,7 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(
         os.environ,
-        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_TYPE": "text"},
+        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_FILE_TYPE": "text"},
         clear=True,
     )
     def test_text_input_returns_correct_config(self):
