@@ -13,7 +13,7 @@ from graphrag.llm import CompletionLLM
 from .prompts import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
-DEFAULT_MAX_INPUT_TOKENS = 4000
+DEFAULT_MAX_INPUT_TOKENS = 4_000
 # Max token count for LLM answers
 DEFAULT_MAX_SUMMARY_LENGTH = 500
 
@@ -104,7 +104,7 @@ class SummarizeExtractor:
             ):
                 # Calculate result (final or partial)
                 result = await self._summarize_descriptions_with_llm(
-                    sorted_items, descriptions
+                    sorted_items, descriptions_collected
                 )
 
                 # If we go for another loop, reset values to new
