@@ -21,7 +21,7 @@ input:
 
 cache:
   type: blob
-  connection_string: ${BLOB_STORAGE_CONNECTION_STRING}
+  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
   container_name: cicache
   base_dir: cache_azure_ai
 
