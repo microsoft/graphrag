@@ -77,6 +77,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--no-entity-types",
+        help="Use  untyped entity extraction generation",
+        action="store_true",
+        required=False,
+        default=False,
+    )
+
+    parser.add_argument(
         "--output",
         help="Folder to save the generated prompts to",
         type=str,
@@ -96,6 +104,7 @@ if __name__ == "__main__":
             args.limit,
             args.max_tokens,
             args.chunk_size,
+            args.untyped,
             args.output,
         )
     )
