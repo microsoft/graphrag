@@ -37,6 +37,7 @@ async def fine_tune(
     limit: int = 5,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
+    is_untyped: bool = False,
     output: str = "prompts",
 ):
     """Fine tune the model.
@@ -75,7 +76,7 @@ async def fine_tune(
     )
 
     await generate_indexing_prompts(
-        llm, config, doc_list, output_path, reporter, domain, max_tokens
+        llm, config, doc_list, output_path, reporter, domain, max_tokens, is_untyped
     )
 
 
@@ -87,6 +88,7 @@ async def generate_indexing_prompts(
     reporter: ProgressReporter,
     domain: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
+    is_untyped: bool = False,
 ):
     """Generate indexing prompts.
 
@@ -109,15 +111,17 @@ async def generate_indexing_prompts(
     persona = await generate_persona(llm, domain)
     reporter.info(f"Generated persona: {persona}")
 
-    reporter.info("Generating entity types")
-    entity_types = await generate_entity_types(
-        llm,
-        domain=domain,
-        persona=persona,
-        docs=doc_list,
-        json_mode=config.llm.model_supports_json or False,
-    )
-    reporter.info(f"Generated entity types: {entity_types}")
+    entity_types = None
+    if not is_untyped:
+        reporter.info("Generating entity types")
+        entity_types = await generate_entity_types(
+            llm,
+            domain=domain,
+            persona=persona,
+            docs=doc_list,
+            json_mode=config.llm.model_supports_json or False,
+        )
+        reporter.info(f"Generated entity types: {entity_types}")
 
     reporter.info("Generating entity relationship examples...")
     examples = await generate_entity_relationship_examples(
