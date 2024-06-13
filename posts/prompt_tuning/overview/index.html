@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indexer CLI</title>
+    <title>Prompt Tuning 🤖</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -210,7 +210,7 @@ a {
 </li><li>
 <a href="/posts/index/1-default_dataflow/">Dataflow</a>
 </li><li>
-<a href="/posts/index/2-cli/" class="is-active" aria-current="page">CLI</a>
+<a href="/posts/index/2-cli/">CLI</a>
 </li><li>
 <a href="/posts/index/3-prompt_tuning/">Prompt Tuning</a>
 </li><li>
@@ -235,7 +235,7 @@ a {
 
                   <li>
                     
-<a href="/posts/prompt_tuning/overview/">Prompt Tuning</a>
+<a href="/posts/prompt_tuning/overview/" class="is-active" aria-current="page">Prompt Tuning</a>
 
                     <ul>
                         <li>
@@ -287,29 +287,20 @@ a {
 
         <!-- Main Content -->
         <main>
-            <h1>Indexer CLI</h1>
-            <p>The GraphRAG indexer CLI allows for no-code usage of the GraphRAG Indexer.</p>
-
-<div style="position: relative">
-  <pre class="language-bash"><code id="code-3" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--verbose</span> <span class="token parameter variable">--root</span> <span class="token operator">&lt;</span>/workspace/project/root<span class="token operator">></span> <span class="token parameter variable">--config</span> <span class="token operator">&lt;</span>custom_config.yml<span class="token operator">></span>
-<span class="token parameter variable">--resume</span> <span class="token operator">&lt;</span>timestamp<span class="token operator">></span> <span class="token parameter variable">--reporter</span> <span class="token operator">&lt;</span>rich<span class="token operator">|</span>print<span class="token operator">|</span>none<span class="token operator">></span> <span class="token parameter variable">--emit</span> json,csv,parquet
-<span class="token parameter variable">--nocache</span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-3" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<h2>CLI Arguments</h2>
+            <h1>Prompt Tuning 🤖</h1>
+            <p>This page provides an overview of the prompt tuning options available for the GraphRAG indexing engine.</p>
+<h2>Default Prompts</h2>
+<p>The default prompts are the simplest way to get started with the GraphRAG system. It is designed to work out-of-the-box with minimal configuration. You can find more detail about these prompts in the following links:</p>
 <ul>
-<li><code>--verbose</code> - Adds extra logging information during the run.</li>
-<li><code>--root &lt;data-project-dir&gt;</code> - the data root directory. This should contain an <code>input</code> directory with the input data, and an <code>.env</code> file with environment variables. These are described below.</li>
-<li><code>--init</code> - This will initialize the data project directory at the specified <code>root</code> with bootstrap configuration and prompt-overrides.</li>
-<li><code>--resume &lt;output-timestamp&gt;</code> - if specified, the pipeline will attempt to resume a prior run. The parquet files from the prior run will be loaded into the system as inputs, and the workflows that generated those files will be skipped. The input value should be the timestamped output folder, e.g. &quot;20240105-143721&quot;.</li>
-<li><code>--config &lt;config_file.yml&gt;</code> - This will opt-out of the Default Configuration mode and execute a custom configuration. If this is used, then none of the environment-variables below will apply.</li>
-<li><code>--reporter &lt;reporter&gt;</code> - This will specify the progress reporter to use. The default is <code>rich</code>. Valid values are <code>rich</code>, <code>print</code>, and <code>none</code>.</li>
-<li><code>--emit &lt;types&gt;</code> - This specifies the table output formats the pipeline should emit. The default is <code>parquet</code>. Valid values are <code>parquet</code>, <code>csv</code>, and <code>json</code>, comma-separated.</li>
-<li><code>--nocache</code> - This will disable the caching mechanism. This is useful for debugging and development, but should not be used in production.</li>
+<li>[Entity/Relationship Extraction] (http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/graph/prompts.py)</li>
+<li><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/summarize/prompts.py">Entity/Relationship Description Summarization</a></li>
+<li><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/claims/prompts.py">Claim Extraction</a></li>
+<li><a href="http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/community_reports/prompts.py">Community Reports</a></li>
 </ul>
+<h2>Auto Templating</h2>
+<p>Auto Templating leverages your input data and LLM interactions to create domain adaptive templates for the generation of the knowledge graph. It is highly encouraged to run it as it will yield better results when executing an Index Run. For more details about how to use it, please refer to the <a href="/posts/prompt_tuning/auto_prompt_tuning">Auto Templating</a> documentation.</p>
+<h2>Manual Configuration</h2>
+<p>Manual configuration is an advanced use-case. Most users will want to use the Auto Templating feature instead.. Details about how to use manual configuration are available in the <a href="/posts/prompt_tunins/manual_prompt_tuning">Manual Prompt Configuration</a> documentation.</p>
 
         </main>
     </div>
