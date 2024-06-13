@@ -1,5 +1,5 @@
 ---
-title: Prompt Tuning 🤖
+title: Prompt Tuning ⚙️
 navtitle: Overview
 layout: page
 tags: [post, tuning]
