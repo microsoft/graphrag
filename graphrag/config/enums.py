@@ -25,13 +25,26 @@ class CacheType(str, Enum):
         return f'"{self.value}"'
 
 
-class InputType(str, Enum):
-    """The input type for the pipeline."""
+class InputFileType(str, Enum):
+    """The input file type for the pipeline."""
 
     csv = "csv"
     """The CSV input type."""
     text = "text"
     """The text input type."""
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
+
+class InputType(str, Enum):
+    """The input type for the pipeline."""
+
+    file = "file"
+    """The file storage type."""
+    blob = "blob"
+    """The blob storage type."""
 
     def __repr__(self):
         """Get a string representation."""

@@ -1,5 +1,5 @@
 input:
-  type: text
+  file_type: text
   base_dir: ../../fixtures/min-csv
   file_pattern: .*\.txt$
 

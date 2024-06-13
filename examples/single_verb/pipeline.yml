@@ -1,5 +1,5 @@
 input:
-  type: csv
+  file_type: csv
   base_dir: ./input
   file_pattern: .*\.csv$
 workflows:

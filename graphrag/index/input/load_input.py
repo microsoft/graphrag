@@ -10,7 +10,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config import InputConfig, StorageType
+from graphrag.config import InputConfig, InputType
 from graphrag.index.config import PipelineInputConfig
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (
@@ -44,8 +44,8 @@ async def load_input(
         msg = "No input specified!"
         raise ValueError(msg)
 
-    match config.storage_type:
-        case StorageType.blob:
+    match config.type:
+        case InputType.blob:
             log.info("using blob storage input")
             if config.container_name is None:
                 msg = "Container name required for blob storage"
@@ -62,7 +62,7 @@ async def load_input(
                 container_name=config.container_name,
                 path_prefix=config.base_dir,
             )
-        case StorageType.file:
+        case InputType.file:
             log.info("using file storage for input")
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
@@ -73,13 +73,13 @@ async def load_input(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
             )
 
-    if config.type in loaders:
+    if config.file_type in loaders:
         progress = progress_reporter.child(
-            f"Loading Input ({config.type})", transient=False
+            f"Loading Input ({config.file_type})", transient=False
         )
-        loader = loaders[config.type]
+        loader = loaders[config.file_type]
         results = await loader(config, progress, storage)
         return cast(pd.DataFrame, results)
 
-    msg = f"Unknown input type {config.type}"
+    msg = f"Unknown input type {config.file_type}"
     raise ValueError(msg)

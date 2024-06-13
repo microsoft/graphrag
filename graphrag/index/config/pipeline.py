@@ -33,7 +33,7 @@ class PipelineConfig(BaseModel):
     """Extends another pipeline configuration"""
 
     input: PipelineInputConfigTypes | None = pydantic_Field(
-        default=None, discriminator="type"
+        default=None, discriminator="file_type"
     )
     """The input configuration for the pipeline."""
 

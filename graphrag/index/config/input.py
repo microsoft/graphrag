@@ -10,7 +10,7 @@ from typing import Generic, Literal, TypeVar
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-from graphrag.config.enums import InputType, StorageType
+from graphrag.config.enums import InputFileType, InputType
 
 from .workflow import PipelineWorkflowStep
 
@@ -20,13 +20,14 @@ T = TypeVar("T")
 class PipelineInputConfig(BaseModel, Generic[T]):
     """Represent the configuration for an input."""
 
-    type: T
-    """The type of input."""
+    file_type: T
+    """The file type of input."""
 
-    storage_type: StorageType | None = pydantic_Field(
-        description="The storage type to use.", default=None
+    type: InputType | None = pydantic_Field(
+        description="The input type to use.",
+        default=None,
     )
-    """The storage type to use."""
+    """The input type to use."""
 
     connection_string: str | None = pydantic_Field(
         description="The blob cache connection string for the input files.",
@@ -70,10 +71,10 @@ class PipelineInputConfig(BaseModel, Generic[T]):
     """The encoding for the input files."""
 
 
-class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputType.csv]]):
+class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputFileType.csv]]):
     """Represent the configuration for a CSV input."""
 
-    type: Literal[InputType.csv] = InputType.csv
+    file_type: Literal[InputFileType.csv] = InputFileType.csv
 
     source_column: str | None = pydantic_Field(
         description="The column to use as the source of the document.", default=None
@@ -102,10 +103,10 @@ class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputType.csv]]):
     """The column to use as the title of the document."""
 
 
-class PipelineTextInputConfig(PipelineInputConfig[Literal[InputType.text]]):
+class PipelineTextInputConfig(PipelineInputConfig[Literal[InputFileType.text]]):
     """Represent the configuration for a text input."""
 
-    type: Literal[InputType.text] = InputType.text
+    file_type: Literal[InputFileType.text] = InputFileType.text
 
     # Text Specific
     title_text_length: int | None = pydantic_Field(
