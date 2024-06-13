@@ -24,7 +24,7 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 
 - --domain (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
 
-- --method (required): The method to select documents. Options are all, random, or top. Default is random.
+- --method (optional): The method to select documents. Options are all, random, or top. Default is random.
 
 - --limit (optional): The limit of files to load when using random or top selection. Default is 15.
 
