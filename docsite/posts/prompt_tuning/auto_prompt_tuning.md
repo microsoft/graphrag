@@ -20,21 +20,21 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 
 ## Command-Line Options
 
-- --root (optional): The data project root directory, including the config files (YML, JSON, or .env). Defaults to the current directory.
+- `--root` (optional): The data project root directory, including the config files (YML, JSON, or .env). Defaults to the current directory.
 
-- --domain (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
+- `--domain` (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
 
-- --method (optional): The method to select documents. Options are all, random, or top. Default is random.
+- `--method` (optional): The method to select documents. Options are all, random, or top. Default is random.
 
-- --limit (optional): The limit of files to load when using random or top selection. Default is 15.
+- `--limit` (optional): The limit of files to load when using random or top selection. Default is 15.
 
-- --max-tokens (optional): Maximum token count for prompt generation. Default is set by MAX_TOKEN_COUNT which is 2000.
+- `--max-tokens` (optional): Maximum token count for prompt generation. Default is set by MAX_TOKEN_COUNT which is 2000.
 
-- --chunk-size (optional): Minimum chunk size for prompt generation. Default is set by MIN_CHUNK_SIZE which is 200.
+- `--chunk-size` (optional): Minimum chunk size for prompt generation. Default is set by MIN_CHUNK_SIZE which is 200.
 
-- --no-entity-types (optional): Use untyped entity extraction generation. When your data is cover a lot of topics or it is highly randomized the guidance is to use untyped entity extraction..
+- `--no-entity-types` (optional): Use untyped entity extraction generation. When your data is cover a lot of topics or it is highly randomized the guidance is to use untyped entity extraction..
 
-- --output (optional): The folder to save the generated prompts. Default is "prompts".
+- `--output` (optional): The folder to save the generated prompts. Default is "prompts".
 
 ## Example Usage
 
@@ -47,6 +47,14 @@ or
 ```bash
 python -m graphrag.prompt_tune --root /path/to/project --no-entity-types
 ```
+
+## Document Selection Methods
+
+The method parameters provides the following document selection methods:
+
+- `random`: Select documents chunks randomly. This is the default option and the encouraged.
+- `top`: Select the head n document chunks.
+- `all`: Use all documents chunks for the generation. Use only over small datasets, this option is not recommended.
 
 ## Modify Env Vars
 
