@@ -13,6 +13,8 @@ from graphrag.prompt_tune.prompt import (
     UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
 
+MAX_EXAMPLES = 5
+
 
 async def generate_entity_relationship_examples(
     llm: CompletionLLM,
@@ -47,6 +49,8 @@ async def generate_entity_relationship_examples(
             UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT.format(input_text=doc)
             for doc in docs_list
         ]
+
+    messages = messages[:MAX_EXAMPLES]
 
     tasks = [llm(message, history=history, json=json_mode) for message in messages]
 
