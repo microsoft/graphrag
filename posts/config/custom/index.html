@@ -389,7 +389,8 @@ a {
 </div>
 <h1>&gt; input</h1>
 <ul>
-<li><code>type</code>: The input type field discriminates between the different input types. Options are <code>csv</code> and <code>text</code>.</li>
+<li><code>type</code>: The type of input to use. Options are <code>file</code> or <code>blob</code>.</li>
+<li><code>file_type</code>: The file type field discriminates between the different input types. Options are <code>csv</code> and <code>text</code>.</li>
 <li><code>base_dir</code>: The base directory to read the input files from. This is relative to the config file.</li>
 <li><code>file_pattern</code>: A regex to match the input files. The regex must have named groups for each of the fields in the file_filter.</li>
 <li><code>post_process</code>: A DataShaper workflow definition to apply to the input before executing the primary workflow.</li>
@@ -400,8 +401,9 @@ a {
 </ul>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-213" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
-  <span class="token key atrule">type</span><span class="token punctuation">:</span> csv
+  <pre class="language-yaml"><code id="code-218" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> file
+  <span class="token key atrule">file_type</span><span class="token punctuation">:</span> csv
   <span class="token key atrule">base_dir</span><span class="token punctuation">:</span> ../data/csv <span class="token comment"># the directory containing the CSV files, this is relative to the config file</span>
   <span class="token key atrule">file_pattern</span><span class="token punctuation">:</span> <span class="token string">'.*[\/](?P&lt;source>[^\/]+)[\/](?P&lt;year>\d{4})-(?P&lt;month>\d{2})-(?P&lt;day>\d{2})_(?P&lt;author>[^_]+)_\d+\.csv$'</span> <span class="token comment"># a regex to match the CSV files</span>
   <span class="token comment"># An additional file filter which uses the named groups from the file_pattern to further filter the files</span>
@@ -420,14 +422,15 @@ a {
         <span class="token key atrule">column</span><span class="token punctuation">:</span> <span class="token string">"title"</span><span class="token punctuation">,</span>
         <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">"My document"</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-213" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-218" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 
 <div style="position: relative">
-  <pre class="language-yaml"><code id="code-214" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
-  <span class="token key atrule">type</span><span class="token punctuation">:</span> text
+  <pre class="language-yaml"><code id="code-219" class="language-yaml"><span class="token key atrule">input</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> file
+  <span class="token key atrule">file_type</span><span class="token punctuation">:</span> csv
   <span class="token key atrule">base_dir</span><span class="token punctuation">:</span> ../data/csv <span class="token comment"># the directory containing the CSV files, this is relative to the config file</span>
   <span class="token key atrule">file_pattern</span><span class="token punctuation">:</span> <span class="token string">'.*[\/](?P&lt;source>[^\/]+)[\/](?P&lt;year>\d{4})-(?P&lt;month>\d{2})-(?P&lt;day>\d{2})_(?P&lt;author>[^_]+)_\d+\.csv$'</span> <span class="token comment"># a regex to match the CSV files</span>
   <span class="token comment"># An additional file filter which uses the named groups from the file_pattern to further filter the files</span>
@@ -442,7 +445,7 @@ a {
         <span class="token key atrule">column</span><span class="token punctuation">:</span> <span class="token string">"title"</span><span class="token punctuation">,</span>
         <span class="token key atrule">value</span><span class="token punctuation">:</span> <span class="token string">"My document"</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-214" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-219" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>

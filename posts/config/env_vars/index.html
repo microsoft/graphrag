@@ -648,7 +648,7 @@ a {
 </table>
 <h2>Input Settings</h2>
 <p>These settings control the data input used by the pipeline. Any settings with a fallback will use the base LLM settings, if available.</p>
-<h3>Plaintext Input Data (<code>GRAPHRAG_INPUT_TYPE</code>=text)</h3>
+<h3>Plaintext Input Data (<code>GRAPHRAG_INPUT_FILE_TYPE</code>=text)</h3>
 <table>
 <thead>
 <tr>
@@ -669,7 +669,7 @@ a {
 </tr>
 </tbody>
 </table>
-<h3>CSV Input Data (<code>GRAPHRAG_INPUT_TYPE</code>=csv)</h3>
+<h3>CSV Input Data (<code>GRAPHRAG_INPUT_FILE_TYPE</code>=csv)</h3>
 <table>
 <thead>
 <tr>
@@ -681,6 +681,13 @@ a {
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>GRAPHRAG_INPUT_TYPE</code></td>
+<td>The input storage type to use when reading files.  (<code>file</code> or <code>blob</code>)</td>
+<td><code>str</code></td>
+<td>optional</td>
+<td><code>file</code></td>
+</tr>
 <tr>
 <td><code>GRAPHRAG_INPUT_FILE_PATTERN</code></td>
 <td>The file pattern regexp to use when reading input files from the input directory.</td>
@@ -731,13 +738,6 @@ a {
 <td><code>title</code></td>
 </tr>
 <tr>
-<td><code>GRAPHRAG_INPUT_STORAGE_TYPE</code></td>
-<td>The storage type to use when reading CSV input files.  (<code>file</code> or <code>blob</code>)</td>
-<td><code>str</code></td>
-<td>optional</td>
-<td><code>file</code></td>
-</tr>
-<tr>
 <td><code>GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL</code></td>
 <td>The Azure Storage blob endpoint to use when in <code>blob</code> mode and using managed identity.  Will have the format <code>https://&lt;storage_account_name&gt;.blob.core.windows.net</code></td>
 <td><code>str</code></td>
@@ -780,7 +780,7 @@ a {
 </thead>
 <tbody>
 <tr>
-<td><code>GRAPHRAG_INPUT_TYPE</code></td>
+<td><code>GRAPHRAG_INPUT_FILE_TYPE</code></td>
 <td>The type of input data, <code>csv</code> or <code>text</code></td>
 <td><code>str</code></td>
 <td>optional</td>

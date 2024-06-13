@@ -286,7 +286,8 @@ API_KEY=some_api_key
 <h2>input</h2>
 <h3>Fields</h3>
 <ul>
-<li><code>type</code> <strong>text|csv</strong> - The type of input data to load. Either <code>text</code> or <code>csv</code>. Default is <code>csv</code></li>
+<li><code>type</code> <strong>file|blob</strong> - The input type to use. Default=<code>file</code></li>
+<li><code>file_type</code> <strong>text|csv</strong> - The type of input data to load. Either <code>text</code> or <code>csv</code>. Default is <code>csv</code></li>
 <li><code>file_encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
 <li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code> if in csv mode and <code>.*\.txt$</code> if in text mode.</li>
 <li><code>source_column</code> <strong>str</strong> - (CSV Mode Only) The source column name.</li>
@@ -295,7 +296,6 @@ API_KEY=some_api_key
 <li><code>text_column</code> <strong>str</strong> - (CSV Mode Only) The text column name.</li>
 <li><code>title_column</code> <strong>str</strong> - (CSV Mode Only) The title column name.</li>
 <li><code>document_attribute_columns</code> <strong>list[str]</strong> - (CSV Mode Only) The additional document attributes to include.</li>
-<li><code>storage_type</code> <strong>file|blob</strong> - The input storage type to use. Default=<code>file</code></li>
 <li><code>connection_string</code> <strong>str</strong> - (blob only) The Azure Storage connection string.</li>
 <li><code>container_name</code> <strong>str</strong> - (blob only) The Azure Storage container name.</li>
 <li><code>base_dir</code> <strong>str</strong> - The base directory to read input from, relative to the root.</li>
