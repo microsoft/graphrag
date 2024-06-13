@@ -50,7 +50,7 @@ python -m graphrag.prompt_tune --root /path/to/project --no-entity-types
 
 ## Modify Env Vars
 
-After running auto-templating, you should modify the following enviroment variables (or config variables) to pick up the new prompts on your index run.
+After running auto-templating, you should modify the following environment variables (or config variables) to pick up the new prompts on your index run.
 
 `GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE` = "prompts/entity_extraction.txt"
 `GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE` = "prompts/community_report.txt"
