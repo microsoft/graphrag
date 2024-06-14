@@ -39,7 +39,7 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 ## Example Usage
 
 ```bash
-python -m graphrag.prompt_tune --root /path/to/project --domain "environmental news" --method random --limit 10 --max_tokens 2048 --chunk_size 256 --no-entity-types --output /path/to/output
+python -m graphrag.prompt_tune --root /path/to/project --domain "environmental news" --method random --limit 10 --max-tokens 2048 --chunk-size 256 --no-entity-types --output /path/to/output
 ```
 
 or
