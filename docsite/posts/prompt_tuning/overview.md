@@ -1,5 +1,5 @@
 ---
-title: Prompt Tuning 🤖
+title: Prompt Tuning ⚙️
 navtitle: Overview
 layout: page
 tags: [post, tuning]
@@ -23,4 +23,4 @@ Auto Templating leverages your input data and LLM interactions to create domain 
 
 ## Manual Configuration
 
-Manual configuration is an advanced use-case. Most users will want to use the Auto Templating feature instead.. Details about how to use manual configuration are available in the [Manual Prompt Configuration](/posts/prompt_tunins/manual_prompt_tuning) documentation.
+Manual configuration is an advanced use-case. Most users will want to use the Auto Templating feature instead. Details about how to use manual configuration are available in the [Manual Prompt Configuration](/posts/prompt_tunins/manual_prompt_tuning) documentation.

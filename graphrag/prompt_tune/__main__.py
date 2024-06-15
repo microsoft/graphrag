@@ -105,7 +105,7 @@ if __name__ == "__main__":
             args.limit,
             args.max_tokens,
             args.chunk_size,
-            args.untyped,
+            args.no_entity_types,
             args.output,
         )
     )
