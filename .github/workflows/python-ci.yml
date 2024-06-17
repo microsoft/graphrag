@@ -79,7 +79,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry self add setuptools && poetry install
+        run: poetry self add setuptools@69.5.1 && poetry install
 
       - name: Check Semversioner
         run: |
