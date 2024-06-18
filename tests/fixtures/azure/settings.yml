@@ -13,8 +13,8 @@ embeddings:
       title_column: "name"
 
 input:
-  type: text
-  storage_type: blob
+  type: blob
+  file_type: text
   connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
   container_name: azurefixture
   base_dir: input

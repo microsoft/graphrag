@@ -10,13 +10,16 @@ from graphrag.llm.types.llm_types import CompletionLLM
 from graphrag.prompt_tune.prompt import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
+    UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
+
+MAX_EXAMPLES = 5
 
 
 async def generate_entity_relationship_examples(
     llm: CompletionLLM,
     persona: str,
-    entity_types: str | list[str],
+    entity_types: str | list[str] | None,
     docs: str | list[str],
     json_mode: bool = False,
 ) -> list[str]:
@@ -26,21 +29,28 @@ async def generate_entity_relationship_examples(
     on the json_mode parameter.
     """
     docs_list = [docs] if isinstance(docs, str) else docs
-
-    entity_types_str = (
-        entity_types if isinstance(entity_types, str) else ", ".join(entity_types)
-    )
-
     history = [{"role": "system", "content": persona}]
 
-    messages = [
-        (
-            ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT
-            if json_mode
-            else ENTITY_RELATIONSHIPS_GENERATION_PROMPT
-        ).format(entity_types=entity_types_str, input_text=doc)
-        for doc in docs_list
-    ]
+    if entity_types:
+        entity_types_str = (
+            entity_types if isinstance(entity_types, str) else ", ".join(entity_types)
+        )
+
+        messages = [
+            (
+                ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT
+                if json_mode
+                else ENTITY_RELATIONSHIPS_GENERATION_PROMPT
+            ).format(entity_types=entity_types_str, input_text=doc)
+            for doc in docs_list
+        ]
+    else:
+        messages = [
+            UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT.format(input_text=doc)
+            for doc in docs_list
+        ]
+
+    messages = messages[:MAX_EXAMPLES]
 
     tasks = [llm(message, history=history, json=json_mode) for message in messages]
 

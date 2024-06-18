@@ -45,7 +45,7 @@ class TestLoadPipelineConfig(unittest.TestCase):
 
         # Check that the input is merged
         assert config.input.file_pattern == "test.txt"
-        assert config.input.type == "text"
+        assert config.input.file_type == "text"
         assert config.input.base_dir == "/some/overridden/dir"
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)

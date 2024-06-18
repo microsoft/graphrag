@@ -1,5 +1,5 @@
 input:
-  type: csv
+  file_type: csv
 
 embeddings:
   vector_store:

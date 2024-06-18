@@ -8,6 +8,7 @@ from .create_graphrag_config import (
 )
 from .enums import (
     CacheType,
+    InputFileType,
     InputType,
     LLMType,
     ReportingType,
@@ -90,6 +91,7 @@ __all__ = [
     "GraphRagConfigInput",
     "InputConfig",
     "InputConfigInput",
+    "InputFileType",
     "InputType",
     "LLMConfig",
     "LLMConfigInput",
