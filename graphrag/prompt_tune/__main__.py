@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--no-entity-types",
-        help="Use  untyped entity extraction generation",
+        help="Use untyped entity extraction generation",
         action="store_true",
         required=False,
         default=False,
