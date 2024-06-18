@@ -83,8 +83,6 @@ jobs:
       - name: Build docsite
         run: yarn build
         working-directory: docsite
-        env:
-          DOCSITE_BASE_URL: "graphrag"
 
       - name: List docsite files
         run: find docsite/_site

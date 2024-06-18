@@ -16,6 +16,7 @@ import graphrag.config.defaults as defs
 
 from .enums import (
     CacheType,
+    InputFileType,
     InputType,
     LLMType,
     ReportingType,
@@ -302,22 +303,20 @@ def create_graphrag_config(
                 random_seed=reader.int("random_seed") or defs.NODE2VEC_RANDOM_SEED,
             )
         with reader.envvar_prefix(Section.input), reader.use(values.get("input")):
-            input_type = reader.str(Fragment.type)
-            storage_type = reader.str("storage_type")
+            input_type = reader.str("type")
+            file_type = reader.str(Fragment.file_type)
             input_model = InputConfig(
-                type=InputType(input_type) if input_type else defs.INPUT_TYPE,
-                storage_type=(
-                    StorageType(storage_type)
-                    if storage_type
-                    else defs.INPUT_STORAGE_TYPE
-                ),
+                file_type=InputFileType(file_type)
+                if file_type
+                else defs.INPUT_FILE_TYPE,
+                type=(InputType(input_type) if input_type else defs.INPUT_TYPE),
                 file_encoding=reader.str("file_encoding", Fragment.encoding)
                 or defs.INPUT_FILE_ENCODING,
                 base_dir=reader.str(Fragment.base_dir) or defs.INPUT_BASE_DIR,
                 file_pattern=reader.str("file_pattern")
                 or (
                     defs.INPUT_TEXT_PATTERN
-                    if input_type == InputType.text
+                    if file_type == InputFileType.text
                     else defs.INPUT_CSV_PATTERN
                 ),
                 source_column=reader.str("source_column"),
@@ -535,6 +534,7 @@ class Fragment(str, Enum):
     api_organization = "API_ORGANIZATION"
     api_proxy = "API_PROXY"
     async_mode = "ASYNC_MODE"
+    base_dir = "BASE_DIR"
     cognitive_services_endpoint = "COGNITIVE_SERVICES_ENDPOINT"
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"
@@ -544,6 +544,7 @@ class Fragment(str, Enum):
     enabled = "ENABLED"
     encoding = "ENCODING"
     encoding_model = "ENCODING_MODEL"
+    file_type = "FILE_TYPE"
     max_gleanings = "MAX_GLEANINGS"
     max_length = "MAX_LENGTH"
     max_retries = "MAX_RETRIES"
@@ -560,7 +561,6 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TPM"
     type = "TYPE"
-    base_dir = "BASE_DIR"
 
 
 class Section(str, Enum):

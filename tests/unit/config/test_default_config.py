@@ -37,6 +37,7 @@ from graphrag.config import (
     GraphRagConfigInput,
     InputConfig,
     InputConfigInput,
+    InputFileType,
     InputType,
     LLMParameters,
     LLMParametersInput,
@@ -120,12 +121,12 @@ ALL_ENV_VARS = {
     "GRAPHRAG_INPUT_ENCODING": "utf-16",
     "GRAPHRAG_INPUT_FILE_PATTERN": ".*\\test\\.txt$",
     "GRAPHRAG_INPUT_SOURCE_COLUMN": "test_source",
-    "GRAPHRAG_INPUT_STORAGE_TYPE": "blob",
+    "GRAPHRAG_INPUT_TYPE": "blob",
     "GRAPHRAG_INPUT_TEXT_COLUMN": "test_text",
     "GRAPHRAG_INPUT_TIMESTAMP_COLUMN": "test_timestamp",
     "GRAPHRAG_INPUT_TIMESTAMP_FORMAT": "test_format",
     "GRAPHRAG_INPUT_TITLE_COLUMN": "test_title",
-    "GRAPHRAG_INPUT_TYPE": "text",
+    "GRAPHRAG_INPUT_FILE_TYPE": "text",
     "GRAPHRAG_LLM_CONCURRENT_REQUESTS": "12",
     "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",
     "GRAPHRAG_LLM_MAX_RETRIES": "312",
@@ -431,7 +432,7 @@ class TestDefaultConfig(unittest.TestCase):
 
     @mock.patch.dict(
         os.environ,
-        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_TYPE": "text"},
+        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_FILE_TYPE": "text"},
         clear=True,
     )
     def test_text_input_returns_correct_config(self):
@@ -540,13 +541,13 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.document_attribute_columns == ["test1", "test2"]
         assert parameters.input.file_encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
+        assert parameters.input.file_type == InputFileType.text
         assert parameters.input.source_column == "test_source"
-        assert parameters.input.storage_type == "blob"
         assert parameters.input.text_column == "test_text"
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.type == InputType.text
+        assert parameters.input.type == InputType.blob
         assert parameters.llm.api_base == "http://some/base"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.api_version == "v1234"
@@ -628,7 +629,7 @@ class TestDefaultConfig(unittest.TestCase):
                     storage_account_blob_url="reporting_account_blob_url",
                 ),
                 input=InputConfigInput(
-                    type=InputType.text,
+                    file_type=InputFileType.text,
                     file_encoding="utf-16",
                     document_attribute_columns=["test1", "test2"],
                     base_dir="/some/input/dir",
@@ -640,7 +641,7 @@ class TestDefaultConfig(unittest.TestCase):
                     timestamp_column="test_timestamp",
                     timestamp_format="test_format",
                     title_column="test_title",
-                    storage_type="blob",
+                    type="blob",
                     storage_account_blob_url="input_account_blob_url",
                 ),
                 embed_graph=EmbedGraphConfigInput(
@@ -729,12 +730,12 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.file_encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
         assert parameters.input.source_column == "test_source"
-        assert parameters.input.storage_type == "blob"
+        assert parameters.input.type == "blob"
         assert parameters.input.text_column == "test_text"
         assert parameters.input.timestamp_column == "test_timestamp"
         assert parameters.input.timestamp_format == "test_format"
         assert parameters.input.title_column == "test_title"
-        assert parameters.input.type == InputType.text
+        assert parameters.input.file_type == InputFileType.text
         assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.llm.api_key == "test"
         assert parameters.llm.model == "test-llm"
@@ -808,10 +809,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.file_pattern == defs.INPUT_CSV_PATTERN
         assert parameters.input.file_encoding == defs.INPUT_FILE_ENCODING
-        assert parameters.input.storage_type == defs.INPUT_STORAGE_TYPE
+        assert parameters.input.type == defs.INPUT_TYPE
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.text_column == defs.INPUT_TEXT_COLUMN
-        assert parameters.input.type == defs.INPUT_TYPE
+        assert parameters.input.file_type == defs.INPUT_FILE_TYPE
         assert parameters.llm.concurrent_requests == defs.LLM_CONCURRENT_REQUESTS
         assert parameters.llm.max_retries == defs.LLM_MAX_RETRIES
         assert parameters.llm.max_retry_wait == defs.LLM_MAX_RETRY_WAIT
@@ -886,7 +887,7 @@ def test_yaml_load_e2e():
     config_dict = yaml.safe_load(
         """
 input:
-  type: text
+  file_type: text
 
 llm:
   type: azure_openai_chat

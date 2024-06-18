@@ -7,6 +7,7 @@ from datashaper import AsyncType
 
 from .enums import (
     CacheType,
+    InputFileType,
     InputType,
     LLMType,
     ReportingType,
@@ -54,8 +55,8 @@ COMMUNITY_REPORT_MAX_LENGTH = 2000
 COMMUNITY_REPORT_MAX_INPUT_LENGTH = 8000
 ENTITY_EXTRACTION_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 ENTITY_EXTRACTION_MAX_GLEANINGS = 0
-INPUT_TYPE = InputType.csv
-INPUT_STORAGE_TYPE = StorageType.file
+INPUT_FILE_TYPE = InputFileType.csv
+INPUT_TYPE = InputType.file
 INPUT_BASE_DIR = "input"
 INPUT_FILE_ENCODING = "utf-8"
 INPUT_TEXT_COLUMN = "text"
@@ -74,8 +75,8 @@ REPORTING_BASE_DIR = "output/${timestamp}/reports"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_RAW_ENTITIES = False
 SNAPSHOTS_TOP_LEVEL_NODES = False
-STORAGE_TYPE = StorageType.file
 STORAGE_BASE_DIR = "output/${timestamp}/artifacts"
+STORAGE_TYPE = StorageType.file
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 UMAP_ENABLED = False
 

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""The Query Engine package root."""
+"""The Prompt auto templating package root."""
 
 import argparse
 import asyncio
@@ -30,14 +30,15 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--root",
-        help="The data project root.",
+        help="The data project root. Including the config yml, json or .env",
         required=False,
         type=str,
+        default=".",
     )
 
     parser.add_argument(
         "--domain",
-        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'.",
+        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If left empty, the domain will be inferred from the input data.",
         required=False,
         default="",
         type=str,
@@ -46,10 +47,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--method",
         help="The method to select documents, one of: all, random or top",
-        required=True,
+        required=False,
         type=DocSelectionType,
         choices=list(DocSelectionType),
-        default=DocSelectionType.TOP,
+        default=DocSelectionType.RANDOM,
     )
 
     parser.add_argument(
@@ -57,11 +58,11 @@ if __name__ == "__main__":
         help="The limit of files to load when doing random or top selection",
         type=int,
         required=False,
-        default=5,
+        default=15,
     )
 
     parser.add_argument(
-        "--max_tokens",
+        "--max-tokens",
         help="Max token count for prompt generation",
         type=int,
         required=False,
@@ -69,11 +70,19 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--chunk_size",
+        "--chunk-size",
         help="Max token count for prompt generation",
         type=int,
         required=False,
         default=MIN_CHUNK_SIZE,
+    )
+
+    parser.add_argument(
+        "--no-entity-types",
+        help="Use untyped entity extraction generation",
+        action="store_true",
+        required=False,
+        default=False,
     )
 
     parser.add_argument(
@@ -96,6 +105,7 @@ if __name__ == "__main__":
             args.limit,
             args.max_tokens,
             args.chunk_size,
+            args.no_entity_types,
             args.output,
         )
     )
