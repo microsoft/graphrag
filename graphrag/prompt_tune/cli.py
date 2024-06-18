@@ -33,8 +33,8 @@ from graphrag.prompt_tune.loader import (
 async def fine_tune(
     root: str,
     domain: str,
-    select: str = "top",
-    limit: int = 5,
+    select: str = "random",
+    limit: int = 15,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
     skip_entity_types: bool = False,
@@ -55,6 +55,54 @@ async def fine_tune(
     """
     reporter = PrintProgressReporter("")
     config = read_config_parameters(root, reporter)
+
+    await fine_tune_with_config(
+        root,
+        config,
+        domain,
+        select,
+        limit,
+        max_tokens,
+        chunk_size,
+        skip_entity_types,
+        output,
+        reporter,
+    )
+
+
+async def fine_tune_with_config(
+    root: str,
+    config: GraphRagConfig,
+    domain: str,
+    select: str = "random",
+    limit: int = 15,
+    max_tokens: int = MAX_TOKEN_COUNT,
+    chunk_size: int = MIN_CHUNK_SIZE,
+    skip_entity_types: bool = False,
+    output: str = "prompts",
+    reporter: ProgressReporter | None = None,
+):
+    """Fine tune the model with a configuration.
+
+    Parameters
+    ----------
+    - root: The root directory.
+    - config: The GraphRag configuration.
+    - domain: The domain to map the input documents to.
+    - select: The chunk selection method.
+    - limit: The limit of chunks to load.
+    - max_tokens: The maximum number of tokens to use on entity extraction prompts.
+    - chunk_size: The chunk token size to use for input text units.
+    - skip_entity_types: Skip generating entity types.
+    - output: The output folder to store the prompts.
+    - reporter: The progress reporter.
+
+    Returns
+    -------
+    - None
+    """
+    if not reporter:
+        reporter = PrintProgressReporter("")
 
     output_path = Path(config.root_dir) / output
 

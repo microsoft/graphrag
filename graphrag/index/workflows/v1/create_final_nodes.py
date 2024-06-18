@@ -23,7 +23,7 @@ def build_steps(
         {
             "verb": "unpack_graph",
             "args": {"column": "positioned_graph", "type": "nodes"},
-            "input": {"source": "layed_out_entity_graph"},
+            "input": {"source": "laid_out_entity_graph"},
         },
         {
             "verb": "filter",
@@ -78,7 +78,7 @@ def build_steps(
     )
     return [
         {
-            "id": "layed_out_entity_graph",
+            "id": "laid_out_entity_graph",
             "verb": "layout_graph",
             "args": {
                 "embeddings_column": "embeddings",

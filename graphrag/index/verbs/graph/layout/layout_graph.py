@@ -38,7 +38,7 @@ def layout_graph(
     **_kwargs: dict,
 ) -> TableContainer:
     """
-    Apply a layout algorithm to a graph. The graph is expected to be in graphml format. The verb outputs a new column containing the layed out graph.
+    Apply a layout algorithm to a graph. The graph is expected to be in graphml format. The verb outputs a new column containing the laid out graph.
 
     ## Usage
     ```yaml
