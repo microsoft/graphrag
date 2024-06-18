@@ -44,14 +44,14 @@ GRAPHRAG_INPUT_TYPE="text"
 # Required LLM Config
 
 # Input Data Configuration
-GRAPHRAG_INPUT_TYPE=text
+GRAPHRAG_INPUT_TYPE="file"
 
 # Plaintext Input Data Configuration
 # GRAPHRAG_INPUT_FILE_PATTERN=.*\.txt
 
-# CSV Input Data Configuration
-GRAPHRAG_INPUT_FILE_TYPE="csv"
-GRAPHRAG_INPUT_FILE_PATTERN=".*\.csv$"
+# Text Input Data Configuration
+GRAPHRAG_INPUT_FILE_TYPE="text"
+GRAPHRAG_INPUT_FILE_PATTERN=".*\.txt$"
 GRAPHRAG_INPUT_SOURCE_COLUMN=source
 # GRAPHRAG_INPUT_TIMESTAMP_COLUMN=None
 # GRAPHRAG_INPUT_TIMESTAMP_FORMAT=None

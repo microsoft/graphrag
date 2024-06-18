@@ -35,7 +35,7 @@ class InputConfig(BaseModel):
         default=defs.INPUT_FILE_ENCODING,
     )
     file_pattern: str = Field(
-        description="The input file pattern to use.", default=defs.INPUT_CSV_PATTERN
+        description="The input file pattern to use.", default=defs.INPUT_TEXT_PATTERN
     )
     file_filter: dict[str, str] | None = Field(
         description="The optional file filter for the input files.", default=None
