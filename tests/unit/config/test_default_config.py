@@ -122,6 +122,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_INPUT_FILE_PATTERN": ".*\\test\\.txt$",
     "GRAPHRAG_INPUT_SOURCE_COLUMN": "test_source",
     "GRAPHRAG_INPUT_TYPE": "blob",
+    "GRAPHRAG_INPUT_FILE_TYPE": "csv",
     "GRAPHRAG_INPUT_TEXT_COLUMN": "test_text",
     "GRAPHRAG_INPUT_TIMESTAMP_COLUMN": "test_timestamp",
     "GRAPHRAG_INPUT_TIMESTAMP_FORMAT": "test_format",
@@ -852,12 +853,14 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_prompt_file_reading(self):
-        config = create_graphrag_config({
-            "entity_extraction": {"prompt": "tests/unit/config/prompt-a.txt"},
-            "claim_extraction": {"prompt": "tests/unit/config/prompt-b.txt"},
-            "community_reports": {"prompt": "tests/unit/config/prompt-c.txt"},
-            "summarize_descriptions": {"prompt": "tests/unit/config/prompt-d.txt"},
-        })
+        config = create_graphrag_config(
+            {
+                "entity_extraction": {"prompt": "tests/unit/config/prompt-a.txt"},
+                "claim_extraction": {"prompt": "tests/unit/config/prompt-b.txt"},
+                "community_reports": {"prompt": "tests/unit/config/prompt-c.txt"},
+                "summarize_descriptions": {"prompt": "tests/unit/config/prompt-d.txt"},
+            }
+        )
         strategy = config.entity_extraction.resolved_strategy(".", "abc123")
         assert strategy["extraction_prompt"] == "Hello, World! A"
         assert strategy["encoding_name"] == "abc123"
