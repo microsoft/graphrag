@@ -323,14 +323,14 @@ the <code>--root</code> parameter on your Indexing Pipeline execution.</p>
 <span class="token comment"># Required LLM Config</span>
 
 <span class="token comment"># Input Data Configuration</span>
-<span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span>text
+<span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"file"</span>
 
 <span class="token comment"># Plaintext Input Data Configuration</span>
 <span class="token comment"># GRAPHRAG_INPUT_FILE_PATTERN=.*\.txt</span>
 
-<span class="token comment"># CSV Input Data Configuration</span>
-<span class="token assign-left variable">GRAPHRAG_INPUT_FILE_TYPE</span><span class="token operator">=</span><span class="token string">"csv"</span>
-<span class="token assign-left variable">GRAPHRAG_INPUT_FILE_PATTERN</span><span class="token operator">=</span><span class="token string">".*\.csv$"</span>
+<span class="token comment"># Text Input Data Configuration</span>
+<span class="token assign-left variable">GRAPHRAG_INPUT_FILE_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span>
+<span class="token assign-left variable">GRAPHRAG_INPUT_FILE_PATTERN</span><span class="token operator">=</span><span class="token string">".*\.txt$"</span>
 <span class="token assign-left variable">GRAPHRAG_INPUT_SOURCE_COLUMN</span><span class="token operator">=</span>source
 <span class="token comment"># GRAPHRAG_INPUT_TIMESTAMP_COLUMN=None</span>
 <span class="token comment"># GRAPHRAG_INPUT_TIMESTAMP_FORMAT=None</span>
