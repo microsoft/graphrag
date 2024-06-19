@@ -43,44 +43,29 @@ class AzureAISearch(BaseVectorStore):
         """Connect to the AzureAI vector store."""
         url = kwargs.get("url", None)
         api_key = kwargs.get("api_key", None)
-        audience = kwargs.get("audience", None)
+        audience = kwargs.get("audience", "https://search.azure.com/.default")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
+        
         self.vector_search_profile_name = kwargs.get(
             "vector_search_profile_name", "vectorSearchProfile"
         )
 
         if url:
-            if audience:
-                self.db_connection = SearchClient(
-                    endpoint=url,
-                    index_name=self.collection_name,
-                    credential=AzureKeyCredential(api_key)
-                    if api_key
-                    else DefaultAzureCredential(),
-                    audience=audience,
-                )
-                self.index_client = SearchIndexClient(
-                    endpoint=url,
-                    credential=AzureKeyCredential(api_key)
-                    if api_key
-                    else DefaultAzureCredential(),
-                    audience=audience,
-                )
-            else:
-                self.db_connection = SearchClient(
-                    endpoint=url,
-                    index_name=self.collection_name,
-                    credential=AzureKeyCredential(api_key)
-                    if api_key
-                    else DefaultAzureCredential(),
-                )
-                self.index_client = SearchIndexClient(
-                    endpoint=url,
-                    credential=AzureKeyCredential(api_key)
-                    if api_key
-                    else DefaultAzureCredential(),
-                )
-            
+            self.db_connection = SearchClient(
+                endpoint=url,
+                index_name=self.collection_name,
+                credential=AzureKeyCredential(api_key)
+                if api_key
+                else DefaultAzureCredential(),
+                audience=audience,
+            )
+            self.index_client = SearchIndexClient(
+                endpoint=url,
+                credential=AzureKeyCredential(api_key)
+                if api_key
+                else DefaultAzureCredential(),
+                audience=audience,
+            )
         else:
             not_supported_error = "AAISearchDBClient is not supported on local host."
             raise ValueError(not_supported_error)
