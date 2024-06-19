@@ -422,7 +422,11 @@ class TestDefaultConfig(unittest.TestCase):
         with pytest.raises(AzureDeploymentNameMissingError):
             create_graphrag_config()
 
-    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_FILE_TYPE": "csv"},
+        clear=True,
+    )
     def test_csv_input_returns_correct_config(self):
         config = create_pipeline_config(create_graphrag_config(root_dir="/some/root"))
         assert config.root_dir == "/some/root"

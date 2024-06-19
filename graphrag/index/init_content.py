@@ -63,7 +63,7 @@ input:
   file_type: {defs.INPUT_FILE_TYPE.value}
   base_dir: "{defs.INPUT_BASE_DIR}"
   file_encoding: {defs.INPUT_FILE_ENCODING}
-  file_pattern: ".*\\\\.csv$"
+  file_pattern: ".*\\\\.txt$"
 
 cache:
   type: {defs.CACHE_TYPE.value} # or blob
