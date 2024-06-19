@@ -43,7 +43,7 @@ class AzureAISearch(BaseVectorStore):
         """Connect to the AzureAI vector store."""
         url = kwargs.get("url", None)
         api_key = kwargs.get("api_key", None)
-        audience = kwargs.get("audience", "https://search.azure.com/.default")
+        audience = kwargs.get("audience", "https://search.azure.com/")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
 
         self.vector_search_profile_name = kwargs.get(
