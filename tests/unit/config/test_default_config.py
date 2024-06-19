@@ -122,7 +122,6 @@ ALL_ENV_VARS = {
     "GRAPHRAG_INPUT_FILE_PATTERN": ".*\\test\\.txt$",
     "GRAPHRAG_INPUT_SOURCE_COLUMN": "test_source",
     "GRAPHRAG_INPUT_TYPE": "blob",
-    "GRAPHRAG_INPUT_FILE_TYPE": "csv",
     "GRAPHRAG_INPUT_TEXT_COLUMN": "test_text",
     "GRAPHRAG_INPUT_TIMESTAMP_COLUMN": "test_timestamp",
     "GRAPHRAG_INPUT_TIMESTAMP_FORMAT": "test_format",
