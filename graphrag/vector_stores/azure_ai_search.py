@@ -45,7 +45,7 @@ class AzureAISearch(BaseVectorStore):
         api_key = kwargs.get("api_key", None)
         audience = kwargs.get("audience", "https://search.azure.com/.default")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
-        
+
         self.vector_search_profile_name = kwargs.get(
             "vector_search_profile_name", "vectorSearchProfile"
         )
