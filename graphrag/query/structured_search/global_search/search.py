@@ -13,6 +13,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
+from graphrag.index.utils.json import clean_up_json
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -184,17 +185,16 @@ class GlobalSearch(BaseSearch):
                 log.info("Map response: %s", search_response)
             try:
                 # parse search response json
-                parsed_elements = json.loads(search_response)["points"]
-                processed_response = [
-                    {
-                        "answer": element["description"],
-                        "score": int(element["score"]),
-                    }
-                    for element in parsed_elements
-                ]
-            except Exception:
-                log.exception("Error parsing search response json")
-                processed_response = []
+                processed_response = self.parse_search_response(search_response)
+            except ValueError:
+                # Clean up and retry parse
+                search_response = clean_up_json(search_response)
+                try:
+                    # parse search response json
+                    processed_response = self.parse_search_response(search_response)
+                except ValueError:
+                    log.exception("Error parsing search response json")
+                    processed_response = []
 
             return SearchResult(
                 response=processed_response,
@@ -215,6 +215,28 @@ class GlobalSearch(BaseSearch):
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
             )
+
+    def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
+        """Parse the search response json and return a list of key points.
+
+        Parameters
+        ----------
+        search_response: str
+            The search response json string
+
+        Returns
+        -------
+        list[dict[str, Any]]
+            A list of key points, each key point is a dictionary with "answer" and "score" keys
+        """
+        parsed_elements = json.loads(search_response)["points"]
+        return [
+            {
+                "answer": element["description"],
+                "score": int(element["score"]),
+            }
+            for element in parsed_elements
+        ]
 
     async def _reduce_response(
         self,
