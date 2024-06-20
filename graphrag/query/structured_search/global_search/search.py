@@ -186,13 +186,13 @@ class GlobalSearch(BaseSearch):
             try:
                 # parse search response json
                 processed_response = self.parse_search_response(search_response)
-            except Exception:
+            except ValueError:
                 # Clean up and retry parse
                 search_response = clean_up_json(search_response)
                 try:
                     # parse search response json
                     processed_response = self.parse_search_response(search_response)
-                except Exception:
+                except ValueError:
                     log.exception("Error parsing search response json")
                     processed_response = []
 
@@ -216,7 +216,19 @@ class GlobalSearch(BaseSearch):
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
             )
 
-    def parse_search_response(self, search_response):
+    def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
+        """Parse the search response json and return a list of key points.
+
+        Parameters
+        ----------
+        search_response: str
+            The search response json string
+
+        Returns
+        -------
+        list[dict[str, Any]]
+            A list of key points, each key point is a dictionary with "answer" and "score" keys
+        """
         parsed_elements = json.loads(search_response)["points"]
         return [
             {
