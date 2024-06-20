@@ -193,9 +193,7 @@ class GlobalSearch(BaseSearch):
                     # parse search response json
                     processed_response = self.parse_search_response(search_response)
                 except Exception:
-                    log.exception(
-                        f"Error parsing search response json for {search_response}"
-                    )
+                    log.exception("Error parsing search response json")
                     processed_response = []
 
             return SearchResult(
