@@ -543,7 +543,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.connection_string == "input_cs"
         assert parameters.input.container_name == "input_cn"
         assert parameters.input.document_attribute_columns == ["test1", "test2"]
-        assert parameters.input.file_encoding == "utf-16"
+        assert parameters.input.encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
         assert parameters.input.file_type == InputFileType.text
         assert parameters.input.source_column == "test_source"
@@ -731,7 +731,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.input.connection_string == "input_cs"
         assert parameters.input.container_name == "input_cn"
         assert parameters.input.document_attribute_columns == ["test1", "test2"]
-        assert parameters.input.file_encoding == "utf-16"
+        assert parameters.input.encoding == "utf-16"
         assert parameters.input.file_pattern == ".*\\test\\.txt$"
         assert parameters.input.source_column == "test_source"
         assert parameters.input.type == "blob"
@@ -812,7 +812,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.encoding_model == defs.ENCODING_MODEL
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.file_pattern == defs.INPUT_CSV_PATTERN
-        assert parameters.input.file_encoding == defs.INPUT_FILE_ENCODING
+        assert parameters.input.encoding == defs.INPUT_FILE_ENCODING
         assert parameters.input.type == defs.INPUT_TYPE
         assert parameters.input.base_dir == defs.INPUT_BASE_DIR
         assert parameters.input.text_column == defs.INPUT_TEXT_COLUMN
