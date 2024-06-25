@@ -217,6 +217,9 @@ a {
 
                     <ul>
                       <li>
+<a href="/posts/config/init">Init command</a>
+</li>
+                      <li>
 <a href="/posts/config/env_vars">Using Env Vars</a>
 </li>
                       <li>
@@ -289,7 +292,8 @@ a {
             <h2>Requirements</h2>
 <p><a href="https://www.python.org/downloads/">Python 3.10-3.12</a></p>
 <p>To get started with the GraphRAG system, you have a few options:</p>
-<p>👉 <a href="https://pypi.org/project/graphrag/">Install from pypi</a>. <br>
+<p>👉 <a href="https://github.com/Azure-Samples/graphrag-accelerator">Use the GraphRAG Accelerator solution</a> <br>
+👉 <a href="https://pypi.org/project/graphrag/">Install from pypi</a>. <br>
 👉 <a href="/posts/developing">Use it from source</a><br></p>
 <h1>Top-Level Packages</h1>
 <p><a href="/posts/index/overview">Indexing Pipeline Overview</a><br>
@@ -307,7 +311,7 @@ It shows how to use the system to index some text, and then use the indexed data
   </button>
 </div>
 <h1>Running the Indexer</h1>
-<p>Now we need to set up a data project and some initial configuration. Let's set that up. We're using the <a href="/posts/config/overview/">default configuration mode</a>, which you can customize as needed using <a href="/posts/config/env_vars/">environment variables</a> or using a <a href="/posts/config/json_yaml/">config file</a>.</p>
+<p>Now we need to set up a data project and some initial configuration. Let's set that up. We're using the <a href="/posts/config/overview/">default configuration mode</a>, which you can customize as needed using a <a href="/posts/config/json_yaml/">config file</a>, which we recommend, or <a href="/posts/config/env_vars/">environment variables</a>.</p>
 <p>First let's get a sample dataset ready:</p>
 
 <div style="position: relative">
@@ -327,51 +331,52 @@ It shows how to use the system to index some text, and then use the indexed data
   </button>
 </div>
 <p>Next we'll inject some required config variables:</p>
-<h2>Set Up Environment Variables</h2>
-<p>First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the <a href="/posts/config/env_vars/">environment variables documentation</a>.</p>
+<h2>Set Up Your Workspace Variables</h2>
+<p>First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the <a href="/posts/config/overview/">variables documentation</a>.</p>
+<p>To initialize your workspace, let's first run the <code>graphrag.index --init</code> command.
+Since we have already configured a directory named .ragtest` in the previous step, we can run the following command:</p>
+
+<div style="position: relative">
+  <pre class="language-sh"><code id="code-54" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--init</span> <span class="token parameter variable">--root</span> ./ragtest</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-54" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<p>This will create two files: <code>.env</code> and <code>settings.yaml</code> in the <code>./ragtest</code> directory.</p>
+<ul>
+<li><code>.env</code> contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
+<code>GRAPHRAG_API_KEY=&lt;API_KEY&gt;</code>. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key.</li>
+<li><code>settings.yaml</code> contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
+<br></li>
+</ul>
 <h4><ins>OpenAI and Azure OpenAI</ins></h4>
-<p>Let's set the base environment variables.</p>
-
-<div style="position: relative">
-  <pre class="language-sh"><code id="code-57" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_KEY</span><span class="token operator">=</span><span class="token string">"&lt;api_key>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_INPUT_TYPE</span><span class="token operator">=</span><span class="token string">"text"</span>
-
-<span class="token comment"># Recommended, but not required. </span>
-<span class="token comment"># JSON output mode is only available with some completion models.</span>
-<span class="token comment"># export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True"</span>
-
-<span class="token comment"># You may use these env vars to specify which model to use.</span>
-<span class="token comment"># export GRAPHRAG_LLM_MODEL="&lt;chat_completions_model>"</span>
-<span class="token comment"># export GRAPHRAG_EMBEDDING_MODEL="&lt;embeddings_model>"</span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-57" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
+<p>To run in OpenAI mode, just make sure to update the value of <code>GRAPHRAG_API_KEY</code> in the <code>.env</code> file with your OpenAI API key.</p>
 <h4><ins>Azure OpenAI</ins></h4>
-<p>In addition, Azure OpenAI users should set the following env-vars.</p>
+<p>In addition, Azure OpenAI users should set the following variables in the settings.yaml file. To find the appropriate sections, just search for the <code>llm:</code> configuration, you should see two sections, one for the chat endpoint and one for the embeddings endpoint. Here is an example of how to configure the chat endpoint:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-64" class="language-sh"><span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_BASE</span><span class="token operator">=</span><span class="token string">"https://&lt;domain>.openai.azure.com"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_API_VERSION</span><span class="token operator">=</span><span class="token string">"2024-02-15-preview"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> GRAPHRAG_LLM_TYPE <span class="token operator">=</span> <span class="token string">"azure_openai_chat"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_LLM_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token string">"&lt;chat_completions_deployment_name>"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> GRAPHRAG_EMBEDDING_API_TYPE <span class="token operator">=</span> <span class="token string">"azure_openai_embedding"</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">\</span>
-<span class="token builtin class-name">export</span> <span class="token assign-left variable">GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME</span><span class="token operator">=</span><span class="token string">"&lt;embeddings_deployment_name>"</span></code></pre>
+  <pre class="language-yaml"><code id="code-82" class="language-yaml"><span class="token key atrule">type</span><span class="token punctuation">:</span> azure_openai_chat <span class="token comment"># Or azure_openai_embedding for embeddings</span>
+<span class="token key atrule">api_base</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//&lt;instance<span class="token punctuation">></span>.openai.azure.com
+<span class="token key atrule">api_version</span><span class="token punctuation">:</span> 2024<span class="token punctuation">-</span>02<span class="token punctuation">-</span>15<span class="token punctuation">-</span>preview <span class="token comment"># You can customize this for other versions</span>
+<span class="token key atrule">deployment_name</span><span class="token punctuation">:</span> &lt;azure_model_deployment_name<span class="token punctuation">></span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-64" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-82" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
-<p>For more details about configuring GraphRAG, see the <a href="/posts/config/overview/">configuration documentation</a>.
-For more details about using the CLI, refer to the <a href="/posts/query/3-cli/">CLI documentation</a>.</p>
+<ul>
+<li>For more details about configuring GraphRAG, see the <a href="/posts/config/overview/">configuration documentation</a>.</li>
+<li>To learn more about Initialization, refer to the <a href="/posts/config/init/">Initialization documentation</a>.</li>
+<li>For more details about using the CLI, refer to the <a href="/posts/query/3-cli/">CLI documentation</a>.</li>
+</ul>
 <h2>Running the Indexing pipeline</h2>
 <p>Finally we'll run the pipeline!</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-74" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--root</span> ./ragtest</code></pre>
+  <pre class="language-sh"><code id="code-106" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--root</span> ./ragtest</code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-74" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-106" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
@@ -384,24 +389,24 @@ Once the pipeline is complete, you should see a new folder called <code>./ragtes
 <p>Here is an example using Global search to ask a high-level question:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-93" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
+  <pre class="language-sh"><code id="code-125" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
 <span class="token parameter variable">--root</span> ./ragtest <span class="token punctuation">\</span>
 <span class="token parameter variable">--method</span> global <span class="token punctuation">\</span>
 <span class="token string">"What are the top themes in this story?"</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-93" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-125" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <p>Here is an example using Local search to ask a more specific question about a particular character:</p>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-97" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
+  <pre class="language-sh"><code id="code-129" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.query <span class="token punctuation">\</span>
 <span class="token parameter variable">--root</span> ./ragtest <span class="token punctuation">\</span>
 <span class="token parameter variable">--method</span> <span class="token builtin class-name">local</span> <span class="token punctuation">\</span>
 <span class="token string">"Who is Scrooge, and what are his main relationships?"</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-97" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-129" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Developing GraphRAG</title>
+    <title>Configuring GraphRAG Indexing</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -196,7 +196,7 @@ a {
 <a href="/posts/get_started/">Get Started</a>
 
               
-<a href="/posts/developing/" class="is-active" aria-current="page">Developing</a>
+<a href="/posts/developing/">Developing</a>
 
             </li>
 
@@ -288,105 +288,40 @@ a {
 
         <!-- Main Content -->
         <main>
-            <h1>Developing GraphRAG</h1>
-            <h1>Requirements</h1>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Installation</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Python 3.10-3.12</td>
-<td><a href="https://www.python.org/downloads/">Download</a></td>
-<td>The library is Python-based.</td>
-</tr>
-<tr>
-<td>Poetry</td>
-<td><a href="https://python-poetry.org/docs/#installation">Instructions</a></td>
-<td>Poetry is used for package management and virtualenv management in Python codebases</td>
-</tr>
-</tbody>
-</table>
-<h1>Getting Started</h1>
-<h2>Install Dependencies</h2>
+            <h1>Configuring GraphRAG Indexing</h1>
+            <p>To start using GraphRAG, you need to configure the system. The <code>init</code> command is the easiest way to get started. It will create a <code>.env</code> and <code>settings.yaml</code> files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.</p>
+<h2>Usage</h2>
 
 <div style="position: relative">
-  <pre class="language-sh"><code id="code-48" class="language-sh"><span class="token comment"># Install Python dependencies.</span>
-poetry <span class="token function">install</span></code></pre>
+  <pre class="language-sh"><code id="code-6" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token punctuation">[</span>--init<span class="token punctuation">]</span> <span class="token punctuation">[</span>--root <span class="token environment constant">PATH</span><span class="token punctuation">]</span></code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-48" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-6" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
-<h2>Execute the Indexing Engine</h2>
-
-<div style="position: relative">
-  <pre class="language-sh"><code id="code-52" class="language-sh">poetry run poe index <span class="token operator">&lt;</span><span class="token punctuation">..</span>.args<span class="token operator">></span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-52" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<h2>Executing Queries</h2>
-
-<div style="position: relative">
-  <pre class="language-sh"><code id="code-56" class="language-sh">poetry run poe query <span class="token operator">&lt;</span><span class="token punctuation">..</span>.args<span class="token operator">></span></code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-56" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<h1>Azurite</h1>
-<p>Some unit and smoke tests use Azurite to emulate Azure resources. This can be started by running:</p>
-
-<div style="position: relative">
-  <pre class="language-sh"><code id="code-63" class="language-sh">./scripts/start-azurite.sh</code></pre>
-
-  <button class="code-copy " data-clipboard-target="#code-63" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
-    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
-  </button>
-</div>
-<p>or by simply running <code>azurite</code> in the terminal if already installed globally. See the <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite">Azurite documentation</a> for more information about how to install and use Azurite.</p>
-<h1>Lifecycle Scripts</h1>
-<p>Our Python package utilizes Poetry to manage dependencies and <a href="https://pypi.org/project/poethepoet/">poethepoet</a> to manage build scripts.</p>
-<p>Available scripts are:</p>
+<h2>Options</h2>
 <ul>
-<li><code>poetry run poe index</code> - Run the Indexing CLI</li>
-<li><code>poetry run poe query</code> - Run the Query CLI</li>
-<li><code>poetry build</code> - This invokes <code>poetry build</code>, which will build a wheel file and other distributable artifacts.</li>
-<li><code>poetry run poe test</code> - This will execute all tests.</li>
-<li><code>poetry run poe test_unit</code> - This will execute unit tests.</li>
-<li><code>poetry run poe test_integration</code> - This will execute integration tests.</li>
-<li><code>poetry run poe test_smoke</code> - This will execute smoke tests.</li>
-<li><code>poetry run poe check</code> - This will perform a suite of static checks across the package, including:
+<li><code>--init</code> - Initialize the directory with the necessary configuration files.</li>
+<li><code>--root PATH</code> - The root directory to initialize. Default is the current directory.</li>
+</ul>
+<h2>Example</h2>
+
+<div style="position: relative">
+  <pre class="language-sh"><code id="code-25" class="language-sh">python <span class="token parameter variable">-m</span> graphrag.index <span class="token parameter variable">--init</span> <span class="token parameter variable">--root</span> ./ragtest</code></pre>
+
+  <button class="code-copy " data-clipboard-target="#code-25" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+    <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
+  </button>
+</div>
+<h2>Output</h2>
+<p>The <code>init</code> command will create the following files in the specified directory:</p>
 <ul>
-<li>formatting</li>
-<li>documentation formatting</li>
-<li>linting</li>
-<li>security patterns</li>
-<li>type-checking</li>
+<li><code>settings.yaml</code> - The configuration settings file. This file contains the configuration settings for GraphRAG.</li>
+<li><code>.env</code> - The environment variables file. These are referenced in the <code>settings.yaml</code> file.</li>
+<li><code>prompts/</code> - The LLM prompts folder. This contains the default prompts used by GraphRAG, you can modify them or run the <a href="/posts/prompt_tuning/auto_prompt_tuning">Auto Prompt Tuning</a> command to generate new prompts adapted to your data.</li>
 </ul>
-</li>
-<li><code>poetry run poe fix</code> - This will apply any available auto-fixes to the package. Usually this is just formatting fixes.</li>
-<li><code>poetry run poe fix_unsafe</code> - This will apply any available auto-fixes to the package, including those that may be unsafe.</li>
-<li><code>poetry run poe format</code> - Explicitly run the formatter across the package.</li>
-</ul>
-<h2>Troubleshooting</h2>
-<h3>&quot;RuntimeError: llvm-config failed executing, please point LLVM_CONFIG to the path for llvm-config&quot; when running poetry install</h3>
-<p>Make sure llvm-9 and llvm-9-dev are installed:</p>
-<p><code>sudo apt-get install llvm-9 llvm-9-dev</code></p>
-<p>and then in your bashrc, add</p>
-<p><code>export LLVM_CONFIG=/usr/bin/llvm-config-9</code></p>
-<h3>&quot;numba/_pymodule.h:6:10: fatal error: Python.h: No such file or directory&quot; when running poetry install</h3>
-<p>Make sure you have python3.10-dev installed or more generally <code>python&lt;version&gt;-dev</code></p>
-<p><code>sudo apt-get install python3.10-dev</code></p>
-<h3>LLM call constantly exceeds TPM, RPM or time limits</h3>
-<p><code>GRAPHRAG_LLM_THREAD_COUNT</code> and <code>GRAPHRAG_EMBEDDING_THREAD_COUNT</code> are both set to 50 by default. You can modify this values
-to reduce concurrency. Please refer to the <a href="../config/overview">Configuration Documents</a></p>
+<h2>Next Steps</h2>
+<p>After initializing your workspace, you can either run the <a href="/posts/prompt_tuning/auto_prompt_tuning">Prompt Tuning</a> command to adapt the prompts to your data or even start running the <a href="/posts/index/overview">Indexing Pipeline</a> to index your data. For more information on configuring GraphRAG, see the <a href="/posts/config/overview">Configuration</a> documentation.</p>
 
         </main>
     </div>
