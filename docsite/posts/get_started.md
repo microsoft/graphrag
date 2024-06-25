@@ -11,6 +11,7 @@ tags: [post]
 
 To get started with the GraphRAG system, you have a few options:
 
+👉 [Use the GraphRAG Accelerator solution](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
 👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
 👉 [Use it from source](/posts/developing)<br/>
 
@@ -32,7 +33,7 @@ pip install graphrag
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using [environment variables](/posts/config/env_vars/) or using a [config file](/posts/config/json_yaml/).
+Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using using a [config file](/posts/config/json_yaml/), which we recommend, or [environment variables](/posts/config/env_vars/).
 
 First let's get a sample dataset ready:
 
@@ -48,42 +49,41 @@ curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt > ./ragtest/input/bo
 
 Next we'll inject some required config variables:
 
-## Set Up Environment Variables
+## Set Up Your Workspace Variables
 
-First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [environment variables documentation](/posts/config/env_vars/).
+First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [variables documentation](/posts/config/overview/).
 
-
-#### <ins>OpenAI and Azure OpenAI</ins>
-Let's set the base environment variables.
+To initialize your workspace, let's first run the `graphrag.index --init` command.
+Since we have already configured a directory named \.ragtest` in the previous step, we can run the following command:
 
 ```sh
-export GRAPHRAG_API_KEY="<api_key>" && \
-export GRAPHRAG_INPUT_TYPE="text"
-
-# Recommended, but not required. 
-# JSON output mode is only available with some completion models.
-# export GRAPHRAG_LLM_MODEL_SUPPORTS_JSON="True"
-
-# You may use these env vars to specify which model to use.
-# export GRAPHRAG_LLM_MODEL="<chat_completions_model>"
-# export GRAPHRAG_EMBEDDING_MODEL="<embeddings_model>"
+python -m graphrag.index --init --root ./ragtest
 ```
+
+This will create two files: `.env` and `settings.yaml` in the `./ragtest` directory.
+
+- `.env` contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
+  `GRAPHRAG_API_KEY=<API_KEY>`. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key.
+- `settings.yaml` contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
+
+#### <ins>OpenAI and Azure OpenAI</ins>
+
+To run in OpenAI mode, just make sure to update the value of `GRAPHRAG_API_KEY` in the `.env` file with your OpenAI API key.
 
 #### <ins>Azure OpenAI</ins>
 
-In addition, Azure OpenAI users should set the following env-vars.
+In addition, Azure OpenAI users should set the following variables in the settings.yaml file. To find the appropriate sections, just search for the `llm:` configuration, you should see two sections, one for the chat endpoint and one for the embeddings endpoint. Here is an example of how to configure the chat endpoint:
 
-```sh
-export GRAPHRAG_API_BASE="https://<domain>.openai.azure.com" && \
-export GRAPHRAG_API_VERSION="2024-02-15-preview" && \
-export GRAPHRAG_LLM_TYPE = "azure_openai_chat" && \
-export GRAPHRAG_LLM_DEPLOYMENT_NAME="<chat_completions_deployment_name>" && \
-export GRAPHRAG_EMBEDDING_API_TYPE = "azure_openai_embedding" && \
-export GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME="<embeddings_deployment_name>"
+```yaml
+type: azure_openai_chat # Or azure_openai_embedding for embeddings
+api_base: https://<instance>.openai.azure.com
+api_version: 2024-02-15-preview # You can customize this for other versions
+deployment_name: <azure_model_deployment_name>
 ```
 
-For more details about configuring GraphRAG, see the [configuration documentation](/posts/config/overview/).
-For more details about using the CLI, refer to the [CLI documentation](/posts/query/3-cli/).
+- For more details about configuring GraphRAG, see the [configuration documentation](/posts/config/overview/).
+- To learn more about Initialization, refer to the [Initialization documentation](/posts/config/init/).
+- For more details about using the CLI, refer to the [CLI documentation](/posts/query/3-cli/).
 
 ## Running the Indexing pipeline
 
