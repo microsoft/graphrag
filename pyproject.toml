@@ -53,7 +53,7 @@ aiolimiter = "^1.1.0"
 aiofiles = "^23.2.1"
 
 # LLM
-openai = "^1.30.3"
+openai = "^1.35.3"
 nltk = "3.8.1"
 tiktoken = "^0.7.0"
 
