@@ -6,7 +6,7 @@ layout: page
 date: 2023-01-03
 ---
 
-To start using GraphRAG, you need to configure the system. The `init` command is the easiest way to get started. It will create a `.env` and `settings.yaml` files in the specified directory with the necessary configuration settings. It will also eject the default LLM prompts used by GraphRAG.
+To start using GraphRAG, you need to configure the system. The `init` command is the easiest way to get started. It will create a `.env` and `settings.yaml` files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.
 
 ## Usage
 

@@ -33,7 +33,7 @@ pip install graphrag
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using using a [config file](/posts/config/json_yaml/), which we recommend, or [environment variables](/posts/config/env_vars/).
+Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](/posts/config/overview/), which you can customize as needed using a [config file](/posts/config/json_yaml/), which we recommend, or [environment variables](/posts/config/env_vars/).
 
 First let's get a sample dataset ready:
 
@@ -65,6 +65,7 @@ This will create two files: `.env` and `settings.yaml` in the `./ragtest` direct
 - `.env` contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
   `GRAPHRAG_API_KEY=<API_KEY>`. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key.
 - `settings.yaml` contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
+  <br/>
 
 #### <ins>OpenAI and Azure OpenAI</ins>
 
