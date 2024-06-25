@@ -4,6 +4,7 @@ layout: page
 ---
 
 👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/) <br/>
+👉 [GraphRAG Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
 👉 [GitHub Repository](https://github.com/microsoft/graphrag)
 
 <p align="center">
