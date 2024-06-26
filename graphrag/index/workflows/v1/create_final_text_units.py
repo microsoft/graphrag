@@ -23,6 +23,10 @@ def build_steps(
     text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
     covariates_enabled = config.get("covariates_enabled", False)
     skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
+    is_using_vector_store = (
+        text_unit_text_embed_config.get("strategy", {}).get("vector_store", None)
+        is not None
+    )
 
     return [
         {
@@ -141,7 +145,7 @@ def build_steps(
                 "columns": [
                     "id",
                     "text",
-                    *([] if skip_text_unit_embedding else ["text_embedding"]),
+                    *([] if (skip_text_unit_embedding or is_using_vector_store) else ["text_embedding"]),
                     "n_tokens",
                     "document_ids",
                     "entity_ids",
