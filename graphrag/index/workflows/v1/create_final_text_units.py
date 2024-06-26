@@ -145,7 +145,11 @@ def build_steps(
                 "columns": [
                     "id",
                     "text",
-                    *([] if (skip_text_unit_embedding or is_using_vector_store) else ["text_embedding"]),
+                    *(
+                        []
+                        if (skip_text_unit_embedding or is_using_vector_store)
+                        else ["text_embedding"]
+                    ),
                     "n_tokens",
                     "document_ids",
                     "entity_ids",
