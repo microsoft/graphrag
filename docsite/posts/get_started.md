@@ -81,6 +81,15 @@ api_base: https://<instance>.openai.azure.com
 api_version: 2024-02-15-preview # You can customize this for other versions
 deployment_name: <azure_model_deployment_name>
 ```
+We also need to update the ingest mechanism to be sure to pick up the file we downloaded earlier.  To do this we will modify the input section like this:
+```yaml
+input:
+  type: file
+  file_type: text
+  base_dir: "input"
+  file_encoding: utf-8
+  file_pattern: ".*\\.txt$"
+```
 
 - For more details about configuring GraphRAG, see the [configuration documentation](/posts/config/overview/).
 - To learn more about Initialization, refer to the [Initialization documentation](/posts/config/init/).
