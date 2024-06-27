@@ -60,7 +60,8 @@ chunks:
   group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
     
 input:
-  file_type: {defs.INPUT_FILE_TYPE.value}
+  type: {defs.INPUT_TYPE.value} # or blob
+  file_type: {defs.INPUT_FILE_TYPE.value} # or csv
   base_dir: "{defs.INPUT_BASE_DIR}"
   file_encoding: {defs.INPUT_FILE_ENCODING}
   file_pattern: ".*\\\\.txt$"
