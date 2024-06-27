@@ -20,7 +20,7 @@ class NodeEmbeddings:
 
 def embed_nod2vec(
     graph: nx.Graph | nx.DiGraph,
-    dimensions: int = 128,
+    dimensions: int = 1536,
     num_walks: int = 10,
     walk_length: int = 40,
     window_size: int = 2,
