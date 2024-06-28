@@ -132,14 +132,6 @@ MSRC
 Arrary
 
 # Prompt Inputs
-Siamak
-Namazi
-Emad
-Shargi
-Evin
-Morad
-Tahbaz
-payus
 dulce
 Asadi
 ABILA
