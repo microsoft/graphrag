@@ -21,7 +21,7 @@ To learn more about GraphRAG and how it can be used to enhance your LLMs ability
 
 ## Solution Accelerator 🚀
 
-To quickstart the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This will allow you to set and end-to-end user friendly GraphRAG experience leveraging Azure resources.
+To quickstart the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
 
 ## Get Started with GraphRAG 🚀
 

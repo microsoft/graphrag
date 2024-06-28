@@ -17,7 +17,7 @@ To get started with the GraphRAG system, you have a few options:
 
 ## Quickstart
 
-To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This will allow you to set and end-to-end user friendly GraphRAG experience leveraging Azure resources.
+To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
 
 # Top-Level Modules
 
