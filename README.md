@@ -1,5 +1,6 @@
 # GraphRAG
 
+👉 [Use the GraphRAG Accelerator solution](https://github.com/Azure-Samples/graphrag-accelerator)
 👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/)
 👉 [Read the docs](https://microsoft.github.io/graphrag)
 
@@ -8,6 +9,10 @@
 The GraphRAG project is a data pipeline and transformation suite that is designed to extract meaningful, structured data from unstructured text using the power of LLMs.
 
 To learn more about GraphRAG and how it can be used to enhance your LLMs ability to reason about your private data, please visit the <a href="https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/" target="_blank">Microsoft Research Blog Post.</a>
+
+## Quickstart
+
+To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
 
 ## Repository Guidance
 
@@ -21,7 +26,7 @@ This repository presents a methodology for using knowledge graph memory structur
 ## Prompt Tuning
 
 Using _GraphRAG_ with your data out of the box may not yield the best possible results.
-We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](https://microsoft.github.io/graphrag/posts/index/3-prompt_tuning/) in our documentation.
+We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](https://microsoft.github.io/graphrag/posts/prompt_tuning/overview/) in our documentation.
 
 ## Responsible AI FAQ
 

@@ -12,7 +12,7 @@ This page provides an overview of the prompt tuning options available for the Gr
 
 The default prompts are the simplest way to get started with the GraphRAG system. It is designed to work out-of-the-box with minimal configuration. You can find more detail about these prompts in the following links:
 
-- [Entity/Relationship Extraction] (http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/graph/prompts.py)
+- [Entity/Relationship Extraction](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/graph/prompts.py)
 - [Entity/Relationship Description Summarization](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/summarize/prompts.py)
 - [Claim Extraction](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/claims/prompts.py)
 - [Community Reports](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/community_reports/prompts.py)
