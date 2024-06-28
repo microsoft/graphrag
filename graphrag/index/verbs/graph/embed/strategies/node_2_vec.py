@@ -20,7 +20,7 @@ def run(graph: nx.Graph, args: dict[str, Any]) -> NodeEmbeddings:
     # create graph embedding using node2vec
     embeddings = embed_nod2vec(
         graph=graph,
-        dimensions=args.get("dimensions", 128),
+        dimensions=args.get("dimensions", 1536),
         num_walks=args.get("num_walks", 10),
         walk_length=args.get("walk_length", 40),
         window_size=args.get("window_size", 2),

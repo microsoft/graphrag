@@ -55,7 +55,7 @@ async def embed_graph(
     ```yaml
     strategy:
         type: node2vec
-        dimensions: 128 # Optional, The number of dimensions to use for the embedding, default: 128
+        dimensions: 1536 # Optional, The number of dimensions to use for the embedding, default: 1536
         num_walks: 10 # Optional, The number of walks to use for the embedding, default: 10
         walk_length: 40 # Optional, The walk length to use for the embedding, default: 40
         window_size: 2 # Optional, The window size to use for the embedding, default: 2
