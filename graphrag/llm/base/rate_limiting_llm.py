@@ -113,7 +113,7 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         **kwargs: Unpack[LLMInput],
     ) -> LLMOutput[TOut]:
         """Execute the LLM with semaphore & rate limiting."""
-        name = kwargs.get("name", "unknown")
+        name = kwargs.get("name", "Process")
         attempt_number = 0
         call_times: list[float] = []
         input_tokens = self.count_request_tokens(input)
@@ -129,7 +129,7 @@ class RateLimitingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
 
         async def sleep_for(time: float | None) -> None:
             log.warning(
-                "%s attempt %s/%s, rate limit exceeded. sleep %d. ignore? %s",
+                "%s failed to invoke LLM %s/%s attempts. Cause: rate limit exceeded, will retry. Recommended sleep for %d seconds. Follow recommendation? %s",
                 name,
                 attempt_number,
                 max_retries,

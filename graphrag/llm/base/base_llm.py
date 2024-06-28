@@ -5,7 +5,6 @@
 
 import traceback
 from abc import ABC, abstractmethod
-from logging import getLogger
 from typing import Generic, TypeVar
 
 from typing_extensions import Unpack
@@ -16,9 +15,6 @@ from graphrag.llm.types import (
     LLMInput,
     LLMOutput,
 )
-
-log = getLogger(__name__)
-
 
 TIn = TypeVar("TIn")
 TOut = TypeVar("TOut")
@@ -58,7 +54,6 @@ class BaseLLM(ABC, LLM[TIn, TOut], Generic[TIn, TOut]):
             return LLMOutput(output=output)
         except Exception as e:
             stack_trace = traceback.format_exc()
-            log.exception("Error invoking LLM")
             if self._on_error:
                 self._on_error(e, stack_trace, {"input": input})
             raise
