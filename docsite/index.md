@@ -19,7 +19,11 @@ approaches using plain text snippets. The GraphRAG process involves extracting a
 
 To learn more about GraphRAG and how it can be used to enhance your LLMs ability to reason about your private data, please visit the [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/).
 
-## Get Started 🚀
+## Solution Accelerator 🚀
+
+To quickstart the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This will allow you to set and end-to-end user friendly GraphRAG experience leveraging Azure resources.
+
+## Get Started with GraphRAG 🚀
 
 To start using GraphRAG, check out the [_Get Started_](posts/get_started) guide.
 For a deeper dive into the main sub-systems, please visit the docpages for the [Indexer](posts/index/overview) and [Query](posts/query/overview) packages.

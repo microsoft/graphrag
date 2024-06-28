@@ -15,7 +15,11 @@ To get started with the GraphRAG system, you have a few options:
 👉 [Install from pypi](https://pypi.org/project/graphrag/). <br/>
 👉 [Use it from source](/posts/developing)<br/>
 
-# Top-Level Packages
+## Quickstart
+
+To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This will allow you to set and end-to-end user friendly GraphRAG experience leveraging Azure resources.
+
+# Top-Level Modules
 
 [Indexing Pipeline Overview](/posts/index/overview)<br/>
 [Query Engine Overview](/posts/query/overview)
