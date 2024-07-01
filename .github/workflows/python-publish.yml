@@ -5,10 +5,6 @@ on:
   push:
     branches: [main]
 
-env:
-  POETRY_VERSION: 1.8.3
-  PYTHON_VERSION: 3.10
-
 jobs:
   publish:
     name: Upload release to PyPI
@@ -18,8 +14,8 @@ jobs:
       name: pypi
       url: https://pypi.org/p/graphrag
     permissions:
-        id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
-    
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,16 +25,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: $PYTHON_VERSION
+          python-version: ${{ env.PYTHON_VERSION}}
 
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: $POETRY_VERSION
-      
+          poetry-version: ${{ env.POETRY_VERSION}}
+
       - name: Add poetry-dynamic-versioning plugin
         run: poetry self add "poetry-dynamic-versioning[plugin]"
-        
+
       - name: Install dependencies
         shell: bash
         run: poetry install
@@ -53,4 +49,3 @@ jobs:
           packages-dir: dist
           skip-existing: true
           verbose: true
-      
