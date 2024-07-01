@@ -36,9 +36,6 @@ jobs:
         with:
           poetry-version: ${{ env.POETRY_VERSION }}
 
-      - name: Add poetry-dynamic-versioning plugin
-        run: poetry self add "poetry-dynamic-versioning[plugin]"
-
       - name: Install dependencies
         shell: bash
         run: poetry install
