@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "description": "Initial Release",
+      "type": "minor"
+    }
+  ],
+  "created_at": "2024-07-01T21:48:50+00:00",
+  "version": "0.1.0"
+}
