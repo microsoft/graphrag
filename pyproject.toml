@@ -50,7 +50,7 @@ nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
 
 # Async IO
 aiolimiter = "^1.1.0"
-aiofiles = "^23.2.1"
+aiofiles = "^24.1.0"
 
 # LLM
 openai = "^1.35.3"
