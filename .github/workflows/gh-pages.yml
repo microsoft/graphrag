@@ -2,13 +2,13 @@ name: gh-pages
 on:
   push:
     branches: [main]
-  
+
 permissions:
   contents: write
 
 env:
   POETRY_VERSION: 1.8.3
-  PYTHON_VERSION: '3.11'
+  PYTHON_VERSION: "3.11"
   NODE_VERSION: 18.x
 
 jobs:
@@ -71,18 +71,20 @@ jobs:
       - name: Install Azurite
         id: azuright
         uses: potatoqualitee/azuright@v1.1
-  
+
       - name: Generate Indexer Outputs
         run: |
           poetry run poe test_smoke
           zip -jrm docsite/data/operation_dulce/dataset.zip tests/fixtures/min-csv/output/*/artifacts/*.parquet
-        
+
       - name: Build Jupyter Notebooks
         run: poetry run poe convert_docsite_notebooks
 
       - name: Build docsite
         run: yarn build
         working-directory: docsite
+        env:
+          DOCSITE_BASE_URL: "graphrag"
 
       - name: List docsite files
         run: find docsite/_site
