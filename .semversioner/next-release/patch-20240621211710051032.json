@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix encoding viariable on GraphRAG Config"
-}

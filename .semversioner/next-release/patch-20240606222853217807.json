@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Shift description summarization to an iterative approach to avoid overflows"
-}

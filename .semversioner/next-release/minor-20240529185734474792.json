@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Fix issue blocking index from updating with new documents."
-}

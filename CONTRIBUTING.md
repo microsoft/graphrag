@@ -74,12 +74,6 @@ If you don't have any additional info/context to add but would like to indicate 
 
 ---
 
-## Contact
-
-If you have any questions or need further assistance, you can reach out to the project maintainers at [graphragvteam@microsoft.com](mailto:graphragvteam@microsoft.com).
-
----
-
 ## Thank you
 
 We appreciate your contributions to GraphRAG!

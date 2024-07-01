@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix response parsing on global search when not in json mode"
-}

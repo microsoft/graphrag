@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Local search fixes: fixed missing covariate attributes and removed single_batch parameter and associated logic"
-}
