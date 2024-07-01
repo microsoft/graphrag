@@ -1,0 +1,254 @@
+[tool.poetry]
+name = "graphrag"
+# Maintainers: do not change the version here manually, use ./scripts/release.sh
+version = "0.0.1"
+description = ""
+authors = [
+    "Alonso Guevara Fernández <alonsog@microsoft.com>",
+    "Andrés Morales Esquivel <andresmor@microsoft.com>",
+    "Chris Trevino <chtrevin@microsoft.com>",
+    "David Tittsworth <datittsw@microsoft.com>",
+    "Dayenne de Souza <ddesouza@microsoft.com>",
+    "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
+    "Ha Trinh <trinhha@microsoft.com>",
+    "Jonathan Larson <jolarso@microsoft.com>",
+    "Kate Lytvynets <kalytv@microsoft.com>",
+    "Mónica Carvajal",
+    "Nathan Evans <naevans@microsoft.com>",
+    "Rodrigo Racanicci <rracanicci@microsoft.com>",
+    "Sarah Smith <smithsarah@microsoft.com>",
+]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "graphrag" }]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+style = "pep440"
+vcs = "git"
+bump = true
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(base, stage, revision, dev=distance) }}
+    {%- endif -%}
+"""
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+environs = "^11.0.0"
+datashaper = "^0.0.49"
+
+# Vector Stores
+azure-search-documents = "^11.4.0"
+lancedb = "^0.9.0"
+
+# Event Loops
+uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
+nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
+
+# Async IO
+aiolimiter = "^1.1.0"
+aiofiles = "^24.1.0"
+
+# LLM
+openai = "^1.35.7"
+nltk = "3.8.1"
+tiktoken = "^0.7.0"
+
+# Data-Sci
+numba = "0.60.0"
+numpy = "^1.25.2"
+graspologic = "^3.4.1"
+networkx = "^3"
+fastparquet = "^2024.2.0"
+# 1.13.0 was a footgun
+scipy = "1.12.0"
+
+# Configuration
+pyyaml = "^6.0.1"
+pyaml-env = "^1.2.1"
+python-dotenv = "^1.0.0"
+
+# Network
+tenacity = "^8.2.3"
+
+swifter = "^1.4.0"
+pydantic = "^2"
+rich = "^13.6.0"
+textual = "^0.70.0"
+devtools = "^0.12.2"
+
+typing-extensions = "^4.12.2"
+
+#Azure
+azure-storage-blob = "^12.19.0"
+azure-identity = "^1.17.1"
+
+[tool.poetry.group.dev.dependencies]
+coverage = "^7.5.4"
+ipykernel = "^6.29.4"
+jupyter = "^1.0.0"
+nbconvert = "^7.16.3"
+poethepoet = "^0.26.0"
+pyright = "^1.1.368"
+pytest = "^8.2.0"
+pytest-asyncio = "^0.23.4"
+pytest-timeout = "^2.3.1"
+ruff = "^0.5.0"
+semversioner = "^2.0.3"
+
+update-toml = "^0.2.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poe.tasks]
+_sort_imports = "ruff check --select I --fix . --preview"
+_format_code = "ruff format  . --preview"
+_ruff_check = 'ruff check . --preview'
+_pyright = "pyright"
+_convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
+_convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
+_semversioner_release = "semversioner release"
+_semversioner_changelog = "semversioner changelog > CHANGELOG.md"
+_semversioner_update_toml_version = "update-toml --path tool.poetry.version --value \"$(semversioner current-version)\" pyproject.toml"
+coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
+check_format = 'ruff format . --check --preview'
+fix = "ruff  --preview check --fix ."
+fix_unsafe = "ruff check --preview --fix --unsafe-fixes ."
+
+_test_all = "coverage run -m pytest ./tests"
+test_unit = "pytest ./tests/unit"
+test_integration = "pytest ./tests/integration"
+test_smoke = "pytest ./tests/smoke"
+index = "python -m graphrag.index"
+query = "python -m graphrag.query"
+prompt_tune = "python -m graphrag.prompt_tune"
+# Pass in a test pattern
+test_only = "pytest -s -k"
+
+[[tool.poe.tasks.release]]
+sequence = [
+    '_semversioner_release',
+    '_semversioner_changelog',
+    '_semversioner_update_toml_version',
+]
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.convert_docsite_notebooks]]
+sequence = ['_convert_local_search_nb', '_convert_global_search_nb']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.format]]
+sequence = ['_sort_imports', '_format_code']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.check]]
+sequence = ['check_format', '_ruff_check', '_pyright']
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.test]]
+sequence = ['_test_all', 'coverage_report']
+ignore_fail = 'return_non_zero'
+
+[tool.ruff]
+target-version = "py310"
+extend-include = ["*.ipynb"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 20
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "W291",
+    "YTT",
+    "T10",
+    "ICN",
+    "INP",
+    "Q",
+    "RSE",
+    "SLOT",
+    "INT",
+    "FLY",
+    "LOG",
+    "C90",
+    "T20",
+    "D",
+    "RET",
+    "PD",
+    "N",
+    "PIE",
+    "SIM",
+    "S",
+    "G",
+    "ERA",
+    "ASYNC",
+    "TID",
+    "UP",
+    "SLF",
+    "BLE",
+    "C4",
+    "I",
+    "F",
+    "A",
+    "ARG",
+    "PTH",
+    "RUF",
+    "B",
+    "TCH",
+    "DTZ",
+    "PYI",
+    "PT",
+    "EM",
+    "TRY",
+    "PERF",
+    "CPY",
+    # "FBT", # use named arguments for boolean flags
+    # "TD", # todos
+    # "FIX", # fixme
+    # "FURB" # preview rules
+    # ANN # Type annotations, re-enable when we get bandwidth
+]
+ignore = [
+    # Deprecated Rules
+    "ANN101",
+    "ANN102",
+    # Conflicts with interface argument checking
+    "ARG002",
+    "ANN204",
+    # TODO: Inspect these pandas rules for validity
+    "PD002", # prevents inplace=True
+    # TODO RE-Enable when we get bandwidth
+    "PERF203", # Needs restructuring of errors, we should bail-out on first error
+    "C901",    # needs refactoring to remove cyclomatic complexity
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
+"examples/*" = ["S", "D", "ANN", "T201", "PTH", "TRY", "PERF"]
+"graphrag/index/config/*" = ["TCH"]
+"*.ipynb" = ["T201"]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["input", "id", "bytes"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+# https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
+[tool.pyright]
+include = ["graphrag", "tests", "examples", "examples_notebooks"]
+exclude = ["**/node_modules", "**/__pycache__"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+timeout = 600
+# log_cli = true
+# log_cli_level = "INFO"

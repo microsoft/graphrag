@@ -1,0 +1,6 @@
+_site
+_posts
+posts/query/notebooks/*.ipynb
+posts/query/notebooks/*_nb.md
+*.parquet
+*.zip

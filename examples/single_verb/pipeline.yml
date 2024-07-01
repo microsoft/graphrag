@@ -1,0 +1,12 @@
+input:
+  file_type: csv
+  base_dir: ./input
+  file_pattern: .*\.csv$
+workflows:
+  - steps:
+      - verb: derive # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/derive.py
+        args:
+          column1: "col1"
+          column2: "col2"
+          to: "col_multiplied"
+          operator: "*"

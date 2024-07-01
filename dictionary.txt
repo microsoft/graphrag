@@ -1,0 +1,143 @@
+# Team
+Alonso
+
+# Pythonisms
+PYTHONPATH
+pycache
+nopython
+virtualenv
+Pythonisms
+pyproject
+ipynb
+pymodule
+virtualenv
+virtualenvs
+signum
+ospath
+msecs
+asdict
+isna
+getcwd
+fillna
+noqa
+
+# Azure
+abfs
+Hnsw
+odata
+
+# NLTK Terms
+chunker
+wordnet
+maxent
+punkt
+
+# Libraries
+Langchain
+networkx
+graspologic
+graphml
+dataframe
+dataframes
+nltk
+datashaper
+numba
+graphintelligence
+dotenv
+tiktoken
+pydantic
+faiss
+pyarrow
+pyaml
+Chakra
+poethepoet
+pyodbc
+lancedb
+httpx
+pymongo
+uvloop
+aiofiles
+asyncio
+numpy
+pypi
+nbformat
+semversioner
+
+# Library Methods
+iterrows
+rprint
+ndarray
+nprobe
+astype
+monkeypatches
+nlist
+ntotal
+quantizer
+arun
+tiktokens
+dtype
+linewidths
+asearch
+iloc
+itertuples
+isin
+nocache
+nbconvert
+
+# Verbs
+binarize
+prechunked
+openai
+genid
+umap
+concat
+unhot
+groupby
+retryer
+agenerate
+aembed
+dedupe
+
+# LLM Terms
+AOAI
+embedder
+llm
+llms
+
+# Galaxy-Brain Terms
+Unipartite
+idempotently
+covariate
+covariates
+logit
+confusors
+
+# Charting
+plottable
+scatterplot
+
+# Resilience Team Terms
+megapipeline
+columnwise
+docstore
+datasource
+devcontainers
+codebases
+
+# Microsoft
+MSRC
+
+# Broken Upstream
+# TODO FIX IN DATASHAPER
+Arrary
+
+# Prompt Inputs
+dulce
+Asadi
+ABILA
+Abila
+POKRALLY
+
+# English
+skippable
+upvote

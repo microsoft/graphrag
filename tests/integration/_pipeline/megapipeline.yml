@@ -1,0 +1,72 @@
+input:
+  file_type: text
+  base_dir: ../../fixtures/min-csv
+  file_pattern: .*\.txt$
+
+storage:
+  type: memory
+
+cache:
+  type: memory
+
+workflows:
+  - name: create_base_text_units
+    config:
+      text_chunk:
+        strategy:
+          type: sentence
+
+      # Just lump everything together
+      chunk_by: []
+
+  - name: create_base_extracted_entities
+    config:
+      graphml_snapshot: True
+      entity_extract:
+        strategy:
+          type: nltk
+
+  - name: create_base_entity_graph
+    config:
+      graphml_snapshot: True
+      embed_graph_enabled: True
+      cluster_graph:
+        strategy:
+          type: leiden
+          verbose: True
+
+  - name: create_final_nodes
+
+  - name: create_base_documents
+
+  # - name: create_final_community_reports
+  #   config:
+  #     create_community_reports:
+  #       <<: *llm_parallel_config
+  #       strategy:
+  #         type: graph_intelligence
+  #         llm: *llm_config
+
+  - name: create_final_communities
+  - name: create_final_text_units
+    config:
+      text_embed:
+        strategy:
+          type: mock
+
+  - name: create_final_entities
+    config:
+      text_embed:
+        strategy:
+          type: mock
+
+  - name: create_final_documents
+    config:
+      text_embed:
+        strategy:
+          type: mock
+  - name: create_final_relationships
+    config:
+      text_embed:
+        strategy:
+          type: mock

@@ -1,0 +1,15 @@
+name: Spellcheck
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - '**/*'
+jobs:
+  spellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Spellcheck
+        run: ./scripts/spellcheck.sh

@@ -1,0 +1,164 @@
+---
+title: GraphRAG
+---
+{% set css %}
+{% include "page.css" %}
+{% endset %}
+
+{% macro link_to(url, text) %}
+<a href="{{url}}"{% if page.url == url %} class="is-active" aria-current="page"{% endif %}>{{text}}</a>
+{% endmacro %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/19.1.1/tooltips.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>{{ css | safe }}</style>
+    {% mermaid_js %}
+    {% initClipboardJS %}
+
+    {% block js %}
+    <script src="https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js" type="text/javascript"></script>
+    <script>
+        function onConsentChanged(categoryPreferences) {
+            console.log("onConsentChanged", categoryPreferences);        
+        }
+
+        var siteConsent
+
+        function initialize(){
+          var currentYear = new Date().getFullYear()
+          document.getElementById("copyright").innerHTML = `©️ ${currentYear} Microsoft`;
+          window.WcpConsent && WcpConsent.init("en-US", "cookie-banner", function (err, _siteConsent) {
+              if (!err) {
+                  siteConsent = _siteConsent;  //siteConsent is used to get the current consent  
+              } else {
+                  console.log("Error initializing WcpConsent: "+ err);
+              }
+          }, onConsentChanged, WcpConsent.themes.light);
+        }
+
+        addEventListener("DOMContentLoaded", initialize)
+        addEventListener("DOMContentLoaded", checkCookieManager)
+
+        function checkCookieManager(){
+          if(siteConsent.isConsentRequired){
+            document.getElementById("cookiesManager").style.display = 'block';
+            document.getElementById("divider").style.display = 'block';
+          }
+          else{
+            document.getElementById("cookiesManager").style.display = 'none';
+            document.getElementById("divider").style.display = 'none';
+          }
+        }
+
+        function manageConsent() {
+        if(siteConsent.isConsentRequired){
+            siteConsent.manageConsent();
+        }
+    }
+    </script>
+    {% endblock %}
+  </head>
+  <body>
+    <header>
+        <div id="cookie-banner"></div>
+        <a href="/"><span class="logotitle">GraphRAG</span></a>
+    </header>
+    <div class="page-content">
+        <!-- Sidebar -->
+        <aside class="menu">
+          <ul class="menu-list">
+            <li>
+              {{link_to("/", "Welcome")}}
+            </li>
+
+            <!-- Get Started Links -->
+            <li>
+              {{link_to("/posts/get_started/", "Get Started")}}
+              {{link_to("/posts/developing/", "Developing")}}
+            </li>
+
+            <!-- Indexing Links -->
+            <li>
+                {{link_to("/posts/index/overview/", "Indexing")}}
+                <ul>
+                  {%- for post in collections.indexing -%}
+                  <li>{{link_to(post.url, post.data.navtitle)}}</li>
+                  {%- endfor -%}
+
+                  <li>
+                    {{link_to("/posts/config/overview/", "Configuration")}}
+                    <ul>
+                      <li>{{link_to("/posts/config/init", "Init command")}}</li>
+                      <li>{{link_to("/posts/config/env_vars", "Using Env Vars")}}</li>
+                      <li>{{link_to("/posts/config/json_yaml", "Using JSON or YAML")}}</li>
+                      <li>{{link_to("/posts/config/custom", "Fully Custom")}}</li>
+                      <li>{{link_to("/posts/config/template", "Template")}}</li>
+                    </ul>
+                  </li>
+
+                  <li>
+                    {{link_to("/posts/prompt_tuning/overview/", "Prompt Tuning")}}
+                    <ul>
+                        <li>
+                            {{link_to("/posts/prompt_tuning/auto_prompt_tuning/", "Automatic Templating")}}
+                        </li>
+                        <li>
+                            {{link_to("/posts/prompt_tuning/manual_prompt_tuning/", "Manual Prompt Tuning")}}
+                        </li>
+                    </ul>
+                  </li>
+                </ul>
+            </li>
+            
+
+            <!-- Query Links -->
+            <li>
+              {{link_to("/posts/query/overview/", "Query")}}
+              <ul>
+                {%- for post in collections.orchestration -%}
+                <li>{{link_to(post.url, post.data.navtitle)}}</li>
+                {%- endfor -%}
+                <li>
+                  {{link_to("/posts/query/notebooks/overview/", "Notebooks")}}
+                  <ul>
+                    <li>{{link_to("/posts/query/notebooks/global_search_nb", "Global Search")}}</li>
+                    <li>{{link_to("/posts/query/notebooks/local_search_nb", "Local Search")}}</li>
+                  </ul>
+                </li>
+            </ul>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <h1>{{title}}</h1>
+            {{ content | safe }}
+        </main>
+    </div>
+    <footer>
+      <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy</a>
+      |
+      <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Health Privacy</a>
+      |
+      <span id="cookiesManager" onClick="manageConsent();">Cookies</span>
+      <span id="divider">|</span>
+      <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>
+      |
+      <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+      |
+      <a href="https://www.microsoft.com" id="copyright"></a>
+      |
+      <a href="https://github.com/microsoft/graphrag">GitHub</a>
+      |
+      <a href="https://github.com/Azure-Samples/graphrag-accelerator">Solution Accelerator</a>
+    </footer>    
+  </body>
+</html>

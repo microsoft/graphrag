@@ -1,0 +1,5 @@
+extends: default
+input:
+  file_type: text
+  base_dir: /some/overridden/dir
+  file_pattern: test.txt

@@ -1,0 +1,33 @@
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: "0.2"
+allowCompoundWords: true
+dictionaryDefinitions:
+  - name: dictionary
+    path: "./dictionary.txt"
+    addWords: true
+dictionaries:
+  - dictionary
+ignorePaths:
+  - cspell.config.yaml
+  - node_modules
+  - _site
+  - /project-words.txt
+  - default_pipeline.yml
+  - .turbo
+  - output/
+  - dist/
+  - temp_azurite/
+  - __pycache__
+  - pyproject.toml
+  - entity_extraction.txt
+  - package.json
+  - tests/fixtures/
+  - docsite/data/
+  - docsite/nbdocsite_template/
+  - docsite/posts/query/notebooks/inputs/
+  - examples_notebooks/inputs/
+  - "*.csv"
+  - "*.parquet"
+  - "*.faiss"
+  - "*.ipynb"
+  - "*.log"

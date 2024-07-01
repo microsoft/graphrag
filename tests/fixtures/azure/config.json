@@ -1,0 +1,13 @@
+{
+    "input_path": "./tests/fixtures/azure",
+    "input_file_type": "text",
+    "workflow_config": {
+        "skip_assert": true,
+        "azure": {
+            "input_container": "azurefixture",
+            "input_base_dir": "input"
+        }
+    },
+    "query_config": [],
+    "slow": false
+}

@@ -1,0 +1,67 @@
+# Node Artifacts
+*/node_modules/
+docsite/*/src/**/*.js
+docsite/*/lib/
+docsite/*/storybook-static/
+docsite/*/docsTemp/
+docsite/*/build/
+.swc/
+dist/
+# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
+docsite/.yarn/*
+!docsite/.yarn/patches
+!docsite/.yarn/releases
+!docsite/.yarn/plugins
+!docsite/.yarn/sdks
+!docsite/.yarn/versions
+docsite/.pnp.*
+
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# Python Artifacts
+python/*/lib/
+# Test Output
+.coverage
+coverage/
+licenses.txt
+examples_notebooks/*/lancedb
+examples_notebooks/*/data
+tests/fixtures/cache
+tests/fixtures/*/cache
+tests/fixtures/*/output
+lancedb/
+
+# Random
+.DS_Store
+*.log*
+.venv
+.conda
+.tmp
+
+
+.env
+build.zip
+
+.turbo
+
+__pycache__
+
+.pipeline
+
+# Azurite
+temp_azurite/
+__azurite*.json
+__blobstorage*.json
+__blobstorage__/
+
+# Getting started example
+ragtest/
+.ragtest/
+.pipelines
+.pipeline

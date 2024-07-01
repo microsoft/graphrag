@@ -1,0 +1,6 @@
+name: workflow_3
+steps:
+  - verb: fill
+    args:
+      to: "col_workflow_3"
+      value: 3

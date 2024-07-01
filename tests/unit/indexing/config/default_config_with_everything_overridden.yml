@@ -1,0 +1,20 @@
+extends: default
+
+input:
+  file_type: text
+  base_dir: /some/overridden/dir
+  file_pattern: test.txt
+
+storage:
+  type: file
+
+cache:
+  type: file
+
+reporting:
+  type: file
+
+workflows:
+  - name: TEST_WORKFLOW
+    steps:
+      - verb: TEST_VERB
