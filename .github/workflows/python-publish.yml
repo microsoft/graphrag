@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+env:
+  POETRY_VERSION: 1.8.3
+  PYTHON_VERSION: 3.10
+
 jobs:
   publish:
     name: Upload release to PyPI
