@@ -178,7 +178,7 @@ a {
   <body>
     <header>
         <div id="cookie-banner"></div>
-        <a href="/"><span class="logotitle">GraphRAG</span></a>
+        <a href="/graphrag/"><span class="logotitle">GraphRAG</span></a>
     </header>
     <div class="page-content">
         <!-- Sidebar -->
@@ -186,67 +186,67 @@ a {
           <ul class="menu-list">
             <li>
               
-<a href="/">Welcome</a>
+<a href="/graphrag/">Welcome</a>
 
             </li>
 
             <!-- Get Started Links -->
             <li>
               
-<a href="/posts/get_started/">Get Started</a>
+<a href="/graphrag/posts/get_started/">Get Started</a>
 
               
-<a href="/posts/developing/">Developing</a>
+<a href="/graphrag/posts/developing/">Developing</a>
 
             </li>
 
             <!-- Indexing Links -->
             <li>
                 
-<a href="/posts/index/overview/">Indexing</a>
+<a href="/graphrag/posts/index/overview/">Indexing</a>
 
                 <ul><li>
-<a href="/posts/index/0-architecture/">Architecture</a>
+<a href="/graphrag/posts/index/0-architecture/">Architecture</a>
 </li><li>
-<a href="/posts/index/1-default_dataflow/" class="is-active" aria-current="page">Dataflow</a>
+<a href="/graphrag/posts/index/1-default_dataflow/" class="is-active" aria-current="page">Dataflow</a>
 </li><li>
-<a href="/posts/index/2-cli/">CLI</a>
+<a href="/graphrag/posts/index/2-cli/">CLI</a>
 </li><li>
                     
-<a href="/posts/config/overview/">Configuration</a>
+<a href="/graphrag/posts/config/overview/">Configuration</a>
 
                     <ul>
                       <li>
-<a href="/posts/config/init">Init command</a>
+<a href="/graphrag/posts/config/init">Init command</a>
 </li>
                       <li>
-<a href="/posts/config/env_vars">Using Env Vars</a>
+<a href="/graphrag/posts/config/env_vars">Using Env Vars</a>
 </li>
                       <li>
-<a href="/posts/config/json_yaml">Using JSON or YAML</a>
+<a href="/graphrag/posts/config/json_yaml">Using JSON or YAML</a>
 </li>
                       <li>
-<a href="/posts/config/custom">Fully Custom</a>
+<a href="/graphrag/posts/config/custom">Fully Custom</a>
 </li>
                       <li>
-<a href="/posts/config/template">Template</a>
+<a href="/graphrag/posts/config/template">Template</a>
 </li>
                     </ul>
                   </li>
 
                   <li>
                     
-<a href="/posts/prompt_tuning/overview/">Prompt Tuning</a>
+<a href="/graphrag/posts/prompt_tuning/overview/">Prompt Tuning</a>
 
                     <ul>
                         <li>
                             
-<a href="/posts/prompt_tuning/auto_prompt_tuning/">Automatic Templating</a>
+<a href="/graphrag/posts/prompt_tuning/auto_prompt_tuning/">Automatic Templating</a>
 
                         </li>
                         <li>
                             
-<a href="/posts/prompt_tuning/manual_prompt_tuning/">Manual Prompt Tuning</a>
+<a href="/graphrag/posts/prompt_tuning/manual_prompt_tuning/">Manual Prompt Tuning</a>
 
                         </li>
                     </ul>
@@ -258,26 +258,26 @@ a {
             <!-- Query Links -->
             <li>
               
-<a href="/posts/query/overview/">Query</a>
+<a href="/graphrag/posts/query/overview/">Query</a>
 
               <ul><li>
-<a href="/posts/query/1-local_search/">Local Search</a>
+<a href="/graphrag/posts/query/1-local_search/">Local Search</a>
 </li><li>
-<a href="/posts/query/2-question_generation/">Question Generation</a>
+<a href="/graphrag/posts/query/2-question_generation/">Question Generation</a>
 </li><li>
-<a href="/posts/query/0-global_search/">Global Search</a>
+<a href="/graphrag/posts/query/0-global_search/">Global Search</a>
 </li><li>
-<a href="/posts/query/3-cli/">CLI</a>
+<a href="/graphrag/posts/query/3-cli/">CLI</a>
 </li><li>
                   
-<a href="/posts/query/notebooks/overview/">Notebooks</a>
+<a href="/graphrag/posts/query/notebooks/overview/">Notebooks</a>
 
                   <ul>
                     <li>
-<a href="/posts/query/notebooks/global_search_nb">Global Search</a>
+<a href="/graphrag/posts/query/notebooks/global_search_nb">Global Search</a>
 </li>
                     <li>
-<a href="/posts/query/notebooks/local_search_nb">Local Search</a>
+<a href="/graphrag/posts/query/notebooks/local_search_nb">Local Search</a>
 </li>
                   </ul>
                 </li>
@@ -301,7 +301,7 @@ a {
 <li><code>Node</code> - This table contains layout information for rendered graph-views of the Entities and Documents which have been embedded and clustered.</li>
 </ul>
 <h2>The Default Configuration Workflow</h2>
-<p>Let's take a look at how the default-configuration workflow transforms text documents into the <em>GraphRAG Knowledge Model</em>. This page gives a general overview of the major steps in this process. To fully configure this workflow, check out the <a href="/posts/config/overview/">configuration</a> documentation.</p>
+<p>Let's take a look at how the default-configuration workflow transforms text documents into the <em>GraphRAG Knowledge Model</em>. This page gives a general overview of the major steps in this process. To fully configure this workflow, check out the <a href="/graphrag/posts/config/overview/">configuration</a> documentation.</p>
 <pre class="mermaid">---&#10;title: Dataflow Overview&#10;---&#10;flowchart TB&#10;    subgraph phase1[Phase 1: Compose TextUnits]&#10;    documents[Documents] --&gt; chunk[Chunk]&#10;    chunk --&gt; embed[Embed] --&gt; textUnits[Text Units]&#10;    end&#10;    subgraph phase2[Phase 2: Graph Extraction]&#10;    textUnits --&gt; graph_extract[Entity &amp; Relationship Extraction]&#10;    graph_extract --&gt; graph_summarize[Entity &amp; Relationship Summarization]&#10;    graph_summarize --&gt; entity_resolve[Entity Resolution]&#10;    entity_resolve --&gt; claim_extraction[Claim Extraction]&#10;    claim_extraction --&gt; graph_outputs[Graph Tables]&#10;    end&#10;    subgraph phase3[Phase 3: Graph Augmentation]&#10;    graph_outputs --&gt; community_detect[Community Detection]&#10;    community_detect --&gt; graph_embed[Graph Embedding]&#10;    graph_embed --&gt; augmented_graph[Augmented Graph Tables]&#10;    end&#10;    subgraph phase4[Phase 4: Community Summarization]&#10;    augmented_graph --&gt; summarized_communities[Community Summarization]&#10;    summarized_communities --&gt; embed_communities[Community Embedding]&#10;    embed_communities --&gt; community_outputs[Community Tables]&#10;    end&#10;    subgraph phase5[Phase 5: Document Processing]&#10;    documents --&gt; link_to_text_units[Link to TextUnits]&#10;    textUnits --&gt; link_to_text_units&#10;    link_to_text_units --&gt; embed_documents[Document Embedding]&#10;    embed_documents --&gt; document_graph[Document Graph Creation]&#10;    document_graph --&gt; document_outputs[Document Tables]&#10;    end&#10;    subgraph phase6[Phase 6: Network Visualization]&#10;    document_outputs --&gt; umap_docs[Umap Documents]&#10;    augmented_graph --&gt; umap_entities[Umap Entities]&#10;    umap_docs --&gt; combine_nodes[Nodes Table]&#10;    umap_entities --&gt; combine_nodes&#10;    end&#10;</pre>
 <h2>Phase 1: Compose TextUnits</h2>
 <p>The first phase of the default-configuration workflow is to transform input documents into <em>TextUnits</em>. A <em>TextUnit</em> is a chunk of text that is used for our graph extraction techniques. They are also used as source-references by extracted knowledge items in order to empower breadcrumbs and provenance by concepts back to their original source tex.</p>
@@ -349,7 +349,7 @@ Entities and Relationships are extracted at once in our <em>entity_extract</em> 
 <p>In this phase of the workflow, we create the <em>Documents</em> table for the knowledge model.</p>
 <pre class="mermaid">---&#10;title: Document Processing&#10;---&#10;flowchart LR&#10;    aug[Augment] --&gt; dp[Link to TextUnits] --&gt; de[Avg. Embedding] --&gt; dg[Document Table Emission]&#10;</pre>
 <h3>Augment with Columns (CSV Only)</h3>
-<p>If the workflow is operating on CSV data, you may configure your workflow to add additional fields to Documents output. These fields should exist on the incoming CSV tables. Details about configuring this can be found in the <a href="/posts/config/overview/">configuration documentation</a>.</p>
+<p>If the workflow is operating on CSV data, you may configure your workflow to add additional fields to Documents output. These fields should exist on the incoming CSV tables. Details about configuring this can be found in the <a href="/graphrag/posts/config/overview/">configuration documentation</a>.</p>
 <h3>Link to TextUnits</h3>
 <p>In this step, we link each document to the text-units that were created in the first phase. This allows us to understand which documents are related to which text-units and vice-versa.</p>
 <h3>Document Embedding</h3>
