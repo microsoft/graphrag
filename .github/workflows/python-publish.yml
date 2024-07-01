@@ -25,12 +25,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION}}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: ${{ env.POETRY_VERSION}}
+          poetry-version: ${{ env.POETRY_VERSION }}
 
       - name: Add poetry-dynamic-versioning plugin
         run: poetry self add "poetry-dynamic-versioning[plugin]"
