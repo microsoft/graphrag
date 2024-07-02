@@ -22,6 +22,7 @@ This repository presents a methodology for using knowledge graph memory structur
 
 - To learn about our contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - To start developing _GraphRAG_, see [DEVELOPING.md](./DEVELOPING.md)
+- Join the conversation and provide feedback in the [GitHub Discussions tab!](https://github.com/microsoft/graphrag/discussions)
 
 ## Prompt Tuning
 
