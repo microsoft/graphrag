@@ -64,6 +64,7 @@ networkx = "^3"
 pandas = "^2.2.2"
 matplotlib = "^3.9.0"
 pyarrow = "^15.0.0"
+umap-learn = "^0.5.6"
 
 # Configuration
 pyyaml = "^6.0.1"
@@ -77,13 +78,11 @@ pydantic = "^2"
 rich = "^13.6.0"
 textual = "^0.72.0"
 devtools = "^0.12.2"
-
 typing-extensions = "^4.12.2"
 
 #Azure
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
-umap-learn = "^0.5.6"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.5.4"
