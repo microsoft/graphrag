@@ -6,7 +6,7 @@ layout: page
 👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/) <br/>
 👉 [GraphRAG Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
 👉 [GitHub Repository](https://github.com/microsoft/graphrag)<br/>
-👉 [GraphRAG Publication](https://arxiv.org/pdf/2404.16130)
+👉 [GraphRAG Arxiv](https://arxiv.org/pdf/2404.16130)
 
 <p align="center">
 <img src="img/GraphRag-Figure1.jpg" alt="Figure 1: LLM-generated knowledge graph built from a private dataset using GPT-4 Turbo." width="450" align="center" />
