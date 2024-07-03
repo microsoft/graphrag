@@ -28,7 +28,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--root",
-        help="If no configuration is defined, the root directory to use for input data and output data",
+        help="If no configuration is defined, the root directory to use for input data and output data. Default value: the current directory",
         # Only required if config is not defined
         required=False,
         default=".",
@@ -68,17 +68,10 @@ if __name__ == "__main__":
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
     )
-
     args = parser.parse_args()
 
-    if not args.config and not args.root:
-        parser.error(
-            "Either --config or --root must be provided."
-        )
     if args.overlay_defaults and not args.config:
-        parser.error(
-            "--overlay-defaults requires --config"
-        )
+        parser.error("--overlay-defaults requires --config")
 
     index_cli(
         root=args.root,

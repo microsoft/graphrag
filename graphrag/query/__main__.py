@@ -34,8 +34,9 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--root",
-        help="The data project root.",
+        help="The data project root. Default value: the current directory",
         required=False,
+        default=".",
         type=str,
     )
 

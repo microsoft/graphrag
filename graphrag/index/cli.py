@@ -83,7 +83,6 @@ def index_cli(
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
-    root = root or ""
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
     _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
@@ -217,16 +216,14 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
             file.write(COMMUNITY_REPORT_PROMPT)
 
 
-def _overlay_default_config(root: str, config: str, verbose: bool) -> PipelineConfig:
-    import yaml
-    data = yaml.safe_load(config)
-    parameters = create_graphrag_config(data, root)
-    return create_pipeline_config(parameters, verbose)
-
 def _create_default_config(
-    root: str, config:str | None, verbose: bool, dryrun: bool, reporter: ProgressReporter
+    root: str,
+    config: str | None,
+    verbose: bool,
+    dryrun: bool,
+    reporter: ProgressReporter,
 ) -> PipelineConfig:
-    """Vverlay default values on an existing config or create a default config if none is provided."""
+    """Overlay default values on an existing config or create a default config if none is provided."""
     if config and not Path(config).exists():
         msg = f"Configuration file {config} does not exist"
         raise ValueError
@@ -253,17 +250,26 @@ def _create_default_config(
     return result
 
 
-def _read_config_parameters(root: str, config:str | None, reporter: ProgressReporter):
+def _read_config_parameters(root: str, config: str | None, reporter: ProgressReporter):
     _root = Path(root)
-    settings_yaml = Path(config) if config and Path(config).suffix in [".yaml", ".yml"] else _root / "settings.yaml"
+    settings_yaml = (
+        Path(config)
+        if config and Path(config).suffix in [".yaml", ".yml"]
+        else _root / "settings.yaml"
+    )
     if not settings_yaml.exists():
         settings_yaml = _root / "settings.yml"
-    settings_json = Path(config) if config and Path(config).suffix == ".json" else _root / "settings.json"
+    settings_json = (
+        Path(config)
+        if config and Path(config).suffix == ".json"
+        else _root / "settings.json"
+    )
 
     if settings_yaml.exists():
         reporter.success(f"Reading settings from {settings_yaml}")
         with settings_yaml.open("r") as file:
             import yaml
+
             data = yaml.safe_load(file)
             return create_graphrag_config(data, root)
 
@@ -271,6 +277,7 @@ def _read_config_parameters(root: str, config:str | None, reporter: ProgressRepo
         reporter.success(f"Reading settings from {settings_json}")
         with settings_json.open("r") as file:
             import json
+
             data = json.loads(file.read())
             return create_graphrag_config(data, root)
 
