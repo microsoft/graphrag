@@ -31,6 +31,7 @@ if __name__ == "__main__":
         help="If no configuration is defined, the root directory to use for input data and output data",
         # Only required if config is not defined
         required=False,
+        default=".",
         type=str,
     )
     parser.add_argument(
@@ -62,8 +63,22 @@ if __name__ == "__main__":
         help="Create an initial configuration in the given path.",
         action="store_true",
     )
+    parser.add_argument(
+        "--overlay-defaults",
+        help="Overlay default configuration values on a provided configuration file (--config).",
+        action="store_true",
+    )
 
     args = parser.parse_args()
+
+    if not args.config and not args.root:
+        parser.error(
+            "Either --config or --root must be provided."
+        )
+    if args.overlay_defaults and not args.config:
+        parser.error(
+            "--overlay-defaults requires --config"
+        )
 
     index_cli(
         root=args.root,
@@ -76,5 +91,6 @@ if __name__ == "__main__":
         emit=args.emit,
         dryrun=args.dryrun or False,
         init=args.init or False,
+        overlay_defaults=args.overlay_defaults or False,
         cli=True,
     )
