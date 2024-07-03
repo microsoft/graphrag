@@ -69,7 +69,7 @@ def redact(input: dict) -> str:
 
 
 def index_cli(
-    root: str | None,
+    root: str,
     init: bool,
     verbose: bool,
     resume: str | None,
@@ -79,19 +79,24 @@ def index_cli(
     config: str | None,
     emit: str | None,
     dryrun: bool,
+    overlay_defaults: bool,
     cli: bool = False,
 ):
     """Run the pipeline with the given config."""
-    root = root or ""
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
     _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter(reporter)
     if init:
         _initialize_project_at(root, progress_reporter)
         sys.exit(0)
-    pipeline_config: str | PipelineConfig = config or _create_default_config(
-        root, verbose, dryrun or False, progress_reporter
-    )
+    if overlay_defaults:
+        pipeline_config: str | PipelineConfig = _create_default_config(
+            root, config, verbose, dryrun or False, progress_reporter
+        )
+    else:
+        pipeline_config: str | PipelineConfig = config or _create_default_config(
+            root, None, verbose, dryrun or False, progress_reporter
+        )
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
@@ -212,14 +217,22 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
 
 
 def _create_default_config(
-    root: str, verbose: bool, dryrun: bool, reporter: ProgressReporter
+    root: str,
+    config: str | None,
+    verbose: bool,
+    dryrun: bool,
+    reporter: ProgressReporter,
 ) -> PipelineConfig:
-    """Create a default config if none is provided."""
+    """Overlay default values on an existing config or create a default config if none is provided."""
+    if config and not Path(config).exists():
+        msg = f"Configuration file {config} does not exist"
+        raise ValueError
+
     if not Path(root).exists():
         msg = f"Root directory {root} does not exist"
         raise ValueError(msg)
 
-    parameters = _read_config_parameters(root, reporter)
+    parameters = _read_config_parameters(root, config, reporter)
     log.info(
         "using default configuration: %s",
         redact(parameters.model_dump()),
@@ -237,12 +250,20 @@ def _create_default_config(
     return result
 
 
-def _read_config_parameters(root: str, reporter: ProgressReporter):
+def _read_config_parameters(root: str, config: str | None, reporter: ProgressReporter):
     _root = Path(root)
-    settings_yaml = _root / "settings.yaml"
+    settings_yaml = (
+        Path(config)
+        if config and Path(config).suffix in [".yaml", ".yml"]
+        else _root / "settings.yaml"
+    )
     if not settings_yaml.exists():
         settings_yaml = _root / "settings.yml"
-    settings_json = _root / "settings.json"
+    settings_json = (
+        Path(config)
+        if config and Path(config).suffix == ".json"
+        else _root / "settings.json"
+    )
 
     if settings_yaml.exists():
         reporter.success(f"Reading settings from {settings_yaml}")
