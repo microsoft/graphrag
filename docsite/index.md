@@ -59,4 +59,4 @@ At query time, these structures are used to provide materials for the LLM contex
 ### Prompt Tuning
 
 Using _GraphRAG_ with your data out of the box may not yield the best possible results.
-We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](posts/index/3-prompt_tuning) in our documentation.
+We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](posts/prompt_tuning/overview/) in our documentation.
