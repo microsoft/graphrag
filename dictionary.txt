@@ -141,3 +141,6 @@ POKRALLY
 # English
 skippable
 upvote
+
+# Misc
+Arxiv
