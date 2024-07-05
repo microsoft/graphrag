@@ -52,7 +52,7 @@ To use the custom SSL configuration, follow these steps:
 
 1. **Install Dependencies**: Run `poetry add httpx[http2] pip-system-certs`.
 2. **SSL Configuration**: Use the provided Python script to set up `httpx` clients with custom SSL certificates.
-3. **Integration**: Integrate the configured `httpx` clients into your application, such as with `ChatOpenAI`.
+3. **Integration**: Integrate the configured `httpx` clients into your application, as demonstrated above with the `ChatOpenAI` llm.
 
 ## Additional Notes
 
