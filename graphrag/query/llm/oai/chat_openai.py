@@ -5,6 +5,7 @@
 
 from collections.abc import Callable
 from typing import Any
+from httpx import Client, AsyncClient
 
 from tenacity import (
     AsyncRetrying,
@@ -43,8 +44,8 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
         reporter: StatusReporter | None = None,
-        http_client: Callable | None = None,
-        http_client_async: Callable | None = None,
+        http_client: Client | None = None,
+        http_client_async: AsyncClient | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,

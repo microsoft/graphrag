@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
+from httpx import Client, AsyncClient
 
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
@@ -101,8 +102,8 @@ class OpenAILLMImpl(BaseOpenAILLM):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         reporter: StatusReporter | None = None,
-        http_client: Callable | None = None,
-        http_client_async: Callable | None = None,
+        http_client: Client | None = None,
+        http_client_async: AsyncClient | None = None,
     ):
         self.api_key = api_key
         self.azure_ad_token_provider = azure_ad_token_provider
