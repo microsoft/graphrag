@@ -7,6 +7,7 @@ docsite/*/docsTemp/
 docsite/*/build/
 .swc/
 dist/
+.idea
 # https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
 docsite/.yarn/*
 !docsite/.yarn/patches
