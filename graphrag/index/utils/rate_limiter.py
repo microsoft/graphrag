@@ -9,6 +9,7 @@ class RateLimiter:
     The RateLimiter was introduced to ensure that
     the CommunityReportsExtractor could be scheduled to adhere to
     rate configurations on a per-minute basis.
+    TODO: RateLimiter scheduled: using asyncio for async_mode
     """
     def __init__(self, rate: int, per: int):
         self.rate = rate
