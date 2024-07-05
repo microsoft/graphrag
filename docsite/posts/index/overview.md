@@ -69,7 +69,7 @@ workflows: list[PipelineWorkflowReference] = [
 dataset = pd.DataFrame([{"col1": 2, "col2": 4}, {"col1": 5, "col2": 10}])
 outputs = []
 async for output in await run_pipeline(dataset=dataset, workflows=workflows):
-    outputs.append(output
+    outputs.append(output)
 pipeline_result = outputs[-1]
 print(pipeline_result)
 ```
