@@ -11,6 +11,14 @@ import graphrag.config.defaults as defs
 class GlobalSearchConfig(BaseModel):
     """The default configuration section for Cache."""
 
+    temperature: float | None = Field(
+        description="The temperature to use for token generation.",
+        default=defs.LLM_TEMPERATURE,
+    )
+    top_p: float | None = Field(
+        description="The top-p value to use for token generation.",
+        default=defs.LLM_TOP_P,
+    )
     max_tokens: int = Field(
         description="The maximum context size in tokens.",
         default=defs.GLOBAL_SEARCH_MAX_TOKENS,

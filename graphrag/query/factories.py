@@ -165,11 +165,13 @@ def get_global_search_engine(
         max_data_tokens=gs_config.data_max_tokens,
         map_llm_params={
             "max_tokens": gs_config.map_max_tokens,
-            "temperature": 0.0,
+            "temperature": gs_config.temperature,
+            "top_p": gs_config.top_p,
         },
         reduce_llm_params={
             "max_tokens": gs_config.reduce_max_tokens,
-            "temperature": 0.0,
+            "temperature": gs_config.temperature,
+            "top_p": gs_config.top_p,
         },
         allow_general_knowledge=False,
         json_mode=False,
