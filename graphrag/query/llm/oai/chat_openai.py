@@ -43,6 +43,8 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
         reporter: StatusReporter | None = None,
+        http_client: Callable | None = None,
+        http_client_async: Callable | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,
@@ -56,6 +58,8 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
             max_retries=max_retries,
             request_timeout=request_timeout,
             reporter=reporter,
+            http_client=http_client,
+            http_client_async=http_client_async,
         )
         self.model = model
         self.retry_error_types = retry_error_types
