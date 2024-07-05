@@ -50,6 +50,9 @@ async def load_docs_in_chunks(
     chunks_df = pd.DataFrame(dataset_chunks["chunks"].explode())  # type: ignore
 
     # Depending on the select method, build the dataset
+    if limit <= 0 or limit > len(chunks_df):
+        limit = len(chunks_df)
+
     if select_method == "top":
         chunks_df = chunks_df[:limit]
     elif select_method == "random":
