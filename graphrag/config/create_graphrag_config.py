@@ -248,7 +248,8 @@ def create_graphrag_config(
                     type=llm_type,
                     model=reader.str(Fragment.model) or defs.LLM_MODEL,
                     max_tokens=reader.int(Fragment.max_tokens) or defs.LLM_MAX_TOKENS,
-                    temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
+                    temperature=reader.float(Fragment.temperature)
+                    or defs.LLM_TEMPERATURE,
                     top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
@@ -489,10 +490,8 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
-                temperature=reader.float(Fragment.temperature)
-                or defs.LLM_TEMPERATURE,
-                top_p=reader.float(Fragment.top_p)
-                or defs.LLM_TOP_P,
+                temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
+                top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")

@@ -98,6 +98,9 @@ class OpenAIConfiguration(Hashable, LLMConfig):
                 return value > 0
             return cast(bool | None, config.get(key))
 
+        print("Model CONFIG!!!!")
+        # print(config)
+
         self._api_key = lookup_required("api_key")
         self._model = lookup_required("model")
         self._deployment_name = lookup_str("deployment_name")

@@ -101,6 +101,7 @@ def _load_openai_completion_llm(
     config: dict[str, Any],
     azure=False,
 ):
+    print(config)
     return _create_openai_completion_llm(
         OpenAIConfiguration({
             **_get_base_config(config),
@@ -110,7 +111,8 @@ def _load_openai_completion_llm(
             "frequency_penalty": config.get("frequency_penalty", 0),
             "presence_penalty": config.get("presence_penalty", 0),
             "top_p": config.get("top_p", 1),
-            "max_tokens": config.get("max_tokens"),
+            "max_tokens": config.get("max_tokens", 4000),
+            "n": config.get("model_parameters", {}).get("n"),
         }),
         on_error,
         cache,
@@ -124,6 +126,7 @@ def _load_openai_chat_llm(
     config: dict[str, Any],
     azure=False,
 ):
+    print(config)
     return _create_openai_chat_llm(
         OpenAIConfiguration({
             # Set default values
@@ -135,6 +138,7 @@ def _load_openai_chat_llm(
             "presence_penalty": config.get("presence_penalty", 0),
             "top_p": config.get("top_p", 1),
             "max_tokens": config.get("max_tokens"),
+            "n": config.get("model_parameters", {}).get("n"),
         }),
         on_error,
         cache,

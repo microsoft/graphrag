@@ -54,7 +54,6 @@ async def _run_extractor(
     args: StrategyConfig,
     reporter: VerbCallbacks,
 ) -> CommunityReport | None:
-
     # RateLimiter
     rate_limiter = RateLimiter(rate=1, per=60)
     extractor = CommunityReportsExtractor(
