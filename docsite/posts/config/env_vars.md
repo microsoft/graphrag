@@ -64,6 +64,9 @@ These settings control the text generation model used by the pipeline. Any setti
 | `GRAPHRAG_LLM_MAX_RETRIES`                        |                          | The maximum number of retries to attempt when a request fails.                 | `int`   | 10                    |
 | `GRAPHRAG_LLM_MAX_RETRY_WAIT`                     |                          | The maximum number of seconds to wait between retries.                         | `int`   | 10                    |
 | `GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |                          | Whether to sleep on rate limit recommendation. (Azure Only)                    | `bool`  | `True`                |
+| `GRAPHRAG_LLM_TEMPERATURE`                        |                          | The temperature to use generation.                                             | `float` | 0                     |
+| `GRAPHRAG_LLM_TOP_P`                              |                          | The top_p to use for sampling.                                                 | `float` | 1                     |
+| `GRAPHRAG_LLM_N`                                  |                          | The number of responses to generate.                                           | `int`   | 1                     |
 
 ## Text Embedding Settings
 
