@@ -1,16 +1,20 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Rate limiter utility."""
+
 import asyncio
 import time
 
 
 class RateLimiter:
     """
-    The original TpmRpmLLMLimiter strategy did not account
-    for minute-based rate limiting when scheduled.
-    The RateLimiter was introduced to ensure that
-    the CommunityReportsExtractor could be scheduled to adhere to
-    rate configurations on a per-minute basis.
-    TODO: RateLimiter scheduled: using asyncio for async_mode
+    The original TpmRpmLLMLimiter strategy did not account for minute-based rate limiting when scheduled.
+
+    The RateLimiter was introduced to ensure that the CommunityReportsExtractor could be scheduled to adhere to rate configurations on a per-minute basis.
     """
+
+    # TODO: RateLimiter scheduled: using asyncio for async_mode
 
     def __init__(self, rate: int, per: int):
         self.rate = rate
@@ -19,6 +23,7 @@ class RateLimiter:
         self.last_check = time.monotonic()
 
     async def acquire(self):
+        """Acquire a token from the rate limiter."""
         current = time.monotonic()
         elapsed = current - self.last_check
         self.last_check = current
