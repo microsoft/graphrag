@@ -489,6 +489,10 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
+                temperature=reader.float(Fragment.temperature)
+                or defs.LLM_TEMPERATURE,
+                top_p=reader.float(Fragment.top_p)
+                or defs.LLM_TOP_P,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
