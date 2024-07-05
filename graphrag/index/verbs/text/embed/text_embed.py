@@ -75,7 +75,7 @@ async def text_embed(
             max_tokens: !ENV ${GRAPHRAG_MAX_TOKENS:6000} # The max tokens to use for openai
             organization: !ENV ${GRAPHRAG_OPENAI_ORGANIZATION} # The organization to use for openai
         vector_store: # The optional configuration for the vector store
-            type: lancedb # The type of vector store to use, available options are: azure_ai_search, lancedb
+            type: lancedb # The type of vector store to use, available options are: azure_ai_search, lancedb, milvus
             <...>
     ```
     """
