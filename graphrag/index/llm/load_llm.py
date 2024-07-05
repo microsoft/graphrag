@@ -110,7 +110,7 @@ def _load_openai_completion_llm(
             "frequency_penalty": config.get("frequency_penalty", 0),
             "presence_penalty": config.get("presence_penalty", 0),
             "top_p": config.get("top_p", 1),
-            "max_tokens": config.get("max_tokens"),
+            "max_tokens": config.get("max_tokens", 4000),
         }),
         on_error,
         cache,

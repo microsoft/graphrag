@@ -112,6 +112,8 @@ def create_graphrag_config(
                 proxy=reader.str("proxy") or base.proxy,
                 model=reader.str("model") or base.model,
                 max_tokens=reader.int(Fragment.max_tokens) or base.max_tokens,
+                temperature=reader.float(Fragment.temperature) or base.temperature,
+                top_p=reader.float(Fragment.top_p) or base.top_p,
                 model_supports_json=reader.bool(Fragment.model_supports_json)
                 or base.model_supports_json,
                 request_timeout=reader.float(Fragment.request_timeout)
@@ -246,6 +248,9 @@ def create_graphrag_config(
                     type=llm_type,
                     model=reader.str(Fragment.model) or defs.LLM_MODEL,
                     max_tokens=reader.int(Fragment.max_tokens) or defs.LLM_MAX_TOKENS,
+                    temperature=reader.float(Fragment.temperature)
+                    or defs.LLM_TEMPERATURE,
+                    top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or defs.LLM_REQUEST_TIMEOUT,
@@ -485,6 +490,8 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
+                temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
+                top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
@@ -550,16 +557,18 @@ class Fragment(str, Enum):
     max_retries = "MAX_RETRIES"
     max_retry_wait = "MAX_RETRY_WAIT"
     max_tokens = "MAX_TOKENS"
+    temperature = "TEMPERATURE"
+    top_p = "TOP_P"
     model = "MODEL"
     model_supports_json = "MODEL_SUPPORTS_JSON"
     prompt_file = "PROMPT_FILE"
     request_timeout = "REQUEST_TIMEOUT"
-    rpm = "RPM"
+    rpm = "REQUESTS_PER_MINUTE"
     sleep_recommendation = "SLEEP_ON_RATE_LIMIT_RECOMMENDATION"
     storage_account_blob_url = "STORAGE_ACCOUNT_BLOB_URL"
     thread_count = "THREAD_COUNT"
     thread_stagger = "THREAD_STAGGER"
-    tpm = "TPM"
+    tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
 
 
