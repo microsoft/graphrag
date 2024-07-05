@@ -251,10 +251,10 @@ def create_graphrag_config(
                     or defs.LLM_REQUEST_TIMEOUT,
                     cognitive_services_endpoint=cognitive_services_endpoint,
                     deployment_name=deployment_name,
-                    tokens_per_minute=reader.int(Fragment.tpm)
-                    or defs.LLM_TOKENS_PER_MINUTE,
-                    requests_per_minute=reader.int(Fragment.rpm)
-                    or defs.LLM_REQUESTS_PER_MINUTE,
+                    tokens_per_minute=reader.int("tokens_per_minute", Fragment.tpm)
+                                      or defs.LLM_TOKENS_PER_MINUTE,
+                    requests_per_minute=reader.int("requests_per_minute", Fragment.rpm)
+                                        or defs.LLM_REQUESTS_PER_MINUTE,
                     max_retries=reader.int(Fragment.max_retries)
                     or defs.LLM_MAX_RETRIES,
                     max_retry_wait=reader.float(Fragment.max_retry_wait)
