@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Exposed http_client and http_client_async for custom SSL configuration with httpx clients and updated documentation."
+}
