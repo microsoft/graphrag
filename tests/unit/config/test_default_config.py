@@ -101,13 +101,13 @@ ALL_ENV_VARS = {
     "GRAPHRAG_EMBEDDING_MAX_RETRIES": "3",
     "GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT": "0.1123",
     "GRAPHRAG_EMBEDDING_MODEL": "text-embedding-2",
-    "GRAPHRAG_EMBEDDING_RPM": "500",
+    "GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE": "500",
     "GRAPHRAG_EMBEDDING_SKIP": "a1,b1,c1",
     "GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION": "False",
     "GRAPHRAG_EMBEDDING_TARGET": "all",
     "GRAPHRAG_EMBEDDING_THREAD_COUNT": "2345",
     "GRAPHRAG_EMBEDDING_THREAD_STAGGER": "0.456",
-    "GRAPHRAG_EMBEDDING_TPM": "7000",
+    "GRAPHRAG_EMBEDDING_TOKENS_PER_MINUTE": "7000",
     "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
     "GRAPHRAG_ENCODING_MODEL": "test123",
     "GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL": "input_account_blob_url",
@@ -134,12 +134,13 @@ ALL_ENV_VARS = {
     "GRAPHRAG_LLM_MAX_TOKENS": "15000",
     "GRAPHRAG_LLM_MODEL_SUPPORTS_JSON": "true",
     "GRAPHRAG_LLM_MODEL": "test-llm",
+    "GRAPHRAG_LLM_N": "1",
     "GRAPHRAG_LLM_REQUEST_TIMEOUT": "12.7",
-    "GRAPHRAG_LLM_RPM": "900",
+    "GRAPHRAG_LLM_REQUESTS_PER_MINUTE": "900",
     "GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION": "False",
     "GRAPHRAG_LLM_THREAD_COUNT": "987",
     "GRAPHRAG_LLM_THREAD_STAGGER": "0.123",
-    "GRAPHRAG_LLM_TPM": "8000",
+    "GRAPHRAG_LLM_TOKENS_PER_MINUTE": "8000",
     "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
     "GRAPHRAG_MAX_CLUSTER_SIZE": "123",
     "GRAPHRAG_NODE2VEC_ENABLED": "true",
@@ -164,6 +165,8 @@ ALL_ENV_VARS = {
     "GRAPHRAG_STORAGE_TYPE": "blob",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/config/prompt-d.txt",
+    "GRAPHRAG_LLM_TEMPERATURE": "0.0",
+    "GRAPHRAG_LLM_TOP_P": "1.0",
     "GRAPHRAG_UMAP_ENABLED": "true",
     "GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP": "0.713",
     "GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP": "0.1234",
@@ -562,11 +565,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.llm.max_tokens == 15000
         assert parameters.llm.model == "test-llm"
         assert parameters.llm.model_supports_json
+        assert parameters.llm.n == 1
         assert parameters.llm.organization == "test_org"
         assert parameters.llm.proxy == "http://some/proxy"
         assert parameters.llm.request_timeout == 12.7
         assert parameters.llm.requests_per_minute == 900
         assert parameters.llm.sleep_on_rate_limit_recommendation is False
+        assert parameters.llm.temperature == 0.0
+        assert parameters.llm.top_p == 1.0
         assert parameters.llm.tokens_per_minute == 8000
         assert parameters.llm.type == "azure_openai_chat"
         assert parameters.parallelization.num_threads == 987
