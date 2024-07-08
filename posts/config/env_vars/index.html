@@ -467,14 +467,14 @@ a {
 <td>25</td>
 </tr>
 <tr>
-<td><code>GRAPHRAG_LLM_TPM</code></td>
+<td><code>GRAPHRAG_LLM_TOKENS_PER_MINUTE</code></td>
 <td></td>
 <td>The number of tokens per minute to allow for the LLM client. 0 = Bypass</td>
 <td><code>int</code></td>
 <td>0</td>
 </tr>
 <tr>
-<td><code>GRAPHRAG_LLM_RPM</code></td>
+<td><code>GRAPHRAG_LLM_REQUESTS_PER_MINUTE</code></td>
 <td></td>
 <td>The number of requests per minute to allow for the LLM client. 0 = Bypass</td>
 <td><code>int</code></td>
@@ -500,6 +500,27 @@ a {
 <td>Whether to sleep on rate limit recommendation. (Azure Only)</td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_TEMPERATURE</code></td>
+<td></td>
+<td>The temperature to use generation.</td>
+<td><code>float</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_TOP_P</code></td>
+<td></td>
+<td>The top_p to use for sampling.</td>
+<td><code>float</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>GRAPHRAG_LLM_N</code></td>
+<td></td>
+<td>The number of responses to generate.</td>
+<td><code>int</code></td>
+<td>1</td>
 </tr>
 </tbody>
 </table>
@@ -622,14 +643,14 @@ a {
 <td>25</td>
 </tr>
 <tr>
-<td><code>GRAPHRAG_EMBEDDING_TPM</code></td>
+<td><code>GRAPHRAG_EMBEDDING_TOKENS_PER_MINUTE</code></td>
 <td></td>
 <td>The number of tokens per minute to allow for the embedding client. 0 = Bypass</td>
 <td><code>int</code></td>
 <td>0</td>
 </tr>
 <tr>
-<td><code>GRAPHRAG_EMBEDDING_RPM</code></td>
+<td><code>GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE</code></td>
 <td></td>
 <td>The number of requests per minute to allow for the embedding client. 0 = Bypass</td>
 <td><code>int</code></td>
