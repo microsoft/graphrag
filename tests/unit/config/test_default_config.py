@@ -565,11 +565,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.llm.max_tokens == 15000
         assert parameters.llm.model == "test-llm"
         assert parameters.llm.model_supports_json
+        assert parameters.llm.n == 1
         assert parameters.llm.organization == "test_org"
         assert parameters.llm.proxy == "http://some/proxy"
         assert parameters.llm.request_timeout == 12.7
         assert parameters.llm.requests_per_minute == 900
         assert parameters.llm.sleep_on_rate_limit_recommendation is False
+        assert parameters.llm.temperature == 0.0
+        assert parameters.llm.top_p == 1.0
         assert parameters.llm.tokens_per_minute == 8000
         assert parameters.llm.type == "azure_openai_chat"
         assert parameters.parallelization.num_threads == 987
