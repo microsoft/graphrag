@@ -12,12 +12,14 @@ from .entity_relationship import generate_entity_relationship_examples
 from .entity_summarization_prompt import create_entity_summarization_prompt
 from .entity_types import generate_entity_types
 from .persona import generate_persona
+from .language import detect_language
 
 __all__ = [
     "MAX_TOKEN_COUNT",
     "create_community_summarization_prompt",
     "create_entity_extraction_prompt",
     "create_entity_summarization_prompt",
+    "detect_language",
     "generate_community_reporter_role",
     "generate_domain",
     "generate_entity_relationship_examples",
