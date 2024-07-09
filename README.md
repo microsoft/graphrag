@@ -34,6 +34,8 @@ To get started with the GraphRAG system we recommend trying the [Solution Accele
 
 This repository presents a methodology for using knowledge graph memory structures to enhance LLM outputs. Please note that the provided code serves as a demonstration and is not an officially supported Microsoft offering.
 
+⚠️ *Warning: GraphRAG indexing can be an expensive operation, please read all of the documentation to understand the process and costs involved, and start small.*
+
 ## Diving Deeper
 
 - To learn about our contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md)
