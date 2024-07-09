@@ -59,11 +59,14 @@ These settings control the text generation model used by the pipeline. Any setti
 | `GRAPHRAG_LLM_THREAD_COUNT`                       |                          | The number of threads to use for LLM parallelization.                          | `int`   | 50                    |
 | `GRAPHRAG_LLM_THREAD_STAGGER`                     |                          | The time to wait (in seconds) between starting each thread.                    | `float` | 0.3                   |
 | `GRAPHRAG_LLM_CONCURRENT_REQUESTS`                |                          | The number of concurrent requests to allow for the embedding client.           | `int`   | 25                    |
-| `GRAPHRAG_LLM_TPM`                                |                          | The number of tokens per minute to allow for the LLM client. 0 = Bypass        | `int`   | 0                     |
-| `GRAPHRAG_LLM_RPM`                                |                          | The number of requests per minute to allow for the LLM client. 0 = Bypass      | `int`   | 0                     |
+| `GRAPHRAG_LLM_TOKENS_PER_MINUTE`                  |                          | The number of tokens per minute to allow for the LLM client. 0 = Bypass        | `int`   | 0                     |
+| `GRAPHRAG_LLM_REQUESTS_PER_MINUTE`                |                          | The number of requests per minute to allow for the LLM client. 0 = Bypass      | `int`   | 0                     |
 | `GRAPHRAG_LLM_MAX_RETRIES`                        |                          | The maximum number of retries to attempt when a request fails.                 | `int`   | 10                    |
 | `GRAPHRAG_LLM_MAX_RETRY_WAIT`                     |                          | The maximum number of seconds to wait between retries.                         | `int`   | 10                    |
 | `GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |                          | Whether to sleep on rate limit recommendation. (Azure Only)                    | `bool`  | `True`                |
+| `GRAPHRAG_LLM_TEMPERATURE`                        |                          | The temperature to use generation.                                             | `float` | 0                     |
+| `GRAPHRAG_LLM_TOP_P`                              |                          | The top_p to use for sampling.                                                 | `float` | 1                     |
+| `GRAPHRAG_LLM_N`                                  |                          | The number of responses to generate.                                           | `int`   | 1                     |
 
 ## Text Embedding Settings
 
@@ -86,8 +89,8 @@ These settings control the text embedding model used by the pipeline. Any settin
 | `GRAPHRAG_EMBEDDING_THREAD_COUNT`                       |                          | The number of threads to use for parallelization for embeddings.                                                           | `int`   |                          |
 | `GRAPHRAG_EMBEDDING_THREAD_STAGGER`                     |                          | The time to wait (in seconds) between starting each thread for embeddings.                                                 | `float` | 50                       |
 | `GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS`                |                          | The number of concurrent requests to allow for the embedding client.                                                       | `int`   | 25                       |
-| `GRAPHRAG_EMBEDDING_TPM`                                |                          | The number of tokens per minute to allow for the embedding client. 0 = Bypass                                              | `int`   | 0                        |
-| `GRAPHRAG_EMBEDDING_RPM`                                |                          | The number of requests per minute to allow for the embedding client. 0 = Bypass                                            | `int`   | 0                        |
+| `GRAPHRAG_EMBEDDING_TOKENS_PER_MINUTE`                  |                          | The number of tokens per minute to allow for the embedding client. 0 = Bypass                                              | `int`   | 0                        |
+| `GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE`                |                          | The number of requests per minute to allow for the embedding client. 0 = Bypass                                            | `int`   | 0                        |
 | `GRAPHRAG_EMBEDDING_MAX_RETRIES`                        |                          | The maximum number of retries to attempt when a request fails.                                                             | `int`   | 10                       |
 | `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`                     |                          | The maximum number of seconds to wait between retries.                                                                     | `int`   | 10                       |
 | `GRAPHRAG_EMBEDDING_TARGET`                             |                          | The target fields to embed. Either `required` or `all`.                                                                    | `str`   | `required`               |

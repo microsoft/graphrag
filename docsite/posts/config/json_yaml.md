@@ -67,6 +67,9 @@ This is the base LLM configuration section. Other steps may override this config
 - `max_retry_wait` **float** - The maximum backoff time.
 - `sleep_on_rate_limit_recommendation` **bool** - Whether to adhere to sleep recommendations (Azure).
 - `concurrent_requests` **int** The number of open requests to allow at once.
+- `temperature` **float** - The temperature to use.
+- `top_p` **float** - The top-p value to use.
+- `n` **int** - The number of completions to generate.
 
 ## parallelization
 
