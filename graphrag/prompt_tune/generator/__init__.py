@@ -11,8 +11,8 @@ from .entity_extraction_prompt import create_entity_extraction_prompt
 from .entity_relationship import generate_entity_relationship_examples
 from .entity_summarization_prompt import create_entity_summarization_prompt
 from .entity_types import generate_entity_types
-from .persona import generate_persona
 from .language import detect_language
+from .persona import generate_persona
 
 __all__ = [
     "MAX_TOKEN_COUNT",
