@@ -4,6 +4,13 @@
 """System prompts for global search."""
 
 MAP_SYSTEM_PROMPT = """
+You should always follow the instructions and output a valid JSON object.
+The structure of the JSON object you can found in the instructions, use {{"answer": "$your_answer"}} as the default structure
+if you are not sure about the structure.
+
+And you should always end the block with a "```" to indicate the end of the JSON object.
+
+<instructions>
 ---Role---
 
 You are a helpful assistant responding to questions about data in the tables provided.
@@ -79,4 +86,6 @@ The response should be JSON formatted as follows:
         {{"description": "Description of point 2 [Data: Reports (report ids)]", "score": score_value}}
     ]
 }}
+</instructions>
+
 """

@@ -176,7 +176,7 @@ class GlobalSearch(BaseSearch):
             search_prompt = self.map_system_prompt.format(context_data=context_data)
             search_messages = [
                 {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
+                {"role": "user", "content": query + "\n```json\n"}
             ]
             async with self.semaphore:
                 search_response = await self.llm.agenerate(
