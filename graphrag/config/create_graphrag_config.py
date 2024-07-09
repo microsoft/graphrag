@@ -114,6 +114,7 @@ def create_graphrag_config(
                 max_tokens=reader.int(Fragment.max_tokens) or base.max_tokens,
                 temperature=reader.float(Fragment.temperature) or base.temperature,
                 top_p=reader.float(Fragment.top_p) or base.top_p,
+                n=reader.int(Fragment.n) or base.n,
                 model_supports_json=reader.bool(Fragment.model_supports_json)
                 or base.model_supports_json,
                 request_timeout=reader.float(Fragment.request_timeout)
@@ -251,6 +252,7 @@ def create_graphrag_config(
                     temperature=reader.float(Fragment.temperature)
                     or defs.LLM_TEMPERATURE,
                     top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
+                    n=reader.int(Fragment.n) or defs.LLM_N,
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or defs.LLM_REQUEST_TIMEOUT,
@@ -492,6 +494,7 @@ def create_graphrag_config(
             global_search_model = GlobalSearchConfig(
                 temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
                 top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
+                n=reader.int(Fragment.n) or defs.LLM_N,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
@@ -559,6 +562,7 @@ class Fragment(str, Enum):
     max_tokens = "MAX_TOKENS"
     temperature = "TEMPERATURE"
     top_p = "TOP_P"
+    n = "N"
     model = "MODEL"
     model_supports_json = "MODEL_SUPPORTS_JSON"
     prompt_file = "PROMPT_FILE"
