@@ -33,6 +33,10 @@ class LLMParameters(BaseModel):
         description="The top-p value to use for token generation.",
         default=defs.LLM_TOP_P,
     )
+    n: int | None = Field(
+        description="The number of completions to generate.",
+        default=defs.LLM_N,
+    )
     request_timeout: float = Field(
         description="The request timeout to use.", default=defs.LLM_REQUEST_TIMEOUT
     )
