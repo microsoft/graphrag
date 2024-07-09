@@ -24,6 +24,9 @@ llm:
   # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
   # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
   # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
+  # temperature: {defs.LLM_TEMPERATURE} # temperature for sampling
+  # top_p: {defs.LLM_TOP_P} # top-p sampling
+  # n: {defs.LLM_N} # Number of completions to generate
 
 parallelization:
   stagger: {defs.PARALLELIZATION_STAGGER}
@@ -108,7 +111,7 @@ claim_extraction:
   description: "{defs.CLAIM_DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
 
-community_report:
+community_reports:
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task

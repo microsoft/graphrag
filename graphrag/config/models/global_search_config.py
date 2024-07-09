@@ -19,6 +19,10 @@ class GlobalSearchConfig(BaseModel):
         description="The top-p value to use for token generation.",
         default=defs.LLM_TOP_P,
     )
+    n: int | None = Field(
+        description="The number of completions to generate.",
+        default=defs.LLM_N,
+    )
     max_tokens: int = Field(
         description="The maximum context size in tokens.",
         default=defs.GLOBAL_SEARCH_MAX_TOKENS,
