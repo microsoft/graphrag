@@ -17,6 +17,7 @@ from graphrag.prompt_tune.generator import (
     create_community_summarization_prompt,
     create_entity_extraction_prompt,
     create_entity_summarization_prompt,
+    generate_community_report_rating,
     generate_community_reporter_role,
     generate_domain,
     generate_entity_relationship_examples,
@@ -167,7 +168,14 @@ async def generate_indexing_prompts(
     reporter.info("Generating persona...")
     persona = await generate_persona(llm, domain)
     reporter.info(f"Generated persona: {persona}")
+    
 
+    reporter.info("Generating community report ranking description...")
+    community_report_ranking = await generate_community_report_rating(
+		llm, domain=domain, persona=persona, docs=doc_list
+	)
+    reporter.info(f"Generated community report ranking description: {community_report_ranking}")
+    
     entity_types = None
     if not skip_entity_types:
         reporter.info("Generating entity types")
@@ -219,7 +227,7 @@ async def generate_indexing_prompts(
 
     reporter.info("Generating community summarization prompt...")
     create_community_summarization_prompt(
-        persona=persona, role=community_reporter_role, output_path=output_path
+        persona=persona, role=community_reporter_role, report_rating_description=community_report_ranking, output_path=output_path
     )
     reporter.info(
         f"Generated community summarization prompt, stored in folder {output_path}"
