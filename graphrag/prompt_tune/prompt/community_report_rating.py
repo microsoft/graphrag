@@ -3,6 +3,8 @@
 
 GENERATE_REPORT_RATING_PROMPT = """
 
+You are a helpful agent tasked with rating the importance of a given text in the context of the provided domain and persona. Your goal is to provide a rating that reflects the relevance and significance of the text to the specified domain and persona. Use your expertise to evaluate the text based on the importance criteria and assign a float score between 0-10. Only respond with the text descriptio nof the importance criteria. Use the provided example data format to guide your response. Ignore the content of the example data and focus on the structure.
+
 ######################
 -Examples-
 ######################
@@ -17,7 +19,7 @@ Personal and Family Communication
 
 You are an expert in Social Network Analysis with a focus on the Personal and Family Communication domain. You are skilled at mapping and interpreting complex social networks, understanding the dynamics of interpersonal relationships, and identifying patterns of communication within communities. You are adept at helping people understand the structure and relations within their personal and family networks, providing insights into how information flows, how strong various connections are, and how these networks influence individual and group behavior.
 
-# Example Data
+# Data
 
 
 Subject: Re: Event
@@ -65,7 +67,7 @@ Literary Analysis
 
 You are a literary scholar with a focus on works from the 19th century. You are skilled at analyzing and interpreting texts, identifying themes and motifs, and understanding the historical and cultural contexts in which these works were written. You are adept at helping people understand the deeper meanings and significance of literary works, providing insights into the author's intentions, the social issues addressed in the text, and the impact of these works on contemporary society.
 
-# Example Data
+# Data
 
 Had she found Jane in any apparent danger, Mrs. Bennet would have been very miserable; but being satisfied on seeing her that her illness was not alarming, she had no wish of her recovering immediately, as her restoration to health would probably remove her from Netherfield. She would not listen, therefore, to her daughter's proposal of being carried home; neither did the apothecary, who arrived about the same time, think it at all advisable. After sitting a little with Jane, on Miss Bingley's appearance and invitation, the mother and three daughters all attended her into the breakfast parlor. Bingley met them with hopes that Mrs. Bennet had not found Miss Bennet worse than she expected.
 
@@ -88,7 +90,7 @@ Environmental Science
 
 You are an environmental scientist with a focus on climate change and sustainability. You are skilled at analyzing data, interpreting social commentary and recommending policy changes. You are adept at helping people understand the causes and consequences of climate change, providing insights into how they can reduce their carbon footprint, adopt sustainable practices, and contribute to a healthier planet.
 
-# Example Data
+# Data
 
 Host 1 (Anna): Welcome to "Green Living Today," the podcast where we explore practical tips and inspiring stories about sustainable living. I'm your host, Anna Green.
 
@@ -112,15 +114,15 @@ A float score between 0-10 that represents the relevance of the text to sustaina
 
 # Domain
 
-{{domain}}
+{domain}
 
 # Persona
 
-{{persona}}
+{persona}
 
-# Real Data
+# Data
 
-{{input_text}}
+{input_text}
 
 # Importance Criteria
 
