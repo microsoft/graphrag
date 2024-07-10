@@ -13,6 +13,7 @@ COMMUNITY_SUMMARIZATION_FILENAME = "community_report.txt"
 def create_community_summarization_prompt(
     persona: str,
     role: str,
+    report_rating_description: str,
     language: str,
     output_path: Path | None = None,
 ) -> str:
@@ -30,7 +31,10 @@ def create_community_summarization_prompt(
     - str: The community summarization prompt
     """
     prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(
-        persona=persona, role=role, language=language
+        persona=persona,
+        role=role,
+        report_rating_description=report_rating_description,
+        language=language,
     )
 
     if output_path:
