@@ -29,7 +29,7 @@ async def generate_community_report_rating(
     domain_prompt = GENERATE_REPORT_RATING_PROMPT.format(
         domain=domain, persona=persona, input_text=docs_str
     )
-    
+
     response = await llm(domain_prompt)
 
     return str(response.output).strip()
