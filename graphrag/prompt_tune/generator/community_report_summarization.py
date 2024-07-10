@@ -13,6 +13,7 @@ COMMUNITY_SUMMARIZATION_FILENAME = "community_report.txt"
 def create_community_summarization_prompt(
     persona: str,
     role: str,
+    report_rating_description: str,
     output_path: Path | None = None,
 ) -> str:
     """Create a prompt for community summarization. If output_path is provided, write the prompt to a file.
@@ -27,7 +28,7 @@ def create_community_summarization_prompt(
     -------
     - str: The community summarization prompt
     """
-    prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(persona=persona, role=role)
+    prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(persona=persona, role=role, report_rating_description=report_rating_description)
 
     if output_path:
         output_path.mkdir(parents=True, exist_ok=True)
