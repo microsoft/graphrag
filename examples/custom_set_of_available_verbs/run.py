@@ -22,7 +22,8 @@ async def run_with_config():
 
     outputs = []
     async for output in run_pipeline_with_config(
-        config_or_path=config_path, dataset=dataset
+        config_or_path=config_path, dataset=dataset,
+        additional_verbs=custom_verbs,
     ):
         outputs.append(output)
     pipeline_result = outputs[-1]
@@ -80,5 +81,5 @@ async def run_python():
 
 
 if __name__ == "__main__":
-    asyncio.run(run_python())
     asyncio.run(run_with_config())
+    asyncio.run(run_python())

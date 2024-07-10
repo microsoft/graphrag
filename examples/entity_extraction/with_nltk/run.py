@@ -7,22 +7,36 @@ from graphrag.index import run_pipeline, run_pipeline_with_config
 from graphrag.index.config import PipelineCSVInputConfig, PipelineWorkflowReference
 from graphrag.index.input import load_input
 
-sample_data_dir = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "../../_sample_data/"
-)
-shared_dataset = asyncio.run(
-    load_input(
-        PipelineCSVInputConfig(
-            file_pattern=".*\\.csv$",
-            base_dir=sample_data_dir,
-            source_column="author",
-            text_column="message",
-            timestamp_column="date(yyyyMMddHHmmss)",
-            timestamp_format="%Y%m%d%H%M%S",
-            title_column="message",
-        ),
-    )
-)
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+from graphrag.index.workflows import WorkflowDefinitions
+import pandas as pd
+
+custom_workflows: WorkflowDefinitions = {
+    "entity_extraction": lambda config: [
+        {
+            "verb": "entity_extract",
+            "args": {
+                "column": "message",
+                "id_column": "author",
+                "async_mode": "asyncio",
+                "strategy": config.get('entity_extract', {}).get(
+                    "strategy"
+                ),
+                "to": "entities",
+                "graph_to": "entity_graph",
+            },
+        }
+    ]
+}
+
+shared_dataset = pd.DataFrame([{"author": "aufsnn",
+                                "message": "Apple Inc. is an American multinational technology company headquartered in Cupertino, California. Tim Cook is the CEO of Apple.",
+                                "date(yyyyMMddHHmmss)": "20240709182511"
+                                },
+                               {"author": "dmeck",
+                                "message": "hello!",
+                                "date(yyyyMMddHHmmss)": "20240709182511"}])
 
 
 async def run_with_config():
@@ -38,7 +52,7 @@ async def run_with_config():
     # Grab the last result from the pipeline, should be our entity extraction
     tables = []
     async for table in run_pipeline_with_config(
-        config_or_path=config_path, dataset=dataset
+            config_or_path=config_path, dataset=dataset, additional_workflows=custom_workflows
     ):
         tables.append(table)
     pipeline_result = tables[-1]
@@ -56,13 +70,13 @@ async def run_python():
     workflows: list[PipelineWorkflowReference] = [
         PipelineWorkflowReference(
             name="entity_extraction",
-            config={"entity_extract": {"strategy": {"type": "nltk"}}},
+            config={"strategy": {"type": "nltk"}},
         )
     ]
 
     # Grab the last result from the pipeline, should be our entity extraction
     tables = []
-    async for table in run_pipeline(dataset=dataset, workflows=workflows):
+    async for table in run_pipeline(dataset=dataset, workflows=workflows, additional_workflows=custom_workflows):
         tables.append(table)
     pipeline_result = tables[-1]
 
