@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Fine tuning prompts for Community Reports Rating"""
+"""Fine tuning prompts for Community Reports Rating."""
 
 GENERATE_REPORT_RATING_PROMPT = """
 

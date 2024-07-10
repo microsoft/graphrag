@@ -30,7 +30,6 @@ def create_community_summarization_prompt(
     -------
     - str: The community summarization prompt
     """
-
     prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(
         persona=persona,
         role=role,
