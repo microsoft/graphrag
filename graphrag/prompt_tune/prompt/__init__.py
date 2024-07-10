@@ -4,6 +4,7 @@
 """Persona, entity type, relationships and domain generation prompts module."""
 
 from .community_reporter_role import GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT
+from .community_report_rating import GENERATE_REPORT_RATING_PROMPT
 from .domain import GENERATE_DOMAIN_PROMPT
 from .entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
@@ -22,6 +23,7 @@ __all__ = [
     "ENTITY_TYPE_GENERATION_JSON_PROMPT",
     "ENTITY_TYPE_GENERATION_PROMPT",
     "GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT",
+	"GENERATE_REPORT_RATING_PROMPT"
     "GENERATE_DOMAIN_PROMPT",
     "GENERATE_PERSONA_PROMPT",
     "UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT",

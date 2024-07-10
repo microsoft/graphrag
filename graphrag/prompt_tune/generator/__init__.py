@@ -4,6 +4,7 @@
 """Prompt generation module."""
 
 from .community_report_summarization import create_community_summarization_prompt
+from .community_report_rating import generate_community_report_rating
 from .community_reporter_role import generate_community_reporter_role
 from .defaults import MAX_TOKEN_COUNT
 from .domain import generate_domain
