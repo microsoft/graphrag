@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Add dynamic community report rating to the prompt tuning engine"
+}
