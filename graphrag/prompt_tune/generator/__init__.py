@@ -3,8 +3,8 @@
 
 """Prompt generation module."""
 
-from .community_report_summarization import create_community_summarization_prompt
 from .community_report_rating import generate_community_report_rating
+from .community_report_summarization import create_community_summarization_prompt
 from .community_reporter_role import generate_community_reporter_role
 from .defaults import MAX_TOKEN_COUNT
 from .domain import generate_domain
@@ -19,6 +19,7 @@ __all__ = [
     "create_community_summarization_prompt",
     "create_entity_extraction_prompt",
     "create_entity_summarization_prompt",
+    "generate_community_report_rating",
     "generate_community_reporter_role",
     "generate_domain",
     "generate_entity_relationship_examples",
