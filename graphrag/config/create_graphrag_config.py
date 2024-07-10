@@ -149,12 +149,12 @@ def create_graphrag_config(
             api_base = (
                 reader.str(Fragment.api_base) or base.api_base
                 if _is_azure(api_type)
-                else reader.str(Fragment.api_base) or None
+                else reader.str(Fragment.api_base)
             )
             api_version = (
                 reader.str(Fragment.api_version) or base.api_version
                 if _is_azure(api_type)
-                else reader.str(Fragment.api_version) or None
+                else reader.str(Fragment.api_version)
             )
             api_organization = reader.str("organization") or base.organization
             api_proxy = reader.str("proxy") or base.proxy
