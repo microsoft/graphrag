@@ -17,6 +17,7 @@ from graphrag.prompt_tune.generator import (
     create_community_summarization_prompt,
     create_entity_extraction_prompt,
     create_entity_summarization_prompt,
+    detect_language,
     generate_community_report_rating,
     generate_community_reporter_role,
     generate_domain,
@@ -38,6 +39,7 @@ async def fine_tune(
     limit: int = 15,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
+    language: str | None = None,
     skip_entity_types: bool = False,
     output: str = "prompts",
 ):
@@ -65,6 +67,7 @@ async def fine_tune(
         limit,
         max_tokens,
         chunk_size,
+        language,
         skip_entity_types,
         output,
         reporter,
@@ -79,6 +82,7 @@ async def fine_tune_with_config(
     limit: int = 15,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
+    language: str | None = None,
     skip_entity_types: bool = False,
     output: str = "prompts",
     reporter: ProgressReporter | None = None,
@@ -132,6 +136,7 @@ async def fine_tune_with_config(
         output_path,
         reporter,
         domain,
+        language,
         max_tokens,
         skip_entity_types,
     )
@@ -144,6 +149,7 @@ async def generate_indexing_prompts(
     output_path: Path,
     reporter: ProgressReporter,
     domain: str | None = None,
+    language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
     skip_entity_types: bool = False,
 ):
@@ -165,17 +171,23 @@ async def generate_indexing_prompts(
         domain = await generate_domain(llm, doc_list)
         reporter.info(f"Generated domain: {domain}")
 
+    if not language:
+        reporter.info("Detecting language...")
+        language = await detect_language(llm, doc_list)
+        reporter.info(f"Detected language: {language}")
+
     reporter.info("Generating persona...")
     persona = await generate_persona(llm, domain)
     reporter.info(f"Generated persona: {persona}")
-    
 
     reporter.info("Generating community report ranking description...")
     community_report_ranking = await generate_community_report_rating(
-		llm, domain=domain, persona=persona, docs=doc_list
-	)
-    reporter.info(f"Generated community report ranking description: {community_report_ranking}")
-    
+        llm, domain=domain, persona=persona, docs=doc_list
+    )
+    reporter.info(
+        f"Generated community report ranking description: {community_report_ranking}"
+    )
+
     entity_types = None
     if not skip_entity_types:
         reporter.info("Generating entity types")
@@ -194,6 +206,7 @@ async def generate_indexing_prompts(
         persona=persona,
         entity_types=entity_types,
         docs=doc_list,
+        language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
     )
     reporter.info("Done generating entity relationship examples")
@@ -203,6 +216,7 @@ async def generate_indexing_prompts(
         entity_types=entity_types,
         docs=doc_list,
         examples=examples,
+        language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
         model_name=config.llm.model,
         output_path=output_path,
@@ -213,6 +227,7 @@ async def generate_indexing_prompts(
     reporter.info("Generating entity summarization prompt...")
     create_entity_summarization_prompt(
         persona=persona,
+        language=language,
         output_path=output_path,
     )
     reporter.info(
@@ -227,7 +242,11 @@ async def generate_indexing_prompts(
 
     reporter.info("Generating community summarization prompt...")
     create_community_summarization_prompt(
-        persona=persona, role=community_reporter_role, report_rating_description=community_report_ranking, output_path=output_path
+        persona=persona,
+        role=community_reporter_role,
+        report_rating_description=community_report_ranking,
+        language=language,
+        output_path=output_path,
     )
     reporter.info(
         f"Generated community summarization prompt, stored in folder {output_path}"

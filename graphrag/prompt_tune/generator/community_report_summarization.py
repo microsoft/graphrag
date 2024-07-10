@@ -14,6 +14,7 @@ def create_community_summarization_prompt(
     persona: str,
     role: str,
     report_rating_description: str,
+    language: str,
     output_path: Path | None = None,
 ) -> str:
     """Create a prompt for community summarization. If output_path is provided, write the prompt to a file.
@@ -22,13 +23,20 @@ def create_community_summarization_prompt(
     ----------
     - persona (str): The persona to use for the community summarization prompt
     - role (str): The role to use for the community summarization prompt
+    - language (str): The language to use for the community summarization prompt
     - output_path (Path | None): The path to write the prompt to. Default is None. If None, the prompt is not written to a file. Default is None.
 
     Returns
     -------
     - str: The community summarization prompt
     """
-    prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(persona=persona, role=role, report_rating_description=report_rating_description)
+
+    prompt = COMMUNITY_REPORT_SUMMARIZATION_PROMPT.format(
+        persona=persona,
+        role=role,
+        report_rating_description=report_rating_description,
+        language=language,
+    )
 
     if output_path:
         output_path.mkdir(parents=True, exist_ok=True)

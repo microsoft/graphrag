@@ -23,7 +23,7 @@ For each pair of related entities, extract the following information:
 
 Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>)
 
-3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **{{record_delimiter}}** as the list delimiter.
+3. Return output in {language} as a single list of all the entities and relationships identified in steps 1 and 2. Use **{{record_delimiter}}** as the list delimiter. If you have to translate, just translate the descriptions, nothing else!
 
 4. When finished, output {{completion_delimiter}}
 
@@ -61,7 +61,7 @@ Format each relationship as a JSON entry with the following format:
 
 {{"source": <source_entity>, "target": <target_entity>, "relationship": <relationship_description>, "relationship_strength": <relationship_strength>}}
 
-3. Return output in English as a single list of all JSON entities and relationships identified in steps 1 and 2.
+3. Return output in {language} as a single list of all JSON entities and relationships identified in steps 1 and 2. If you have to translate, just translate the descriptions, nothing else!
 
 -Examples-
 ######################
@@ -120,7 +120,7 @@ For each pair of related entities, extract the following information:
 - relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
  Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>)
 
-3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **{{record_delimiter}}** as the list delimiter.
+3. Return output in {language} as a single list of all the entities and relationships identified in steps 1 and 2. Use **{{record_delimiter}}** as the list delimiter. If you have to translate, just translate the descriptions, nothing else!
 
 4. When finished, output {{completion_delimiter}}
 
