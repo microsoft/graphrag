@@ -45,8 +45,8 @@ EMBEDDING_TARGET = TextEmbeddingTarget.required
 
 CACHE_TYPE = CacheType.file
 CACHE_BASE_DIR = "cache"
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 100
+CHUNK_SIZE = 1024
+CHUNK_OVERLAP = 20
 CHUNK_GROUP_BY_COLUMNS = ["id"]
 CLAIM_DESCRIPTION = (
     "Any claims or facts that could be relevant to information discovery."
