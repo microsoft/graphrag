@@ -427,7 +427,7 @@ def create_graphrag_config(
 
         community_report_config = values.get("community_reports") or {}
         with (
-            reader.envvar_prefix(Section.community_report),
+            reader.envvar_prefix(Section.community_reports),
             reader.use(community_report_config),
         ):
             community_reports_model = CommunityReportsConfig(
@@ -583,7 +583,7 @@ class Section(str, Enum):
     cache = "CACHE"
     chunk = "CHUNK"
     claim_extraction = "CLAIM_EXTRACTION"
-    community_report = "COMMUNITY_REPORT"
+    community_reports = "COMMUNITY_REPORTS"
     embedding = "EMBEDDING"
     entity_extraction = "ENTITY_EXTRACTION"
     graphrag = "GRAPHRAG"
