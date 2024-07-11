@@ -2,6 +2,7 @@
 # Licensed under the MIT License
 
 """Utilities for working with tokens."""
+
 import logging
 
 import tiktoken
@@ -17,9 +18,9 @@ def num_tokens_from_string(
     if model is not None:
         try:
             encoding = tiktoken.encoding_for_model(model)
-        except KeyError as e:
-            log.error(f"Failed to get encoding for {model} when getting num_tokens_from_string, "
-                      f"fall back to default encoding {DEFAULT_ENCODING_NAME}")
+        except KeyError:
+            msg = f"Failed to get encoding for {model} when getting num_tokens_from_string. Fall back to default encoding {DEFAULT_ENCODING_NAME}"
+            log.warning(msg)
             encoding = tiktoken.get_encoding(DEFAULT_ENCODING_NAME)
     else:
         encoding = tiktoken.get_encoding(encoding_name or DEFAULT_ENCODING_NAME)
