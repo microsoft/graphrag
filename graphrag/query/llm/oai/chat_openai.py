@@ -181,8 +181,11 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                     chunk = await response.__anext__()  # type: ignore
                     if not chunk or not chunk.choices:
                         continue
-
-                    delta = chunk.choices[0].delta.content or ""  # type: ignore
+                    if chunk.choices[0].delta is None :
+                        _content = ""
+                    else:
+                        _content = chunk.choices[0].delta.content
+                    delta = _content  or ""  # type: ignore
                     full_response += delta
                     if callbacks:
                         for callback in callbacks:
