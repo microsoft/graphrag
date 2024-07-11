@@ -218,8 +218,8 @@ async def generate_indexing_prompts(
         examples=examples,
         language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
-        model_name=config.llm.model,
         output_path=output_path,
+        encoding_model=config.encoding_model,
         max_token_count=max_tokens,
     )
     reporter.info(f"Generated entity extraction prompt, stored in folder {output_path}")
