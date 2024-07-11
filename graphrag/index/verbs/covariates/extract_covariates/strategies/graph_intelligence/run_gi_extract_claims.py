@@ -8,6 +8,7 @@ from typing import Any
 
 from datashaper import VerbCallbacks
 
+import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
@@ -49,7 +50,7 @@ async def _execute(
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     extraction_prompt = strategy_config.get("extraction_prompt")
-    max_gleanings = strategy_config.get("max_gleanings", 0)
+    max_gleanings = strategy_config.get("max_gleanings", defs.CLAIM_MAX_GLEANINGS)
     tuple_delimiter = strategy_config.get("tuple_delimiter")
     record_delimiter = strategy_config.get("record_delimiter")
     completion_delimiter = strategy_config.get("completion_delimiter")
@@ -60,9 +61,9 @@ async def _execute(
         extraction_prompt=extraction_prompt,
         max_gleanings=max_gleanings,
         encoding_model=encoding_model,
-        on_error=lambda e, s, d: reporter.error("Claim Extraction Error", e, s, d)
-        if reporter
-        else None,
+        on_error=lambda e, s, d: (
+            reporter.error("Claim Extraction Error", e, s, d) if reporter else None
+        ),
     )
 
     claim_description = strategy_config.get("claim_description")
