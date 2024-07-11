@@ -140,7 +140,7 @@ def create_graphrag_config(
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
             api_key = reader.str(Fragment.api_key) or base.api_key
-            
+
             # In a unique events where:
             # - same api_bases for LLM and embeddings (both Azure)
             # - different api_bases for LLM and embeddings (both Azure)
