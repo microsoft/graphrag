@@ -7,15 +7,14 @@ COMMUNITY_REPORT_SUMMARIZATION_PROMPT = """
 {persona}
 
 # Goal
-Write a comprehensive assessment report of a community taking on the role of a {role}. The content of this report includes an overview of the community's key entities, their legal compliance, technical capabilities,
-reputation, and noteworthy claims.
+Write a comprehensive assessment report of a community taking on the role of a {role}. The content of this report includes an overview of the community's key entities and relationships.
 
 # Report Structure
 The report should include the following sections:
 - TITLE: community's name that represents its key entities - title should be short but specific. When possible, include representative named entities in the title.
-- SUMMARY: An executive summary of the community's overall structure, how its entities are related to each other, and significant threats associated with its entities.
-- THREAT SEVERITY RATING: a float score between 0-10 that represents the potential global impact to humanity as posed by entities within the community.
-- RATING EXPLANATION: Give a single sentence explanation of the threat severity rating.
+- SUMMARY: An executive summary of the community's overall structure, how its entities are related to each other, and significant points associated with its entities.
+- REPORT RATING: {report_rating_description}
+- RATING EXPLANATION: Give a single sentence explanation of the rating.
 - DETAILED FINDINGS: A list of 5-10 key insights about the community. Each insight should have a short summary followed by multiple paragraphs of explanatory text grounded according to the grounding rules below. Be comprehensive.
 
 Return output as a well-formed JSON-formatted string with the following format. Don't use any unnecessary escape sequences. The output should be a single JSON object that can be parsed by json.loads.
@@ -29,7 +28,7 @@ Return output as a well-formed JSON-formatted string with the following format. 
 
 # Grounding Rules
 After each paragraph, add data record reference if the content of the paragraph was derived from one or more data records. Reference is in the format of [records: <record_source> (<record_id_list>, ...<record_source> (<record_id_list>)]. If there are more than 10 data records, show the top 10 most relevant records.
-Each paragraph should contain multiple sentences of explanation and concrete examples with specific named entities. All paragraphs must have these references at the start and end. Use "NONE" if there are no related roles or records.
+Each paragraph should contain multiple sentences of explanation and concrete examples with specific named entities. All paragraphs must have these references at the start and end. Use "NONE" if there are no related roles or records. Everything should be in {language}.
 
 Example paragraph with references added:
 This is a paragraph of the output text [records: Entities (1, 2, 3), Claims (2, 5), Relationships (10, 12)]
