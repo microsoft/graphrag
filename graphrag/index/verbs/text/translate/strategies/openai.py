@@ -9,6 +9,7 @@ from typing import Any
 
 from datashaper import VerbCallbacks
 
+import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.llm import load_llm
@@ -40,8 +41,8 @@ async def run(
     )
     language = args.get("language", "English")
     prompt = args.get("prompt")
-    chunk_size = args.get("chunk_size", 2500)
-    chunk_overlap = args.get("chunk_overlap", 0)
+    chunk_size = args.get("chunk_size", defs.CHUNK_SIZE)
+    chunk_overlap = args.get("chunk_overlap", defs.CHUNK_OVERLAP)
 
     input = [input] if isinstance(input, str) else input
     return TextTranslationResult(
