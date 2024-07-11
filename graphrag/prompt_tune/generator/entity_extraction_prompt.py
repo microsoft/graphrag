@@ -21,6 +21,7 @@ def create_entity_extraction_prompt(
     entity_types: str | list[str] | None,
     docs: list[str],
     examples: list[str],
+    language: str,
     model_name: str,
     max_token_count: int,
     json_mode: bool = False,
@@ -34,6 +35,7 @@ def create_entity_extraction_prompt(
     - entity_types (str | list[str]): The entity types to extract
     - docs (list[str]): The list of documents to extract entities from
     - examples (list[str]): The list of examples to use for entity extraction
+    - language (str): The language of the inputs and outputs
     - model_name (str): The name of the model to use for token counting
     - max_token_count (int): The maximum number of tokens to use for the prompt
     - json_mode (bool): Whether to use JSON mode for the prompt. Default is False
@@ -84,9 +86,11 @@ def create_entity_extraction_prompt(
         tokens_left -= example_tokens
 
     prompt = (
-        prompt.format(entity_types=entity_types, examples=examples_prompt)
+        prompt.format(
+            entity_types=entity_types, examples=examples_prompt, language=language
+        )
         if entity_types
-        else prompt.format(examples=examples_prompt)
+        else prompt.format(examples=examples_prompt, language=language)
     )
 
     if output_path:
