@@ -5,6 +5,7 @@
 
 from pathlib import Path
 
+import graphrag.config.defaults as defs
 from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.prompt_tune.template import (
     EXAMPLE_EXTRACTION_TEMPLATE,
@@ -21,8 +22,9 @@ def create_entity_extraction_prompt(
     entity_types: str | list[str] | None,
     docs: list[str],
     examples: list[str],
-    model_name: str,
+    language: str,
     max_token_count: int,
+    encoding_model: str = defs.ENCODING_MODEL,
     json_mode: bool = False,
     output_path: Path | None = None,
 ) -> str:
@@ -34,7 +36,8 @@ def create_entity_extraction_prompt(
     - entity_types (str | list[str]): The entity types to extract
     - docs (list[str]): The list of documents to extract entities from
     - examples (list[str]): The list of examples to use for entity extraction
-    - model_name (str): The name of the model to use for token counting
+    - language (str): The language of the inputs and outputs
+    - encoding_model (str): The name of the model to use for token counting
     - max_token_count (int): The maximum number of tokens to use for the prompt
     - json_mode (bool): Whether to use JSON mode for the prompt. Default is False
     - output_path (Path | None): The path to write the prompt to. Default is None. If None, the prompt is not written to a file. Default is None.
@@ -53,8 +56,8 @@ def create_entity_extraction_prompt(
 
     tokens_left = (
         max_token_count
-        - num_tokens_from_string(prompt, model=model_name)
-        - num_tokens_from_string(entity_types, model=model_name)
+        - num_tokens_from_string(prompt, model=encoding_model)
+        - num_tokens_from_string(entity_types, model=encoding_model)
         if entity_types
         else 0
     )
@@ -74,7 +77,7 @@ def create_entity_extraction_prompt(
             )
         )
 
-        example_tokens = num_tokens_from_string(example_formatted, model=model_name)
+        example_tokens = num_tokens_from_string(example_formatted, model=encoding_model)
 
         # Squeeze in at least one example
         if i > 0 and example_tokens > tokens_left:
@@ -84,9 +87,11 @@ def create_entity_extraction_prompt(
         tokens_left -= example_tokens
 
     prompt = (
-        prompt.format(entity_types=entity_types, examples=examples_prompt)
+        prompt.format(
+            entity_types=entity_types, examples=examples_prompt, language=language
+        )
         if entity_types
-        else prompt.format(examples=examples_prompt)
+        else prompt.format(examples=examples_prompt, language=language)
     )
 
     if output_path:

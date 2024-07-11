@@ -78,6 +78,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--language",
+        help="Primary language used for inputs and outputs on GraphRAG",
+        type=str,
+        required=False,
+        default="",
+    )
+
+    parser.add_argument(
         "--no-entity-types",
         help="Use untyped entity extraction generation",
         action="store_true",
@@ -105,6 +113,7 @@ if __name__ == "__main__":
             args.limit,
             args.max_tokens,
             args.chunk_size,
+            args.language,
             args.no_entity_types,
             args.output,
         )

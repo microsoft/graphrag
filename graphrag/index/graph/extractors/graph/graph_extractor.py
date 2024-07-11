@@ -14,6 +14,7 @@ from typing import Any
 import networkx as nx
 import tiktoken
 
+import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils import clean_str
 from graphrag.llm import CompletionLLM
@@ -78,7 +79,11 @@ class GraphExtractor:
         )
         self._entity_types_key = entity_types_key or "entity_types"
         self._extraction_prompt = prompt or GRAPH_EXTRACTION_PROMPT
-        self._max_gleanings = max_gleanings if max_gleanings is not None else 0
+        self._max_gleanings = (
+            max_gleanings
+            if max_gleanings is not None
+            else defs.ENTITY_EXTRACTION_MAX_GLEANINGS
+        )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
