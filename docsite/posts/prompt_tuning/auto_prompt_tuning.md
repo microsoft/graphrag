@@ -19,7 +19,7 @@ Before running the automatic template generation make sure you have already init
 You can run the main script from the command line with various options:
 
 ```bash
-python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--no-entity-types] [--output OUTPUT]
+python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--no-entity-types] [--output OUTPUT]
 ```
 
 ## Command-Line Options
@@ -32,6 +32,8 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 
 - `--limit` (optional): The limit of text units to load when using random or top selection. Default is 15.
 
+- `--language` (optional): The language to use for input processing. If it is different from the inputs' language, the LLM will translate. Default is "" meaning it will be automatically detected from the inputs.
+
 - `--max-tokens` (optional): Maximum token count for prompt generation. Default is 2000.
 
 - `--chunk-size` (optional): The size in tokens to use for generating text units from input documents. Default is 200.
@@ -43,7 +45,7 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 ## Example Usage
 
 ```bash
-python -m graphrag.prompt_tune --root /path/to/project --domain "environmental news" --method random --limit 10 --max-tokens 2048 --chunk-size 256 --no-entity-types --output /path/to/output
+python -m graphrag.prompt_tune --root /path/to/project --domain "environmental news" --method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --no-entity-types --output /path/to/output
 ```
 
 or, with minimal configuration (suggested):
