@@ -3,6 +3,7 @@
 
 """Entity Extraction prompt generator module."""
 
+import warnings
 from pathlib import Path
 
 import graphrag.config.defaults as defs
@@ -63,6 +64,8 @@ def create_entity_extraction_prompt(
     )
 
     examples_prompt = ""
+    min_examples_required = 3
+    example_count = 0
 
     # Iterate over examples, while we have tokens left or examples left
     for i, output in enumerate(examples):
@@ -79,12 +82,18 @@ def create_entity_extraction_prompt(
 
         example_tokens = num_tokens_from_string(example_formatted, model=encoding_model)
 
-        # Squeeze in at least one example
-        if i > 0 and example_tokens > tokens_left:
+        # Ensure at least three examples are included
+        if example_count >= min_examples_required and example_tokens > tokens_left:
             break
 
         examples_prompt += example_formatted
         tokens_left -= example_tokens
+        example_count += 1
+
+    if example_count < min_examples_required:
+        warnings.warn(
+            "Not enough examples to meet the minimum requirement of three examples."
+        )
 
     prompt = (
         prompt.format(
