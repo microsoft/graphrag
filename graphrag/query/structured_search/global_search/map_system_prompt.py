@@ -45,7 +45,7 @@ user question: Is Person X currently under investigation for alleged illegal act
 | 4  | CEO of company X               | 1                 | Person X is CEO of Company X             |   3.0   |
 | 5  | owner of company Y              | 1                 | Person X is the owner of Company Y     |   3.0   |
 
-output:
+answer:
 {{
     "points": [
         {{"description": "Person X is the owner of Company Y and subject to many allegations of wrongdoing [Data: Reports (1, 2, 3, 4)].", "score": 85}},
@@ -59,5 +59,5 @@ user question: {user_question}
 ---Data tables---
 {context_data}
 
-output:
+answer:
 """
