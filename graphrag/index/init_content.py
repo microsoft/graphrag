@@ -145,6 +145,10 @@ local_search:
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
+  # temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE}
+  # top_p: {defs.LOCAL_SEARCH_LLM_TOP_P}
+  # n: {defs.LOCAL_SEARCH_LLM_N}
+  # llm_max_tokens: {defs.LOCAL_SEARCH_LLM_MAX_TOKENS}
 
 global_search:
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
@@ -152,6 +156,10 @@ global_search:
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}
   # reduce_max_tokens: {defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS}
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
+  # temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE}
+  # top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P}
+  # n: {defs.GLOBAL_SEARCH_LLM_N}
+  # llm_max_tokens: {defs.GLOBAL_SEARCH_LLM_MAX_TOKENS}
 """
 
 INIT_DOTENV = """

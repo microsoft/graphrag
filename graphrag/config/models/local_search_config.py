@@ -12,15 +12,15 @@ class LocalSearchConfig(BaseModel):
     """The default configuration section for Cache."""
     temperature: float | None = Field(
         description="The temperature to use for token generation.",
-        default=defs.LLM_TEMPERATURE,
+        default=defs.LOCAL_SEARCH_LLM_TEMPERATURE,
     )
     top_p: float | None = Field(
         description="The top-p value to use for token generation.",
-        default=defs.LLM_TOP_P,
+        default=defs.LOCAL_SEARCH_LLM_TOP_P,
     )
     n: int | None = Field(
         description="The number of completions to generate.",
-        default=defs.LLM_N,
+        default=defs.LOCAL_SEARCH_LLM_N,
     )
     text_unit_prop: float = Field(
         description="The text unit proportion.",

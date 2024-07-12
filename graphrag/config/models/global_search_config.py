@@ -13,19 +13,22 @@ class GlobalSearchConfig(BaseModel):
 
     temperature: float | None = Field(
         description="The temperature to use for token generation.",
-        default=defs.LLM_TEMPERATURE,
+        default=defs.GLOBAL_SEARCH_LLM_TEMPERATURE,
     )
     top_p: float | None = Field(
         description="The top-p value to use for token generation.",
-        default=defs.LLM_TOP_P,
+        default=defs.GLOBAL_SEARCH_LLM_TOP_P,
     )
     n: int | None = Field(
         description="The number of completions to generate.",
-        default=defs.LLM_N,
+        default=defs.GLOBAL_SEARCH_LLM_N,
     )
     max_tokens: int = Field(
         description="The maximum context size in tokens.",
         default=defs.GLOBAL_SEARCH_MAX_TOKENS,
+    )
+    llm_max_tokens: int = Field(
+        description="The LLM maximum tokens.", default=defs.GLOBAL_SEARCH_LLM_MAX_TOKENS
     )
     data_max_tokens: int = Field(
         description="The data llm maximum tokens.",
