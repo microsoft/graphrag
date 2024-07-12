@@ -10,7 +10,7 @@ from enum import Enum
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 
-from .cli import fine_tune
+from .cli import prompt_tune
 
 
 class DocSelectionType(Enum):
@@ -19,6 +19,7 @@ class DocSelectionType(Enum):
     ALL = "all"
     RANDOM = "random"
     TOP = "top"
+    AUTO = "auto"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -46,11 +47,27 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--method",
-        help="The method to select documents, one of: all, random or top",
+        help="The method to select documents, one of: all, random, top or auto",
         required=False,
         type=DocSelectionType,
         choices=list(DocSelectionType),
         default=DocSelectionType.RANDOM,
+    )
+
+    parser.add_argument(
+        "--n_subset_max",
+        help="The number of text chunks to embed when using auto selection method",
+        required=False,
+        type=int,
+        default=300,
+    )
+
+    parser.add_argument(
+        "--k",
+        help="The maximum number of documents to select from each centroid when using auto selection method",
+        required=False,
+        type=int,
+        default=15,
     )
 
     parser.add_argument(
@@ -106,7 +123,7 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     loop.run_until_complete(
-        fine_tune(
+        prompt_tune(
             args.root,
             args.domain,
             str(args.method),
@@ -116,5 +133,7 @@ if __name__ == "__main__":
             args.language,
             args.no_entity_types,
             args.output,
+            args.n_subset_max,
+            args.k,
         )
     )
