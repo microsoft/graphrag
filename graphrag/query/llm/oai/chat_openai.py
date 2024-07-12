@@ -146,7 +146,10 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                     if not chunk or not chunk.choices:
                         continue
 
-                    delta = chunk.choices[0].delta.content or ""  # type: ignore
+                    delta = (
+                        chunk.choices[0].delta.content if chunk.choices[0].delta else ""
+                    )  # type: ignore
+
                     full_response += delta
                     if callbacks:
                         for callback in callbacks:
@@ -182,7 +185,10 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                     if not chunk or not chunk.choices:
                         continue
 
-                    delta = chunk.choices[0].delta.content or ""  # type: ignore
+                    delta = (
+                        chunk.choices[0].delta.content if chunk.choices[0].delta else ""
+                    )  # type: ignore
+
                     full_response += delta
                     if callbacks:
                         for callback in callbacks:
