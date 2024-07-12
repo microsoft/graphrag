@@ -16,3 +16,6 @@ class LocalSearchConfigInput(TypedDict):
     top_k_relationships: NotRequired[int | str | None]
     max_tokens: NotRequired[int | str | None]
     llm_max_tokens: NotRequired[int | str | None]
+    temperature: NotRequired[float | str | None]
+    top_p: NotRequired[float | str | None]
+    n: NotRequired[int | str | None]

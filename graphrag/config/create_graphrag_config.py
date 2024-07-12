@@ -483,6 +483,10 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.local_search),
         ):
             local_search_model = LocalSearchConfig(
+                temperature=reader.float(Fragment.temperature),
+                top_p=reader.float(Fragment.top_p),
+                n=reader.int(Fragment.n)
+                or defs.LLM_N,
                 text_unit_prop=reader.float("text_unit_prop")
                 or defs.LOCAL_SEARCH_TEXT_UNIT_PROP,
                 community_prop=reader.float("community_prop")
@@ -506,9 +510,10 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
-                temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
-                top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
-                n=reader.int(Fragment.n) or defs.LLM_N,
+                temperature=reader.float(Fragment.temperature),
+                top_p=reader.float(Fragment.top_p),
+                n=reader.int(Fragment.n)
+                or defs.LLM_N,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")

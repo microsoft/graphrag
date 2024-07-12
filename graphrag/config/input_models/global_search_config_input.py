@@ -14,3 +14,6 @@ class GlobalSearchConfigInput(TypedDict):
     map_max_tokens: NotRequired[int | str | None]
     reduce_max_tokens: NotRequired[int | str | None]
     concurrency: NotRequired[int | str | None]
+    temperature: NotRequired[float | str | None]
+    top_p: NotRequired[float | str | None]
+    n: NotRequired[int | str | None]
