@@ -10,6 +10,7 @@ from typing import Any
 
 import tiktoken
 
+import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.llm import CompletionLLM
 
@@ -80,7 +81,9 @@ class ClaimExtractor:
         self._input_resolved_entities_key = (
             input_resolved_entities_key or "resolved_entities"
         )
-        self._max_gleanings = max_gleanings if max_gleanings is not None else 0
+        self._max_gleanings = (
+            max_gleanings if max_gleanings is not None else defs.CLAIM_MAX_GLEANINGS
+        )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments

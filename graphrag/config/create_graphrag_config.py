@@ -114,6 +114,7 @@ def create_graphrag_config(
                 max_tokens=reader.int(Fragment.max_tokens) or base.max_tokens,
                 temperature=reader.float(Fragment.temperature) or base.temperature,
                 top_p=reader.float(Fragment.top_p) or base.top_p,
+                n=reader.int(Fragment.n) or base.n,
                 model_supports_json=reader.bool(Fragment.model_supports_json)
                 or base.model_supports_json,
                 request_timeout=reader.float(Fragment.request_timeout)
@@ -136,13 +137,27 @@ def create_graphrag_config(
         config: LLMConfigInput, base: LLMParameters
     ) -> LLMParameters:
         with reader.use(config.get("llm")):
-            api_key = reader.str(Fragment.api_key) or base.api_key
-            api_base = reader.str(Fragment.api_base) or base.api_base
-            api_version = reader.str(Fragment.api_version) or base.api_version
-            api_organization = reader.str("organization") or base.organization
-            api_proxy = reader.str("proxy") or base.proxy
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
+            api_key = reader.str(Fragment.api_key) or base.api_key
+
+            # In a unique events where:
+            # - same api_bases for LLM and embeddings (both Azure)
+            # - different api_bases for LLM and embeddings (both Azure)
+            # - LLM uses Azure OpenAI, while embeddings uses base OpenAI (this one is important)
+            # - LLM uses Azure OpenAI, while embeddings uses third-party OpenAI-like API
+            api_base = (
+                reader.str(Fragment.api_base) or base.api_base
+                if _is_azure(api_type)
+                else reader.str(Fragment.api_base)
+            )
+            api_version = (
+                reader.str(Fragment.api_version) or base.api_version
+                if _is_azure(api_type)
+                else reader.str(Fragment.api_version)
+            )
+            api_organization = reader.str("organization") or base.organization
+            api_proxy = reader.str("proxy") or base.proxy
             cognitive_services_endpoint = (
                 reader.str(Fragment.cognitive_services_endpoint)
                 or base.cognitive_services_endpoint
@@ -251,6 +266,7 @@ def create_graphrag_config(
                     temperature=reader.float(Fragment.temperature)
                     or defs.LLM_TEMPERATURE,
                     top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
+                    n=reader.int(Fragment.n) or defs.LLM_N,
                     model_supports_json=reader.bool(Fragment.model_supports_json),
                     request_timeout=reader.float(Fragment.request_timeout)
                     or defs.LLM_REQUEST_TIMEOUT,
@@ -425,7 +441,7 @@ def create_graphrag_config(
 
         community_report_config = values.get("community_reports") or {}
         with (
-            reader.envvar_prefix(Section.community_report),
+            reader.envvar_prefix(Section.community_reports),
             reader.use(community_report_config),
         ):
             community_reports_model = CommunityReportsConfig(
@@ -492,6 +508,7 @@ def create_graphrag_config(
             global_search_model = GlobalSearchConfig(
                 temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
                 top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
+                n=reader.int(Fragment.n) or defs.LLM_N,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
@@ -559,6 +576,7 @@ class Fragment(str, Enum):
     max_tokens = "MAX_TOKENS"
     temperature = "TEMPERATURE"
     top_p = "TOP_P"
+    n = "N"
     model = "MODEL"
     model_supports_json = "MODEL_SUPPORTS_JSON"
     prompt_file = "PROMPT_FILE"
@@ -579,7 +597,7 @@ class Section(str, Enum):
     cache = "CACHE"
     chunk = "CHUNK"
     claim_extraction = "CLAIM_EXTRACTION"
-    community_report = "COMMUNITY_REPORT"
+    community_reports = "COMMUNITY_REPORTS"
     embedding = "EMBEDDING"
     entity_extraction = "ENTITY_EXTRACTION"
     graphrag = "GRAPHRAG"
