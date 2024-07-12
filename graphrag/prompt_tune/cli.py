@@ -32,7 +32,7 @@ from graphrag.prompt_tune.loader import (
 )
 
 
-async def fine_tune(
+async def prompt_tune(
     root: str,
     domain: str,
     select: str = "random",
@@ -42,8 +42,10 @@ async def fine_tune(
     language: str | None = None,
     skip_entity_types: bool = False,
     output: str = "prompts",
+    n_subset_max: int = 300,
+    k: int = 15,
 ):
-    """Fine tune the model.
+    """Prompt tune the model.
 
     Parameters
     ----------
@@ -55,11 +57,13 @@ async def fine_tune(
     - chunk_size: The chunk token size to use.
     - skip_entity_types: Skip generating entity types.
     - output: The output folder to store the prompts.
+    - n_subset_max: The number of text chunks to embed when using auto selection method.
+    - k: The number of documents to select when using auto selection method.
     """
     reporter = PrintProgressReporter("")
     config = read_config_parameters(root, reporter)
 
-    await fine_tune_with_config(
+    await prompt_tune_with_config(
         root,
         config,
         domain,
@@ -71,10 +75,12 @@ async def fine_tune(
         skip_entity_types,
         output,
         reporter,
+        n_subset_max,
+        k,
     )
 
 
-async def fine_tune_with_config(
+async def prompt_tune_with_config(
     root: str,
     config: GraphRagConfig,
     domain: str,
@@ -86,8 +92,10 @@ async def fine_tune_with_config(
     skip_entity_types: bool = False,
     output: str = "prompts",
     reporter: ProgressReporter | None = None,
+    n_subset_max: int = 300,
+    k: int = 15,
 ):
-    """Fine tune the model with a configuration.
+    """Prompt tune the model with a configuration.
 
     Parameters
     ----------
@@ -101,6 +109,8 @@ async def fine_tune_with_config(
     - skip_entity_types: Skip generating entity types.
     - output: The output folder to store the prompts.
     - reporter: The progress reporter.
+    - n_subset_max: The number of text chunks to embed when using auto selection method.
+    - k: The number of documents to select when using auto selection method.
 
     Returns
     -------
@@ -118,11 +128,13 @@ async def fine_tune_with_config(
         select_method=select,
         reporter=reporter,
         chunk_size=chunk_size,
+        n_subset_max=n_subset_max,
+        k=k,
     )
 
     # Create LLM from config
     llm = load_llm(
-        "fine_tuning",
+        "prompt_tuning",
         config.llm.type,
         NoopVerbCallbacks(),
         None,
