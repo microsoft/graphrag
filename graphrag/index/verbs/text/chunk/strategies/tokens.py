@@ -9,20 +9,18 @@ from typing import Any
 import tiktoken
 from datashaper import ProgressTicker
 
+import graphrag.config.defaults as defs
 from graphrag.index.text_splitting import Tokenizer
 from graphrag.index.verbs.text.chunk.typing import TextChunk
-
-DEFAULT_CHUNK_SIZE = 2500  # tokens
-DEFAULT_CHUNK_OVERLAP = 300  # tokens
 
 
 def run(
     input: list[str], args: dict[str, Any], tick: ProgressTicker
 ) -> Iterable[TextChunk]:
     """Chunks text into multiple parts. A pipeline verb."""
-    tokens_per_chunk = args.get("chunk_size", DEFAULT_CHUNK_SIZE)
-    chunk_overlap = args.get("chunk_overlap", DEFAULT_CHUNK_OVERLAP)
-    encoding_name = args.get("encoding_name", "cl100k_base")
+    tokens_per_chunk = args.get("chunk_size", defs.CHUNK_SIZE)
+    chunk_overlap = args.get("chunk_overlap", defs.CHUNK_OVERLAP)
+    encoding_name = args.get("encoding_name", defs.ENCODING_MODEL)
     enc = tiktoken.get_encoding(encoding_name)
 
     def encode(text: str) -> list[int]:

@@ -73,8 +73,8 @@ def chunk(
     ```yaml
     strategy:
         type: tokens
-        chunk_size: 1000 # Optional, The chunk size to use, default: 1000
-        chunk_overlap: 300 # Optional, The chunk overlap to use, default: 300
+        chunk_size: 1200 # Optional, The chunk size to use, default: 1200
+        chunk_overlap: 100 # Optional, The chunk overlap to use, default: 100
     ```
 
     ### sentence

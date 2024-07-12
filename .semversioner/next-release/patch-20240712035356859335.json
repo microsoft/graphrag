@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "fix llm response content is None in query"
+}
