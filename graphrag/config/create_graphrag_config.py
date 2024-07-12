@@ -480,7 +480,7 @@ def create_graphrag_config(
 
         with (
             reader.use(values.get("local_search")),
-            reader.envvar_prefix(Section.llm),
+            reader.envvar_prefix(Section.local_search),
         ):
             local_search_model = LocalSearchConfig(
                 temperature=reader.float(Fragment.temperature)
@@ -509,7 +509,7 @@ def create_graphrag_config(
 
         with (
             reader.use(values.get("global_search")),
-            reader.envvar_prefix(Section.llm),
+            reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
                 temperature=reader.float(Fragment.temperature)
