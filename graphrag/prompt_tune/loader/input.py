@@ -3,11 +3,11 @@
 
 """Input loading module."""
 
-from typing import cast, tuple
+from typing import cast
 
 import numpy as np
 import pandas as pd
-from datashaper import VerbCallbacks, TableContainer, VerbInput
+from datashaper import NoopVerbCallbacks, VerbCallbacks, TableContainer, VerbInput
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
