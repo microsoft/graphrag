@@ -7,7 +7,7 @@ from typing import cast
 
 import numpy as np
 import pandas as pd
-from datashaper import NoopVerbCallbacks, VerbCallbacks, TableContainer, VerbInput
+from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
@@ -95,7 +95,7 @@ async def load_docs_in_chunks(
         embedding_llm = load_llm_embeddings(
             name="prompt_tuning_embeddings",
             llm_type=config.embeddings.resolved_strategy()["llm"]["type"],
-            callbacks=VerbCallbacks,
+            callbacks=NoopVerbCallbacks(),
             cache=None,
             llm_config=config.embeddings.resolved_strategy()["llm"],
         )
