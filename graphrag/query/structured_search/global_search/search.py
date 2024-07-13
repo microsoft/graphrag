@@ -6,6 +6,7 @@
 import asyncio
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -92,6 +93,7 @@ class GlobalSearch(BaseSearch):
 
         self.map_llm_params = map_llm_params
         self.reduce_llm_params = reduce_llm_params
+        self.json_mode = json_mode
         if json_mode:
             self.map_llm_params["response_format"] = {"type": "json_object"}
         else:
@@ -174,6 +176,9 @@ class GlobalSearch(BaseSearch):
         search_prompt = ""
         try:
             search_prompt = self.map_system_prompt.format(context_data=context_data)
+            if self.json_mode:
+                search_prompt += "\nYour response should be in JSON format."
+            self._last_search_prompt = search_prompt
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
@@ -228,15 +233,37 @@ class GlobalSearch(BaseSearch):
         -------
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
+
+        Raises
+        ------
+        ValueError
+            If the response cannot be parsed as JSON or doesn't contain the expected structure
         """
-        parsed_elements = json.loads(search_response)["points"]
-        return [
-            {
-                "answer": element["description"],
-                "score": int(element["score"]),
-            }
-            for element in parsed_elements
-        ]
+        # Try to extract JSON from the response if it's embedded in text
+        json_match = re.search(r"\{.*\}", search_response, re.DOTALL)
+        json_str = json_match.group() if json_match else search_response
+
+        try:
+            parsed_data = json.loads(json_str)
+        except json.JSONDecodeError as err:
+            error_msg = "Failed to parse response as JSON"
+            raise ValueError(error_msg) from err
+
+        if "points" not in parsed_data or not isinstance(parsed_data["points"], list):
+            error_msg = "Response JSON does not contain a 'points' list"
+            raise ValueError(error_msg)
+
+        try:
+            return [
+                {
+                    "answer": element["description"],
+                    "score": int(element["score"]),
+                }
+                for element in parsed_data["points"]
+            ]
+        except (KeyError, ValueError) as e:
+            error_msg = f"Error processing points: {e!s}"
+            raise ValueError(error_msg) from e
 
     async def _reduce_response(
         self,
@@ -316,6 +343,8 @@ class GlobalSearch(BaseSearch):
             )
             if self.allow_general_knowledge:
                 search_prompt += "\n" + self.general_knowledge_inclusion_prompt
+            if self.json_mode:
+                search_prompt += "\nYour response should be in JSON format."
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
