@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Modify defaults for CHUNK_SIZE, CHUNK_OVERLAP and GLEANINGS to reduce time and LLM calls"
+}

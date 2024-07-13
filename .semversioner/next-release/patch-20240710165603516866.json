@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fixed an issue where base OpenAI embeddings can't work with Azure OpenAI LLM"
+}
