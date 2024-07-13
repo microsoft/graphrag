@@ -76,7 +76,6 @@ tenacity = "^8.2.3"
 
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.72.0"
 devtools = "^0.12.2"
 typing-extensions = "^4.12.2"
 
@@ -96,7 +95,6 @@ pytest-asyncio = "^0.23.4"
 pytest-timeout = "^2.3.1"
 ruff = "^0.5.1"
 semversioner = "^2.0.3"
-
 update-toml = "^0.2.1"
 deptry = "^0.16.1"
 
