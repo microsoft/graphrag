@@ -439,7 +439,7 @@ def create_graphrag_config(
                 or defs.CLAIM_MAX_GLEANINGS,
             )
 
-        community_report_config = values.get("community_reports") or {}
+        community_report_config = values.get("community_report") or {}
         with (
             reader.envvar_prefix(Section.community_reports),
             reader.use(community_report_config),
