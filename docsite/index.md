@@ -44,7 +44,7 @@ GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/workla
 
 ### Index
 
-- Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references ino our outputs.
+- Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references into our outputs.
 - Extract all entities, relationships, and key claims from the TextUnits using an LLM.
 - Perform a hierarchical clustering of the graph using the [Leiden technique](https://arxiv.org/pdf/1810.08473.pdf). To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.
 - Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.
