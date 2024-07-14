@@ -13,7 +13,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.index.utils.json import clean_up_json
+from graphrag.index.utils.json import clean_up_json, fix_malformed_json
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,

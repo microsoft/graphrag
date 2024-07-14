@@ -1,7 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+from json_repair import repair_json
+
 """JSON cleaning and formatting utilities."""
+
+
+def fix_malformed_json(json_str: str) -> str:
+    """Fixup potentially malformed json string using json_repair."""
+    return str(repair_json(json_str=json_str, return_objects=False))
 
 
 def clean_up_json(json_str: str) -> str:

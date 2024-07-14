@@ -57,6 +57,9 @@ openai = "^1.35.7"
 nltk = "3.8.1"
 tiktoken = "^0.7.0"
 
+# LLM JSON parsing
+json-repair = "0.25.3"
+
 # Data-Sci
 numba = "0.60.0"
 numpy = "^1.25.2"

@@ -16,7 +16,7 @@ from graphrag.llm.types import (
     LLMOutput,
 )
 
-from ._json import clean_up_json
+from ._json import clean_up_json, fix_malformed_json
 from ._prompts import JSON_CHECK_PROMPT
 from .openai_configuration import OpenAIConfiguration
 from .types import OpenAIClientTypes
@@ -120,6 +120,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         result = await self._invoke(input, **kwargs)
         history = result.history or []
         output = clean_up_json(result.output or "")
+        output = fix_malformed_json(result.output or "")
         try:
             json_output = try_parse_json_object(output)
             return LLMOutput[CompletionOutput](
