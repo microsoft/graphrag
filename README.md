@@ -11,10 +11,11 @@ poetry build
 pip install ./dist/graphrag-0.1.1-py3-none-any.whl
 ```
 ## Configuration
-change .env and setting.yaml file with the following content:
-```yaml
-GRAPHRAG_API_KEY=<GRAPHRAG_API_KEY>
-```
+change  setting.yaml file with the following content:
+
+in embeddings: section change model: ollama:your_embedding_model
+
+  **model: ollama:nomic-embed-text**
 
 setting.yaml
 ```yaml
