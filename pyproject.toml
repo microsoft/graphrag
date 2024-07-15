@@ -72,7 +72,7 @@ pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
 # Network
-tenacity = "^8.2.3"
+tenacity = "^8.5.0"
 
 swifter = "^1.4.0"
 pydantic = "^2"
