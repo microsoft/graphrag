@@ -145,6 +145,7 @@ local_search:
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
+  # llm_max_tokens: {defs.LOCAL_SEARCH_LLM_MAX_TOKENS}
 
 global_search:
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
