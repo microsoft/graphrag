@@ -21,6 +21,7 @@ async def generate_entity_relationship_examples(
     persona: str,
     entity_types: str | list[str] | None,
     docs: str | list[str],
+    language: str,
     json_mode: bool = False,
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity configuration.
@@ -41,12 +42,14 @@ async def generate_entity_relationship_examples(
                 ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT
                 if json_mode
                 else ENTITY_RELATIONSHIPS_GENERATION_PROMPT
-            ).format(entity_types=entity_types_str, input_text=doc)
+            ).format(entity_types=entity_types_str, input_text=doc, language=language)
             for doc in docs_list
         ]
     else:
         messages = [
-            UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT.format(input_text=doc)
+            UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT.format(
+                input_text=doc, language=language
+            )
             for doc in docs_list
         ]
 

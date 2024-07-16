@@ -170,11 +170,17 @@ ALL_ENV_VARS = {
     "GRAPHRAG_UMAP_ENABLED": "true",
     "GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP": "0.713",
     "GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP": "0.1234",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS": "12",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS": "15",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES": "14",
     "GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS": "2",
     "GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS": "142435",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS": "5123",
     "GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS": "123",
     "GRAPHRAG_GLOBAL_SEARCH_MAP_MAX_TOKENS": "4123",
@@ -605,7 +611,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.local_search.top_k_relationships == 15
         assert parameters.local_search.conversation_history_max_turns == 2
         assert parameters.local_search.top_k_entities == 14
+        assert parameters.local_search.temperature == 0.1
+        assert parameters.local_search.top_p == 0.9
+        assert parameters.local_search.n == 2
         assert parameters.local_search.max_tokens == 142435
+
+        assert parameters.global_search.temperature == 0.1
+        assert parameters.global_search.top_p == 0.9
+        assert parameters.global_search.n == 2
         assert parameters.global_search.max_tokens == 5123
         assert parameters.global_search.data_max_tokens == 123
         assert parameters.global_search.map_max_tokens == 4123

@@ -134,7 +134,7 @@ These settings control the data input used by the pipeline. Any settings with a 
 
 | Parameter                   | Description                                                                                 | Type  | Required or Optional | Default |
 | --------------------------- | ------------------------------------------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_CHUNK_SIZE`       | The chunk size in tokens for text-chunk analysis windows.                                   | `str` | optional             | 300     |
+| `GRAPHRAG_CHUNK_SIZE`       | The chunk size in tokens for text-chunk analysis windows.                                   | `str` | optional             | 1200    |
 | `GRAPHRAG_CHUNK_OVERLAP`    | The chunk overlap in tokens for text-chunk analysis windows.                                | `str` | optional             | 100     |
 | `GRAPHRAG_CHUNK_BY_COLUMNS` | A comma-separated list of document attributes to groupby when performing TextUnit chunking. | `str` | optional             | `id`    |
 
@@ -143,14 +143,14 @@ These settings control the data input used by the pipeline. Any settings with a 
 | Parameter                                     | Description                                                                                | Type     | Required or Optional | Default                                                          |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------ | -------- | -------------------- | ---------------------------------------------------------------- |
 | `GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE`      | The path (relative to the root) of an entity extraction prompt template text file.         | `str`    | optional             | `None`                                                           |
-| `GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS`    | The maximum number of redrives (gleanings) to invoke when extracting entities in a loop.   | `int`    | optional             | 0                                                                |
+| `GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS`    | The maximum number of redrives (gleanings) to invoke when extracting entities in a loop.   | `int`    | optional             | 1                                                                |
 | `GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES`     | A comma-separated list of entity types to extract.                                         | `str`    | optional             | `organization,person,event,geo`                                  |
 | `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE` | The path (relative to the root) of an description summarization prompt template text file. | `str`    | optional             | `None`                                                           |
 | `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH`  | The maximum number of tokens to generate per description summarization.                    | `int`    | optional             | 500                                                              |
 | `GRAPHRAG_CLAIM_EXTRACTION_ENABLED`           | Whether claim extraction is enabled for this pipeline.                                     | `bool`   | optional             | `False`                                                          |
 | `GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION`       | The claim_description prompting argument to utilize.                                       | `string` | optional             | "Any claims or facts that could be relevant to threat analysis." |
 | `GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE`       | The claim extraction prompt to utilize.                                                    | `string` | optional             | `None`                                                           |
-| `GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS`     | The maximum number of redrives (gleanings) to invoke when extracting claims in a loop.     | `int`    | optional             | 0                                                                |
+| `GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS`     | The maximum number of redrives (gleanings) to invoke when extracting claims in a loop.     | `int`    | optional             | 1                                                                |
 | `GRAPHRAG_COMMUNITY_REPORTS_PROMPT_FILE`      | The community reports extraction prompt to utilize.                                        | `string` | optional             | `None`                                                           |
 | `GRAPHRAG_COMMUNITY_REPORTS_MAX_LENGTH`       | The maximum number of tokens to generate per community reports.                            | `int`    | optional             | 1500                                                             |
 
