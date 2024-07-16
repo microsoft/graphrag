@@ -39,13 +39,18 @@ class MockContextBuilder(GlobalContextBuilder):
 class TestGlobalSearch(GlobalSearch):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._last_search_prompt = None
+        self.last_search_prompt = None
 
-    def get_last_search_prompt(self):
-        return self._last_search_prompt
-
-    def set_last_search_prompt(self, value):
-        self._last_search_prompt = value
+    async def _map_response_single_batch(
+        self, context_data: str, query: str, **llm_kwargs
+    ):
+        search_prompt = self.map_system_prompt.format(context_data=context_data)
+        if self.json_mode:
+            search_prompt += "\nYour response should be in JSON format."
+        self.last_search_prompt = search_prompt
+        return await super()._map_response_single_batch(
+            context_data, query, **llm_kwargs
+        )
 
 
 @pytest.fixture
@@ -70,20 +75,17 @@ async def test_json_format_instruction_in_search_prompt(global_search):
 
     await global_search.asearch(query)
 
-    assert global_search.get_last_search_prompt() is not None
-    assert (
-        "Your response should be in JSON format."
-        in global_search.get_last_search_prompt()
-    )
+    assert global_search.last_search_prompt is not None
+    assert "Your response should be in JSON format." in global_search.last_search_prompt
 
     global_search.json_mode = False
-    global_search.set_last_search_prompt(None)
+    global_search.last_search_prompt = None
     await global_search.asearch(query)
 
-    assert global_search.get_last_search_prompt() is not None
+    assert global_search.last_search_prompt is not None
     assert (
         "Your response should be in JSON format."
-        not in global_search.get_last_search_prompt()
+        not in global_search.last_search_prompt
     )
 
 

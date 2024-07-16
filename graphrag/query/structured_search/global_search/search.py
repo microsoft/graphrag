@@ -176,7 +176,6 @@ class GlobalSearch(BaseSearch):
             search_prompt = self.map_system_prompt.format(context_data=context_data)
             if self.json_mode:
                 search_prompt += "\nYour response should be in JSON format."
-            self._last_search_prompt = search_prompt
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
