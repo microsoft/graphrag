@@ -109,8 +109,7 @@ def run_local_search(
     final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
     final_relationships = pd.read_parquet(
         data_path / "create_final_relationships.parquet"
-    )
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
+    )    
     final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
     final_covariates_path = data_path / "create_final_covariates.parquet"
     final_covariates = (
