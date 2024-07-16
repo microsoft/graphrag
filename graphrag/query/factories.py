@@ -130,7 +130,9 @@ def get_local_search_engine(
         token_encoder=token_encoder,
         llm_params={
             "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": 0.0,
+            "temperature": ls_config.temperature,
+            "top_p": ls_config.top_p,
+            "n": ls_config.n,
         },
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
