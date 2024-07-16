@@ -19,6 +19,8 @@ def clean_up_json(json_str: str):
     # Remove JSON Markdown Frame
     if json_str.startswith("```json"):
         json_str = json_str[len("```json") :]
+    if json_str.startswith("json"):
+        json_str = json_str[len("json") :]
     if json_str.endswith("```"):
         json_str = json_str[: len(json_str) - len("```")]
 
