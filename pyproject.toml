@@ -87,7 +87,7 @@ azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.5.4"
+coverage = "^7.6.0"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
