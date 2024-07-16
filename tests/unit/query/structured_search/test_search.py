@@ -128,20 +128,6 @@ def test_parse_search_response_invalid_point_format(global_search):
         global_search.parse_search_response(invalid_point)
 
 
-def test_parse_search_response_with_text_prefix(global_search):
-    response_with_prefix = """
-    Here's the response:
-    {
-        "points": [
-            {"description": "Point 1", "score": 90}
-        ]
-    }
-    """
-    result = global_search.parse_search_response(response_with_prefix)
-    assert len(result) == 1
-    assert result[0] == {"answer": "Point 1", "score": 90}
-
-
 def test_parse_search_response_non_integer_score(global_search):
     non_integer_score = """
     {

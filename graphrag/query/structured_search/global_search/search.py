@@ -1,12 +1,10 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-
 """The GlobalSearch Implementation."""
 
 import asyncio
 import json
 import logging
-import re
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -16,9 +14,7 @@ import tiktoken
 
 from graphrag.index.utils.json import clean_up_json
 from graphrag.query.context_builder.builders import GlobalContextBuilder
-from graphrag.query.context_builder.conversation_history import (
-    ConversationHistory,
-)
+from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
@@ -125,12 +121,14 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(*[
-            self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
-            )
-            for data in context_chunks
-        ])
+        map_responses = await asyncio.gather(
+            *[
+                self._map_response_single_batch(
+                    context_data=data, query=query, **self.map_llm_params
+                )
+                for data in context_chunks
+            ]
+        )
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
@@ -239,12 +237,8 @@ class GlobalSearch(BaseSearch):
         ValueError
             If the response cannot be parsed as JSON or doesn't contain the expected structure
         """
-        # Try to extract JSON from the response if it's embedded in text
-        json_match = re.search(r"\{.*\}", search_response, re.DOTALL)
-        json_str = json_match.group() if json_match else search_response
-
         try:
-            parsed_data = json.loads(json_str)
+            parsed_data = json.loads(search_response)
         except json.JSONDecodeError as err:
             error_msg = "Failed to parse response as JSON"
             raise ValueError(error_msg) from err
@@ -286,11 +280,13 @@ class GlobalSearch(BaseSearch):
                         continue
                     if "answer" not in element or "score" not in element:
                         continue
-                    key_points.append({
-                        "analyst": index,
-                        "answer": element["answer"],
-                        "score": element["score"],
-                    })
+                    key_points.append(
+                        {
+                            "analyst": index,
+                            "answer": element["answer"],
+                            "score": element["score"],
+                        }
+                    )
 
             # filter response with score = 0 and rank responses by descending order of score
             filtered_key_points = [
