@@ -2141,17 +2141,17 @@ files = [
 
 [[package]]
 name = "lancedb"
-version = "0.10.0"
+version = "0.10.1"
 description = "lancedb"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "lancedb-0.10.0-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:e7b922db07d3186867c622af8bbd6fd0306e11fcdec57bdd56d0da303a51a7ad"},
-    {file = "lancedb-0.10.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:f390ebe0f145612503f50d6158a7543c7eed8ad9d7a4d560aff1f1c572c3b4ea"},
-    {file = "lancedb-0.10.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cfa5b19ef009fd96e16417363af52a80fd53b9fa62c322e7020c6a2e154714b7"},
-    {file = "lancedb-0.10.0-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:e1eb075528f1a9dccb37d490b6bf745ed3afa2decb28c3846490c04bc80dc958"},
-    {file = "lancedb-0.10.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:828ff34ed3d81387516e4c8356c5f960ad2c6132a1d5e2cee152f359ec9a40c9"},
-    {file = "lancedb-0.10.0-cp38-abi3-win_amd64.whl", hash = "sha256:c0f7eec52938ea00ffad80bdeaa7ad398d90e0b47691c86bc9baaa604493e1f0"},
+    {file = "lancedb-0.10.1-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:dc38d85b2018c15924e5d3ccc5c73fb9cfe259ad7f24ad575a969735caf48a8c"},
+    {file = "lancedb-0.10.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:6da31c08d9fdec954faa736fa4feb5ad69515acd6c4283dc78d3edb154bbd82b"},
+    {file = "lancedb-0.10.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f82f96e6e32670a1b9d8cebfbce973ca6a66c66a9aec7a80beff99ad09d3f5d9"},
+    {file = "lancedb-0.10.1-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:37b6879ed18d50fdd21741a8b6b215a62bfa8e2ca6d84d3d5489085071bec43d"},
+    {file = "lancedb-0.10.1-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ff5fc893464d3039c0acaaa6420ae6d8a6409d218eac6c1f71622f1056c398c3"},
+    {file = "lancedb-0.10.1-cp38-abi3-win_amd64.whl", hash = "sha256:a2ffb1dde118ec64df155a8344093fdb6596c58639d562bddbb2dfb359db7afa"},
 ]
 
 [package.dependencies]
@@ -2459,13 +2459,13 @@ files = [
 
 [[package]]
 name = "msal"
-version = "1.29.0"
+version = "1.30.0"
 description = "The Microsoft Authentication Library (MSAL) for Python library enables your app to access the Microsoft Cloud by supporting authentication of users with Microsoft Azure Active Directory accounts (AAD) and Microsoft Accounts (MSA) using industry standard OAuth2 and OpenID Connect."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "msal-1.29.0-py3-none-any.whl", hash = "sha256:6b301e63f967481f0cc1a3a3bac0cf322b276855bc1b0955468d9deb3f33d511"},
-    {file = "msal-1.29.0.tar.gz", hash = "sha256:8f6725f099752553f9b2fe84125e2a5ebe47b49f92eacca33ebedd3a9ebaae25"},
+    {file = "msal-1.30.0-py3-none-any.whl", hash = "sha256:423872177410cb61683566dc3932db7a76f661a5d2f6f52f02a047f101e1c1de"},
+    {file = "msal-1.30.0.tar.gz", hash = "sha256:b4bf00850092e465157d814efa24a18f788284c9a479491024d62903085ea2fb"},
 ]
 
 [package.dependencies]
@@ -3572,13 +3572,13 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pyright"
-version = "1.1.371"
+version = "1.1.372"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.371-py3-none-any.whl", hash = "sha256:cce52e42ff73943243e7e5e24f2a59dee81b97d99f4e3cf97370b27e8a1858cd"},
-    {file = "pyright-1.1.371.tar.gz", hash = "sha256:777b508b92dda2db476214c400ce043aad8d8f3dd0e10d284c96e79f298308b5"},
+    {file = "pyright-1.1.372-py3-none-any.whl", hash = "sha256:25b15fb8967740f0949fd35b963777187f0a0404c0bd753cc966ec139f3eaa0b"},
+    {file = "pyright-1.1.372.tar.gz", hash = "sha256:a9f5e0daa955daaa17e3d1ef76d3623e75f8afd5e37b437d3ff84d5b38c15420"},
 ]
 
 [package.dependencies]
@@ -3612,13 +3612,13 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments
 
 [[package]]
 name = "pytest-asyncio"
-version = "0.23.7"
+version = "0.23.8"
 description = "Pytest support for asyncio"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest_asyncio-0.23.7-py3-none-any.whl", hash = "sha256:009b48127fbe44518a547bddd25611551b0e43ccdbf1e67d12479f569832c20b"},
-    {file = "pytest_asyncio-0.23.7.tar.gz", hash = "sha256:5f5c72948f4c49e7db4f29f2521d4031f1c27f86e57b046126654083d4770268"},
+    {file = "pytest_asyncio-0.23.8-py3-none-any.whl", hash = "sha256:50265d892689a5faefb84df80819d1ecef566eb3549cf915dfb33569359d1ce2"},
+    {file = "pytest_asyncio-0.23.8.tar.gz", hash = "sha256:759b10b33a6dc61cce40a8bd5205e302978bbbcc00e279a8b61d9a6a3c82e4d3"},
 ]
 
 [package.dependencies]
