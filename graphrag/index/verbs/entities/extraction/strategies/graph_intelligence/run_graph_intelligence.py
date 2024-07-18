@@ -6,6 +6,7 @@
 import networkx as nx
 from datashaper import VerbCallbacks
 
+import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.graph import GraphExtractor
@@ -52,8 +53,8 @@ async def run_extract_entities(
 
     # Chunking Arguments
     prechunked = args.get("prechunked", False)
-    chunk_size = args.get("chunk_size", 2500)
-    chunk_overlap = args.get("chunk_overlap", 300)
+    chunk_size = args.get("chunk_size", defs.CHUNK_SIZE)
+    chunk_overlap = args.get("chunk_overlap", defs.CHUNK_OVERLAP)
 
     # Extraction Arguments
     tuple_delimiter = args.get("tuple_delimiter", None)
@@ -61,7 +62,7 @@ async def run_extract_entities(
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
-    max_gleanings = args.get("max_gleanings", None)
+    max_gleanings = args.get("max_gleanings", defs.ENTITY_EXTRACTION_MAX_GLEANINGS)
 
     # note: We're not using UnipartiteGraphChain.from_params
     # because we want to pass "timeout" to the llm_kwargs

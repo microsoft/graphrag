@@ -92,8 +92,8 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
     "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-a.txt",
-    "GRAPHRAG_COMMUNITY_REPORT_MAX_LENGTH": "23456",
-    "GRAPHRAG_COMMUNITY_REPORT_PROMPT_FILE": "tests/unit/config/prompt-b.txt",
+    "GRAPHRAG_COMMUNITY_REPORTS_MAX_LENGTH": "23456",
+    "GRAPHRAG_COMMUNITY_REPORTS_PROMPT_FILE": "tests/unit/config/prompt-b.txt",
     "GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS": "17",
     "GRAPHRAG_EMBEDDING_BATCH_SIZE": "1000000",
     "GRAPHRAG_EMBEDDING_CONCURRENT_REQUESTS": "12",
@@ -101,13 +101,13 @@ ALL_ENV_VARS = {
     "GRAPHRAG_EMBEDDING_MAX_RETRIES": "3",
     "GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT": "0.1123",
     "GRAPHRAG_EMBEDDING_MODEL": "text-embedding-2",
-    "GRAPHRAG_EMBEDDING_RPM": "500",
+    "GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE": "500",
     "GRAPHRAG_EMBEDDING_SKIP": "a1,b1,c1",
     "GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION": "False",
     "GRAPHRAG_EMBEDDING_TARGET": "all",
     "GRAPHRAG_EMBEDDING_THREAD_COUNT": "2345",
     "GRAPHRAG_EMBEDDING_THREAD_STAGGER": "0.456",
-    "GRAPHRAG_EMBEDDING_TPM": "7000",
+    "GRAPHRAG_EMBEDDING_TOKENS_PER_MINUTE": "7000",
     "GRAPHRAG_EMBEDDING_TYPE": "azure_openai_embedding",
     "GRAPHRAG_ENCODING_MODEL": "test123",
     "GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL": "input_account_blob_url",
@@ -134,12 +134,13 @@ ALL_ENV_VARS = {
     "GRAPHRAG_LLM_MAX_TOKENS": "15000",
     "GRAPHRAG_LLM_MODEL_SUPPORTS_JSON": "true",
     "GRAPHRAG_LLM_MODEL": "test-llm",
+    "GRAPHRAG_LLM_N": "1",
     "GRAPHRAG_LLM_REQUEST_TIMEOUT": "12.7",
-    "GRAPHRAG_LLM_RPM": "900",
+    "GRAPHRAG_LLM_REQUESTS_PER_MINUTE": "900",
     "GRAPHRAG_LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION": "False",
     "GRAPHRAG_LLM_THREAD_COUNT": "987",
     "GRAPHRAG_LLM_THREAD_STAGGER": "0.123",
-    "GRAPHRAG_LLM_TPM": "8000",
+    "GRAPHRAG_LLM_TOKENS_PER_MINUTE": "8000",
     "GRAPHRAG_LLM_TYPE": "azure_openai_chat",
     "GRAPHRAG_MAX_CLUSTER_SIZE": "123",
     "GRAPHRAG_NODE2VEC_ENABLED": "true",
@@ -164,14 +165,22 @@ ALL_ENV_VARS = {
     "GRAPHRAG_STORAGE_TYPE": "blob",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH": "12345",
     "GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE": "tests/unit/config/prompt-d.txt",
+    "GRAPHRAG_LLM_TEMPERATURE": "0.0",
+    "GRAPHRAG_LLM_TOP_P": "1.0",
     "GRAPHRAG_UMAP_ENABLED": "true",
     "GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP": "0.713",
     "GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP": "0.1234",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS": "12",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS": "15",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES": "14",
     "GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS": "2",
     "GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS": "142435",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS": "5123",
     "GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS": "123",
     "GRAPHRAG_GLOBAL_SEARCH_MAP_MAX_TOKENS": "4123",
@@ -562,11 +571,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.llm.max_tokens == 15000
         assert parameters.llm.model == "test-llm"
         assert parameters.llm.model_supports_json
+        assert parameters.llm.n == 1
         assert parameters.llm.organization == "test_org"
         assert parameters.llm.proxy == "http://some/proxy"
         assert parameters.llm.request_timeout == 12.7
         assert parameters.llm.requests_per_minute == 900
         assert parameters.llm.sleep_on_rate_limit_recommendation is False
+        assert parameters.llm.temperature == 0.0
+        assert parameters.llm.top_p == 1.0
         assert parameters.llm.tokens_per_minute == 8000
         assert parameters.llm.type == "azure_openai_chat"
         assert parameters.parallelization.num_threads == 987
@@ -599,7 +611,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.local_search.top_k_relationships == 15
         assert parameters.local_search.conversation_history_max_turns == 2
         assert parameters.local_search.top_k_entities == 14
+        assert parameters.local_search.temperature == 0.1
+        assert parameters.local_search.top_p == 0.9
+        assert parameters.local_search.n == 2
         assert parameters.local_search.max_tokens == 142435
+
+        assert parameters.global_search.temperature == 0.1
+        assert parameters.global_search.top_p == 0.9
+        assert parameters.global_search.n == 2
         assert parameters.global_search.max_tokens == 5123
         assert parameters.global_search.data_max_tokens == 123
         assert parameters.global_search.map_max_tokens == 4123

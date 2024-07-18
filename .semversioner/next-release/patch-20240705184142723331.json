@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add Minute-based Rate Limiting and fix rpm, tpm settings"
+}

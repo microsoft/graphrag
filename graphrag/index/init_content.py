@@ -24,6 +24,9 @@ llm:
   # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
   # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
   # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
+  # temperature: {defs.LLM_TEMPERATURE} # temperature for sampling
+  # top_p: {defs.LLM_TOP_P} # top-p sampling
+  # n: {defs.LLM_N} # Number of completions to generate
 
 parallelization:
   stagger: {defs.PARALLELIZATION_STAGGER}
@@ -90,7 +93,7 @@ entity_extraction:
   ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/entity_extraction.txt"
   entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
-  max_gleanings: 0
+  max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
 
 summarize_descriptions:
   ## llm: override the global llm settings for this task
@@ -108,7 +111,7 @@ claim_extraction:
   description: "{defs.CLAIM_DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
 
-community_report:
+community_reports:
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
@@ -141,9 +144,15 @@ local_search:
   # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
+  # llm_temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
+  # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
   # data_max_tokens: {defs.GLOBAL_SEARCH_DATA_MAX_TOKENS}
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}
