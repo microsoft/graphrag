@@ -1701,6 +1701,17 @@ files = [
 ]
 
 [[package]]
+name = "json-repair"
+version = "0.25.3"
+description = "A package to repair broken json strings"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "json_repair-0.25.3-py3-none-any.whl", hash = "sha256:f00b510dd21b31ebe72581bdb07e66381df2883d6f640c89605e482882c12b17"},
+    {file = "json_repair-0.25.3.tar.gz", hash = "sha256:4ee970581a05b0b258b749eb8bcac21de380edda97c3717a4edfafc519ec21a4"},
+]
+
+[[package]]
 name = "json5"
 version = "0.9.25"
 description = "A Python implementation of the JSON5 data format."
@@ -5104,4 +5115,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "01ee5a94c60b640ad124c27244a21cf97ddbd7effdd7aaf89ff8c896af3a0887"
+content-hash = "f3c74ddcb5b250a88ed331b70dbef8e4c324989682bda65ef14588a6112a7068"

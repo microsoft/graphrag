@@ -4,12 +4,12 @@
 """Utility functions for the OpenAI API."""
 
 import json
-from json_repair import repair_json
 import logging
 from collections.abc import Callable
 from typing import Any
 
 import tiktoken
+from json_repair import repair_json
 from openai import (
     APIConnectionError,
     InternalServerError,
