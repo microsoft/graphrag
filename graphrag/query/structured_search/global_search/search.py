@@ -233,8 +233,9 @@ class GlobalSearch(BaseSearch):
         json_match = re.search(r"\{.*\}", search_response, re.DOTALL)
 
         if not json_match:
-            raise ValueError("No JSON object found in search response")
-        
+            msg = "No JSON object found in search response"
+            raise ValueError(msg)
+
         json_str = json_match.group(0)
 
         parsed_elements = json.loads(json_str)["points"]
