@@ -6,6 +6,7 @@
 import asyncio
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -229,7 +230,14 @@ class GlobalSearch(BaseSearch):
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
         """
-        parsed_elements = json.loads(search_response)["points"]
+        json_match = re.search(r"\{.*\}", search_response, re.DOTALL)
+
+        if not json_match:
+            raise ValueError("No JSON object found in search response")
+        
+        json_str = json_match.group(0)
+
+        parsed_elements = json.loads(json_str)["points"]
         return [
             {
                 "answer": element["description"],
