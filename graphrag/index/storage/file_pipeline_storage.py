@@ -105,6 +105,7 @@ class FilePipelineStorage(PipelineStorage):
             path,
             cast(Any, read_type),
             encoding=encoding,
+            errors="strict",
         ) as f:
             return await f.read()
 
@@ -114,7 +115,10 @@ class FilePipelineStorage(PipelineStorage):
         write_type = "wb" if is_bytes else "w"
         encoding = None if is_bytes else encoding or self._encoding
         async with aiofiles.open(
-            join_path(self._root_dir, key), cast(Any, write_type), encoding=encoding
+            join_path(self._root_dir, key),
+            cast(Any, write_type),
+            encoding=encoding,
+            errors="strict",
         ) as f:
             await f.write(value)
 
