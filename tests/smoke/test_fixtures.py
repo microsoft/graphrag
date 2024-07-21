@@ -108,7 +108,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     data_files = txt_files + csv_files
     for data_file in data_files:
         with data_file.open("rb") as f:
-            text = f.read().decode(encoding="utf8", errors="strict")
+            text = f.read().decode(encoding="utf-8", errors="strict")
         file_path = (
             str(Path(input_base_dir) / data_file.name)
             if input_base_dir
