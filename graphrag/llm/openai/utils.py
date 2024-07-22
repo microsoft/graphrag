@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 """Utility functions for the OpenAI API."""
-
+import re
 import json
 import logging
 from collections.abc import Callable
@@ -89,17 +89,20 @@ def get_completion_llm_args(
 
 
 def try_parse_json_object(input: str) -> tuple[str, dict]:
-
     """JSON cleaning and formatting utilities."""
-
+    """sometime, the llm return a json string with some extra description, this function will clean it up."""
+    _pattern = r"\{(.*)\}"
+    _match = re.search(_pattern, input)
+    input = "{" + _match.group(1) + "}" if _match else input
+    
     """Clean up json string."""
     input = (
-        input.replace("\\n", " ")
+        input.replace("{{","{")
+        .replace("}}","}")
         .replace('"[{', "[{")
         .replace('}]"', "}]")
         .replace("\\", " ")
-        .replace("{{","{")
-        .replace("}}","}")
+        .replace("\\n", " ")
         .replace("\n", " ")
         .replace("\r", "")
         .strip()

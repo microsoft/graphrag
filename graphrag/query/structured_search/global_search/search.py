@@ -32,7 +32,7 @@ from graphrag.query.structured_search.global_search.reduce_system_prompt import 
     NO_DATA_ANSWER,
     REDUCE_SYSTEM_PROMPT,
 )
-
+from graphrag.llm.openai.utils import try_parse_json_object
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,
     "temperature": 0.0,
@@ -188,7 +188,6 @@ class GlobalSearch(BaseSearch):
                 processed_response = self.parse_search_response(search_response)
             except ValueError:
                 # Clean up and retry parse
-                search_response,_ = try_parse_json_object(search_response)
                 try:
                     # parse search response json
                     processed_response = self.parse_search_response(search_response)
@@ -229,6 +228,10 @@ class GlobalSearch(BaseSearch):
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
         """
+        search_response,_j = try_parse_json_object(search_response)
+        if _j =={}:
+            return [{"answer":"not avaliable","score": 0}]
+
         parsed_elements = json.loads(search_response)["points"]
         return [
             {
