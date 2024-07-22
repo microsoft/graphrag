@@ -9,6 +9,7 @@ from collections.abc import Callable
 from typing import Any
 
 import tiktoken
+from graphrag.llm.openai._json import clean_up_json
 from openai import (
     APIConnectionError,
     InternalServerError,
@@ -90,7 +91,7 @@ def get_completion_llm_args(
 def try_parse_json_object(input: str) -> dict:
     """Generate JSON-string output using best-attempt prompting & parsing techniques."""
     try:
-        result = json.loads(input)
+        result = json.loads(clean_up_json(input))
     except json.JSONDecodeError:
         log.exception("error loading json, json=%s", input)
         raise
