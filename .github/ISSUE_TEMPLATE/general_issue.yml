@@ -4,6 +4,7 @@ title: "[Issue]: <title> "
 labels: ["triage"]
 
 body:
+  - type: 
   - type: textarea
     id: description
     attributes:
@@ -28,6 +29,12 @@ body:
       label: GraphRAG Config Used
       description: The GraphRAG configuration used for the run.
       placeholder: The settings.yaml content or GraphRAG configuration
+      value: |
+      ```yaml
+
+      # Paste your config here
+      
+      ```
   - type: textarea
     id: screenshotslogs
     attributes:
