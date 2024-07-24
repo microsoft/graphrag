@@ -21,7 +21,7 @@ jobs:
   python-ci:
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
         os: [ubuntu-latest, windows-latest]
     env:
       DEBUG: 1
