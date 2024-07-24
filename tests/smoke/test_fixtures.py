@@ -38,11 +38,12 @@ def _load_fixtures():
             continue
 
         config_file = fixtures_path / subfolder / "config.json"
-        with config_file.open("rb") as f:
-            params.append((
-                subfolder,
-                json.loads(f.read().decode(encoding="utf-8", errors="strict")),
-            ))
+        params.append((
+            subfolder,
+            json.loads(
+                config_file.read_bytes().decode(encoding="utf-8", errors="strict")
+            ),
+        ))
 
     return params
 
@@ -109,9 +110,6 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     for data_file in data_files:
         with data_file.open(encoding="utf8") as f:
             text = f.read()
-        # with data_file.open("rb") as f:
-        #     text = f.read().decode(encoding="utf-8", errors="strict")
-        # text = data_file.read_bytes().decode(encoding="utf-8")
         file_path = (
             str(Path(input_base_dir) / data_file.name)
             if input_base_dir
