@@ -318,7 +318,7 @@ For a deeper dive into the main sub-systems, please visit the docpages for the <
 <p>GraphRAG builds upon our prior <a href="https://www.microsoft.com/en-us/worklab/patterns-hidden-inside-the-org-chart">research</a> and <a href="https://github.com/graspologic-org/graspologic">tooling</a> using graph machine learning. The basic steps of the GraphRAG process are as follows:</p>
 <h3>Index</h3>
 <ul>
-<li>Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references into our outputs.</li>
+<li>Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references in our outputs.</li>
 <li>Extract all entities, relationships, and key claims from the TextUnits using an LLM.</li>
 <li>Perform a hierarchical clustering of the graph using the <a href="https://arxiv.org/pdf/1810.08473.pdf">Leiden technique</a>. To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.</li>
 <li>Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.</li>
