@@ -58,6 +58,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
             else None
         ),
         api_base=config.llm.api_base,
+        organization=config.llm.organization,
         model=config.llm.model,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         deployment_name=config.llm.deployment_name,
@@ -89,6 +90,7 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
             else None
         ),
         api_base=config.embeddings.llm.api_base,
+        organization=config.llm.organization,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         model=config.embeddings.llm.model,
         deployment_name=config.embeddings.llm.deployment_name,
@@ -130,7 +132,9 @@ def get_local_search_engine(
         token_encoder=token_encoder,
         llm_params={
             "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": 0.0,
+            "temperature": ls_config.temperature,
+            "top_p": ls_config.top_p,
+            "n": ls_config.n,
         },
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,

@@ -137,13 +137,27 @@ def create_graphrag_config(
         config: LLMConfigInput, base: LLMParameters
     ) -> LLMParameters:
         with reader.use(config.get("llm")):
-            api_key = reader.str(Fragment.api_key) or base.api_key
-            api_base = reader.str(Fragment.api_base) or base.api_base
-            api_version = reader.str(Fragment.api_version) or base.api_version
-            api_organization = reader.str("organization") or base.organization
-            api_proxy = reader.str("proxy") or base.proxy
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
+            api_key = reader.str(Fragment.api_key) or base.api_key
+
+            # In a unique events where:
+            # - same api_bases for LLM and embeddings (both Azure)
+            # - different api_bases for LLM and embeddings (both Azure)
+            # - LLM uses Azure OpenAI, while embeddings uses base OpenAI (this one is important)
+            # - LLM uses Azure OpenAI, while embeddings uses third-party OpenAI-like API
+            api_base = (
+                reader.str(Fragment.api_base) or base.api_base
+                if _is_azure(api_type)
+                else reader.str(Fragment.api_base)
+            )
+            api_version = (
+                reader.str(Fragment.api_version) or base.api_version
+                if _is_azure(api_type)
+                else reader.str(Fragment.api_version)
+            )
+            api_organization = reader.str("organization") or base.organization
+            api_proxy = reader.str("proxy") or base.proxy
             cognitive_services_endpoint = (
                 reader.str(Fragment.cognitive_services_endpoint)
                 or base.cognitive_services_endpoint
@@ -481,6 +495,10 @@ def create_graphrag_config(
                 or defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
                 top_k_relationships=reader.int("top_k_relationships")
                 or defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
+                temperature=reader.float("llm_temperature")
+                or defs.LOCAL_SEARCH_LLM_TEMPERATURE,
+                top_p=reader.float("llm_top_p") or defs.LOCAL_SEARCH_LLM_TOP_P,
+                n=reader.int("llm_n") or defs.LOCAL_SEARCH_LLM_N,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.LOCAL_SEARCH_MAX_TOKENS,
                 llm_max_tokens=reader.int("llm_max_tokens")
@@ -492,9 +510,10 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
-                temperature=reader.float(Fragment.temperature) or defs.LLM_TEMPERATURE,
-                top_p=reader.float(Fragment.top_p) or defs.LLM_TOP_P,
-                n=reader.int(Fragment.n) or defs.LLM_N,
+                temperature=reader.float("llm_temperature")
+                or defs.GLOBAL_SEARCH_LLM_TEMPERATURE,
+                top_p=reader.float("llm_top_p") or defs.GLOBAL_SEARCH_LLM_TOP_P,
+                n=reader.int("llm_n") or defs.GLOBAL_SEARCH_LLM_N,
                 max_tokens=reader.int(Fragment.max_tokens)
                 or defs.GLOBAL_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
