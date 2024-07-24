@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "remove duplicate file read"
+}
