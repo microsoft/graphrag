@@ -12,7 +12,6 @@ body:
       options:
         - label: I have searched the existing issues
         - label: I have checked [#657](https://github.com/microsoft/graphrag/issues/657) to validate if my issue is covered by community support
-      required: true
   - type: textarea
     id: description
     attributes:
