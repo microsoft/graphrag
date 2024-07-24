@@ -7,10 +7,10 @@ body:
   - type: checkboxes
     attributes:
     label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the bug you encountered. 
+    description: Please search to see if an issue already exists for the bug you encountered.
     options:
-    - label: I have searched the existing issues
-    - label: I have checked [#657](https://github.com/microsoft/graphrag/issues/657) to validate if my issue is covered by community support
+      - label: I have searched the existing issues
+      - label: I have checked [#657](https://github.com/microsoft/graphrag/issues/657) to validate if my issue is covered by community support
     required: true
   - type: textarea
     id: description
@@ -37,11 +37,10 @@ body:
       description: The GraphRAG configuration used for the run.
       placeholder: The settings.yaml content or GraphRAG configuration
       value: |
-      ```yaml
+        ```yaml
+        # Paste your config here
 
-      # Paste your config here
-      
-      ```
+        ```
   - type: textarea
     id: screenshotslogs
     attributes:
