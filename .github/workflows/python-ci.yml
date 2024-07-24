@@ -79,7 +79,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry self add setuptools && poetry run python -m pip install gensim --no-use-pep517 && poetry install
+        run: poetry self add setuptools wheel && poetry run python -m pip install gensim --no-use-pep517 && poetry install
 
       - name: Check Semversioner
         run: |
