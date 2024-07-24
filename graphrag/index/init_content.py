@@ -144,9 +144,15 @@ local_search:
   # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
+  # llm_temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
+  # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
   # data_max_tokens: {defs.GLOBAL_SEARCH_DATA_MAX_TOKENS}
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}

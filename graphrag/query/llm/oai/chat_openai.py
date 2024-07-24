@@ -147,7 +147,9 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                         continue
 
                     delta = (
-                        chunk.choices[0].delta.content if chunk.choices[0].delta and chunk.choices[0].delta.content else ""
+                        chunk.choices[0].delta.content
+                        if chunk.choices[0].delta and chunk.choices[0].delta.content
+                        else ""
                     )  # type: ignore
 
                     full_response += delta
@@ -186,7 +188,9 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                         continue
 
                     delta = (
-                        chunk.choices[0].delta.content if chunk.choices[0].delta and chunk.choices[0].delta.content else ""
+                        chunk.choices[0].delta.content
+                        if chunk.choices[0].delta and chunk.choices[0].delta.content
+                        else ""
                     )  # type: ignore
 
                     full_response += delta
