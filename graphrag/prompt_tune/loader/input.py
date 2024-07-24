@@ -42,7 +42,7 @@ def _sample_chunks_from_embeddings(
     center = np.mean(embeddings, axis=0)
     distances = np.linalg.norm(embeddings - center, axis=1)
     nearest_indices = np.argsort(distances)[:k]
-    
+
     return text_chunks.iloc[nearest_indices]
 
 

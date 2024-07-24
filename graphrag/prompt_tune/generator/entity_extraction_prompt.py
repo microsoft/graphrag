@@ -27,6 +27,7 @@ def create_entity_extraction_prompt(
     encoding_model: str = defs.ENCODING_MODEL,
     json_mode: bool = False,
     output_path: Path | None = None,
+    min_examples_required: int = 2,
 ) -> str:
     """
     Create a prompt for entity extraction.
@@ -41,6 +42,7 @@ def create_entity_extraction_prompt(
     - max_token_count (int): The maximum number of tokens to use for the prompt
     - json_mode (bool): Whether to use JSON mode for the prompt. Default is False
     - output_path (Path | None): The path to write the prompt to. Default is None. If None, the prompt is not written to a file. Default is None.
+        - min_examples_required (int): The minimum number of examples required. Default is 2.
 
     Returns
     -------
@@ -63,7 +65,6 @@ def create_entity_extraction_prompt(
     )
 
     examples_prompt = ""
-    min_examples_required = 3
 
     # Iterate over examples, while we have tokens left or examples left
     for i, output in enumerate(examples):

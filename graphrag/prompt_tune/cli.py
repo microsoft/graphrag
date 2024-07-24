@@ -44,6 +44,7 @@ async def prompt_tune(
     output: str = "prompts",
     n_subset_max: int = 300,
     k: int = 15,
+    min_examples_required: int = 2,
 ):
     """Prompt tune the model.
 
@@ -77,6 +78,7 @@ async def prompt_tune(
         reporter,
         n_subset_max,
         k,
+        min_examples_required,
     )
 
 
@@ -94,6 +96,7 @@ async def prompt_tune_with_config(
     reporter: ProgressReporter | None = None,
     n_subset_max: int = 300,
     k: int = 15,
+    min_examples_required: int = 2,
 ):
     """Prompt tune the model with a configuration.
 
@@ -151,6 +154,7 @@ async def prompt_tune_with_config(
         language,
         max_tokens,
         skip_entity_types,
+        min_examples_required,
     )
 
 
@@ -164,6 +168,7 @@ async def generate_indexing_prompts(
     language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
     skip_entity_types: bool = False,
+    min_examples_required: int = 2,
 ):
     """Generate indexing prompts.
 
@@ -177,6 +182,7 @@ async def generate_indexing_prompts(
     - domain: The domain to map the input documents to.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts
     - skip_entity_types: Skip generating entity types.
+    - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
     if not domain:
         reporter.info("Generating domain...")
@@ -233,6 +239,7 @@ async def generate_indexing_prompts(
         output_path=output_path,
         encoding_model=config.encoding_model,
         max_token_count=max_tokens,
+        min_examples_required=min_examples_required,
     )
     reporter.info(f"Generated entity extraction prompt, stored in folder {output_path}")
 

@@ -87,6 +87,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--min-examples-required",
+        help="The minimum number of examples required in entity extraction prompt",
+        type=int,
+        required=False,
+        default=2,
+    )
+
+    parser.add_argument(
         "--chunk-size",
         help="Max token count for prompt generation",
         type=int,
@@ -135,5 +143,6 @@ if __name__ == "__main__":
             args.output,
             args.n_subset_max,
             args.k,
+            args.min_examples_required,
         )
     )
