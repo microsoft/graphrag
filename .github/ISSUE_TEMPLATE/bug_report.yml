@@ -42,7 +42,7 @@ body:
     attributes:
       label: GraphRAG Config Used
       description: The GraphRAG configuration used for the run.
-      placeholder: The settings.yaml content or GraphRAG configuration\
+      placeholder: The settings.yaml content or GraphRAG configuration
       value: |
         ```yaml
         # Paste your config here
