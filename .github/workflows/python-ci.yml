@@ -21,7 +21,7 @@ jobs:
   python-ci:
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11"] # add 3.12 once gensim supports it
         os: [ubuntu-latest, windows-latest]
     env:
       DEBUG: 1
