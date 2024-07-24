@@ -30,7 +30,7 @@ def create_entity_summarization_prompt(
 
         output_path = output_path / ENTITY_SUMMARIZATION_FILENAME
         # Write file to output path
-        with output_path.open("w") as file:
-            file.write(prompt)
+        with output_path.open("wb") as file:
+            file.write(prompt.encode(encoding="utf-8", errors="strict"))
 
     return prompt

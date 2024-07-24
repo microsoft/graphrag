@@ -34,7 +34,9 @@ class SummarizeDescriptionsConfig(LLMConfig):
             "type": SummarizeStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
-            "summarize_prompt": (Path(root_dir) / self.prompt).read_text()
+            "summarize_prompt": (Path(root_dir) / self.prompt)
+            .read_bytes()
+            .decode(encoding="utf-8")
             if self.prompt
             else None,
             "max_summary_length": self.max_length,
