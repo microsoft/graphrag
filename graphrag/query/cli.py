@@ -38,14 +38,12 @@ def __get_embedding_description_store(
     if not config_args:
         config_args = {}
 
-    config_args.update(
-        {
-            "collection_name": config_args.get(
-                "query_collection_name",
-                config_args.get("collection_name", "description_embedding"),
-            ),
-        }
-    )
+    config_args.update({
+        "collection_name": config_args.get(
+            "query_collection_name",
+            config_args.get("collection_name", "description_embedding"),
+        ),
+    })
 
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
