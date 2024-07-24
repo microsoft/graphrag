@@ -105,7 +105,6 @@ class FilePipelineStorage(PipelineStorage):
             path,
             cast(Any, read_type),
             encoding=encoding,
-            errors="strict",
         ) as f:
             return await f.read()
 
@@ -118,7 +117,6 @@ class FilePipelineStorage(PipelineStorage):
             join_path(self._root_dir, key),
             cast(Any, write_type),
             encoding=encoding,
-            errors="strict",
         ) as f:
             await f.write(value)
 
