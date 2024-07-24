@@ -30,10 +30,10 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         # Create a cache directory
         if not os.path.exists(TEMP_DIR):
             os.mkdir(TEMP_DIR)
-        with open(f"{TEMP_DIR}/test1", "wb") as f:
-            f.write("This is test1 file.".encode(encoding="utf-8", errors="strict"))
-        with open(f"{TEMP_DIR}/test2", "wb") as f:
-            f.write("This is test2 file.".encode(encoding="utf-8", errors="strict"))
+        with open(f"{TEMP_DIR}/test1", "w") as f:
+            f.write("This is test1 file.")
+        with open(f"{TEMP_DIR}/test2", "w") as f:
+            f.write("This is test2 file.")
 
         # this invokes cache.clear()
         await self.cache.clear()

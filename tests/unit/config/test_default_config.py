@@ -458,8 +458,8 @@ class TestDefaultConfig(unittest.TestCase):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
         query_docs_path = Path("docsite/posts/query/3-cli.md")
 
-        env_var_docs = env_var_docs_path.read_bytes().decode(encoding="utf-8")
-        query_docs = query_docs_path.read_bytes().decode(encoding="utf-8")
+        env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
+        query_docs = query_docs_path.read_text(encoding="utf-8")
 
         def find_envvar_names(text) -> set[str]:
             pattern = r"`(GRAPHRAG_[^`]+)`"
