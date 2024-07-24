@@ -38,12 +38,14 @@ def __get_embedding_description_store(
     if not config_args:
         config_args = {}
 
-    config_args.update({
-        "collection_name": config_args.get(
-            "query_collection_name",
-            config_args.get("collection_name", "description_embedding"),
-        ),
-    })
+    config_args.update(
+        {
+            "collection_name": config_args.get(
+                "query_collection_name",
+                config_args.get("collection_name", "description_embedding"),
+            ),
+        }
+    )
 
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
@@ -109,7 +111,7 @@ def run_local_search(
     final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
     final_relationships = pd.read_parquet(
         data_path / "create_final_relationships.parquet"
-    )    
+    )
     final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
     final_covariates_path = data_path / "create_final_covariates.parquet"
     final_covariates = (
