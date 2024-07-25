@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "fix the organization parameter is ineffective during queries"
-}

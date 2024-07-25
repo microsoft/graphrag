@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add content-based KNN for selecting prompt tune few shot examples"
-}
