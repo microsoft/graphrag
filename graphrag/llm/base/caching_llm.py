@@ -29,7 +29,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
     _cache: LLMCache
     _delegate: LLM[TIn, TOut]
     _operation: str
-    _llm_paramaters: dict
+    _llm_parameters: dict
     _on_cache_hit: OnCacheActionFn
     _on_cache_miss: OnCacheActionFn
 
@@ -41,7 +41,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         cache: LLMCache,
     ):
         self._delegate = delegate
-        self._llm_paramaters = llm_parameters
+        self._llm_parameters = llm_parameters
         self._cache = cache
         self._operation = operation
         self._on_cache_hit = _noop_cache_fn
@@ -90,7 +90,10 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         """Execute the LLM."""
         # Check for an Existing cache item
         name = kwargs.get("name")
-        llm_args = {**self._llm_paramaters, **(kwargs.get("model_parameters") or {})}
+        history = kwargs.get("history") or None
+        llm_args = {**self._llm_parameters, **(kwargs.get("model_parameters") or {})}
+        if history:
+            llm_args["history"] = history
         cache_key = self._cache_key(input, name, llm_args)
         cached_result = await self._cache_read(cache_key)
         if cached_result:

@@ -49,11 +49,11 @@ def create_openai_chat_llm(
     operation = "chat"
     result = OpenAIChatLLM(client, config)
     result.on_error(on_error)
+    result = OpenAIHistoryTrackingLLM(result)
     if limiter is not None or semaphore is not None:
         result = _rate_limited(result, config, operation, limiter, semaphore, on_invoke)
     if cache is not None:
         result = _cached(result, config, operation, cache, on_cache_hit, on_cache_miss)
-    result = OpenAIHistoryTrackingLLM(result)
     result = OpenAITokenReplacingLLM(result)
     return JsonParsingLLM(result)
 
