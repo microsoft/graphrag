@@ -185,11 +185,11 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
 
     dotenv = root / ".env"
     if not dotenv.exists():
-        with settings_yaml.open("w") as file:
-            file.write(INIT_YAML)
+        with settings_yaml.open("wb") as file:
+            file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
 
-    with dotenv.open("w") as file:
-        file.write(INIT_DOTENV)
+    with dotenv.open("wb") as file:
+        file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
 
     prompts_dir = root / "prompts"
     if not prompts_dir.exists():
@@ -197,23 +197,29 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
 
     entity_extraction = prompts_dir / "entity_extraction.txt"
     if not entity_extraction.exists():
-        with entity_extraction.open("w") as file:
-            file.write(GRAPH_EXTRACTION_PROMPT)
+        with entity_extraction.open("wb") as file:
+            file.write(
+                GRAPH_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
+            )
 
     summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
     if not summarize_descriptions.exists():
-        with summarize_descriptions.open("w") as file:
-            file.write(SUMMARIZE_PROMPT)
+        with summarize_descriptions.open("wb") as file:
+            file.write(SUMMARIZE_PROMPT.encode(encoding="utf-8", errors="strict"))
 
     claim_extraction = prompts_dir / "claim_extraction.txt"
     if not claim_extraction.exists():
-        with claim_extraction.open("w") as file:
-            file.write(CLAIM_EXTRACTION_PROMPT)
+        with claim_extraction.open("wb") as file:
+            file.write(
+                CLAIM_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
+            )
 
     community_report = prompts_dir / "community_report.txt"
     if not community_report.exists():
-        with community_report.open("w") as file:
-            file.write(COMMUNITY_REPORT_PROMPT)
+        with community_report.open("wb") as file:
+            file.write(
+                COMMUNITY_REPORT_PROMPT.encode(encoding="utf-8", errors="strict")
+            )
 
 
 def _create_default_config(
@@ -267,18 +273,18 @@ def _read_config_parameters(root: str, config: str | None, reporter: ProgressRep
 
     if settings_yaml.exists():
         reporter.success(f"Reading settings from {settings_yaml}")
-        with settings_yaml.open("r") as file:
+        with settings_yaml.open("rb") as file:
             import yaml
 
-            data = yaml.safe_load(file)
+            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
             return create_graphrag_config(data, root)
 
     if settings_json.exists():
         reporter.success(f"Reading settings from {settings_json}")
-        with settings_json.open("r") as file:
+        with settings_json.open("rb") as file:
             import json
 
-            data = json.loads(file.read())
+            data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
             return create_graphrag_config(data, root)
 
     reporter.success("Reading settings from environment variables")
