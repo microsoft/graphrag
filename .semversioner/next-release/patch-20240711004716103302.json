@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix encoding model parameter on prompt tune"
-}
