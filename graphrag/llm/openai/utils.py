@@ -15,6 +15,7 @@ from openai import (
     RateLimitError,
 )
 
+from ._json import clean_up_json
 from .openai_configuration import OpenAIConfiguration
 
 DEFAULT_ENCODING = "cl100k_base"
@@ -90,6 +91,7 @@ def get_completion_llm_args(
 def try_parse_json_object(input: str) -> dict:
     """Generate JSON-string output using best-attempt prompting & parsing techniques."""
     try:
+        input = clean_up_json(input)
         result = json.loads(input)
     except json.JSONDecodeError:
         log.exception("error loading json, json=%s", input)

@@ -2,7 +2,6 @@
 # Licensed under the MIT License
 
 """The Chat-based language model."""
-
 import logging
 from json import JSONDecodeError
 
@@ -15,7 +14,6 @@ from graphrag.llm.types import (
     LLMInput,
     LLMOutput,
 )
-
 from ._json import clean_up_json
 from ._prompts import JSON_CHECK_PROMPT
 from .openai_configuration import OpenAIConfiguration
@@ -42,32 +40,34 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         self.configuration = configuration
 
     async def _execute_llm(
-        self, input: CompletionInput, **kwargs: Unpack[LLMInput]
+            self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> CompletionOutput | None:
         args = get_completion_llm_args(
             kwargs.get("model_parameters"), self.configuration
         )
-        history = kwargs.get("history") or []
+        history = []
+
         messages = [
             *history,
             {"role": "user", "content": input},
         ]
-        completion = await self.client.chat.completions.create(
-            messages=messages, **args
-        )
+        # completion = await self.client.chat.completions.create(
+        #     messages=messages, **args
+        # )
+        completion = await self.client.chat.completions.create(messages=messages, **args)
         return completion.choices[0].message.content
 
     async def _invoke_json(
-        self,
-        input: CompletionInput,
-        **kwargs: Unpack[LLMInput],
+            self,
+            input: CompletionInput,
+            **kwargs: Unpack[LLMInput],
     ) -> LLMOutput[CompletionOutput]:
         """Generate JSON output."""
         name = kwargs.get("name") or "unknown"
         is_response_valid = kwargs.get("is_response_valid") or (lambda _x: True)
 
         async def generate(
-            attempt: int | None = None,
+                attempt: int | None = None,
         ) -> LLMOutput[CompletionOutput]:
             call_name = name if attempt is None else f"{name}@{attempt}"
             return (
@@ -90,7 +90,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         raise RuntimeError(FAILED_TO_CREATE_JSON_ERROR)
 
     async def _native_json(
-        self, input: CompletionInput, **kwargs: Unpack[LLMInput]
+            self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> LLMOutput[CompletionOutput]:
         """Generate JSON output using a model's native JSON-output support."""
         result = await self._invoke(
@@ -114,7 +114,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         )
 
     async def _manual_json(
-        self, input: CompletionInput, **kwargs: Unpack[LLMInput]
+            self, input: CompletionInput, **kwargs: Unpack[LLMInput]
     ) -> LLMOutput[CompletionOutput]:
         # Otherwise, clean up the output and try to parse it as json
         result = await self._invoke(input, **kwargs)
@@ -139,7 +139,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             )
 
     async def _try_clean_json_with_llm(
-        self, output: str, **kwargs: Unpack[LLMInput]
+            self, output: str, **kwargs: Unpack[LLMInput]
     ) -> LLMOutput[CompletionOutput]:
         name = kwargs.get("name") or "unknown"
         return await self._invoke(
