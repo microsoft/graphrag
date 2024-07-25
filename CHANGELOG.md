@@ -15,7 +15,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: Fix delta none on query calls
 - patch: Fix docsite base url
 - patch: Fix encoding model parameter on prompt tune
-- patch: Fix for --limit exceeding the dataframe lenght
+- patch: Fix for --limit exceeding the dataframe length
 - patch: Fix for Ruff 0.5.2
 - patch: Fixed an issue where base OpenAI embeddings can't work with Azure OpenAI LLM
 - patch: Modify defaults for CHUNK_SIZE, CHUNK_OVERLAP and GLEANINGS to reduce time and LLM calls
