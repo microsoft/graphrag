@@ -35,8 +35,8 @@ class OpenAIHistoryTrackingLLM(LLM[CompletionInput, CompletionOutput]):
             output=output.output,
             json=output.json,
             history=[
-                *history, 
-                {"role": "user", "content": input.prompt},
-                {"role": "system", "content": output.output}
+                *history,
+                {"role": "user", "content": input},
+                {"role": "system", "content": output.output},
             ],
         )
