@@ -408,6 +408,13 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.entity_extraction),
             reader.use(entity_extraction_config),
         ):
+            max_gleanings = reader.int(Fragment.max_gleanings)
+            max_gleanings = (
+                max_gleanings
+                if max_gleanings is not None
+                else defs.ENTITY_EXTRACTION_MAX_GLEANINGS
+            )
+
             entity_extraction_model = EntityExtractionConfig(
                 llm=hydrate_llm_params(entity_extraction_config, llm_model),
                 parallelization=hydrate_parallelization_params(
@@ -416,8 +423,7 @@ def create_graphrag_config(
                 async_mode=hydrate_async_type(entity_extraction_config, async_mode),
                 entity_types=reader.list("entity_types")
                 or defs.ENTITY_EXTRACTION_ENTITY_TYPES,
-                max_gleanings=reader.int(Fragment.max_gleanings)
-                or defs.ENTITY_EXTRACTION_MAX_GLEANINGS,
+                max_gleanings=max_gleanings,
                 prompt=reader.str("prompt", Fragment.prompt_file),
             )
 
@@ -426,6 +432,10 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.claim_extraction),
             reader.use(claim_extraction_config),
         ):
+            max_gleanings = reader.int(Fragment.max_gleanings)
+            max_gleanings = (
+                max_gleanings if max_gleanings is not None else defs.CLAIM_MAX_GLEANINGS
+            )
             claim_extraction_model = ClaimExtractionConfig(
                 enabled=reader.bool(Fragment.enabled) or defs.CLAIM_EXTRACTION_ENABLED,
                 llm=hydrate_llm_params(claim_extraction_config, llm_model),
@@ -435,8 +445,7 @@ def create_graphrag_config(
                 async_mode=hydrate_async_type(claim_extraction_config, async_mode),
                 description=reader.str("description") or defs.CLAIM_DESCRIPTION,
                 prompt=reader.str("prompt", Fragment.prompt_file),
-                max_gleanings=reader.int(Fragment.max_gleanings)
-                or defs.CLAIM_MAX_GLEANINGS,
+                max_gleanings=max_gleanings,
             )
 
         community_report_config = values.get("community_reports") or {}
