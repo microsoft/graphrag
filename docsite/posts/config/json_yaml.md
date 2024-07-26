@@ -102,6 +102,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
 - `group_by_columns` **list[str]** - group documents by fields before chunking.
+- `encoding_model` **str** - The text encoding model to use. Default is to use the top-level encoding model.
 - `strategy` **dict** - Fully override the chunking strategy.
 
 ## cache

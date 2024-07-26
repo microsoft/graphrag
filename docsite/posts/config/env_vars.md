@@ -137,6 +137,7 @@ These settings control the data input used by the pipeline. Any settings with a 
 | `GRAPHRAG_CHUNK_SIZE`       | The chunk size in tokens for text-chunk analysis windows.                                   | `str` | optional             | 1200    |
 | `GRAPHRAG_CHUNK_OVERLAP`    | The chunk overlap in tokens for text-chunk analysis windows.                                | `str` | optional             | 100     |
 | `GRAPHRAG_CHUNK_BY_COLUMNS` | A comma-separated list of document attributes to groupby when performing TextUnit chunking. | `str` | optional             | `id`    |
+| `GRAPHRAG_CHUNK_ENCODING_MODEL` | The encoding model to use for chunking.                                                  | `str` | optional             | `None` |
 
 ## Prompting Overrides
 
