@@ -21,6 +21,8 @@ from graphrag.llm import CompletionLLM
 
 from .prompts import CONTINUE_PROMPT, GRAPH_EXTRACTION_PROMPT, LOOP_PROMPT
 
+_log = logging.getLogger(__name__)
+
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
@@ -124,7 +126,7 @@ class GraphExtractor:
                 source_doc_map[doc_index] = text
                 all_records[doc_index] = result
             except Exception as e:
-                logging.exception("error extracting graph")
+                _log.exception("error extracting graph")
                 self._on_error(
                     e,
                     traceback.format_exc(),
@@ -159,24 +161,24 @@ class GraphExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            glean_response = await self._llm(
+            response = await self._llm(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history or [],
             )
-            results += glean_response.output or ""
+            results += response.output or ""
 
             # if this is the final glean, don't bother updating the continuation flag
             if i >= self._max_gleanings - 1:
                 break
 
-            continuation = await self._llm(
+            response = await self._llm(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
-                history=glean_response.history or [],
+                history=response.history or [],
                 model_parameters=self._loop_args,
             )
-            if continuation.output != "YES":
+            if response.output != "YES":
                 break
 
         return results
