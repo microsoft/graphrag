@@ -419,7 +419,6 @@ def create_graphrag_config(
                 max_gleanings=reader.int(Fragment.max_gleanings)
                 or defs.ENTITY_EXTRACTION_MAX_GLEANINGS,
                 prompt=reader.str("prompt", Fragment.prompt_file),
-                strategy=entity_extraction_config.get("strategy"),
             )
 
         claim_extraction_config = values.get("claim_extraction") or {}
