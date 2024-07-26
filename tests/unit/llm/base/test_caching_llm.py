@@ -20,7 +20,7 @@ class TestCache(LLMCache):
 
     async def get(self, key: str) -> dict | None:
         entry = self.cache.get(key)
-        if entry: 
+        if entry:
             return entry["result"]
 
     async def set(self, key: str, value: str, debug_data: dict[str, Any]) -> None:
