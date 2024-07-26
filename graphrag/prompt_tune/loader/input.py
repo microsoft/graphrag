@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
 
+import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
@@ -61,7 +62,7 @@ async def load_docs_in_chunks(
 
     # covert to text units
     input = VerbInput(input=TableContainer(table=dataset))
-    chunk_strategy = config.chunks.resolved_strategy()
+    chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)
 
     # Use smaller chunks, to avoid huge prompts
     chunk_strategy["chunk_size"] = chunk_size
