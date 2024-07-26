@@ -102,10 +102,13 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         llm_args = {**self._llm_parameters, **(kwargs.get("model_parameters") or {})}
         cache_key = self._cache_key(input, name, llm_args, history_in)
         cached_result = await self._cache_read(cache_key)
-        
+
         if cached_result:
             self._on_cache_hit(cache_key, name)
-            return LLMOutput(output=cached_result["result"], history=cached_result.get("history") or [])
+            return LLMOutput(
+                output=cached_result["result"],
+                history=cached_result.get("history") or [],
+            )
 
         # Report the Cache Miss
         self._on_cache_miss(cache_key, name)
