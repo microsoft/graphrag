@@ -13,10 +13,10 @@ class LLMCache(Protocol):
         """Check if the cache has a value."""
         ...
 
-    async def get(self, key: str) -> Any | None:
+    async def get(self, key: str) -> dict[str, Any] | None:
         """Retrieve a value from the cache."""
         ...
 
-    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         """Write a value into the cache."""
         ...

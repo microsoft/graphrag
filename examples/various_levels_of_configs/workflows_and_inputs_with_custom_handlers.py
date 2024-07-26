@@ -90,9 +90,9 @@ class ExampleCache(InMemoryCache):
         print(f"ExampleCache.get {key}")
         return await super().get(key)
 
-    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         print(f"ExampleCache.set {key}")
-        return await super().set(key, value, debug_data)
+        return await super().set(key, data)
 
     async def has(self, key: str) -> bool:
         print(f"ExampleCache.has {key}")

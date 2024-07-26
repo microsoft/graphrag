@@ -33,7 +33,7 @@ class InMemoryCache(PipelineCache):
         key = self._create_cache_key(key)
         return self._cache.get(key)
 
-    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         """Set the value for the given key.
 
         Args:
@@ -41,7 +41,7 @@ class InMemoryCache(PipelineCache):
             - value - The value to set.
         """
         key = self._create_cache_key(key)
-        self._cache[key] = value
+        self._cache[key] = data
 
     async def has(self, key: str) -> bool:
         """Return True if the given key exists in the storage.

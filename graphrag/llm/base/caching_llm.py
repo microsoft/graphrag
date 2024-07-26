@@ -4,7 +4,7 @@
 """A class to interact with the cache."""
 
 import json
-from typing import Any, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from typing_extensions import Unpack
 
@@ -47,6 +47,10 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         self._on_cache_hit = _noop_cache_fn
         self._on_cache_miss = _noop_cache_fn
 
+    def set_delegate(self, delegate: LLM[TIn, TOut]) -> None:
+        """Set the delegate LLM. (for testing)."""
+        self._delegate = delegate
+
     def on_cache_hit(self, fn: OnCacheActionFn | None) -> None:
         """Set the function to call when a cache hit occurs."""
         self._on_cache_hit = fn or _noop_cache_fn
@@ -66,30 +70,6 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         )
         return create_hash_key(tag, json_input, args, history)
 
-    async def _cache_read(self, key: str) -> dict[str, Any] | None:
-        """Read a value from the cache."""
-        return await self._cache.get(key)
-
-    async def _cache_write(
-        self,
-        key: str,
-        input: TIn,
-        result: TOut | None,
-        args: dict,
-        history: list[dict] | None,
-    ) -> None:
-        """Write a value to the cache."""
-        if result:
-            await self._cache.set(
-                key,
-                result,
-                {
-                    "input": input,
-                    "parameters": args,
-                    "history": history,
-                },
-            )
-
     async def __call__(
         self,
         input: TIn,
@@ -101,7 +81,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         history_in = kwargs.get("history") or None
         llm_args = {**self._llm_parameters, **(kwargs.get("model_parameters") or {})}
         cache_key = self._cache_key(input, name, llm_args, history_in)
-        cached_result = await self._cache_read(cache_key)
+        cached_result = await self._cache.get(cache_key)
 
         if cached_result:
             self._on_cache_hit(cache_key, name)
@@ -118,5 +98,14 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         history = result.history
 
         # Cache the new result
-        await self._cache_write(cache_key, input, result.output, llm_args, history)
+        if result.output is not None:
+            await self._cache.set(
+                cache_key,
+                {
+                    "result": result.output,
+                    "input": input,
+                    "parameters": llm_args,
+                    "history": history,
+                },
+            )
         return result

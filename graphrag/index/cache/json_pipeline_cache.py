@@ -39,11 +39,8 @@ class JsonPipelineCache(PipelineCache):
 
         return None
 
-    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         """Set method definition."""
-        if value is None:
-            return
-        data = {"result": value, **(debug_data or {})}
         await self._storage.set(key, json.dumps(data), encoding=self._encoding)
 
     async def has(self, key: str) -> bool:

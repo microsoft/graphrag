@@ -44,22 +44,22 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         assert len(files) == 0
 
     async def test_child_cache(self):
-        await self.cache.set("test1", "test1")
+        await self.cache.set("test1", {"value": "test1"})
         assert os.path.exists(f"{TEMP_DIR}/test1")
 
         child = self.cache.child("test")
         assert os.path.exists(f"{TEMP_DIR}/test")
 
-        await child.set("test2", "test2")
+        await child.set("test2", {"value": "test2"})
         assert os.path.exists(f"{TEMP_DIR}/test/test2")
 
-        await self.cache.set("test1", "test1")
+        await self.cache.set("test1", {"value": "test1"})
         await self.cache.delete("test1")
         assert not os.path.exists(f"{TEMP_DIR}/test1")
 
     async def test_cache_has(self):
         test1 = "this is a test file"
-        await self.cache.set("test1", test1)
+        await self.cache.set("test1", {"value": test1})
 
         assert await self.cache.has("test1")
         assert not await self.cache.has("NON_EXISTENT")
@@ -69,9 +69,13 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         test1 = "this is a test file"
         test2 = "\\n test"
         test3 = "\\\\\\"
-        await self.cache.set("test1", test1)
-        await self.cache.set("test2", test2)
-        await self.cache.set("test3", test3)
-        assert cast(dict, (await self.cache.get("test1")))["result"] == test1
-        assert cast(dict, (await self.cache.get("test2")))["result"] == test2
-        assert cast(dict, (await self.cache.get("test3")))["result"] == test3
+        await self.cache.set("test1", {"result": test1})
+        await self.cache.set("test2", {"result": test2})
+        await self.cache.set("test3", {"result": test3})
+
+        res1 = await self.cache.get("test1")
+        res2 = await self.cache.get("test2")
+        res3 = await self.cache.get("test3")
+        assert cast(dict, res1)["result"] == test1
+        assert cast(dict, res2)["result"] == test2
+        assert cast(dict, res3)["result"] == test3

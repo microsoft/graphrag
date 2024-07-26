@@ -24,9 +24,7 @@ class NoopPipelineCache(PipelineCache):
         """
         return None
 
-    async def set(
-        self, key: str, value: str | bytes | None, debug_data: dict | None = None
-    ) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         """Set the value for the given key.
 
         Args:

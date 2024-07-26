@@ -26,7 +26,7 @@ class PipelineCache(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    async def set(self, key: str, value: Any, debug_data: dict | None = None) -> None:
+    async def set(self, key: str, data: dict[str, Any]) -> None:
         """Set the value for the given key.
 
         Args:
