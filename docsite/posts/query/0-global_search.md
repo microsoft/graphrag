@@ -75,4 +75,4 @@ Below are the key parameters of the [GlobalSearch class](https://github.com/micr
 
 ## How to Use
 
-An example of a global search scenario can be found in the following [notebook](../../examples_notebooks/global_search.ipynb).
+An example of a global search scenario can be found in the following [notebook](../../../examples_notebooks/global_search.ipynb).
