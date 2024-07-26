@@ -20,7 +20,9 @@ def _hash(_input: str) -> str:
     return hashlib.md5(_input.encode()).hexdigest()  # noqa S324
 
 
-def create_hash_key(operation: str, prompt: str, parameters: dict, history: dict) -> str:
+def create_hash_key(
+    operation: str, prompt: str, parameters: dict, history: dict
+) -> str:
     """Compute cache key from prompt and associated model and settings.
 
     Args:
@@ -33,5 +35,9 @@ def create_hash_key(operation: str, prompt: str, parameters: dict, history: dict
     """
     llm_string = _llm_string(parameters)
     history_string = _hash(json.dumps(history)) if history else None
-    hash = _hash(prompt + llm_string + history_string) if history_string else _hash(prompt + llm_string)
-    return f"{operation}-{hash}"
+    hash_string = (
+        _hash(prompt + llm_string + history_string)
+        if history_string
+        else _hash(prompt + llm_string)
+    )
+    return f"{operation}-{hash_string}"

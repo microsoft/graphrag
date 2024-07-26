@@ -55,7 +55,9 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         """Set the function to call when a cache miss occurs."""
         self._on_cache_miss = fn or _noop_cache_fn
 
-    def _cache_key(self, input: TIn, name: str | None, args: dict, history: dict | None) -> str:
+    def _cache_key(
+        self, input: TIn, name: str | None, args: dict, history: dict | None
+    ) -> str:
         json_input = json.dumps(input)
         tag = (
             f"{name}-{self._operation}-v{_cache_strategy_version}"
