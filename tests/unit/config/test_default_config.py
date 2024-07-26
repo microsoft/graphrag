@@ -454,6 +454,20 @@ class TestDefaultConfig(unittest.TestCase):
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_LLM_API_KEY": "test",
+            "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "0",
+            "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "0",
+        },
+        clear=True,
+    )
+    def test_can_set_gleanings_to_zero(self):
+        parameters = create_graphrag_config()
+        assert parameters.claim_extraction.max_gleanings == 0
+        assert parameters.entity_extraction.max_gleanings == 0
+
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
         query_docs_path = Path("docsite/posts/query/3-cli.md")
