@@ -88,6 +88,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CHUNK_BY_COLUMNS": "a,b",
     "GRAPHRAG_CHUNK_OVERLAP": "12",
     "GRAPHRAG_CHUNK_SIZE": "500",
+    "GRAPHRAG_CHUNK_ENCODING_MODEL": "encoding-c",
     "GRAPHRAG_CLAIM_EXTRACTION_ENABLED": "True",
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
@@ -468,6 +469,15 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.claim_extraction.max_gleanings == 0
         assert parameters.entity_extraction.max_gleanings == 0
 
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_LLM_API_KEY": "test", "GRAPHRAG_CHUNK_BY_COLUMNS": ""},
+        clear=True,
+    )
+    def test_can_set_no_chunk_by_columns(self):
+        parameters = create_graphrag_config()
+        assert parameters.chunks.group_by_columns == []
+
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
         query_docs_path = Path("docsite/posts/query/3-cli.md")
@@ -528,6 +538,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
+        assert parameters.chunks.encoding_model == "encoding-c"
         assert parameters.claim_extraction.enabled
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
