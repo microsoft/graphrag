@@ -390,6 +390,7 @@ def create_graphrag_config(
                 size=reader.int("size") or defs.CHUNK_SIZE,
                 overlap=reader.int("overlap") or defs.CHUNK_OVERLAP,
                 group_by_columns=group_by_columns,
+                encoding_model=reader.str(Fragment.encoding_model),
             )
         with (
             reader.envvar_prefix(Section.snapshot),
