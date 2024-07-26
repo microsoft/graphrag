@@ -71,7 +71,12 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         return await self._cache.get(key)
 
     async def _cache_write(
-        self, key: str, input: TIn, result: TOut | None, args: dict
+        self,
+        key: str,
+        input: TIn,
+        result: TOut | None,
+        args: dict,
+        history: list[dict] | None,
     ) -> None:
         """Write a value to the cache."""
         if result:
@@ -81,6 +86,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
                 {
                     "input": input,
                     "parameters": args,
+                    "history": history,
                 },
             )
 
@@ -105,6 +111,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
 
         # Compute the new result
         result = await self._delegate(input, **kwargs)
+
         # Cache the new result
-        await self._cache_write(cache_key, input, result.output, llm_args)
+        await self._cache_write(cache_key, input, result.output, llm_args, history)
         return result
