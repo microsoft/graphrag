@@ -425,6 +425,7 @@ def create_graphrag_config(
                 or defs.ENTITY_EXTRACTION_ENTITY_TYPES,
                 max_gleanings=max_gleanings,
                 prompt=reader.str("prompt", Fragment.prompt_file),
+                encoding_model=reader.str(Fragment.encoding_model),
             )
 
         claim_extraction_config = values.get("claim_extraction") or {}
@@ -446,6 +447,7 @@ def create_graphrag_config(
                 description=reader.str("description") or defs.CLAIM_DESCRIPTION,
                 prompt=reader.str("prompt", Fragment.prompt_file),
                 max_gleanings=max_gleanings,
+                encoding_model=reader.str(Fragment.encoding_model),
             )
 
         community_report_config = values.get("community_reports") or {}
