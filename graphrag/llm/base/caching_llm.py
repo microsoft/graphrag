@@ -56,7 +56,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         self._on_cache_miss = fn or _noop_cache_fn
 
     def _cache_key(
-        self, input: TIn, name: str | None, args: dict, history: dict | None
+        self, input: TIn, name: str | None, args: dict, history: list[dict] | None
     ) -> str:
         json_input = json.dumps(input)
         tag = (

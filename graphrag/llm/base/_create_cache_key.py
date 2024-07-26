@@ -21,7 +21,7 @@ def _hash(_input: str) -> str:
 
 
 def create_hash_key(
-    operation: str, prompt: str, parameters: dict, history: dict
+    operation: str, prompt: str, parameters: dict, history: list[dict] | None
 ) -> str:
     """Compute cache key from prompt and associated model and settings.
 
