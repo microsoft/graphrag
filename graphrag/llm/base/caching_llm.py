@@ -66,7 +66,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         )
         return create_hash_key(tag, json_input, args, history)
 
-    async def _cache_read(self, key: str) -> Any | None:
+    async def _cache_read(self, key: str) -> dict[str, Any] | None:
         """Read a value from the cache."""
         return await self._cache.get(key)
 
@@ -98,19 +98,21 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         """Execute the LLM."""
         # Check for an Existing cache item
         name = kwargs.get("name")
-        history = kwargs.get("history") or None
+        history_in = kwargs.get("history") or None
         llm_args = {**self._llm_parameters, **(kwargs.get("model_parameters") or {})}
-        cache_key = self._cache_key(input, name, llm_args, history)
+        cache_key = self._cache_key(input, name, llm_args, history_in)
         cached_result = await self._cache_read(cache_key)
+        
         if cached_result:
             self._on_cache_hit(cache_key, name)
-            return LLMOutput(output=cached_result)
+            return LLMOutput(output=cached_result["result"], history=cached_result.get("history") or [])
 
         # Report the Cache Miss
         self._on_cache_miss(cache_key, name)
 
         # Compute the new result
         result = await self._delegate(input, **kwargs)
+        history = result.history
 
         # Cache the new result
         await self._cache_write(cache_key, input, result.output, llm_args, history)

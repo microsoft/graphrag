@@ -22,7 +22,7 @@ class JsonPipelineCache(PipelineCache):
         self._storage = storage
         self._encoding = encoding
 
-    async def get(self, key: str) -> str | None:
+    async def get(self, key: str) -> dict[str, Any] | None:
         """Get method definition."""
         if await self.has(key):
             try:
@@ -35,7 +35,7 @@ class JsonPipelineCache(PipelineCache):
                 await self._storage.delete(key)
                 return None
             else:
-                return data.get("result")
+                return data
 
         return None
 

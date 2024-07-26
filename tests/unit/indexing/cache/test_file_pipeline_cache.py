@@ -71,6 +71,6 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         await self.cache.set("test1", test1)
         await self.cache.set("test2", test2)
         await self.cache.set("test3", test3)
-        assert await self.cache.get("test1") == test1
-        assert await self.cache.get("test2") == test2
-        assert await self.cache.get("test3") == test3
+        assert (await self.cache.get("test1"))["result"] == test1
+        assert (await self.cache.get("test2"))["result"] == test2
+        assert (await self.cache.get("test3"))["result"] == test3
