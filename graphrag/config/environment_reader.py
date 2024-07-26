@@ -149,7 +149,6 @@ class EnvironmentReader:
 
         if result is None:
             result = self.str(key, env_key)
-        if result is not None:
-            result = [s.strip() for s in result.split(",")]
-            return [s for s in result if s]
+        if result:
+            return [s.strip() for s in result.split(",")]
         return default_value
