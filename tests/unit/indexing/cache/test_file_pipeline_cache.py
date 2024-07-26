@@ -3,6 +3,7 @@
 import asyncio
 import os
 import unittest
+from typing import cast
 
 from graphrag.index.cache import (
     JsonPipelineCache,
@@ -71,6 +72,6 @@ class TestFilePipelineCache(unittest.IsolatedAsyncioTestCase):
         await self.cache.set("test1", test1)
         await self.cache.set("test2", test2)
         await self.cache.set("test3", test3)
-        assert (await self.cache.get("test1"))["result"] == test1
-        assert (await self.cache.get("test2"))["result"] == test2
-        assert (await self.cache.get("test3"))["result"] == test3
+        assert cast(dict, (await self.cache.get("test1")))["result"] == test1
+        assert cast(dict, (await self.cache.get("test2")))["result"] == test2
+        assert cast(dict, (await self.cache.get("test3")))["result"] == test3
