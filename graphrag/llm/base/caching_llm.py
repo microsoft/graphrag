@@ -55,14 +55,14 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         """Set the function to call when a cache miss occurs."""
         self._on_cache_miss = fn or _noop_cache_fn
 
-    def _cache_key(self, input: TIn, name: str | None, args: dict) -> str:
+    def _cache_key(self, input: TIn, name: str | None, args: dict, history: dict | None) -> str:
         json_input = json.dumps(input)
         tag = (
             f"{name}-{self._operation}-v{_cache_strategy_version}"
             if name is not None
             else self._operation
         )
-        return create_hash_key(tag, json_input, args)
+        return create_hash_key(tag, json_input, args, history)
 
     async def _cache_read(self, key: str) -> Any | None:
         """Read a value from the cache."""
@@ -92,9 +92,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
         name = kwargs.get("name")
         history = kwargs.get("history") or None
         llm_args = {**self._llm_parameters, **(kwargs.get("model_parameters") or {})}
-        if history:
-            llm_args["history"] = history
-        cache_key = self._cache_key(input, name, llm_args)
+        cache_key = self._cache_key(input, name, llm_args, history)
         cached_result = await self._cache_read(cache_key)
         if cached_result:
             self._on_cache_hit(cache_key, name)
