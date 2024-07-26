@@ -20,11 +20,12 @@ class TestCache(LLMCache):
 
     async def get(self, key: str) -> dict | None:
         entry = self.cache.get(key)
-        if entry:
-            return entry["result"]
+        return entry["result"] if entry else None
 
-    async def set(self, key: str, value: str, debug_data: dict[str, Any]) -> None:
-        self.cache[key] = {"result": value, **debug_data}
+    async def set(
+        self, key: str, value: str, debug_data: dict[str, Any] | None = None
+    ) -> None:
+        self.cache[key] = {"result": value, **(debug_data or {})}
 
 
 async def mock_responder(input: str, **kwargs: dict) -> LLMOutput:
