@@ -7,11 +7,12 @@ body:
   - type: checkboxes
     id: existingcheck
     attributes:
-      label: Is there an existing issue for this?
-      description: Please search to see if an issue already exists for the bug you encountered.
+      label: Do you need to file an issue?
+      description: Please help us manage our time by avoiding duplicates and common questions with the steps below.
       options:
-        - label: I have searched the existing issues
-        - label: I have checked [#657](https://github.com/microsoft/graphrag/issues/657) to validate if my issue is covered by community support
+        - label: I have searched the existing issues and this bug is not already filed.
+        - label: My model is hosted on OpenAI or Azure. If not, please look at the "model providers" issue and don't file a new one here.
+        - label: I believe this is a legitimate bug, not just a question. If this is a question, please use the Discussions area.
   - type: textarea
     id: description
     attributes:
