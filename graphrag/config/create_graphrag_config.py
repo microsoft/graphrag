@@ -387,6 +387,7 @@ def create_graphrag_config(
                 overlap=reader.int("overlap") or defs.CHUNK_OVERLAP,
                 group_by_columns=reader.list("group_by_columns", "BY_COLUMNS")
                 or defs.CHUNK_GROUP_BY_COLUMNS,
+                encoding_model=reader.str(Fragment.encoding_model),
             )
         with (
             reader.envvar_prefix(Section.snapshot),
