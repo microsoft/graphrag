@@ -382,12 +382,14 @@ def create_graphrag_config(
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
             )
         with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
+            group_by_columns = reader.list("group_by_columns", "BY_COLUMNS")
+            if group_by_columns is None:
+                group_by_columns = defs.CHUNK_GROUP_BY_COLUMNS
+
             chunks_model = ChunkingConfig(
                 size=reader.int("size") or defs.CHUNK_SIZE,
                 overlap=reader.int("overlap") or defs.CHUNK_OVERLAP,
-                group_by_columns=reader.list("group_by_columns", "BY_COLUMNS")
-                or defs.CHUNK_GROUP_BY_COLUMNS,
-                encoding_model=reader.str(Fragment.encoding_model),
+                group_by_columns=group_by_columns,
             )
         with (
             reader.envvar_prefix(Section.snapshot),
