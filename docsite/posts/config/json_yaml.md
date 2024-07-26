@@ -145,6 +145,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
+- `encoding_model` **str** - The text encoding model to use. By default, this will use the top-level encoding model.
 - `strategy` **dict** - Fully override the entity extraction strategy.
 
 ## summarize_descriptions
@@ -169,6 +170,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
+- `encoding_model` **str** - The text encoding model to use. By default, this will use the top-level encoding model.
 - `strategy` **dict** - Fully override the claim extraction strategy.
 
 ## community_reports

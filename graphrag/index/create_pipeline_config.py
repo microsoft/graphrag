@@ -405,7 +405,7 @@ def _covariate_workflows(
                 "claim_extract": {
                     **settings.claim_extraction.parallelization.model_dump(),
                     "strategy": settings.claim_extraction.resolved_strategy(
-                        settings.root_dir
+                        settings.root_dir, settings.encoding_model
                     ),
                 },
             },

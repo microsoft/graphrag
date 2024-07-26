@@ -93,6 +93,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
     "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-a.txt",
+    "GRAPHRAG_CLAIM_EXTRACTION_ENCODING_MODEL": "encoding_a",
     "GRAPHRAG_COMMUNITY_REPORTS_MAX_LENGTH": "23456",
     "GRAPHRAG_COMMUNITY_REPORTS_PROMPT_FILE": "tests/unit/config/prompt-b.txt",
     "GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS": "17",
@@ -115,6 +116,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES": "cat,dog,elephant",
     "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
     "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-c.txt",
+    "GRAPHRAG_ENTITY_EXTRACTION_ENCODING_MODEL": "encoding_b",
     "GRAPHRAG_INPUT_BASE_DIR": "/some/input/dir",
     "GRAPHRAG_INPUT_CONNECTION_STRING": "input_cs",
     "GRAPHRAG_INPUT_CONTAINER_NAME": "input_cn",
@@ -543,6 +545,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
         assert parameters.claim_extraction.prompt == "tests/unit/config/prompt-a.txt"
+        assert parameters.claim_extraction.encoding_model == "encoding_a"
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
         assert parameters.community_reports.prompt == "tests/unit/config/prompt-b.txt"
@@ -572,6 +575,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
         assert parameters.entity_extraction.prompt == "tests/unit/config/prompt-c.txt"
+        assert parameters.entity_extraction.encoding_model == "encoding_b"
         assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
@@ -910,7 +914,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert strategy["extraction_prompt"] == "Hello, World! A"
         assert strategy["encoding_name"] == "abc123"
 
-        strategy = config.claim_extraction.resolved_strategy(".")
+        strategy = config.claim_extraction.resolved_strategy(".", "encoding_b")
         assert strategy["extraction_prompt"] == "Hello, World! B"
 
         strategy = config.community_reports.resolved_strategy(".")

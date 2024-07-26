@@ -16,3 +16,4 @@ class ClaimExtractionConfigInput(LLMConfigInput):
     description: NotRequired[str | None]
     max_gleanings: NotRequired[int | str | None]
     strategy: NotRequired[dict | None]
+    encoding_model: NotRequired[str | None]
