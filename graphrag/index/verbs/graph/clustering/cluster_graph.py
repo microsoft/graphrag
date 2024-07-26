@@ -98,10 +98,7 @@ def cluster_graph(
     output_df = output_df.explode(to, ignore_index=True)
 
     # split the (level, graph) pairs into separate columns
-    # TODO: There is probably a better way to do this
-    output_df[[level_to, to]] = pd.DataFrame(
-        output_df[to].tolist(), index=output_df.index
-    )
+    output_df[[level_to, to]] = pd.DataFrame(output_df[to].tolist(), index=output_df.index, columns=[level_to, to])
 
     # clean up the community map
     output_df.drop(columns=[community_map_to], inplace=True)
