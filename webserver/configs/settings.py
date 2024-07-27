@@ -6,10 +6,10 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     server_port: int = 20213
     data: str = (
-        "/Users/evilkylin/Projects/graphrag/output"
+        "./output"
     )
     lancedb_uri: str = (
-        "/Users/evilkylin/Projects/graphrag/lancedb"  # f"{input_dir}/lancedb"
+        "./lancedb"
     )
     api_key: str = os.environ.get("DEEP_SEEK_API_KEY")
     api_base: str = "https://api.deepseek.com/v1"

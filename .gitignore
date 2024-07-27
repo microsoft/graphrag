@@ -66,3 +66,8 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+settings.yaml
+output/
+input
+cache
+prompts

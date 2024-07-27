@@ -146,7 +146,7 @@ async def chat_completions(request: ChatCompletionRequest):
         conversation_history = ConversationHistory.from_list(message_dicts)
 
         if not request.stream:
-            if request.model.startswith("global"):
+            if request.model.endswith("global"):
                 global_context = await switch_context(model=request.model)
                 global_search.context_builder = global_context
                 result = await global_search.asearch(prompt, conversation_history=conversation_history)
@@ -180,7 +180,7 @@ async def chat_completions(request: ChatCompletionRequest):
             return JSONResponse(content=json_compatible)
         else:
             callback = CustomSearchCallback()
-            if request.model.startswith("global"):
+            if request.model.endswith("global"):
                 global_context = await switch_context(model=request.model)
                 global_search.context_builder = global_context
                 global_search.callbacks = [callback]
@@ -200,8 +200,8 @@ async def list_models():
     dirs = get_sorted_subdirs(settings.data)
     models = []
     for dir in dirs:
-        model_global = {"id": f"global-{dir}", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
-        model_local = {"id": f"local-{dir}", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
+        model_global = {"id": f"{dir}-global", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
+        model_local = {"id": f"{dir}-local", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
         models.append(model_global)
         models.append(model_local)
 
@@ -213,11 +213,11 @@ async def list_models():
 
 
 async def switch_context(model: str = None):
-    if model.startswith("global"):
-        input_dir = os.path.join(settings.data, model.removeprefix("global-"), "artifacts")
+    if model.endswith("global"):
+        input_dir = os.path.join(settings.data, model.removesuffix("-global"), "artifacts")
         context_builder = await build_global_context_builder(input_dir, token_encoder)
-    elif model.startswith("local"):
-        input_dir = os.path.join(settings.data, model.removeprefix("local-"), "artifacts")
+    elif model.endswith("local"):
+        input_dir = os.path.join(settings.data, model.removesuffix("-local"), "artifacts")
         context_builder = await load_local_context(input_dir, text_embedder, token_encoder)
     else:
         raise NotImplementedError(f"model {model} is not supported")
