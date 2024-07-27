@@ -19,14 +19,14 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
-from utils import consts
-from configs import settings
+from webserver.utils import consts
+from webserver.configs import settings
 
 
-async def load_local_context(embedder: BaseTextEmbedding, token_encoder: tiktoken.Encoding | None = None) -> LocalContextBuilder:
+async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_encoder: tiktoken.Encoding | None = None) -> LocalContextBuilder:
     # read nodes table to get community and degree data
-    entity_df = pd.read_parquet(f"{settings.input_dir}/{consts.ENTITY_TABLE}.parquet")
-    entity_embedding_df = pd.read_parquet(f"{settings.input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
+    entity_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_TABLE}.parquet")
+    entity_embedding_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
 
     entities = read_indexer_entities(entity_df, entity_embedding_df, consts.COMMUNITY_LEVEL)
 
@@ -40,17 +40,17 @@ async def load_local_context(embedder: BaseTextEmbedding, token_encoder: tiktoke
         entities=entities, vectorstore=description_embedding_store
     )
 
-    relationship_df = pd.read_parquet(f"{settings.input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
+    relationship_df = pd.read_parquet(f"{input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
     relationships = read_indexer_relationships(relationship_df)
 
     # covariate_df = pd.read_parquet(f"{settings.input_dir}/{consts.COVARIATE_TABLE}.parquet")
     # claims = read_indexer_covariates(covariate_df)
     # covariates = {"claims": claims}
 
-    report_df = pd.read_parquet(f"{settings.input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
+    report_df = pd.read_parquet(f"{input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
     reports = read_indexer_reports(report_df, entity_df, consts.COMMUNITY_LEVEL)
 
-    text_unit_df = pd.read_parquet(f"{settings.input_dir}/{consts.TEXT_UNIT_TABLE}.parquet")
+    text_unit_df = pd.read_parquet(f"{input_dir}/{consts.TEXT_UNIT_TABLE}.parquet")
     text_units = read_indexer_text_units(text_unit_df)
 
     context_builder = LocalSearchMixedContext(
@@ -68,7 +68,7 @@ async def load_local_context(embedder: BaseTextEmbedding, token_encoder: tiktoke
     return context_builder
 
 
-async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder, token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
+async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder = None, token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
     local_context_params = {
         "text_unit_prop": 0.5,
         "community_prop": 0.1,

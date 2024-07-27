@@ -4,8 +4,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    input_dir: str = (
-        "/Users/evilkylin/Projects/graphrag/output/20240726-141021/artifacts"
+    server_port: int = 20213
+    data: str = (
+        "/Users/evilkylin/Projects/graphrag/output"
     )
     lancedb_uri: str = (
         "/Users/evilkylin/Projects/graphrag/lancedb"  # f"{input_dir}/lancedb"

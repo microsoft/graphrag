@@ -1,35 +1,53 @@
 import asyncio
 import logging
+import os
 import time
 import uuid
-from datetime import datetime
 from typing import Generator, Optional
 
 import tiktoken
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse
+from openai.types import CompletionUsage
+from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionChunk
+from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
+
 from graphrag.query.context_builder.conversation_history import ConversationHistory
-from graphrag.query.llm.base import BaseLLMCallback
 from graphrag.query.llm.oai import ChatOpenAI, OpenaiApiType, OpenAIEmbedding
 from graphrag.query.structured_search.base import SearchResult
 from graphrag.query.structured_search.global_search.callbacks import GlobalSearchLLMCallback
 from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from openai.types import CompletionUsage
-from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionChunk
-from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
-from fastapi.responses import JSONResponse
-from gtypes import ChatCompletionRequest
-from fastapi.responses import StreamingResponse
-
-from configs import settings
-from globalsearch import build_global_search_engine
-from localsearch import build_local_search_engine, load_local_context
+from webserver.configs import settings
+from webserver.globalsearch import build_global_search_engine, build_global_context_builder
+from webserver.gtypes import ChatCompletionRequest
+from webserver.localsearch import build_local_search_engine, load_local_context
+from webserver.utils import get_sorted_subdirs
 
 app = FastAPI()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+llm = ChatOpenAI(
+    api_key=settings.api_key,
+    api_base=settings.api_base,
+    model=settings.llm_model,
+    api_type=OpenaiApiType.OpenAI,
+    max_retries=settings.max_retries,
+)
+
+text_embedder = OpenAIEmbedding(
+    api_key=settings.api_key,
+    api_base=settings.embedding_api_base,
+    api_type=OpenaiApiType.OpenAI,
+    model=settings.embedding_model,
+    max_retries=settings.max_retries,
+)
+
+token_encoder = tiktoken.get_encoding("cl100k_base")
 
 local_search: LocalSearch = None
 global_search: GlobalSearch = None
@@ -68,45 +86,22 @@ class CustomSearchCallback(GlobalSearchLLMCallback):
     async def generate_tokens(self) -> Generator[str, None, None]:
         while True:
             token = await self.token_queue.get()
-            if token == CustomSearchCallback.stop_sign:
-                yield token
-                break
             yield token
+            if token == CustomSearchCallback.stop_sign:
+                break
 
 
 @app.on_event("startup")
 async def startup_event():
     global local_search
     global global_search
-    llm = ChatOpenAI(
-        api_key=settings.api_key,
-        api_base=settings.api_base,
-        model=settings.llm_model,
-        api_type=OpenaiApiType.OpenAI,
-        max_retries=settings.max_retries,
-    )
-
-    token_encoder = tiktoken.get_encoding("cl100k_base")
-
-    text_embedder = OpenAIEmbedding(
-        api_key=settings.api_key,
-        api_base=settings.embedding_api_base,
-        api_type=OpenaiApiType.OpenAI,
-        model=settings.embedding_model,
-        max_retries=settings.max_retries,
-    )
-    local_context = await load_local_context(text_embedder, token_encoder)
-    local_search = await build_local_search_engine(llm, local_context, token_encoder)
-
-    global_search = await build_global_search_engine(llm, input_dir=settings.input_dir, token_encoder=token_encoder)
+    local_search = await build_local_search_engine(llm, token_encoder=token_encoder)
+    global_search = await build_global_search_engine(llm, token_encoder=token_encoder)
 
 
 @app.get("/")
 async def index():
-    result = await global_search.asearch(
-        "What is the major conflict in this story and who are the protagonist and antagonist?"
-    )
-    return {"message": result.response}
+    return {"message": "Hello, here is the webserver for graphrag, developed by @kylinmountain"}
 
 
 async def generate_chunks(callback, request_model):
@@ -151,9 +146,13 @@ async def chat_completions(request: ChatCompletionRequest):
         conversation_history = ConversationHistory.from_list(message_dicts)
 
         if not request.stream:
-            if request.model == "global":
+            if request.model.startswith("global"):
+                global_context = await switch_context(model=request.model)
+                global_search.context_builder = global_context
                 result = await global_search.asearch(prompt, conversation_history=conversation_history)
             else:
+                local_context = await switch_context(model=request.model)
+                local_search.context_builder = local_context
                 result = await local_search.asearch(prompt, conversation_history=conversation_history)
 
             completion = ChatCompletion(
@@ -181,10 +180,14 @@ async def chat_completions(request: ChatCompletionRequest):
             return JSONResponse(content=json_compatible)
         else:
             callback = CustomSearchCallback()
-            if request.model == "global":
+            if request.model.startswith("global"):
+                global_context = await switch_context(model=request.model)
+                global_search.context_builder = global_context
                 global_search.callbacks = [callback]
                 task = asyncio.create_task(global_search.asearch(prompt, conversation_history))
             else:
+                local_context = await switch_context(model=request.model)
+                local_search.context_builder = local_context
                 local_search.callbacks = [callback]
                 task = asyncio.create_task(local_search.asearch(prompt, conversation_history))
             return StreamingResponse(generate_chunks(callback, request.model), media_type="text/event-stream")
@@ -194,13 +197,13 @@ async def chat_completions(request: ChatCompletionRequest):
 
 @app.get("/v1/models")
 async def list_models():
-    current_time = int(time.time())
-    models = [
-        {"id": "global", "object": "model", "created": current_time,
-         "owned_by": "graphrag"},
-        {"id": "local", "object": "model", "created": current_time,
-         "owned_by": "graphrag"},
-    ]
+    dirs = get_sorted_subdirs(settings.data)
+    models = []
+    for dir in dirs:
+        model_global = {"id": f"global-{dir}", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
+        model_local = {"id": f"local-{dir}", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
+        models.append(model_global)
+        models.append(model_local)
 
     response = {
         "object": "list",
@@ -209,7 +212,19 @@ async def list_models():
     return response
 
 
+async def switch_context(model: str = None):
+    if model.startswith("global"):
+        input_dir = os.path.join(settings.data, model.removeprefix("global-"), "artifacts")
+        context_builder = await build_global_context_builder(input_dir, token_encoder)
+    elif model.startswith("local"):
+        input_dir = os.path.join(settings.data, model.removeprefix("local-"), "artifacts")
+        context_builder = await load_local_context(input_dir, text_embedder, token_encoder)
+    else:
+        raise NotImplementedError(f"model {model} is not supported")
+    return context_builder
+
+
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8899)
+    uvicorn.run(app, host="localhost", port=settings.server_port)

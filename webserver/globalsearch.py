@@ -1,5 +1,7 @@
 import pandas as pd
 import tiktoken
+
+from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.indexer_adapters import read_indexer_entities, read_indexer_reports
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.structured_search.global_search.callbacks import GlobalSearchLLMCallback
@@ -8,11 +10,12 @@ from graphrag.query.structured_search.global_search.community_context import (
 )
 from graphrag.query.structured_search.global_search.search import GlobalSearch
 
-from configs import settings
-from utils import consts
+from webserver.configs import settings
+from webserver.utils import consts
 
 
-async def build_global_search_engine(llm: BaseLLM, input_dir: str, callback: GlobalSearchLLMCallback=None, token_encoder: tiktoken.Encoding | None = None) -> GlobalSearch:
+async def build_global_context_builder(input_dir: str,
+                                       token_encoder: tiktoken.Encoding | None = None) -> GlobalContextBuilder:
     entity_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_TABLE}.parquet")
     report_df = pd.read_parquet(f"{input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
     entity_embedding_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
@@ -25,7 +28,11 @@ async def build_global_search_engine(llm: BaseLLM, input_dir: str, callback: Glo
         entities=entities,  # default to None if you don't want to use community weights for ranking
         token_encoder=token_encoder,
     )
+    return context_builder
 
+
+async def build_global_search_engine(llm: BaseLLM, context_builder=None, callback: GlobalSearchLLMCallback = None,
+                                     token_encoder: tiktoken.Encoding | None = None) -> GlobalSearch:
     context_builder_params = {
         "use_community_summary": False,
         # False means using full community reports. True means using community short summaries.
