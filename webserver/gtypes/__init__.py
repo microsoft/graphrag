@@ -1,0 +1,1 @@
+from .chat_request import CompletionCreateParamsBase as ChatCompletionRequest
