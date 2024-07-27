@@ -125,6 +125,7 @@ class OpenAI(OpenAILLMImpl):
         )  # type: ignore
         if streaming:
             full_response = ""
+            usage = None
             while True:
                 try:
                     chunk = response.__next__()  # type: ignore
@@ -142,9 +143,13 @@ class OpenAI(OpenAILLMImpl):
                         for callback in callbacks:
                             callback.on_llm_new_token(delta)
                     if chunk.choices[0].finish_reason == "stop":  # type: ignore
+                        usage = chunk.usage
                         break
                 except StopIteration:
                     break
+                if callbacks:
+                    for callback in callbacks:
+                        callback.on_llm_stop(usage=usage)
             return full_response
         return response.choices[0].message.content or ""  # type: ignore
 
@@ -163,6 +168,7 @@ class OpenAI(OpenAILLMImpl):
         )
         if streaming:
             full_response = ""
+            usage = None
             while True:
                 try:
                     chunk = await response.__anext__()  # type: ignore
@@ -180,8 +186,12 @@ class OpenAI(OpenAILLMImpl):
                         for callback in callbacks:
                             callback.on_llm_new_token(delta)
                     if chunk.choices[0].finish_reason == "stop":  # type: ignore
+                        usage = chunk.usage
                         break
                 except StopIteration:
                     break
+            if callbacks:
+                for callback in callbacks:
+                    callback.on_llm_stop(usage=usage)
             return full_response
         return response.choices[0].message.content or ""  # type: ignore

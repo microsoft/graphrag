@@ -4,7 +4,9 @@
 """Base classes for LLM and Embedding models."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
+
+from openai.types import CompletionUsage
 
 
 class BaseLLMCallback:
@@ -16,6 +18,9 @@ class BaseLLMCallback:
     def on_llm_new_token(self, token: str):
         """Handle when a new token is generated."""
         self.response.append(token)
+
+    def on_llm_stop(self, usage: Optional[CompletionUsage]):
+        pass
 
 
 class BaseLLM(ABC):
