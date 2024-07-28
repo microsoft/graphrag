@@ -120,7 +120,7 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         result = await self._invoke(input, **kwargs)
         history = result.history or []
         output = clean_up_json(result.output or "")
-        output = fix_malformed_json(result.output or "")
+        output = fix_malformed_json(output)
         try:
             json_output = try_parse_json_object(output)
             return LLMOutput[CompletionOutput](
