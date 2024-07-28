@@ -8,8 +8,8 @@ from typing import Generator, Optional
 import tiktoken
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionChunk
 from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
@@ -27,6 +27,7 @@ from webserver.localsearch import build_local_search_engine, load_local_context
 from webserver.utils import get_sorted_subdirs
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="webserver/static"), name="static")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -101,7 +102,10 @@ async def startup_event():
 
 @app.get("/")
 async def index():
-    return {"message": "Hello, here is the webserver for graphrag, developed by @kylinmountain"}
+    html_file_path = os.path.join("webserver", "templates", "index.html")
+    with open(html_file_path, "r", encoding="utf-8") as file:
+        html_content = file.read()
+    return HTMLResponse(content=html_content)
 
 
 async def generate_chunks(callback, request_model):
