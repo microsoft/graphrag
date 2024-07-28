@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "update config-reader to allow for empty chunk-by arrays"
+}

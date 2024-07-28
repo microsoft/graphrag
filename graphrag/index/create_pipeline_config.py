@@ -217,7 +217,11 @@ def _text_unit_workflows(
             name=create_base_text_units,
             config={
                 "chunk_by": settings.chunks.group_by_columns,
-                "text_chunk": {"strategy": settings.chunks.resolved_strategy()},
+                "text_chunk": {
+                    "strategy": settings.chunks.resolved_strategy(
+                        settings.encoding_model
+                    )
+                },
             },
         ),
         PipelineWorkflowReference(
@@ -401,7 +405,7 @@ def _covariate_workflows(
                 "claim_extract": {
                     **settings.claim_extraction.parallelization.model_dump(),
                     "strategy": settings.claim_extraction.resolved_strategy(
-                        settings.root_dir
+                        settings.root_dir, settings.encoding_model
                     ),
                 },
             },

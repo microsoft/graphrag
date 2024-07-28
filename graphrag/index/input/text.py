@@ -52,4 +52,15 @@ async def load(
         raise ValueError(msg)
     found_files = f"found text files from {config.base_dir}, found {files}"
     log.info(found_files)
-    return pd.DataFrame([await load_file(file, group) for file, group in files])
+
+    files_loaded = []
+
+    for file, group in files:
+        try:
+            files_loaded.append(await load_file(file, group))
+        except Exception:  # noqa: BLE001 (catching Exception is fine here)
+            log.warning("Warning! Error loading file %s. Skipping...", file)
+
+    log.info("Found %d files, loading %d", len(files), len(files_loaded))
+
+    return pd.DataFrame(files_loaded)
