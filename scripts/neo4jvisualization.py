@@ -11,7 +11,7 @@ NEO4J_DATABASE = "neo4j"
 # Create a Neo4j driver
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
-GRAPHRAG_FOLDER = "../output/20240722-121744/artifacts"
+GRAPHRAG_FOLDER = "./output/20240728-152325/artifacts"
 
 
 def batched_import(statement, df, batch_size=1000):
