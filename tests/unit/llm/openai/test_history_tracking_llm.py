@@ -21,12 +21,12 @@ async def test_history_tracking_llm() -> None:
     history: list[dict] = cast(list[dict], response.history)
     assert len(history) == 2
     assert history[0] == {"role": "user", "content": "input 1"}
-    assert history[1] == {"role": "system", "content": "response to [input 1]"}
+    assert history[1] == {"role": "assistant", "content": "response to [input 1]"}
 
     response = await llm("input 2", history=history)
     history: list[dict] = cast(list[dict], response.history)
     assert len(history) == 4
     assert history[0] == {"role": "user", "content": "input 1"}
-    assert history[1] == {"role": "system", "content": "response to [input 1]"}
+    assert history[1] == {"role": "assistant", "content": "response to [input 1]"}
     assert history[2] == {"role": "user", "content": "input 2"}
-    assert history[3] == {"role": "system", "content": "response to [input 2]"}
+    assert history[3] == {"role": "assistant", "content": "response to [input 2]"}
