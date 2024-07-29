@@ -77,7 +77,7 @@ tenacity = "^8.5.0"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.72.0"
+textual = "^0.74.0"
 devtools = "^0.12.2"
 
 typing-extensions = "^4.12.2"
