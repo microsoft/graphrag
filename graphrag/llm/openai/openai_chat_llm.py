@@ -105,7 +105,8 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         )
 
         raw_output = result.output or ""
-        json_output = try_parse_json_object(raw_output)
+        output = clean_up_json(raw_output or "")
+        json_output = try_parse_json_object(output)
 
         return LLMOutput[CompletionOutput](
             output=raw_output,
