@@ -78,8 +78,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(f"args.query: {args.query}\n")
-
     match args.method:
         case SearchType.LOCAL:
             run_local_search(

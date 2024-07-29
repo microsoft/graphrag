@@ -36,7 +36,7 @@ reporter = PrintProgressReporter("")
 def __get_embedding_description_store(
     entities: list[Entity],
     vector_store_type: str = VectorStoreType.LanceDB,
-    config_args: dict | None = None
+    config_args: dict | None = None,
 ):
     """Get the embedding description store."""
     if not config_args:
@@ -45,9 +45,7 @@ def __get_embedding_description_store(
     collection_name = config_args.get(
         "query_collection_name", "entity_description_embeddings"
     )
-    config_args.update({
-        "collection_name": collection_name
-    })
+    config_args.update({"collection_name": collection_name})
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
     )
@@ -69,12 +67,14 @@ def __get_embedding_description_store(
             collection_name=collection_name
         )
         description_embedding_store.connect(
-            db_uri=config_args.get("db_uri", "./lancedb"))
+            db_uri=config_args.get("db_uri", "./lancedb")
+        )
 
         # load data from an existing table
-        description_embedding_store.document_collection = description_embedding_store \
-            .db_connection.open_table(
+        description_embedding_store.document_collection = (
+            description_embedding_store.db_connection.open_table(
                 description_embedding_store.collection_name
+            )
         )
 
     return description_embedding_store
@@ -189,7 +189,9 @@ def run_local_search(
 
 
 def _configure_paths_and_settings(
-    data_dir: str | None, root_dir: str | None, config_dir: str | None,
+    data_dir: str | None,
+    root_dir: str | None,
+    config_dir: str | None,
 ) -> tuple[str, str | None, GraphRagConfig]:
     if data_dir is None and root_dir is None:
         msg = "Either data_dir or root_dir must be provided."
@@ -213,13 +215,11 @@ def _infer_data_dir(root: str) -> str:
 
 
 def _create_graphrag_config(
-        root: str | None,
-        config_dir: str | None,
-    ) -> GraphRagConfig:
+    root: str | None,
+    config_dir: str | None,
+) -> GraphRagConfig:
     """Create a GraphRag configuration."""
-    return _read_config_parameters(
-        root or "./", config_dir
-    )
+    return _read_config_parameters(root or "./", config_dir)
 
 
 def _read_config_parameters(root: str, config: str | None):
