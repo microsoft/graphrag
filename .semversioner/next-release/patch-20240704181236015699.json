@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix for --limit exceeding the dataframe lenght"
-}

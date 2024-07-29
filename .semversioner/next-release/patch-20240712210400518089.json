@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Add exception handling on file load"
-}

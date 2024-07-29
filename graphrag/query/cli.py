@@ -143,7 +143,6 @@ def run_local_search(
     final_relationships = pd.read_parquet(
         data_path / "create_final_relationships.parquet"
     )
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
     final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
     final_covariates_path = data_path / "create_final_covariates.parquet"
     final_covariates = (
@@ -235,10 +234,12 @@ def _read_config_parameters(root: str, config: str | None):
 
     if settings_yaml.exists():
         reporter.info(f"Reading settings from {settings_yaml}")
-        with settings_yaml.open("r") as file:
+        with settings_yaml.open(
+            "rb",
+        ) as file:
             import yaml
 
-            data = yaml.safe_load(file)
+            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
             return create_graphrag_config(data, root)
 
     settings_json = (
@@ -248,10 +249,10 @@ def _read_config_parameters(root: str, config: str | None):
     )
     if settings_json.exists():
         reporter.info(f"Reading settings from {settings_json}")
-        with settings_json.open("r") as file:
+        with settings_json.open("rb") as file:
             import json
 
-            data = json.loads(file.read())
+            data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
             return create_graphrag_config(data, root)
 
     reporter.info("Reading settings from environment variables")
