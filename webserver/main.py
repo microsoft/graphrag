@@ -22,7 +22,7 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from webserver.configs import settings
 from webserver.globalsearch import build_global_search_engine, build_global_context_builder
-from webserver.gtypes import ChatCompletionRequest
+from webserver.gtypes import ChatCompletionRequest, TypedFuture
 from webserver.localsearch import build_local_search_engine, load_local_context
 from webserver.utils import get_sorted_subdirs
 
@@ -108,33 +108,54 @@ async def index():
     return HTMLResponse(content=html_content)
 
 
-async def generate_chunks(callback, request_model):
-    async for token in callback.generate_tokens():
-        finish_reason = None
-        if token == CustomSearchCallback.stop_sign:
-            token = ""
-            finish_reason = 'stop'
-        chunk = ChatCompletionChunk(
-            id=f"chatcmpl-{uuid.uuid4().hex}",
-            created=int(time.time()),
-            model=request_model,
-            object="chat.completion.chunk",
-            choices=[
-                Choice(
-                    index=len(callback.response) - 1,
-                    finish_reason=finish_reason,
-                    delta=ChoiceDelta(
-                        role="assistant",
-                        content=token
+async def generate_chunks(callback, request_model, future: TypedFuture[SearchResult]):
+    usage = None
+    while not future.done():
+        async for token in callback.generate_tokens():
+            if token == CustomSearchCallback.stop_sign:
+                usage = callback.usage
+                break
+            chunk = ChatCompletionChunk(
+                id=f"chatcmpl-{uuid.uuid4().hex}",
+                created=int(time.time()),
+                model=request_model,
+                object="chat.completion.chunk",
+                choices=[
+                    Choice(
+                        index=len(callback.response) - 1,
+                        finish_reason=None,
+                        delta=ChoiceDelta(
+                            role="assistant",
+                            content=token
+                        )
                     )
+                ]
+            )
+            yield f"data: {chunk.json()}\n\n"
+
+    result: SearchResult = future.result()
+    print(result.response)
+    finish_reason = 'stop'
+    chunk = ChatCompletionChunk(
+        id=f"chatcmpl-{uuid.uuid4().hex}",
+        created=int(time.time()),
+        model=request_model,
+        object="chat.completion.chunk",
+        choices=[
+            Choice(
+                index=len(callback.response) - 1,
+                finish_reason=finish_reason,
+                delta=ChoiceDelta(
+                    role="assistant",
+                    # content=result.context_data["entities"].head().to_string()
+                    content="\n\n### 参考："
                 )
-            ],
-            usage=callback.usage
-        )
-        yield f"data: {chunk.json()}\n\n"
-        if finish_reason:
-            yield f"data: [DONE]\n\n"
-            break
+            ),
+        ],
+        usage=usage
+    )
+    yield f"data: {chunk.json()}\n\n"
+    yield f"data: [DONE]\n\n"
 
 
 @app.post("/v1/chat/completions")
@@ -184,17 +205,23 @@ async def chat_completions(request: ChatCompletionRequest):
             return JSONResponse(content=json_compatible)
         else:
             callback = CustomSearchCallback()
+            future: TypedFuture[SearchResult] = TypedFuture()
+
+            async def run_search(search, prompt, history, future: TypedFuture[SearchResult]):
+                ret = await search.asearch(prompt, history)
+                future.set_result(ret)
+
             if request.model.endswith("global"):
                 global_context = await switch_context(model=request.model)
                 global_search.context_builder = global_context
                 global_search.callbacks = [callback]
-                task = asyncio.create_task(global_search.asearch(prompt, conversation_history))
+                asyncio.create_task(run_search(global_search, prompt, conversation_history, future))
             else:
                 local_context = await switch_context(model=request.model)
                 local_search.context_builder = local_context
                 local_search.callbacks = [callback]
-                task = asyncio.create_task(local_search.asearch(prompt, conversation_history))
-            return StreamingResponse(generate_chunks(callback, request.model), media_type="text/event-stream")
+                asyncio.create_task(run_search(local_search, prompt, conversation_history, future))
+            return StreamingResponse(generate_chunks(callback, request.model, future), media_type="text/event-stream")
     except Exception as e:
         raise HTTPException(status_code=500, detail=e)
 

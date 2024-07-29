@@ -45,9 +45,9 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_
     relationship_df = pd.read_parquet(f"{input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
     relationships = read_indexer_relationships(relationship_df)
 
-    covariate_file = f"{settings.input_dir}/{consts.COVARIATE_TABLE}.parquet"
-    if os.exists(covariate_file):
-        covariate_df = pd.read_parquet()
+    covariate_file = f"{input_dir}/{consts.COVARIATE_TABLE}.parquet"
+    if os.path.exists(covariate_file):
+        covariate_df = pd.read_parquet(covariate_file)
         claims = read_indexer_covariates(covariate_df)
         covariates = {"claims": claims}
     else:
