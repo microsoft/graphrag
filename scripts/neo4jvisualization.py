@@ -1,3 +1,4 @@
+import os
 import time
 
 import pandas as pd
@@ -11,7 +12,7 @@ NEO4J_DATABASE = "neo4j"
 # Create a Neo4j driver
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
-GRAPHRAG_FOLDER = "./output/20240728-152325/artifacts"
+GRAPHRAG_FOLDER = os.path.join(".", "output", "20240728-152325", "artifacts")
 
 
 def batched_import(statement, df, batch_size=1000):
@@ -48,7 +49,7 @@ for statement in statements:
         print(statement)
         driver.execute_query(statement)
 
-doc_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_documents.parquet', columns=["id", "title"])
+doc_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_documents.parquet"), columns=["id", "title"])
 doc_df.head(2)
 
 # import documents
@@ -59,7 +60,7 @@ SET d += value {.title}
 
 batched_import(statement, doc_df)
 
-text_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_text_units.parquet',
+text_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_text_units.parquet"),
                           columns=["id", "text", "n_tokens", "document_ids"])
 text_df.head(2)
 
@@ -74,7 +75,7 @@ MERGE (c)-[:PART_OF]->(d)
 
 batched_import(statement, text_df)
 
-entity_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_entities.parquet',
+entity_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_entities.parquet"),
                             columns=["name", "type", "description", "human_readable_id", "id", "description_embedding",
                                      "text_unit_ids"])
 entity_df.head(2)
@@ -92,7 +93,7 @@ MERGE (c)-[:HAS_ENTITY]->(e)
 
 batched_import(entity_statement, entity_df)
 
-rel_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_relationships.parquet',
+rel_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_relationships.parquet"),
                          columns=["source", "target", "id", "rank", "weight", "human_readable_id", "description",
                                   "text_unit_ids"])
 rel_df.head(2)
@@ -108,7 +109,7 @@ rel_statement = """
 
 batched_import(rel_statement, rel_df)
 
-community_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_communities.parquet',
+community_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_communities.parquet"),
                                columns=["id", "level", "title", "text_unit_ids", "relationship_ids"])
 
 community_df.head(2)
@@ -132,7 +133,7 @@ RETURn count(distinct c) as createdCommunities
 
 batched_import(statement, community_df)
 
-community_report_df = pd.read_parquet(f'{GRAPHRAG_FOLDER}/create_final_community_reports.parquet',
+community_report_df = pd.read_parquet(os.path.join(GRAPHRAG_FOLDER, "create_final_community_reports.parquet"),
                                       columns=["id", "community", "level", "title", "summary", "findings", "rank",
                                                "rank_explanation", "full_content"])
 community_report_df.head(2)
