@@ -14,5 +14,8 @@ def dict_has_keys_with_types(
 
         value = data[field]
         if not isinstance(value, field_type):
-            return False
+            if field_type == float and isinstance(value, int):
+                data[field] = float(value)
+            else:
+                return False
     return True
