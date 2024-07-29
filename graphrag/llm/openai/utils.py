@@ -114,19 +114,25 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     if input.endswith("```"):
         input = input[: len(input) - len("```")]
 
-    """Fixup potentially malformed json string using json_repair."""
-    input = str(repair_json(json_str=input, return_objects=False))
-
-    """Generate JSON-string output using best-attempt prompting & parsing techniques."""
     try:
         result = json.loads(input)
     except json.JSONDecodeError:
-        log.exception("error loading json, json=%s", input)
-        return input, {}
-    else:
-        if not isinstance(result, dict):
-            log.error("not expected dict type. type=%s:", type(result))
+    
+        """Fixup potentially malformed json string using json_repair."""
+        input = str(repair_json(json_str=input, return_objects=False))
+
+        """Generate JSON-string output using best-attempt prompting & parsing techniques."""
+        try:
+            result = json.loads(input)
+        except json.JSONDecodeError:
+            log.exception("error loading json, json=%s", input)
             return input, {}
+        else:
+            if not isinstance(result, dict):
+                log.exception("not expected dict type. type=%s:", type(result))
+                return input, {}
+            return input, result
+    else:
         return input, result
 
 
