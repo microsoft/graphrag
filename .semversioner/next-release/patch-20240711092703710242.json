@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "support non-open ai model config to prompt tune"
-}

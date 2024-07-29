@@ -21,8 +21,8 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
     def __init__(self, directory: str):
         """Create a new file-based workflow reporter."""
         Path(directory).mkdir(parents=True, exist_ok=True)
-        self._out_stream = open(  # noqa SIM115
-            Path(directory) / "logs.json", "a", encoding="utf-8"
+        self._out_stream = open(  # noqa: PTH123, SIM115
+            Path(directory) / "logs.json", "a", encoding="utf-8", errors="strict"
         )
 
     def on_error(
