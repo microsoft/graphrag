@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import tiktoken
 from graphrag.query.context_builder.builders import LocalContextBuilder
@@ -43,9 +45,13 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_
     relationship_df = pd.read_parquet(f"{input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
     relationships = read_indexer_relationships(relationship_df)
 
-    # covariate_df = pd.read_parquet(f"{settings.input_dir}/{consts.COVARIATE_TABLE}.parquet")
-    # claims = read_indexer_covariates(covariate_df)
-    # covariates = {"claims": claims}
+    covariate_file = f"{settings.input_dir}/{consts.COVARIATE_TABLE}.parquet"
+    if os.exists(covariate_file):
+        covariate_df = pd.read_parquet()
+        claims = read_indexer_covariates(covariate_df)
+        covariates = {"claims": claims}
+    else:
+        covariates = None
 
     report_df = pd.read_parquet(f"{input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
     reports = read_indexer_reports(report_df, entity_df, consts.COMMUNITY_LEVEL)
@@ -58,7 +64,7 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_
         text_units=text_units,
         entities=entities,
         relationships=relationships,
-        # covariates=covariates,
+        covariates=covariates,
         entity_text_embeddings=description_embedding_store,
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
         # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
