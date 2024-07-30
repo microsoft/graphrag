@@ -16,15 +16,15 @@ from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.oai import ChatOpenAI, OpenaiApiType, OpenAIEmbedding
+from graphrag.query.question_gen.local_gen import LocalQuestionGen
 from graphrag.query.structured_search.base import SearchResult
 from graphrag.query.structured_search.global_search.callbacks import GlobalSearchLLMCallback
 from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from webserver.configs import settings
-from webserver.globalsearch import build_global_search_engine, build_global_context_builder
 from webserver import gtypes
-from webserver.localsearch import build_local_search_engine, load_local_context
+from webserver import search
 from webserver import utils
+from webserver.configs import settings
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="webserver/static"), name="static")
@@ -50,8 +50,9 @@ text_embedder = OpenAIEmbedding(
 
 token_encoder = tiktoken.get_encoding("cl100k_base")
 
-local_search: LocalSearch = None
-global_search: GlobalSearch = None
+local_search: LocalSearch
+global_search: GlobalSearch
+question_gen: LocalQuestionGen
 
 
 class CustomSearchCallback(GlobalSearchLLMCallback):
@@ -96,8 +97,10 @@ class CustomSearchCallback(GlobalSearchLLMCallback):
 async def startup_event():
     global local_search
     global global_search
-    local_search = await build_local_search_engine(llm, token_encoder=token_encoder)
-    global_search = await build_global_search_engine(llm, token_encoder=token_encoder)
+    global question_gen
+    local_search = await search.build_local_search_engine(llm, token_encoder=token_encoder)
+    global_search = await search.build_global_search_engine(llm, token_encoder=token_encoder)
+    question_gen = await search.build_local_question_gen(llm, token_encoder=token_encoder)
 
 
 @app.get("/")
@@ -233,35 +236,45 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
         raise HTTPException(status_code=500, detail=e)
 
 
-@app.post("/v1/advice_questions")
+@app.post("/v1/advice_questions", response_model=gtypes.QuestionGenResult)
 async def get_advice_question(request: gtypes.ChatQuestionGen):
-    pass
+    if request.model.endswith("local"):
+        local_context = await switch_context(model=request.model)
+        question_gen.context_builder = local_context
+    else:
+        raise NotImplementedError(f"model {request.model} is not supported")
+    question_history = [message.content for message in request.messages if message.role == "user"]
+    candidate_questions = await question_gen.agenerate(
+        question_history=question_history, context_data=None, question_count=5
+    )
+    # the original generated question is "- what about xxx?"
+    questions: list[str] = [question.removeprefix("-").strip() for question in candidate_questions.response]
+    resp = gtypes.QuestionGenResult(questions=questions,
+                                    completion_time=candidate_questions.completion_time,
+                                    llm_calls=candidate_questions.llm_calls,
+                                    prompt_tokens=candidate_questions.prompt_tokens)
+    return resp
 
 
-@app.get("/v1/models")
+@app.get("/v1/models", response_model=gtypes.ModelList)
 async def list_models():
     dirs = utils.get_sorted_subdirs(settings.data)
-    models = []
+    models: list[gtypes.Model] = []
     for dir in dirs:
-        model_global = {"id": f"{dir}-global", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
-        model_local = {"id": f"{dir}-local", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
-        models.append(model_global)
-        models.append(model_local)
+        models.append(gtypes.Model(id=f"{dir}-local", object="model", created=1644752340, owned_by="graphrag"))
+        models.append(gtypes.Model(id=f"{dir}-global", object="model", created=1644752340, owned_by="graphrag"))
 
-    response = {
-        "object": "list",
-        "data": models
-    }
+    response = gtypes.ModelList(data=models)
     return response
 
 
 async def switch_context(model: str = None):
     if model.endswith("global"):
         input_dir = os.path.join(settings.data, model.removesuffix("-global"), "artifacts")
-        context_builder = await build_global_context_builder(input_dir, token_encoder)
+        context_builder = await search.build_global_context_builder(input_dir, token_encoder)
     elif model.endswith("local"):
         input_dir = os.path.join(settings.data, model.removesuffix("-local"), "artifacts")
-        context_builder = await load_local_context(input_dir, text_embedder, token_encoder)
+        context_builder = await search.load_local_context(input_dir, text_embedder, token_encoder)
     else:
         raise NotImplementedError(f"model {model} is not supported")
     return context_builder

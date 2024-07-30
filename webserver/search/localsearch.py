@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import pandas as pd
 import tiktoken
@@ -15,6 +16,7 @@ from graphrag.query.input.loaders.dfs import (
     store_entity_semantic_embeddings,
 )
 from graphrag.query.llm.base import BaseLLM, BaseTextEmbedding
+from graphrag.query.question_gen.local_gen import LocalQuestionGen
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
@@ -25,7 +27,8 @@ from webserver.utils import consts
 from webserver.configs import settings
 
 
-async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_encoder: tiktoken.Encoding | None = None) -> LocalContextBuilder:
+async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
+                             token_encoder: tiktoken.Encoding | None = None) -> LocalContextBuilder:
     # read nodes table to get community and degree data
     entity_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_TABLE}.parquet")
     entity_embedding_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
@@ -74,7 +77,8 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding, token_
     return context_builder
 
 
-async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder = None, token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
+async def build_local_question_gen(llm: BaseLLM, llm_params: dict[str, Any] | None = None, context_builder: LocalContextBuilder = None,
+                                   token_encoder: tiktoken.Encoding | None = None) -> LocalQuestionGen:
     local_context_params = {
         "text_unit_prop": 0.5,
         "community_prop": 0.1,
@@ -89,7 +93,35 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
         "max_tokens": settings.max_tokens,
-        # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+    }
+
+    question_generator = LocalQuestionGen(
+        llm=llm,
+        context_builder=context_builder,
+        token_encoder=token_encoder,
+        llm_params=llm_params,
+        context_builder_params=local_context_params,
+    )
+
+    return question_generator
+
+
+async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder = None,
+                                    token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
+    local_context_params = {
+        "text_unit_prop": 0.5,
+        "community_prop": 0.1,
+        "conversation_history_max_turns": 5,
+        "conversation_history_user_turns_only": True,
+        "top_k_mapped_entities": 10,
+        "top_k_relationships": 10,
+        "include_entity_rank": True,
+        "include_relationship_weight": True,
+        "include_community_rank": False,
+        "return_candidate_context": False,
+        "embedding_vectorstore_key": EntityVectorStoreKey.ID,
+        # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
+        "max_tokens": settings.max_tokens,
     }
     llm_params = {
         "max_tokens": settings.max_tokens,
@@ -102,40 +134,6 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
         llm_params=llm_params,
         context_builder_params=local_context_params,
         response_type="multiple paragraphs",
-        # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
     )
     return search_engine
 
-# result = await local_search.asearch("Tell me about Agent Mercer")
-# print(result.response)
-#
-# result.completion_time
-# question = "Tell me about Dr. Jordan Hayes"
-# result = await search_engine.asearch(question)
-# print(result.response)
-
-
-# result.context_data["entities"].head()
-# result.context_data["relationships"].head()
-# result.context_data["reports"].head()
-# result.context_data["sources"].head()
-# if "claims" in result.context_data:
-#     print(result.context_data["claims"].head())
-#
-#
-# question_generator = LocalQuestionGen(
-#     llm=llm,
-#     context_builder=context_builder,
-#     token_encoder=token_encoder,
-#     llm_params=llm_params,
-#     context_builder_params=local_context_params,
-# )
-#
-# question_history = [
-#     "Tell me about Agent Mercer",
-#     "What happens in Dulce military base?",
-# ]
-# candidate_questions = await question_generator.agenerate(
-#     question_history=question_history, context_data=None, question_count=5
-# )
-# print(candidate_questions.response)

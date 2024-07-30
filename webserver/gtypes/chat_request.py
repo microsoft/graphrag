@@ -1,3 +1,4 @@
+from dataclasses import Field
 from typing import Optional, Dict, List, Union, Literal
 
 from pydantic import BaseModel
@@ -47,9 +48,18 @@ class CompletionCreateParamsBase(BaseModel):
 class ChatQuestionGen(BaseModel):
     messages: List[ChatCompletionMessageParam]
     model: str
-    frequency_penalty: Optional[float] = None
-    logit_bias: Optional[Dict[str, int]] = None
-    logprobs: Optional[bool] = None
     max_tokens: Optional[int] = None
+    temperature: Optional[float] = 0.0
     n: Optional[int] = None
-    parallel_tool_calls: bool = False
+
+
+class Model(BaseModel):
+    id: str
+    object: Literal["model"]
+    created: int
+    owned_by: str
+
+
+class ModelList(BaseModel):
+    object: Literal["list"] = "list"
+    data: List[Model]
