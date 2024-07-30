@@ -37,6 +37,6 @@ class OpenAIHistoryTrackingLLM(LLM[CompletionInput, CompletionOutput]):
             history=[
                 *history,
                 {"role": "user", "content": input},
-                {"role": "system", "content": output.output},
+                {"role": "assistant", "content": output.output},
             ],
         )
