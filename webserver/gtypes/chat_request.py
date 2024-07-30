@@ -42,3 +42,14 @@ class CompletionCreateParamsBase(BaseModel):
     top_logprobs: Optional[int] = None
     top_p: Optional[float] = None
     user: Optional[str] = None
+
+
+class ChatQuestionGen(BaseModel):
+    messages: List[ChatCompletionMessageParam]
+    model: str
+    frequency_penalty: Optional[float] = None
+    logit_bias: Optional[Dict[str, int]] = None
+    logprobs: Optional[bool] = None
+    max_tokens: Optional[int] = None
+    n: Optional[int] = None
+    parallel_tool_calls: bool = False

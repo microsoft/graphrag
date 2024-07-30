@@ -22,9 +22,9 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from webserver.configs import settings
 from webserver.globalsearch import build_global_search_engine, build_global_context_builder
-from webserver.gtypes import ChatCompletionRequest, TypedFuture
+from webserver import gtypes
 from webserver.localsearch import build_local_search_engine, load_local_context
-from webserver.utils import get_sorted_subdirs
+from webserver import utils
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="webserver/static"), name="static")
@@ -108,7 +108,7 @@ async def index():
     return HTMLResponse(content=html_content)
 
 
-async def generate_chunks(callback, request_model, future: TypedFuture[SearchResult]):
+async def generate_chunks(callback, request_model, future: gtypes.TypedFuture[SearchResult]):
     usage = None
     while not future.done():
         async for token in callback.generate_tokens():
@@ -134,7 +134,10 @@ async def generate_chunks(callback, request_model, future: TypedFuture[SearchRes
             yield f"data: {chunk.json()}\n\n"
 
     result: SearchResult = future.result()
-    print(result.response)
+    content = ""
+    reference = utils.get_reference(result.response)
+    if reference:
+        content = f"\n\n### 参考：{reference}"
     finish_reason = 'stop'
     chunk = ChatCompletionChunk(
         id=f"chatcmpl-{uuid.uuid4().hex}",
@@ -148,7 +151,7 @@ async def generate_chunks(callback, request_model, future: TypedFuture[SearchRes
                 delta=ChoiceDelta(
                     role="assistant",
                     # content=result.context_data["entities"].head().to_string()
-                    content="\n\n### 参考："
+                    content=content
                 )
             ),
         ],
@@ -159,7 +162,7 @@ async def generate_chunks(callback, request_model, future: TypedFuture[SearchRes
 
 
 @app.post("/v1/chat/completions")
-async def chat_completions(request: ChatCompletionRequest):
+async def chat_completions(request: gtypes.ChatCompletionRequest):
     if not local_search or not global_search:
         logger.error("graphrag search engines is not initialized")
         raise HTTPException(status_code=500, detail="graphrag search engines is not initialized")
@@ -205,9 +208,9 @@ async def chat_completions(request: ChatCompletionRequest):
             return JSONResponse(content=json_compatible)
         else:
             callback = CustomSearchCallback()
-            future: TypedFuture[SearchResult] = TypedFuture()
+            future: gtypes.TypedFuture[SearchResult] = gtypes.TypedFuture()
 
-            async def run_search(search, prompt, history, future: TypedFuture[SearchResult]):
+            async def run_search(search, prompt, history, future: gtypes.TypedFuture[SearchResult]):
                 ret = await search.asearch(prompt, history)
                 future.set_result(ret)
 
@@ -226,9 +229,14 @@ async def chat_completions(request: ChatCompletionRequest):
         raise HTTPException(status_code=500, detail=e)
 
 
+@app.post("/v1/advice_questions")
+async def get_advice_question(request: gtypes.ChatQuestionGen):
+    pass
+
+
 @app.get("/v1/models")
 async def list_models():
-    dirs = get_sorted_subdirs(settings.data)
+    dirs = utils.get_sorted_subdirs(settings.data)
     models = []
     for dir in dirs:
         model_global = {"id": f"{dir}-global", "object": "model", "created": 1644752340, "owned_by": "graphrag"}
