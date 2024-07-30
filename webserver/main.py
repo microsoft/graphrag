@@ -183,6 +183,10 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
                 local_search.context_builder = local_context
                 result = await local_search.asearch(prompt, conversation_history=conversation_history)
 
+            response = result.response
+            reference = utils.get_reference(response)
+            if reference:
+                response += f"\n\n### 参考：{reference}"
             completion = ChatCompletion(
                 id=f"chatcmpl-{uuid.uuid4().hex}",
                 created=int(time.time()),
@@ -194,7 +198,7 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
                         finish_reason="stop",
                         message=ChatCompletionMessage(
                             role="assistant",
-                            content=result.response
+                            content=response
                         )
                     )
                 ],
