@@ -1,4 +1,3 @@
-graphrag==0.2.0
 neo4j-rust-ext==5.22.0.0
 pandas==2.2.2
 pydantic_settings=2.3.4
