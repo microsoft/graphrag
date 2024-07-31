@@ -10,7 +10,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v5
+      - uses: actions/stale@v9
         with:
           days-before-issue-stale: 7
           days-before-issue-close: 5
@@ -18,7 +18,7 @@ jobs:
           close-issue-label: "autoresolved"
           stale-issue-message: "This issue has been marked stale due to inactivity after repo maintainer or community member responses that request more information or suggest a solution. It will be closed after five additional days."
           close-issue-message: "This issue has been closed after being marked as stale for five days. Please reopen if needed."
-          exempt-issue-label: "triage"
+          any-of-labels: "awaiting_response"
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
