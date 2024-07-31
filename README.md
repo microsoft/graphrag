@@ -1,3 +1,19 @@
+# GraphRAG customized by KylinMountain
+- I have added websever to support streaming output immediately.
+- I have fixed error when using local embedding service like LM Studio
+- I have fixed index error after prompt tune
+- I have fixed the strategy not loaded when setting entity extraction using NLTK.
+- I have added advice question api
+- Support any desktop application or web application compatible with OpenAI SDK.
+
+# GraphRAG 定制版
+- 我添加了Web服务器，以支持真即时流式输出。
+- 我修复了使用本地嵌入服务（如LM Studio）时的错误。
+- 我修复了提示调整后索引错误的问题。
+- 我修复了在使用NLTK设置实体提取时策略未加载的问题。
+- 我添加了建议问题API。
+- 支持任意兼容OpenAI大模型桌面应用或者Web应用UI接入。
+
 # GraphRAG
 
 👉 [Use the GraphRAG Accelerator solution](https://github.com/Azure-Samples/graphrag-accelerator) <br/>
