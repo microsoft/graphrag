@@ -1,0 +1,4 @@
+{
+  "type": "major",
+  "description": "fixbug non-ascii encoding like Chinese."
+}
