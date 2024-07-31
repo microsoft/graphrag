@@ -1,6 +1,5 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-
 """The GlobalSearch Implementation."""
 
 import asyncio
@@ -15,9 +14,7 @@ import tiktoken
 
 from graphrag.index.utils.json import clean_up_json
 from graphrag.query.context_builder.builders import GlobalContextBuilder
-from graphrag.query.context_builder.conversation_history import (
-    ConversationHistory,
-)
+from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
@@ -92,6 +89,7 @@ class GlobalSearch(BaseSearch):
 
         self.map_llm_params = map_llm_params
         self.reduce_llm_params = reduce_llm_params
+        self.json_mode = json_mode
         if json_mode:
             self.map_llm_params["response_format"] = {"type": "json_object"}
         else:
@@ -123,12 +121,14 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(*[
-            self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
-            )
-            for data in context_chunks
-        ])
+        map_responses = await asyncio.gather(
+            *[
+                self._map_response_single_batch(
+                    context_data=data, query=query, **self.map_llm_params
+                )
+                for data in context_chunks
+            ]
+        )
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
@@ -174,6 +174,8 @@ class GlobalSearch(BaseSearch):
         search_prompt = ""
         try:
             search_prompt = self.map_system_prompt.format(context_data=context_data)
+            if self.json_mode:
+                search_prompt += "\nYour response should be in JSON format."
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
@@ -228,15 +230,33 @@ class GlobalSearch(BaseSearch):
         -------
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
+
+        Raises
+        ------
+        ValueError
+            If the response cannot be parsed as JSON or doesn't contain the expected structure
         """
-        parsed_elements = json.loads(search_response)["points"]
-        return [
-            {
-                "answer": element["description"],
-                "score": int(element["score"]),
-            }
-            for element in parsed_elements
-        ]
+        try:
+            parsed_data = json.loads(search_response)
+        except json.JSONDecodeError as err:
+            error_msg = "Failed to parse response as JSON"
+            raise ValueError(error_msg) from err
+
+        if "points" not in parsed_data or not isinstance(parsed_data["points"], list):
+            error_msg = "Response JSON does not contain a 'points' list"
+            raise ValueError(error_msg)
+
+        try:
+            return [
+                {
+                    "answer": element["description"],
+                    "score": int(element["score"]),
+                }
+                for element in parsed_data["points"]
+            ]
+        except (KeyError, ValueError) as e:
+            error_msg = f"Error processing points: {e!s}"
+            raise ValueError(error_msg) from e
 
     async def _reduce_response(
         self,
@@ -259,11 +279,13 @@ class GlobalSearch(BaseSearch):
                         continue
                     if "answer" not in element or "score" not in element:
                         continue
-                    key_points.append({
-                        "analyst": index,
-                        "answer": element["answer"],
-                        "score": element["score"],
-                    })
+                    key_points.append(
+                        {
+                            "analyst": index,
+                            "answer": element["answer"],
+                            "score": element["score"],
+                        }
+                    )
 
             # filter response with score = 0 and rank responses by descending order of score
             filtered_key_points = [
@@ -316,6 +338,8 @@ class GlobalSearch(BaseSearch):
             )
             if self.allow_general_knowledge:
                 search_prompt += "\n" + self.general_knowledge_inclusion_prompt
+            if self.json_mode:
+                search_prompt += "\nYour response should be in JSON format."
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
