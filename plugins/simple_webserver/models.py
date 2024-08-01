@@ -19,7 +19,7 @@ class GraphRAGItem(BaseModel):
     class DomainEnum(str, Enum):
         cypnest = "cypnest"
 
-    domain: DomainEnum = Field(DomainEnum.cypnest, description="The domain to search, one of: cypnest")
+    domain: DomainEnum = Field(..., description="The domain to search")
     question: str = Field(..., description="The query to run")
     method: MethodEnum = Field(MethodEnum.local, description="The method to run, one of: local or global")
     response_type: str = Field("Multiple Paragraphs",
