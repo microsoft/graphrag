@@ -16,7 +16,7 @@ def run_script(cli: str, mode: GraphRAGItem.MethodEnum):
         show_output: List of output to show
         all_output: List of all output
     """
-    process = subprocess.Popen(cli, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, text=True, env=os.environ)
+    process = subprocess.Popen(cli, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, text=True)
     flag_begin_output = False
     all_output = []
     show_output = []

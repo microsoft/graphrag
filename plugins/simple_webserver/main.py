@@ -17,7 +17,8 @@ def read_root():
 
 @app.post("/graphrag", response_model=GraphRAGResponseItem)
 def run(item: GraphRAGItem):
-    cli = f"python -m graphrag.query --root ./ragtest --response_type '{item.response_type}' --method {item.method.value} '{item.question}'"
+    #!!! This is a temporary solution to run graphrag by CLI
+    cli = f"/root/miniconda3/envs/graphrag/python -m graphrag.query --root ./ragtest --response_type '{item.response_type}' --method {item.method.value} '{item.question}'"
     logger.info(f"Running graphrag by CLI: {cli} ...")
     run_code, show_output, all_output = utils.run_script(cli, item.method)
     if run_code == 0:
