@@ -117,7 +117,7 @@ requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-simple_webserver = "uvicorn plugins.simple_webserver.main:app"
+webserver = "uvicorn plugins.simple_webserver.main:app --host 0.0.0.0 --port 8001 --workers 4"
 streamlit_run = "streamlit run plugins/streamlit/main.py"
 _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
