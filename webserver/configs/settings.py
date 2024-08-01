@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    server_host: str = "http://localhost"
     server_port: int = 20213
     data: str = (
         "./output"

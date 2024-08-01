@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from jinja2 import Template
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionChunk
 from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
@@ -140,7 +141,8 @@ async def generate_chunks(callback, request_model, future: gtypes.TypedFuture[Se
     content = ""
     reference = utils.get_reference(result.response)
     if reference:
-        content = f"\n\n### 参考：{reference}"
+        index_id = request_model.removesuffix("-global").removesuffix("-local")
+        content = f"\n\n### 参考：\n\n{utils.generate_ref_links(reference, index_id)}"
     finish_reason = 'stop'
     chunk = ChatCompletionChunk(
         id=f"chatcmpl-{uuid.uuid4().hex}",
@@ -189,7 +191,8 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
             response = result.response
             reference = utils.get_reference(response)
             if reference:
-                response += f"\n\n### 参考：{reference}"
+                index_id = request.model.removesuffix("-global").removesuffix("-local")
+                response += f"\n\n#### 参考：\n\n{utils.generate_ref_links(reference, index_id)}"
             completion = ChatCompletion(
                 id=f"chatcmpl-{uuid.uuid4().hex}",
                 created=int(time.time()),
@@ -266,6 +269,23 @@ async def list_models():
 
     response = gtypes.ModelList(data=models)
     return response
+
+
+@app.get("/v1/references/{index_id}/{datatype}/{id}", response_class=HTMLResponse)
+async def get_reference(index_id: str, datatype: str, id: int):
+    input_dir = os.path.join(settings.data, index_id, "artifacts")
+    if not os.path.exists(input_dir):
+        raise HTTPException(status_code=404, detail=f"{index_id} not found")
+    if datatype not in ["entities", "claims", "sources", "reports", "relationships"]:
+        raise HTTPException(status_code=404, detail=f"{datatype} not found")
+
+    data = await search.get_index_data(input_dir, datatype, id)
+    html_file_path = os.path.join("webserver", "templates", f"{datatype}_template.html")
+    with open(html_file_path, 'r') as file:
+        html_content = file.read()
+    template = Template(html_content)
+    html_content = template.render(data=data)
+    return HTMLResponse(content=html_content)
 
 
 async def switch_context(model: str = None):
