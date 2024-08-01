@@ -103,12 +103,17 @@ semversioner = "^2.0.3"
 
 update-toml = "^0.2.1"
 
+[tool.poetry.group.webserver.dependencies]
+pydantic-settings = "^2.4.0"
+
+fastapi = "^0.111.1"
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-streamlit_run= "streamlit run plugins/streamlit/main.py"
+simple_webserver = "uvicorn plugins.simple_webserver.main:app --port 8300"
+streamlit_run = "streamlit run plugins/streamlit/main.py"
 _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
 _ruff_check = 'ruff check . --preview'
@@ -230,7 +235,7 @@ ignore = [
     "PD002", # prevents inplace=True
     # TODO RE-Enable when we get bandwidth
     "PERF203", # Needs restructuring of errors, we should bail-out on first error
-    "C901",    # needs refactoring to remove cyclomatic complexity
+    "C901", # needs refactoring to remove cyclomatic complexity
 ]
 
 [tool.ruff.lint.per-file-ignores]
