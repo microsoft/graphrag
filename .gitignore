@@ -66,3 +66,5 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+
+*.pyc
