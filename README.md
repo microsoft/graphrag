@@ -4,6 +4,7 @@
 - I have fixed index error after prompt tune
 - I have fixed the strategy not loaded when setting entity extraction using NLTK.
 - I have added advice question api
+- I have added reference link to the entity、report or relationship refered in output, you can access it.
 - Support any desktop application or web application compatible with OpenAI SDK.
 
 # GraphRAG 定制版
@@ -12,7 +13,12 @@
 - 我修复了提示调整后索引错误的问题。
 - 我修复了在使用NLTK设置实体提取时策略未加载的问题。
 - 我添加了建议问题API。
+- 我添加了实体或者关系等链接到输出中，你可以直接点击访问参考实体、关系、数据源或者报告。
 - 支持任意兼容OpenAI大模型桌面应用或者Web应用UI接入。
+
+![image](https://github.com/user-attachments/assets/0ea3abfb-677d-4535-b855-7ea49fd77ed2)
+
+![image](https://github.com/user-attachments/assets/ab7a8d2e-aeec-4a0c-afb9-97086b9c7b2a)
 
 # GraphRAG
 
