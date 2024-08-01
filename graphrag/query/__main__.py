@@ -26,6 +26,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "--config",
+        help="The configuration yaml file to use when running the query",
+        required=False,
+        type=str,
+    )
+
+    parser.add_argument(
         "--data",
         help="The path with the output data from the pipeline",
         required=False,
@@ -74,6 +81,7 @@ if __name__ == "__main__":
     match args.method:
         case SearchType.LOCAL:
             run_local_search(
+                args.config,
                 args.data,
                 args.root,
                 args.community_level,
@@ -82,6 +90,7 @@ if __name__ == "__main__":
             )
         case SearchType.GLOBAL:
             run_global_search(
+                args.config,
                 args.data,
                 args.root,
                 args.community_level,

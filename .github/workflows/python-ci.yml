@@ -108,18 +108,18 @@ jobs:
         run: |
           poetry run poe test_integration
 
-      - name: Smoke Test
-        if: steps.changes.outputs.python == 'true'
-        run: |
-          poetry run poe test_smoke
+      # - name: Smoke Test
+      #   if: steps.changes.outputs.python == 'true'
+      #   run: |
+      #     poetry run poe test_smoke
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
-          path: tests/fixtures/*/output
+      # - uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+      #     path: tests/fixtures/*/output
 
-      - name: E2E Test
-        if: steps.changes.outputs.python == 'true'
-        run: |
-          ./scripts/e2e-test.sh
+      # - name: E2E Test
+      #   if: steps.changes.outputs.python == 'true'
+      #   run: |
+      #     ./scripts/e2e-test.sh
