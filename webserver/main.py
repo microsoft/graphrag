@@ -142,7 +142,7 @@ async def generate_chunks(callback, request_model, future: gtypes.TypedFuture[Se
     reference = utils.get_reference(result.response)
     if reference:
         index_id = request_model.removesuffix("-global").removesuffix("-local")
-        content = f"\n\n### 参考：\n\n{utils.generate_ref_links(reference, index_id)}"
+        content = f"\n{utils.generate_ref_links(reference, index_id)}"
     finish_reason = 'stop'
     chunk = ChatCompletionChunk(
         id=f"chatcmpl-{uuid.uuid4().hex}",
@@ -192,7 +192,7 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
             reference = utils.get_reference(response)
             if reference:
                 index_id = request.model.removesuffix("-global").removesuffix("-local")
-                response += f"\n\n#### 参考：\n\n{utils.generate_ref_links(reference, index_id)}"
+                response += f"\n{utils.generate_ref_links(reference, index_id)}"
             completion = ChatCompletion(
                 id=f"chatcmpl-{uuid.uuid4().hex}",
                 created=int(time.time()),
