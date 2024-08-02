@@ -2,9 +2,10 @@
 # Licensed under the MIT License
 
 """Utility functions for the OpenAI API."""
-import re
+
 import json
 import logging
+import re
 from collections.abc import Callable
 from typing import Any
 
@@ -94,11 +95,11 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     _pattern = r"\{(.*)\}"
     _match = re.search(_pattern, input)
     input = "{" + _match.group(1) + "}" if _match else input
-    
+
     """Clean up json string."""
     input = (
-        input.replace("{{","{")
-        .replace("}}","}")
+        input.replace("{{", "{")
+        .replace("}}", "}")
         .replace('"[{', "[{")
         .replace('}]"', "}]")
         .replace("\\", " ")
@@ -117,7 +118,6 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     try:
         result = json.loads(input)
     except json.JSONDecodeError:
-    
         """Fixup potentially malformed json string using json_repair."""
         input = str(repair_json(json_str=input, return_objects=False))
 

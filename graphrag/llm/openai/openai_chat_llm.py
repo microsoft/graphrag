@@ -4,7 +4,6 @@
 """The Chat-based language model."""
 
 import logging
-from json import JSONDecodeError
 
 from typing_extensions import Unpack
 
@@ -122,8 +121,9 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             return LLMOutput[CompletionOutput](
                 output=result.output, json=json_output, history=history
             )
-        # if not return correct formatted json, retry 
+        # if not return correct formatted json, retry
         log.warning("error parsing llm json, retrying")
+
         # If cleaned up json is unparsable, use the LLM to reformat it (may throw)
         result = await self._try_clean_json_with_llm(output, **kwargs)
         output, json_output = try_parse_json_object(result.output or "")
