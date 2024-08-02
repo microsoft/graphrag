@@ -1,8 +1,0 @@
-neo4j-rust-ext==5.22.0.0
-pandas==2.2.2
-pydantic_settings=2.3.4
-tiktoken~=0.7.0
-uvicorn~=0.20.0
-fastapi~=0.103.0
-openai~=1.37.0
-neo4j~=5.22.0

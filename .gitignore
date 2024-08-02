@@ -62,9 +62,11 @@ __blobstorage*.json
 __blobstorage__/
 
 # Getting started example
-ragtest/
+context/cypnest/
 .ragtest/
 .pipelines
 .pipeline
 
 *.pyc
+
+context/*
