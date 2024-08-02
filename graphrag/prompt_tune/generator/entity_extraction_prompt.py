@@ -58,8 +58,8 @@ def create_entity_extraction_prompt(
 
     tokens_left = (
         max_token_count
-        - num_tokens_from_string(prompt, model=encoding_model)
-        - num_tokens_from_string(entity_types, model=encoding_model)
+        - num_tokens_from_string(prompt, encoding_model=encoding_model)
+        - num_tokens_from_string(entity_types, encoding_model=encoding_model)
         if entity_types
         else 0
     )
