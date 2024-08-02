@@ -16,7 +16,8 @@
 - 我添加了实体或者关系等链接到输出中，你可以直接点击访问参考实体、关系、数据源或者报告。
 - 支持任意兼容OpenAI大模型桌面应用或者Web应用UI接入。
 
-![image](https://github.com/user-attachments/assets/0ea3abfb-677d-4535-b855-7ea49fd77ed2)
+![image](https://github.com/user-attachments/assets/c251d434-4925-4012-88e7-f3b2ff40471f)
+
 
 ![image](https://github.com/user-attachments/assets/ab7a8d2e-aeec-4a0c-afb9-97086b9c7b2a)
 
