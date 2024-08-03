@@ -47,16 +47,19 @@ poetry run poe index --init --root .
 ```
 - 创建input文件夹 Create Input Foler
 - 配置settings.yaml Config settings.yaml
+按照GraphRAG官方配置文档配置 [GraphRAG Configuration](https://microsoft.github.io/graphrag/posts/config/json_yaml/)
 - 配置webserver Config webserver
 
-你可能需要配置以下设置 You may need config the following item.
-当前还不支持从settigns.yaml，但很快就会支持。Currently, we don't support read llm config from graphrag settings.yaml, but it is incoming.
+你可能需要配置以下设置，但默认即可支持本地运行。 You may need config the following item, but you can use the default param.
 ```yaml
-    api_key: str = os.environ.get("DEEP_SEEK_API_KEY")
-    api_base: str = "https://api.deepseek.com/v1"
-    llm_model: str = "deepseek-chat"
-    embedding_model: str = "text-embedding-ada-002"
-    embedding_api_base: str = "http://localhost:1234/v1"
+    server_host: str = "http://localhost"
+    server_port: int = 20213
+    data: str = (
+        "./output"
+    )
+    lancedb_uri: str = (
+        "./lancedb"
+    )
 ```
 
 # GraphRAG
