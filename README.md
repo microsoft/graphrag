@@ -21,7 +21,7 @@
 
 ![image](https://github.com/user-attachments/assets/ab7a8d2e-aeec-4a0c-afb9-97086b9c7b2a)
 
-# How to install如何安装
+# 如何安装How to install
 - 克隆本项目 Clone the repo
 ```
 git clone https://github.com/KylinMountain/graphrag.git
