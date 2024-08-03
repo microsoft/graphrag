@@ -20,15 +20,15 @@ Each key point in the response should have the following element:
 The response MUST be JSON formatted as follows:
 {{
     "points": [
-        {{"description": "Description of point 1 [^Data: Reports (report id)][^Data: Reports (report id)]", "score": score_value}},
-        {{"description": "Description of point 2 [^Data: Reports (report id)][^Data: Reports (report id)]", "score": score_value}}
+        {{"description": "Description of point 1 [^Data:Reports(report id)][^Data:Reports(report id)]", "score": score_value}},
+        {{"description": "Description of point 2 [^Data:Reports(report id)][^Data:Reports(report id)]", "score": score_value}}
     ]
 }}
 
 The response shall preserve the original meaning and use of modal verbs such as "shall", "may" or "will".
 
 Points supported by data should list the relevant reports as references as follows:
-"This is an example sentence supported by data references [^Data: Reports (report id)][^Data: Reports (report id)]"
+"This is an example sentence supported by data references [^Data:Reports(report id)][^Data:Reports(report id)]"
 
 **Do not list more than 5 record ids in a single reference**. Instead, list the top 5 most relevant record ids and add "+more" to indicate that there are more.
 
@@ -47,8 +47,8 @@ user question: Is Person X currently under investigation for alleged illegal act
 answer:
 {{
     "points": [
-        {{"description": "Person X is the owner of Company Y and subject to many allegations of wrongdoing [^Data: Reports (1)][^Data: Reports (2)][^Data: Reports (3)][^Data: Reports (4)].", "score": 85}},
-        {{"description": "He is also CEO of company X [^Data: Reports (4)]", "score": 75}}
+        {{"description": "Person X is the owner of Company Y and subject to many allegations of wrongdoing [^Data:Reports(1)][^Data:Reports(2)][^Data:Reports(3)][^Data:Reports(4)].", "score": 85}},
+        {{"description": "He is also CEO of company X [^Data:Reports(4)]", "score": 75}}
     ]
 }}
 
