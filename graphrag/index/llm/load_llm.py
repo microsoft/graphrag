@@ -16,13 +16,13 @@ from graphrag.llm import (
     LLMCache,
     LLMLimiter,
     MockCompletionLLM,
+    DashScopeEmbeddingLLM,
     OpenAIConfiguration,
     create_openai_chat_llm,
     create_openai_client,
     create_openai_completion_llm,
     create_openai_embedding_llm,
     create_tpm_rpm_limiters,
-    DashScopeEmbeddingLLM,
 )
 
 if TYPE_CHECKING:
@@ -238,7 +238,7 @@ loaders = {
     LLMType.DashScopeEmbedding: {
         "load": _load_dashscope_embeddings_llm,
         "chat": False,
-    }
+    },
     LLMType.OpenAIEmbedding: {
         "load": _load_openai_embeddings_llm,
         "chat": False,

@@ -42,6 +42,7 @@ from .types import (
     LLMOutput,
     OnCacheActionFn,
 )
+from .dashscope import DashScopeEmbeddingLLM
 
 __all__ = [
     # LLM Types
@@ -88,4 +89,6 @@ __all__ = [
     "create_openai_embedding_llm",
     # Limiters
     "create_tpm_rpm_limiters",
+    # DashScope
+    "DashScopeEmbeddingLLM"
 ]

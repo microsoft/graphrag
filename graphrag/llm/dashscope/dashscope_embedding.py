@@ -1,5 +1,6 @@
 """The EmbeddingsLLM class."""
 
+import logging
 import dashscope
 from typing_extensions import Unpack
 
@@ -10,10 +11,11 @@ from graphrag.llm.types import (
     LLMInput,
 )
 
+log = logging.getLogger(__name__)
 
 class DashScopeEmbeddingLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
     """A text-embedding generator LLM."""
-    def __init__(self, llm_config: dict = None):
+    def __init__(self, llm_config: dict):
         log.info(f"llm_config: {llm_config}")
         self.llm_config = llm_config or {}
         self.api_key = self.llm_config.get("api_key", "")
