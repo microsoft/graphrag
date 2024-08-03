@@ -34,8 +34,7 @@ async def build_global_context_builder(input_dir: str,
 async def build_global_search_engine(llm: BaseLLM, context_builder=None, callback: GlobalSearchLLMCallback = None,
                                      token_encoder: tiktoken.Encoding | None = None, **kwargs) -> GlobalSearch:
 
-    max_tokens = int(kwargs.get('max_tokens', settings.max_tokens))
-
+    max_tokens = int(kwargs.get('max_tokens', settings.global_search.max_tokens))
     context_builder_params = {
         "use_community_summary": False,
         # False means using full community reports. True means using community short summaries.

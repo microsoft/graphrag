@@ -15,6 +15,7 @@ from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionMessage, ChatCompletionChunk
 from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 
+from graphrag.config import LLMType
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.oai import ChatOpenAI, OpenaiApiType, OpenAIEmbedding
 from graphrag.query.question_gen.local_gen import LocalQuestionGen
@@ -34,19 +35,31 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 llm = ChatOpenAI(
-    api_key=settings.api_key,
-    api_base=settings.api_base,
-    model=settings.llm_model,
-    api_type=OpenaiApiType.OpenAI,
-    max_retries=settings.max_retries,
+    api_key=settings.llm.api_key,
+    api_base=settings.llm.api_base,
+    model=settings.llm.model,
+    api_type=settings.get_api_type(),
+    max_retries=settings.llm.max_retries,
+    azure_ad_token_provider=settings.azure_ad_token_provider(),
+    deployment_name=settings.llm.deployment_name,
+    api_version=settings.llm.api_version,
+    organization=settings.llm.organization,
+    request_timeout=settings.llm.request_timeout,
 )
 
 text_embedder = OpenAIEmbedding(
-    api_key=settings.api_key,
-    api_base=settings.embedding_api_base,
-    api_type=OpenaiApiType.OpenAI,
-    model=settings.embedding_model,
-    max_retries=settings.max_retries,
+    api_key=settings.embeddings.llm.api_key,
+    api_base=settings.embeddings.llm.api_base,
+    api_type=settings.get_api_type(),
+    api_version=settings.embeddings.llm.api_version,
+    model=settings.embeddings.llm.model,
+    max_retries=settings.embeddings.llm.max_retries,
+    max_tokens=settings.embeddings.llm.max_tokens,
+    azure_ad_token_provider=settings.azure_ad_token_provider(),
+    deployment_name=settings.embeddings.llm.deployment_name,
+    organization=settings.embeddings.llm.organization,
+    encoding_name=settings.encoding_model,
+    request_timeout=settings.embeddings.llm.request_timeout,
 )
 
 token_encoder = tiktoken.get_encoding("cl100k_base")

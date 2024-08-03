@@ -79,15 +79,15 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
 
 async def build_local_question_gen(llm: BaseLLM, llm_params: dict[str, Any] | None = None, context_builder: LocalContextBuilder = None,
                                    token_encoder: tiktoken.Encoding | None = None, **kwargs) -> LocalQuestionGen:
-    max_tokens = int(kwargs.get('max_tokens', settings.max_tokens))
+    max_tokens = int(kwargs.get('max_tokens', settings.llm.max_tokens))
 
     local_context_params = {
-        "text_unit_prop": 0.5,
-        "community_prop": 0.1,
-        "conversation_history_max_turns": 5,
+        "text_unit_prop": settings.local_search.text_unit_prop,
+        "community_prop": settings.local_search.community_prop,
+        "conversation_history_max_turns": settings.local_search.conversation_history_max_turns,
         "conversation_history_user_turns_only": True,
-        "top_k_mapped_entities": 10,
-        "top_k_relationships": 10,
+        "top_k_mapped_entities": settings.local_search.top_k_entities,
+        "top_k_relationships": settings.local_search.top_k_relationships,
         "include_entity_rank": True,
         "include_relationship_weight": True,
         "include_community_rank": False,
@@ -112,19 +112,19 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
                                     token_encoder: tiktoken.Encoding | None = None, **kwargs) -> LocalSearch:
 
     local_context_params = {
-        "text_unit_prop": 0.5,
-        "community_prop": 0.1,
-        "conversation_history_max_turns": 5,
+        "text_unit_prop": settings.local_search.text_unit_prop,
+        "community_prop": settings.local_search.community_prop,
+        "conversation_history_max_turns": settings.local_search.conversation_history_max_turns,
         "conversation_history_user_turns_only": True,
-        "top_k_mapped_entities": 10,
-        "top_k_relationships": 10,
+        "top_k_mapped_entities": settings.local_search.top_k_entities,
+        "top_k_relationships": settings.local_search.top_k_relationships,
         "include_entity_rank": True,
         "include_relationship_weight": True,
         "include_community_rank": False,
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": int(kwargs.get('max_tokens', settings.max_tokens)),
+        "max_tokens": int(kwargs.get('max_tokens', settings.llm.max_tokens)),
     }
 
     search_engine = LocalSearch(
