@@ -22,6 +22,7 @@ from graphrag.llm import (
     create_openai_completion_llm,
     create_openai_embedding_llm,
     create_tpm_rpm_limiters,
+    DashScopeEmbeddingLLM,
 )
 
 if TYPE_CHECKING:
@@ -94,6 +95,13 @@ def _create_error_handler(callbacks: VerbCallbacks) -> ErrorHandlerFn:
 
     return on_error
 
+def _load_dashscope_embeddings_llm(
+    on_error: ErrorHandlerFn,
+    cache: LLMCache,
+    config: dict[str, Any],
+    azure=False,
+): 
+    return DashScopeEmbeddingLLM(config)
 
 def _load_openai_completion_llm(
     on_error: ErrorHandlerFn,
@@ -227,6 +235,10 @@ loaders = {
         "load": _load_azure_openai_chat_llm,
         "chat": True,
     },
+    LLMType.DashScopeEmbedding: {
+        "load": _load_dashscope_embeddings_llm,
+        "chat": False,
+    }
     LLMType.OpenAIEmbedding: {
         "load": _load_openai_embeddings_llm,
         "chat": False,

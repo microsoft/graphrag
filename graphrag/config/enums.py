@@ -98,6 +98,7 @@ class LLMType(str, Enum):
     # Embeddings
     OpenAIEmbedding = "openai_embedding"
     AzureOpenAIEmbedding = "azure_openai_embedding"
+    DashScopeEmbedding = "dashscope_embedding"
 
     # Raw Completion
     OpenAI = "openai"
