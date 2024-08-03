@@ -18,7 +18,7 @@ from openai.types.chat.chat_completion_chunk import Choice, ChoiceDelta
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.oai import ChatOpenAI, OpenaiApiType, OpenAIEmbedding
 from graphrag.query.question_gen.local_gen import LocalQuestionGen
-from graphrag.query.structured_search.base import SearchResult
+from graphrag.query.structured_search.base import SearchResult, BaseSearch
 from graphrag.query.structured_search.global_search.callbacks import GlobalSearchLLMCallback
 from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
@@ -166,6 +166,59 @@ async def generate_chunks(callback, request_model, future: gtypes.TypedFuture[Se
     yield f"data: [DONE]\n\n"
 
 
+async def initialize_search(request: gtypes.ChatCompletionRequest, search: BaseSearch, context: str = None):
+    search.context_builder = await switch_context(model=context)
+    search.llm_params = request.llm_chat_params()
+    if isinstance(search, GlobalSearch):
+        search.map_llm_params.update(request.llm_chat_params())
+        search.reduce_llm_params.update(request.llm_chat_params())
+    return search
+
+
+async def handle_sync_response(request, search, conversation_history):
+    result = await search.asearch(request.messages[-1].content, conversation_history=conversation_history)
+    response = result.response
+    reference = utils.get_reference(response)
+    if reference:
+        index_id = request.model.removesuffix("-global").removesuffix("-local")
+        response += f"\n{utils.generate_ref_links(reference, index_id)}"
+    completion = ChatCompletion(
+        id=f"chatcmpl-{uuid.uuid4().hex}",
+        created=int(time.time()),
+        model=request.model,
+        object="chat.completion",
+        choices=[
+            Choice(
+                index=0,
+                finish_reason="stop",
+                message=ChatCompletionMessage(
+                    role="assistant",
+                    content=response
+                )
+            )
+        ],
+        usage=CompletionUsage(
+            completion_tokens=-1,
+            prompt_tokens=result.prompt_tokens,
+            total_tokens=-1
+        )
+    )
+    return JSONResponse(content=jsonable_encoder(completion))
+
+
+async def handle_stream_response(request, search, conversation_history):
+    callback = CustomSearchCallback()
+    future = gtypes.TypedFuture[SearchResult]()
+
+    async def run_search():
+        result = await search.asearch(request.messages[-1].content, conversation_history)
+        future.set_result(result)
+
+    search.callbacks = [callback]
+    asyncio.create_task(run_search())
+    return StreamingResponse(generate_chunks(callback, request.model, future), media_type="text/event-stream")
+
+
 @app.post("/v1/chat/completions")
 async def chat_completions(request: gtypes.ChatCompletionRequest):
     if not local_search or not global_search:
@@ -173,70 +226,22 @@ async def chat_completions(request: gtypes.ChatCompletionRequest):
         raise HTTPException(status_code=500, detail="graphrag search engines is not initialized")
 
     try:
-        prompt = request.messages[-1].content
         history = request.messages[:-1]
-        message_dicts = [message.dict() for message in history]
-        conversation_history = ConversationHistory.from_list(message_dicts)
+        conversation_history = ConversationHistory.from_list([message.dict() for message in history])
+
+        if request.model.endswith("global"):
+            search = await initialize_search(request, global_search, request.model)
+        else:
+            search = await initialize_search(request, local_search, request.model)
+            if request.max_tokens:
+                search.context_builder_params['max_tokens'] = request.max_tokens
 
         if not request.stream:
-            if request.model.endswith("global"):
-                global_context = await switch_context(model=request.model)
-                global_search.context_builder = global_context
-                result = await global_search.asearch(prompt, conversation_history=conversation_history)
-            else:
-                local_context = await switch_context(model=request.model)
-                local_search.context_builder = local_context
-                result = await local_search.asearch(prompt, conversation_history=conversation_history)
-
-            response = result.response
-            reference = utils.get_reference(response)
-            if reference:
-                index_id = request.model.removesuffix("-global").removesuffix("-local")
-                response += f"\n{utils.generate_ref_links(reference, index_id)}"
-            completion = ChatCompletion(
-                id=f"chatcmpl-{uuid.uuid4().hex}",
-                created=int(time.time()),
-                model=request.model,
-                object="chat.completion",
-                choices=[
-                    Choice(
-                        index=0,
-                        finish_reason="stop",
-                        message=ChatCompletionMessage(
-                            role="assistant",
-                            content=response
-                        )
-                    )
-                ],
-                usage=CompletionUsage(
-                    completion_tokens=-1,
-                    prompt_tokens=result.prompt_tokens,
-                    total_tokens=-1
-                )
-            )
-            json_compatible = jsonable_encoder(completion)
-            return JSONResponse(content=json_compatible)
+            return await handle_sync_response(request, search, conversation_history)
         else:
-            callback = CustomSearchCallback()
-            future: gtypes.TypedFuture[SearchResult] = gtypes.TypedFuture()
-
-            async def run_search(search, prompt, history, future: gtypes.TypedFuture[SearchResult]):
-                ret = await search.asearch(prompt, history)
-                future.set_result(ret)
-
-            if request.model.endswith("global"):
-                global_context = await switch_context(model=request.model)
-                global_search.context_builder = global_context
-                global_search.callbacks = [callback]
-                asyncio.create_task(run_search(global_search, prompt, conversation_history, future))
-            else:
-                local_context = await switch_context(model=request.model)
-                local_search.context_builder = local_context
-                local_search.callbacks = [callback]
-                asyncio.create_task(run_search(local_search, prompt, conversation_history, future))
-            return StreamingResponse(generate_chunks(callback, request.model, future), media_type="text/event-stream")
+            return await handle_stream_response(request, search, conversation_history)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/v1/advice_questions", response_model=gtypes.QuestionGenResult)
@@ -288,7 +293,7 @@ async def get_reference(index_id: str, datatype: str, id: int):
     return HTMLResponse(content=html_content)
 
 
-async def switch_context(model: str = None):
+async def switch_context(model: str):
     if model.endswith("global"):
         input_dir = os.path.join(settings.data, model.removesuffix("-global"), "artifacts")
         context_builder = await search.build_global_context_builder(input_dir, token_encoder)

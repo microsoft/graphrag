@@ -32,7 +32,10 @@ async def build_global_context_builder(input_dir: str,
 
 
 async def build_global_search_engine(llm: BaseLLM, context_builder=None, callback: GlobalSearchLLMCallback = None,
-                                     token_encoder: tiktoken.Encoding | None = None) -> GlobalSearch:
+                                     token_encoder: tiktoken.Encoding | None = None, **kwargs) -> GlobalSearch:
+
+    max_tokens = int(kwargs.get('max_tokens', settings.max_tokens))
+
     context_builder_params = {
         "use_community_summary": False,
         # False means using full community reports. True means using community short summaries.
@@ -43,28 +46,22 @@ async def build_global_search_engine(llm: BaseLLM, context_builder=None, callbac
         "include_community_weight": True,
         "community_weight_name": "occurrence weight",
         "normalize_community_weight": True,
-        "max_tokens": settings.max_tokens,
+        "max_tokens": max_tokens,
         "context_name": "Reports",
     }
 
     map_llm_params = {
-        "max_tokens": settings.max_tokens,
-        "temperature": settings.temperature,
+        **kwargs,
         "response_format": {"type": "json_object"},
-    }
-
-    reduce_llm_params = {
-        "max_tokens": settings.max_tokens,
-        "temperature": settings.temperature,
     }
 
     search_engine = GlobalSearch(
         llm=llm,
         context_builder=context_builder,
         token_encoder=token_encoder,
-        max_data_tokens=settings.max_tokens,
+        max_data_tokens=max_tokens,
         map_llm_params=map_llm_params,
-        reduce_llm_params=reduce_llm_params,
+        reduce_llm_params=kwargs,
         allow_general_knowledge=False,
         json_mode=True,  # set this to False if your LLM model does not support JSON mode.
         context_builder_params=context_builder_params,
@@ -76,16 +73,3 @@ async def build_global_search_engine(llm: BaseLLM, context_builder=None, callbac
     )
     return search_engine
 
-# result = await search_engine.asearch(
-#     "What is the major conflict in this story and who are the protagonist and antagonist?"
-# )
-#
-# print(result.completion_time)
-#
-# result.context_data["reports"]
-#
-# print(f"LLM calls: {result.llm_calls}. LLM tokens: {result.prompt_tokens}")
-#
-# result.context_text
-#
-# result.map_responses

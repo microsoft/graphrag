@@ -78,7 +78,9 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
 
 
 async def build_local_question_gen(llm: BaseLLM, llm_params: dict[str, Any] | None = None, context_builder: LocalContextBuilder = None,
-                                   token_encoder: tiktoken.Encoding | None = None) -> LocalQuestionGen:
+                                   token_encoder: tiktoken.Encoding | None = None, **kwargs) -> LocalQuestionGen:
+    max_tokens = int(kwargs.get('max_tokens', settings.max_tokens))
+
     local_context_params = {
         "text_unit_prop": 0.5,
         "community_prop": 0.1,
@@ -92,7 +94,7 @@ async def build_local_question_gen(llm: BaseLLM, llm_params: dict[str, Any] | No
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": settings.max_tokens,
+        "max_tokens": max_tokens,
     }
 
     question_generator = LocalQuestionGen(
@@ -107,7 +109,8 @@ async def build_local_question_gen(llm: BaseLLM, llm_params: dict[str, Any] | No
 
 
 async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder = None,
-                                    token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
+                                    token_encoder: tiktoken.Encoding | None = None, **kwargs) -> LocalSearch:
+
     local_context_params = {
         "text_unit_prop": 0.5,
         "community_prop": 0.1,
@@ -121,17 +124,14 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": settings.max_tokens,
+        "max_tokens": int(kwargs.get('max_tokens', settings.max_tokens)),
     }
-    llm_params = {
-        "max_tokens": settings.max_tokens,
-        "temperature": settings.temperature,
-    }
+
     search_engine = LocalSearch(
         llm=llm,
         context_builder=context_builder,
         token_encoder=token_encoder,
-        llm_params=llm_params,
+        llm_params=kwargs,
         context_builder_params=local_context_params,
         response_type="multiple paragraphs",
     )
