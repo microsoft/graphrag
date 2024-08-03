@@ -22,6 +22,11 @@ license = "MIT"
 readme = "README.md"
 packages = [{ include = "graphrag" }]
 
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "default"
+
 [tool.poetry-dynamic-versioning]
 enable = true
 style = "pep440"
@@ -86,6 +91,7 @@ typing-extensions = "^4.12.2"
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
 json-repair = "^0.25.3"
+dashscope = "^1.20.3"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
