@@ -92,9 +92,9 @@ def get_completion_llm_args(
 def try_parse_json_object(input: str) -> tuple[str, dict]:
     """JSON cleaning and formatting utilities."""
     """sometime, the llm return a json string with some extra description, this function will clean it up."""
-    _pattern = r"\{(.*)\}"
-    _match = re.search(_pattern, input)
-    input = "{" + _match.group(1) + "}" if _match else input
+    _pattern = r"\{.*\}"
+    _match = re.search(_pattern, input, re.DOTALL)
+    input = _match.group(0) if _match else input
 
     """Clean up json string."""
     input = (
@@ -111,9 +111,9 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
 
     # Remove JSON Markdown Frame
     if input.startswith("```json"):
-        input = input[len("```json") :]
+        input = input[len("```json"):].strip()
     if input.endswith("```"):
-        input = input[: len(input) - len("```")]
+        input = input[:len(input) - len("```")].strip()
 
     try:
         result = json.loads(input)
@@ -133,6 +133,9 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
                 return input, {}
             return input, result
     else:
+        if not isinstance(result, dict):
+            log.exception("not expected dict type. type=%s:", type(result))
+            return input, {}
         return input, result
 
 

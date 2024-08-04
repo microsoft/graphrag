@@ -8,7 +8,6 @@ You are a helpful assistant responding to questions about data in the tables pro
 """
 
 MAP_USER_PROMPT = """
-===============
 Generate a response consisting of a list of key points that responds to the user's question, summarizing all relevant information in the input data tables.
 You should use the data provided in the data tables below as the primary context for generating the response.
 If you don't know the answer or if the input data tables do not contain sufficient information to provide an answer, just say so. Do not make anything up.
