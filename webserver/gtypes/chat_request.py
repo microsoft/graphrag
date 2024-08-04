@@ -1,4 +1,3 @@
-from dataclasses import Field
 from typing import Optional, Dict, List, Union, Literal, Any
 
 from pydantic import BaseModel
@@ -41,21 +40,13 @@ class CompletionCreateParamsBase(BaseModel):
     temperature: Optional[float] = 0.0
     tools: List[ChatCompletionToolParam] = None
     top_logprobs: Optional[int] = None
-    top_p: Optional[float] = None
+    top_p: Optional[float] = 1.0
     user: Optional[str] = None
 
     def llm_chat_params(self) -> dict[str, Any]:
         return {
-            "max_tokens": self.max_tokens,
-            "stop": self.stop,
             "temperature": self.temperature,
-            "top_p": self.top_p,
-            "logprobs": self.logprobs,
-            "frequency_penalty": self.frequency_penalty,
-            "presence_penalty": self.presence_penalty,
-            "response_format": self.response_format,
-            "seed": self.seed,
-            "service_tier": self.service_tier,
+            "seed": self.seed
         }
 
 

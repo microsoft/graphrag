@@ -181,10 +181,7 @@ async def generate_chunks(callback, request_model, future: gtypes.TypedFuture[Se
 
 async def initialize_search(request: gtypes.ChatCompletionRequest, search: BaseSearch, context: str = None):
     search.context_builder = await switch_context(model=context)
-    search.llm_params = request.llm_chat_params()
-    if isinstance(search, GlobalSearch):
-        search.map_llm_params.update(request.llm_chat_params())
-        search.reduce_llm_params.update(request.llm_chat_params())
+    search.llm_params.update(request.llm_chat_params())
     return search
 
 
@@ -195,6 +192,7 @@ async def handle_sync_response(request, search, conversation_history):
     if reference:
         index_id = request.model.removesuffix("-global").removesuffix("-local")
         response += f"\n{utils.generate_ref_links(reference, index_id)}"
+    from openai.types.chat.chat_completion import Choice
     completion = ChatCompletion(
         id=f"chatcmpl-{uuid.uuid4().hex}",
         created=int(time.time()),
@@ -309,7 +307,7 @@ async def get_reference(index_id: str, datatype: str, id: int):
 async def switch_context(model: str):
     if model.endswith("global"):
         input_dir = os.path.join(settings.data, model.removesuffix("-global"), "artifacts")
-        context_builder = await search.build_global_context_builder(input_dir, token_encoder)
+        context_builder = await search.load_global_context(input_dir, token_encoder)
     elif model.endswith("local"):
         input_dir = os.path.join(settings.data, model.removesuffix("-local"), "artifacts")
         context_builder = await search.load_local_context(input_dir, text_embedder, token_encoder)

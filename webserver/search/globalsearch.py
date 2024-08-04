@@ -14,8 +14,8 @@ from webserver.configs import settings
 from webserver.utils import consts
 
 
-async def build_global_context_builder(input_dir: str,
-                                       token_encoder: tiktoken.Encoding | None = None) -> GlobalContextBuilder:
+async def load_global_context(input_dir: str,
+                              token_encoder: tiktoken.Encoding | None = None) -> GlobalContextBuilder:
     entity_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_TABLE}.parquet")
     report_df = pd.read_parquet(f"{input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
     entity_embedding_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
@@ -32,9 +32,8 @@ async def build_global_context_builder(input_dir: str,
 
 
 async def build_global_search_engine(llm: BaseLLM, context_builder=None, callback: GlobalSearchLLMCallback = None,
-                                     token_encoder: tiktoken.Encoding | None = None, **kwargs) -> GlobalSearch:
+                                     token_encoder: tiktoken.Encoding | None = None) -> GlobalSearch:
 
-    max_tokens = int(kwargs.get('max_tokens', settings.global_search.max_tokens))
     context_builder_params = {
         "use_community_summary": False,
         # False means using full community reports. True means using community short summaries.
@@ -45,27 +44,33 @@ async def build_global_search_engine(llm: BaseLLM, context_builder=None, callbac
         "include_community_weight": True,
         "community_weight_name": "occurrence weight",
         "normalize_community_weight": True,
-        "max_tokens": max_tokens,
+        "max_tokens": settings.global_search.max_tokens,
         "context_name": "Reports",
     }
 
     map_llm_params = {
-        **kwargs,
+        "max_tokens": settings.global_search.map_max_tokens,
+        "temperature": settings.global_search.temperature,
         "response_format": {"type": "json_object"},
+    }
+
+    reduce_llm_params = {
+        "max_tokens": settings.global_search.reduce_max_tokens,
+        "temperature": settings.global_search.temperature,
     }
 
     search_engine = GlobalSearch(
         llm=llm,
         context_builder=context_builder,
         token_encoder=token_encoder,
-        max_data_tokens=max_tokens,
+        max_data_tokens=settings.global_search.data_max_tokens,
         map_llm_params=map_llm_params,
-        reduce_llm_params=kwargs,
+        reduce_llm_params=reduce_llm_params,
         allow_general_knowledge=False,
         json_mode=True,  # set this to False if your LLM model does not support JSON mode.
         context_builder_params=context_builder_params,
         concurrent_coroutines=32,
-        callbacks=[callback],
+        callbacks=[callback] if callback else None,
         # free form text describing the response type and format, can be anything,
         # e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
         response_type="multiple paragraphs",
