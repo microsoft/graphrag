@@ -33,6 +33,5 @@ class JsonParsingLLM(LLM[CompletionInput, CompletionOutput]):
         """Call the LLM with the input and kwargs."""
         result = await self._delegate(input, **kwargs)
         if kwargs.get("json") and result.json is None and result.output is not None:
-            _, parsed_json = try_parse_json_object(result.output)
-            result.json = parsed_json
+            result.json = try_parse_json_object(result.output)
         return result

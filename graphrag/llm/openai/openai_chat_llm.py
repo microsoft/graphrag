@@ -4,6 +4,7 @@
 """The Chat-based language model."""
 
 import logging
+from json import JSONDecodeError
 
 from typing_extensions import Unpack
 
@@ -15,6 +16,7 @@ from graphrag.llm.types import (
     LLMOutput,
 )
 
+from ._json import clean_up_json
 from ._prompts import JSON_CHECK_PROMPT
 from .openai_configuration import OpenAIConfiguration
 from .types import OpenAIClientTypes
@@ -102,10 +104,11 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
             },
         )
 
-        output, json_output = try_parse_json_object(result.output or "")
+        raw_output = result.output or ""
+        json_output = try_parse_json_object(raw_output)
 
         return LLMOutput[CompletionOutput](
-            output=output,
+            output=raw_output,
             json=json_output,
             history=result.history,
         )
@@ -116,23 +119,24 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         # Otherwise, clean up the output and try to parse it as json
         result = await self._invoke(input, **kwargs)
         history = result.history or []
-        output, json_output = try_parse_json_object(result.output or "")
-        if json_output:
+        output = clean_up_json(result.output or "")
+        try:
+            json_output = try_parse_json_object(output)
             return LLMOutput[CompletionOutput](
-                output=result.output, json=json_output, history=history
+                output=output, json=json_output, history=history
             )
-        # if not return correct formatted json, retry
-        log.warning("error parsing llm json, retrying")
+        except (TypeError, JSONDecodeError):
+            log.warning("error parsing llm json, retrying")
+            # If cleaned up json is unparsable, use the LLM to reformat it (may throw)
+            result = await self._try_clean_json_with_llm(output, **kwargs)
+            output = clean_up_json(result.output or "")
+            json = try_parse_json_object(output)
 
-        # If cleaned up json is unparsable, use the LLM to reformat it (may throw)
-        result = await self._try_clean_json_with_llm(output, **kwargs)
-        output, json_output = try_parse_json_object(result.output or "")
-
-        return LLMOutput[CompletionOutput](
-            output=output,
-            json=json_output,
-            history=history,
-        )
+            return LLMOutput[CompletionOutput](
+                output=output,
+                json=json,
+                history=history,
+            )
 
     async def _try_clean_json_with_llm(
         self, output: str, **kwargs: Unpack[LLMInput]
