@@ -88,7 +88,7 @@ azure-identity = "^1.17.1"
 json-repair = "^0.25.3"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.6.0"
+coverage = "^7.6.1"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
