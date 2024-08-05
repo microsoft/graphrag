@@ -93,6 +93,9 @@ azure-identity = "^1.17.1"
 
 streamlit = "^1.37.0"
 loguru = "^0.7.2"
+rank-bm25 = "^0.2.2"
+jieba = "^0.42.1"
+langchain = "^0.2.12"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
@@ -117,7 +120,7 @@ requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-webserver = "python plugins/simple_webserver/main.py"
+webserver = "python plugins/webserver/main.py"
 streamlit_run = "streamlit run plugins/streamlit/main.py"
 _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"

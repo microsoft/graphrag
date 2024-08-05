@@ -9,6 +9,7 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from plugins.webserver import utils
 from plugins.webserver.models import GraphRAGItem, GraphRAGResponseItem
+from plugins.context2question import utils as c2q_utils
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -39,19 +40,22 @@ async def graphrag(request: GraphRAGItem):
         raise HTTPException(status_code=500, detail="graphrag search engines is not initialized")
 
     # switch context via domain
-    context = await utils.switch_context(request, all_contexts)
+    context = await utils.switch_context(request.domain, request.method.value, all_contexts)
+
+    # generate answer from user chat context
+    question_list = await c2q_utils.context_to_question(user_context=request.question, llm=llm, app_context=context)
 
     if request.method == GraphRAGItem.MethodEnum.global_:
         global_search.context_builder = context
-        result = await global_search.asearch(request.question)
+        result = await global_search.asearch('\n'.join(question_list))
     else:
         local_search.context_builder = context
-        result = await local_search.asearch(request.question)
+        result = await local_search.asearch('\n'.join(question_list))
 
     ori_response = result.response
     response = utils.delete_reference(ori_response)
-
-    return GraphRAGResponseItem(code=200, message="success", data=response, other={"ori_response": result.response,"context": result.context_text})
+    return GraphRAGResponseItem(code=200, message="success", question=question_list, data=response,
+                                other={"ori_response": result.response, "context": result.context_text})
 
 
 if __name__ == '__main__':

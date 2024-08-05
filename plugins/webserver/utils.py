@@ -214,11 +214,10 @@ async def load_all_context(context_root_dir: str, text_embedder: OpenAIEmbedding
     return all_context
 
 
-async def switch_context(graphrag_item: GraphRAGItem, all_context: Dict) -> LocalContextBuilder:
+async def switch_context(domain: str, method: str, all_context: Dict) -> LocalContextBuilder:
     # switch index dir based on domain
-    domain = graphrag_item.domain.value
 
-    if graphrag_item.method.value == "global":
+    if method == "global":
         # context_builder = await build_global_context_builder(data_dir, token_encoder)
         context_builder = all_context[domain]['global']
     else:  # local
