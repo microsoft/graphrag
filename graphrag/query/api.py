@@ -54,7 +54,7 @@ def __get_embedding_description_store(
     description_embedding_store.connect(**config_args)
 
     if config_args.get("overwrite", False):
-        # this step assumps the embeddings where originally stored in a file rather
+        # this step assumps the embeddings were originally stored in a file rather
         # than a vector database
 
         # dump embeddings from the entities list to the description_embedding_store
