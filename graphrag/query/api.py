@@ -104,11 +104,11 @@ def global_search(
 
     Returns
     -------
-    search response
+    TODO: Document the search response type and format.
 
     Raises
     ------
-    TODO: Document any exceptions to expect
+    TODO: Document any exceptions to expect.
     """
     reports = read_indexer_reports(
         final_community_reports, final_nodes, community_level
@@ -141,24 +141,24 @@ def local_search(
 
     Args
     ----
-    config (GraphRagConfig): A graphrag configuration (settings.yaml)
-    final_nodes (pd.DataFrame): A DataFrame containing the final nodes (create_final_nodes.parquet)
-    final_entities (pd.DataFrame): A DataFrame containing the final entities (create_final_entities.parquet)
-    final_community_reports (pd.DataFrame): A DataFrame containing the final community reports (create_final_community_reports.parquet)
-    final_text_units (pd.DataFrame): A DataFrame containing the final text units (create_final_text_units.parquet)
-    final_relationships (pd.DataFrame): A DataFrame containing the final relationships (create_final_relationships.parquet)
-    final_covariates (pd.DataFrame): A DataFrame containing the final covariates (create_final_covariates.parquet)
+    config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    final_nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    final_entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    final_community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    final_text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    final_relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    final_covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
     community_level (int): The community level to search at.
     response_type (str): The response type to return.
     query (str): The user query to search for.
 
     Returns
     -------
-    search response
+    TODO: Document the search response type and format.
 
     Raises
     ------
-    TODO: Document any exceptions to expect
+    TODO: Document any exceptions to expect.
     """
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
