@@ -284,7 +284,7 @@ class GlobalSearch(BaseSearch):
             if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
                 # return no data answer if no key points are found
                 log.warning(
-                    "Warning: All map responses have score 0, returning a canned 'I do not know' answer"
+                    "Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations."
                 )
                 return SearchResult(
                     response=NO_DATA_ANSWER,
