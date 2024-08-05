@@ -218,6 +218,8 @@ select = [
     # ANN # Type annotations, re-enable when we get bandwidth
 ]
 ignore = [
+    # Ignore module names shadowing Python builtins
+    "A005",
     # Deprecated Rules
     "ANN101",
     "ANN102",
