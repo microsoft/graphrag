@@ -52,7 +52,7 @@ def __get_embedding_description_store(
 
     description_embedding_store.connect(**config_args)
 
-    if config_args.get("overwrite", False):
+    if config_args.get("overwrite", True):
         # this step assumps the embeddings where originally stored in a file rather
         # than a vector database
 
