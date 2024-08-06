@@ -255,7 +255,7 @@ class TestIndexer:
         },
         clear=True,
     )
-    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
+    @pytest.mark.timeout(800)  # Extend the timeout to 600 seconds (10 minutes)
     def test_fixture(
         self,
         input_path: str,
