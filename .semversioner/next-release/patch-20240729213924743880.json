@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "update history-tracking LLm to use 'assistant' instead of 'system' in output history."
-}

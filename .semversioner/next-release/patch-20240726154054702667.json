@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "use history argument in hash key computation; add history input to cache data"
-}

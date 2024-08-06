@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Try parsing json before even repairing"
-}
