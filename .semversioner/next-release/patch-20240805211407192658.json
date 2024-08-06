@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Change json parsing error in the map step of global search to warning"
-}

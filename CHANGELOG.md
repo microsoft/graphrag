@@ -1,6 +1,25 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.2.1
+
+- patch: Added default columns for vector store at create_pipeline_config. No change for other cases.
+- patch: Change json parsing error in the map step of global search to warning
+- patch: Fix Local Search breaking when loading Embeddings input. Defaulting overwrite to True as in the rest of the vector store config
+- patch: Fix json parsing when LLM returns faulty responses
+- patch: Fix missing community reports and refactor community context builder
+- patch: Fixed a bug that erased the vector database, added a new parameter to specify the config file path, and updated the documentation accordingly.
+- patch: Try parsing json before even repairing
+- patch: Update Prompt Tuning meta prompts with finer examples
+- patch: Update default entity extraction and gleaning prompts to reduce hallucinations
+- patch: add encoding-model to entity/claim extraction config
+- patch: add encoding-model to text chunking config
+- patch: add user prompt to history-tracking llm
+- patch: update config reader to allow for zero gleans
+- patch: update config-reader to allow for empty chunk-by arrays
+- patch: update history-tracking LLm to use 'assistant' instead of 'system' in output history.
+- patch: use history argument in hash key computation; add history input to cache data
+
 ## 0.2.0
 
 - minor: Add content-based KNN for selecting prompt tune few shot examples
