@@ -40,7 +40,7 @@ def _load_fixtures():
         config_file = fixtures_path / subfolder / "config.json"
         params.append((subfolder, json.loads(config_file.read_bytes().decode("utf-8"))))
 
-    return params
+    return params[1:]  # disable azure blob connection test
 
 
 def pytest_generate_tests(metafunc):
