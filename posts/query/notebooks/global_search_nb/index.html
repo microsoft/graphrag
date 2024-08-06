@@ -368,7 +368,10 @@ entity_embedding_df <span class="token operator">=</span> pd<span class="token p
 
 reports <span class="token operator">=</span> read_indexer_reports<span class="token punctuation">(</span>report_df<span class="token punctuation">,</span> entity_df<span class="token punctuation">,</span> COMMUNITY_LEVEL<span class="token punctuation">)</span>
 entities <span class="token operator">=</span> read_indexer_entities<span class="token punctuation">(</span>entity_df<span class="token punctuation">,</span> entity_embedding_df<span class="token punctuation">,</span> COMMUNITY_LEVEL<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Report records: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>report_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Total report count: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>report_df<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>
+    <span class="token string-interpolation"><span class="token string">f"Report count after filtering by community level </span><span class="token interpolation"><span class="token punctuation">{</span>COMMUNITY_LEVEL<span class="token punctuation">}</span></span><span class="token string">: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">len</span><span class="token punctuation">(</span>reports<span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span>
+<span class="token punctuation">)</span>
 report_df<span class="token punctuation">.</span>head<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
 
   <button class="code-copy " data-clipboard-target="#code-31" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
@@ -469,7 +472,6 @@ result<span class="token punctuation">.</span>context_data<span class="token pun
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
-<p>LLM calls: 13. LLM tokens: 184660</p>
 
         </main>
     </div>
