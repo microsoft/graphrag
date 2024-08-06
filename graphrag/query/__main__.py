@@ -23,7 +23,10 @@ class SearchType(Enum):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog="python -m graphrag.query",
+        description="The graphrag query engine",
+    )
 
     parser.add_argument(
         "--config",
