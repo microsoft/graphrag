@@ -52,8 +52,8 @@ stateDiagram-v2
     Chunk --> ExtractGraph
     Chunk --> EmbedDocuments
     ExtractGraph --> GenerateReports
+    ExtractGraph --> EmbedEntities
     ExtractGraph --> EmbedGraph
-    EmbedGraph --> GenerateReports
 ```
 
 ### Dataframe Message Format

@@ -112,6 +112,8 @@ Now that we have a graph of entities and relationships, each with a list of desc
 
 Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These are emitted as a primary artifact called **Covariates**.
 
+Note: claim extraction is _optional_ and turned off by default. This is because claim extraction generally needs prompt tuning to be useful.
+
 ## Phase 3: Graph Augmentation
 
 Now that we have a usable graph of entities and relationships, we want to understand their community structure and augment the graph with additional information. This is done in two steps: _Community Detection_ and _Graph Embedding_. These give us explicit (communities) and implicit (embeddings) ways of understanding the topological structure of our graph.
