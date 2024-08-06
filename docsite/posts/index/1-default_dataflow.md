@@ -34,8 +34,7 @@ flowchart TB
     subgraph phase2[Phase 2: Graph Extraction]
     textUnits --> graph_extract[Entity & Relationship Extraction]
     graph_extract --> graph_summarize[Entity & Relationship Summarization]
-    graph_summarize --> entity_resolve[Entity Resolution]
-    entity_resolve --> claim_extraction[Claim Extraction]
+    graph_summarize --> claim_extraction[Claim Extraction]
     claim_extraction --> graph_outputs[Graph Tables]
     end
     subgraph phase3[Phase 3: Graph Augmentation]
@@ -95,7 +94,7 @@ Entities and Relationships are extracted at once in our _entity_extract_ verb, a
 title: Graph Extraction
 ---
 flowchart LR
-    tu[TextUnit] --> ge[Graph Extraction] --> gs[Graph Summarization] --> er[Entity Resolution]
+    tu[TextUnit] --> ge[Graph Extraction] --> gs[Graph Summarization]
     tu --> ce[Claim Extraction]
 ```
 
@@ -109,17 +108,11 @@ These subgraphs are merged together - any entities with the same _name_ and _typ
 
 Now that we have a graph of entities and relationships, each with a list of descriptions, we can summarize these lists into a single description per entity and relationship. This is done by asking the LLM for a short summary that captures all of the distinct information from each description. This allows all of our entities and relationships to have a single concise description.
 
-### Entity Resolution (Not Enabled by Default)
-
-The final step of graph extraction is to resolve any entities that represent the same real-world entity but but have different names. Since this is done via LLM, and we don't want to lose information, we want to take a conservative, non-destructive approach to this.
-
-Our current implementation of Entity Resolution, however, is destructive. It will provide the LLM with a series of entities and ask it to determine which ones should be merged. Those entities are then merged together into a single entity and their relationships are updated.
-
-We are currently exploring other entity resolution techniques. In the near future, entity resolution will be executed by creating an edge between entity variants indicating that the entities have been resolved by the indexing engine. This will allow for end-users to undo indexing-side resolutions, and add their own non-destructive resolutions using a similar process.
-
 ### Claim Extraction & Emission
 
 Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These are emitted as a primary artifact called **Covariates**.
+
+Note: claim extraction is _optional_ and turned off by default. This is because claim extraction generally needs prompt tuning to be useful.
 
 ## Phase 3: Graph Augmentation
 

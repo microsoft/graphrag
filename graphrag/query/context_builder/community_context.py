@@ -92,6 +92,7 @@ def build_community_context(
         )
 
     selected_reports = [report for report in community_reports if _is_included(report)]
+
     if selected_reports is None or len(selected_reports) == 0:
         return ([], {})
 
@@ -160,6 +161,12 @@ def build_community_context(
     # add the last batch if it has not been added
     if batch_text not in all_context_text:
         _cut_batch()
+
+    if len(all_context_records) == 0:
+        log.warning(
+            "Warning: No community records added when building community context."
+        )
+        return ([], {})
 
     return all_context_text, {
         context_name.lower(): pd.concat(all_context_records, ignore_index=True)
