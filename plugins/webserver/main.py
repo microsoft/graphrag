@@ -57,7 +57,7 @@ async def graphrag(request: GraphRAGItem):
     document = getattr(context, "document", None)
     if isinstance(document, pd.DataFrame):
         hit_docs: pd.DataFrame = document[document['id'].isin(context_document_ids)]
-        title_link = {row['source']: row['title'] for i, row in hit_docs.iterrows()}
+        title_link = {row['title']: row['source'] for i, row in hit_docs.iterrows()}
         reference_doc_title_list: list = await c2q_utils.get_docs_by_title_filter(str(list(title_link.keys())), str(question_list), llm)
 
         for idx in reference_doc_title_list:
