@@ -32,8 +32,11 @@ class ClaimExtractionConfig(LLMConfig):
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+    encoding_model: str | None = Field(
+        default=None, description="The encoding model to use."
+    )
 
-    def resolved_strategy(self, root_dir: str) -> dict:
+    def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
         """Get the resolved claim extraction strategy."""
         from graphrag.index.verbs.covariates.extract_covariates import (
             ExtractClaimsStrategyType,
@@ -50,4 +53,5 @@ class ClaimExtractionConfig(LLMConfig):
             else None,
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
+            "encoding_name": self.encoding_model or encoding_model,
         }
