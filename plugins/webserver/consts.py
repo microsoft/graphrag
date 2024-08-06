@@ -10,3 +10,5 @@ COMMUNITY_LEVEL = 2
 RELATIONSHIP_TABLE = "create_final_relationships"
 COVARIATE_TABLE = "create_final_covariates"
 TEXT_UNIT_TABLE = "create_final_text_units"
+
+DOCUMENT_TABLE = "create_final_documents"

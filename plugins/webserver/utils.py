@@ -186,6 +186,12 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
     text_unit_df = pd.read_parquet(f"{input_dir}/{consts.TEXT_UNIT_TABLE}.parquet")
     text_units = read_indexer_text_units(text_unit_df)
 
+    documents_path = Path(f"{input_dir}/{consts.DOCUMENT_TABLE}.parquet")
+    if documents_path.exists():
+        documents_df = pd.read_parquet(documents_path)
+    else:
+        documents_df = None
+
     context_builder = LocalSearchMixedContext(
         community_reports=reports,
         text_units=text_units,
@@ -197,6 +203,7 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
         # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
         text_embedder=embedder,
         token_encoder=token_encoder,
+        document=documents_df,
     )
     return context_builder
 

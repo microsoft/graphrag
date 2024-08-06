@@ -51,16 +51,17 @@ class LocalSearchMixedContext(LocalContextBuilder):
     """Build data context for local search prompt combining community reports and entity/relationship/covariate tables."""
 
     def __init__(
-        self,
-        entities: list[Entity],
-        entity_text_embeddings: BaseVectorStore,
-        text_embedder: BaseTextEmbedding,
-        text_units: list[TextUnit] | None = None,
-        community_reports: list[CommunityReport] | None = None,
-        relationships: list[Relationship] | None = None,
-        covariates: dict[str, list[Covariate]] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
-        embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
+            self,
+            entities: list[Entity],
+            entity_text_embeddings: BaseVectorStore,
+            text_embedder: BaseTextEmbedding,
+            text_units: list[TextUnit] | None = None,
+            community_reports: list[CommunityReport] | None = None,
+            relationships: list[Relationship] | None = None,
+            covariates: dict[str, list[Covariate]] | None = None,
+            token_encoder: tiktoken.Encoding | None = None,
+            embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
+            **kwargs,
     ):
         if community_reports is None:
             community_reports = []
@@ -84,34 +85,37 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.token_encoder = token_encoder
         self.embedding_vectorstore_key = embedding_vectorstore_key
 
+        if 'document' in kwargs:
+            self.document = kwargs.get('document')
+
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
         """Filter entity text embeddings by entity keys."""
         self.entity_text_embeddings.filter_by_id(entity_keys)
 
     def build_context(
-        self,
-        query: str,
-        conversation_history: ConversationHistory | None = None,
-        include_entity_names: list[str] | None = None,
-        exclude_entity_names: list[str] | None = None,
-        conversation_history_max_turns: int | None = 5,
-        conversation_history_user_turns_only: bool = True,
-        max_tokens: int = 8000,
-        text_unit_prop: float = 0.5,
-        community_prop: float = 0.25,
-        top_k_mapped_entities: int = 10,
-        top_k_relationships: int = 10,
-        include_community_rank: bool = False,
-        include_entity_rank: bool = False,
-        rank_description: str = "number of relationships",
-        include_relationship_weight: bool = False,
-        relationship_ranking_attribute: str = "rank",
-        return_candidate_context: bool = False,
-        use_community_summary: bool = False,
-        min_community_rank: int = 0,
-        community_context_name: str = "Reports",
-        column_delimiter: str = "|",
-        **kwargs: dict[str, Any],
+            self,
+            query: str,
+            conversation_history: ConversationHistory | None = None,
+            include_entity_names: list[str] | None = None,
+            exclude_entity_names: list[str] | None = None,
+            conversation_history_max_turns: int | None = 5,
+            conversation_history_user_turns_only: bool = True,
+            max_tokens: int = 8000,
+            text_unit_prop: float = 0.5,
+            community_prop: float = 0.25,
+            top_k_mapped_entities: int = 10,
+            top_k_relationships: int = 10,
+            include_community_rank: bool = False,
+            include_entity_rank: bool = False,
+            rank_description: str = "number of relationships",
+            include_relationship_weight: bool = False,
+            relationship_ranking_attribute: str = "rank",
+            return_candidate_context: bool = False,
+            use_community_summary: bool = False,
+            min_community_rank: int = 0,
+            community_context_name: str = "Reports",
+            column_delimiter: str = "|",
+            **kwargs: dict[str, Any],
     ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
         """
         Build data context for local search prompt.
@@ -219,15 +223,15 @@ class LocalSearchMixedContext(LocalContextBuilder):
         return ("\n\n".join(final_context), final_context_data)
 
     def _build_community_context(
-        self,
-        selected_entities: list[Entity],
-        max_tokens: int = 4000,
-        use_community_summary: bool = False,
-        column_delimiter: str = "|",
-        include_community_rank: bool = False,
-        min_community_rank: int = 0,
-        return_candidate_context: bool = False,
-        context_name: str = "Reports",
+            self,
+            selected_entities: list[Entity],
+            max_tokens: int = 4000,
+            use_community_summary: bool = False,
+            column_delimiter: str = "|",
+            include_community_rank: bool = False,
+            min_community_rank: int = 0,
+            return_candidate_context: bool = False,
+            context_name: str = "Reports",
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Add community data to the context window until it hits the max_tokens limit."""
         if len(selected_entities) == 0 or len(self.community_reports) == 0:
@@ -239,7 +243,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if entity.community_ids:
                 for community_id in entity.community_ids:
                     community_matches[community_id] = (
-                        community_matches.get(community_id, 0) + 1
+                            community_matches.get(community_id, 0) + 1
                     )
 
         # sort communities by number of matched entities and rank
@@ -287,8 +291,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 context_data[context_key]["in_context"] = False
             else:
                 if (
-                    "id" in candidate_context_data.columns
-                    and "id" in context_data[context_key].columns
+                        "id" in candidate_context_data.columns
+                        and "id" in context_data[context_key].columns
                 ):
                     candidate_context_data["in_context"] = candidate_context_data[
                         "id"
@@ -301,12 +305,12 @@ class LocalSearchMixedContext(LocalContextBuilder):
         return (str(context_text), context_data)
 
     def _build_text_unit_context(
-        self,
-        selected_entities: list[Entity],
-        max_tokens: int = 8000,
-        return_candidate_context: bool = False,
-        column_delimiter: str = "|",
-        context_name: str = "Sources",
+            self,
+            selected_entities: list[Entity],
+            max_tokens: int = 8000,
+            return_candidate_context: bool = False,
+            column_delimiter: str = "|",
+            context_name: str = "Sources",
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Rank matching text units and add them to the context window until it hits the max_tokens limit."""
         if len(selected_entities) == 0 or len(self.text_units) == 0:
@@ -319,8 +323,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if entity.text_unit_ids:
                 for text_id in entity.text_unit_ids:
                     if (
-                        text_id not in [unit.id for unit in selected_text_units]
-                        and text_id in self.text_units
+                            text_id not in [unit.id for unit in selected_text_units]
+                            and text_id in self.text_units
                     ):
                         selected_unit = self.text_units[text_id]
                         num_relationships = count_relationships(
@@ -366,8 +370,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 context_data[context_key]["in_context"] = False
             else:
                 if (
-                    "id" in candidate_context_data.columns
-                    and "id" in context_data[context_key].columns
+                        "id" in candidate_context_data.columns
+                        and "id" in context_data[context_key].columns
                 ):
                     candidate_context_data["in_context"] = candidate_context_data[
                         "id"
@@ -380,16 +384,16 @@ class LocalSearchMixedContext(LocalContextBuilder):
         return (str(context_text), context_data)
 
     def _build_local_context(
-        self,
-        selected_entities: list[Entity],
-        max_tokens: int = 8000,
-        include_entity_rank: bool = False,
-        rank_description: str = "relationship count",
-        include_relationship_weight: bool = False,
-        top_k_relationships: int = 10,
-        relationship_ranking_attribute: str = "rank",
-        return_candidate_context: bool = False,
-        column_delimiter: str = "|",
+            self,
+            selected_entities: list[Entity],
+            max_tokens: int = 8000,
+            include_entity_rank: bool = False,
+            rank_description: str = "relationship count",
+            include_relationship_weight: bool = False,
+            top_k_relationships: int = 10,
+            relationship_ranking_attribute: str = "rank",
+            return_candidate_context: bool = False,
+            column_delimiter: str = "|",
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Build data context for local search prompt combining entity/relationship/covariate tables."""
         # build entity context

@@ -9,6 +9,8 @@ class GraphRAGResponseItem(BaseModel):
     message: str = Field(..., description="The response message")
     data: Any = Field(..., description="The response data")
     question: list = Field(..., description="The question list that generated")
+    user_context: list = Field(..., description="The user chat context")
+    reference: dict = Field({}, description="The reference document")
     other: Any = Field(None, description="Other data")
 
 

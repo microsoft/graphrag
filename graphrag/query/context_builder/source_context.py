@@ -18,13 +18,13 @@ Contain util functions to build text unit context for the search's system prompt
 
 
 def build_text_unit_context(
-    text_units: list[TextUnit],
-    token_encoder: tiktoken.Encoding | None = None,
-    column_delimiter: str = "|",
-    shuffle_data: bool = True,
-    max_tokens: int = 8000,
-    context_name: str = "Sources",
-    random_state: int = 86,
+        text_units: list[TextUnit],
+        token_encoder: tiktoken.Encoding | None = None,
+        column_delimiter: str = "|",
+        shuffle_data: bool = True,
+        max_tokens: int = 8000,
+        context_name: str = "Sources",
+        random_state: int = 86,
 ) -> tuple[str, dict[str, pd.DataFrame]]:
     """Prepare text-unit data table as context data for system prompt."""
     if text_units is None or len(text_units) == 0:
@@ -69,16 +69,24 @@ def build_text_unit_context(
         current_tokens += new_tokens
 
     if len(all_context_records) > 1:
+        # record_df = pd.DataFrame(
+        #     all_context_records[1:], columns=cast(Any, all_context_records[0])
+        # )
+
+        # get all document ids
+        all_doc_ids = [','.join(unit.document_ids) for unit in text_units]
+        doc_id_df = pd.DataFrame(all_doc_ids, columns=['document_ids'])
         record_df = pd.DataFrame(
             all_context_records[1:], columns=cast(Any, all_context_records[0])
         )
+        record_df = pd.concat([record_df,doc_id_df], axis=1)
     else:
         record_df = pd.DataFrame()
     return current_context_text, {context_name.lower(): record_df}
 
 
 def count_relationships(
-    text_unit: TextUnit, entity: Entity, relationships: dict[str, Relationship]
+        text_unit: TextUnit, entity: Entity, relationships: dict[str, Relationship]
 ) -> int:
     """Count the number of relationships of the selected entity that are associated with the text unit."""
     matching_relationships = list[Relationship]()
