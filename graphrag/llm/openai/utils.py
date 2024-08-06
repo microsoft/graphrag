@@ -91,12 +91,23 @@ def get_completion_llm_args(
 
 def try_parse_json_object(input: str) -> tuple[str, dict]:
     """JSON cleaning and formatting utilities."""
-    """sometime, the llm return a json string with some extra description, this function will clean it up."""
+    # Sometimes, the LLM returns a json string with some extra description, this function will clean it up.
+
+    result = None
+    try:
+        # Try parse first
+        result = json.loads(input)
+    except json.JSONDecodeError:
+        log.info("Warning: Error decoding faulty json, attempting repair")
+
+    if result:
+        return input, result
+
     _pattern = r"\{(.*)\}"
     _match = re.search(_pattern, input)
     input = "{" + _match.group(1) + "}" if _match else input
 
-    """Clean up json string."""
+    # Clean up json string.
     input = (
         input.replace("{{", "{")
         .replace("}}", "}")
@@ -118,10 +129,10 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     try:
         result = json.loads(input)
     except json.JSONDecodeError:
-        """Fixup potentially malformed json string using json_repair."""
+        # Fixup potentially malformed json string using json_repair.
         input = str(repair_json(json_str=input, return_objects=False))
 
-        """Generate JSON-string output using best-attempt prompting & parsing techniques."""
+        # Generate JSON-string output using best-attempt prompting & parsing techniques.
         try:
             result = json.loads(input)
         except json.JSONDecodeError:
