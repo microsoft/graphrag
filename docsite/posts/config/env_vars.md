@@ -93,7 +93,6 @@ These settings control the text embedding model used by the pipeline. Any settin
 | `GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE`                |                          | The number of requests per minute to allow for the embedding client. 0 = Bypass                                            | `int`   | 0                        |
 | `GRAPHRAG_EMBEDDING_MAX_RETRIES`                        |                          | The maximum number of retries to attempt when a request fails.                                                             | `int`   | 10                       |
 | `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`                     |                          | The maximum number of seconds to wait between retries.                                                                     | `int`   | 10                       |
-| `GRAPHRAG_EMBEDDING_TARGET`                             |                          | The target fields to embed. Either `required` or `all`.                                                                    | `str`   | `required`               |
 | `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |                          | Whether to sleep on rate limit recommendation. (Azure Only)                                                                | `bool`  | `True`                   |
 
 ## Input Settings
