@@ -29,7 +29,11 @@ async def get_entity(input_dir: str, row_id: Optional[int] = None) -> Entity:
     entity_embedding_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
 
     entities = read_indexer_entities(entity_df, entity_embedding_df, consts.COMMUNITY_LEVEL)
-    return entities[row_id]
+    # TODO optimize performance using like database or dict in memory
+    for entity in entities:
+        if int(entity.short_id) == row_id:
+            return entity
+    raise ValueError(f"Not Found entity id {row_id}")
 
 
 async def get_claim(input_dir: str, row_id: Optional[int] = None) -> Covariate:
@@ -39,23 +43,39 @@ async def get_claim(input_dir: str, row_id: Optional[int] = None) -> Covariate:
         claims = read_indexer_covariates(covariate_df)
     else:
         raise ValueError(f"No claims {input_dir} of id {row_id} found")
-    return claims[row_id]
+    # TODO optimize performance using like database or dict in memory
+    for claim in claims:
+        if int(claim.short_id) == row_id:
+            return claim
+    raise ValueError(f"Not Found claim id {row_id}")
 
 
 async def get_source(input_dir: str, row_id: Optional[int] = None) -> TextUnit:
     text_unit_df = pd.read_parquet(f"{input_dir}/{consts.TEXT_UNIT_TABLE}.parquet")
     text_units = read_indexer_text_units(text_unit_df)
-    return text_units[row_id]
+    # TODO optimize performance using like database or dict in memory
+    for text_unit in text_units:
+        if int(text_unit.short_id) == row_id:
+            return text_unit
+    raise ValueError(f"Not Found source id {row_id}")
 
 
 async def get_report(input_dir: str, row_id: Optional[int] = None) -> CommunityReport:
     entity_df = pd.read_parquet(f"{input_dir}/{consts.ENTITY_TABLE}.parquet")
     report_df = pd.read_parquet(f"{input_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
     reports = read_indexer_reports(report_df, entity_df, consts.COMMUNITY_LEVEL)
-    return reports[row_id]
+    # TODO optimize performance using like database or dict in memory
+    for report in reports:
+        if int(report.short_id) == row_id:
+            return report
+    raise ValueError(f"Not Found report id {row_id}")
 
 
 async def get_relationship(input_dir: str, row_id: Optional[int] = None) -> Relationship:
     relationship_df = pd.read_parquet(f"{input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
     relationships = read_indexer_relationships(relationship_df)
-    return relationships[row_id]
+    # TODO optimize performance using like database or dict in memory
+    for relationship in relationships:
+        if int(relationship.short_id) == row_id:
+            return relationship
+    raise ValueError(f"Not Found relationship id {row_id}")
