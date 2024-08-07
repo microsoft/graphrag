@@ -21,7 +21,20 @@ class KustoVectorStore(BaseVectorStore):
     """The Azure Kusto vector storage implementation."""
 
     def connect(self, **kwargs: Any) -> Any:
-        """Connect to the vector storage."""
+        """
+        Connect to the vector storage.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments containing connection parameters.
+                - cluster (str): The Kusto cluster URL.
+                - database (str): The Kusto database name.
+                - client_id (str): The client ID for AAD authentication.
+                - client_secret (str): The client secret for AAD authentication.
+                - authority_id (str): The authority ID (tenant ID) for AAD authentication.
+
+        Returns:
+            Any: The Kusto client instance.
+        """
         cluster = kwargs.get("cluster")
         database = kwargs.get("database")
         client_id = kwargs.get("client_id")
@@ -37,7 +50,13 @@ class KustoVectorStore(BaseVectorStore):
     def load_documents(
         self, documents: List[VectorStoreDocument], overwrite: bool = True
     ) -> None:
-        """Load documents into vector storage."""
+        """
+        Load documents into vector storage.
+
+        Args:
+            documents (List[VectorStoreDocument]): List of documents to be loaded.
+            overwrite (bool): Whether to overwrite the existing table. Defaults to True.
+        """
         data = [
             {
                 "id": document.id,
@@ -68,7 +87,15 @@ class KustoVectorStore(BaseVectorStore):
         self.client.execute(self.database, ingestion_command)
 
     def filter_by_id(self, include_ids: List[str] | List[int]) -> Any:
-        """Build a query filter to filter documents by id."""
+        """
+        Build a query filter to filter documents by id.
+
+        Args:
+            include_ids (List[str] | List[int]): List of document IDs to include in the filter.
+
+        Returns:
+            Any: The query filter string.
+        """
         if len(include_ids) == 0:
             self.query_filter = None
         else:
@@ -84,7 +111,17 @@ class KustoVectorStore(BaseVectorStore):
     def similarity_search_by_vector(
         self, query_embedding: List[float], k: int = 10, **kwargs: Any
     ) -> List[VectorStoreSearchResult]:
-        """Perform a vector-based similarity search."""
+        """
+        Perform a vector-based similarity search.
+
+        Args:
+            query_embedding (List[float]): The query embedding vector.
+            k (int): The number of top results to return. Defaults to 10.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            List[VectorStoreSearchResult]: List of search results.
+        """
         query = f"""
         let query_vector = dynamic({query_embedding});
         {self.collection_name}
@@ -111,7 +148,18 @@ class KustoVectorStore(BaseVectorStore):
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> List[VectorStoreSearchResult]:
-        """Perform a similarity search using a given input text."""
+        """
+        Perform a similarity search using a given input text.
+
+        Args:
+            text (str): The input text to search for.
+            text_embedder (TextEmbedder): The text embedder to convert text to vector.
+            k (int): The number of top results to return. Defaults to 10.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            List[VectorStoreSearchResult]: List of search results.
+        """
         query_embedding = text_embedder(text)
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
