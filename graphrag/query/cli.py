@@ -3,6 +3,7 @@
 
 """Command line interface for the query module."""
 
+import asyncio
 import os
 from pathlib import Path
 from typing import cast
@@ -47,14 +48,16 @@ def run_global_search(
         data_path / "create_final_community_reports.parquet"
     )
 
-    return api.global_search(
-        config=config,
-        final_nodes=final_nodes,
-        final_entities=final_entities,
-        final_community_reports=final_community_reports,
-        community_level=community_level,
-        response_type=response_type,
-        query=query,
+    return asyncio.run(
+        api.global_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
+        )
     )
 
 
@@ -92,17 +95,19 @@ def run_local_search(
     )
 
     # call the Query API
-    return api.local_search(
-        config=config,
-        final_nodes=final_nodes,
-        final_entities=final_entities,
-        final_community_reports=final_community_reports,
-        final_text_units=final_text_units,
-        final_relationships=final_relationships,
-        final_covariates=final_covariates,
-        community_level=community_level,
-        response_type=response_type,
-        query=query,
+    return asyncio.run(
+        api.local_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            text_units=final_text_units,
+            relationships=final_relationships,
+            covariates=final_covariates,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
+        )
     )
 
 
