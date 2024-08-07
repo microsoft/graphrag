@@ -19,7 +19,9 @@ class Settings(BaseSettings):
     max_retries: int = 3
     embedding_model: str = "text-embedding-3-small"
     embedding_api_base: str = "https://aihubmix.com/v1/"
-    max_tokens: int = 4096
+    context_max_tokens: int = 24000
+    response_max_tokens:int = 4096
+
     temperature: float = 0.0
     top_p: float = 1.0
     frequency_penalty: float = 0.0

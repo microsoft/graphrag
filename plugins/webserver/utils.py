@@ -69,10 +69,10 @@ async def build_local_search_engine(llm: BaseLLM,
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": settings.max_tokens,
+        "max_tokens": settings.context_max_tokens,
     }
     llm_params = {
-        "max_tokens": settings.max_tokens,
+        "max_tokens": settings.response_max_tokens,
         "temperature": settings.temperature,
     }
     search_engine = LocalSearch(
@@ -100,18 +100,18 @@ async def build_global_search_engine(llm: BaseLLM,
         "include_community_weight": True,
         "community_weight_name": "occurrence weight",
         "normalize_community_weight": True,
-        "max_tokens": settings.max_tokens,
+        "max_tokens": settings.context_max_tokens,
         "context_name": "Reports",
     }
 
     map_llm_params = {
-        "max_tokens": settings.max_tokens,
+        "max_tokens": settings.response_max_tokens,
         "temperature": settings.temperature,
         "response_format": {"type": "json_object"},
     }
 
     reduce_llm_params = {
-        "max_tokens": settings.max_tokens,
+        "max_tokens": settings.response_max_tokens,
         "temperature": settings.temperature,
     }
 
@@ -119,7 +119,7 @@ async def build_global_search_engine(llm: BaseLLM,
         llm=llm,
         context_builder=context_builder,
         token_encoder=token_encoder,
-        max_data_tokens=settings.max_tokens,
+        max_data_tokens=settings.context_max_tokens,
         map_llm_params=map_llm_params,
         reduce_llm_params=reduce_llm_params,
         allow_general_knowledge=False,
