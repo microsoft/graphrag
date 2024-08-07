@@ -19,7 +19,7 @@ def read_dotenv(root: str) -> None:
         log.info("Loading pipeline .env file")
         env_config = dotenv_values(f"{env_path}")
         for key, value in env_config.items():
-            if key not in os.environ:
-                os.environ[key] = value or ""
+            # if key not in os.environ:
+            os.environ[key] = value or ""  # !!! overwrite the env variable
     else:
         log.info("No .env file found at %s", root)
