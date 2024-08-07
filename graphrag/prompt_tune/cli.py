@@ -3,6 +3,7 @@
 
 """Command line interface for the fine_tune module."""
 
+from enum import Enum
 from pathlib import Path
 
 from graphrag.index.progress import PrintProgressReporter
@@ -13,17 +14,17 @@ from graphrag.prompt_tune.loader import (
 )
 
 from . import api
-
-ENTITY_EXTRACTION_FILENAME = "entity_extraction.txt"
-ENTITY_SUMMARIZATION_FILENAME = "summarize_descriptions.txt"
-COMMUNITY_SUMMARIZATION_FILENAME = "community_report.txt"
+from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
+from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME
+from .generator.entity_summarization_prompt import ENTITY_SUMMARIZATION_FILENAME
+from .types import DocSelectionType
 
 
 async def prompt_tune(
     config: str,
     root: str,
     domain: str,
-    select: str = "random",
+    select: DocSelectionType = DocSelectionType.RANDOM,
     limit: int = 15,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
@@ -38,16 +39,19 @@ async def prompt_tune(
 
     Parameters
     ----------
+    - config: The configuration file.
     - root: The root directory.
     - domain: The domain to map the input documents to.
     - select: The chunk selection method.
     - limit: The limit of chunks to load.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
     - chunk_size: The chunk token size to use.
+    - language: The language to use for the prompts.
     - skip_entity_types: Skip generating entity types.
     - output: The output folder to store the prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
+    - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
     reporter = PrintProgressReporter("")
     graph_config = read_config_parameters(root, reporter, config)

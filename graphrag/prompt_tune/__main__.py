@@ -5,25 +5,11 @@
 
 import argparse
 import asyncio
-from enum import Enum
 
+from .api import DocSelectionType
 from .cli import prompt_tune
 from .generator import MAX_TOKEN_COUNT
 from .loader import MIN_CHUNK_SIZE
-
-
-class DocSelectionType(Enum):
-    """The type of document selection to use."""
-
-    ALL = "all"
-    RANDOM = "random"
-    TOP = "top"
-    AUTO = "auto"
-
-    def __str__(self):
-        """Return the string representation of the enum value."""
-        return self.value
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -33,14 +19,14 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--config",
-        help="The configuration yaml file to use when generating prompts",
+        help="Configuration yaml file to use when generating prompts",
         required=True,
         type=str,
     )
 
     parser.add_argument(
         "--root",
-        help="The data project root. Default: current directory",
+        help="Data project root. Default: current directory",
         required=False,
         type=str,
         default=".",
@@ -48,7 +34,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--domain",
-        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, the domain will be inferred from the input data.",
+        help="Domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, the domain will be inferred from the input data.",
         required=False,
         default="",
         type=str,
@@ -56,7 +42,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--method",
-        help=f"The method to select documents. Default: {DocSelectionType.RANDOM}",
+        help=f"Document selection method. Default: {DocSelectionType.RANDOM}",
         required=False,
         type=DocSelectionType,
         choices=list(DocSelectionType),
@@ -65,7 +51,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--n_subset_max",
-        help="The number of text chunks to embed when using auto selection method. Default: 300",
+        help="Number of text chunks to embed when using auto selection method. Default: 300",
         required=False,
         type=int,
         default=300,
@@ -73,7 +59,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--k",
-        help="The maximum number of documents to select from each centroid when using auto selection method. Default: 15",
+        help="Maximum number of documents to select from each centroid when using auto selection method. Default: 15",
         required=False,
         type=int,
         default=15,
@@ -81,7 +67,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--limit",
-        help="The limit of files to load when doing random or top selection. Default: 15",
+        help="Number of files to load when doing random or top selection. Default: 15",
         type=int,
         required=False,
         default=15,
@@ -97,7 +83,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--min-examples-required",
-        help="The minimum number of examples required in entity extraction prompt. Default: 2",
+        help="Minimum number of examples required in the entity extraction prompt. Default: 2",
         type=int,
         required=False,
         default=2,

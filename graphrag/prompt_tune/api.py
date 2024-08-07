@@ -18,6 +18,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm import load_llm
 from graphrag.index.progress import PrintProgressReporter
 
+from .cli import DocSelectionType
 from .generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
@@ -43,14 +44,14 @@ async def generate_indexing_prompts(
     root: str,
     chunk_size: PositiveInt = MIN_CHUNK_SIZE,
     limit: PositiveInt = 15,
-    select: str = "random",
+    select: DocSelectionType = DocSelectionType.RANDOM,
     domain: str | None = None,
     language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
     skip_entity_types: bool = False,
-    min_examples_required: int = 2,
-    n_subset_max: int = 300,
-    k: int = 15,
+    min_examples_required: PositiveInt = 2,
+    n_subset_max: PositiveInt = 300,
+    k: PositiveInt = 15,
 ) -> tuple[str, str, str]:
     """Generate indexing prompts.
 
