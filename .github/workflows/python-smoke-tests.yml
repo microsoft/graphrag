@@ -34,7 +34,7 @@ jobs:
       GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
       GRAPHRAG_CACHE_CONTAINER_NAME: "cicache"
       GRAPHRAG_CACHE_BASE_DIR": "cache"
-      GRAPHRAG_LLM_MODEL: gpt-3.5-turbo-16k
+      GRAPHRAG_LLM_MODEL: gpt-4o
       GRAPHRAG_EMBEDDING_MODEL: text-embedding-ada-002
       # We have Windows + Linux runners in 3.10 and 3.11, so we need to divide the rate limits by 4
       GRAPHRAG_LLM_TPM: 45_000 # 180,000 / 4
