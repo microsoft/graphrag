@@ -24,6 +24,7 @@ from graphrag.query.input.loaders.dfs import (
 )
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag.vector_stores.kusto import KustoVectorStore
 from graphrag.common.blob_storage_client import BlobStorageClient
 
 from .factories import get_global_search_engine, get_local_search_engine
