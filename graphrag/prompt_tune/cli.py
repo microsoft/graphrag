@@ -3,7 +3,6 @@
 
 """Command line interface for the fine_tune module."""
 
-from enum import Enum
 from pathlib import Path
 
 from graphrag.index.progress import PrintProgressReporter
