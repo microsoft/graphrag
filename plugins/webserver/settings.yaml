@@ -1,0 +1,5 @@
+query:
+  community_level: 2
+  response_type: 'Multiple Phrase'
+
+all_index_dir: './context'
