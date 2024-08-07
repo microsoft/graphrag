@@ -1,16 +1,15 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""The Prompt auto templating package root."""
+"""The auto templating package root."""
 
 import argparse
 import asyncio
 from enum import Enum
 
-from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
-from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
-
 from .cli import prompt_tune
+from .generator import MAX_TOKEN_COUNT
+from .loader import MIN_CHUNK_SIZE
 
 
 class DocSelectionType(Enum):
@@ -27,11 +26,21 @@ class DocSelectionType(Enum):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog="python -m graphrag.prompt_tune",
+        description="The graphrag auto templating module.",
+    )
+
+    parser.add_argument(
+        "--config",
+        help="The configuration yaml file to use when generating prompts",
+        required=True,
+        type=str,
+    )
 
     parser.add_argument(
         "--root",
-        help="The data project root. Including the config yml, json or .env",
+        help="The data project root. Default: current directory",
         required=False,
         type=str,
         default=".",
@@ -39,7 +48,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--domain",
-        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If left empty, the domain will be inferred from the input data.",
+        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, the domain will be inferred from the input data.",
         required=False,
         default="",
         type=str,
@@ -47,7 +56,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--method",
-        help="The method to select documents, one of: all, random, top or auto",
+        help=f"The method to select documents. Default: {DocSelectionType.RANDOM}",
         required=False,
         type=DocSelectionType,
         choices=list(DocSelectionType),
@@ -56,7 +65,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--n_subset_max",
-        help="The number of text chunks to embed when using auto selection method",
+        help="The number of text chunks to embed when using auto selection method. Default: 300",
         required=False,
         type=int,
         default=300,
@@ -64,7 +73,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--k",
-        help="The maximum number of documents to select from each centroid when using auto selection method",
+        help="The maximum number of documents to select from each centroid when using auto selection method. Default: 15",
         required=False,
         type=int,
         default=15,
@@ -72,7 +81,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--limit",
-        help="The limit of files to load when doing random or top selection",
+        help="The limit of files to load when doing random or top selection. Default: 15",
         type=int,
         required=False,
         default=15,
@@ -80,7 +89,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--max-tokens",
-        help="Max token count for prompt generation",
+        help=f"Max token count for prompt generation. Default: {MAX_TOKEN_COUNT}",
         type=int,
         required=False,
         default=MAX_TOKEN_COUNT,
@@ -88,7 +97,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--min-examples-required",
-        help="The minimum number of examples required in entity extraction prompt",
+        help="The minimum number of examples required in entity extraction prompt. Default: 2",
         type=int,
         required=False,
         default=2,
@@ -96,7 +105,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--chunk-size",
-        help="Max token count for prompt generation",
+        help=f"Max token count for prompt generation. Default: {MIN_CHUNK_SIZE}",
         type=int,
         required=False,
         default=MIN_CHUNK_SIZE,
@@ -120,7 +129,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--output",
-        help="Folder to save the generated prompts to",
+        help="Directory to save generated prompts to. Default: prompts",
         type=str,
         required=False,
         default="prompts",
@@ -132,6 +141,7 @@ if __name__ == "__main__":
 
     loop.run_until_complete(
         prompt_tune(
+            args.config,
             args.root,
             args.domain,
             str(args.method),
