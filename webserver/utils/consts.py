@@ -10,3 +10,6 @@ COMMUNITY_LEVEL = 2
 RELATIONSHIP_TABLE = "create_final_relationships"
 COVARIATE_TABLE = "create_final_covariates"
 TEXT_UNIT_TABLE = "create_final_text_units"
+
+LATEST_MODEL_LOCAL = "GraphRAG-latest-local"
+LATEST_MODEL_GLOBAL = "GraphRAG-latest-global"
