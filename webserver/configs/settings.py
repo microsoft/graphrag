@@ -60,8 +60,8 @@ def load_settings_from_yaml(file_path: str) -> Settings:
     return Settings(
         llm=llm_params,
         embeddings=text_embedding,
-        global_search=GlobalSearchConfig(**global_search_config),
-        local_search=LocalSearchConfig(**local_search_config),
+        global_search=GlobalSearchConfig(**global_search_config if global_search_config else {}),
+        local_search=LocalSearchConfig(**local_search_config if local_search_config else {}),
         encoding_model=encoding_model
     )
 
