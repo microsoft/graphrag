@@ -44,7 +44,7 @@ async def generate_indexing_prompts(
     root: str,
     chunk_size: PositiveInt = MIN_CHUNK_SIZE,
     limit: PositiveInt = 15,
-    select: DocSelectionType = DocSelectionType.RANDOM,
+    selection_method: DocSelectionType = DocSelectionType.RANDOM,
     domain: str | None = None,
     language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
@@ -61,6 +61,7 @@ async def generate_indexing_prompts(
     - output_path: The path to store the prompts.
     - chunk_size: The chunk token size to use for input text units.
     - limit: The limit of chunks to load.
+    - selection_method: The chunk selection method.
     - domain: The domain to map the input documents to.
     - language: The language to use for the prompts.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts
@@ -80,7 +81,7 @@ async def generate_indexing_prompts(
         root=root,
         config=config,
         limit=limit,
-        select_method=select,
+        select_method=selection_method,
         reporter=reporter,
         chunk_size=chunk_size,
         n_subset_max=n_subset_max,

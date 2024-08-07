@@ -41,8 +41,8 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--method",
-        help=f"Document selection method. Default: {DocSelectionType.RANDOM}",
+        "--selection-method",
+        help=f"Chunk selection method. Default: {DocSelectionType.RANDOM}",
         required=False,
         type=DocSelectionType,
         choices=list(DocSelectionType),
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--limit",
-        help="Number of files to load when doing random or top selection. Default: 15",
+        help="Number of documents to load when doing random or top selection. Default: 15",
         type=int,
         required=False,
         default=15,
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--output",
-        help="Directory to save generated prompts to. Default: prompts",
+        help="Directory to save generated prompts to. Default: 'prompts'",
         type=str,
         required=False,
         default="prompts",
@@ -127,18 +127,18 @@ if __name__ == "__main__":
 
     loop.run_until_complete(
         prompt_tune(
-            args.config,
-            args.root,
-            args.domain,
-            str(args.method),
-            args.limit,
-            args.max_tokens,
-            args.chunk_size,
-            args.language,
-            args.no_entity_types,
-            args.output,
-            args.n_subset_max,
-            args.k,
-            args.min_examples_required,
+            config=args.config,
+            root=args.root,
+            domain=args.domain,
+            selection_method=args.selection_method,
+            limit=args.limit,
+            max_tokens=args.max_tokens,
+            chunk_size=args.chunk_size,
+            language=args.language,
+            skip_entity_types=args.no_entity_types,
+            output=args.output,
+            n_subset_max=args.n_subset_max,
+            k=args.k,
+            min_examples_required=args.min_examples_required,
         )
     )

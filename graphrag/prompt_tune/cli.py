@@ -24,7 +24,7 @@ async def prompt_tune(
     config: str,
     root: str,
     domain: str,
-    select: DocSelectionType = DocSelectionType.RANDOM,
+    selection_method: DocSelectionType = DocSelectionType.RANDOM,
     limit: int = 15,
     max_tokens: int = MAX_TOKEN_COUNT,
     chunk_size: int = MIN_CHUNK_SIZE,
@@ -42,7 +42,7 @@ async def prompt_tune(
     - config: The configuration file.
     - root: The root directory.
     - domain: The domain to map the input documents to.
-    - select: The chunk selection method.
+    - selection_method: The chunk selection method.
     - limit: The limit of chunks to load.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
     - chunk_size: The chunk token size to use.
@@ -61,7 +61,7 @@ async def prompt_tune(
         root=root,
         chunk_size=chunk_size,
         limit=limit,
-        select=select,
+        selection_method=selection_method,
         domain=domain,
         language=language,
         max_tokens=max_tokens,
