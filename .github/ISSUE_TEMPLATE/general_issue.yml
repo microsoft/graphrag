@@ -4,6 +4,14 @@ title: "[Issue]: <title> "
 labels: ["triage"]
 
 body:
+  - type: checkboxes
+    id: existingcheck
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+        - label: I have checked [#657](https://github.com/microsoft/graphrag/issues/657) to validate if my issue is covered by community support
   - type: textarea
     id: description
     attributes:
@@ -28,6 +36,11 @@ body:
       label: GraphRAG Config Used
       description: The GraphRAG configuration used for the run.
       placeholder: The settings.yaml content or GraphRAG configuration
+      value: |
+        ```yaml
+        # Paste your config here
+
+        ```
   - type: textarea
     id: screenshotslogs
     attributes:

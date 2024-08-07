@@ -58,6 +58,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
             else None
         ),
         api_base=config.llm.api_base,
+        organization=config.llm.organization,
         model=config.llm.model,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         deployment_name=config.llm.deployment_name,
@@ -89,6 +90,7 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
             else None
         ),
         api_base=config.embeddings.llm.api_base,
+        organization=config.llm.organization,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         model=config.embeddings.llm.model,
         deployment_name=config.embeddings.llm.deployment_name,

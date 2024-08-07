@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.1.1"
+version = "0.2.1"
 description = ""
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -42,8 +42,8 @@ datashaper = "^0.0.49"
 
 # Vector Stores
 azure-search-documents = "^11.4.0"
-lancedb = "^0.10.0"
 qdrant-client = "^1.10.1"
+lancedb = "^0.11.0"
 
 # Event Loops
 uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
@@ -54,7 +54,7 @@ aiolimiter = "^1.1.0"
 aiofiles = "^24.1.0"
 
 # LLM
-openai = "^1.35.7"
+openai = "^1.37.1"
 nltk = "3.8.1"
 tiktoken = "^0.7.0"
 
@@ -78,7 +78,7 @@ tenacity = "^8.5.0"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.72.0"
+textual = "^0.74.0"
 devtools = "^0.12.2"
 
 typing-extensions = "^4.12.2"
@@ -86,15 +86,16 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
+json-repair = "^0.25.3"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
 jupyter = "^1.0.0"
 nbconvert = "^7.16.3"
-poethepoet = "^0.26.0"
+poethepoet = "^0.27.0"
 pyright = "^1.1.371"
-pytest = "^8.2.0"
+pytest = "^8.3.2"
 pytest-asyncio = "^0.23.4"
 pytest-timeout = "^2.3.1"
 ruff = "^0.5.2"
@@ -115,7 +116,7 @@ _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/n
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml --path tool.poetry.version --value \"$(semversioner current-version)\" pyproject.toml"
+_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value \"$(semversioner current-version)\" pyproject.toml"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
@@ -218,6 +219,8 @@ select = [
     # ANN # Type annotations, re-enable when we get bandwidth
 ]
 ignore = [
+    # Ignore module names shadowing Python builtins
+    "A005",
     # Deprecated Rules
     "ANN101",
     "ANN102",

@@ -40,6 +40,9 @@ jobs:
         shell: bash
         run: poetry install
 
+      - name: Export Publication Version
+        run: echo "version=`poetry version --short`" >> $GITHUB_OUTPUT
+
       - name: Build Distributable
         shell: bash
         run: poetry build
