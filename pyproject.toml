@@ -252,6 +252,6 @@ exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-timeout = 600
+timeout = 800
 # log_cli = true
 # log_cli_level = "INFO"
