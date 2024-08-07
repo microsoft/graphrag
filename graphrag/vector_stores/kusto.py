@@ -58,7 +58,9 @@ class KustoVectorStore(BaseVectorStore):
 
         # Create or replace table
         if overwrite:
-            command = f".drop table {self.collection_name} ifexists; .create table {self.collection_name} (id: string, text: string, vector: dynamic, attributes: string)"
+            command = f".drop table {self.collection_name} ifexists"
+            self.client.execute(self.database, command)
+            command = f".create table {self.collection_name} (id: string, text: string, vector: dynamic, attributes: string)"
             self.client.execute(self.database, command)
 
         # Ingest data
