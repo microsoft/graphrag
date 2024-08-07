@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'ResolvedEntity' and 'EntityResolutionResult' models."""
+"""A module containing 'SummarizedDescriptionResult' model."""
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
