@@ -47,4 +47,4 @@ COPY . /app
 EXPOSE 8000
 
 # run
-CMD ["poetry","run","poe","webserver"]
+CMD ["poetry","run","webserver"]
