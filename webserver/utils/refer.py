@@ -20,7 +20,7 @@ def get_reference(text: str) -> dict:
 
 
 def generate_ref_links(data: Dict[str, Set[int]], index_id: str) -> str:
-    base_url = f"{settings.server_host}:{settings.server_port}/v1/references"
+    base_url = f"{settings.website_address}/v1/references"
     lines = []
     for key, values in data.items():
         for value in values:

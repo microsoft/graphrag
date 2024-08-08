@@ -332,4 +332,4 @@ def get_latest_model(model: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=settings.server_port)
+    uvicorn.run(app, port=settings.server_port)
