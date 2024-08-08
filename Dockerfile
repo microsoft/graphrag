@@ -11,11 +11,11 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # install the required basic tools to ensure sources.list is available
-RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    gnupg \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y \
+#    apt-transport-https \
+#    gnupg \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*
 
 # use aliyun mirror to speed up the installation
 RUN echo "deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free" > /etc/apt/sources.list \
@@ -24,11 +24,11 @@ RUN echo "deb https://mirrors.aliyun.com/debian/ bookworm main contrib non-free"
     && echo "deb https://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list
 
 # install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+#RUN apt-get update && apt-get install -y \
+#    build-essential \
+#    libpq-dev \
+#    && apt-get clean \
+#    && rm -rf /var/lib/apt/lists/*
 
 # install Poetry and set the timeout to 120 seconds
 RUN pip install --no-cache-dir --default-timeout=120 poetry==1.8.3 -i https://mirrors.aliyun.com/pypi/simple/
@@ -38,7 +38,7 @@ COPY pyproject.toml poetry.lock /app/
 
 # install dependencies via poetry
 RUN poetry config repositories.aliyun https://mirrors.aliyun.com/pypi/simple/ \
-    && poetry config virtualenvs.create true \
+    && poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi --no-dev
 
 # copy the rest of the application code
