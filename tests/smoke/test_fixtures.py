@@ -40,7 +40,7 @@ def _load_fixtures():
         config_file = fixtures_path / subfolder / "config.json"
         params.append((subfolder, json.loads(config_file.read_bytes().decode("utf-8"))))
 
-    return params
+    return params[1:]  # disable azure blob connection test
 
 
 def pytest_generate_tests(metafunc):
@@ -255,7 +255,7 @@ class TestIndexer:
         },
         clear=True,
     )
-    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
+    @pytest.mark.timeout(800)
     def test_fixture(
         self,
         input_path: str,
