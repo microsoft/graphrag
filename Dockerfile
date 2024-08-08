@@ -1,5 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.11-slim
+FROM python:3.10.9
 
 # Set environment variables
 # Prevents Python from writing .pyc files to disk
