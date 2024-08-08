@@ -38,7 +38,6 @@ COPY pyproject.toml poetry.lock /app/
 
 # install dependencies via poetry
 RUN poetry config repositories.aliyun https://mirrors.aliyun.com/pypi/simple/ \
-    && poetry config installer.timeout 120 \
     && poetry install --no-interaction --no-ansi --no-dev
 
 # copy the rest of the application code
