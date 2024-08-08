@@ -39,7 +39,7 @@ COPY pyproject.toml poetry.lock /app/
 # install dependencies via poetry
 RUN poetry config repositories.aliyun https://mirrors.aliyun.com/pypi/simple/ \
     && poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi --no-dev
+    && poetry install --no-interaction --no-ansi
 
 # copy the rest of the application code
 COPY . /app
