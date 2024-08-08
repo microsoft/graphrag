@@ -44,7 +44,9 @@ class JsonPipelineCache(PipelineCache):
         if value is None:
             return
         data = {"result": value, **(debug_data or {})}
-        await self._storage.set(key, json.dumps(data), encoding=self._encoding)
+        await self._storage.set(
+            key, json.dumps(data, ensure_ascii=False), encoding=self._encoding
+        )
 
     async def has(self, key: str) -> bool:
         """Has method definition."""

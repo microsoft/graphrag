@@ -34,13 +34,16 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
     ):
         """Handle when an error occurs."""
         self._out_stream.write(
-            json.dumps({
-                "type": "error",
-                "data": message,
-                "stack": stack,
-                "source": str(cause),
-                "details": details,
-            })
+            json.dumps(
+                {
+                    "type": "error",
+                    "data": message,
+                    "stack": stack,
+                    "source": str(cause),
+                    "details": details,
+                },
+                ensure_ascii=False,
+            )
             + "\n"
         )
         message = f"{message} details={details}"
@@ -49,14 +52,21 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
     def on_warning(self, message: str, details: dict | None = None):
         """Handle when a warning occurs."""
         self._out_stream.write(
-            json.dumps({"type": "warning", "data": message, "details": details}) + "\n"
+            json.dumps(
+                {"type": "warning", "data": message, "details": details},
+                ensure_ascii=False,
+            )
+            + "\n"
         )
         _print_warning(message)
 
     def on_log(self, message: str, details: dict | None = None):
         """Handle when a log message is produced."""
         self._out_stream.write(
-            json.dumps({"type": "log", "data": message, "details": details}) + "\n"
+            json.dumps(
+                {"type": "log", "data": message, "details": details}, ensure_ascii=False
+            )
+            + "\n"
         )
 
         message = f"{message} details={details}"

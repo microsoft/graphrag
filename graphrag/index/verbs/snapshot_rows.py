@@ -49,9 +49,11 @@ async def snapshot_rows(
             if fmt.format == "json":
                 await storage.set(
                     f"{row_name}.{extension}",
-                    json.dumps(row[column])
-                    if column is not None
-                    else json.dumps(row.to_dict()),
+                    (
+                        json.dumps(row[column], ensure_ascii=False)
+                        if column is not None
+                        else json.dumps(row.to_dict(), ensure_ascii=False)
+                    ),
                 )
             elif fmt.format == "text":
                 if column is None:
@@ -65,9 +67,11 @@ async def snapshot_rows(
 def _parse_formats(formats: list[str | dict[str, Any]]) -> list[FormatSpecifier]:
     """Parse the formats into a list of FormatSpecifiers."""
     return [
-        FormatSpecifier(**fmt)
-        if isinstance(fmt, dict)
-        else FormatSpecifier(format=fmt, extension=_get_format_extension(fmt))
+        (
+            FormatSpecifier(**fmt)
+            if isinstance(fmt, dict)
+            else FormatSpecifier(format=fmt, extension=_get_format_extension(fmt))
+        )
         for fmt in formats
     ]
 
