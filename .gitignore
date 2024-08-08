@@ -70,3 +70,4 @@ context/cypnest/
 *.pyc
 
 context/*
+lancedb/*
