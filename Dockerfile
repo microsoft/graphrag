@@ -46,4 +46,4 @@ COPY . /app
 EXPOSE 8000
 
 # run
-CMD ["poetry","run","poe","webserver"]
+CMD ["uvicorn","plugins.webserver.main:app","--host","0.0.0.0","--port","8000"]
