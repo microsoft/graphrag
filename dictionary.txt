@@ -62,6 +62,7 @@ numpy
 pypi
 nbformat
 semversioner
+qdrant
 
 # Library Methods
 iterrows
