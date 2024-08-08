@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.2.1"
+version = "0.2.2"
 description = ""
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -115,7 +115,7 @@ _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/n
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value \"$(semversioner current-version)\" pyproject.toml"
+_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(semversioner current-version)"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
