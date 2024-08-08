@@ -6,7 +6,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from rank_bm25 import BM25Okapi
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from plugins.context2question import prompt
+from plugins.webserver import prompt
 from plugins.webserver.types import ChatCompletionMessageParam
 
 
