@@ -119,10 +119,9 @@ fastapi = "^0.111.1"
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
-[tool.poetry.scripts]
+[tool.poe.tasks]
 webserver = "uvicorn plugins.webserver.main:app --host 0.0.0.0 --port 8000"
 streamlit_run = "streamlit run plugins/streamlit/main.py"
-[tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
 _ruff_check = 'ruff check . --preview'

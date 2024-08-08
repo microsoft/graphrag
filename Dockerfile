@@ -38,7 +38,7 @@ COPY pyproject.toml poetry.lock /app/
 
 # install dependencies via poetry
 RUN poetry config repositories.aliyun https://mirrors.aliyun.com/pypi/simple/ \
-    && poetry config virtualenvs.create false \
+    && poetry config virtualenvs.create true \
     && poetry install --no-interaction --no-ansi --no-dev
 
 # copy the rest of the application code
@@ -47,4 +47,5 @@ COPY . /app
 EXPOSE 8000
 
 # run
-CMD ["poetry","run","webserver"]
+CMD ["poetry","shell"]
+CMD ["poetry","run","poe","webserver"]
