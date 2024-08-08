@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Dict
 
 from pydantic import BaseModel, Field
 
@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class GraphRAGResponseItem(BaseModel):
     code: int = Field(..., description="The response code")
     message: str = Field(..., description="The response message")
+    reference: Dict[str, Any] = Field(..., description="The response reference")
     data: Any = Field(..., description="The response data")
     other: Any = Field(None, description="Other data")
 
@@ -19,7 +20,7 @@ class GraphRAGItem(BaseModel):
     class DomainEnum(str, Enum):
         cypnest = "cypnest"
 
-    domain: DomainEnum = Field(..., description="The domain to search")
+    domain: DomainEnum = Field(..., description="The domain to search_engine")
     question: str = Field(..., description="The query to run")
     method: MethodEnum = Field(MethodEnum.local, description="The method to run, one of: local or global")
     response_type: str = Field("Multiple Paragraphs",

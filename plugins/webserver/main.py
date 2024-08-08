@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.structured_search.base import BaseSearch
 from plugins.webserver import utils
-from plugins.webserver.types import DomainEnum, SearchModeEnum, GraphRAGItem
+from plugins.webserver.types import DomainEnum, SearchModeEnum, GraphRAGItem, SourceEnum, GraphRAGResponseItem
 
 from plugins.webserver.service import graphrag as graphrag_service
 from plugins.webserver.service import openai as openai_service
@@ -45,15 +45,23 @@ async def run(request: GraphRAGItem):
         # get search engine
         search_engine = all_search_engine[DomainEnum(domain)][SearchModeEnum(search_mode)]
 
-        # generate question list by user chat context via llm
-        question_list = await utils.context_to_question(request.messages, search_engine.llm)
+        match request.source:
+            case SourceEnum.qa:
+                try:
+                    question_list = await utils.context_to_question(request.messages, search_engine.llm)
+                except:
+                    return GraphRAGResponseItem(code=204, message="refuse answer", reference={}, question=[], data={})
 
-        # filter question by bm25
-        filtered_question_list, context_document_ids = utils.filter_question_by_bm25(question_list, search_engine.context_builder)
-        # get reference
-        reference = await utils.get_reference(search_engine.context_builder, context_document_ids, filtered_question_list, search_engine.llm)
+                # filter question by bm25
+                filtered_question_list, context_document_ids = utils.filter_question_by_bm25(question_list, search_engine.context_builder)
+                # get reference
+                reference = await utils.get_reference(search_engine.context_builder, context_document_ids, filtered_question_list, search_engine.llm)
+            case SourceEnum.chat:
+                filtered_question_list = [request.messages[-1].content]
+                reference = {}
+            case _:
+                raise HTTPException(status_code=400, detail="Invalid source")
 
-        print(reference)
         if not request.stream:
             return await openai_service.handle_sync_response(filtered_question_list, reference, search_engine, conversation_history)
         else:

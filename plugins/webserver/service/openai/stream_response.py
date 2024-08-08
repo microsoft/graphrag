@@ -79,8 +79,9 @@ class CustomSearchCallback(SearchLLMCallback):
 
 async def generate_chunks(callback, future: TypedFuture[SearchResult], reference, question_list):
     while not future.done():
+        all_response = ''
         async for token in callback.generate_tokens():
-            print(f"Token: {token}")
+            all_response += token
             if token == CustomSearchCallback.stop_sign:
                 break
             chunk = GraphRAGResponseItem(
@@ -89,7 +90,7 @@ async def generate_chunks(callback, future: TypedFuture[SearchResult], reference
                 reference=reference,
                 data=token,
                 question=question_list,
-                other={}
+                other={"usage": callback.usage, "all_response": all_response}
             )
             yield f"data: {chunk.json()}\n\n"
 

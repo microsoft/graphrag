@@ -95,21 +95,3 @@ def get_bm25_top_n_score(question: str, context: List[str], n: int = 1) -> List[
     bm25 = BM25Okapi(tokenized_context, k1=1.2)
     scores = bm25.get_scores(tokenized_question)
     return np.sort(scores)[::-1][:n].tolist()
-
-
-async def get_docs_by_title_filter(doc_title_list: str, question: str, llm) -> list:
-    format = """文档标题列表
-    {}
-    问题
-    {}"""
-
-    search_messages = [
-        {"role": "system", "content": prompt.best_match_question_prompt},
-        {"role": "user", "content": format.format(doc_title_list, question)},
-    ]
-
-    str_question_list = await llm.agenerate(messages=search_messages, streaming=False, callbacks=None)
-
-    doc_title_list = JsonOutputParser().parse(str_question_list)
-
-    return doc_title_list

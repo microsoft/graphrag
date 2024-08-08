@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 
 from pydantic import BaseModel, Field
 
-from plugins.webserver.types import DomainEnum, SearchModeEnum
+from plugins.webserver.types import DomainEnum, SearchModeEnum, SourceEnum
 
 
 class ChatCompletionMessageParam(BaseModel):
@@ -28,6 +28,7 @@ class GraphRAGItem(BaseModel):
     response_type: str = Field("Multiple Paragraphs",
                                description="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, "
                                            "Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report")
+    source: SourceEnum = Field(SourceEnum.qa, description="The source of the request")
 
 
 class GraphRAGResponseItem(BaseModel):

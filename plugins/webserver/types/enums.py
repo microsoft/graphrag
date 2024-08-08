@@ -9,3 +9,8 @@ class SearchModeEnum(Enum):
 class DomainEnum(Enum):
     cypnest = 'cypnest'
     infotest = 'infotest'
+
+
+class SourceEnum(Enum):
+    chat = 'chat'
+    qa = 'qa'

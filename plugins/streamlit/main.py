@@ -29,7 +29,7 @@ def run_script(cli, mode: str):
 def app():
     st.title("GraphRAG")
     mode = st.selectbox("Running Mode", ["local", "global"], index=0,
-                        help="Local mode is used for running queries on a local search engine.\n\nGlobal mode is used for running queries on a global search engine.")
+                        help="Local mode is used for running queries on a local search_engine engine.\n\nGlobal mode is used for running queries on a global search_engine engine.")
     output_mode = st.text_input("Output Mode",
                                 help="Free form text describing the response type and format, can be anything.\n\ne.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report",
                                 value="Multiple Paragraphs")
