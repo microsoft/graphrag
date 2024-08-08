@@ -181,6 +181,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         )
         if streaming:
             full_response = ""
+            usage = None
             while True:
                 try:
                     chunk = await response.__anext__()  # type: ignore
@@ -201,6 +202,9 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                         break
                 except StopIteration:
                     break
+            if callbacks:
+                for callback in callbacks:
+                    callback.on_llm_stop(usage=usage)
             return full_response
 
         return response.choices[0].message.content or ""  # type: ignore

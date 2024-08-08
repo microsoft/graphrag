@@ -3,7 +3,7 @@ import re
 import pandas as pd
 from langchain_core.output_parsers import JsonOutputParser
 
-from plugins.context2question import prompt
+from plugins.webserver import prompt
 
 
 def delete_reference(text: str) -> str:

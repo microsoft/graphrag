@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Dict
 
 import pandas as pd
 import tiktoken
@@ -8,13 +8,18 @@ from graphrag.query.cli import __get_embedding_description_store, _configure_pat
 from graphrag.query.factories import get_llm, get_text_embedder
 from graphrag.query.indexer_adapters import read_indexer_entities, read_indexer_relationships, read_indexer_covariates, read_indexer_reports, \
     read_indexer_text_units
+from graphrag.query.input.loaders.dfs import store_entity_semantic_embeddings
 from graphrag.query.llm.base import BaseLLM
+from graphrag.query.structured_search.base import BaseSearch
 from graphrag.query.structured_search.local_search.mixed_context import LocalSearchMixedContext
 from graphrag.vector_stores import VectorStoreType
 from plugins.webserver import consts
 from plugins.webserver.config.create_final_config import create_final_config
 from plugins.webserver.config.merge_config import merge_config
 from plugins.webserver.config.final_config import FinalConfig
+from plugins.webserver.types import ContextBuilder
+
+from plugins.webserver.types.enums import DomainEnum, SearchModeEnum
 from plugins.webserver.service.graphrag.local import build_local_search_engine
 
 
@@ -38,7 +43,7 @@ def load_data_files(data_dir, config: FinalConfig):
     # load entity
     entity_df = pd.read_parquet(f"{data_dir}/{consts.ENTITY_TABLE}.parquet")
     entity_embedding_df = pd.read_parquet(f"{data_dir}/{consts.ENTITY_EMBEDDING_TABLE}.parquet")
-    entities = read_indexer_entities(entity_df, entity_embedding_df, config.query.COMMUNITY_LEVEL)
+    entities = read_indexer_entities(entity_df, entity_embedding_df, config.query.community_level)
     datas['entities'] = entities
 
     # load entity description embedding
@@ -49,6 +54,9 @@ def load_data_files(data_dir, config: FinalConfig):
     description_embedding_store = __get_embedding_description_store(
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
+    )
+    store_entity_semantic_embeddings(
+        entities=entities, vectorstore=description_embedding_store
     )
     datas['entity_text_embeddings'] = description_embedding_store
 
@@ -69,7 +77,7 @@ def load_data_files(data_dir, config: FinalConfig):
 
     # load report
     report_df = pd.read_parquet(f"{data_dir}/{consts.COMMUNITY_REPORT_TABLE}.parquet")
-    reports = read_indexer_reports(report_df, entity_df, config.query.COMMUNITY_LEVEL)
+    reports = read_indexer_reports(report_df, entity_df, config.query.community_level)
     datas['community_reports'] = reports
 
     # load text unit
@@ -88,35 +96,35 @@ def load_data_files(data_dir, config: FinalConfig):
     return datas
 
 
-def build_search_engine(mode: str, llm: BaseLLM, config: FinalConfig, token_encoder: tiktoken.Encoding, context_builder=None):
+def build_search_engine(mode: SearchModeEnum, llm: BaseLLM, config: FinalConfig, token_encoder: tiktoken.Encoding, context_builder=None) -> BaseSearch:
     match mode:
-        case 'local':
+        case SearchModeEnum.local:
             return build_local_search_engine(llm, config, token_encoder, context_builder)
-        case 'global':
+        case SearchModeEnum.global_:
             ...
 
 
-async def load_context(mode: str, text_embedder, token_encoder, **kwargs):
+def load_context(mode: SearchModeEnum, text_embedder, token_encoder, **kwargs) -> ContextBuilder:
     match mode:
-        case 'local':
-            return LocalSearchMixedContext(text_embedder, token_encoder, **kwargs)
-        case 'global':
+        case SearchModeEnum.local:
+            return LocalSearchMixedContext(text_embedder=text_embedder, token_encoder=token_encoder, **kwargs)
+        case SearchModeEnum.global_:
             ...
             # return await build_global_context_builder(text_embedder, token_encoder, **kwargs)
 
 
-async def load_context_by_domain_dir(domain_dir):
-    domain_instance = dict()
+def load_search_engine_by_domain_dir(domain_dir) -> Dict[SearchModeEnum, BaseSearch]:
+    domain_instance: Dict[SearchModeEnum, BaseSearch] = {}
     data_dir, config = load_domain_setting(domain_dir)
     # load universal object
     llm, text_embedder, token_encoder = load_universal_obj(config)
     # load data files
     datas = load_data_files(data_dir, config)
     # load tow mode of search_engine engine
-    for mode in ['local', 'global']:
-        context_builder = load_context(mode, text_embedder, token_encoder, **datas)
-        search_engine = build_search_engine(mode, llm, config, token_encoder, context_builder)
-        domain_instance[mode] = search_engine
+    for mode in SearchModeEnum.__members__.values():
+        context_builder: ContextBuilder = load_context(mode, text_embedder, token_encoder, **datas)
+        search_engine: BaseSearch = build_search_engine(mode, llm, config, token_encoder, context_builder)
+        domain_instance[SearchModeEnum(mode)] = search_engine
     return domain_instance
 
 
@@ -138,27 +146,37 @@ def load_domain_setting(domain_dir) -> Tuple[str, FinalConfig]:
     # get current file path
     plugin_path = Path(__file__).parent.parent.parent
     global_setting_yaml_path = plugin_path / 'settings.yaml'
-    if global_setting_yaml_path.exists():
-        with global_setting_yaml_path.open("rb") as file:
-            import yaml
-            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
-            final_config = create_final_config(data, str(plugin_path), config)
+    yaml_config = load_yaml_setting(global_setting_yaml_path)
+    final_config = create_final_config(yaml_config, str(plugin_path), config)
     # merge config
     final_config = merge_config(domain_config=config, final_config=final_config)
 
     return data_dir, final_config
 
 
-async def load_all_context(all_index_dir: str):
-    all_context = {}
+def load_yaml_setting(yaml_path: Path) -> Dict:
+    if yaml_path.exists():
+        with yaml_path.open("rb") as file:
+            import yaml
+            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
+            return data
+
+
+def load_all_search_engine(all_index_dir: str) -> Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]]:
+    all_search_engine: Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]] = {}
     all_index_dir = Path(all_index_dir)
     if all_index_dir.exists():
         for domain_dir in all_index_dir.iterdir():
-            domain = domain_dir.name
-            all_context[domain] = load_context_by_domain_dir(domain_dir)
-    return all_context
+            if domain_dir.name in DomainEnum.__members__:
+                domain = domain_dir.name
+                all_search_engine[DomainEnum(domain)] = load_search_engine_by_domain_dir(str(domain_dir))
+    return all_search_engine
 
 
-async def init_env():
-    final_config = FinalConfig()
-    return await load_all_context(final_config.all_index_dir)
+def init_env() -> Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]]:
+    # get current file path
+    plugin_path = Path(__file__).parent.parent.parent
+    global_setting_yaml_path = plugin_path / 'settings.yaml'
+    config = load_yaml_setting(global_setting_yaml_path)
+    all_index_dir = config.get('all_index_dir', './context')
+    return load_all_search_engine(all_index_dir)

@@ -38,5 +38,5 @@ def build_local_search_engine(llm: BaseLLM,
             "max_tokens": ls_config.max_tokens,
             # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
-        response_type=config.response_type
+        response_type=config.query.response_type
     )
