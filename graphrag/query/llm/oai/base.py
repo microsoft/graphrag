@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
+from httpx import Client, AsyncClient
 
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
@@ -101,6 +102,8 @@ class OpenAILLMImpl(BaseOpenAILLM):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         reporter: StatusReporter | None = None,
+        http_client: Client | None = None,
+        http_client_async: AsyncClient | None = None,
     ):
         self.api_key = api_key
         self.azure_ad_token_provider = azure_ad_token_provider
@@ -112,6 +115,8 @@ class OpenAILLMImpl(BaseOpenAILLM):
         self.max_retries = max_retries
         self.request_timeout = request_timeout
         self.reporter = reporter or ConsoleStatusReporter()
+        self.http_client = http_client
+        self.http_client_async = http_client_async
 
         try:
             # Create OpenAI sync and async clients
@@ -141,6 +146,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
                 # Retry Configuration
                 timeout=self.request_timeout,
                 max_retries=self.max_retries,
+                http_client=self.http_client,
             )
 
             async_client = AsyncAzureOpenAI(
@@ -154,6 +160,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
                 # Retry Configuration
                 timeout=self.request_timeout,
                 max_retries=self.max_retries,
+                http_client=self.http_client_async,
             )
             self.set_clients(sync_client=sync_client, async_client=async_client)
 
@@ -165,6 +172,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
                 # Retry Configuration
                 timeout=self.request_timeout,
                 max_retries=self.max_retries,
+                http_client=self.http_client,
             )
 
             async_client = AsyncOpenAI(
@@ -174,6 +182,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
                 # Retry Configuration
                 timeout=self.request_timeout,
                 max_retries=self.max_retries,
+                http_client=self.http_client_async,
             )
             self.set_clients(sync_client=sync_client, async_client=async_client)
 
