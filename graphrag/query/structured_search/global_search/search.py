@@ -25,7 +25,7 @@ from graphrag.query.structured_search.global_search.callbacks import (
     GlobalSearchLLMCallback,
 )
 from graphrag.query.structured_search.global_search.map_system_prompt import (
-    MAP_SYSTEM_PROMPT,
+    MAP_SYSTEM_PROMPT, MAP_USER_PROMPT,
 )
 from graphrag.query.structured_search.global_search.reduce_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
@@ -64,6 +64,7 @@ class GlobalSearch(BaseSearch):
         context_builder: GlobalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         map_system_prompt: str = MAP_SYSTEM_PROMPT,
+        map_user_prompt: str = MAP_USER_PROMPT,
         reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
         response_type: str = "multiple paragraphs",
         allow_general_knowledge: bool = False,
@@ -83,6 +84,7 @@ class GlobalSearch(BaseSearch):
             context_builder_params=context_builder_params,
         )
         self.map_system_prompt = map_system_prompt
+        self.map_user_prompt = map_user_prompt
         self.reduce_system_prompt = reduce_system_prompt
         self.response_type = response_type
         self.allow_general_knowledge = allow_general_knowledge
@@ -173,10 +175,10 @@ class GlobalSearch(BaseSearch):
         start_time = time.time()
         search_prompt = ""
         try:
-            search_prompt = self.map_system_prompt.format(context_data=context_data)
+            search_prompt = self.map_user_prompt.format(context_data=context_data, user_question=query)
             search_messages = [
-                {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
+                {"role": "system", "content": self.map_system_prompt},
+                {"role": "user", "content": search_prompt},
             ]
             async with self.semaphore:
                 search_response = await self.llm.agenerate(
