@@ -1,5 +1,6 @@
 # Node Artifacts
 */node_modules/
+.ipynb_checkpoints
 docsite/*/src/**/*.js
 docsite/*/lib/
 docsite/*/storybook-static/
