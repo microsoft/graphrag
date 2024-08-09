@@ -36,7 +36,6 @@ async def build_global_search_engine(llm: BaseLLM, context_builder=None, callbac
 
     context_builder_params = {
         "use_community_summary": False,
-        # False means using full community reports. True means using community short summaries.
         "shuffle_data": True,
         "include_community_rank": True,
         "min_community_rank": 0,
@@ -51,12 +50,16 @@ async def build_global_search_engine(llm: BaseLLM, context_builder=None, callbac
     map_llm_params = {
         "max_tokens": settings.global_search.map_max_tokens,
         "temperature": settings.global_search.temperature,
+        "top_p": settings.global_search.top_p,
+        "n": settings.global_search.n,
         "response_format": {"type": "json_object"},
     }
 
     reduce_llm_params = {
         "max_tokens": settings.global_search.reduce_max_tokens,
         "temperature": settings.global_search.temperature,
+        "top_p": settings.global_search.top_p,
+        "n": settings.global_search.n,
     }
 
     search_engine = GlobalSearch(
