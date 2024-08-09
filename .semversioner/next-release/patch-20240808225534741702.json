@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix file dumps using json for non ASCII chars"
+}
