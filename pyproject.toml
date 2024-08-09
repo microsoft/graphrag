@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.2.1"
+version = "0.2.2"
 description = ""
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -72,7 +72,7 @@ pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
 # Network
-tenacity = "^8.5.0"
+tenacity = "^9.0.0"
 
 swifter = "^1.4.0"
 pydantic = "^2"
@@ -85,7 +85,7 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
-json-repair = "^0.25.3"
+json-repair = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
@@ -115,7 +115,7 @@ _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/n
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value \"$(semversioner current-version)\" pyproject.toml"
+_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(semversioner current-version)"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
@@ -252,6 +252,6 @@ exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-timeout = 600
+timeout = 800
 # log_cli = true
 # log_cli_level = "INFO"

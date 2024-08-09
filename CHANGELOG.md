@@ -1,5 +1,12 @@
 # Changelog
+
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 0.2.2
+
+- patch: Add a check if there is no community record added in local search context
+- patch: Add sepparate workflow for Python Tests
+- patch: Docs updates
 
 ## 0.2.1
 
