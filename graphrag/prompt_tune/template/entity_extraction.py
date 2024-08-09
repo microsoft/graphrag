@@ -20,8 +20,7 @@ For each pair of related entities, extract the following information:
 - target_entity: name of the target entity, as identified in step 1
 - relationship_description: explanation as to why you think the source entity and the target entity are related to each other
 - relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
-
-Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>){{record_delimiter}}
+Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>)
 
 3, Use **{{record_delimiter}}** as the list delimiter.
 
@@ -63,7 +62,9 @@ Format each relationship as a JSON entry with the following format:
 
 {{"source": <source_entity>, "target": <target_entity>, "relationship": <relationship_description>, "relationship_strength": <relationship_strength>}}
 
-3. Return output in {language} as a single list of all JSON entities and relationships identified in steps 1 and 2. If you have to translate, just translate the descriptions, nothing else!
+3. Return output in {language} as a single list of all JSON entities and relationships identified in steps 1 and 2.
+
+4. If you have to translate into {language}, just translate the descriptions, nothing else!
 
 -Examples-
 ######################
