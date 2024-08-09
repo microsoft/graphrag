@@ -4,6 +4,7 @@
 """Command line interface for the query module."""
 
 import os
+import sys
 from pathlib import Path
 from typing import cast
 
@@ -183,9 +184,13 @@ def run_local_search(
         response_type=response_type,
     )
 
-    result = search_engine.search(query=query)
-    reporter.success(f"Local Search Response: {result.response}")
-    return result.response
+    result = search_engine.search(query=query, streaming=True)
+    # reporter.success(f"Local Search Response: {result.response}")
+    reporter.success(f"Local Search Response:\n")
+    for r in result:
+        sys.stdout.write(r)  # write to stdout chunk by chunk
+    sys.stdout.write("\n")
+    # return result.response
 
 
 def _configure_paths_and_settings(
