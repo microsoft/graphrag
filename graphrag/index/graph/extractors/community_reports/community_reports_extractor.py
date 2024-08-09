@@ -66,7 +66,7 @@ class CommunityReportsExtractor:
                             ("title", str),
                             ("summary", str),
                             ("findings", list),
-                            ("rating", float),
+                            ("rating", float|int),
                             ("rating_explanation", str),
                         ],
                     ),
