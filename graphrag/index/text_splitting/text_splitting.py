@@ -224,7 +224,7 @@ class TextListSplitter(TextSplitter):
         """Append the current chunk to the result."""
         if new_chunk and len(new_chunk) > 0:
             if self._type == TextListSplitterType.JSON:
-                chunk_list.append(json.dumps(new_chunk))
+                chunk_list.append(json.dumps(new_chunk, ensure_ascii=False))
             else:
                 chunk_list.append(self._output_delimiter.join(new_chunk))
 
