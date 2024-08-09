@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Add a check if there is no community record added in local search context"
-}
