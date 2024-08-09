@@ -6,15 +6,16 @@ from fastapi.responses import StreamingResponse
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.llm.base import BaseLLMCallback
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from plugins.webserver.types import TypedFuture, GraphRAGItem, GraphRAGResponseItem
+from plugins.webserver.types import TypedFuture, GraphRAGResponseItem
 
 
-async def handle_stream_response(question_list: list, reference: dict, search: BaseSearch, conversation_history: ConversationHistory):
+async def handle_stream_response(question_list: list, reference: dict, search: BaseSearch, conversation_history: ConversationHistory,
+                                 search_other_kwargs: dict = None):
     callback = CustomSearchCallback()
     future = TypedFuture[SearchResult]()
 
     async def run_search():
-        result = await search.asearch(str(question_list), conversation_history)
+        result = await search.asearch(str(question_list), conversation_history, **search_other_kwargs)
         future.set_result(result)
 
     search.callbacks = [callback]

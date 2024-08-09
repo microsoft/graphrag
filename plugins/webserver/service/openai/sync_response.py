@@ -7,8 +7,9 @@ from plugins.webserver import utils
 from plugins.webserver.types import GraphRAGResponseItem
 
 
-async def handle_sync_response(question_list: list, reference: dict, search: BaseSearch, conversation_history: ConversationHistory):
-    result = await search.asearch(str(question_list), conversation_history=conversation_history)
+async def handle_sync_response(question_list: list, reference: dict, search: BaseSearch, conversation_history: ConversationHistory,
+                               search_other_kwargs: dict = None):
+    result = await search.asearch(str(question_list), conversation_history=conversation_history, **search_other_kwargs)
     response = result.response
     # delete reference in origin response
     cleaned_response = utils.delete_reference(response)

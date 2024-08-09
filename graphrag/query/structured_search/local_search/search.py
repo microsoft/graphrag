@@ -74,10 +74,19 @@ class LocalSearch(BaseSearch):
             search_prompt = self.system_prompt.format(
                 context_data=context_text, response_type=self.response_type
             )
-            search_messages = [
-                {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
-            ]
+
+            if kwargs.get('add_history_to_search_messages', False):
+                history = [{"role": _.role, "content": _.content} for _ in conversation_history.turns]
+                search_messages = [
+                    {"role": "system", "content": search_prompt},
+                    *history,
+                    {"role": "user", "content": query},
+                ]
+            else:
+                search_messages = [
+                    {"role": "system", "content": search_prompt},
+                    {"role": "user", "content": query},
+                ]
 
             response = await self.llm.agenerate(
                 messages=search_messages,

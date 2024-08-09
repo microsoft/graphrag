@@ -11,15 +11,6 @@ class ChatCompletionMessageParam(BaseModel):
     role: str = "user"
 
 
-class ResponseFormat(BaseModel):
-    type: str
-
-
-class ChatCompletionToolParam(BaseModel):
-    name: str
-    description: str
-
-
 class GraphRAGItem(BaseModel):
     domain: DomainEnum = Field(..., description="The domain to search_engine")
     method: SearchModeEnum = Field(SearchModeEnum.local, description="The method to run, one of: local or global")
@@ -29,6 +20,9 @@ class GraphRAGItem(BaseModel):
                                description="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, "
                                            "Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report")
     source: SourceEnum = Field(SourceEnum.qa, description="The source of the request")
+
+    context_max_token: int = Field(0, description="The maximum number of tokens to build context")
+    response_max_token: int = Field(0, description="The maximum number of tokens to generate")
 
 
 class GraphRAGResponseItem(BaseModel):

@@ -96,10 +96,10 @@ def load_data_files(data_dir, config: FinalConfig):
     return datas
 
 
-def build_search_engine(mode: SearchModeEnum, llm: BaseLLM, config: FinalConfig, token_encoder: tiktoken.Encoding, context_builder=None) -> BaseSearch:
+def build_search_engine(mode: SearchModeEnum, llm: BaseLLM, config: FinalConfig, token_encoder: tiktoken.Encoding, context_builder, **kwargs) -> BaseSearch:
     match mode:
         case SearchModeEnum.local:
-            return build_local_search_engine(llm, config, token_encoder, context_builder)
+            return build_local_search_engine(llm, config, token_encoder, context_builder, **kwargs)
         case SearchModeEnum.global_:
             ...
 
@@ -113,8 +113,8 @@ def load_context(mode: SearchModeEnum, text_embedder, token_encoder, **kwargs) -
             # return await build_global_context_builder(text_embedder, token_encoder, **kwargs)
 
 
-def load_search_engine_by_domain_dir(domain_dir) -> Dict[SearchModeEnum, BaseSearch]:
-    domain_instance: Dict[SearchModeEnum, BaseSearch] = {}
+def load_search_engine_args_by_domain_dir(domain_dir) -> Dict[SearchModeEnum, Dict]:
+    domain_instance: Dict[SearchModeEnum, Dict] = {}
     data_dir, config = load_domain_setting(domain_dir)
     # load universal object
     llm, text_embedder, token_encoder = load_universal_obj(config)
@@ -123,8 +123,13 @@ def load_search_engine_by_domain_dir(domain_dir) -> Dict[SearchModeEnum, BaseSea
     # load tow mode of search_engine engine
     for mode in SearchModeEnum.__members__.values():
         context_builder: ContextBuilder = load_context(mode, text_embedder, token_encoder, **datas)
-        search_engine: BaseSearch = build_search_engine(mode, llm, config, token_encoder, context_builder)
-        domain_instance[SearchModeEnum(mode)] = search_engine
+        # domain_instance[SearchModeEnum(mode)] = search_engine
+        domain_instance[SearchModeEnum(mode)] = {
+            'context_builder': context_builder,
+            'llm': llm,
+            'config': config,
+            'token_encoder': token_encoder
+        }
     return domain_instance
 
 
@@ -162,21 +167,21 @@ def load_yaml_setting(yaml_path: Path) -> Dict:
             return data
 
 
-def load_all_search_engine(all_index_dir: str) -> Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]]:
-    all_search_engine: Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]] = {}
+def load_all_search_engine_args(all_index_dir: str) -> Dict[DomainEnum, Dict[SearchModeEnum, Dict]]:
+    all_search_engine_args: Dict[DomainEnum, Dict[SearchModeEnum, Dict]] = {}
     all_index_dir = Path(all_index_dir)
     if all_index_dir.exists():
         for domain_dir in all_index_dir.iterdir():
             if domain_dir.name in DomainEnum.__members__:
                 domain = domain_dir.name
-                all_search_engine[DomainEnum(domain)] = load_search_engine_by_domain_dir(str(domain_dir))
-    return all_search_engine
+                all_search_engine_args[DomainEnum(domain)] = load_search_engine_args_by_domain_dir(str(domain_dir))
+    return all_search_engine_args
 
 
-def init_env() -> Dict[DomainEnum, Dict[SearchModeEnum, BaseSearch]]:
+def init_env() -> Dict[DomainEnum, Dict[SearchModeEnum, Dict]]:
     # get current file path
     plugin_path = Path(__file__).parent.parent.parent
     global_setting_yaml_path = plugin_path / 'settings.yaml'
     config = load_yaml_setting(global_setting_yaml_path)
     all_index_dir = config.get('all_index_dir', './context')
-    return load_all_search_engine(all_index_dir)
+    return load_all_search_engine_args(all_index_dir)
