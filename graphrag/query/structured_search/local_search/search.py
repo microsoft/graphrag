@@ -112,7 +112,7 @@ class LocalSearch(BaseSearch):
         conversation_history: ConversationHistory | None = None,
         streaming: bool = True,  # if True, return a generator that yields response chunk by chunk
         **kwargs,
-    ) -> SearchResult | Generator[str, None, SearchResult]:
+    ) -> Generator[str, None, SearchResult]:
         """Build local search context that fits a single context window and generate answer for the user question."""
         start_time = time.time()
         search_prompt = ""
@@ -154,6 +154,10 @@ class LocalSearch(BaseSearch):
                             prompt_tokens=num_tokens(search_prompt, self.token_encoder),
                         )
             else:
+                try:
+                    response.__next__()
+                except StopIteration as e:
+                    response = e.value
                 return SearchResult(
                     response=response,
                     context_data=context_records,

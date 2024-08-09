@@ -28,7 +28,7 @@ class BaseLLM(ABC):
         streaming: bool = True,
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
-    ) -> str | Generator[str, None, str]:
+    ) -> Generator[str, None, str]:
         """Generate a response."""
 
     @abstractmethod
