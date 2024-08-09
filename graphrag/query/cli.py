@@ -87,6 +87,7 @@ def run_global_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Run a global search with the given query."""
@@ -116,10 +117,21 @@ def run_global_search(
         response_type=response_type,
     )
 
-    result = search_engine.search(query=query)
-
-    reporter.success(f"Global Search Response: {result.response}")
-    return result.response
+    result = search_engine.search(query=query, streaming=streaming)
+    if not streaming:
+        try:
+            result.__next__()
+        except StopIteration as e:
+            result = e.value
+        reporter.success(f"Global Search Response: {result.response}")
+        return result.response
+    else:
+        reporter.success(f"Global Search Response:")
+        while True:
+            try:
+                sys.stdout.write(result.__next__())
+            except StopIteration as e:
+                return e.value.response
 
 
 def run_local_search(
@@ -128,6 +140,7 @@ def run_local_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Run a local search with the given query."""
@@ -184,13 +197,21 @@ def run_local_search(
         response_type=response_type,
     )
 
-    result = search_engine.search(query=query, streaming=True)
-    # reporter.success(f"Local Search Response: {result.response}")
-    reporter.success(f"Local Search Response:\n")
-    for r in result:
-        sys.stdout.write(r)  # write to stdout chunk by chunk
-    sys.stdout.write("\n")
-    # return result.response
+    result = search_engine.search(query=query, streaming=streaming)
+    if not streaming:
+        try:
+            result.__next__()
+        except StopIteration as e:
+            result = e.value
+        reporter.success(f"Local Search Response: {result.response}")
+        return result.response
+    else:
+        reporter.success(f"Local Search Response:")
+        while True:
+            try:
+                sys.stdout.write(result.__next__())
+            except StopIteration as e:
+                return e.value.response
 
 
 def _configure_paths_and_settings(

@@ -66,7 +66,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         streaming: bool = True,
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
-    ) -> str | Generator[str, None, str]:
+    ) -> Generator[str, None, str]:
         """Generate text."""
         try:
             retryer = Retrying(
@@ -90,12 +90,15 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                             except StopIteration as e:
                                 return e.value
                     else:
-                        return self._generate(
-                            messages=messages,
-                            streaming=streaming,
-                            callbacks=callbacks,
-                            **kwargs,
-                        )
+                        try:
+                            self._generate(
+                                messages=messages,
+                                streaming=streaming,
+                                callbacks=callbacks,
+                                **kwargs,
+                            ).__next__()
+                        except StopIteration as e:
+                            return e.value
         except RetryError as e:
             self._reporter.error(
                 message="Error at generate()", details={self.__class__.__name__: str(e)}
