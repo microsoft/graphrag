@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Any
+from typing import Any, Generator
 
 import tiktoken
 
@@ -110,8 +110,9 @@ class LocalSearch(BaseSearch):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
+        streaming: bool = True,  # if True, return a generator that yields response chunk by chunk
         **kwargs,
-    ) -> SearchResult:
+    ) -> Generator[str, None, SearchResult]:
         """Build local search context that fits a single context window and generate answer for the user question."""
         start_time = time.time()
         search_prompt = ""
@@ -133,19 +134,38 @@ class LocalSearch(BaseSearch):
 
             response = self.llm.generate(
                 messages=search_messages,
-                streaming=True,
+                streaming=streaming,
                 callbacks=self.callbacks,
                 **self.llm_params,
             )
 
-            return SearchResult(
-                response=response,
-                context_data=context_records,
-                context_text=context_text,
-                completion_time=time.time() - start_time,
-                llm_calls=1,
-                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
-            )
+            if streaming:
+                while True:
+                    try:
+                        delta = response.__next__()
+                        yield delta
+                    except StopIteration as e:  # return the final result
+                        return SearchResult(
+                            response=e.value,
+                            context_data=context_records,
+                            context_text=context_text,
+                            completion_time=time.time() - start_time,
+                            llm_calls=1,
+                            prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                        )
+            else:
+                try:
+                    response.__next__()
+                except StopIteration as e:
+                    response = e.value
+                return SearchResult(
+                    response=response,
+                    context_data=context_records,
+                    context_text=context_text,
+                    completion_time=time.time() - start_time,
+                    llm_calls=1,
+                    prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                )
 
         except Exception:
             log.exception("Exception in _map_response_single_batch")
