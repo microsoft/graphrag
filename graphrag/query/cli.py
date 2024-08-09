@@ -23,6 +23,7 @@ from graphrag.query.input.loaders.dfs import (
     store_entity_semantic_embeddings,
 )
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
+from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 from graphrag.vector_stores.kusto import KustoVectorStore
 from graphrag.common.blob_storage_client import BlobStorageClient
@@ -235,6 +236,94 @@ def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageTyp
         if not file_path.exists():
             raise ValueError(f"Data path {file_path} does not exist.")
         return pd.read_parquet(path)
+# TODO I split this out for now to preserve how the original local search worked.
+# I don't think this will necessarily be permanently separate.
+# It was just easier without having to keep everything generic and work the same way as local search worked.
+# One last optimization: Once all the merges are done we can go back to the parquet loads and optimize those for only the fields we need and merge them right away into one big table (I think).
+def run_content_store_local_search(
+    config_dir: str | None,
+    data_dir: str | None,
+    root_dir: str | None,
+    community_level: int,
+    response_type: str,
+    query: str,
+):
+    """Run a local search with the given query."""
+    data_dir, root_dir, config = _configure_paths_and_settings(
+        data_dir, root_dir, config_dir
+    )
+    data_path = Path(data_dir)
+
+    vector_store_args = (
+        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+    
+    vector_store_type = vector_store_args.get("type", VectorStoreType.Kusto)
+    
+    collection_name = vector_store_args.get(
+        "query_collection_name", "entity_description_embeddings"
+    )
+    vector_store_args.update({"collection_name": collection_name})
+
+    description_embedding_store = VectorStoreFactory.get_vector_store(
+        vector_store_type=vector_store_type, kwargs=vector_store_args
+    )
+
+    description_embedding_store.connect(**vector_store_args)
+
+    #TODO add back covariates. I skipped this for now.
+    description_embedding_store.load_parqs(data_dir, ["create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
+
+    #TODO KQLify this. This merge of nodes & entities needs to happen in Kusto.
+    # entities = read_indexer_entities(final_nodes, final_entities, community_level)
+    # description_embedding_store = __get_embedding_description_store(
+    #     entities=entities,
+    #     description_embedding_store=description_embedding_store,
+    #     config_args=vector_store_args,
+    # )
+
+    #TODO add back covariates w/Kusto. I skipped this for now.
+    # covariates = (
+    #     read_indexer_covariates(final_covariates)
+    #     if final_covariates is not None
+    #     else []
+    # )
+
+    #TODO KQLify this. I know at least the read_indedxer_reports needs to be done in Kusto. We are joining the community reports & final nodes.
+    # search_engine = get_local_search_engine(
+    #     config,
+    #     reports=read_indexer_reports(
+    #         final_community_reports, final_nodes, community_level
+    #     ),
+    #     text_units=read_indexer_text_units(final_text_units),
+    #     entities=entities,
+    #     relationships=read_indexer_relationships(final_relationships),
+    #     covariates={"claims": covariates},
+    #     description_embedding_store=description_embedding_store,
+    #     response_type=response_type,
+    # )
+
+    #TODO This is the biggest TODO. I need to go through the whole mixed_context.py and make sure it's using Kusto data not the parquet data it expects in memory.
+    # result = search_engine.search(query=query)
+    # reporter.success(f"Local Search Response: {result.response}")
+    # return result.response
+
+    return True #Obviously this is a placeholder due to all the TODOs above.
+
+
+
+def run_content_store_global_search(
+    config_dir: str | None,
+    data_dir: str | None,
+    root_dir: str | None,
+    community_level: int,
+    response_type: str,
+    query: str,
+):
+    """Run a content store global search with the given query."""
+    raise NotImplementedError("This function is not implemented yet.")
+
+
 
 def _configure_paths_and_settings(
         

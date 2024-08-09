@@ -192,3 +192,7 @@ class AzureAISearch(BaseVectorStore):
                 query_embedding=query_embedding, k=k
             )
         return []
+
+    def load_parqs(self, data_path, parq_names) -> Any:
+        """Load documents (Parquet files) into the vector-store."""
+        raise NotImplementedError("Loading Parquet files is not supported for Azure AI Search")

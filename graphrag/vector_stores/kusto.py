@@ -3,12 +3,16 @@
 
 """The Azure Kusto vector storage implementation package."""
 
+import typing
 from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
 from azure.kusto.data.helpers import dataframe_from_result_table
 from graphrag.model.types import TextEmbedder
 
+import pandas as pd
+from pathlib import Path
+
 import json
-from typing import Any, List
+from typing import Any, List, cast
 
 from .base import (
     BaseVectorStore,
@@ -19,6 +23,15 @@ from .base import (
 
 class KustoVectorStore(BaseVectorStore):
     """The Azure Kusto vector storage implementation."""
+
+    #TODO Currently loading in all the parquet fields, need to filter out the ones that are not needed.
+    #TODO Double check the types. This was done quickly and I may have missed something.
+    #TODO Check if there is a better way to get the fields to ingest into the Kusto table. These schemas are based off of me reading the files and manually making them. Maybe there is a better way to do this.
+    schema_dict: typing.ClassVar[dict] = {"create_final_nodes": "(level: int, title: string, type: string, description: string, source_id: string, community: int, degree: int, human_readable_id: int, id: string, size: int, graph_embedding: dynamic, entity_type: string, top_level_node_id: string, x: int, y: int)"
+                                          , "create_final_community_reports": "(community: int, full_content: string, level: int, rank: int, title: string, rank_explanation: string, summary: string, findings: string, full_content_json: string, id: string)"
+                                          , "create_final_text_units": "(id: string, text: string, n_tokens: int, document_ids: string, entity_ids: string, relationship_ids: string)"
+                                          , "create_final_relationships": "(source: string, target: string, weight: float, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
+                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string)"}
 
     def connect(self, **kwargs: Any) -> Any:
         """
@@ -42,7 +55,7 @@ class KustoVectorStore(BaseVectorStore):
         authority_id = kwargs.get("authority_id")
 
         kcsb = KustoConnectionStringBuilder.with_aad_application_key_authentication(
-            cluster, client_id, client_secret, authority_id
+            str(cluster), str(client_id), str(client_secret), str(authority_id)
         )
         self.client = KustoClient(kcsb)
         self.database = database
@@ -164,3 +177,27 @@ class KustoVectorStore(BaseVectorStore):
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
         return []
+
+
+    def load_parqs(self, data_dir, parq_names) -> Any:
+        data_path = Path(data_dir)
+        for parq_name in parq_names:
+            parq_path = data_path / f"{parq_name}.parquet"
+            if parq_path.exists():
+                parq = pd.read_parquet(parq_path)
+
+                # I wasn't sure if was easier to rename the columns here or in the KQL queries.
+                # Most likely the KQL queries as this is a place I am trying to handle all the parquet files generically.
+                # parq.rename(columns={"id": "title"}, inplace=True)
+                # parq = cast(pd.DataFrame, parq[["title", "degree", "community"]]).rename(
+                #     columns={"title": "name", "degree": "rank"}
+                # )
+
+                command = f".drop table {parq_name} ifexists"
+                self.client.execute(self.database, command)
+                command = f".create table {parq_name} {self.schema_dict[parq_name]}"
+                self.client.execute(self.database, command)
+                command = f".ingest inline into table {parq_name} <| {parq.to_csv(index=False, header=False)}"
+                self.client.execute(self.database, command)
+            else:
+                print(f"Parquet file {parq_path} not found.")
