@@ -61,6 +61,11 @@ poetry run poe index --init --root .
         "./lancedb"
     )
 ```
+- 启动web serevr
+```bash
+python webserver/main.py
+```
+更多的参考配置，可以访问[公众号文章](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0OTAzNTEwMw==&action=getalbum&album_id=3429606151455670272&uin=&key=&devicetype=iMac+MacBookPro17%2C1+OSX+OSX+14.4+build(23E214)&version=13080710&lang=zh_CN&nettype=WIFI&ascene=0&fontScale=100)和[B站视频](https://www.bilibili.com/video/BV113v8e6EZn)
 
 # GraphRAG
 
