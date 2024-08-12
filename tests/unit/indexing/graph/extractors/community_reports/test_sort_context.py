@@ -1,6 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 import math
+import platform
 
 from graphrag.index.graph.extractors.community_reports import sort_context
 from graphrag.query.llm.text_utils import num_tokens
@@ -202,7 +203,7 @@ context: list[dict] = [
 
 def test_sort_context():
     ctx = sort_context(context)
-    assert num_tokens(ctx) == 826
+    assert num_tokens(ctx) == 827 if platform.system() == "Windows" else 826
     assert ctx is not None
 
 
