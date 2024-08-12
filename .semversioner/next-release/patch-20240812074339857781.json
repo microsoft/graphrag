@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "fixed entity_extraction_prompt use model instead of encoding_name"
+}
