@@ -15,6 +15,10 @@ from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
 
+NO_COMMUNITY_RECORDS_WARNING: str = (
+    "Warning: No community records added when building community context."
+)
+
 
 def build_community_context(
     community_reports: list[CommunityReport],
@@ -128,9 +132,9 @@ def build_community_context(
         record_df = _convert_report_context_to_df(
             context_records=batch_records,
             header=header,
-            weight_column=community_weight_name
-            if entities and include_community_weight
-            else None,
+            weight_column=(
+                community_weight_name if entities and include_community_weight else None
+            ),
             rank_column=community_rank_name if include_community_rank else None,
         )
         if len(record_df) == 0:
@@ -163,9 +167,7 @@ def build_community_context(
         _cut_batch()
 
     if len(all_context_records) == 0:
-        log.warning(
-            "Warning: No community records added when building community context."
-        )
+        log.warning(NO_COMMUNITY_RECORDS_WARNING)
         return ([], {})
 
     return all_context_text, {
