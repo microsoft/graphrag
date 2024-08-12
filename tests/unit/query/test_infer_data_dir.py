@@ -26,5 +26,5 @@ def test_infer_data_dir_ignores_non_numeric():
 
 def test_infer_data_dir_throws_on_no_match():
     root = "./tests/unit/query/data/empty"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError): # noqa PT011 (this is what is actually thrown...)
         _infer_data_dir(root)
