@@ -68,8 +68,8 @@ def read_indexer_reports(
     report_df = final_community_reports
     entity_df = final_nodes
     entity_df = _filter_under_community_level(entity_df, community_level)
-    entity_df["community"] = entity_df["community"].fillna(-1)
-    entity_df["community"] = entity_df["community"].astype(int)
+    entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
+    entity_df.loc[:, "community"] = entity_df["community"].astype(int)
 
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
     entity_df["community"] = entity_df["community"].astype(str)
