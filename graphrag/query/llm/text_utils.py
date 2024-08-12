@@ -39,4 +39,4 @@ def chunk_text(
         token_encoder = tiktoken.get_encoding("cl100k_base")
     tokens = token_encoder.encode(text)  # type: ignore
     chunk_iterator = batched(iter(tokens), max_tokens)
-    yield from chunk_iterator
+    yield from (token_encoder.decode(list(chunk)) for chunk in chunk_iterator)
