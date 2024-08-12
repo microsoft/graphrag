@@ -41,7 +41,7 @@ def create_entity_extraction_prompt(
     - encoding_model (str): The name of the model to use for token counting
     - max_token_count (int): The maximum number of tokens to use for the prompt
     - json_mode (bool): Whether to use JSON mode for the prompt. Default is False
-    - output_path (Path | None): The path to write the prompt to. Default is None. If None, the prompt is not written to a file. Default is None.
+    - output_path (Path | None): The path to write the prompt to. Default is None.
         - min_examples_required (int): The minimum number of examples required. Default is 2.
 
     Returns
@@ -58,8 +58,8 @@ def create_entity_extraction_prompt(
 
     tokens_left = (
         max_token_count
-        - num_tokens_from_string(prompt, model=encoding_model)
-        - num_tokens_from_string(entity_types, model=encoding_model)
+        - num_tokens_from_string(prompt, encoding_name=encoding_model)
+        - num_tokens_from_string(entity_types, encoding_name=encoding_model)
         if entity_types
         else 0
     )
@@ -79,7 +79,9 @@ def create_entity_extraction_prompt(
             )
         )
 
-        example_tokens = num_tokens_from_string(example_formatted, model=encoding_model)
+        example_tokens = num_tokens_from_string(
+            example_formatted, encoding_name=encoding_model
+        )
 
         # Ensure at least three examples are included
         if i >= min_examples_required and example_tokens > tokens_left:
