@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Improves filtering for data dir inferring"
+}
