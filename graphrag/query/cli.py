@@ -4,7 +4,7 @@
 """Command line interface for the query module."""
 
 import asyncio
-import os
+import re
 from pathlib import Path
 from typing import cast
 
@@ -129,7 +129,9 @@ def _infer_data_dir(root: str) -> str:
     output = Path(root) / "output"
     # use the latest data-run folder
     if output.exists():
-        folders = sorted(output.iterdir(), key=os.path.getmtime, reverse=True)
+        expr = re.compile(r"\d{8}-\d{6}")
+        filtered = [f for f in output.iterdir() if f.is_dir() and expr.match(f.name)]
+        folders = sorted(filtered, key=lambda f: f.name, reverse=True)
         if len(folders) > 0:
             folder = folders[0]
             return str((folder / "artifacts").absolute())
