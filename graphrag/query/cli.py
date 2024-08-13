@@ -4,7 +4,6 @@
 """Command line interface for the query module."""
 
 import asyncio
-import os
 import re
 from pathlib import Path
 from typing import cast
