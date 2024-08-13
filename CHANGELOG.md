@@ -1,12 +1,21 @@
 # Changelog
-
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 0.3.0
+
+- minor: Implement auto templating API.
+- minor: Implement query engine API.
+- patch: Fix file dumps using json for non ASCII chars
+- patch: Stabilize smoke tests for query context building
+- patch: fix query embedding
+- patch: fix sort_context & max_tokens params in verb
 
 ## 0.2.2
 
 - patch: Add a check if there is no community record added in local search context
 - patch: Add sepparate workflow for Python Tests
 - patch: Docs updates
+- patch: Run smoke tests on 4o
 
 ## 0.2.1
 
