@@ -23,6 +23,7 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"] # add 3.12 once gensim supports it. TODO: watch this issue - https://github.com/piskvorky/gensim/issues/3510
         os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Continue running all jobs even if one fails
     env:
       DEBUG: 1
       GRAPHRAG_LLM_TYPE: "azure_openai_chat"
