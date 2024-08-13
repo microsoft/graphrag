@@ -5,7 +5,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, AsyncGenerator
 
 import pandas as pd
 import tiktoken
@@ -67,3 +67,11 @@ class BaseSearch(ABC):
         **kwargs,
     ) -> SearchResult:
         """Search for the given query asynchronously."""
+
+    @abstractmethod
+    def astream_search(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+    ) -> AsyncGenerator[str, None]:
+        """Stream search for the given query."""

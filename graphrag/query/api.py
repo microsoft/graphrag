@@ -90,6 +90,7 @@ async def global_search(
     community_reports: pd.DataFrame,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ) -> str | dict[str, Any] | list[dict[str, Any]]:
     """Perform a global search.
@@ -120,10 +121,28 @@ async def global_search(
         entities=_entities,
         response_type=response_type,
     )
-    result = await search_engine.asearch(query=query)
-    reporter.success(f"Global Search Response: {result.response}")
-    return result.response
 
+    if not streaming:
+        result = await search_engine.asearch(query=query)
+        reporter.success(f"Global Search Response: {result.response}")
+        return result.response
+
+    else:
+        import sys
+        full_resp = ''
+        results = search_engine.astream_search(query=query)
+        reporter.success(f'Global Search Response: \n')
+        sys.stdout.write('⬤')  # display an initial progress indicator
+
+        async for result in results:
+            sys.stdout.write('\b')  # move the cursor back one position to overwrite the previous progress indicator
+            sys.stdout.flush()  # flush the output buffer
+            sys.stdout.write(result + "⬤")  # display the next progress indicator
+            sys.stdout.flush()
+            full_resp += result
+
+        sys.stdout.write('\b\n')
+        return full_resp
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
@@ -136,6 +155,7 @@ async def local_search(
     covariates: pd.DataFrame | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ) -> str | dict[str, Any] | list[dict[str, Any]]:
     """Perform a local search.
@@ -187,6 +207,24 @@ async def local_search(
         response_type=response_type,
     )
 
-    result = await search_engine.asearch(query=query)
-    reporter.success(f"Local Search Response: {result.response}")
-    return result.response
+    if not streaming:
+        result = await search_engine.asearch(query=query)
+        reporter.success(f"Local Search Response: {result.response}")
+        return result.response
+
+    else:
+        import sys
+        full_resp = ''
+        results = search_engine.astream_search(query=query)
+        reporter.success(f'Local Search Response: \n')
+        sys.stdout.write('⬤')  # display an initial progress indicator
+
+        async for result in results:
+            sys.stdout.write('\b')  # move the cursor back one position to overwrite the previous progress indicator
+            sys.stdout.flush()
+            sys.stdout.write(result + "⬤")  # display the next progress indicator
+            sys.stdout.flush()
+            full_resp += result
+
+        sys.stdout.write('\b\n')
+        return full_resp

@@ -27,6 +27,7 @@ def run_global_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Perform a global search with a given query.
@@ -56,6 +57,7 @@ def run_global_search(
             community_reports=final_community_reports,
             community_level=community_level,
             response_type=response_type,
+            streaming=streaming,
             query=query,
         )
     )
@@ -67,6 +69,7 @@ def run_local_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Perform a local search with a given query.
@@ -106,6 +109,7 @@ def run_local_search(
             covariates=final_covariates,
             community_level=community_level,
             response_type=response_type,
+            streaming=streaming,
             query=query,
         )
     )
