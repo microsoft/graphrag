@@ -19,6 +19,10 @@ def build_steps(
     """
     covariates_enabled = config.get("covariates_enabled", False)
     create_community_reports_config = config.get("create_community_reports", {})
+    community_report_strategy = create_community_reports_config.get("strategy", {})
+    community_report_max_input_length = community_report_strategy.get(
+        "max_input_length", 16_000
+    )
     base_text_embed = config.get("text_embed", {})
     community_report_full_content_embed_config = config.get(
         "community_report_full_content_embed", base_text_embed
@@ -77,6 +81,7 @@ def build_steps(
         {
             "id": "local_contexts",
             "verb": "prepare_community_reports",
+            "args": {"max_tokens": community_report_max_input_length},
             "input": {
                 "source": "nodes",
                 "nodes": "nodes",
