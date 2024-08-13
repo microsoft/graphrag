@@ -1,8 +1,9 @@
+import logging
 import os
-from typing import Any
 
 import pandas as pd
 import tiktoken
+from graphrag.model import Entity
 from graphrag.query.context_builder.builders import LocalContextBuilder
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.indexer_adapters import (
@@ -21,10 +22,12 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
+from graphrag.vector_stores import VectorStoreType, VectorStoreFactory
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-from webserver.utils import consts
 from webserver.configs import settings
+from webserver.utils import consts
+
+logger = logging.getLogger(__name__)
 
 
 async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
@@ -35,14 +38,17 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
 
     entities = read_indexer_entities(entity_df, entity_embedding_df, consts.COMMUNITY_LEVEL)
 
-    # load description embeddings to an in-memory lancedb vectorstore
-    # to connect to a remote db, specify url and port values.
-    description_embedding_store = LanceDBVectorStore(
-        collection_name="entity_description_embeddings",
+    vector_store_args = (
+        settings.embeddings.vector_store if settings.embeddings.vector_store else {}
     )
-    description_embedding_store.connect(db_uri=settings.lancedb_uri)
-    entity_description_embeddings = store_entity_semantic_embeddings(
-        entities=entities, vectorstore=description_embedding_store
+
+    logger.info(f"Vector Store Args: {vector_store_args}")
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+
+    description_embedding_store = __get_embedding_description_store(
+        entities=entities,
+        vector_store_type=vector_store_type,
+        config_args=vector_store_args,
     )
 
     relationship_df = pd.read_parquet(f"{input_dir}/{consts.RELATIONSHIP_TABLE}.parquet")
@@ -77,9 +83,55 @@ async def load_local_context(input_dir: str, embedder: BaseTextEmbedding,
     return context_builder
 
 
+def __get_embedding_description_store(
+        entities: list[Entity],
+        vector_store_type: str = VectorStoreType.LanceDB,
+        config_args: dict | None = None,
+):
+    """Get the embedding description store."""
+    if not config_args:
+        config_args = {}
+
+    collection_name = config_args.get(
+        "query_collection_name", "entity_description_embeddings"
+    )
+    config_args.update({"collection_name": collection_name})
+    description_embedding_store = VectorStoreFactory.get_vector_store(
+        vector_store_type=vector_store_type, kwargs=config_args
+    )
+
+    description_embedding_store.connect(**config_args)
+
+    if config_args.get("overwrite", True):
+        # this step assumes the embeddings were originally stored in a file rather
+        # than a vector database
+
+        # dump embeddings from the entities list to the description_embedding_store
+        store_entity_semantic_embeddings(
+            entities=entities, vectorstore=description_embedding_store
+        )
+    else:
+        # load description embeddings to an in-memory lancedb vectorstore
+        # and connect to a remote db, specify url and port values.
+        description_embedding_store = LanceDBVectorStore(
+            collection_name=collection_name
+        )
+        description_embedding_store.connect(
+            db_uri=config_args.get("db_uri", "./lancedb")
+        )
+
+        # load data from an existing table
+        description_embedding_store.document_collection = (
+            description_embedding_store.db_connection.open_table(
+                description_embedding_store.collection_name
+            )
+        )
+
+    return description_embedding_store
+
+
 async def build_local_question_gen(llm: BaseLLM, context_builder: LocalContextBuilder = None,
                                    token_encoder: tiktoken.Encoding | None = None) -> LocalQuestionGen:
-
     local_context_params = {
         "text_unit_prop": settings.local_search.text_unit_prop,
         "community_prop": settings.local_search.community_prop,
@@ -93,12 +145,14 @@ async def build_local_question_gen(llm: BaseLLM, context_builder: LocalContextBu
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": settings.llm.max_tokens,
+        "max_tokens": settings.local_search.max_tokens,
     }
 
     llm_params = {
-        "max_tokens": settings.llm.max_tokens,
-        "temperature": settings.llm.temperature,
+        "max_tokens": settings.local_search.llm_max_tokens,
+        "temperature": settings.local_search.temperature,
+        "top_p": settings.local_search.top_p,
+        "n": settings.local_search.n,
     }
 
     question_generator = LocalQuestionGen(
@@ -114,7 +168,6 @@ async def build_local_question_gen(llm: BaseLLM, context_builder: LocalContextBu
 
 async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextBuilder = None,
                                     token_encoder: tiktoken.Encoding | None = None) -> LocalSearch:
-
     local_context_params = {
         "text_unit_prop": settings.local_search.text_unit_prop,
         "community_prop": settings.local_search.community_prop,
@@ -128,12 +181,14 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
         "return_candidate_context": False,
         "embedding_vectorstore_key": EntityVectorStoreKey.ID,
         # set this to EntityVectorStoreKey.TITLE if the vectorstore uses entity title as ids
-        "max_tokens": settings.llm.max_tokens,
+        "max_tokens": settings.local_search.max_tokens,
     }
 
     llm_params = {
-        "max_tokens": settings.llm.max_tokens,
-        "temperature": settings.llm.temperature,
+        "max_tokens": settings.local_search.llm_max_tokens,
+        "temperature": settings.local_search.temperature,
+        "top_p": settings.local_search.top_p,
+        "n": settings.local_search.n,
     }
 
     search_engine = LocalSearch(
@@ -145,4 +200,3 @@ async def build_local_search_engine(llm: BaseLLM, context_builder: LocalContextB
         response_type="multiple paragraphs",
     )
     return search_engine
-
