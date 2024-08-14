@@ -433,12 +433,14 @@ class GlobalSearch(BaseSearch):
         data = []
         total_tokens = 0
         for point in filtered_key_points:
-            formatted_response_data = [f'----Analyst {point["analyst"] + 1}----',
-                                       f'Importance Score: {point["score"]}', point["answer"]]
+            formatted_response_data = [
+                f'----Analyst {point["analyst"] + 1}----',
+                f'Importance Score: {point["score"]}',
+                point["answer"],
+            ]
             formatted_response_text = "\n".join(formatted_response_data)
             if (
-                total_tokens
-                + num_tokens(formatted_response_text, self.token_encoder)
+                total_tokens + num_tokens(formatted_response_text, self.token_encoder)
                 > self.max_data_tokens
             ):
                 break

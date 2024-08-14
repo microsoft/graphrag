@@ -127,22 +127,23 @@ async def global_search(
         reporter.success(f"Global Search Response: {result.response}")
         return result.response
 
-    else:
-        import sys
-        full_resp = ''
-        results = search_engine.astream_search(query=query)
-        reporter.success(f'Global Search Response: \n')
-        sys.stdout.write('⬤')  # display an initial progress indicator
+    import sys
 
-        async for result in results:
-            sys.stdout.write('\b')  # move the cursor back one position to overwrite the previous progress indicator
-            sys.stdout.flush()  # flush the output buffer
-            sys.stdout.write(result + "⬤")  # display the next progress indicator
-            sys.stdout.flush()
-            full_resp += result
+    full_resp = ""
+    results = search_engine.astream_search(query=query)
+    reporter.success(f"Global Search Response: \n")
+    sys.stdout.write("⬤")  # display an initial progress indicator
+    async for result in results:
+        sys.stdout.write(
+            "\b"
+        )  # move the cursor back one position to overwrite the previous progress indicator
+        sys.stdout.flush()  # flush the output buffer
+        sys.stdout.write(result + "⬤")  # display the next progress indicator
+        sys.stdout.flush()
+        full_resp += result
+    sys.stdout.write("\b\n")
+    return full_resp
 
-        sys.stdout.write('\b\n')
-        return full_resp
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
@@ -212,19 +213,19 @@ async def local_search(
         reporter.success(f"Local Search Response: {result.response}")
         return result.response
 
-    else:
-        import sys
-        full_resp = ''
-        results = search_engine.astream_search(query=query)
-        reporter.success(f'Local Search Response: \n')
-        sys.stdout.write('⬤')  # display an initial progress indicator
+    import sys
 
-        async for result in results:
-            sys.stdout.write('\b')  # move the cursor back one position to overwrite the previous progress indicator
-            sys.stdout.flush()
-            sys.stdout.write(result + "⬤")  # display the next progress indicator
-            sys.stdout.flush()
-            full_resp += result
-
-        sys.stdout.write('\b\n')
-        return full_resp
+    full_resp = ""
+    results = search_engine.astream_search(query=query)
+    reporter.success(f"Local Search Response: \n")
+    sys.stdout.write("⬤")  # display an initial progress indicator
+    async for result in results:
+        sys.stdout.write(
+            "\b"
+        )  # move the cursor back one position to overwrite the previous progress indicator
+        sys.stdout.flush()
+        sys.stdout.write(result + "⬤")  # display the next progress indicator
+        sys.stdout.flush()
+        full_resp += result
+    sys.stdout.write("\b\n")
+    return full_resp

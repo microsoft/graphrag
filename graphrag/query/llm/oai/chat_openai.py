@@ -118,7 +118,8 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
 
         except RetryError as e:
             self._reporter.error(
-                message="Error at stream_generate()", details={self.__class__.__name__: str(e)}
+                message="Error at stream_generate()",
+                details={self.__class__.__name__: str(e)},
             )
             return
         else:
