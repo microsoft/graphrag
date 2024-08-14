@@ -11,7 +11,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from typing import Any
+from typing import Any, AsyncGenerator
 
 import pandas as pd
 from pydantic import validate_call
@@ -92,7 +92,7 @@ async def global_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> str | dict[str, Any] | list[dict[str, Any]]:
+) -> str | dict[str, Any] | list[dict[str, Any]] | AsyncGenerator[str, None]:
     """Perform a global search.
 
     Parameters
@@ -126,7 +126,7 @@ async def global_search(
         result = await search_engine.asearch(query=query)
         reporter.success(f"Global Search Response: {result.response}")
         return result.response
-
+    return search_engine.astream_search(query=query)
     import sys
 
     full_resp = ""
@@ -158,7 +158,7 @@ async def local_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> str | dict[str, Any] | list[dict[str, Any]]:
+) -> str | dict[str, Any] | list[dict[str, Any]] | AsyncGenerator[str, None]:
     """Perform a local search.
 
     Parameters
@@ -212,6 +212,7 @@ async def local_search(
         result = await search_engine.asearch(query=query)
         reporter.success(f"Local Search Response: {result.response}")
         return result.response
+    return search_engine.astream_search(query=query)
 
     import sys
 
