@@ -54,7 +54,7 @@ aiofiles = "^24.1.0"
 
 # LLM
 openai = "^1.37.1"
-nltk = "3.8.1"
+nltk = "3.8.2"
 tiktoken = "^0.7.0"
 
 # Data-Sci
