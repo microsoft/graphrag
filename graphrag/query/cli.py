@@ -63,7 +63,6 @@ def run_global_search(
                 query=query,
             )
         )
-
     # else streaming
     async def run_streaming_search():
         full_response = ""
@@ -135,7 +134,6 @@ def run_local_search(
                 query=query,
             )
         )
-
     # else streaming
     async def run_streaming_search():
         full_response = ""
