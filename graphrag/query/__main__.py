@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--streaming",
-        help="Whether to output the response text in a streaming (chunk-by-chunk) format",
+        help="Output the response in a streaming (chunk-by-chunk) manner",
         action="store_true",
     )
 
