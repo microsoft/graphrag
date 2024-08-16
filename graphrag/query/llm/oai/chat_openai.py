@@ -3,8 +3,8 @@
 
 """Chat-based OpenAI LLM implementation."""
 
-from collections.abc import Callable
-from typing import Any, AsyncGenerator, Generator
+from collections.abc import AsyncGenerator, Callable, Generator
+from typing import Any
 
 from tenacity import (
     AsyncRetrying,
@@ -113,8 +113,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                         callbacks=callbacks,
                         **kwargs,
                     )
-                    for response in generator:
-                        yield response
+                    yield from generator
 
         except RetryError as e:
             self._reporter.error(

@@ -7,8 +7,9 @@ import asyncio
 import json
 import logging
 import time
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator
+from typing import Any
 
 import pandas as pd
 import tiktoken

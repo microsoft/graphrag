@@ -4,7 +4,8 @@
 """Base classes for LLM and Embedding models."""
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Generator
+from collections.abc import AsyncGenerator, Generator
+from typing import Any
 
 
 class BaseLLMCallback:

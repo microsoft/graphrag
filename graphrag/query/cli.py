@@ -77,18 +77,18 @@ def run_global_search(
             return full_response, context_data
 
         return asyncio.run(run_streaming_search())
-    else:  # not streaming
-        return asyncio.run(
-            api.global_search(
-                config=config,
-                nodes=final_nodes,
-                entities=final_entities,
-                community_reports=final_community_reports,
-                community_level=community_level,
-                response_type=response_type,
-                query=query,
-            )
+    # not streaming
+    return asyncio.run(
+        api.global_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
         )
+    )
 
 
 def run_local_search(
@@ -155,21 +155,21 @@ def run_local_search(
             return full_response, context_data
 
         return asyncio.run(run_streaming_search())
-    else:  # not streaming
-        return asyncio.run(
-            api.local_search(
-                config=config,
-                nodes=final_nodes,
-                entities=final_entities,
-                community_reports=final_community_reports,
-                text_units=final_text_units,
-                relationships=final_relationships,
-                covariates=final_covariates,
-                community_level=community_level,
-                response_type=response_type,
-                query=query,
-            )
+    # not streaming
+    return asyncio.run(
+        api.local_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            text_units=final_text_units,
+            relationships=final_relationships,
+            covariates=final_covariates,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
         )
+    )
 
 
 def _configure_paths_and_settings(

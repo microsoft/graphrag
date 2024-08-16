@@ -4,8 +4,9 @@
 """Base classes for search algos."""
 
 from abc import ABC, abstractmethod
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator
+from typing import Any
 
 import pandas as pd
 import tiktoken
