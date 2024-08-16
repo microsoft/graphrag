@@ -57,7 +57,7 @@ def run_global_search(
             full_response = ""
             context_data = None
             get_context_data = True
-            async for stream_result in api.global_search_streaming(
+            async for stream_chunk in api.global_search_streaming(
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
@@ -67,11 +67,11 @@ def run_global_search(
                 query=query,
             ):
                 if get_context_data:
-                    context_data = stream_result
+                    context_data = stream_chunk
                     get_context_data = False
                 else:
-                    full_response += stream_result
-                    print(stream_result, end="")  # noqa: T201
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
                     sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
@@ -132,7 +132,7 @@ def run_local_search(
             full_response = ""
             context_data = None
             get_context_data = True
-            async for stream_result in api.local_search_streaming(
+            async for stream_chunk in api.local_search_streaming(
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
@@ -145,11 +145,11 @@ def run_local_search(
                 query=query,
             ):
                 if get_context_data:
-                    context_data = stream_result
+                    context_data = stream_chunk
                     get_context_data = False
                 else:
-                    full_response += stream_result
-                    print(stream_result, end="")  # noqa: T201
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
                     sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
