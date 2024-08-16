@@ -345,7 +345,7 @@ def _validate_config_names(
         parameters = _read_config_parameters(root, config, reporter)
         
         # Validate Chat LLM configs
-        test_llm = load_llm(
+        llm = load_llm(
                 "test-llm",
                 parameters.llm.type,
                 NoopVerbCallbacks(),
@@ -353,7 +353,7 @@ def _validate_config_names(
                 parameters.llm.model_dump()
             )
         try:
-            asyncio.run(test_llm("Test"))
+            asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
             reporter.success("LLM Config Params Validated")
         except Exception as e:
             reporter.error("LLM Config Error Detected. Exiting...")
@@ -361,7 +361,7 @@ def _validate_config_names(
             sys.exit(1)
 
         # Validate Embeddings LLM configs
-        test_embed_llm = load_llm_embeddings(
+        embed_llm = load_llm_embeddings(
             "test-embed-llm",
             parameters.embeddings.llm.type,
             NoopVerbCallbacks(),
@@ -369,7 +369,7 @@ def _validate_config_names(
             parameters.embeddings.llm.model_dump()
         )
         try:
-            asyncio.run(test_embed_llm(["Test"]))
+            asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
             reporter.success("Embedding LLM Config Params Validated")
         except Exception as e:
             reporter.error("Embedding LLM Config Error Detected. Exiting...")
