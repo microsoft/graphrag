@@ -318,3 +318,56 @@ def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
         datefmt="%H:%M:%S",
         level=logging.DEBUG if verbose else logging.INFO,
     )
+
+# Function to validate config file for model/deployment name typos
+def _validate_config_names(
+    root: str,
+    config: str | None,
+    reporter: ProgressReporter) -> None:
+        import os
+        from graphrag.config.enums import LLMType
+        from graphrag.index.llm import load_llm, load_llm_embeddings
+        from datashaper import NoopVerbCallbacks
+        from graphrag.llm.types import (
+            LLM,
+            CompletionInput,
+            CompletionLLM,
+            CompletionOutput,
+            LLMInput,
+            LLMOutput,
+        )
+        
+        # Fetch raw list of params from config file
+        parameters = _read_config_parameters(root, config, reporter)
+        
+        # Validate Chat LLM configs
+        test_llm = load_llm(
+                "test-llm",
+                parameters.llm.type,
+                NoopVerbCallbacks(),
+                None,
+                parameters.llm.model_dump()
+            )
+        try:
+            asyncio.run(test_llm("Test"))
+            reporter.success("LLM Config Params Validated")
+        except Exception as e:
+            reporter.error("LLM Config Error Detected. Exiting...")
+            print(e)
+            sys.exit(1)
+
+        # Validate Embeddings LLM configs
+        test_embed_llm = load_llm_embeddings(
+            "test-embed-llm",
+            parameters.embeddings.llm.type,
+            NoopVerbCallbacks(),
+            None,
+            parameters.embeddings.llm.model_dump()
+        )
+        try:
+            asyncio.run(test_embed_llm(["Test"]))
+            reporter.success("Embedding LLM Config Params Validated")
+        except Exception as e:
+            reporter.error("Embedding LLM Config Error Detected. Exiting...")
+            print(e)
+            sys.exit(1)
