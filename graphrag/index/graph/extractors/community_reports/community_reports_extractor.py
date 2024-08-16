@@ -69,6 +69,7 @@ class CommunityReportsExtractor:
                             ("rating", float),
                             ("rating_explanation", str),
                         ],
+                        inplace=True,
                     ),
                     model_parameters={"max_tokens": self._max_report_length},
                 )
