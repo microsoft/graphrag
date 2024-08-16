@@ -85,5 +85,4 @@ if __name__ == "__main__":
         dryrun=args.dryrun or False,
         init=args.init or False,
         overlay_defaults=args.overlay_defaults or False,
-        cli=True,
     )
