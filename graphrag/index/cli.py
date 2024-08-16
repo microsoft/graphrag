@@ -101,6 +101,10 @@ def index_cli(
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
 
+    # Run pre-flight validation on config model values
+    _validate_config_names(root, config, progress_reporter)
+
+
     def _run_workflow_async() -> None:
         import signal
 
