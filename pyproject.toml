@@ -68,7 +68,7 @@ fastparquet = "^2024.2.0"
 scipy = "1.12.0"
 
 # Configuration
-pyyaml = "^6.0.1"
+pyyaml = "^6.0.2"
 pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
@@ -78,13 +78,13 @@ tenacity = "^9.0.0"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.74.0"
+textual = "^0.76.0"
 devtools = "^0.12.2"
 
 typing-extensions = "^4.12.2"
 
 #Azure
-azure-storage-blob = "^12.19.0"
+azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
 json-repair = "^0.26.0"
 
