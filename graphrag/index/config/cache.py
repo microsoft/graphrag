@@ -73,10 +73,19 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The storage account blob url for cache"""
 
+class PipelineRedisCacheConfig(PipelineCacheConfig[Literal[CacheType.redis]]):
+    """Represent the memory cache configuration for the pipeline."""
+
+    type: Literal[CacheType.redis] = CacheType.redis
+    connection_string: str | None = pydantic_Field(
+        description="The redis cache connection string for the cache.", default=None
+    )
+    """The type of cache."""
 
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig
     | PipelineMemoryCacheConfig
     | PipelineBlobCacheConfig
     | PipelineNoneCacheConfig
+    | PipelineRedisCacheConfig
 )

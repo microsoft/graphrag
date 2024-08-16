@@ -11,6 +11,7 @@ from graphrag.config.enums import CacheType
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
+    PipelineRedisCacheConfig,
 )
 from graphrag.index.storage import BlobPipelineStorage, FilePipelineStorage
 
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
 from .json_pipeline_cache import JsonPipelineCache
 from .memory_pipeline_cache import create_memory_cache
 from .noop_pipeline_cache import NoopPipelineCache
+from .redis_cache import create_redis_cache
 
 
 def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
@@ -38,14 +40,9 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
             config = cast(PipelineFileCacheConfig, config)
             storage = FilePipelineStorage(root_dir).child(config.base_dir)
             return JsonPipelineCache(storage)
-        case CacheType.blob:
-            config = cast(PipelineBlobCacheConfig, config)
-            storage = BlobPipelineStorage(
-                config.connection_string,
-                config.container_name,
-                storage_account_blob_url=config.storage_account_blob_url,
-            ).child(config.base_dir)
-            return JsonPipelineCache(storage)
+        case CacheType.redis:
+            config = cast(PipelineFileCacheConfig, config)
+            return create_redis_cache(config.connection_string)
         case _:
             msg = f"Unknown cache type: {config.type}"
             raise ValueError(msg)
