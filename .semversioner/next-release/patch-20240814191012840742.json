@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add support for both float and int on schema validation for community report generation"
+}

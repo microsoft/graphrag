@@ -85,7 +85,9 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
 
         if is_valid(result.json):
             return result
-        raise RuntimeError(FAILED_TO_CREATE_JSON_ERROR)
+
+        error_msg = f"{FAILED_TO_CREATE_JSON_ERROR} - Faulty JSON: {result.json!s}"
+        raise RuntimeError(error_msg)
 
     async def _native_json(
         self, input: CompletionInput, **kwargs: Unpack[LLMInput]
