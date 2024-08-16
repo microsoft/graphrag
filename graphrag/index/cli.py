@@ -16,6 +16,7 @@ from graphrag.config import (
     create_graphrag_config,
 )
 from graphrag.index import PipelineConfig, create_pipeline_config
+from graphrag.index.validate_config import _validate_config_names
 from graphrag.index.cache import NoopPipelineCache
 from graphrag.index.progress import (
     NullProgressReporter,
@@ -102,8 +103,8 @@ def index_cli(
     encountered_errors = False
 
     # Run pre-flight validation on config model values
-    _validate_config_names(root, config, progress_reporter)
-
+    parameters = _read_config_parameters(root, config, progress_reporter)
+    _validate_config_names(progress_reporter, parameters)
 
     def _run_workflow_async() -> None:
         import signal
@@ -323,55 +324,3 @@ def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
         level=logging.DEBUG if verbose else logging.INFO,
     )
 
-# Function to validate config file for model/deployment name typos
-def _validate_config_names(
-    root: str,
-    config: str | None,
-    reporter: ProgressReporter) -> None:
-        import os
-        from graphrag.config.enums import LLMType
-        from graphrag.index.llm import load_llm, load_llm_embeddings
-        from datashaper import NoopVerbCallbacks
-        from graphrag.llm.types import (
-            LLM,
-            CompletionInput,
-            CompletionLLM,
-            CompletionOutput,
-            LLMInput,
-            LLMOutput,
-        )
-        
-        # Fetch raw list of params from config file
-        parameters = _read_config_parameters(root, config, reporter)
-        
-        # Validate Chat LLM configs
-        llm = load_llm(
-                "test-llm",
-                parameters.llm.type,
-                NoopVerbCallbacks(),
-                None,
-                parameters.llm.model_dump()
-            )
-        try:
-            asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
-            reporter.success("LLM Config Params Validated")
-        except Exception as e:
-            reporter.error("LLM Config Error Detected. Exiting...")
-            print(e)
-            sys.exit(1)
-
-        # Validate Embeddings LLM configs
-        embed_llm = load_llm_embeddings(
-            "test-embed-llm",
-            parameters.embeddings.llm.type,
-            NoopVerbCallbacks(),
-            None,
-            parameters.embeddings.llm.model_dump()
-        )
-        try:
-            asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
-            reporter.success("Embedding LLM Config Params Validated")
-        except Exception as e:
-            reporter.error("Embedding LLM Config Error Detected. Exiting...")
-            print(e)
-            sys.exit(1)
