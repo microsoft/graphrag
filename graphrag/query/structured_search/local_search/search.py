@@ -110,7 +110,7 @@ class LocalSearch(BaseSearch):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator[str, None]:
+    ) -> AsyncGenerator:
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
 
@@ -128,6 +128,8 @@ class LocalSearch(BaseSearch):
             {"role": "user", "content": query},
         ]
 
+        # send context records first before sending the reduce response
+        yield context_records
         async for response in self.llm.astream_generate(  # type: ignore
             messages=search_messages,
             callbacks=self.callbacks,

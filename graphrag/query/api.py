@@ -41,7 +41,250 @@ from .input.loaders.dfs import store_entity_semantic_embeddings
 reporter = PrintProgressReporter("")
 
 
-def __get_embedding_description_store(
+@validate_call(config={"arbitrary_types_allowed": True})
+async def global_search(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> str | dict[str, Any] | list[dict[str, Any]]:
+    """Perform a global search.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - community_level (int): The community level to search at.
+    - response_type (str): The type of response to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    search_engine = get_global_search_engine(
+        config,
+        reports=reports,
+        entities=_entities,
+        response_type=response_type,
+    )
+    result = await search_engine.asearch(query=query)
+    reporter.success(f"Global Search Response: {result.response}")
+    return result.response
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def global_search_streaming(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a global search and return results as a generator.
+
+    Context data is returned as a dictionary of lists, with one list entry for each record.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - community_level (int): The community level to search at.
+    - response_type (str): The type of response to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    search_engine = get_global_search_engine(
+        config,
+        reports=reports,
+        entities=_entities,
+        response_type=response_type,
+    )
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_result in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_result)
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_result
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def local_search(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    text_units: pd.DataFrame,
+    relationships: pd.DataFrame,
+    covariates: pd.DataFrame | None,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> str | dict[str, Any] | list[dict[str, Any]]:
+    """Perform a local search.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
+    - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = (
+        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+    reporter.info(f"Vector Store Args: {vector_store_args}")
+
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    description_embedding_store = _get_embedding_description_store(
+        entities=_entities,
+        vector_store_type=vector_store_type,
+        config_args=vector_store_args,
+    )
+
+    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+
+    search_engine = get_local_search_engine(
+        config=config,
+        reports=read_indexer_reports(community_reports, nodes, community_level),
+        text_units=read_indexer_text_units(text_units),
+        entities=_entities,
+        relationships=read_indexer_relationships(relationships),
+        covariates={"claims": _covariates},
+        description_embedding_store=description_embedding_store,
+        response_type=response_type,
+    )
+
+    result = await search_engine.asearch(query=query)
+    reporter.success(f"Local Search Response: {result.response}")
+    return result.response
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def local_search_streaming(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    text_units: pd.DataFrame,
+    relationships: pd.DataFrame,
+    covariates: pd.DataFrame | None,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a local search and return results as a generator.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
+    - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = (
+        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+    reporter.info(f"Vector Store Args: {vector_store_args}")
+
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    description_embedding_store = _get_embedding_description_store(
+        entities=_entities,
+        vector_store_type=vector_store_type,
+        config_args=vector_store_args,
+    )
+
+    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+
+    search_engine = get_local_search_engine(
+        config=config,
+        reports=read_indexer_reports(community_reports, nodes, community_level),
+        text_units=read_indexer_text_units(text_units),
+        entities=_entities,
+        relationships=read_indexer_relationships(relationships),
+        covariates={"claims": _covariates},
+        description_embedding_store=description_embedding_store,
+        response_type=response_type,
+    )
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_result in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_result)
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_result
+
+
+def _get_embedding_description_store(
     entities: list[Entity],
     vector_store_type: str = VectorStoreType.LanceDB,
     config_args: dict | None = None,
@@ -97,249 +340,19 @@ def _reformat_context_data(context_data: dict) -> dict:
     dictionary keys.
 
     Note: depending on which query algorithm is used, the context_data may not
-          contain the same keys. In this case, the default behavior will be to
-          set these keys as empty lists in order to preserve a standard output format.
+          contain the same information (keys). In this case, the default behavior will be to
+          set these keys as empty lists to preserve a standard output format.
     """
-    final_format = {"reports": [], "entities": [], "relationships": [], "claims": []}
+    final_format = {
+        "reports": [],
+        "entities": [],
+        "relationships": [],
+        "claims": [],
+        "sources": [],
+    }
     for key in context_data:
         records = context_data[key].to_dict(orient="records")
         if len(records) < 1:
             continue
-        # sort records
-        if "rating" in records[0]:
-            records = sorted(records, key=lambda x: x["rating"], reverse=True)
         final_format[key] = records
     return final_format
-
-
-@validate_call(config={"arbitrary_types_allowed": True})
-async def global_search(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    community_level: int,
-    response_type: str,
-    query: str,
-) -> str | dict[str, Any] | list[dict[str, Any]]:
-    """Perform a global search.
-
-    Parameters
-    ----------
-    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - community_level (int): The community level to search at.
-    - response_type (str): The type of response to return.
-    - query (str): The user query to search for.
-
-    Returns
-    -------
-    TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
-    """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=_entities,
-        response_type=response_type,
-    )
-    result = await search_engine.asearch(query=query)
-    reporter.success(f"Global Search Response: {result.response}")
-    return result.response
-
-
-@validate_call(config={"arbitrary_types_allowed": True})
-async def global_search_streaming(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    community_level: int,
-    response_type: str,
-    query: str,
-) -> AsyncGenerator[str, None]:
-    """Perform a global search and return results as a generator.
-
-    Parameters
-    ----------
-    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - community_level (int): The community level to search at.
-    - response_type (str): The type of response to return.
-    - query (str): The user query to search for.
-
-    Returns
-    -------
-    TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
-    """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=_entities,
-        response_type=response_type,
-    )
-    results = search_engine.astream_search(query=query)
-    results.context_data = _reformat_context_data(results.context_data)
-    async for result in results:
-        yield result
-    for report in results.context_data["reports"]:
-        # map title into index_name, index_id and title for provenance tracking
-        context = dict(
-            {k: report[k] for k in report},
-            **{
-                "index_name": report["title"].split("<sep>")[0],
-                "index_id": report["title"].split("<sep>")[1],
-                "title": report["title"].split("<sep>")[2],
-            },
-        )
-
-
-@validate_call(config={"arbitrary_types_allowed": True})
-async def local_search(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    text_units: pd.DataFrame,
-    relationships: pd.DataFrame,
-    covariates: pd.DataFrame | None,
-    community_level: int,
-    response_type: str,
-    query: str,
-) -> str | dict[str, Any] | list[dict[str, Any]]:
-    """Perform a local search.
-
-    Parameters
-    ----------
-    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
-    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
-    - community_level (int): The community level to search at.
-    - response_type (str): The response type to return.
-    - query (str): The user query to search for.
-
-    Returns
-    -------
-    TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
-    """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    description_embedding_store = __get_embedding_description_store(
-        entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
-
-    search_engine = get_local_search_engine(
-        config=config,
-        reports=read_indexer_reports(community_reports, nodes, community_level),
-        text_units=read_indexer_text_units(text_units),
-        entities=_entities,
-        relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
-        description_embedding_store=description_embedding_store,
-        response_type=response_type,
-    )
-
-    result = await search_engine.asearch(query=query)
-    reporter.success(f"Local Search Response: {result.response}")
-    return result.response
-
-
-@validate_call(config={"arbitrary_types_allowed": True})
-async def local_search_streaming(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    text_units: pd.DataFrame,
-    relationships: pd.DataFrame,
-    covariates: pd.DataFrame | None,
-    community_level: int,
-    response_type: str,
-    query: str,
-) -> AsyncGenerator[str, None]:
-    """Perform a local search and return results as a generator.
-
-    Parameters
-    ----------
-    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
-    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
-    - community_level (int): The community level to search at.
-    - response_type (str): The response type to return.
-    - query (str): The user query to search for.
-
-    Returns
-    -------
-    TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
-    """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    description_embedding_store = __get_embedding_description_store(
-        entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
-
-    search_engine = get_local_search_engine(
-        config=config,
-        reports=read_indexer_reports(community_reports, nodes, community_level),
-        text_units=read_indexer_text_units(text_units),
-        entities=_entities,
-        relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
-        description_embedding_store=description_embedding_store,
-        response_type=response_type,
-    )
-
-    results = search_engine.astream_search(query=query)
-    async for result in results:
-        yield result
