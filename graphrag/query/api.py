@@ -130,13 +130,13 @@ async def global_search_streaming(
     # and the query response in subsequent tokens
     context_data = None
     get_context_data = True
-    async for stream_result in search_result:
+    async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_result)
+            context_data = _reformat_context_data(stream_chunk)
             yield context_data
             get_context_data = False
         else:
-            yield stream_result
+            yield stream_chunk
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -275,13 +275,13 @@ async def local_search_streaming(
     # and the query response in subsequent tokens
     context_data = None
     get_context_data = True
-    async for stream_result in search_result:
+    async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_result)
+            context_data = _reformat_context_data(stream_chunk)
             yield context_data
             get_context_data = False
         else:
-            yield stream_result
+            yield stream_chunk
 
 
 def _get_embedding_description_store(
