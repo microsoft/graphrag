@@ -323,4 +323,3 @@ def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
         datefmt="%H:%M:%S",
         level=logging.DEBUG if verbose else logging.INFO,
     )
-

@@ -16,17 +16,17 @@ from graphrag.index.progress import (
 
 
 def validate_config_names(
-    reporter: ProgressReporter,
-    parameters: GraphRagConfig) -> None:
+    reporter: ProgressReporter, parameters: GraphRagConfig
+) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     llm = load_llm(
-            "test-llm",
-            parameters.llm.type,
-            NoopVerbCallbacks(),
-            None,
-            parameters.llm.model_dump()
-        )
+        "test-llm",
+        parameters.llm.type,
+        NoopVerbCallbacks(),
+        None,
+        parameters.llm.model_dump(),
+    )
     try:
         asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
         reporter.success("LLM Config Params Validated")
@@ -40,7 +40,7 @@ def validate_config_names(
         parameters.embeddings.llm.type,
         NoopVerbCallbacks(),
         None,
-        parameters.embeddings.llm.model_dump()
+        parameters.embeddings.llm.model_dump(),
     )
     try:
         asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
