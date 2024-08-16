@@ -104,9 +104,9 @@ class GlobalSearch(BaseSearch):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator[str, None]:
+    ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, _ = self.context_builder.build_context(
+        context_chunks, context_records = self.context_builder.build_context(
             conversation_history=conversation_history, **self.context_builder_params
         )
         if self.callbacks:
@@ -122,6 +122,8 @@ class GlobalSearch(BaseSearch):
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
 
+        # send context records first before sending the reduce response
+        yield context_records
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,

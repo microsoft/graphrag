@@ -41,53 +41,6 @@ from .input.loaders.dfs import store_entity_semantic_embeddings
 reporter = PrintProgressReporter("")
 
 
-def __get_embedding_description_store(
-    entities: list[Entity],
-    vector_store_type: str = VectorStoreType.LanceDB,
-    config_args: dict | None = None,
-):
-    """Get the embedding description store."""
-    if not config_args:
-        config_args = {}
-
-    collection_name = config_args.get(
-        "query_collection_name", "entity_description_embeddings"
-    )
-    config_args.update({"collection_name": collection_name})
-    description_embedding_store = VectorStoreFactory.get_vector_store(
-        vector_store_type=vector_store_type, kwargs=config_args
-    )
-
-    description_embedding_store.connect(**config_args)
-
-    if config_args.get("overwrite", True):
-        # this step assumes the embeddings were originally stored in a file rather
-        # than a vector database
-
-        # dump embeddings from the entities list to the description_embedding_store
-        store_entity_semantic_embeddings(
-            entities=entities, vectorstore=description_embedding_store
-        )
-    else:
-        # load description embeddings to an in-memory lancedb vectorstore
-        # and connect to a remote db, specify url and port values.
-        description_embedding_store = LanceDBVectorStore(
-            collection_name=collection_name
-        )
-        description_embedding_store.connect(
-            db_uri=config_args.get("db_uri", "./lancedb")
-        )
-
-        # load data from an existing table
-        description_embedding_store.document_collection = (
-            description_embedding_store.db_connection.open_table(
-                description_embedding_store.collection_name
-            )
-        )
-
-    return description_embedding_store
-
-
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search(
     config: GraphRagConfig,
@@ -140,8 +93,10 @@ async def global_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
-) -> AsyncGenerator[str, None]:
+) -> AsyncGenerator:
     """Perform a global search and return results as a generator.
+
+    Context data is returned as a dictionary of lists, with one list entry for each record.
 
     Parameters
     ----------
@@ -169,9 +124,19 @@ async def global_search_streaming(
         entities=_entities,
         response_type=response_type,
     )
-    results = search_engine.astream_search(query=query)
-    async for result in results:
-        yield result
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_result in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_result)
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_result
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -218,7 +183,7 @@ async def local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
-    description_embedding_store = __get_embedding_description_store(
+    description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
@@ -254,7 +219,7 @@ async def local_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
-) -> AsyncGenerator[str, None]:
+) -> AsyncGenerator:
     """Perform a local search and return results as a generator.
 
     Parameters
@@ -286,7 +251,7 @@ async def local_search_streaming(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
-    description_embedding_store = __get_embedding_description_store(
+    description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
@@ -304,7 +269,90 @@ async def local_search_streaming(
         description_embedding_store=description_embedding_store,
         response_type=response_type,
     )
+    search_result = search_engine.astream_search(query=query)
 
-    results = search_engine.astream_search(query=query)
-    async for result in results:
-        yield result
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_result in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_result)
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_result
+
+
+def _get_embedding_description_store(
+    entities: list[Entity],
+    vector_store_type: str = VectorStoreType.LanceDB,
+    config_args: dict | None = None,
+):
+    """Get the embedding description store."""
+    if not config_args:
+        config_args = {}
+
+    collection_name = config_args.get(
+        "query_collection_name", "entity_description_embeddings"
+    )
+    config_args.update({"collection_name": collection_name})
+    description_embedding_store = VectorStoreFactory.get_vector_store(
+        vector_store_type=vector_store_type, kwargs=config_args
+    )
+
+    description_embedding_store.connect(**config_args)
+
+    if config_args.get("overwrite", True):
+        # this step assumes the embeddings were originally stored in a file rather
+        # than a vector database
+
+        # dump embeddings from the entities list to the description_embedding_store
+        store_entity_semantic_embeddings(
+            entities=entities, vectorstore=description_embedding_store
+        )
+    else:
+        # load description embeddings to an in-memory lancedb vectorstore
+        # and connect to a remote db, specify url and port values.
+        description_embedding_store = LanceDBVectorStore(
+            collection_name=collection_name
+        )
+        description_embedding_store.connect(
+            db_uri=config_args.get("db_uri", "./lancedb")
+        )
+
+        # load data from an existing table
+        description_embedding_store.document_collection = (
+            description_embedding_store.db_connection.open_table(
+                description_embedding_store.collection_name
+            )
+        )
+
+    return description_embedding_store
+
+
+def _reformat_context_data(context_data: dict) -> dict:
+    """
+    Reformats context_data for all query responses.
+
+    Reformats a dictionary of dataframes into a dictionary of lists.
+    One list entry for each record. Records are grouped by original
+    dictionary keys.
+
+    Note: depending on which query algorithm is used, the context_data may not
+          contain the same information (keys). In this case, the default behavior will be to
+          set these keys as empty lists to preserve a standard output format.
+    """
+    final_format = {
+        "reports": [],
+        "entities": [],
+        "relationships": [],
+        "claims": [],
+        "sources": [],
+    }
+    for key in context_data:
+        records = context_data[key].to_dict(orient="records")
+        if len(records) < 1:
+            continue
+        final_format[key] = records
+    return final_format
