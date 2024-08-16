@@ -1,12 +1,25 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Attach to Node Functions",
-			"type": "node",
-			"request": "attach",
-			"port": 9229,
-			"preLaunchTask": "func: host start"
-		}
-	]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Indexer",
+            "type": "debugpy",
+            "python": "E:\\graphrag\\.venv\\Scripts\\python.exe",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "poetry",
+            "args": ["poe", "index",  "--root", ".\\ragtest6"],
+            "stopOnEntry": false
+        },
+        {
+            "name": "QUery",
+            "type": "debugpy",
+            "python": "E:\\graphrag\\.venv\\Scripts\\python.exe",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "poetry",
+            "args": ["poe", "query", "--root", ".\\ragtest6", "--method", "local", "Who provided access to Amritpal at first place to Unified Feedback KV Certificate?"],
+            "stopOnEntry": false
+        }
+    ]
 }

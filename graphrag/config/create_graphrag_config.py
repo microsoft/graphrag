@@ -608,6 +608,7 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
+    output = "OUTPUT"
 
 
 class Section(str, Enum):

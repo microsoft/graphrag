@@ -45,6 +45,7 @@ async def load(
             re.compile(config.file_pattern),
             progress=progress,
             file_filter=config.file_filter,
+            base_dir=config.base_dir,
         )
     )
     #change here to run indexer on each file one by one. 
