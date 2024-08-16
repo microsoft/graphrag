@@ -52,7 +52,7 @@ def run_global_search(
 
     # call the Query API
     if not streaming:
-        return asyncio.run(
+        response = asyncio.run(
             api.global_search(
                 config=config,
                 nodes=final_nodes,
@@ -63,25 +63,27 @@ def run_global_search(
                 query=query,
             )
         )
-    # else streaming
-    async def run_streaming_search():
-        full_response = ""
-        async for token in api.global_search_streaming(
-            config=config,
-            nodes=final_nodes,
-            entities=final_entities,
-            community_reports=final_community_reports,
-            community_level=community_level,
-            response_type=response_type,
-            query=query,
-        ):
-            print(token, end="")  # noqa: T201
-            sys.stdout.flush()  # flush output buffer to display text immediately
-            full_response += token
-        print()  # noqa: T201
-        return full_response
+        print(type(response))
+        print(response)
+    else: # streaming
+        async def run_streaming_search():
+            full_response = ""
+            async for token in api.global_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                print(token, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += token
+            print()  # noqa: T201
+            return full_response
 
-    return asyncio.run(run_streaming_search())
+        return asyncio.run(run_streaming_search())
 
 
 def run_local_search(

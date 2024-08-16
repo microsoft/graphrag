@@ -88,6 +88,30 @@ def __get_embedding_description_store(
     return description_embedding_store
 
 
+def _reformat_context_data(context_data: dict) -> dict:
+    """
+    Reformats context_data for all query responses.
+
+    Reformats a dictionary of dataframes into a dictionary of lists.
+    One list entry for each record. Records are grouped by original
+    dictionary keys.
+
+    Note: depending on which query algorithm is used, the context_data may not
+          contain the same keys. In this case, the default behavior will be to
+          set these keys as empty lists in order to preserve a standard output format.
+    """
+    final_format = {"reports": [], "entities": [], "relationships": [], "claims": []}
+    for key in context_data:
+        records = context_data[key].to_dict(orient="records")
+        if len(records) < 1:
+            continue
+        # sort records
+        if "rating" in records[0]:
+            records = sorted(records, key=lambda x: x["rating"], reverse=True)
+        final_format[key] = records
+    return final_format
+
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search(
     config: GraphRagConfig,
@@ -170,8 +194,19 @@ async def global_search_streaming(
         response_type=response_type,
     )
     results = search_engine.astream_search(query=query)
+    results.context_data = _reformat_context_data(results.context_data)
     async for result in results:
         yield result
+    for report in results.context_data["reports"]:
+        # map title into index_name, index_id and title for provenance tracking
+        context = dict(
+            {k: report[k] for k in report},
+            **{
+                "index_name": report["title"].split("<sep>")[0],
+                "index_id": report["title"].split("<sep>")[1],
+                "title": report["title"].split("<sep>")[2],
+            },
+        )
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
