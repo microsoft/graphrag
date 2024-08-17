@@ -89,6 +89,7 @@ def run_global_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    context_id: str,
     query: str,
 ):
     """Run a global search with the given query."""
@@ -130,6 +131,7 @@ def run_local_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    context_id: str,
     query: str,
 ):
     """Run a local search with the given query."""
@@ -138,7 +140,7 @@ def run_local_search(
     )
     
     data_paths = []
-    data_paths = ["131e6f80-6ba2-407a-811a-926612fbfb32/V1.0/output/artifacts", "7a10bc92-3fa7-4b06-96be-1d3d204c6cde/V1.0/output/artifacts"]
+    data_paths = get_files_by_context(config, context_id)
     #data_paths = [Path("E:\\graphrag\\ragtest6\\output\\AtoG\\artifacts")]
     #data_paths = [Path("E:\\graphrag\\auditlogstest\\output\\securityPlatformPPE\\artifacts"),Path("E:\\graphrag\\auditlogstest\\output\\UnifiedFeedbackPPE\\artifacts")]
     #data_paths.append(Path(data_dir))
@@ -151,7 +153,7 @@ def run_local_search(
     for data_path in data_paths:
         #check from the config for the ouptut storage type and then read the data from the storage.
         
-        
+        #GraphDB: we may need to make change below to read nodes data from Graph DB
         final_nodes = pd.concat([final_nodes, read_paraquet_file(config, data_path + "/create_final_nodes.parquet", config.storage.type)])
         
         final_community_reports = pd.concat([final_community_reports,read_paraquet_file(config, data_path + "/create_final_community_reports.parquet", config.storage.type)])
@@ -172,7 +174,7 @@ def run_local_search(
     )
 
     reporter.info(f"Vector Store Args: {vector_store_args}")
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB) # verify kusto vector store here.
 
     entities = read_indexer_entities(final_nodes, final_entities, community_level) # Change it to read file specific indexer files.
     description_embedding_store = __get_embedding_description_store(
@@ -203,6 +205,10 @@ def run_local_search(
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
 
+def get_files_by_context(config: GraphRagConfig, context_id: str):
+    data_paths = config.query_context.files
+    return data_paths
+    
 def blob_exists(container_client, blob_name):
     blob_client = container_client.get_blob_client(blob_name)
     try:
@@ -225,11 +231,11 @@ def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageTyp
             bytes_io = BytesIO(blob_data.readall())
             return pd.read_parquet(bytes_io, engine="pyarrow")
         else:
-            return pd.DataFrame()
+            return pd.DataFrame() # return empty data frame as covariates file doesn't exist
     else:
-        data_path = Path(path)
-        if not data_path.exists():
-            raise ValueError(f"Data path {data_path} does not exist.")
+        file_path = Path(path)
+        if not file_path.exists():
+            raise ValueError(f"Data path {file_path} does not exist.")
         return pd.read_parquet(path)
 
 def _configure_paths_and_settings(

@@ -70,11 +70,20 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--context_id",
+        help="Guid describing context in which the search should be performed",
+        type=str,
+        default="00000000-0000-0000-0000-000000000000",
+    )
+
+    parser.add_argument(
         "query",
         nargs=1,
         help="The query to run",
         type=str,
     )
+
+   
 
     args = parser.parse_args()
 
@@ -86,6 +95,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.context_id,
                 args.query[0],
             )
         case SearchType.GLOBAL:
@@ -95,6 +105,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.context_id,
                 args.query[0],
             )
         case _:
