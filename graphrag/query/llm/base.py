@@ -59,6 +59,7 @@ class BaseLLM(ABC):
         **kwargs: Any,
     ) -> AsyncGenerator[str, None]:
         """Generate a response asynchronously with streaming."""
+        ...
 
 
 class BaseTextEmbedding(ABC):
