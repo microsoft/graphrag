@@ -47,7 +47,7 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
         text_unit_ids_col=None,
     )
 
-
+# GraphDB: read relationshiops from the graph db.
 def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
     return read_relationships(

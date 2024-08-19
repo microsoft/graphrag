@@ -113,3 +113,15 @@ class LLMType(str, Enum):
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
+
+class ContextSwitchType(str, Enum):
+    """context switcher type."""
+    
+    #context switch types
+    Activate = "activate"
+    Deactivate= "deactivate"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+

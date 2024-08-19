@@ -8,6 +8,7 @@ from .create_graphrag_config import (
 )
 from .enums import (
     CacheType,
+    ContextSwitchType,
     InputFileType,
     InputType,
     LLMType,
@@ -57,6 +58,7 @@ from .models import (
     LLMParameters,
     LocalSearchConfig,
     ParallelizationParameters,
+    QueryContextConfig,
     ReportingConfig,
     SnapshotsConfig,
     StorageConfig,
@@ -71,6 +73,7 @@ __all__ = [
     "AzureApiBaseMissingError",
     "AzureDeploymentNameMissingError",
     "CacheConfig",
+    "ContextSwitchType",
     "CacheConfigInput",
     "CacheType",
     "ChunkingConfig",
@@ -102,6 +105,8 @@ __all__ = [
     "LocalSearchConfigInput",
     "ParallelizationParameters",
     "ParallelizationParametersInput",
+    "QueryContextConfig",
+    "QueryContextConfigInput",
     "ReportingConfig",
     "ReportingConfigInput",
     "ReportingType",

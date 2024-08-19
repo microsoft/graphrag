@@ -47,6 +47,7 @@ from .models import (
     LLMParameters,
     LocalSearchConfig,
     ParallelizationParameters,
+    QueryContextConfig,
     ReportingConfig,
     SnapshotsConfig,
     StorageConfig,
@@ -539,6 +540,14 @@ def create_graphrag_config(
                 or defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS,
                 concurrency=reader.int("concurrency") or defs.GLOBAL_SEARCH_CONCURRENCY,
             )
+        
+        with (
+            reader.use(values.get("query_context")),
+            reader.envvar_prefix(Section.query_context),
+        ):
+            query_context_model = QueryContextConfig(
+                files=reader.list("files") or [],
+            )
 
         encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
         skip_workflows = reader.list("skip_workflows") or []
@@ -566,6 +575,7 @@ def create_graphrag_config(
         skip_workflows=skip_workflows,
         local_search=local_search_model,
         global_search=global_search_model,
+        query_context=query_context_model
     )
 
 
@@ -608,6 +618,7 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
+    output = "OUTPUT"
 
 
 class Section(str, Enum):
@@ -631,6 +642,7 @@ class Section(str, Enum):
     umap = "UMAP"
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
+    query_context = "QUERY_CONTEXT"
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:

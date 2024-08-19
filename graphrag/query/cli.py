@@ -6,6 +6,9 @@
 import os
 from pathlib import Path
 from typing import cast
+from io import BytesIO
+from graphrag.config.enums import StorageType
+from azure.core.exceptions import ResourceNotFoundError
 
 import pandas as pd
 
@@ -20,6 +23,7 @@ from graphrag.query.input.loaders.dfs import (
 )
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag.common.blob_storage_client import BlobStorageClient
 
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
@@ -31,7 +35,6 @@ from .indexer_adapters import (
 )
 
 reporter = PrintProgressReporter("")
-
 
 def __get_embedding_description_store(
     entities: list[Entity],
@@ -86,6 +89,7 @@ def run_global_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    context_id: str,
     query: str,
 ):
     """Run a global search with the given query."""
@@ -127,38 +131,52 @@ def run_local_search(
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    context_id: str,
     query: str,
 ):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
-    data_path = Path(data_dir)
+    
+    data_paths = []
+    data_paths = get_files_by_context(config, context_id)
+    #data_paths = [Path("E:\\graphrag\\ragtest6\\output\\AtoG\\artifacts")]
+    #data_paths = [Path("E:\\graphrag\\auditlogstest\\output\\securityPlatformPPE\\artifacts"),Path("E:\\graphrag\\auditlogstest\\output\\UnifiedFeedbackPPE\\artifacts")]
+    #data_paths.append(Path(data_dir))
+    final_nodes = pd.DataFrame()
+    final_community_reports = pd.DataFrame()
+    final_text_units = pd.DataFrame()
+    final_relationships = pd.DataFrame()
+    final_entities = pd.DataFrame()
+    final_covariates = pd.DataFrame()
+    for data_path in data_paths:
+        #check from the config for the ouptut storage type and then read the data from the storage.
+        
+        #GraphDB: we may need to make change below to read nodes data from Graph DB
+        final_nodes = pd.concat([final_nodes, read_paraquet_file(config, data_path + "/create_final_nodes.parquet", config.storage.type)])
+        
+        final_community_reports = pd.concat([final_community_reports,read_paraquet_file(config, data_path + "/create_final_community_reports.parquet", config.storage.type)])
+        
+        final_text_units = pd.concat([final_text_units, read_paraquet_file(config, data_path + "/create_final_text_units.parquet", config.storage.type)])
+        
+        final_relationships = pd.concat([final_relationships, read_paraquet_file(config, data_path + "/create_final_relationships.parquet", config.storage.type)])
 
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
-    final_community_reports = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
-    )
-    final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
-    final_relationships = pd.read_parquet(
-        data_path / "create_final_relationships.parquet"
-    )
-    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
-    final_covariates_path = data_path / "create_final_covariates.parquet"
-    final_covariates = (
-        pd.read_parquet(final_covariates_path)
-        if final_covariates_path.exists()
-        else None
-    )
+
+        final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
+
+        final_covariates = pd.concat([final_covariates, (
+            read_paraquet_file(config, data_path + "/create_final_covariates.parquet", config.storage.type)
+        )])
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
 
     reporter.info(f"Vector Store Args: {vector_store_args}")
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB) # verify kusto vector store here.
 
-    entities = read_indexer_entities(final_nodes, final_entities, community_level)
+    entities = read_indexer_entities(final_nodes, final_entities, community_level) # Change it to read file specific indexer files.
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
         vector_store_type=vector_store_type,
@@ -166,7 +184,7 @@ def run_local_search(
     )
     covariates = (
         read_indexer_covariates(final_covariates)
-        if final_covariates is not None
+        if final_covariates.empty is False
         else []
     )
 
@@ -187,8 +205,41 @@ def run_local_search(
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
 
+def get_files_by_context(config: GraphRagConfig, context_id: str):
+    data_paths = config.query_context.files
+    return data_paths
+    
+def blob_exists(container_client, blob_name):
+    blob_client = container_client.get_blob_client(blob_name)
+    try:
+        # Attempt to get the blob properties
+        blob_client.get_blob_properties()
+        return True
+    except ResourceNotFoundError:
+        # Blob does not exist
+        return False
+
+
+def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageType):
+    #create different enum for paraquet storage type
+    if storageType == StorageType.blob:
+        container_name = config.input.container_name or ""
+        blobStorageClient = BlobStorageClient(connection_string=config.input.connection_string, container_name=container_name, encoding="utf-8")
+        container_client = blobStorageClient.get_container_client()
+        if blob_exists(container_client, path):
+            blob_data = container_client.download_blob(blob=path)
+            bytes_io = BytesIO(blob_data.readall())
+            return pd.read_parquet(bytes_io, engine="pyarrow")
+        else:
+            return pd.DataFrame() # return empty data frame as covariates file doesn't exist
+    else:
+        file_path = Path(path)
+        if not file_path.exists():
+            raise ValueError(f"Data path {file_path} does not exist.")
+        return pd.read_parquet(path)
 
 def _configure_paths_and_settings(
+        
     data_dir: str | None,
     root_dir: str | None,
     config_dir: str | None,

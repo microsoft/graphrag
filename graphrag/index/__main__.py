@@ -68,6 +68,18 @@ if __name__ == "__main__":
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
     )
+    parser.add_argument(
+        "--contextId",
+        help="Context id to activate or deactivate.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--contextOperation",
+        help="Context operation activate or deactivate.",
+        # Only required if contextId is provided
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     if args.overlay_defaults and not args.config:
@@ -86,4 +98,6 @@ if __name__ == "__main__":
         init=args.init or False,
         overlay_defaults=args.overlay_defaults or False,
         cli=True,
+        contextId=args.contextId,
+        contextOperation=args.contextOperation,
     )

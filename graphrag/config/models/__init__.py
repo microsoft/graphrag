@@ -17,6 +17,7 @@ from .llm_config import LLMConfig
 from .llm_parameters import LLMParameters
 from .local_search_config import LocalSearchConfig
 from .parallelization_parameters import ParallelizationParameters
+from .query_context_config import QueryContextConfig
 from .reporting_config import ReportingConfig
 from .snapshots_config import SnapshotsConfig
 from .storage_config import StorageConfig
@@ -39,6 +40,7 @@ __all__ = [
     "LLMParameters",
     "LocalSearchConfig",
     "ParallelizationParameters",
+    "QueryContextConfig",
     "ReportingConfig",
     "SnapshotsConfig",
     "StorageConfig",

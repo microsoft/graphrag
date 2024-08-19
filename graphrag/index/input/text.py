@@ -30,7 +30,7 @@ async def load(
     """Load text inputs from a directory."""
 
     async def load_file(
-        path: str, group: dict | None = None, _encoding: str = "utf-8"
+        path: str, group: dict | None = None, _encoding: str = "utf-8" #what is group here, can be used as context?
     ) -> dict[str, Any]:
         if group is None:
             group = {}
@@ -45,8 +45,10 @@ async def load(
             re.compile(config.file_pattern),
             progress=progress,
             file_filter=config.file_filter,
+            base_dir=config.base_dir,
         )
     )
+    #change here to run indexer on each file one by one. 
     if len(files) == 0:
         msg = f"No text files found in {config.base_dir}"
         raise ValueError(msg)
