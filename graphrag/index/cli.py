@@ -176,14 +176,12 @@ def index_cli(
 
         async def execute():
             nonlocal encountered_errors
-            outputs = asyncio.run(
-                build_index(
-                    default_config,
-                    progress_reporter,
-                    run_id,
-                    memprofile,
-                    pipeline_emit,
-                )
+            outputs = await build_index(
+                default_config,
+                progress_reporter,
+                run_id,
+                memprofile,
+                pipeline_emit,
             )
             encountered_errors = any(
                 output.errors and len(output.errors) > 0 for output in outputs
