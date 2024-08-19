@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Avoid running index on gh-pages publishing"
+}
