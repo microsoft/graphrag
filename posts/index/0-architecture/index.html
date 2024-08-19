@@ -308,14 +308,14 @@ In DataShaper, these verbs model relational concepts such as SELECT, DROP, JOIN,
 <h3>Workflow Graphs</h3>
 <p>Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.
 In the GraphRAG Indexing Pipeline, each workflow may define dependencies on other workflows, effectively forming a directed acyclic graph (DAG) of workflows, which is then used to schedule processing.</p>
-<pre class="mermaid">---&#10;title: Sample Workflow DAG&#10;---&#10;stateDiagram-v2&#10;    [*] --&gt; Prepare&#10;    Prepare --&gt; Chunk&#10;    Chunk --&gt; ExtractGraph&#10;    Chunk --&gt; EmbedDocuments&#10;    ExtractGraph --&gt; GenerateReports&#10;    ExtractGraph --&gt; EmbedGraph&#10;    EntityResolution --&gt; EmbedGraph&#10;    EntityResolution --&gt; GenerateReports&#10;    ExtractGraph --&gt; EntityResolution&#10;</pre>
+<pre class="mermaid">---&#10;title: Sample Workflow DAG&#10;---&#10;stateDiagram-v2&#10;    [*] --&gt; Prepare&#10;    Prepare --&gt; Chunk&#10;    Chunk --&gt; ExtractGraph&#10;    Chunk --&gt; EmbedDocuments&#10;    ExtractGraph --&gt; GenerateReports&#10;    ExtractGraph --&gt; EmbedEntities&#10;    ExtractGraph --&gt; EmbedGraph&#10;</pre>
 <h3>Dataframe Message Format</h3>
 <p>The primary unit of communication between workflows, and between workflow steps is an instance of <code>pandas.DataFrame</code>.
 Although side-effects are possible, our goal is to be <em>data-centric</em> and <em>table-centric</em> in our approach to data processing.
 This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
 Our underlying dataframe technology may change over time, but our primary goal is to support the DataShaper workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
 <h3>LLM Caching</h3>
-<p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors errors due to network latency, throttling, etc..
+<p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
 Because of these potential error cases, we've added a cache layer around LLM interactions.
 When completion requests are made using the same input set (prompt and tuning parameters), we return a cached result if one exists.
 This allows our indexer to be more resilient to network issues, to act idempotently, and to provide a more efficient end-user experience.</p>

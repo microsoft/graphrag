@@ -395,7 +395,9 @@ relationship_df<span class="token punctuation">.</span>head<span class="token pu
 </div>
 
 <div style="position: relative">
-  <pre class="language-python"><code id="code-30" class="language-python">covariate_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COVARIATE_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
+  <pre class="language-python"><code id="code-30" class="language-python"><span class="token comment"># NOTE: covariates are turned off by default, because they generally need prompt tuning to be valuable</span>
+<span class="token comment"># Please see the GRAPHRAG_CLAIM_* settings</span>
+covariate_df <span class="token operator">=</span> pd<span class="token punctuation">.</span>read_parquet<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"</span><span class="token interpolation"><span class="token punctuation">{</span>INPUT_DIR<span class="token punctuation">}</span></span><span class="token string">/</span><span class="token interpolation"><span class="token punctuation">{</span>COVARIATE_TABLE<span class="token punctuation">}</span></span><span class="token string">.parquet"</span></span><span class="token punctuation">)</span>
 
 claims <span class="token operator">=</span> read_indexer_covariates<span class="token punctuation">(</span>covariate_df<span class="token punctuation">)</span>
 
@@ -468,6 +470,7 @@ text_embedder <span class="token operator">=</span> OpenAIEmbedding<span class="
     text_units<span class="token operator">=</span>text_units<span class="token punctuation">,</span>
     entities<span class="token operator">=</span>entities<span class="token punctuation">,</span>
     relationships<span class="token operator">=</span>relationships<span class="token punctuation">,</span>
+    <span class="token comment"># if you did not run covariates during indexing, set this to None</span>
     covariates<span class="token operator">=</span>covariates<span class="token punctuation">,</span>
     entity_text_embeddings<span class="token operator">=</span>description_embedding_store<span class="token punctuation">,</span>
     embedding_vectorstore_key<span class="token operator">=</span>EntityVectorStoreKey<span class="token punctuation">.</span>ID<span class="token punctuation">,</span>  <span class="token comment"># if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE</span>
