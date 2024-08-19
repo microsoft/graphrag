@@ -1,0 +1,52 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+import asyncio
+import os
+import pandas as pd
+from graphrag.index import run_pipeline_with_config
+
+# Path to the pipeline configuration file
+pipeline_file = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "pipeline.yml"
+)
+
+async def run_pipeline():
+    """
+    Executes the pipeline with the provided configuration and dataset.
+    """
+    try:
+        # Load the dataset
+        dataset = _load_dataset()
+
+        # Ensure the pipeline file exists
+        if not os.path.exists(pipeline_file):
+            raise FileNotFoundError(f"Pipeline file not found: {pipeline_file}")
+
+        # Run the pipeline and collect results
+        outputs = []
+        async for output in run_pipeline_with_config(config_or_path=pipeline_file, dataset=dataset):
+            outputs.append(output)
+
+        # Check and display the final result
+        if outputs:
+            pipeline_result = outputs[-1]
+            if pipeline_result.result is not None:
+                print(pipeline_result.result)
+            else:
+                print("Pipeline executed, but no results were produced!")
+        else:
+            print("Pipeline executed, but no outputs were generated!")
+
+    except Exception as e:
+        print(f"An error occurred during pipeline execution: {e}")
+
+def _load_dataset() -> pd.DataFrame:
+    """
+    Loads the dataset in a predefined way.
+    Modify this function to load your dataset from the appropriate source.
+    """
+    return pd.DataFrame([{"col1": 2, "col2": 4}, {"col1": 5, "col2": 10}])
+
+if __name__ == "__main__":
+    asyncio.run(run_pipeline())
