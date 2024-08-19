@@ -7,9 +7,9 @@ from pathlib import Path
 import nbformat
 import pytest
 
-DOCS_PATH = Path("../../docsite")
+NOTEBOOKS_PATH = Path("examples_notebooks")
 
-notebooks_list = list(DOCS_PATH.rglob("*.ipynb"))
+notebooks_list = list(NOTEBOOKS_PATH.rglob("*.ipynb"))
 
 
 def _notebook_run(filepath: Path):
