@@ -6,6 +6,7 @@
 import asyncio
 import json
 import logging
+import platform
 import sys
 import time
 import warnings
@@ -167,21 +168,47 @@ def index_cli(
         sys.exit(0)
 
     pipeline_emit = emit.split(",") if emit else None
-    _register_signal_handlers(progress_reporter)
 
-    outputs = asyncio.run(
-        build_index(
-            default_config,
-            progress_reporter,
-            run_id,
-            memprofile,
-            pipeline_emit,
-        )
-    )
+    encountered_errors = False
+
+    def _run_workflow_sync():
+        _register_signal_handlers(progress_reporter)
+
+        async def execute():
+            nonlocal encountered_errors
+            outputs = asyncio.run(
+                build_index(
+                    default_config,
+                    progress_reporter,
+                    run_id,
+                    memprofile,
+                    pipeline_emit,
+                )
+            )
+            encountered_errors = any(
+                output.errors and len(output.errors) > 0 for output in outputs
+            )
+
+        if platform.system() == "Windows":
+            import nest_asyncio  # type: ignore Ignoring because out of windows this will cause an error
+
+            nest_asyncio.apply()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(execute())
+        elif sys.version_info >= (3, 11):
+            import uvloop  # type: ignore Ignoring because on windows this will cause an error
+
+            with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:  # type: ignore Ignoring because minor versions this will throw an error
+                runner.run(execute())
+        else:
+            import uvloop  # type: ignore Ignoring because on windows this will cause an error
+
+            uvloop.install()
+            asyncio.run(execute())
+
+    _run_workflow_sync()
     progress_reporter.stop()
-    encountered_errors = any(
-        output.errors and len(output.errors) > 0 for output in outputs
-    )
+
     if encountered_errors:
         error(
             "Errors occurred during the pipeline run, see logs for more details.", True
