@@ -17,20 +17,16 @@ from graphrag.config.config_file_loader import (
     resolve_config_path_with_root,
 )
 from graphrag.config.enums import CacheType
+from graphrag.config.logging import enable_logging_with_config
 
-from .api import (
-    build_index,
-    enable_logging_with_config,
-    load_progress_reporter,
-)
+from .api import build_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .init_content import INIT_DOTENV, INIT_YAML
-from .progress import (
-    ProgressReporter,
-)
+from .progress import ProgressReporter
+from .progress.load_progress_reporter import load_progress_reporter
 from .validate_config import validate_config_names
 
 # Ignore warnings from numba
@@ -175,9 +171,9 @@ def index_cli(
     outputs = asyncio.run(
         build_index(
             default_config,
-            progress_reporter,
             run_id,
             memprofile,
+            progress_reporter,
             pipeline_emit,
         )
     )
