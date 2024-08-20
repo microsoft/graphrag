@@ -73,8 +73,8 @@ def redact(input: dict) -> str:
 def index_cli(
     root: str,
     init: bool,
-    contextOperation: str | None,
-    contextId: str | None,
+    context_operation: str | None,
+    context_id: str | None,
     verbose: bool,
     resume: str | None,
     memprofile: bool,
@@ -101,13 +101,13 @@ def index_cli(
         pipeline_config: str | PipelineConfig = config or _create_default_config(
             root, None, verbose, dryrun or False, progress_reporter
         )
-    if contextId:
-        if not is_valid_guid(contextId):
+    if context_id:
+        if not is_valid_guid(context_id):
             ValueError("ContextId is invalid: It should be a valid Guid")
-        if (contextOperation != ContextSwitchType.Activate or contextOperation != ContextSwitchType.Deactivate):
+        if (context_operation != ContextSwitchType.Activate and context_operation != ContextSwitchType.Deactivate):
             ValueError("ContextOperation is invalid: It should be Active or DeActive")
         graphrag_config = _read_config_parameters(root, config, progress_reporter)
-        _switch_context(graphrag_config, contextOperation, contextId, progress_reporter)
+        _switch_context(graphrag_config, context_operation, context_id, progress_reporter)
         sys.exit(0)
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None

@@ -53,6 +53,19 @@ if __name__ == "__main__":
         type=str,
     )
     parser.add_argument(
+        "--context-id",
+        required=False,
+        help="Context id to activate or deactivate.",
+        type=str
+    )
+    parser.add_argument(
+        "--context-operation",
+        help="Context operation activate or deactivate.",
+        required=False,
+        # Only required if contextId is provided
+        type=str
+    )
+    parser.add_argument(
         "--dryrun",
         help="Run the pipeline without actually executing any steps and inspect the configuration.",
         action="store_true",
@@ -67,17 +80,6 @@ if __name__ == "__main__":
         "--overlay-defaults",
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
-    )
-    parser.add_argument(
-        "--contextId",
-        help="Context id to activate or deactivate.",
-        type=str
-    )
-    parser.add_argument(
-        "--contextOperation",
-        help="Context operation activate or deactivate.",
-        # Only required if contextId is provided
-        type=str
     )
 
     args = parser.parse_args()
@@ -98,6 +100,6 @@ if __name__ == "__main__":
         init=args.init or False,
         overlay_defaults=args.overlay_defaults or False,
         cli=True,
-        contextId=args.contextId,
-        contextOperation=args.contextOperation,
+        context_id=args.context_id,
+        context_operation=args.context_operation,
     )
