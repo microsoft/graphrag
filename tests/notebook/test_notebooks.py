@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 import subprocess
-import os
 from pathlib import Path
 
 import nbformat
