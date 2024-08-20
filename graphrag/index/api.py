@@ -15,8 +15,8 @@ from graphrag.config.enums import CacheType, ReportingType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
 
-from . import create_pipeline_config as cpc
 from .cache.noop_pipeline_cache import NoopPipelineCache
+from .create_pipeline_config import create_pipeline_config
 from .emit.types import TableEmitterType
 from .progress import (
     NullProgressReporter,
@@ -26,8 +26,6 @@ from .progress import (
 from .progress.rich import RichProgressReporter
 from .run import run_pipeline_with_config
 from .typing import PipelineRunResult
-
-create_pipeline_config = cpc
 
 
 def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
