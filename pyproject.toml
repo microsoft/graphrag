@@ -45,7 +45,7 @@ azure-search-documents = "^11.4.0"
 lancedb = "^0.11.0"
 
 # Event Loops
-uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
+uvloop = { version = "^0.20.0", markers = "platform_system != 'Windows'" }
 nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
 
 # Async IO
