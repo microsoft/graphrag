@@ -381,6 +381,7 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
+                overwrite=reader.bool(Fragment.overwrite) or False
             )
         with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
             group_by_columns = reader.list("group_by_columns", "BY_COLUMNS")
@@ -589,6 +590,7 @@ class Fragment(str, Enum):
     api_proxy = "API_PROXY"
     async_mode = "ASYNC_MODE"
     base_dir = "BASE_DIR"
+    overwrite = "Overwrite"
     cognitive_services_endpoint = "COGNITIVE_SERVICES_ENDPOINT"
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"

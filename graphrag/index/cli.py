@@ -10,13 +10,14 @@ import platform
 import sys
 import time
 import warnings
-from enum import Enum
 from pathlib import Path
 
 from graphrag.config import (
+    GraphRagConfig,
     create_graphrag_config,
 )
 from graphrag.config.enums import ContextSwitchType
+from graphrag.common.utils.common_utils import is_valid_guid
 from graphrag.index import PipelineConfig, create_pipeline_config
 from graphrag.index.cache import NoopPipelineCache
 from graphrag.index.progress import (
@@ -38,7 +39,6 @@ from .init_content import INIT_DOTENV, INIT_YAML
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
 log = logging.getLogger(__name__)
-
 
 def redact(input: dict) -> str:
     """Sanitize the config json."""
@@ -102,7 +102,12 @@ def index_cli(
             root, None, verbose, dryrun or False, progress_reporter
         )
     if contextId:
-        _switch_context(pipeline_config, contextOperation, contextId, progress_reporter)
+        if not is_valid_guid(contextId):
+            ValueError("ContextId is invalid: It should be a valid Guid")
+        if (contextOperation != ContextSwitchType.Activate or contextOperation != ContextSwitchType.Deactivate):
+            ValueError("ContextOperation is invalid: It should be Active or DeActive")
+        graphrag_config = _read_config_parameters(root, config, progress_reporter)
+        _switch_context(graphrag_config, contextOperation, contextId, progress_reporter)
         sys.exit(0)
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
@@ -177,7 +182,7 @@ def index_cli(
     if cli:
         sys.exit(1 if encountered_errors else 0)
 
-def _switch_context(config: PipelineConfig | str, context_operation: str | None, context_id: str, reporter: ProgressReporter) -> None:
+def _switch_context(config: GraphRagConfig | str, context_operation: str | None, context_id: str, reporter: ProgressReporter) -> None:
     """Switch the context to the given context."""
     reporter.info(f"Switching context to {context_id} using operation {context_operation}")
     from graphrag.index.context_switch.contextSwitcher import ContextSwitcher

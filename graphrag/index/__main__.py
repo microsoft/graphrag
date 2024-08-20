@@ -71,13 +71,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--contextId",
         help="Context id to activate or deactivate.",
-        action="store_true",
+        type=str
     )
     parser.add_argument(
         "--contextOperation",
         help="Context operation activate or deactivate.",
         # Only required if contextId is provided
-        action="store_true",
+        type=str
     )
 
     args = parser.parse_args()

@@ -7,14 +7,15 @@ import os
 from pathlib import Path
 from typing import cast
 from io import BytesIO
+from graphrag.common.utils.context_utils import get_files_by_contextid
 from graphrag.config.enums import StorageType
 from azure.core.exceptions import ResourceNotFoundError
 
 import pandas as pd
 
 from graphrag.config import (
-    GraphRagConfig,
     create_graphrag_config,
+    GraphRagConfig,
 )
 from graphrag.index.progress import PrintProgressReporter
 from graphrag.model.entity import Entity
@@ -140,7 +141,7 @@ def run_local_search(
     )
     
     data_paths = []
-    data_paths = get_files_by_context(config, context_id)
+    data_paths = get_files_by_contextid(config, context_id)
     #data_paths = [Path("E:\\graphrag\\ragtest6\\output\\AtoG\\artifacts")]
     #data_paths = [Path("E:\\graphrag\\auditlogstest\\output\\securityPlatformPPE\\artifacts"),Path("E:\\graphrag\\auditlogstest\\output\\UnifiedFeedbackPPE\\artifacts")]
     #data_paths.append(Path(data_dir))
@@ -204,10 +205,6 @@ def run_local_search(
     result = search_engine.search(query=query)
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
-
-def get_files_by_context(config: GraphRagConfig, context_id: str):
-    data_paths = config.query_context.files
-    return data_paths
     
 def blob_exists(container_client, blob_name):
     blob_client = container_client.get_blob_client(blob_name)

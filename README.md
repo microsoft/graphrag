@@ -69,3 +69,7 @@ Any use of third-party trademarks or logos are subject to those third-party's po
 ## Privacy
 
 [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement)
+
+
+## Updates
+- add new settings query_context -> files [file1, file2, file3]
