@@ -46,7 +46,6 @@ jobs:
               - '**/*.toml'
               - '**/*.ipynb'
               - '.github/workflows/python*.yml'
-              - 'tests/smoke/*'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -64,6 +63,7 @@ jobs:
           poetry self add setuptools wheel
           poetry run python -m pip install gensim
           poetry install
+          echo "${{matrix.os}} $TMP $TEMP"
 
       - name: Notebook Test
         run: |
