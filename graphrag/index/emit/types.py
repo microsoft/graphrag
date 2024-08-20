@@ -12,3 +12,4 @@ class TableEmitterType(str, Enum):
     Json = "json"
     Parquet = "parquet"
     CSV = "csv"
+    Graphdb = "graphdb"

@@ -9,6 +9,7 @@ from graphrag.index.typing import ErrorHandlerFn
 from .csv_table_emitter import CSVTableEmitter
 from .json_table_emitter import JsonTableEmitter
 from .parquet_table_emitter import ParquetTableEmitter
+from .graph_db_emitter import GraphDBEmitter
 from .table_emitter import TableEmitter
 from .types import TableEmitterType
 
@@ -24,6 +25,8 @@ def create_table_emitter(
             return ParquetTableEmitter(storage, on_error)
         case TableEmitterType.CSV:
             return CSVTableEmitter(storage)
+        case TableEmitterType.Graphdb:
+            return GraphDBEmitter()
         case _:
             msg = f"Unsupported table emitter type: {emitter_type}"
             raise ValueError(msg)

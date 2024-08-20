@@ -6,6 +6,7 @@
 import json
 import logging
 from pathlib import Path
+from .emit.types import TableEmitterType
 
 from graphrag.config.enums import (
     CacheType,
@@ -354,6 +355,7 @@ def _graph_workflows(
                 ),
                 "skip_name_embedding": skip_entity_name_embedding,
                 "skip_description_embedding": skip_entity_description_embedding,
+                "emitter_type": TableEmitterType.Graphdb,
             },
         ),
         PipelineWorkflowReference(
