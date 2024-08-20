@@ -118,6 +118,7 @@ def index_cli(
     emit: str | None,
     dryrun: bool,
     overlay_defaults: bool,
+    skip_validations: bool,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = load_progress_reporter(reporter or "rich")
@@ -154,7 +155,8 @@ def index_cli(
             True,
         )
 
-    validate_config_names(progress_reporter, default_config)
+    if skip_validations:
+        validate_config_names(progress_reporter, default_config)
 
     info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
     info(
