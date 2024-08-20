@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add preflight check to check LLM connectivity."
+}

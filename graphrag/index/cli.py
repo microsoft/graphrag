@@ -24,6 +24,7 @@ from graphrag.index.progress import (
 )
 from graphrag.index.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
+from graphrag.index.validate_config import validate_config_names
 
 from .emit import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -100,6 +101,10 @@ def index_cli(
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
+
+    # Run pre-flight validation on config model values
+    parameters = _read_config_parameters(root, config, progress_reporter)
+    validate_config_names(progress_reporter, parameters)
 
     def _run_workflow_async() -> None:
         import signal
