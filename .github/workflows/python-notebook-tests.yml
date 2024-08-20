@@ -60,7 +60,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-          echo "{TMP}={$USERPROFILE/AppData/Local/Temp}" >> "$GITHUB_ENV"
+          echo "TMP=$USERPROFILE/AppData/Local/Temp" >> "$GITHUB_ENV"
           echo "TMP: $TMP"  
           poetry self add setuptools wheel
           poetry run python -m pip install gensim
