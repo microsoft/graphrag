@@ -5,6 +5,7 @@
 
 import asyncio
 import re
+import sys
 from pathlib import Path
 from typing import cast
 
@@ -22,11 +23,12 @@ reporter = PrintProgressReporter("")
 
 
 def run_global_search(
-    config_dir: str | None,
+    config_filepath: str | None,
     data_dir: str | None,
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Perform a global search with a given query.
@@ -34,7 +36,7 @@ def run_global_search(
     Loads index files required for global search and calls the Query API.
     """
     data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_dir
+        data_dir, root_dir, config_filepath
     )
     data_path = Path(data_dir)
 
@@ -48,6 +50,34 @@ def run_global_search(
         data_path / "create_final_community_reports.parquet"
     )
 
+    # call the Query API
+    if streaming:
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.global_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
+    # not streaming
     return asyncio.run(
         api.global_search(
             config=config,
@@ -62,11 +92,12 @@ def run_global_search(
 
 
 def run_local_search(
-    config_dir: str | None,
+    config_filepath: str | None,
     data_dir: str | None,
     root_dir: str | None,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
     """Perform a local search with a given query.
@@ -74,7 +105,7 @@ def run_local_search(
     Loads index files required for local search and calls the Query API.
     """
     data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_dir
+        data_dir, root_dir, config_filepath
     )
     data_path = Path(data_dir)
 
@@ -95,6 +126,36 @@ def run_local_search(
     )
 
     # call the Query API
+    if streaming:
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.local_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                text_units=final_text_units,
+                relationships=final_relationships,
+                covariates=final_covariates,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
+    # not streaming
     return asyncio.run(
         api.local_search(
             config=config,
@@ -114,14 +175,14 @@ def run_local_search(
 def _configure_paths_and_settings(
     data_dir: str | None,
     root_dir: str | None,
-    config_dir: str | None,
+    config_filepath: str | None,
 ) -> tuple[str, str | None, GraphRagConfig]:
     if data_dir is None and root_dir is None:
         msg = "Either data_dir or root_dir must be provided."
         raise ValueError(msg)
     if data_dir is None:
         data_dir = _infer_data_dir(cast(str, root_dir))
-    config = _create_graphrag_config(root_dir, config_dir)
+    config = _create_graphrag_config(root_dir, config_filepath)
     return data_dir, root_dir, config
 
 
@@ -141,10 +202,10 @@ def _infer_data_dir(root: str) -> str:
 
 def _create_graphrag_config(
     root: str | None,
-    config_dir: str | None,
+    config_filepath: str | None,
 ) -> GraphRagConfig:
     """Create a GraphRag configuration."""
-    return _read_config_parameters(root or "./", config_dir)
+    return _read_config_parameters(root or "./", config_filepath)
 
 
 def _read_config_parameters(root: str, config: str | None):
