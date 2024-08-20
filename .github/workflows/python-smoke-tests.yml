@@ -107,3 +107,9 @@ jobs:
         if: steps.changes.outputs.python == 'true'
         run: |
           ./scripts/e2e-test.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+          path: examples/*/output
