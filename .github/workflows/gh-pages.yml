@@ -68,15 +68,6 @@ jobs:
       - name: Install Poetry dependencies
         run: poetry install
 
-      - name: Install Azurite
-        id: azuright
-        uses: potatoqualitee/azuright@v1.1
-
-      - name: Generate Indexer Outputs
-        run: |
-          poetry run poe test_smoke
-          zip -jrm docsite/data/operation_dulce/dataset.zip tests/fixtures/min-csv/output/*/artifacts/*.parquet
-
       - name: Build Jupyter Notebooks
         run: poetry run poe convert_docsite_notebooks
 
