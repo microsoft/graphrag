@@ -219,7 +219,7 @@ select = [
 ]
 ignore = [
     # Ignore module names shadowing Python builtins
-    "A005",
+    # "A005",
     # Deprecated Rules
     "ANN101",
     "ANN102",

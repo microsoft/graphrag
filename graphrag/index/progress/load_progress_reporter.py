@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Load a progress reporter."""
+
 from .rich import RichProgressReporter
 from .types import NullProgressReporter, PrintProgressReporter, ProgressReporter
 
