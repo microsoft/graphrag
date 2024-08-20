@@ -18,7 +18,7 @@ def _notebook_run(filepath: Path):
     :returns execution errors
     """
 
-    with tempfile.NamedTemporaryFile(suffix=".ipynb", dir=os.environ.get("RUNNER_TEMP")) as temp_file:
+    with tempfile.NamedTemporaryFile(suffix=".ipynb", dir=os.getcwd()) as temp_file:
         args = [
             "jupyter",
             "nbconvert",
