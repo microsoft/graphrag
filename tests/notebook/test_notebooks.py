@@ -2,6 +2,7 @@
 # Licensed under the MIT License
 import subprocess
 import tempfile
+import os
 from pathlib import Path
 
 import nbformat
@@ -16,7 +17,8 @@ def _notebook_run(filepath: Path):
     """Execute a notebook via nbconvert and collect output.
     :returns execution errors
     """
-    with tempfile.NamedTemporaryFile(suffix=".ipynb") as temp_file:
+
+    with tempfile.NamedTemporaryFile(suffix=".ipynb", dir=os.environ.get("RUNNER_TEMP")) as temp_file:
         args = [
             "jupyter",
             "nbconvert",
