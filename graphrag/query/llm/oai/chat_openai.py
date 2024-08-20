@@ -3,7 +3,7 @@
 
 """Chat-based OpenAI LLM implementation."""
 
-from collections.abc import Callable
+from collections.abc import AsyncGenerator, Callable, Generator
 from typing import Any
 
 from tenacity import (
@@ -92,6 +92,38 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
             # TODO: why not just throw in this case?
             return ""
 
+    def stream_generate(
+        self,
+        messages: str | list[Any],
+        callbacks: list[BaseLLMCallback] | None = None,
+        **kwargs: Any,
+    ) -> Generator[str, None, None]:
+        """Generate text with streaming."""
+        try:
+            retryer = Retrying(
+                stop=stop_after_attempt(self.max_retries),
+                wait=wait_exponential_jitter(max=10),
+                reraise=True,
+                retry=retry_if_exception_type(self.retry_error_types),
+            )
+            for attempt in retryer:
+                with attempt:
+                    generator = self._stream_generate(
+                        messages=messages,
+                        callbacks=callbacks,
+                        **kwargs,
+                    )
+                    yield from generator
+
+        except RetryError as e:
+            self._reporter.error(
+                message="Error at stream_generate()",
+                details={self.__class__.__name__: str(e)},
+            )
+            return
+        else:
+            return
+
     async def agenerate(
         self,
         messages: str | list[Any],
@@ -121,6 +153,35 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         else:
             # TODO: why not just throw in this case?
             return ""
+
+    async def astream_generate(
+        self,
+        messages: str | list[Any],
+        callbacks: list[BaseLLMCallback] | None = None,
+        **kwargs: Any,
+    ) -> AsyncGenerator[str, None]:
+        """Generate text asynchronously with streaming."""
+        try:
+            retryer = AsyncRetrying(
+                stop=stop_after_attempt(self.max_retries),
+                wait=wait_exponential_jitter(max=10),
+                reraise=True,
+                retry=retry_if_exception_type(self.retry_error_types),  # type: ignore
+            )
+            async for attempt in retryer:
+                with attempt:
+                    generator = self._astream_generate(
+                        messages=messages,
+                        callbacks=callbacks,
+                        **kwargs,
+                    )
+                    async for response in generator:
+                        yield response
+        except RetryError as e:
+            self._reporter.error(f"Error at astream_generate(): {e}")
+            return
+        else:
+            return
 
     def _generate(
         self,
@@ -163,6 +224,37 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
             return full_response
         return response.choices[0].message.content or ""  # type: ignore
 
+    def _stream_generate(
+        self,
+        messages: str | list[Any],
+        callbacks: list[BaseLLMCallback] | None = None,
+        **kwargs: Any,
+    ) -> Generator[str, None, None]:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
+        response = self.sync_client.chat.completions.create(  # type: ignore
+            model=model,
+            messages=messages,  # type: ignore
+            stream=True,
+            **kwargs,
+        )
+        for chunk in response:
+            if not chunk or not chunk.choices:
+                continue
+
+            delta = (
+                chunk.choices[0].delta.content
+                if chunk.choices[0].delta and chunk.choices[0].delta.content
+                else ""
+            )
+
+            yield delta
+
+            if callbacks:
+                for callback in callbacks:
+                    callback.on_llm_new_token(delta)
+
     async def _agenerate(
         self,
         messages: str | list[Any],
@@ -204,3 +296,34 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
             return full_response
 
         return response.choices[0].message.content or ""  # type: ignore
+
+    async def _astream_generate(
+        self,
+        messages: str | list[Any],
+        callbacks: list[BaseLLMCallback] | None = None,
+        **kwargs: Any,
+    ) -> AsyncGenerator[str, None]:
+        model = self.model
+        if not model:
+            raise ValueError(_MODEL_REQUIRED_MSG)
+        response = await self.async_client.chat.completions.create(  # type: ignore
+            model=model,
+            messages=messages,  # type: ignore
+            stream=True,
+            **kwargs,
+        )
+        async for chunk in response:
+            if not chunk or not chunk.choices:
+                continue
+
+            delta = (
+                chunk.choices[0].delta.content
+                if chunk.choices[0].delta and chunk.choices[0].delta.content
+                else ""
+            )  # type: ignore
+
+            yield delta
+
+            if callbacks:
+                for callback in callbacks:
+                    callback.on_llm_new_token(delta)
