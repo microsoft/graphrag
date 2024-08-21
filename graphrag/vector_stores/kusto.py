@@ -30,7 +30,7 @@ class KustoVectorStore(BaseVectorStore):
     schema_dict: typing.ClassVar[dict] = {"create_final_nodes": "(level: int, title: string, type: string, description: string, source_id: string, community: int, degree: int, human_readable_id: int, id: string, size: int, graph_embedding: dynamic, entity_type: string, top_level_node_id: string, x: int, y: int)"
                                           , "create_final_community_reports": "(community: int, full_content: string, level: int, rank: int, title: string, rank_explanation: string, summary: string, findings: string, full_content_json: string, id: string)"
                                           , "create_final_text_units": "(id: string, text: string, n_tokens: int, document_ids: string, entity_ids: string, relationship_ids: string)"
-                                          , "create_final_relationships": "(source: string, target: string, weight: float, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
+                                          , "create_final_relationships": "(source: string, target: string, weight: real, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
                                           , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string)"}
 
     def connect(self, **kwargs: Any) -> Any:
