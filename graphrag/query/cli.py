@@ -173,8 +173,11 @@ def run_local_search(
         #final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
         final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
 
+        data_path_object = Path(data_path)
+        final_covariates_path = data_path_object / "create_final_covariates.parquet"
+
         final_covariates = pd.concat([final_covariates, (
-            read_paraquet_file(config, data_path + "/create_final_covariates.parquet", config.storage.type)
+            read_paraquet_file(config, final_covariates_path, config.storage.type) if final_covariates_path.exists() else None
         )])
 
     vector_store_args = (
