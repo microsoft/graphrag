@@ -39,13 +39,16 @@ async def load(
         new_item["id"] = gen_md5_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
         return new_item
-
+    base_dir = config.base_dir
+    if config.type == "file":
+        # base dir is already being added to root dir in case of type file.
+        base_dir = None
     files = list(
         storage.find(
             re.compile(config.file_pattern),
             progress=progress,
             file_filter=config.file_filter,
-            base_dir=config.base_dir,
+            base_dir=base_dir
         )
     )
 
