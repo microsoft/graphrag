@@ -65,7 +65,7 @@ jobs:
               - '**/*.toml'
               - '**/*.ipynb'
               - '.github/workflows/python*.yml'
-              - 'tests/smoke/*'
+              - 'tests/smoke/**/*'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5

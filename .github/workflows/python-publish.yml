@@ -1,4 +1,4 @@
-name: Python Publish
+name: Python Publish (pypi)
 on:
   release:
     types: [created]
