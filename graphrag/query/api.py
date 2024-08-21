@@ -31,6 +31,7 @@ from .indexer_adapters import (
     read_indexer_text_units,
 )
 from .input.loaders.dfs import store_entity_semantic_embeddings
+from .structured_search.base import BaseSearch
 
 reporter = PrintProgressReporter("")
 
@@ -58,7 +59,8 @@ def __get_embedding_description_store(
         # this step assumes the embeddings were originally stored in a file rather
         # than a vector database
 
-        # dump embeddings from the entities list to the description_embedding_store
+        # dump embeddings from the entities list to the
+        # description_embedding_store
         store_entity_semantic_embeddings(
             entities=entities, vectorstore=description_embedding_store
         )
@@ -81,10 +83,12 @@ def __get_embedding_description_store(
 
     return description_embedding_store
 
+
 async def execute_search(search_engine: Any, query: str) -> str | dict[str, Any] | list[dict[str, Any]]:
     result = await search_engine.asearch(query=query)
     reporter.success(f"Search Response: {result.response}")
     return result.response
+
 
 async def prepare_global_search_engine(
     config: GraphRagConfig,
@@ -93,7 +97,7 @@ async def prepare_global_search_engine(
     community_reports: pd.DataFrame,
     community_level: int,
     response_type: str,
-) -> Any:
+) -> BaseSearch:
     reports = read_indexer_reports(community_reports, nodes, community_level)
     _entities = read_indexer_entities(nodes, entities, community_level)
     search_engine = get_global_search_engine(
@@ -104,6 +108,7 @@ async def prepare_global_search_engine(
     )
 
     return search_engine
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search(
@@ -135,10 +140,19 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    search_engine = await prepare_global_search_engine(config, nodes, entities, community_reports, community_level, response_type)
+    search_engine = await prepare_global_search_engine(
+        config,
+        nodes,
+        entities,
+        community_reports,
+        community_level,
+        response_type
+    )
+
     result = await search_engine.asearch(query=query)
     reporter.success(f"Global Search Response: {result.response}")
     return result.response
+
 
 async def prepare_local_search_engine(
     config: GraphRagConfig,
@@ -150,10 +164,9 @@ async def prepare_local_search_engine(
     covariates: pd.DataFrame | None,
     community_level: int,
     response_type: str,
-) -> Any:
+) -> BaseSearch:
     vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
+        config.embeddings.vector_store if config.embeddings.vector_store else {})
 
     reporter.info(f"Vector Store Args: {vector_store_args}")
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
@@ -164,15 +177,20 @@ async def prepare_local_search_engine(
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
     )
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+    _covariates = read_indexer_covariates(
+        covariates) if covariates is not None else []
 
     search_engine = get_local_search_engine(
         config=config,
-        reports=read_indexer_reports(community_reports, nodes, community_level),
+        reports=read_indexer_reports(
+            community_reports,
+            nodes,
+            community_level),
         text_units=read_indexer_text_units(text_units),
         entities=_entities,
         relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
+        covariates={
+            "claims": _covariates},
         description_embedding_store=description_embedding_store,
         response_type=response_type,
     )
@@ -216,7 +234,17 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    search_engine = await prepare_local_search_engine(config, nodes, entities, community_reports, text_units, relationships, covariates, community_level, response_type)
+    search_engine = await prepare_local_search_engine(
+        config,
+        nodes,
+        entities,
+        community_reports,
+        text_units,
+        relationships,
+        covariates,
+        community_level,
+        response_type
+    )
 
     result = await search_engine.asearch(query=query)
     reporter.success(f"Local Search Response: {result.response}")
