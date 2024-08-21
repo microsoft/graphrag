@@ -17,6 +17,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+import re
 from collections.abc import AsyncGenerator
 from typing import Any
 
@@ -24,6 +25,7 @@ import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.resolve_timestamp_path import _resolve_timestamp_path_with_dir
 from graphrag.index.progress.types import PrintProgressReporter
 from graphrag.model.entity import Entity
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
@@ -142,6 +144,7 @@ async def global_search_streaming(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
+    root_dir: str | None,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -184,6 +187,12 @@ async def local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
+
+    timestamp_dir = str(root_dir) + "/" + config.storage.base_dir
+    resolved_timestamp_dir = _resolve_timestamp_path_with_dir(timestamp_dir, re.compile("\d{8}")) # type: ignore
+    lancedb_dir = str(resolved_timestamp_dir) + "/lancedb"
+    vector_store_args.update({"db_uri": str(lancedb_dir)})
+
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,

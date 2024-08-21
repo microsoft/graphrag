@@ -158,6 +158,7 @@ def run_local_search(
     # not streaming
     return asyncio.run(
         api.local_search(
+            root_dir=root_dir,
             config=config,
             nodes=final_nodes,
             entities=final_entities,
