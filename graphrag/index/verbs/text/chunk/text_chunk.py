@@ -134,11 +134,13 @@ def run_strategy(
             results.append(strategy_result.text_chunk)
         else:
             doc_ids = [input[doc_idx][0] for doc_idx in doc_indices]
-            results.append((
-                doc_ids,
-                strategy_result.text_chunk,
-                strategy_result.n_tokens,
-            ))
+            results.append(
+                (
+                    doc_ids,
+                    strategy_result.text_chunk,
+                    strategy_result.n_tokens,
+                )
+            )
     return results
 
 

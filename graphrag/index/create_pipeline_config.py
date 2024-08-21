@@ -273,9 +273,9 @@ def _get_embedding_settings(
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
     strategy = settings.resolved_strategy()  # get the default strategy
-    strategy.update({
-        "vector_store": {**vector_store_settings, **(vector_store_params or {})}
-    })  # update the default strategy with the vector store settings
+    strategy.update(
+        {"vector_store": {**vector_store_settings, **(vector_store_params or {})}}
+    )  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {
         "strategy": strategy,

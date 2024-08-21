@@ -29,10 +29,16 @@ def build_mixed_context(context: list[dict], max_tokens: int) -> str:
     for idx, sub_community_context in enumerate(sorted_context):
         if exceeded_limit:
             if sub_community_context[schemas.FULL_CONTENT]:
-                substitute_reports.append({
-                    schemas.COMMUNITY_ID: sub_community_context[schemas.SUB_COMMUNITY],
-                    schemas.FULL_CONTENT: sub_community_context[schemas.FULL_CONTENT],
-                })
+                substitute_reports.append(
+                    {
+                        schemas.COMMUNITY_ID: sub_community_context[
+                            schemas.SUB_COMMUNITY
+                        ],
+                        schemas.FULL_CONTENT: sub_community_context[
+                            schemas.FULL_CONTENT
+                        ],
+                    }
+                )
             else:
                 # this sub-community has no report, so we will use its local context
                 final_local_contexts.extend(sub_community_context[schemas.ALL_CONTEXT])
@@ -55,10 +61,12 @@ def build_mixed_context(context: list[dict], max_tokens: int) -> str:
         # if all sub-community reports exceed the limit, we add reports until context is full
         substitute_reports = []
         for sub_community_context in sorted_context:
-            substitute_reports.append({
-                schemas.COMMUNITY_ID: sub_community_context[schemas.SUB_COMMUNITY],
-                schemas.FULL_CONTENT: sub_community_context[schemas.FULL_CONTENT],
-            })
+            substitute_reports.append(
+                {
+                    schemas.COMMUNITY_ID: sub_community_context[schemas.SUB_COMMUNITY],
+                    schemas.FULL_CONTENT: sub_community_context[schemas.FULL_CONTENT],
+                }
+            )
             new_context_string = pd.DataFrame(substitute_reports).to_csv(
                 index=False, sep=","
             )
