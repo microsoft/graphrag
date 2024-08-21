@@ -234,17 +234,15 @@ class ClaimExtractor:
                 continue
 
             claim_fields = claim.split(tuple_delimiter)
-            result.append(
-                {
-                    "subject_id": pull_field(0, claim_fields),
-                    "object_id": pull_field(1, claim_fields),
-                    "type": pull_field(2, claim_fields),
-                    "status": pull_field(3, claim_fields),
-                    "start_date": pull_field(4, claim_fields),
-                    "end_date": pull_field(5, claim_fields),
-                    "description": pull_field(6, claim_fields),
-                    "source_text": pull_field(7, claim_fields),
-                    "doc_id": pull_field(8, claim_fields),
-                }
-            )
+            result.append({
+                "subject_id": pull_field(0, claim_fields),
+                "object_id": pull_field(1, claim_fields),
+                "type": pull_field(2, claim_fields),
+                "status": pull_field(3, claim_fields),
+                "start_date": pull_field(4, claim_fields),
+                "end_date": pull_field(5, claim_fields),
+                "description": pull_field(6, claim_fields),
+                "source_text": pull_field(7, claim_fields),
+                "doc_id": pull_field(8, claim_fields),
+            })
         return result

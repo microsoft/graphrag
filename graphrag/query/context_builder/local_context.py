@@ -115,9 +115,9 @@ def build_covariates_context(
 
     all_context_records = [header]
     for entity in selected_entities:
-        selected_covariates.extend(
-            [cov for cov in covariates if cov.subject_id == entity.title]
-        )
+        selected_covariates.extend([
+            cov for cov in covariates if cov.subject_id == entity.title
+        ])
 
     for covariate in selected_covariates:
         new_context = [
