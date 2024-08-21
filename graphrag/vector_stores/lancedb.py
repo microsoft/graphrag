@@ -119,3 +119,6 @@ class LanceDBVectorStore(BaseVectorStore):
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
         return []
+
+    def load_parqs(self, data_path, parq_names) -> Any:
+        raise NotImplementedError("Loading Parquet files is not supported for LanceDB")

@@ -8,7 +8,7 @@ from typing import ClassVar
 
 from .azure_ai_search import AzureAISearch
 from .lancedb import LanceDBVectorStore
-from .kustodb import KustoDBVectorStore
+from .kusto import KustoVectorStore
 
 
 class VectorStoreType(str, Enum):
@@ -16,7 +16,7 @@ class VectorStoreType(str, Enum):
 
     LanceDB = "lancedb"
     AzureAISearch = "azure_ai_search"
-    KustoDB = "kustodb"
+    Kusto = "kusto"
 
 
 class VectorStoreFactory:
@@ -32,15 +32,15 @@ class VectorStoreFactory:
     @classmethod
     def get_vector_store(
         cls, vector_store_type: VectorStoreType | str, kwargs: dict
-    ) -> LanceDBVectorStore | AzureAISearch | KustoDBVectorStore:
+    ) -> LanceDBVectorStore | AzureAISearch | KustoVectorStore:
         """Get the vector store type from a string."""
         match vector_store_type:
             case VectorStoreType.LanceDB:
                 return LanceDBVectorStore(**kwargs)
             case VectorStoreType.AzureAISearch:
                 return AzureAISearch(**kwargs)
-            case VectorStoreType.KustoDB:
-                 return KustoDBVectorStore() # KustoDB: Pass required arguments here
+            case VectorStoreType.Kusto:
+                return KustoVectorStore(**kwargs)
             case _:
                 if vector_store_type in cls.vector_store_types:
                     return cls.vector_store_types[vector_store_type](**kwargs)

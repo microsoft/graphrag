@@ -79,3 +79,7 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
+
+    @abstractmethod
+    def load_parqs(self, data_path: str, parqs: list[str]) -> Any:
+        """Load documents (Parquet files) into the vector-store."""
