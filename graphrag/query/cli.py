@@ -134,6 +134,7 @@ def run_local_search(
             context_data = None
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
+                root_dir=root_dir,
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
