@@ -81,6 +81,29 @@ def __get_embedding_description_store(
 
     return description_embedding_store
 
+async def execute_search(search_engine: Any, query: str) -> str | dict[str, Any] | list[dict[str, Any]]:
+    result = await search_engine.asearch(query=query)
+    reporter.success(f"Search Response: {result.response}")
+    return result.response
+
+async def prepare_global_search_engine(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    community_level: int,
+    response_type: str,
+) -> Any:
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    search_engine = get_global_search_engine(
+        config,
+        reports=reports,
+        entities=_entities,
+        response_type=response_type,
+    )
+
+    return search_engine
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search(
@@ -112,17 +135,49 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=_entities,
-        response_type=response_type,
-    )
+    search_engine = await prepare_global_search_engine(config, nodes, entities, community_reports, community_level, response_type)
     result = await search_engine.asearch(query=query)
     reporter.success(f"Global Search Response: {result.response}")
     return result.response
+
+async def prepare_local_search_engine(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    text_units: pd.DataFrame,
+    relationships: pd.DataFrame,
+    covariates: pd.DataFrame | None,
+    community_level: int,
+    response_type: str,
+) -> Any:
+    vector_store_args = (
+        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+
+    reporter.info(f"Vector Store Args: {vector_store_args}")
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
+
+    _entities = read_indexer_entities(nodes, entities, community_level)
+    description_embedding_store = __get_embedding_description_store(
+        entities=_entities,
+        vector_store_type=vector_store_type,
+        config_args=vector_store_args,
+    )
+    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+
+    search_engine = get_local_search_engine(
+        config=config,
+        reports=read_indexer_reports(community_reports, nodes, community_level),
+        text_units=read_indexer_text_units(text_units),
+        entities=_entities,
+        relationships=read_indexer_relationships(relationships),
+        covariates={"claims": _covariates},
+        description_embedding_store=description_embedding_store,
+        response_type=response_type,
+    )
+
+    return search_engine
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -161,31 +216,7 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    description_embedding_store = __get_embedding_description_store(
-        entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
-
-    search_engine = get_local_search_engine(
-        config=config,
-        reports=read_indexer_reports(community_reports, nodes, community_level),
-        text_units=read_indexer_text_units(text_units),
-        entities=_entities,
-        relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
-        description_embedding_store=description_embedding_store,
-        response_type=response_type,
-    )
+    search_engine = await prepare_local_search_engine(config, nodes, entities, community_reports, text_units, relationships, covariates, community_level, response_type)
 
     result = await search_engine.asearch(query=query)
     reporter.success(f"Local Search Response: {result.response}")
