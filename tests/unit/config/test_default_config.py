@@ -904,12 +904,14 @@ class TestDefaultConfig(unittest.TestCase):
         clear=True,
     )
     def test_prompt_file_reading(self):
-        config = create_graphrag_config({
-            "entity_extraction": {"prompt": "tests/unit/config/prompt-a.txt"},
-            "claim_extraction": {"prompt": "tests/unit/config/prompt-b.txt"},
-            "community_reports": {"prompt": "tests/unit/config/prompt-c.txt"},
-            "summarize_descriptions": {"prompt": "tests/unit/config/prompt-d.txt"},
-        })
+        config = create_graphrag_config(
+            {
+                "entity_extraction": {"prompt": "tests/unit/config/prompt-a.txt"},
+                "claim_extraction": {"prompt": "tests/unit/config/prompt-b.txt"},
+                "community_reports": {"prompt": "tests/unit/config/prompt-c.txt"},
+                "summarize_descriptions": {"prompt": "tests/unit/config/prompt-d.txt"},
+            }
+        )
         strategy = config.entity_extraction.resolved_strategy(".", "abc123")
         assert strategy["extraction_prompt"] == "Hello, World! A"
         assert strategy["encoding_name"] == "abc123"

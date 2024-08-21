@@ -15,6 +15,7 @@ from graphrag.config import (
     GraphRagConfig,
     create_graphrag_config,
 )
+from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
@@ -178,12 +179,13 @@ def _configure_paths_and_settings(
     root_dir: str | None,
     config_filepath: str | None,
 ) -> tuple[str, str | None, GraphRagConfig]:
+    config = _create_graphrag_config(root_dir, config_filepath)
     if data_dir is None and root_dir is None:
         msg = "Either data_dir or root_dir must be provided."
         raise ValueError(msg)
     if data_dir is None:
-        data_dir = _infer_data_dir(cast(str, root_dir))
-    config = _create_graphrag_config(root_dir, config_filepath)
+        base_dir = cast(str, root_dir) + "/" + config.storage.base_dir
+        data_dir = cast(str, resolve_timestamp_path(base_dir))
     return data_dir, root_dir, config
 
 

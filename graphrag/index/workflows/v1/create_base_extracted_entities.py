@@ -60,11 +60,13 @@ def build_steps(
                                 "delimiter": ", ",
                                 "distinct": True,
                             },
-                            "description": ({
-                                "operation": "concat",
-                                "separator": "\n",
-                                "distinct": False,
-                            }),
+                            "description": (
+                                {
+                                    "operation": "concat",
+                                    "separator": "\n",
+                                    "distinct": False,
+                                }
+                            ),
                         },
                         "edges": {
                             "source_id": {
@@ -72,11 +74,13 @@ def build_steps(
                                 "delimiter": ", ",
                                 "distinct": True,
                             },
-                            "description": ({
-                                "operation": "concat",
-                                "separator": "\n",
-                                "distinct": False,
-                            }),
+                            "description": (
+                                {
+                                    "operation": "concat",
+                                    "separator": "\n",
+                                    "distinct": False,
+                                }
+                            ),
                             "weight": "sum",
                         },
                     },

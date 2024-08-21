@@ -214,19 +214,23 @@ class GraphExtractor:
                         node = graph.nodes[entity_name]
                         if self._join_descriptions:
                             node["description"] = "\n".join(
-                                list({
-                                    *_unpack_descriptions(node),
-                                    entity_description,
-                                })
+                                list(
+                                    {
+                                        *_unpack_descriptions(node),
+                                        entity_description,
+                                    }
+                                )
                             )
                         else:
                             if len(entity_description) > len(node["description"]):
                                 node["description"] = entity_description
                         node["source_id"] = ", ".join(
-                            list({
-                                *_unpack_source_ids(node),
-                                str(source_doc_id),
-                            })
+                            list(
+                                {
+                                    *_unpack_source_ids(node),
+                                    str(source_doc_id),
+                                }
+                            )
                         )
                         node["entity_type"] = (
                             entity_type if entity_type != "" else node["entity_type"]
@@ -273,16 +277,20 @@ class GraphExtractor:
                             weight += edge_data["weight"]
                             if self._join_descriptions:
                                 edge_description = "\n".join(
-                                    list({
-                                        *_unpack_descriptions(edge_data),
-                                        edge_description,
-                                    })
+                                    list(
+                                        {
+                                            *_unpack_descriptions(edge_data),
+                                            edge_description,
+                                        }
+                                    )
                                 )
                             edge_source_id = ", ".join(
-                                list({
-                                    *_unpack_source_ids(edge_data),
-                                    str(source_doc_id),
-                                })
+                                list(
+                                    {
+                                        *_unpack_source_ids(edge_data),
+                                        str(source_doc_id),
+                                    }
+                                )
                             )
                     graph.add_edge(
                         source,

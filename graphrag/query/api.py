@@ -17,15 +17,14 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-import re
 from collections.abc import AsyncGenerator
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_timestamp_path import _resolve_timestamp_path_with_dir
+from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
 from graphrag.index.progress.types import PrintProgressReporter
 from graphrag.model.entity import Entity
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
@@ -188,9 +187,11 @@ async def local_search(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    timestamp_dir = str(root_dir) + "/" + config.storage.base_dir
-    resolved_timestamp_dir = _resolve_timestamp_path_with_dir(timestamp_dir, re.compile("\d{8}")) # type: ignore
-    lancedb_dir = str(resolved_timestamp_dir) + "/lancedb"
+    base_dir = cast(str, root_dir) + "/" + config.storage.base_dir
+    resolved_base_dir = resolve_timestamp_path(
+        base_dir
+    )
+    lancedb_dir = str(resolved_base_dir) + "/lancedb"
     vector_store_args.update({"db_uri": str(lancedb_dir)})
 
     description_embedding_store = _get_embedding_description_store(
