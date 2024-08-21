@@ -185,7 +185,7 @@ def _configure_paths_and_settings(
         msg = "Either data_dir or root_dir must be provided."
         raise ValueError(msg)
     if data_dir is None:
-        base_dir = Path(cast(str, root_dir)) / Path(config.storage.base_dir)
+        base_dir = Path(cast(str, root_dir)) / config.storage.base_dir
         data_dir = cast(str, resolve_timestamp_path(base_dir))
     return data_dir, root_dir, config
 

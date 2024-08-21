@@ -102,19 +102,17 @@ def _load_openai_completion_llm(
     azure=False,
 ):
     return _create_openai_completion_llm(
-        OpenAIConfiguration(
-            {
-                **_get_base_config(config),
-                "model": config.get("model", "gpt-4-turbo-preview"),
-                "deployment_name": config.get("deployment_name"),
-                "temperature": config.get("temperature", 0.0),
-                "frequency_penalty": config.get("frequency_penalty", 0),
-                "presence_penalty": config.get("presence_penalty", 0),
-                "top_p": config.get("top_p", 1),
-                "max_tokens": config.get("max_tokens", 4000),
-                "n": config.get("n"),
-            }
-        ),
+        OpenAIConfiguration({
+            **_get_base_config(config),
+            "model": config.get("model", "gpt-4-turbo-preview"),
+            "deployment_name": config.get("deployment_name"),
+            "temperature": config.get("temperature", 0.0),
+            "frequency_penalty": config.get("frequency_penalty", 0),
+            "presence_penalty": config.get("presence_penalty", 0),
+            "top_p": config.get("top_p", 1),
+            "max_tokens": config.get("max_tokens", 4000),
+            "n": config.get("n"),
+        }),
         on_error,
         cache,
         azure,
@@ -128,20 +126,18 @@ def _load_openai_chat_llm(
     azure=False,
 ):
     return _create_openai_chat_llm(
-        OpenAIConfiguration(
-            {
-                # Set default values
-                **_get_base_config(config),
-                "model": config.get("model", "gpt-4-turbo-preview"),
-                "deployment_name": config.get("deployment_name"),
-                "temperature": config.get("temperature", 0.0),
-                "frequency_penalty": config.get("frequency_penalty", 0),
-                "presence_penalty": config.get("presence_penalty", 0),
-                "top_p": config.get("top_p", 1),
-                "max_tokens": config.get("max_tokens"),
-                "n": config.get("n"),
-            }
-        ),
+        OpenAIConfiguration({
+            # Set default values
+            **_get_base_config(config),
+            "model": config.get("model", "gpt-4-turbo-preview"),
+            "deployment_name": config.get("deployment_name"),
+            "temperature": config.get("temperature", 0.0),
+            "frequency_penalty": config.get("frequency_penalty", 0),
+            "presence_penalty": config.get("presence_penalty", 0),
+            "top_p": config.get("top_p", 1),
+            "max_tokens": config.get("max_tokens"),
+            "n": config.get("n"),
+        }),
         on_error,
         cache,
         azure,
@@ -156,15 +152,13 @@ def _load_openai_embeddings_llm(
 ):
     # TODO: Inject Cache
     return _create_openai_embeddings_llm(
-        OpenAIConfiguration(
-            {
-                **_get_base_config(config),
-                "model": config.get(
-                    "embeddings_model", config.get("model", "text-embedding-3-small")
-                ),
-                "deployment_name": config.get("deployment_name"),
-            }
-        ),
+        OpenAIConfiguration({
+            **_get_base_config(config),
+            "model": config.get(
+                "embeddings_model", config.get("model", "text-embedding-3-small")
+            ),
+            "deployment_name": config.get("deployment_name"),
+        }),
         on_error,
         cache,
         azure,

@@ -109,14 +109,12 @@ def _prepare_reports_at_level(
         axis=0,
     )
     merged_node_df = (
-        merged_node_df.groupby(
-            [
-                node_name_column,
-                node_community_column,
-                node_degree_column,
-                node_level_column,
-            ]
-        )
+        merged_node_df.groupby([
+            node_name_column,
+            node_community_column,
+            node_degree_column,
+            node_level_column,
+        ])
         .agg({node_details_column: "first", edge_details_column: list})
         .reset_index()
     )
@@ -132,21 +130,17 @@ def _prepare_reports_at_level(
             how="left",
         )
     merged_node_df = (
-        merged_node_df.groupby(
-            [
-                node_name_column,
-                node_community_column,
-                node_level_column,
-                node_degree_column,
-            ]
-        )
-        .agg(
-            {
-                node_details_column: "first",
-                edge_details_column: "first",
-                **({claim_details_column: list} if level_claim_df is not None else {}),
-            }
-        )
+        merged_node_df.groupby([
+            node_name_column,
+            node_community_column,
+            node_level_column,
+            node_degree_column,
+        ])
+        .agg({
+            node_details_column: "first",
+            edge_details_column: "first",
+            **({claim_details_column: list} if level_claim_df is not None else {}),
+        })
         .reset_index()
     )
 

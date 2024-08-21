@@ -44,14 +44,12 @@ class LanceDBVectorStore(BaseVectorStore):
         if len(data) == 0:
             data = None
 
-        schema = pa.schema(
-            [
-                pa.field("id", pa.string()),
-                pa.field("text", pa.string()),
-                pa.field("vector", pa.list_(pa.float64())),
-                pa.field("attributes", pa.string()),
-            ]
-        )
+        schema = pa.schema([
+            pa.field("id", pa.string()),
+            pa.field("text", pa.string()),
+            pa.field("vector", pa.list_(pa.float64())),
+            pa.field("attributes", pa.string()),
+        ])
         if overwrite:
             if data:
                 self.document_collection = self.db_connection.create_table(
