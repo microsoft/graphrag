@@ -102,8 +102,3 @@ jobs:
         with:
           name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
           path: tests/fixtures/*/output
-
-      - name: E2E Test
-        if: steps.changes.outputs.python == 'true'
-        run: |
-          ./scripts/e2e-test.sh

@@ -45,7 +45,7 @@ azure-search-documents = "^11.4.0"
 lancedb = "^0.11.0"
 
 # Event Loops
-uvloop = { version = "^0.19.0", markers = "platform_system != 'Windows'" }
+uvloop = { version = "^0.20.0", markers = "platform_system != 'Windows'" }
 nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
 
 # Async IO
@@ -54,7 +54,7 @@ aiofiles = "^24.1.0"
 
 # LLM
 openai = "^1.37.1"
-nltk = "3.8.1"
+nltk = "3.9.1"
 tiktoken = "^0.7.0"
 
 # Data-Sci
@@ -125,6 +125,7 @@ _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
 test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
+test_notebook = "pytest ./tests/notebook"
 index = "python -m graphrag.index"
 query = "python -m graphrag.query"
 prompt_tune = "python -m graphrag.prompt_tune"
