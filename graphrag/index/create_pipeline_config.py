@@ -370,6 +370,7 @@ def _graph_workflows(
                     },
                 ),
                 "skip_description_embedding": skip_relationship_description_embedding,
+                "emitter_type": TableEmitterType.Graphdb,
             },
         ),
         PipelineWorkflowReference(

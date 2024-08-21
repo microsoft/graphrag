@@ -38,6 +38,8 @@ from .indexer_adapters import (
     read_indexer_text_units,
 )
 
+from common.graph_db_client import GraphDBClient
+
 reporter = PrintProgressReporter("")
 
 def __get_embedding_description_store(
@@ -100,14 +102,13 @@ def run_global_search(
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
+    graph_db_client = GraphDBClient()
     data_path = Path(data_dir)
 
     final_nodes: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_nodes.parquet"
     )
-    final_entities: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_entities.parquet"
-    )
+    final_entities = graph_db_client.query_vertices()
     final_community_reports: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_community_reports.parquet"
     )
@@ -154,6 +155,7 @@ def run_local_search(
     final_relationships = pd.DataFrame()
     final_entities = pd.DataFrame()
     final_covariates = pd.DataFrame()
+    graph_db_client = GraphDBClient()
     for data_path in data_paths:
         #check from the config for the ouptut storage type and then read the data from the storage.
         
@@ -164,10 +166,12 @@ def run_local_search(
         
         final_text_units = pd.concat([final_text_units, read_paraquet_file(config, data_path + "/create_final_text_units.parquet", config.storage.type)])
         
-        final_relationships = pd.concat([final_relationships, read_paraquet_file(config, data_path + "/create_final_relationships.parquet", config.storage.type)])
+        #final_relationships = pd.concat([final_relationships, read_paraquet_file(config, data_path + "/create_final_relationships.parquet", config.storage.type)])
+        final_relationships = pd.concat([final_relationships, graph_db_client.query_edges()])
 
 
-        final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
+        #final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
+        final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
 
         final_covariates = pd.concat([final_covariates, (
             read_paraquet_file(config, data_path + "/create_final_covariates.parquet", config.storage.type)
