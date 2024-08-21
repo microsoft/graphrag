@@ -108,9 +108,9 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         )
         chunk_embeddings = []
         chunk_lens = []
-        embedding_results = await asyncio.gather(
-            *[self._aembed_with_retry(chunk, **kwargs) for chunk in token_chunks]
-        )
+        embedding_results = await asyncio.gather(*[
+            self._aembed_with_retry(chunk, **kwargs) for chunk in token_chunks
+        ])
         embedding_results = [result for result in embedding_results if result[0]]
         chunk_embeddings = [result[0] for result in embedding_results]
         chunk_lens = [result[1] for result in embedding_results]

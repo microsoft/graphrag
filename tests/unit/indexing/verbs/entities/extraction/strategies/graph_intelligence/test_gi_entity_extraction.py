@@ -41,9 +41,9 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
 
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
-        assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted(
-            [entity["name"] for entity in results.entities]
-        )
+        assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
+            entity["name"] for entity in results.entities
+        ])
 
     async def test_run_extract_entities_multiple_documents_correct_entities_returned(
         self,
@@ -80,9 +80,9 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
 
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
-        assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted(
-            [entity["name"] for entity in results.entities]
-        )
+        assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
+            entity["name"] for entity in results.entities
+        ])
 
     async def test_run_extract_entities_multiple_documents_correct_edges_returned(self):
         results = await run_extract_entities(
@@ -122,12 +122,10 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
 
         # convert to strings for more visual comparison
         edges_str = sorted([f"{edge[0]} -> {edge[1]}" for edge in graph.edges])
-        assert edges_str == sorted(
-            [
-                "TEST_ENTITY_1 -> TEST_ENTITY_2",
-                "TEST_ENTITY_1 -> TEST_ENTITY_3",
-            ]
-        )
+        assert edges_str == sorted([
+            "TEST_ENTITY_1 -> TEST_ENTITY_2",
+            "TEST_ENTITY_1 -> TEST_ENTITY_3",
+        ])
 
     async def test_run_extract_entities_multiple_documents_correct_entity_source_ids_mapped(
         self,

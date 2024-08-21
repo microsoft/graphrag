@@ -91,15 +91,13 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         details: dict | None = None,
     ):
         """Report an error."""
-        self._write_log(
-            {
-                "type": "error",
-                "data": message,
-                "cause": str(cause),
-                "stack": stack,
-                "details": details,
-            }
-        )
+        self._write_log({
+            "type": "error",
+            "data": message,
+            "cause": str(cause),
+            "stack": stack,
+            "details": details,
+        })
 
     def on_warning(self, message: str, details: dict | None = None):
         """Report a warning."""
