@@ -122,3 +122,6 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def load_parqs(self, data_path, parq_names) -> Any:
         raise NotImplementedError("Loading Parquet files is not supported for LanceDB")
+    
+    def execute_query(self, query: str) -> Any:
+        return super().execute_query(query)

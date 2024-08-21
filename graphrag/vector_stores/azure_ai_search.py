@@ -194,5 +194,7 @@ class AzureAISearch(BaseVectorStore):
         return []
 
     def load_parqs(self, data_path, parq_names) -> Any:
-        """Load documents (Parquet files) into the vector-store."""
         raise NotImplementedError("Loading Parquet files is not supported for Azure AI Search")
+    
+    def execute_query(self, query: str) -> Any:
+        return super().execute_query(query)

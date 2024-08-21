@@ -83,3 +83,8 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def load_parqs(self, data_path: str, parqs: list[str]) -> Any:
         """Load documents (Parquet files) into the vector-store."""
+
+    #TODO This is temporary until I take out the client from the vector store class
+    @abstractmethod
+    def execute_query(self, query: str) -> Any:
+        """Execute a query in the vector-store."""
