@@ -235,7 +235,7 @@ def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageTyp
     else:
         file_path = Path(path)
         if not file_path.exists():
-            raise ValueError(f"Data path {file_path} does not exist.")
+            return pd.DataFrame()
         return pd.read_parquet(path)
 # TODO I split this out for now to preserve how the original local search worked.
 # I don't think this will necessarily be permanently separate.
