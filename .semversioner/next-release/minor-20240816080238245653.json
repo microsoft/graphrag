@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add streaming support for local/global search to query cli"
-}
