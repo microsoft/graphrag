@@ -54,15 +54,17 @@ def unpack_graph(
             else {}
         )
 
-        result.extend([
-            {**cleaned_row, **graph_id}
-            for graph_id in _run_unpack(
-                cast(str | nx.Graph, row[column]),
-                type,
-                embeddings,
-                kwargs,
-            )
-        ])
+        result.extend(
+            [
+                {**cleaned_row, **graph_id}
+                for graph_id in _run_unpack(
+                    cast(str | nx.Graph, row[column]),
+                    type,
+                    embeddings,
+                    kwargs,
+                )
+            ]
+        )
 
     output_df = pd.DataFrame(result)
     return TableContainer(table=output_df)

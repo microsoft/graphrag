@@ -73,15 +73,17 @@ async def _execute(
 
     texts = [texts] if isinstance(texts, str) else texts
 
-    results = await extractor({
-        "input_text": texts,
-        "entity_specs": entity_types,
-        "resolved_entities": resolved_entities_map,
-        "claim_description": claim_description,
-        "tuple_delimiter": tuple_delimiter,
-        "record_delimiter": record_delimiter,
-        "completion_delimiter": completion_delimiter,
-    })
+    results = await extractor(
+        {
+            "input_text": texts,
+            "entity_specs": entity_types,
+            "resolved_entities": resolved_entities_map,
+            "claim_description": claim_description,
+            "tuple_delimiter": tuple_delimiter,
+            "record_delimiter": record_delimiter,
+            "completion_delimiter": completion_delimiter,
+        }
+    )
 
     claim_data = results.output
     return CovariateExtractionResult([create_covariate(item) for item in claim_data])

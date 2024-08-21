@@ -17,7 +17,6 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-import os
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any, cast
@@ -191,7 +190,7 @@ async def local_search(
 
     base_dir = Path(cast(str, root_dir)) / Path(config.storage.base_dir)
     resolved_base_dir = resolve_timestamp_path(base_dir)
-    lancedb_dir = os.path.join(resolved_base_dir, "lancedb")  # noqa: PTH118
+    lancedb_dir = resolved_base_dir / Path("lancedb")
     vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
@@ -265,7 +264,7 @@ async def local_search_streaming(
 
     base_dir = Path(cast(str, root_dir)) / Path(config.storage.base_dir)
     resolved_base_dir = resolve_timestamp_path(base_dir)
-    lancedb_dir = os.path.join(resolved_base_dir, "lancedb")  # noqa: PTH118
+    lancedb_dir = resolved_base_dir / Path("lancedb")
     vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
