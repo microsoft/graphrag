@@ -178,6 +178,8 @@ class KustoVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
+    def execute_query(self, query: str) -> Any:
+        self.client.execute(self.database, f"{query}")
 
     def load_parqs(self, data_dir, parq_names) -> Any:
         data_path = Path(data_dir)

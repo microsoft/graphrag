@@ -276,7 +276,7 @@ def run_content_store_local_search(
     description_embedding_store.load_parqs(data_dir, ["create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
 
     #TODO KQLify this. This merge of nodes & entities needs to happen in Kusto.
-    # entities = read_indexer_entities(final_nodes, final_entities, community_level)
+    create_entities_table(description_embedding_store, community_level)
     # description_embedding_store = __get_embedding_description_store(
     #     entities=entities,
     #     description_embedding_store=description_embedding_store,
@@ -313,7 +313,13 @@ def run_content_store_local_search(
 
     return True #Obviously this is a placeholder due to all the TODOs above.
 
-
+# Create entities table similar to read_indexer_entities, but creating that table in Kusto, not in memory.
+def create_entities_table(description_embedding_store: BaseVectorStore, community_level: int):
+    description_embedding_store.execute_query(f".set-or-replace entities <| create_final_nodes \
+        | where level <= {community_level} \
+        | project community=coalesce(community, 0), name=['title'], rank=degree \
+        | summarize community=max(community) by name, rank \
+        | join kind=inner create_final_entities on name")
 
 def run_content_store_global_search(
     config_dir: str | None,
