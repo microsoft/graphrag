@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "<define a name hare>",
+            "name": "<define a name here>",
             "type": "debugpy",
             "python": "<Path to a python interpreter of your choice>",
             "request": "launch",
