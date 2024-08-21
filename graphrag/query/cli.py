@@ -34,6 +34,7 @@ from .indexer_adapters import (
     read_indexer_entities,
     read_indexer_relationships,
     read_indexer_reports,
+    kt_read_indexer_reports,
     read_indexer_text_units,
 )
 
@@ -288,6 +289,8 @@ def run_content_store_local_search(
     #     if final_covariates is not None
     #     else []
     # )
+
+    reports=kt_read_indexer_reports( description_embedding_store, community_level)
 
     #TODO KQLify this. I know at least the read_indedxer_reports needs to be done in Kusto. We are joining the community reports & final nodes.
     # search_engine = get_local_search_engine(

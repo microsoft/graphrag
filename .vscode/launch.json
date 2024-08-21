@@ -2,34 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Indexer",
-            "type": "debugpy",
-            "python": "E:\\graphrag\\.venv\\Scripts\\python.exe",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "module": "poetry",
-            "args": ["poe", "index", "","", "--root", ".\\ragtest6"],
-            "stopOnEntry": false
-        },
-        {
-            "name": "Query",
-            "type": "debugpy",
-            "python": "E:\\graphrag\\.venv\\Scripts\\python.exe",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "module": "poetry",
-            "args": ["poe", "query", "--root", ".\\ragtest6", "--method", "local", "How Guillermo got certificate access?"],
-            "stopOnEntry": false
-        },
-        {
-            "name": "Context Switch",
-            "type": "debugpy",
-            "python": "E:\\graphrag\\.venv\\Scripts\\python.exe",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "module": "poetry",
-            "args": ["poe", "index", "--context-id", "f367f396-b0bf-4547-8d9c-331fc7a39433", "--context-operation", "activate", "--root", ".\\ragtest6"],
-            "stopOnEntry": false
+
         }
     ]
 }

@@ -19,6 +19,7 @@ from graphrag.query.input.loaders.dfs import (
     read_text_units,
 )
 
+from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
     """Read in the Text Units from the raw indexing outputs."""
@@ -58,6 +59,22 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
         attributes_cols=["rank"],
     )
 
+def kt_read_indexer_reports(
+    vs: VectorStoreType.Kusto,
+    community_level: int,
+) -> list[CommunityReport]:
+
+    vs.client.execute(vs.database,'.drop table interm_rep ifexists')
+
+    cmd=f'''
+        .set interm_rep  <| (create_final_community_reports | where level <= 2 |
+        join kind=inner (create_final_nodes |
+        where level <= 2 | summarize community=max(community) by ['title'] | summarize by community )
+        on community | project-away community1)
+    '''
+
+    res=vs.client.execute(vs.database,cmd)
+    return True #TODO: error checking should be added later
 
 def read_indexer_reports(
     final_community_reports: pd.DataFrame,
