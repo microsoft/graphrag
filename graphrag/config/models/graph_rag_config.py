@@ -19,6 +19,7 @@ from .global_search_config import GlobalSearchConfig
 from .input_config import InputConfig
 from .llm_config import LLMConfig
 from .local_search_config import LocalSearchConfig
+from .query_context_config import QueryContextConfig
 from .reporting_config import ReportingConfig
 from .snapshots_config import SnapshotsConfig
 from .storage_config import StorageConfig
@@ -144,3 +145,8 @@ class GraphRagConfig(LLMConfig):
         description="The workflows to skip, usually for testing reasons.", default=[]
     )
     """The workflows to skip, usually for testing reasons."""
+
+    query_context: QueryContextConfig = Field(
+        description="The query context to use.", default=[]
+    )
+    """The query context to use."""

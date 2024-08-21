@@ -30,7 +30,7 @@ async def load(
     """Load text inputs from a directory."""
 
     async def load_file(
-        path: str, group: dict | None = None, _encoding: str = "utf-8"
+        path: str, group: dict | None = None, _encoding: str = "utf-8" #what is group here, can be used as context?
     ) -> dict[str, Any]:
         if group is None:
             group = {}
@@ -45,11 +45,18 @@ async def load(
             re.compile(config.file_pattern),
             progress=progress,
             file_filter=config.file_filter,
+            base_dir=config.base_dir,
         )
     )
+
     if len(files) == 0:
         msg = f"No text files found in {config.base_dir}"
         raise ValueError(msg)
+    
+    if len(files) > 1:
+        msg = f"found more than 1 files in base dir  {config.base_dir}"
+        raise ValueError(msg)
+    
     found_files = f"found text files from {config.base_dir}, found {files}"
     log.info(found_files)
 

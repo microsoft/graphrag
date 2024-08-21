@@ -158,6 +158,9 @@ global_search:
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}
   # reduce_max_tokens: {defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS}
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
+
+query_context:
+  # Files: [] # list of files in context to run query 
 """
 
 INIT_DOTENV = """

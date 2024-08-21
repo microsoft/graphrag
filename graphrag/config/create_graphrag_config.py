@@ -47,6 +47,7 @@ from .models import (
     LLMParameters,
     LocalSearchConfig,
     ParallelizationParameters,
+    QueryContextConfig,
     ReportingConfig,
     SnapshotsConfig,
     StorageConfig,
@@ -380,6 +381,7 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
+                overwrite=reader.bool(Fragment.overwrite) or False
             )
         with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
             group_by_columns = reader.list("group_by_columns", "BY_COLUMNS")
@@ -539,6 +541,14 @@ def create_graphrag_config(
                 or defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS,
                 concurrency=reader.int("concurrency") or defs.GLOBAL_SEARCH_CONCURRENCY,
             )
+        
+        with (
+            reader.use(values.get("query_context")),
+            reader.envvar_prefix(Section.query_context),
+        ):
+            query_context_model = QueryContextConfig(
+                files=reader.list("files") or [],
+            )
 
         encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
         skip_workflows = reader.list("skip_workflows") or []
@@ -566,6 +576,7 @@ def create_graphrag_config(
         skip_workflows=skip_workflows,
         local_search=local_search_model,
         global_search=global_search_model,
+        query_context=query_context_model
     )
 
 
@@ -579,6 +590,7 @@ class Fragment(str, Enum):
     api_proxy = "API_PROXY"
     async_mode = "ASYNC_MODE"
     base_dir = "BASE_DIR"
+    overwrite = "Overwrite"
     cognitive_services_endpoint = "COGNITIVE_SERVICES_ENDPOINT"
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"
@@ -608,6 +620,7 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
+    output = "OUTPUT"
 
 
 class Section(str, Enum):
@@ -631,6 +644,7 @@ class Section(str, Enum):
     umap = "UMAP"
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
+    query_context = "QUERY_CONTEXT"
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:

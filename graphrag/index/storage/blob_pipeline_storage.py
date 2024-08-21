@@ -36,6 +36,7 @@ class BlobPipelineStorage(PipelineStorage):
         encoding: str | None = None,
         path_prefix: str | None = None,
         storage_account_blob_url: str | None = None,
+        overwrite: bool = False
     ):
         """Create a new BlobStorage instance."""
         if connection_string:
@@ -54,6 +55,7 @@ class BlobPipelineStorage(PipelineStorage):
         self._encoding = encoding or "utf-8"
         self._container_name = container_name
         self._connection_string = connection_string
+        self._overwrite = overwrite
         self._path_prefix = path_prefix or ""
         self._storage_account_blob_url = storage_account_blob_url
         self._storage_account_name = (
@@ -196,6 +198,8 @@ class BlobPipelineStorage(PipelineStorage):
                 self._container_name
             )
             blob_client = container_client.get_blob_client(key)
+            if blob_client.exists() and not self._overwrite:
+                ValueError("Artifacts already exists, make sure output folder is empty.")
             if isinstance(value, bytes):
                 blob_client.upload_blob(value, overwrite=True)
             else:

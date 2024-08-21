@@ -13,8 +13,11 @@ import warnings
 from pathlib import Path
 
 from graphrag.config import (
+    GraphRagConfig,
     create_graphrag_config,
 )
+from graphrag.config.enums import ContextSwitchType
+from graphrag.common.utils.common_utils import is_valid_guid
 from graphrag.index import PipelineConfig, create_pipeline_config
 from graphrag.index.cache import NoopPipelineCache
 from graphrag.index.progress import (
@@ -36,7 +39,6 @@ from .init_content import INIT_DOTENV, INIT_YAML
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
 log = logging.getLogger(__name__)
-
 
 def redact(input: dict) -> str:
     """Sanitize the config json."""
@@ -71,6 +73,8 @@ def redact(input: dict) -> str:
 def index_cli(
     root: str,
     init: bool,
+    context_operation: str | None,
+    context_id: str | None,
     verbose: bool,
     resume: str | None,
     memprofile: bool,
@@ -97,6 +101,14 @@ def index_cli(
         pipeline_config: str | PipelineConfig = config or _create_default_config(
             root, None, verbose, dryrun or False, progress_reporter
         )
+    if context_id:
+        if not is_valid_guid(context_id):
+            ValueError("ContextId is invalid: It should be a valid Guid")
+        if (context_operation != ContextSwitchType.Activate and context_operation != ContextSwitchType.Deactivate):
+            ValueError("ContextOperation is invalid: It should be Active or DeActive")
+        graphrag_config = _read_config_parameters(root, config, progress_reporter)
+        _switch_context(graphrag_config, context_operation, context_id, progress_reporter)
+        sys.exit(0)
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
@@ -170,6 +182,18 @@ def index_cli(
     if cli:
         sys.exit(1 if encountered_errors else 0)
 
+def _switch_context(config: GraphRagConfig | str, context_operation: str | None, context_id: str, reporter: ProgressReporter) -> None:
+    """Switch the context to the given context."""
+    reporter.info(f"Switching context to {context_id} using operation {context_operation}")
+    from graphrag.index.context_switch.contextSwitcher import ContextSwitcher
+    context_switcher = ContextSwitcher()
+    if context_operation == ContextSwitchType.Activate:
+        context_switcher.activate(config, context_id, reporter)
+    elif context_operation == ContextSwitchType.Deactivate:
+        context_switcher.deactivate(config, context_id, reporter)
+    else:
+        msg = f"Invalid context operation {context_operation}"
+        raise ValueError(msg)
 
 def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
     """Initialize the project at the given path."""
