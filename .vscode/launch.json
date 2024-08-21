@@ -2,7 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-
+            "name": "<define a name hare>",
+            "type": "debugpy",
+            "python": "<Path to a python interpreter of your choice>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "module": "poetry",
+            "args": ["poe", "<command here: index or query?>", "other args"],
+            "stopOnEntry": false
         }
     ]
 }
