@@ -30,6 +30,8 @@ from .indexer_adapters import (
     read_indexer_text_units,
 )
 
+from common.graph_db_client import GraphDBClient
+
 reporter = PrintProgressReporter("")
 
 
@@ -92,14 +94,13 @@ def run_global_search(
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
+    graph_db_client = GraphDBClient()
     data_path = Path(data_dir)
 
     final_nodes: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_nodes.parquet"
     )
-    final_entities: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_entities.parquet"
-    )
+    final_entities = graph_db_client.query_vertices()
     final_community_reports: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_community_reports.parquet"
     )
@@ -134,16 +135,14 @@ def run_local_search(
         data_dir, root_dir, config_dir
     )
     data_path = Path(data_dir)
-
+    graph_db_client = GraphDBClient()
     final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
     final_community_reports = pd.read_parquet(
         data_path / "create_final_community_reports.parquet"
     )
     final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
-    final_relationships = pd.read_parquet(
-        data_path / "create_final_relationships.parquet"
-    )
-    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
+    final_relationships = graph_db_client.query_edges()
+    final_entities = graph_db_client.query_vertices()
     final_covariates_path = data_path / "create_final_covariates.parquet"
     final_covariates = (
         pd.read_parquet(final_covariates_path)
