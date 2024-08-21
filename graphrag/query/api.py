@@ -188,9 +188,7 @@ async def local_search(
     _entities = read_indexer_entities(nodes, entities, community_level)
 
     base_dir = cast(str, root_dir) + "/" + config.storage.base_dir
-    resolved_base_dir = resolve_timestamp_path(
-        base_dir
-    )
+    resolved_base_dir = resolve_timestamp_path(base_dir)
     lancedb_dir = str(resolved_base_dir) + "/lancedb"
     vector_store_args.update({"db_uri": lancedb_dir})
 
@@ -265,9 +263,7 @@ async def local_search_streaming(
     _entities = read_indexer_entities(nodes, entities, community_level)
 
     base_dir = cast(str, root_dir) + "/" + config.storage.base_dir
-    resolved_base_dir = resolve_timestamp_path(
-        base_dir
-    )
+    resolved_base_dir = resolve_timestamp_path(base_dir)
     lancedb_dir = str(resolved_base_dir) + "/lancedb"
     vector_store_args.update({"db_uri": lancedb_dir})
 
