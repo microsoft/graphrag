@@ -16,3 +16,6 @@ class ReportingConfigInput(TypedDict):
     connection_string: NotRequired[str | None]
     container_name: NotRequired[str | None]
     storage_account_blob_url: NotRequired[str | None]
+    bucket_name: NotRequired[str | None]
+    access_key: NotRequired[str | None]
+    endpoint: NotRequired[str | None]

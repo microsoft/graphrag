@@ -69,7 +69,22 @@ class PipelineInputConfig(BaseModel, Generic[T]):
         description="The encoding for the input files.", default=None
     )
     """The encoding for the input files."""
-
+    bucket_name: str| None = pydantic_Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = pydantic_Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key  for the input files."""
+    secret_key: str| None = pydantic_Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint:   str | None = pydantic_Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""
 
 class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputFileType.csv]]):
     """Represent the configuration for a CSV input."""

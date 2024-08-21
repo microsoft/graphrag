@@ -9,6 +9,7 @@ from .cache import (
     PipelineCacheConfigTypes,
     PipelineFileCacheConfig,
     PipelineMemoryCacheConfig,
+    PipelineMinioCacheConfig,
     PipelineNoneCacheConfig,
 )
 from .input import (
@@ -22,6 +23,7 @@ from .reporting import (
     PipelineBlobReportingConfig,
     PipelineConsoleReportingConfig,
     PipelineFileReportingConfig,
+    PipelineMinioReportingConfig,
     PipelineReportingConfig,
     PipelineReportingConfigTypes,
 )
@@ -29,6 +31,7 @@ from .storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineMemoryStorageConfig,
+    PipelineMinioStorageConfig,
     PipelineStorageConfig,
     PipelineStorageConfigTypes,
 )
@@ -42,6 +45,7 @@ __all__ = [
     "PipelineBlobCacheConfig",
     "PipelineBlobReportingConfig",
     "PipelineBlobStorageConfig",
+    "PipelineMinioReportingConfig",
     "PipelineCSVInputConfig",
     "PipelineCacheConfig",
     "PipelineCacheConfigTypes",
@@ -66,4 +70,5 @@ __all__ = [
     "PipelineWorkflowConfig",
     "PipelineWorkflowReference",
     "PipelineWorkflowStep",
+    "PipelineMinioCacheConfig"
 ]

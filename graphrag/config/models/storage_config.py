@@ -28,3 +28,19 @@ class StorageConfig(BaseModel):
     storage_account_blob_url: str | None = Field(
         description="The storage account blob url to use.", default=None
     )
+    bucket_name: str| None = Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key for the input files."""
+    secret_key: str| None = Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint: str | None = Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""

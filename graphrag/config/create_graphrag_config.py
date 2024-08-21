@@ -350,6 +350,10 @@ def create_graphrag_config(
                 connection_string=reader.str(Fragment.conn_string),
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
+                bucket_name=reader.str(Fragment.bucket_name),
+                access_key=reader.str(Fragment.access_key),
+                secret_key=reader.str(Fragment.secret_key),
+                endpoint = reader.str(Fragment.endpoint),
             )
         with reader.envvar_prefix(Section.cache), reader.use(values.get("cache")):
             c_type = reader.str(Fragment.type)
@@ -359,6 +363,10 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.CACHE_BASE_DIR,
+                bucket_name=reader.str(Fragment.bucket_name),
+                access_key=reader.str(Fragment.access_key),
+                secret_key=reader.str(Fragment.secret_key),
+                endpoint=reader.str(Fragment.endpoint),
             )
         with (
             reader.envvar_prefix(Section.reporting),
@@ -371,6 +379,10 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.REPORTING_BASE_DIR,
+                bucket_name=reader.str(Fragment.bucket_name),
+                access_key=reader.str(Fragment.access_key),
+                secret_key=reader.str(Fragment.secret_key),
+                endpoint=reader.str(Fragment.endpoint),
             )
         with reader.envvar_prefix(Section.storage), reader.use(values.get("storage")):
             s_type = reader.str(Fragment.type)
@@ -380,6 +392,10 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
+                bucket_name=reader.str(Fragment.bucket_name),
+                access_key=reader.str(Fragment.access_key),
+                secret_key=reader.str(Fragment.secret_key),
+                endpoint=reader.str(Fragment.endpoint),
             )
         with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
             group_by_columns = reader.list("group_by_columns", "BY_COLUMNS")
@@ -608,7 +624,10 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
-
+    bucket_name="BUCKET_NAME"
+    access_key = "ACCESS_KEY"
+    secret_key = "SECRET_KEY"  # noqa: S105
+    endpoint = "ENDPOINT"
 
 class Section(str, Enum):
     """Configuration Sections."""

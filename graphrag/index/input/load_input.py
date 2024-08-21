@@ -16,6 +16,7 @@ from graphrag.index.progress import NullProgressReporter, ProgressReporter
 from graphrag.index.storage import (
     BlobPipelineStorage,
     FilePipelineStorage,
+    MinioPipelineStorage,
 )
 
 from .csv import input_type as csv
@@ -66,6 +67,24 @@ async def load_input(
             log.info("using file storage for input")
             storage = FilePipelineStorage(
                 root_dir=str(Path(root_dir) / (config.base_dir or ""))
+            )
+        case InputType.minio:
+            log.info("using minio storage for input")
+            if config.bucket_name is None:
+                msg = "Bucket name required for minio storage"
+                raise ValueError(config)
+            if config.access_key is None or config.secret_key is None:
+                msg = "Access key and secret key required for minio storage"
+                raise ValueError(config)
+            if config.endpoint is None:
+                msg = "Endpoint required for minio storage"
+                raise ValueError(config)
+            storage = MinioPipelineStorage(
+                endpoint=config.endpoint if config.endpoint is not None else "",
+                access_key=config.access_key,
+                secret_key=config.secret_key,
+                bucket_name=config.bucket_name,
+                path_prefix=config.base_dir,
             )
         case _:
             log.info("using file storage for input")
