@@ -315,11 +315,16 @@ def run_content_store_local_search(
 
 # Create entities table similar to read_indexer_entities, but creating that table in Kusto, not in memory.
 def create_entities_table(description_embedding_store: BaseVectorStore, community_level: int):
-    description_embedding_store.execute_query(f".set-or-replace entities <| create_final_nodes \
+    description_embedding_store.execute_query(".drop table entities ifexists") #make sure a stale schema doesn't exist
+    description_embedding_store.execute_query(".set entities <| (create_final_entities | \
+                                              project id,title=name,text=description,vector=description_embeddings)")
+    '''
+    description_embedding_store.execute_query(f".set entities <| create_final_nodes \
         | where level <= {community_level} \
         | project community=coalesce(community, 0), name=['title'], rank=degree \
         | summarize community=max(community) by name, rank \
         | join kind=inner create_final_entities on name")
+    '''
 
 def run_content_store_global_search(
     config_dir: str | None,
