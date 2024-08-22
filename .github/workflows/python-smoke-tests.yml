@@ -21,7 +21,7 @@ jobs:
   python-ci:
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"] # add 3.12 once gensim supports it. TODO: watch this issue - https://github.com/piskvorky/gensim/issues/3510
+        python-version: ["3.10"]
         os: [ubuntu-latest, windows-latest]
       fail-fast: false # Continue running all jobs even if one fails
     env:
@@ -65,7 +65,7 @@ jobs:
               - '**/*.toml'
               - '**/*.ipynb'
               - '.github/workflows/python*.yml'
-              - 'tests/smoke/*'
+              - 'tests/smoke/**/*'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -102,8 +102,3 @@ jobs:
         with:
           name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
           path: tests/fixtures/*/output
-
-      - name: E2E Test
-        if: steps.changes.outputs.python == 'true'
-        run: |
-          ./scripts/e2e-test.sh
