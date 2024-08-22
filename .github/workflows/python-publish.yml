@@ -1,4 +1,4 @@
-name: Python Publish
+name: Python Publish (pypi)
 on:
   release:
     types: [created]
@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: poetry install
+
+      - name: Export Publication Version
+        run: echo "version=`poetry version --short`" >> $GITHUB_OUTPUT
 
       - name: Build Distributable
         shell: bash

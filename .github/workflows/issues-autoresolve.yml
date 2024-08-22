@@ -1,0 +1,29 @@
+name: Close inactive issues
+on:
+  schedule:
+    - cron: "30 1 * * *"
+
+permissions:
+  actions: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-issue-stale: 7
+          days-before-issue-close: 5
+          stale-issue-label: "stale"
+          close-issue-label: "autoresolved"
+          stale-issue-message: "This issue has been marked stale due to inactivity after repo maintainer or community member responses that request more information or suggest a solution. It will be closed after five additional days."
+          close-issue-message: "This issue has been closed after being marked as stale for five days. Please reopen if needed."
+          any-of-labels: "awaiting_response"
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

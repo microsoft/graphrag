@@ -29,6 +29,9 @@ class EntityExtractionConfig(LLMConfig):
     strategy: dict | None = Field(
         description="Override the default entity extraction strategy", default=None
     )
+    encoding_model: str | None = Field(
+        default=None, description="The encoding model to use."
+    )
 
     def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
         """Get the resolved entity extraction strategy."""
@@ -38,11 +41,13 @@ class EntityExtractionConfig(LLMConfig):
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
-            "extraction_prompt": (Path(root_dir) / self.prompt).read_text()
+            "extraction_prompt": (Path(root_dir) / self.prompt)
+            .read_bytes()
+            .decode(encoding="utf-8")
             if self.prompt
             else None,
             "max_gleanings": self.max_gleanings,
             # It's prechunked in create_base_text_units
-            "encoding_name": encoding_model,
+            "encoding_name": self.encoding_model or encoding_model,
             "prechunked": True,
         }

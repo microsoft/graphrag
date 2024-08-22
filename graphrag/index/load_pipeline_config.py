@@ -26,8 +26,8 @@ def load_pipeline_config(config_or_path: str | PipelineConfig) -> PipelineConfig
         read_dotenv(str(Path(config_or_path).parent))
 
         if config_or_path.endswith(".json"):
-            with Path(config_or_path).open(encoding="utf-8") as f:
-                config = json.load(f)
+            with Path(config_or_path).open("rb") as f:
+                config = json.loads(f.read().decode(encoding="utf-8", errors="strict"))
         elif config_or_path.endswith((".yml", ".yaml")):
             config = _parse_yaml(config_or_path)
         else:
@@ -73,7 +73,7 @@ def _create_include_constructor():
         if filename.endswith((".yml", ".yaml")):
             return _parse_yaml(filename)
 
-        with Path(filename).open(encoding="utf-8") as f:
-            return f.read()
+        with Path(filename).open("rb") as f:
+            return f.read().decode(encoding="utf-8", errors="strict")
 
     return handle_include
