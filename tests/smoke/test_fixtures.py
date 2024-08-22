@@ -38,7 +38,8 @@ def _load_fixtures():
             continue
 
         config_file = fixtures_path / subfolder / "config.json"
-        params.append((subfolder, json.loads(config_file.read_bytes().decode("utf-8"))))
+        with config_file.open() as f:
+            params.append((subfolder, json.load(f)))
 
     return params
 
@@ -103,7 +104,8 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     csv_files = list((root / "input").glob("*.csv"))
     data_files = txt_files + csv_files
     for data_file in data_files:
-        text = data_file.read_bytes().decode("utf-8")
+        with data_file.open(encoding="utf8") as f:
+            text = f.read()
         file_path = (
             str(Path(input_base_dir) / data_file.name)
             if input_base_dir
@@ -164,7 +166,8 @@ class TestIndexer:
         assert artifacts.exists(), "artifact folder does not exist"
 
         # Check stats for all workflow
-        stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
+        with (artifacts / "stats.json").open() as f:
+            stats = json.load(f)
 
         # Check all workflows run
         expected_workflows = set(workflow_config.keys())

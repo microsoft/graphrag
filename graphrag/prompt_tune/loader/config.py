@@ -25,18 +25,18 @@ def read_config_parameters(root: str, reporter: ProgressReporter):
 
     if settings_yaml.exists():
         reporter.info(f"Reading settings from {settings_yaml}")
-        with settings_yaml.open("rb") as file:
+        with settings_yaml.open("r") as file:
             import yaml
 
-            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
+            data = yaml.safe_load(file)
             return create_graphrag_config(data, root)
 
     if settings_json.exists():
         reporter.info(f"Reading settings from {settings_json}")
-        with settings_json.open("rb") as file:
+        with settings_json.open("r") as file:
             import json
 
-            data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
+            data = json.loads(file.read())
             return create_graphrag_config(data, root)
 
     reporter.info("Reading settings from environment variables")
