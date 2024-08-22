@@ -39,6 +39,11 @@ from .indexer_adapters import (
 )
 
 from common.graph_db_client import GraphDBClient
+<<<<<<< HEAD
+=======
+
+reporter = PrintProgressReporter("")
+>>>>>>> 16295e5da8a3e66178c9196a6770b9bf08a8add7
 
 reporter = PrintProgressReporter("")
 
