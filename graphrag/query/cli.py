@@ -290,7 +290,7 @@ def run_content_store_local_search(
     #     else []
     # )
 
-    reports=kt_read_indexer_reports( description_embedding_store, community_level)
+    reports_result=kt_read_indexer_reports( description_embedding_store, community_level)
 
     #TODO KQLify this. I know at least the read_indedxer_reports needs to be done in Kusto. We are joining the community reports & final nodes.
     # search_engine = get_local_search_engine(
@@ -315,9 +315,11 @@ def run_content_store_local_search(
 
 # Create entities table similar to read_indexer_entities, but creating that table in Kusto, not in memory.
 def create_entities_table(description_embedding_store: BaseVectorStore, community_level: int):
-    description_embedding_store.execute_query(".drop table entities ifexists") #make sure a stale schema doesn't exist
-    description_embedding_store.execute_query(".set entities <| (create_final_entities | \
-                                              project id,title=name,text=description,vector=description_embeddings)")
+    description_embedding_store.execute_query(".set-or-replace entities <| ( \
+    create_final_nodes | where level <= 2 | project name=['title'] ,rank=degree,community | \
+    summarize community=max(community) by name,rank | join kind=inner \
+    create_final_entities on name | project id,title=name,text=description,vector=description_embeddings)")
+
     '''
     description_embedding_store.execute_query(f".set entities <| create_final_nodes \
         | where level <= {community_level} \
