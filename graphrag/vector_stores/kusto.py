@@ -31,7 +31,7 @@ class KustoVectorStore(BaseVectorStore):
                                           , "create_final_community_reports": "(community: int, full_content: string, level: int, rank: int, title: string, rank_explanation: string, summary: string, findings: string, full_content_json: string, id: string)"
                                           , "create_final_text_units": "(id: string, text: string, n_tokens: int, document_ids: string, entity_ids: string, relationship_ids: string)"
                                           , "create_final_relationships": "(source: string, target: string, weight: real, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
-                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string, description_embeddings: dynamic )"}}
+                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string, description_embeddings: dynamic )"}
 
     def connect(self, **kwargs: Any) -> Any:
         """
