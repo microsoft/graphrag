@@ -85,6 +85,7 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.19.0"
 azure-identity = "^1.17.1"
+json-repair = "^0.25.3"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
