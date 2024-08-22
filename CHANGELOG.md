@@ -1,6 +1,16 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.1
+
+- patch: Add preflight check to check LLM connectivity.
+- patch: Add streaming support for local/global search to query cli
+- patch: Add support for both float and int on schema validation for community report generation
+- patch: Avoid running index on gh-pages publishing
+- patch: Implement Index API
+- patch: Improves filtering for data dir inferring
+- patch: Update to nltk 3.9.1
+
 ## 0.3.0
 
 - minor: Implement auto templating API.
