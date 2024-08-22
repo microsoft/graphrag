@@ -19,7 +19,7 @@ Backwards compatibility is not guaranteed at this time.
 
 from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from pydantic import validate_call
@@ -188,7 +188,7 @@ async def local_search(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    base_dir = Path(cast(str, root_dir)) / config.storage.base_dir
+    base_dir = Path(str(root_dir)) / config.storage.base_dir
     resolved_base_dir = resolve_timestamp_path(base_dir)
     lancedb_dir = resolved_base_dir / "lancedb"
     vector_store_args.update({"db_uri": str(lancedb_dir)})
@@ -262,7 +262,7 @@ async def local_search_streaming(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    base_dir = Path(cast(str, root_dir)) / config.storage.base_dir
+    base_dir = Path(str(root_dir)) / config.storage.base_dir
     resolved_base_dir = resolve_timestamp_path(base_dir)
     lancedb_dir = resolved_base_dir / "lancedb"
     vector_store_args.update({"db_uri": str(lancedb_dir)})
