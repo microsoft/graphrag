@@ -26,7 +26,7 @@ from pydantic import validate_call
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.progress.types import PrintProgressReporter
 from graphrag.model.entity import Entity
-from graphrag.query.structured_search.base import SearchResult
+from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
 
