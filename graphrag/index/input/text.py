@@ -34,15 +34,15 @@ async def load(
     ) -> dict[str, Any]:
         if group is None:
             group = {}
-        text = await storage.get(path, encoding="utf-8")
+        text = await storage.get(path.replace('\\','/'), encoding="utf-8")
         new_item = {**group, "text": text}
         new_item["id"] = gen_md5_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
         return new_item
     base_dir = config.base_dir
-    if config.type == "file":
+    # if config.type == "file":
         # base dir is already being added to root dir in case of type file.
-        base_dir = None
+        # base_dir = None
     files = list(
         storage.find(
             re.compile(config.file_pattern),
@@ -67,7 +67,7 @@ async def load(
 
     for file, group in files:
         try:
-            files_loaded.append(await load_file(file, group))
+            files_loaded.append(await load_file(base_dir + file, group))
         except Exception:  # noqa: BLE001 (catching Exception is fine here)
             log.warning("Warning! Error loading file %s. Skipping...", file)
 
