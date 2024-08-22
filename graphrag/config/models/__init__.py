@@ -24,6 +24,7 @@ from .storage_config import StorageConfig
 from .summarize_descriptions_config import SummarizeDescriptionsConfig
 from .text_embedding_config import TextEmbeddingConfig
 from .umap_config import UmapConfig
+from .graphdb_config import GraphDBConfig
 
 __all__ = [
     "CacheConfig",
@@ -47,4 +48,5 @@ __all__ = [
     "SummarizeDescriptionsConfig",
     "TextEmbeddingConfig",
     "UmapConfig",
+    "GraphDBConfig",
 ]

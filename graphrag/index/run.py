@@ -24,6 +24,7 @@ from datashaper import (
     WorkflowCallbacksManager,
     WorkflowRunResult,
 )
+from graphrag.config.models.graphdb_config import GraphDBConfig
 
 from .cache import InMemoryCache, PipelineCache, load_cache
 from .config import (
@@ -164,6 +165,7 @@ async def run_pipeline_with_config(
         progress_reporter=progress_reporter,
         emit=emit,
         is_resume_run=is_resume_run,
+        graphdb_params = config.graphdb_params,
     ):
         yield table
 
@@ -181,6 +183,7 @@ async def run_pipeline(
     emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     is_resume_run: bool = False,
+    graphdb_params: GraphDBConfig|None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run the pipeline.
@@ -216,6 +219,7 @@ async def run_pipeline(
         lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
             "Error emitting table", e, s, d
         ),
+        graphdb_params
     )
     loaded_workflows = load_workflows(
         workflows,
