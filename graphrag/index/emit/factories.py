@@ -3,6 +3,7 @@
 
 """Table Emitter Factories."""
 
+from graphrag.config.models.graphdb_config import GraphDBConfig
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
 
@@ -13,9 +14,8 @@ from .graph_db_emitter import GraphDBEmitter
 from .table_emitter import TableEmitter
 from .types import TableEmitterType
 
-
 def create_table_emitter(
-    emitter_type: TableEmitterType, storage: PipelineStorage, on_error: ErrorHandlerFn
+    emitter_type: TableEmitterType, storage: PipelineStorage, on_error: ErrorHandlerFn, graphdb_params: GraphDBConfig|None = None
 ) -> TableEmitter:
     """Create a table emitter based on the specified type."""
     match emitter_type:
@@ -26,7 +26,7 @@ def create_table_emitter(
         case TableEmitterType.CSV:
             return CSVTableEmitter(storage)
         case TableEmitterType.Graphdb:
-            return GraphDBEmitter()
+            return GraphDBEmitter(graphdb_params)
         case _:
             msg = f"Unsupported table emitter type: {emitter_type}"
             raise ValueError(msg)
@@ -36,9 +36,10 @@ def create_table_emitters(
     emitter_types: list[TableEmitterType],
     storage: PipelineStorage,
     on_error: ErrorHandlerFn,
+    graphdb_params: GraphDBConfig|None = None,
 ) -> list[TableEmitter]:
     """Create a list of table emitters based on the specified types."""
     return [
-        create_table_emitter(emitter_type, storage, on_error)
+        create_table_emitter(emitter_type, storage, on_error, graphdb_params)
         for emitter_type in emitter_types
     ]

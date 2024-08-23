@@ -160,7 +160,13 @@ global_search:
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 
 query_context:
-  # Files: [] # list of files in context to run query 
+  # Files: [] # list of files in context to run query
+
+graphdb:
+    account_name: ''
+    account_key: ''
+    username: ''
+    enabled: false
 """
 
 INIT_DOTENV = """

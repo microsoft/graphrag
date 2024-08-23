@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 from devtools import pformat
+from graphrag.config.models.graphdb_config import GraphDBConfig
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
@@ -62,3 +63,8 @@ class PipelineConfig(BaseModel):
         description="The workflows for the pipeline.", default_factory=list
     )
     """The workflows for the pipeline."""
+
+    graphdb_params: GraphDBConfig|None = pydantic_Field(
+        description="Parameters for Graphdb collection", default=None
+    )
+    """Parameters for Graphdb collection"""

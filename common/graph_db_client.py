@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+from graphrag.config.models.graphdb_config import GraphDBConfig
 import numpy as np
 
 import ast
@@ -12,15 +13,12 @@ import os
 import json
 
 class GraphDBClient:
-    def __init__(self):
-        ACCOUNT_NAME = os.getenv("ACCOUNT_NAME")
-        ACCOUNT_KEY = os.getenv("ACCOUNT_KEY")
-        GRAPHDB_USERNAME = os.getenv("GRAPHDB_USERNAME")
+    def __init__(self,graph_db_params: GraphDBConfig|None):
         self._client=client.Client(
-            url=f"wss://{ACCOUNT_NAME}.gremlin.cosmos.azure.com:443/",
+            url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
             traversal_source="g",
-            username=GRAPHDB_USERNAME,
-            password=f"{ACCOUNT_KEY}",
+            username=graph_db_params.username,
+            password=f"{graph_db_params.account_key}",
             message_serializer=serializer.GraphSONSerializersV2d0(),
         )
 

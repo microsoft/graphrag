@@ -4,6 +4,7 @@
 """Parameterization settings for the default configuration."""
 
 from devtools import pformat
+from graphrag.config.models.graphdb_config import GraphDBConfig
 from pydantic import Field
 
 import graphrag.config.defaults as defs
@@ -150,3 +151,8 @@ class GraphRagConfig(LLMConfig):
         description="The query context to use.", default=[]
     )
     """The query context to use."""
+
+    graphdb: GraphDBConfig = Field(
+        description="The parameters to use graphdb.", default=[]
+    )
+    """The parameters to use graphdb."""

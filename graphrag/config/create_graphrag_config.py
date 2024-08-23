@@ -54,6 +54,7 @@ from .models import (
     SummarizeDescriptionsConfig,
     TextEmbeddingConfig,
     UmapConfig,
+    GraphDBConfig,
 )
 from .read_dotenv import read_dotenv
 
@@ -550,6 +551,17 @@ def create_graphrag_config(
                 files=reader.list("files") or [],
             )
 
+        with (
+            reader.use(values.get("graphdb")),
+            reader.envvar_prefix(Section.query_context),
+        ):
+            graphdb_model = GraphDBConfig(
+                account_name=reader.str("account_name") or None,
+                account_key=reader.str("account_key") or None,
+                username=reader.str("username") or None,
+                enabled=reader.bool("enabled") or False,
+            )
+
         encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
         skip_workflows = reader.list("skip_workflows") or []
 
@@ -576,7 +588,8 @@ def create_graphrag_config(
         skip_workflows=skip_workflows,
         local_search=local_search_model,
         global_search=global_search_model,
-        query_context=query_context_model
+        query_context=query_context_model,
+        graphdb=graphdb_model,
     )
 
 
@@ -645,6 +658,7 @@ class Section(str, Enum):
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
     query_context = "QUERY_CONTEXT"
+    graphdb = "GRAPHDB"
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:
