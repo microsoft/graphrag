@@ -12,3 +12,8 @@ embeddings:
 
     entity_name_description:
       title_column: "name"
+
+community_reports:
+  prompt: "prompts/community_report.txt"
+  max_length: 2000
+  max_input_length: 8000

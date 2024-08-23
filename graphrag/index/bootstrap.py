@@ -20,8 +20,11 @@ def bootstrap():
         from nltk.corpus import wordnet as wn
 
         nltk.download("punkt")
+        nltk.download("punkt_tab")
         nltk.download("averaged_perceptron_tagger")
+        nltk.download("averaged_perceptron_tagger_eng")
         nltk.download("maxent_ne_chunker")
+        nltk.download("maxent_ne_chunker_tab")
         nltk.download("words")
         nltk.download("wordnet")
         wn.ensure_loaded()
