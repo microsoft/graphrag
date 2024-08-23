@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ${{ secrets.MY_CUSTOM_IMAGE_NAME }}
+      IMAGE_NAME: ${{ github.event.repository.name }}
 
     steps:
     - uses: actions/checkout@v4
