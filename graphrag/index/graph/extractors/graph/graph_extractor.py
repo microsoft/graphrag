@@ -4,7 +4,6 @@
 """A module containing 'GraphExtractionResult' and 'GraphExtractor' models."""
 
 import logging
-import numbers
 import re
 import traceback
 from collections.abc import Mapping
