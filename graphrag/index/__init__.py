@@ -38,7 +38,7 @@ from .errors import (
 )
 from .load_pipeline_config import load_pipeline_config
 from .run import run_pipeline, run_pipeline_with_config
-from .storage import PipelineStorage
+from graphrag.common.storage import PipelineStorage
 
 __all__ = [
     "NoWorkflowsDefinedError",

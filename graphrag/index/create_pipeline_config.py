@@ -40,7 +40,7 @@ from graphrag.index.config.reporting import (
     PipelineFileReportingConfig,
     PipelineReportingConfigTypes,
 )
-from graphrag.index.config.storage import (
+from graphrag.common.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineMemoryStorageConfig,

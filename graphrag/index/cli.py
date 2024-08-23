@@ -20,12 +20,12 @@ from graphrag.config.enums import ContextSwitchType
 from graphrag.common.utils.common_utils import is_valid_guid
 from graphrag.index import PipelineConfig, create_pipeline_config
 from graphrag.index.cache import NoopPipelineCache
-from graphrag.index.progress import (
+from graphrag.common.progress import (
     NullProgressReporter,
     PrintProgressReporter,
     ProgressReporter,
 )
-from graphrag.index.progress.rich import RichProgressReporter
+from graphrag.common.progress.rich import RichProgressReporter
 from graphrag.index.run import run_pipeline_with_config
 
 from .emit import TableEmitterType

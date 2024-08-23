@@ -7,7 +7,7 @@ import unittest
 from graphrag.index.cache import (
     JsonPipelineCache,
 )
-from graphrag.index.storage.file_pipeline_storage import (
+from graphrag.common.storage.file_pipeline_storage import (
     FilePipelineStorage,
 )
 

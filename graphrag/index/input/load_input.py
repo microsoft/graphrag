@@ -12,8 +12,8 @@ import pandas as pd
 
 from graphrag.config import InputConfig, InputType
 from graphrag.index.config import PipelineInputConfig
-from graphrag.index.progress import NullProgressReporter, ProgressReporter
-from graphrag.index.storage import (
+from graphrag.common.progress import NullProgressReporter, ProgressReporter
+from graphrag.common.storage import (
     BlobPipelineStorage,
     FilePipelineStorage,
 )

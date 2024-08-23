@@ -3,10 +3,12 @@
 
 """Command line interface for the query module."""
 
+import asyncio
 import os
 from pathlib import Path
 from typing import cast
 from io import BytesIO
+from graphrag.common.storage import PipelineStorage, BlobPipelineStorage, FilePipelineStorage
 from graphrag.common.utils.context_utils import get_files_by_contextid
 from graphrag.config.enums import StorageType
 from azure.core.exceptions import ResourceNotFoundError
@@ -17,7 +19,7 @@ from graphrag.config import (
     create_graphrag_config,
     GraphRagConfig,
 )
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.common.progress import PrintProgressReporter
 from graphrag.model.entity import Entity
 from graphrag.query.input.loaders.dfs import (
     store_entity_semantic_embeddings,
@@ -26,8 +28,6 @@ from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 from graphrag.vector_stores.kusto import KustoVectorStore
-from graphrag.common.blob_storage_client import BlobStorageClient
-
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
     read_indexer_covariates,
@@ -152,11 +152,21 @@ def run_local_search(
         data_dir, root_dir, config_dir
     )
 
+    # for the POC purpose input artifacts blob, output artifacts blob and input query blob storage are going to same.
+    if(config.storage.type == StorageType.memory):
+        ValueError("Memory storage is not supported")
+    if(config.storage.type == StorageType.blob):
+        if(config.storage.container_name is not None):
+            input_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
+            output_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
+        else:
+            ValueError("Storage type is Blob but container name is invalid")
+    if(config.storage.type == StorageType.file):
+        input_storage_client: PipelineStorage = FilePipelineStorage(config.root_dir)
+        output_storage_client: PipelineStorage = FilePipelineStorage(config.root_dir)
+
     data_paths = []
     data_paths = get_files_by_contextid(config, context_id)
-    #data_paths = [Path("E:\\graphrag\\ragtest6\\output\\AtoG\\artifacts")]
-    #data_paths = [Path("E:\\graphrag\\auditlogstest\\output\\securityPlatformPPE\\artifacts"),Path("E:\\graphrag\\auditlogstest\\output\\UnifiedFeedbackPPE\\artifacts")]
-    #data_paths.append(Path(data_dir))
     final_nodes = pd.DataFrame()
     final_community_reports = pd.DataFrame()
     final_text_units = pd.DataFrame()
@@ -169,25 +179,20 @@ def run_local_search(
         #check from the config for the ouptut storage type and then read the data from the storage.
         
         #GraphDB: we may need to make change below to read nodes data from Graph DB
-        final_nodes = pd.concat([final_nodes, read_paraquet_file(config, data_path + "/create_final_nodes.parquet", config.storage.type)])
+        final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
         
-        final_community_reports = pd.concat([final_community_reports,read_paraquet_file(config, data_path + "/create_final_community_reports.parquet", config.storage.type)])
+        final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")])
         
-        final_text_units = pd.concat([final_text_units, read_paraquet_file(config, data_path + "/create_final_text_units.parquet", config.storage.type)])
+        final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")])
         
         if config.graphdb.enabled:
             final_relationships = pd.concat([final_relationships, graph_db_client.query_edges()])
             final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
         else:
-            final_relationships = pd.concat([final_relationships, read_paraquet_file(config, data_path + "/create_final_relationships.parquet", config.storage.type)])
-            final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
+            final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
+            final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
 
-        data_path_object = Path(data_path)
-        final_covariates_path = data_path_object / "create_final_covariates.parquet"
-
-        final_covariates = pd.concat([final_covariates, (
-            read_paraquet_file(config, final_covariates_path, config.storage.type) if final_covariates_path.exists() else None
-        )])
+        final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
@@ -221,7 +226,9 @@ def run_local_search(
         response_type=response_type,
     )
 
-    result = search_engine.search(query=query)
+    result = search_engine.optimized_search(query=query) # changed it to search if we want to get final text response.
+    for key in  result.context_data.keys():
+        asyncio.run(output_storage_client.set("query/output/"+ key +".paraquet", result.context_data[key].to_parquet())) #it shows as error in editor but not an error.
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
     
@@ -236,23 +243,13 @@ def blob_exists(container_client, blob_name):
         return False
 
 
-def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageType):
+def read_paraquet_file(storage: PipelineStorage, path: str):
     #create different enum for paraquet storage type
-    if storageType == StorageType.blob:
-        container_name = config.input.container_name or ""
-        blobStorageClient = BlobStorageClient(connection_string=config.input.connection_string, container_name=container_name, encoding="utf-8")
-        container_client = blobStorageClient.get_container_client()
-        if blob_exists(container_client, path):
-            blob_data = container_client.download_blob(blob=path)
-            bytes_io = BytesIO(blob_data.readall())
-            return pd.read_parquet(bytes_io, engine="pyarrow")
-        else:
-            return pd.DataFrame() # return empty data frame as covariates file doesn't exist
-    else:
-        file_path = Path(path)
-        if not file_path.exists():
-            return pd.DataFrame()
-        return pd.read_parquet(path)
+    file_data = asyncio.run(storage.get(path, True))
+    if file_data is None:
+        return pd.DataFrame()
+    return pd.read_parquet(BytesIO(file_data), engine="pyarrow")
+    
 # TODO I split this out for now to preserve how the original local search worked.
 # I don't think this will necessarily be permanently separate.
 # It was just easier without having to keep everything generic and work the same way as local search worked.
