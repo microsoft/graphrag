@@ -37,6 +37,7 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
+  # target: {defs.EMBEDDING_TARGET.value} # or all
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -53,7 +54,7 @@ embeddings:
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
     # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
     # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-    # target: {defs.EMBEDDING_TARGET.value} # or optional
+    
   
 
 
