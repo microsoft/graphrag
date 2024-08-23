@@ -23,6 +23,7 @@ from graphrag.index.config.cache import (
     PipelineCacheConfigTypes,
     PipelineFileCacheConfig,
     PipelineMemoryCacheConfig,
+    PipelineMinioCacheConfig,
     PipelineNoneCacheConfig,
 )
 from graphrag.index.config.input import (
@@ -37,12 +38,14 @@ from graphrag.index.config.reporting import (
     PipelineBlobReportingConfig,
     PipelineConsoleReportingConfig,
     PipelineFileReportingConfig,
+    PipelineMinioReportingConfig,
     PipelineReportingConfigTypes,
 )
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineMemoryStorageConfig,
+    PipelineMinioStorageConfig,
     PipelineStorageConfigTypes,
 )
 from graphrag.index.config.workflow import (
@@ -469,6 +472,7 @@ def _get_pipeline_input_config(
                 connection_string=settings.input.connection_string,
                 storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
+                bucket_name = settings.input.bucket_name
             )
         case InputFileType.text:
             return PipelineTextInputConfig(
@@ -479,6 +483,10 @@ def _get_pipeline_input_config(
                 connection_string=settings.input.connection_string,
                 storage_account_blob_url=settings.input.storage_account_blob_url,
                 container_name=settings.input.container_name,
+                bucket_name = settings.input.bucket_name,
+                access_key= settings.input.access_key,
+                secret_key=settings.input.secret_key,
+                endpoint=settings.input.endpoint
             )
         case _:
             msg = f"Unknown input type: {file_type}"
@@ -511,6 +519,24 @@ def _get_reporting_config(
             )
         case ReportingType.console:
             return PipelineConsoleReportingConfig()
+        case ReportingType.minio:
+             bucket_name= settings.reporting.bucket_name
+             access_key = settings.reporting.access_key
+             secret_key = settings.reporting.secret_key
+             endpoint = settings.reporting.endpoint
+             if bucket_name is None:
+                msg = "bucket_name  must be provided for blob reporting."
+                raise ValueError(settings.reporting)
+             if access_key is None or secret_key is None or endpoint is None :
+                msg = "Connection string or storage account blob url must be provided for blob reporting."
+                raise ValueError(msg)
+             return PipelineMinioReportingConfig(
+                bucket_name=bucket_name,
+                access_key= access_key,
+                secret_key=secret_key,
+                endpoint=settings.reporting.endpoint,
+                base_dir=settings.reporting.base_dir,
+            )
         case _:
             # relative to the root_dir
             return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
@@ -546,6 +572,27 @@ def _get_storage_config(
                 container_name=container_name,
                 base_dir=settings.storage.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
+            )
+        case StorageType.minio:
+            access_key = settings.cache.access_key
+            bucket_name = settings.cache.bucket_name
+            endpoint = settings.cache.endpoint
+            secret_key = settings.cache.secret_key
+            if access_key is None:
+                msg = "access_key must be provided for blob cache."
+                raise ValueError(msg)
+            if bucket_name is None:
+                msg = "bucket_name string  must be provided for blob cache."
+                raise ValueError(msg)
+            if endpoint is None:
+                msg = "endpoint must be provided for blob cache."
+                raise ValueError(msg)
+            return PipelineMinioStorageConfig(
+                access_key=access_key,
+                bucket_name=bucket_name,
+                base_dir=settings.storage.base_dir,
+                endpoint=endpoint,
+                secret_key = secret_key
             )
         case _:
             # relative to the root_dir
@@ -583,6 +630,27 @@ def _get_cache_config(
                 container_name=container_name,
                 base_dir=settings.cache.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
+            )
+        case CacheType.minio:
+            access_key = settings.cache.access_key
+            bucket_name = settings.cache.bucket_name
+            endpoint = settings.cache.endpoint
+            secret_key = settings.cache.secret_key
+            if access_key is None:
+                msg = "access_key must be provided for blob cache."
+                raise ValueError(msg)
+            if bucket_name is None:
+                msg = "bucket_name string  must be provided for blob cache."
+                raise ValueError(msg)
+            if endpoint is None:
+                msg = "endpoint must be provided for blob cache."
+                raise ValueError(msg)
+            return PipelineMinioCacheConfig(
+                access_key=access_key,
+                bucket_name=bucket_name,
+                base_dir=settings.cache.base_dir,
+                endpoint=endpoint,
+                secret_key = secret_key
             )
         case _:
             # relative to root dir

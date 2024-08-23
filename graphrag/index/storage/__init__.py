@@ -7,6 +7,7 @@ from .blob_pipeline_storage import BlobPipelineStorage, create_blob_storage
 from .file_pipeline_storage import FilePipelineStorage
 from .load_storage import load_storage
 from .memory_pipeline_storage import MemoryPipelineStorage
+from .minio_pipeline_storage import MinioPipelineStorage
 from .typing import PipelineStorage
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "PipelineStorage",
     "create_blob_storage",
     "load_storage",
+    "MinioPipelineStorage"
 ]

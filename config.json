@@ -1,0 +1,20 @@
+{
+    "llm": {
+        "api_key": "${API_KEY}",
+        "type": "azure_openai_chat",
+        "deployment_name":"gpt-4o-mini",
+        "api_base":"https://siasaigc.openai.azure.com/",
+        "api_version":"gpt-4o-mini-2024-07-18",
+        "model":"gpt-4o-mini-2024-07-18"
+
+    },
+    "embeddings": {
+        "api_key": "${API_KEY}",
+        "type": "azure_openai_chat",
+        "deployment_name":"text-embedding-3-large",
+        "api_base":"https://siasaigc.openai.azure.com/",
+        "api_version":"2024-06-01",
+        "model":"text-embedding-3-large"
+        
+    }
+}

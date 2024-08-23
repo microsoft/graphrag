@@ -11,8 +11,13 @@ from graphrag.config.enums import CacheType
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
+    PipelineMinioCacheConfig,
 )
-from graphrag.index.storage import BlobPipelineStorage, FilePipelineStorage
+from graphrag.index.storage import (
+    BlobPipelineStorage,
+    FilePipelineStorage,
+    MinioPipelineStorage,
+)
 
 if TYPE_CHECKING:
     from graphrag.index.config import (
@@ -44,6 +49,16 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
                 config.connection_string,
                 config.container_name,
                 storage_account_blob_url=config.storage_account_blob_url,
+            ).child(config.base_dir)
+            return JsonPipelineCache(storage)
+        case CacheType.minio:
+            config = cast(PipelineMinioCacheConfig, config)
+            storage = MinioPipelineStorage(
+                config.endpoint if config.endpoint is not None else "",
+                config.access_key if config.access_key is not None else "",
+                config.secret_key if config.secret_key is not None else "",
+                config.bucket_name if config.bucket_name is not None else "",
+                path_prefix=config.base_dir
             ).child(config.base_dir)
             return JsonPipelineCache(storage)
         case _:

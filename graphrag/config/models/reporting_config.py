@@ -28,3 +28,15 @@ class ReportingConfig(BaseModel):
     storage_account_blob_url: str | None = Field(
         description="The storage account blob url to use.", default=None
     )
+    bucket_name: str | None = Field(
+        description="The reporting bucket name to use.", default=None
+    )
+    access_key: str | None = Field(
+        description="The reporting access key to use.", default=None
+    )
+    secret_key: str | None = Field(
+        description="The reporting secret key to use.", default=None
+    )
+    endpoint: str | None = Field(
+        description="The reporting endpoint to use.", default=None
+    )

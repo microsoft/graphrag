@@ -12,12 +12,14 @@ from graphrag.config import ReportingType
 from graphrag.index.config import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
+    PipelineMinioReportingConfig,
     PipelineReportingConfig,
 )
 
 from .blob_workflow_callbacks import BlobWorkflowCallbacks
 from .console_workflow_callbacks import ConsoleWorkflowCallbacks
 from .file_workflow_callbacks import FileWorkflowCallbacks
+from .minio_workflow_callbacks import MinioWorkflowCallbacks
 
 
 def load_pipeline_reporter(
@@ -41,6 +43,15 @@ def load_pipeline_reporter(
                 config.container_name,
                 base_dir=config.base_dir,
                 storage_account_blob_url=config.storage_account_blob_url,
+            )
+        case ReportingType.minio:
+            config = cast(PipelineMinioReportingConfig, config)
+            return MinioWorkflowCallbacks(
+                endpoint=config.endpoint or "",
+                access_key=config.access_key or "",
+                secret_key=config.secret_key or "",
+                bucket_name=config.bucket_name or "",
+                base_dir=config.base_dir or "",
             )
         case _:
             msg = f"Unknown reporting type: {config.type}"

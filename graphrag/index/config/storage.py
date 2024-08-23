@@ -65,8 +65,49 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
         description="The storage account blob url.", default=None
     )
     """The storage account blob url."""
+class PipelineMinioStorageConfig(PipelineStorageConfig[Literal[StorageType.minio]]):
+    """Represents the blob storage configuration for the pipeline."""
 
+    type: Literal[StorageType.minio] = StorageType.minio
+    """The type of storage."""
+
+    connection_string: str | None = pydantic_Field(
+        description="The blob storage connection string for the storage.", default=None
+    )
+    """The blob storage connection string for the storage."""
+
+    container_name: str = pydantic_Field(
+        description="The container name for storage", default=None
+    )
+    """The container name for storage."""
+
+    base_dir: str | None = pydantic_Field(
+        description="The base directory for the storage.", default=None
+    )
+    """The base directory for the storage."""
+
+    storage_account_blob_url: str | None = pydantic_Field(
+        description="The storage account blob url.", default=None
+    )
+    """The storage account blob url."""
+    """The encoding for the input files."""
+    bucket_name: str| None = pydantic_Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = pydantic_Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key  for the input files."""
+    secret_key: str| None = pydantic_Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint:   str | None = pydantic_Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""
 
 PipelineStorageConfigTypes = (
-    PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig
+    PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig | PipelineMinioStorageConfig
 )

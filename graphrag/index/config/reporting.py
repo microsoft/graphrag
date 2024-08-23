@@ -69,9 +69,70 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     )
     """The base directory for the reporting."""
 
+    """The encoding for the input files."""
+    bucket_name: str| None = pydantic_Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = pydantic_Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key  for the input files."""
+    secret_key: str| None = pydantic_Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint:   str | None = pydantic_Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""
+class PipelineMinioReportingConfig(PipelineReportingConfig[Literal[ReportingType.minio]]):
+    """Represents the blob reporting configuration for the pipeline."""
 
+    type: Literal[ReportingType.minio] = ReportingType.minio
+    """The type of reporting."""
+
+    connection_string: str | None = pydantic_Field(
+        description="The blob reporting connection string for the reporting.",
+        default=None,
+    )
+    """The blob reporting connection string for the reporting."""
+
+    container_name: str = pydantic_Field(
+        description="The container name for reporting", default=None
+    )
+    """The container name for reporting"""
+
+    storage_account_blob_url: str | None = pydantic_Field(
+        description="The storage account blob url for reporting", default=None
+    )
+    """The storage account blob url for reporting"""
+
+    base_dir: str | None = pydantic_Field(
+        description="The base directory for the reporting.", default=None
+    )
+    """The base directory for the reporting."""
+    
+    """The encoding for the input files."""
+    bucket_name: str| None = pydantic_Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = pydantic_Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key  for the input files."""
+    secret_key: str| None = pydantic_Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint:   str | None = pydantic_Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""
 PipelineReportingConfigTypes = (
     PipelineFileReportingConfig
     | PipelineConsoleReportingConfig
     | PipelineBlobReportingConfig
+    | PipelineMinioReportingConfig
 )

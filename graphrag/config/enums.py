@@ -19,7 +19,8 @@ class CacheType(str, Enum):
     """The none cache configuration type."""
     blob = "blob"
     """The blob cache configuration type."""
-
+    minio = "minio"
+    """The minio cache configuration type."""
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
@@ -45,7 +46,8 @@ class InputType(str, Enum):
     """The file storage type."""
     blob = "blob"
     """The blob storage type."""
-
+    minio = "minio"
+    """The minio storage type."""
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
@@ -60,6 +62,8 @@ class StorageType(str, Enum):
     """The memory storage type."""
     blob = "blob"
     """The blob storage type."""
+    minio = "minio"
+    """The minio storage type."""
 
     def __repr__(self):
         """Get a string representation."""
@@ -75,7 +79,8 @@ class ReportingType(str, Enum):
     """The console reporting configuration type."""
     blob = "blob"
     """The blob reporting configuration type."""
-
+    minio = "minio"
+    """The minio reporting configuration type."""
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'

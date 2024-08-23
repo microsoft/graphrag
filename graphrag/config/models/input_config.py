@@ -58,3 +58,19 @@ class InputConfig(BaseModel):
     document_attribute_columns: list[str] = Field(
         description="The document attribute columns to use.", default=[]
     )
+    bucket_name: str| None = Field(
+        description="The bucket name for the input files.", default=None
+    )
+    """The bucket name for the input files."""
+    access_key: str| None = Field(
+        description="The access key  for the input files.", default=None
+    )
+    """The access key for the input files."""
+    secret_key: str| None = Field(
+        description="The secret key for the input files.", default=None
+    )
+    """The secret key for the input files."""
+    endpoint: str | None = Field(
+        description="The endpoint for the input files.", default=None
+    )
+    """The endpoint for the input files."""

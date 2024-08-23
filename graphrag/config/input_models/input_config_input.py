@@ -25,3 +25,6 @@ class InputConfigInput(TypedDict):
     title_column: NotRequired[str | None]
     document_attribute_columns: NotRequired[list[str] | str | None]
     storage_account_blob_url: NotRequired[str | None]
+    bucket_name: NotRequired[str | None]
+    access_key: NotRequired[str | None]
+    endpoint: NotRequired[str | None]
