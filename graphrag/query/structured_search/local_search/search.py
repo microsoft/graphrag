@@ -173,7 +173,7 @@ class LocalSearch(BaseSearch):
             conversation_history=conversation_history,
             **kwargs,
             **self.context_builder_params,
-            isOptimizedFlow=True,
+            is_optimized_flow=True,
         )
         log.info("GENERATE ANSWER: %d. QUERY: %s", start_time, query)
         try:

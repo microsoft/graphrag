@@ -190,7 +190,7 @@ def run_local_search(
             final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
         else:
             final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
-            final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
+            final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
 
         final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 

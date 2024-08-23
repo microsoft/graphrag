@@ -3,21 +3,13 @@
 
 """GraphDBEmitter module."""
 
-import logging
-import traceback
-
 import pandas as pd
-
-from graphrag.config.models.graphdb_config import GraphDBConfig
-from gremlin_python.driver import client, serializer
-
-from .table_emitter import TableEmitter
-
 from common.graph_db_client import GraphDBClient
-
-from graphrag.index.storage import PipelineStorage
+from .table_emitter import TableEmitter
+from graphrag.config.models.graphdb_config import GraphDBConfig
 
 class GraphDBEmitter(TableEmitter):
+    """Graph DB Emitter."""
 
     def __init__(self, graph_db_params: GraphDBConfig|None):
         self.graph_db_client = GraphDBClient(graph_db_params)
