@@ -33,6 +33,7 @@ def build_entity_context(
     rank_description: str = "number of relationships",
     column_delimiter: str = "|",
     context_name="Entities",
+    is_optimized_search: bool = False
 ) -> tuple[str, pd.DataFrame]:
     """Prepare entity data table as context data for system prompt."""
     if len(selected_entities) == 0:
@@ -68,10 +69,11 @@ def build_entity_context(
                 else ""
             )
             new_context.append(field_value)
-        new_context_text = column_delimiter.join(new_context) + "\n"
-        new_tokens = num_tokens(new_context_text, token_encoder)
-        if current_tokens + new_tokens > max_tokens:
-            break
+        if not is_optimized_search:
+            new_context_text = column_delimiter.join(new_context) + "\n"
+            new_tokens = num_tokens(new_context_text, token_encoder)
+            if current_tokens + new_tokens > max_tokens:
+                break
         current_context_text += new_context_text
         all_context_records.append(new_context)
         current_tokens += new_tokens
