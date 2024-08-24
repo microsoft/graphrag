@@ -54,7 +54,7 @@ def create_entity_extraction_prompt(
         else UNTYPED_GRAPH_EXTRACTION_PROMPT
     )
     if isinstance(entity_types, list):
-        entity_types = ", ".join(entity_types)
+        entity_types = ", ".join(map(str, entity_types))
 
     tokens_left = (
         max_token_count
