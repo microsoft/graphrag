@@ -47,6 +47,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
         reporter: StatusReporter | None = None,
+        dimensions=1536,
     ):
         OpenAILLMImpl.__init__(
             self=self,
@@ -67,6 +68,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         self.max_tokens = max_tokens
         self.token_encoder = tiktoken.get_encoding(self.encoding_name)
         self.retry_error_types = retry_error_types
+        self.dimensions = dimensions
 
     def embed(self, text: str, **kwargs: Any) -> list[float]:
         """
@@ -134,6 +136,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
                         self.sync_client.embeddings.create(  # type: ignore
                             input=text,
                             model=self.model,
+                            dimensions=self.dimensions,
                             **kwargs,  # type: ignore
                         )
                         .data[0]
@@ -143,7 +146,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(
-                message="Error at embed_with_retry()",
+                message="Error at chunk_lens()",
                 details={self.__class__.__name__: str(e)},
             )
             return ([], 0)
@@ -167,6 +170,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
                         await self.async_client.embeddings.create(  # type: ignore
                             input=text,
                             model=self.model,
+                            dimensions=self.dimensions
                             **kwargs,  # type: ignore
                         )
                     ).data[0].embedding or []
