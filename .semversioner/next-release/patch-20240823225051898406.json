@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Ensure entity types to be str when running prompt tuning"
+}
