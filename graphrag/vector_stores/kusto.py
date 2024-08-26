@@ -6,6 +6,7 @@
 import typing
 from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
 from azure.kusto.data.helpers import dataframe_from_result_table
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
 import pandas as pd
@@ -31,7 +32,7 @@ class KustoVectorStore(BaseVectorStore):
                                           , "create_final_community_reports": "(community: int, full_content: string, level: int, rank: int, title: string, rank_explanation: string, summary: string, findings: string, full_content_json: string, id: string)"
                                           , "create_final_text_units": "(id: string, text: string, n_tokens: int, document_ids: string, entity_ids: string, relationship_ids: string)"
                                           , "create_final_relationships": "(source: string, target: string, weight: real, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
-                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string, description_embeddings: dynamic )"}
+                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string, description_embedding: dynamic)"}
 
     def connect(self, **kwargs: Any) -> Any:
         """
@@ -125,7 +126,7 @@ class KustoVectorStore(BaseVectorStore):
         self, query_embedding: List[float], k: int = 10, **kwargs: Any
     ) -> List[VectorStoreSearchResult]:
         """
-        Perform a vector-based similarity search.
+        Perform a vector-based similarity search. A search to find the k nearest neighbors of the given query vector.
 
         Args:
             query_embedding (List[float]): The query embedding vector.
@@ -139,7 +140,6 @@ class KustoVectorStore(BaseVectorStore):
         let query_vector = dynamic({query_embedding});
         {self.collection_name}
         | extend distance = array_length(set_difference(vector, query_vector))
-        | where distance <= {k}
         | top {k} by distance asc
         """
         response = self.client.execute(self.database, query)
@@ -160,7 +160,7 @@ class KustoVectorStore(BaseVectorStore):
 
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
-    ) -> List[VectorStoreSearchResult]:
+    ) -> list[VectorStoreSearchResult]:
         """
         Perform a similarity search using a given input text.
 
@@ -178,8 +178,69 @@ class KustoVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
+
     def execute_query(self, query: str) -> Any:
-        self.client.execute(self.database, f"{query}")
+        return self.client.execute(self.database, f"{query}")
+
+    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -> list[Entity]:
+        query_results = self.similarity_search_by_text(text, text_embedder, k)
+        query_ids = [result.document.id for result in query_results]
+        if query_ids not in [[], None]:
+            ids_str = "\", \"".join([str(id) for id in query_ids])
+            query = f"""
+            entities
+            | where id in ("{ids_str}")
+            """
+            print(query)
+            response = self.client.execute(self.database, query)
+            df = dataframe_from_result_table(response.primary_results[0])
+            return self.__extract_entities_from_data_frame(df)
+        return []
+
+    def __extract_entities_from_data_frame(self, df: pd.DataFrame) -> list[Entity]:
+        return [
+            Entity(
+                id=row["id"],
+                title=row["name1"],
+                type=row["type"],
+                description=row["description"],
+                graph_embedding=row["graph_embedding"],
+                text_unit_ids=row["text_unit_ids"],
+                description_embedding=row["description_embedding"],
+                short_id="",
+                community_ids=[row["community"]],
+                rank=row["rank"],
+                attributes={"title":row["name1"]},
+            )
+            for _, row in df.iterrows()
+        ]
+
+    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
+        """Get related entities based on the given titles."""
+        titles_str = "\", \"".join(titles)
+
+        query = f"""
+        create_final_relationships
+        | where source in ("{titles_str}")
+        | project name=target
+        | join kind=inner create_final_entities on name
+        """
+        response = self.client.execute(self.database, query)
+        df = dataframe_from_result_table(response.primary_results[0])
+        selected_entities = self.__extract_entities_from_data_frame(df)
+
+        query = f"""
+        create_final_relationships
+        | where target in ("{titles_str}")
+        | project name=source
+        | join kind=inner create_final_entities on name
+        """
+        response = self.client.execute(self.database, query)
+        df = dataframe_from_result_table(response.primary_results[0])
+        selected_entities += self.__extract_entities_from_data_frame(df)
+
+        return selected_entities
 
     def load_parqs(self, data_dir, parq_names) -> Any:
         data_path = Path(data_dir)
@@ -203,3 +264,13 @@ class KustoVectorStore(BaseVectorStore):
                 self.client.execute(self.database, command)
             else:
                 print(f"Parquet file {parq_path} not found.")
+
+    def read_parqs(self, data_dir, parq_names) -> Any:
+        """Return a dictionary of parquet dataframes of parq_name to data frame."""
+        data_path = Path(data_dir)
+        for parq_name in parq_names:
+            parq_path = data_path / f"{parq_name}.parquet"
+            parq = None
+            if parq_path.exists():
+                parq = pd.read_parquet(parq_path)
+            yield parq_name, parq
