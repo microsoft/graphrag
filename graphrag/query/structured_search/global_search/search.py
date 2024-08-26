@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import time
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any
 
@@ -99,6 +100,37 @@ class GlobalSearch(BaseSearch):
             self.map_llm_params.pop("response_format", None)
 
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
+
+    async def astream_search(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+    ) -> AsyncGenerator:
+        """Stream the global search response."""
+        context_chunks, context_records = self.context_builder.build_context(
+            conversation_history=conversation_history, **self.context_builder_params
+        )
+        if self.callbacks:
+            for callback in self.callbacks:
+                callback.on_map_response_start(context_chunks)  # type: ignore
+        map_responses = await asyncio.gather(*[
+            self._map_response_single_batch(
+                context_data=data, query=query, **self.map_llm_params
+            )
+            for data in context_chunks
+        ])
+        if self.callbacks:
+            for callback in self.callbacks:
+                callback.on_map_response_end(map_responses)  # type: ignore
+
+        # send context records first before sending the reduce response
+        yield context_records
+        async for response in self._stream_reduce_response(
+            map_responses=map_responses,  # type: ignore
+            query=query,
+            **self.reduce_llm_params,
+        ):
+            yield response
 
     async def asearch(
         self,
@@ -357,3 +389,81 @@ class GlobalSearch(BaseSearch):
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
             )
+
+    async def _stream_reduce_response(
+        self,
+        map_responses: list[SearchResult],
+        query: str,
+        **llm_kwargs,
+    ) -> AsyncGenerator[str, None]:
+        # collect all key points into a single list to prepare for sorting
+        key_points = []
+        for index, response in enumerate(map_responses):
+            if not isinstance(response.response, list):
+                continue
+            for element in response.response:
+                if not isinstance(element, dict):
+                    continue
+                if "answer" not in element or "score" not in element:
+                    continue
+                key_points.append({
+                    "analyst": index,
+                    "answer": element["answer"],
+                    "score": element["score"],
+                })
+
+        # filter response with score = 0 and rank responses by descending order of score
+        filtered_key_points = [
+            point
+            for point in key_points
+            if point["score"] > 0  # type: ignore
+        ]
+
+        if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
+            # return no data answer if no key points are found
+            log.warning(
+                "Warning: All map responses have score 0 (i.e., no relevant information found from the dataset), returning a canned 'I do not know' answer. You can try enabling `allow_general_knowledge` to encourage the LLM to incorporate relevant general knowledge, at the risk of increasing hallucinations."
+            )
+            yield NO_DATA_ANSWER
+            return
+
+        filtered_key_points = sorted(
+            filtered_key_points,
+            key=lambda x: x["score"],  # type: ignore
+            reverse=True,  # type: ignore
+        )
+
+        data = []
+        total_tokens = 0
+        for point in filtered_key_points:
+            formatted_response_data = [
+                f'----Analyst {point["analyst"] + 1}----',
+                f'Importance Score: {point["score"]}',
+                point["answer"],
+            ]
+            formatted_response_text = "\n".join(formatted_response_data)
+            if (
+                total_tokens + num_tokens(formatted_response_text, self.token_encoder)
+                > self.max_data_tokens
+            ):
+                break
+            data.append(formatted_response_text)
+            total_tokens += num_tokens(formatted_response_text, self.token_encoder)
+        text_data = "\n\n".join(data)
+
+        search_prompt = self.reduce_system_prompt.format(
+            report_data=text_data, response_type=self.response_type
+        )
+        if self.allow_general_knowledge:
+            search_prompt += "\n" + self.general_knowledge_inclusion_prompt
+        search_messages = [
+            {"role": "system", "content": search_prompt},
+            {"role": "user", "content": query},
+        ]
+
+        async for resp in self.llm.astream_generate(  # type: ignore
+            search_messages,
+            callbacks=self.callbacks,  # type: ignore
+            **llm_kwargs,  # type: ignore
+        ):
+            yield resp
