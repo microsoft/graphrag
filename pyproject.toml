@@ -99,7 +99,7 @@ pyright = "^1.1.371"
 pytest = "^8.3.2"
 pytest-asyncio = "^0.23.4"
 pytest-timeout = "^2.3.1"
-ruff = "^0.5.2"
+ruff = "^0.6.2"
 semversioner = "^2.0.3"
 
 update-toml = "^0.2.1"

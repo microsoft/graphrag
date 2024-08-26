@@ -7,7 +7,6 @@ import asyncio
 import re
 import sys
 from pathlib import Path
-from typing import cast
 
 import pandas as pd
 
@@ -15,6 +14,7 @@ from graphrag.config import (
     GraphRagConfig,
     create_graphrag_config,
 )
+from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
@@ -137,6 +137,7 @@ def run_local_search(
             context_data = None
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
+                root_dir=root_dir,
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
@@ -162,6 +163,7 @@ def run_local_search(
     # not streaming
     response, context_data = asyncio.run(
         api.local_search(
+            root_dir=root_dir,
             config=config,
             nodes=final_nodes,
             entities=final_entities,
@@ -185,12 +187,13 @@ def _configure_paths_and_settings(
     root_dir: str | None,
     config_filepath: str | None,
 ) -> tuple[str, str | None, GraphRagConfig]:
+    config = _create_graphrag_config(root_dir, config_filepath)
     if data_dir is None and root_dir is None:
         msg = "Either data_dir or root_dir must be provided."
         raise ValueError(msg)
     if data_dir is None:
-        data_dir = _infer_data_dir(cast(str, root_dir))
-    config = _create_graphrag_config(root_dir, config_filepath)
+        base_dir = Path(str(root_dir)) / config.storage.base_dir
+        data_dir = str(resolve_timestamp_path(base_dir))
     return data_dir, root_dir, config
 
 

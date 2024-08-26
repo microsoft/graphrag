@@ -18,12 +18,14 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from collections.abc import AsyncGenerator
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
 from graphrag.index.progress.types import PrintProgressReporter
 from graphrag.model.entity import Entity
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
@@ -147,6 +149,7 @@ async def global_search_streaming(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
+    root_dir: str | None,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -192,6 +195,11 @@ async def local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
+
+    base_dir = Path(str(root_dir)) / config.storage.base_dir
+    resolved_base_dir = resolve_timestamp_path(base_dir)
+    lancedb_dir = resolved_base_dir / "lancedb"
+    vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
@@ -219,6 +227,7 @@ async def local_search(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search_streaming(
+    root_dir: str | None,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -261,6 +270,11 @@ async def local_search_streaming(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
+
+    base_dir = Path(str(root_dir)) / config.storage.base_dir
+    resolved_base_dir = resolve_timestamp_path(base_dir)
+    lancedb_dir = resolved_base_dir / "lancedb"
+    vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
