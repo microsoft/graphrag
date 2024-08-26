@@ -1,0 +1,42 @@
+{
+  "changes": [
+    {
+      "description": "Add context data to query API responses.",
+      "type": "patch"
+    },
+    {
+      "description": "Add missing config parameter documentation for prompt tuning",
+      "type": "patch"
+    },
+    {
+      "description": "Add neo4j community notebook",
+      "type": "patch"
+    },
+    {
+      "description": "Ensure entity types to be str when running prompt tuning",
+      "type": "patch"
+    },
+    {
+      "description": "Fix weight casting during graph extraction",
+      "type": "patch"
+    },
+    {
+      "description": "Patch \"past\" dependency issues",
+      "type": "patch"
+    },
+    {
+      "description": "Update developer guide.",
+      "type": "patch"
+    },
+    {
+      "description": "Update query type hints.",
+      "type": "patch"
+    },
+    {
+      "description": "change-lancedb-placement",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-08-26T23:43:01+00:00",
+  "version": "0.3.2"
+}
