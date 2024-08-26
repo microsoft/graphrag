@@ -44,12 +44,14 @@ class BaseVectorStore(ABC):
     def __init__(
         self,
         collection_name: str,
+        vector_name: str,
         db_connection: Any | None = None,
         document_collection: Any | None = None,
         query_filter: Any | None = None,
         **kwargs: Any,
     ):
         self.collection_name = collection_name
+        self.vector_name = vector_name
         self.db_connection = db_connection
         self.document_collection = document_collection
         self.query_filter = query_filter

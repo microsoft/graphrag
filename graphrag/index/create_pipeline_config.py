@@ -352,6 +352,7 @@ def _graph_workflows(
                     {
                         "title_column": "description",
                         "collection_name": "entity_description_embeddings",
+                        "vector_name": "vector",
                     },
                 ),
                 "skip_name_embedding": skip_entity_name_embedding,

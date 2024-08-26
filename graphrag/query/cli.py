@@ -57,6 +57,11 @@ def __get_embedding_description_store(
         "query_collection_name", "entity_description_embeddings"
     )
     config_args.update({"collection_name": collection_name})
+    vector_name = config_args.get(
+        "vector_search_column", "vector"
+    )
+    config_args.update({"vector_name": vector_name})
+
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
     )
@@ -259,7 +264,7 @@ def read_paraquet_file(config:GraphRagConfig, path: str, storageType: StorageTyp
 # I don't think this will necessarily be permanently separate.
 # It was just easier without having to keep everything generic and work the same way as local search worked.
 # One last optimization: Once all the merges are done we can go back to the parquet loads and optimize those for only the fields we need and merge them right away into one big table (I think).
-def run_content_store_local_search(
+def run_kusto_local_search(
     config_dir: str | None,
     data_dir: str | None,
     root_dir: str | None,
@@ -267,10 +272,11 @@ def run_content_store_local_search(
     response_type: str,
     query: str,
 ):
-    """Run a local search with the given query."""
+    """Run a local search in Kusto with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
+
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
@@ -279,9 +285,13 @@ def run_content_store_local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.Kusto)
 
     collection_name = vector_store_args.get(
-        "query_collection_name", "entity_description_embeddings"
+        "query_collection_name", "entities"
     )
     vector_store_args.update({"collection_name": collection_name})
+    vector_name = vector_store_args.get(
+        "vector_search_column", "description_embedding"
+    )
+    vector_store_args.update({"vector_name": vector_name})
 
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=vector_store_args
@@ -335,7 +345,7 @@ def create_entities_table(description_embedding_store: BaseVectorStore, communit
     summarize community=max(community) by name,rank | join kind=inner \
     create_final_entities on name)")
 
-def run_content_store_global_search(
+def run_kusto_global_search(
     config_dir: str | None,
     data_dir: str | None,
     root_dir: str | None,
@@ -343,7 +353,7 @@ def run_content_store_global_search(
     response_type: str,
     query: str,
 ):
-    """Run a content store global search with the given query."""
+    """Run a global search in Kusto with the given query."""
     raise NotImplementedError("This function is not implemented yet.")
 
 
