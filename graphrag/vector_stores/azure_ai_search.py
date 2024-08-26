@@ -24,6 +24,7 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
 from .base import (
@@ -195,6 +196,18 @@ class AzureAISearch(BaseVectorStore):
 
     def load_parqs(self, data_path, parq_names) -> Any:
         raise NotImplementedError("Loading Parquet files is not supported for Azure AI Search")
-    
+
+    def get_extracted_entities(
+        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -> list[Entity]:
+        raise NotImplementedError("Extracting entities is not supported for Azure AI Search")
+
+    def read_parqs(self, data_dir, parq_names) -> Any:
+        raise NotImplementedError("Reading Parquet files is not supported for Azure AI Search")
+
+    def get_related_entities(self, titles:list[str], **kwargs: Any) -> list[Entity]:
+        """Get related entities from the vector store."""
+        raise NotImplementedError("Getting related entities is not supported for Azure AI Search")
+
     def execute_query(self, query: str) -> Any:
         return super().execute_query(query)

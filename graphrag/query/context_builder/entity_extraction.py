@@ -31,6 +31,23 @@ class EntityVectorStoreKey(str, Enum):
         msg = f"Invalid EntityVectorStoreKey: {value}"
         raise ValueError(msg)
 
+def map_query_to_entities_in_place(
+    query: str,
+    text_embedding_vectorstore: BaseVectorStore,
+    text_embedder: BaseTextEmbedding,
+    k: int = 10,
+    oversample_scaler: int = 2,
+) -> list[Entity]:
+    """Extract entities that match a given query using semantic similarity of text embeddings of query and entity descriptions."""
+    # get entities with highest semantic similarity to query
+    # oversample to account for excluded entities
+    search_results = text_embedding_vectorstore.get_extracted_entities(
+        text=query,
+        text_embedder=lambda t: text_embedder.embed(t),
+        k=k * oversample_scaler,
+    )
+    print(search_results)
+    return search_results
 
 def map_query_to_entities(
     query: str,
@@ -44,6 +61,15 @@ def map_query_to_entities(
     oversample_scaler: int = 2,
 ) -> list[Entity]:
     """Extract entities that match a given query using semantic similarity of text embeddings of query and entity descriptions."""
+    if all_entities == []:
+        return map_query_to_entities_in_place(
+            query,
+            text_embedding_vectorstore,
+            text_embedder,
+            k,
+            oversample_scaler,
+        )
+
     if include_entity_names is None:
         include_entity_names = []
     if exclude_entity_names is None:
