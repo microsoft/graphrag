@@ -42,6 +42,7 @@ lancedb/
 .DS_Store
 *.log*
 .venv
+venv/
 .conda
 .tmp
 
