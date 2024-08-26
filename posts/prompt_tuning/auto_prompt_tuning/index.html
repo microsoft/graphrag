@@ -306,6 +306,9 @@ a {
 <h2>Command-Line Options</h2>
 <ul>
 <li>
+<p><code>--config</code> (required): The path to the configuration file. This is required to load the data and model settings.</p>
+</li>
+<li>
 <p><code>--root</code> (optional): The data project root directory, including the config files (YML, JSON, or .env). Defaults to the current directory.</p>
 </li>
 <li>
@@ -336,18 +339,18 @@ a {
 <h2>Example Usage</h2>
 
 <div style="position: relative">
-  <pre class="language-bash"><code id="code-72" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.prompt_tune <span class="token parameter variable">--root</span> /path/to/project <span class="token parameter variable">--domain</span> <span class="token string">"environmental news"</span> <span class="token parameter variable">--method</span> random <span class="token parameter variable">--limit</span> <span class="token number">10</span> <span class="token parameter variable">--language</span> English --max-tokens <span class="token number">2048</span> --chunk-size <span class="token number">256</span> --no-entity-types <span class="token parameter variable">--output</span> /path/to/output</code></pre>
+  <pre class="language-bash"><code id="code-77" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.prompt_tune <span class="token parameter variable">--root</span> /path/to/project <span class="token parameter variable">--config</span> /path/to/settings.yaml <span class="token parameter variable">--domain</span> <span class="token string">"environmental news"</span> <span class="token parameter variable">--method</span> random <span class="token parameter variable">--limit</span> <span class="token number">10</span> <span class="token parameter variable">--language</span> English --max-tokens <span class="token number">2048</span> --chunk-size <span class="token number">256</span> --no-entity-types <span class="token parameter variable">--output</span> /path/to/output</code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-72" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-77" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
 <p>or, with minimal configuration (suggested):</p>
 
 <div style="position: relative">
-  <pre class="language-bash"><code id="code-76" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.prompt_tune <span class="token parameter variable">--root</span> /path/to/project --no-entity-types</code></pre>
+  <pre class="language-bash"><code id="code-81" class="language-bash">python <span class="token parameter variable">-m</span> graphrag.prompt_tune <span class="token parameter variable">--root</span> /path/to/project <span class="token parameter variable">--config</span> /path/to/settings.yaml --no-entity-types</code></pre>
 
-  <button class="code-copy " data-clipboard-target="#code-76" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
+  <button class="code-copy " data-clipboard-target="#code-81" style="position: absolute; top: 7.5px; right: 6px; padding-top: 3px; cursor: pointer; outline: none; opacity: 0.8;" title="Copy">
     <span style="display:inline-block;background:url(https://api.iconify.design/mdi/content-copy.svg) no-repeat center center / contain;width: 16px; height: 16px;" class=""></span>
   </button>
 </div>
