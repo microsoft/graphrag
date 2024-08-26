@@ -82,18 +82,14 @@ class RedisCache(PipelineCache):
         return f"{self._prefix}{key}"
 
     def child(self, name: str) -> PipelineCache:
-        """Create a child cache with the given name.
-
-        Args:
-            - name - The name to create the sub cache with.
-        """
+        """create a child cache with the given name."""
         return self
 
 
-def create_redis_cache(connection_string) -> PipelineCache:
+def create_redis_cache(connection_string, ttl=None) -> PipelineCache:
     """Create a memory cache."""
     from redis import Redis
     _redis = Redis.from_url(connection_string, decode_responses=True)
     _redis.ping()
 
-    return RedisCache(_redis)
+    return RedisCache(_redis, ttl=ttl)

@@ -80,7 +80,9 @@ class PipelineRedisCacheConfig(PipelineCacheConfig[Literal[CacheType.redis]]):
     connection_string: str | None = pydantic_Field(
         description="The redis cache connection string for the cache.", default=None
     )
-    """The type of cache."""
+    ttl: int | None = pydantic_Field(
+        description="The Time-To-Live (TTL) for the cache items in seconds.", default=None
+    )
 
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig

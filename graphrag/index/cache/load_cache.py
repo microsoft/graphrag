@@ -40,9 +40,17 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
             config = cast(PipelineFileCacheConfig, config)
             storage = FilePipelineStorage(root_dir).child(config.base_dir)
             return JsonPipelineCache(storage)
+        case CacheType.blob:
+            config = cast(PipelineBlobCacheConfig, config)
+            storage = BlobPipelineStorage(
+                config.connection_string,
+                config.container_name,
+                storage_account_blob_url=config.storage_account_blob_url,
+            ).child(config.base_dir)
+            return JsonPipelineCache(storage)
         case CacheType.redis:
-            config = cast(PipelineFileCacheConfig, config)
-            return create_redis_cache(config.connection_string)
+            config = cast(PipelineRedisCacheConfig, config)
+            return create_redis_cache(config.connection_string, config.ttl)
         case _:
             msg = f"Unknown cache type: {config.type}"
             raise ValueError(msg)
