@@ -177,7 +177,7 @@ def run_local_search(
         graph_db_client = GraphDBClient(config.graphdb)
     for data_path in data_paths:
         #check from the config for the ouptut storage type and then read the data from the storage.
-        
+
         #GraphDB: we may need to make change below to read nodes data from Graph DB
         final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
         
@@ -207,6 +207,7 @@ def run_local_search(
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
     )
+
     covariates = (
         read_indexer_covariates(final_covariates)
         if final_covariates.empty is False
@@ -231,7 +232,7 @@ def run_local_search(
         asyncio.run(output_storage_client.set("query/output/"+ key +".paraquet", result.context_data[key].to_parquet())) #it shows as error in editor but not an error.
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
-    
+
 def blob_exists(container_client, blob_name):
     blob_client = container_client.get_blob_client(blob_name)
     try:
@@ -266,14 +267,13 @@ def run_content_store_local_search(
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
-    data_path = Path(data_dir)
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
-    
+
     vector_store_type = vector_store_args.get("type", VectorStoreType.Kusto)
-    
+
     collection_name = vector_store_args.get(
         "query_collection_name", "entity_description_embeddings"
     )
@@ -285,61 +285,51 @@ def run_content_store_local_search(
 
     description_embedding_store.connect(**vector_store_args)
 
-    #TODO add back covariates. I skipped this for now.
     description_embedding_store.load_parqs(data_dir, ["create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
 
-    #TODO KQLify this. This merge of nodes & entities needs to happen in Kusto.
-    create_entities_table(description_embedding_store, community_level)
-    # description_embedding_store = __get_embedding_description_store(
-    #     entities=entities,
-    #     description_embedding_store=description_embedding_store,
-    #     config_args=vector_store_args,
-    # )
+    gen_parqs = description_embedding_store.read_parqs(data_dir, ["create_final_covariates", "create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
+    dict_parqs = {}
+    for parq in gen_parqs:
+        dict_parqs[parq[0]] = parq[1]
+    final_covariates = dict_parqs.get("create_final_covariates")
+    final_community_reports = dict_parqs.get("create_final_community_reports")
+    final_text_units = dict_parqs.get("create_final_text_units")
+    final_relationships = dict_parqs.get("create_final_relationships")
+    final_nodes = dict_parqs.get("create_final_nodes")
 
-    #TODO add back covariates w/Kusto. I skipped this for now.
-    # covariates = (
-    #     read_indexer_covariates(final_covariates)
-    #     if final_covariates is not None
-    #     else []
-    # )
+    create_entities_table(description_embedding_store, community_level)
+
+    covariates = (
+        read_indexer_covariates(final_covariates)
+        if final_covariates is not None
+        else []
+    )
 
     reports_result=kt_read_indexer_reports( description_embedding_store, community_level)
 
-    #TODO KQLify this. I know at least the read_indedxer_reports needs to be done in Kusto. We are joining the community reports & final nodes.
-    # search_engine = get_local_search_engine(
-    #     config,
-    #     reports=read_indexer_reports(
-    #         final_community_reports, final_nodes, community_level
-    #     ),
-    #     text_units=read_indexer_text_units(final_text_units),
-    #     entities=entities,
-    #     relationships=read_indexer_relationships(final_relationships),
-    #     covariates={"claims": covariates},
-    #     description_embedding_store=description_embedding_store,
-    #     response_type=response_type,
-    # )
+    search_engine = get_local_search_engine(
+        config,
+        reports=read_indexer_reports(
+            final_community_reports, final_nodes, community_level
+        ),
+        text_units=read_indexer_text_units(final_text_units),
+        entities=[],
+        relationships=read_indexer_relationships(final_relationships),
+        covariates={"claims": covariates},
+        description_embedding_store=description_embedding_store,
+        response_type=response_type,
+    )
 
-    #TODO This is the biggest TODO. I need to go through the whole mixed_context.py and make sure it's using Kusto data not the parquet data it expects in memory.
-    # result = search_engine.search(query=query)
-    # reporter.success(f"Local Search Response: {result.response}")
-    # return result.response
-
-    return True #Obviously this is a placeholder due to all the TODOs above.
+    result = search_engine.search(query=query)
+    reporter.success(f"Local Search Response: {result.response}")
+    return result.response
 
 # Create entities table similar to read_indexer_entities, but creating that table in Kusto, not in memory.
 def create_entities_table(description_embedding_store: BaseVectorStore, community_level: int):
     description_embedding_store.execute_query(".set-or-replace entities <| ( \
     create_final_nodes | where level <= 2 | project name=['title'] ,rank=degree,community | \
     summarize community=max(community) by name,rank | join kind=inner \
-    create_final_entities on name | project id,title=name,text=description,vector=description_embeddings)")
-
-    '''
-    description_embedding_store.execute_query(f".set entities <| create_final_nodes \
-        | where level <= {community_level} \
-        | project community=coalesce(community, 0), name=['title'], rank=degree \
-        | summarize community=max(community) by name, rank \
-        | join kind=inner create_final_entities on name")
-    '''
+    create_final_entities on name)")
 
 def run_content_store_global_search(
     config_dir: str | None,
@@ -355,7 +345,6 @@ def run_content_store_global_search(
 
 
 def _configure_paths_and_settings(
-        
     data_dir: str | None,
     root_dir: str | None,
     config_dir: str | None,

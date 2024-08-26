@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
 DEFAULT_VECTOR_SIZE: int = 1536
@@ -88,3 +89,17 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def execute_query(self, query: str) -> Any:
         """Execute a query in the vector-store."""
+
+    @abstractmethod
+    def get_extracted_entities(
+        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -> list[Entity]:
+        """From a query, build a subtable of entities which is only matching entities."""
+
+    @abstractmethod
+    def read_parqs(self, data_dir, parq_names) -> Any:
+        """Return a dictionary of parquet dataframes of parq_name to data frame."""
+
+    @abstractmethod
+    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
+        """Get related entities from the vector store."""

@@ -4,6 +4,7 @@
 """The LanceDB vector storage implementation package."""
 
 import lancedb as lancedb  # noqa: I001 (Ruff was breaking on this file imports, even tho they were sorted and passed local tests)
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
 import json
@@ -122,6 +123,18 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def load_parqs(self, data_path, parq_names) -> Any:
         raise NotImplementedError("Loading Parquet files is not supported for LanceDB")
-    
+
+    def get_extracted_entities(
+        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -> list[Entity]:
+        raise NotImplementedError("Extracting entities is not supported for LanceDB")
+
+    def read_parqs(self, data_dir, parq_names) -> Any:
+        raise NotImplementedError("Reading Parquet files is not supported for LanceDB")
+
+    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
+        """Get related entities from the vector store."""
+        raise NotImplementedError("Getting related entities is not supported for LanceDB")
+
     def execute_query(self, query: str) -> Any:
         return super().execute_query(query)
