@@ -181,8 +181,8 @@ def run_local_search(
         final_text_units = pd.concat([final_text_units, read_paraquet_file(config, data_path + "/create_final_text_units.parquet", config.storage.type)])
 
         if config.graphdb.enabled:
-            final_relationships = pd.concat([final_relationships, graph_db_client.query_edges()])
-            final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
+            final_relationships = pd.concat([final_relationships, graph_db_client.query_edges(context_id)])
+            final_entities = pd.concat([final_entities, graph_db_client.query_vertices(context_id)])
         else:
             final_relationships = pd.concat([final_relationships, read_paraquet_file(config, data_path + "/create_final_relationships.parquet", config.storage.type)])
             final_entities = pd.concat([final_entities, read_paraquet_file(config, data_path + "/create_final_entities.parquet", config.storage.type)])
