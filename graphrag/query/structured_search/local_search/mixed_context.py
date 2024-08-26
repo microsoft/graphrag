@@ -61,6 +61,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         covariates: dict[str, list[Covariate]] | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
+        is_optimized_search: bool = False,
     ):
         if community_reports is None:
             community_reports = []
@@ -83,6 +84,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
         self.embedding_vectorstore_key = embedding_vectorstore_key
+        self.is_optimized_search = is_optimized_search
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
         """Filter entity text embeddings by entity keys."""
@@ -111,7 +113,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         min_community_rank: int = 0,
         community_context_name: str = "Reports",
         column_delimiter: str = "|",
-        is_optimized_flow: bool = False,
+        is_optimized_search: bool = False,
         **kwargs: dict[str, Any],
     ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
         """
@@ -173,21 +175,21 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 )
 
         # build community context
-        if not is_optimized_flow:
-            community_tokens = max(int(max_tokens * community_prop), 0)
-            community_context, community_context_data = self._build_community_context(
-                selected_entities=selected_entities,
-                max_tokens=community_tokens,
-                use_community_summary=use_community_summary,
-                column_delimiter=column_delimiter,
-                include_community_rank=include_community_rank,
-                min_community_rank=min_community_rank,
-                return_candidate_context=return_candidate_context,
-                context_name=community_context_name,
-            )
-            if community_context.strip() != "":
-                final_context.append(community_context)
-                final_context_data = {**final_context_data, **community_context_data}
+        community_tokens = max(int(max_tokens * community_prop), 0)
+        community_context, community_context_data = self._build_community_context(
+            selected_entities=selected_entities,
+            max_tokens=community_tokens,
+            use_community_summary=use_community_summary,
+            column_delimiter=column_delimiter,
+            include_community_rank=include_community_rank,
+            min_community_rank=min_community_rank,
+            return_candidate_context=return_candidate_context,
+            context_name=community_context_name,
+            is_optimized_search=is_optimized_search
+        )
+        if community_context.strip() != "":
+            final_context.append(community_context)
+            final_context_data = {**final_context_data, **community_context_data}
 
         # build local (i.e. entity-relationship-covariate) context
         local_prop = 1 - community_prop - text_unit_prop
@@ -206,7 +208,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         if local_context.strip() != "":
             final_context.append(str(local_context))
             final_context_data = {**final_context_data, **local_context_data}
-        if not is_optimized_flow:
+        if not self.is_optimized_search:
             # build text unit context
             text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
             text_unit_context, text_unit_context_data = self._build_text_unit_context(
@@ -230,6 +232,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         min_community_rank: int = 0,
         return_candidate_context: bool = False,
         context_name: str = "Reports",
+        is_optimized_search: bool = False,
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Add community data to the context window until it hits the max_tokens limit."""
         if len(selected_entities) == 0 or len(self.community_reports) == 0:
@@ -260,46 +263,49 @@ class LocalSearchMixedContext(LocalContextBuilder):
         )
         for community in selected_communities:
             del community.attributes["matches"]  # type: ignore
-
-        context_text, context_data = build_community_context(
-            community_reports=selected_communities,
-            token_encoder=self.token_encoder,
-            use_community_summary=use_community_summary,
-            column_delimiter=column_delimiter,
-            shuffle_data=False,
-            include_community_rank=include_community_rank,
-            min_community_rank=min_community_rank,
-            max_tokens=max_tokens,
-            single_batch=True,
-            context_name=context_name,
-        )
-        if isinstance(context_text, list) and len(context_text) > 0:
-            context_text = "\n\n".join(context_text)
-
-        if return_candidate_context:
-            candidate_context_data = get_candidate_communities(
-                selected_entities=selected_entities,
-                community_reports=list(self.community_reports.values()),
+        context_data = {}
+        context_data["reports"] =  selected_communities
+        context_text = ""
+        if not is_optimized_search:
+            context_text, context_data = build_community_context(
+                community_reports=selected_communities,
+                token_encoder=self.token_encoder,
                 use_community_summary=use_community_summary,
+                column_delimiter=column_delimiter,
+                shuffle_data=False,
                 include_community_rank=include_community_rank,
+                min_community_rank=min_community_rank,
+                max_tokens=max_tokens,
+                single_batch=True,
+                context_name=context_name,
             )
-            context_key = context_name.lower()
-            if context_key not in context_data:
-                context_data[context_key] = candidate_context_data
-                context_data[context_key]["in_context"] = False
-            else:
-                if (
-                    "id" in candidate_context_data.columns
-                    and "id" in context_data[context_key].columns
-                ):
-                    candidate_context_data["in_context"] = candidate_context_data[
-                        "id"
-                    ].isin(  # cspell:disable-line
-                        context_data[context_key]["id"]
-                    )
+            if isinstance(context_text, list) and len(context_text) > 0:
+                context_text = "\n\n".join(context_text)
+
+            if return_candidate_context:
+                candidate_context_data = get_candidate_communities(
+                    selected_entities=selected_entities,
+                    community_reports=list(self.community_reports.values()),
+                    use_community_summary=use_community_summary,
+                    include_community_rank=include_community_rank,
+                )
+                context_key = context_name.lower()
+                if context_key not in context_data:
                     context_data[context_key] = candidate_context_data
+                    context_data[context_key]["in_context"] = False
                 else:
-                    context_data[context_key]["in_context"] = True
+                    if (
+                        "id" in candidate_context_data.columns
+                        and "id" in context_data[context_key].columns
+                    ):
+                        candidate_context_data["in_context"] = candidate_context_data[
+                            "id"
+                        ].isin(  # cspell:disable-line
+                            context_data[context_key]["id"]
+                        )
+                        context_data[context_key] = candidate_context_data
+                    else:
+                        context_data[context_key]["in_context"] = True
         return (str(context_text), context_data)
 
     def _build_text_unit_context(
@@ -392,6 +398,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         relationship_ranking_attribute: str = "rank",
         return_candidate_context: bool = False,
         column_delimiter: str = "|",
+        is_optimized_search: bool = False
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Build data context for local search prompt combining entity/relationship/covariate tables."""
         # build entity context
@@ -403,6 +410,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             include_entity_rank=include_entity_rank,
             rank_description=rank_description,
             context_name="Entities",
+            is_optimized_search=is_optimized_search,
         )
         entity_tokens = num_tokens(entity_context, self.token_encoder)
 

@@ -146,6 +146,7 @@ def run_local_search(
     response_type: str,
     context_id: str,
     query: str,
+    optimized_search: bool = False,
 ):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
@@ -225,9 +226,13 @@ def run_local_search(
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
         response_type=response_type,
+        is_optimized_search=optimized_search,
     )
 
-    result = search_engine.optimized_search(query=query) # changed it to search if we want to get final text response.
+    if optimized_search:
+        result = search_engine.optimized_search(query=query)
+    else:
+        result = search_engine.search(query=query)
     for key in  result.context_data.keys():
         asyncio.run(output_storage_client.set("query/output/"+ key +".paraquet", result.context_data[key].to_parquet())) #it shows as error in editor but not an error.
     reporter.success(f"Local Search Response: {result.response}")

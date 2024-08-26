@@ -113,6 +113,7 @@ class LocalSearch(BaseSearch):
         **kwargs,
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user question."""
+
         start_time = time.time()
         search_prompt = ""
         context_text, context_records = self.context_builder.build_context(
@@ -171,9 +172,9 @@ class LocalSearch(BaseSearch):
         context_text, context_records = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
+            is_optimized_search = self.optimized_search,
             **kwargs,
             **self.context_builder_params,
-            is_optimized_flow=True,
         )
         log.info("GENERATE ANSWER: %d. QUERY: %s", start_time, query)
         try:

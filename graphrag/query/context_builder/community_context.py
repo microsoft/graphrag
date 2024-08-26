@@ -33,6 +33,7 @@ def build_community_context(
     single_batch: bool = True,
     context_name: str = "Reports",
     random_state: int = 86,
+    is_optimized_search: bool = False,
 ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
     """
     Prepare community report data table as context data for system prompt.
@@ -57,7 +58,8 @@ def build_community_context(
         return header
 
     def _report_context_text(
-        report: CommunityReport, attributes: list[str]
+        report: CommunityReport, attributes: list[str],
+        is_optimized_search: bool = False
     ) -> tuple[str, list[str]]:
         context: list[str] = [
             report.short_id if report.short_id else "",
@@ -143,7 +145,7 @@ def build_community_context(
     _init_batch()
 
     for report in selected_reports:
-        new_context_text, new_context = _report_context_text(report, attributes)
+        new_context_text, new_context = _report_context_text(report, attributes, is_optimized_search)
         new_tokens = num_tokens(new_context_text, token_encoder)
 
         if batch_tokens + new_tokens > max_tokens:
