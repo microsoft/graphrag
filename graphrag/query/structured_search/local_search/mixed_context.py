@@ -174,22 +174,22 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     conversation_history_context, self.token_encoder
                 )
 
-        # build community context
-        community_tokens = max(int(max_tokens * community_prop), 0)
-        community_context, community_context_data = self._build_community_context(
-            selected_entities=selected_entities,
-            max_tokens=community_tokens,
-            use_community_summary=use_community_summary,
-            column_delimiter=column_delimiter,
-            include_community_rank=include_community_rank,
-            min_community_rank=min_community_rank,
-            return_candidate_context=return_candidate_context,
-            context_name=community_context_name,
-            is_optimized_search=is_optimized_search
-        )
-        if community_context.strip() != "":
-            final_context.append(community_context)
-            final_context_data = {**final_context_data, **community_context_data}
+        if not is_optimized_search:
+            community_tokens = max(int(max_tokens * community_prop), 0)
+            community_context, community_context_data = self._build_community_context(
+                selected_entities=selected_entities,
+                max_tokens=community_tokens,
+                use_community_summary=use_community_summary,
+                column_delimiter=column_delimiter,
+                include_community_rank=include_community_rank,
+                min_community_rank=min_community_rank,
+                return_candidate_context=return_candidate_context,
+                context_name=community_context_name,
+                is_optimized_search=is_optimized_search
+            )
+            if community_context.strip() != "":
+                final_context.append(community_context)
+                final_context_data = {**final_context_data, **community_context_data}
 
         # build local (i.e. entity-relationship-covariate) context
         local_prop = 1 - community_prop - text_unit_prop

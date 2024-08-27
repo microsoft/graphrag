@@ -181,11 +181,12 @@ def run_local_search(
 
         #GraphDB: we may need to make change below to read nodes data from Graph DB
         final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
+        final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")]) # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
+        final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")]) # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
         
-        final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")])
-        
-        final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")])
-        
+        if not optimized_search:
+            final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
+
         if config.graphdb.enabled:
             final_relationships = pd.concat([final_relationships, graph_db_client.query_edges()])
             final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
@@ -193,7 +194,6 @@ def run_local_search(
             final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
             final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
 
-        final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
@@ -202,7 +202,7 @@ def run_local_search(
     reporter.info(f"Vector Store Args: {vector_store_args}")
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB) # verify kusto vector store here.
 
-    entities = read_indexer_entities(final_nodes, final_entities, community_level) # Change it to read file specific indexer files.
+    entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
         vector_store_type=vector_store_type,
