@@ -204,6 +204,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             relationship_ranking_attribute=relationship_ranking_attribute,
             return_candidate_context=return_candidate_context,
             column_delimiter=column_delimiter,
+            is_optimized_search=is_optimized_search
         )
         if local_context.strip() != "":
             final_context.append(str(local_context))
@@ -439,6 +440,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 include_relationship_weight=include_relationship_weight,
                 relationship_ranking_attribute=relationship_ranking_attribute,
                 context_name="Relationships",
+                is_optimized_search=is_optimized_search
             )
             current_context.append(relationship_context)
             current_context_data["relationships"] = relationship_context_data
@@ -446,6 +448,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 relationship_context, self.token_encoder
             )
 
+        
             # build covariate context
             for covariate in self.covariates:
                 covariate_context, covariate_context_data = build_covariates_context(
@@ -455,6 +458,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     max_tokens=max_tokens,
                     column_delimiter=column_delimiter,
                     context_name=covariate,
+                    is_optimized_search=is_optimized_search
                 )
                 total_tokens += num_tokens(covariate_context, self.token_encoder)
                 current_context.append(covariate_context)

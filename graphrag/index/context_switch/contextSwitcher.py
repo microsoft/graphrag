@@ -1,4 +1,4 @@
-from graphrag.index.progress import ProgressReporter
+from graphrag.common.progress import ProgressReporter
 from graphrag.config import GraphRagConfig
 
 class ContextSwitcher:
@@ -9,7 +9,6 @@ class ContextSwitcher:
         pass
     def activate(self, config: GraphRagConfig | str, contextId: str | None, reporter: ProgressReporter):
         """Activate the context."""
-        
         #1. read the context id to fileId mapping.
         #2. read the file from storage using common/blob_storage_client.py
         #3. GraphDB: use cosmos db client to load data into Cosmos DB.
