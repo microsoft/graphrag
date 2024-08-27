@@ -3,8 +3,8 @@
 """Algorithms to build context data for local search prompt."""
 
 import logging
-from typing import Any
 from collections import defaultdict
+from typing import Any
 
 import pandas as pd
 import tiktoken
@@ -322,7 +322,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 if text_id not in text_unit_ids_set and text_id in self.text_units:
                     text_unit_ids_set.add(text_id)
                     selected_unit = self.text_units[text_id]
-                    num_relationships = count_relationships(selected_unit, entity, self.relationships)
+                    num_relationships = count_relationships(
+                        selected_unit, entity, self.relationships
+                    )
                     if selected_unit.attributes is None:
                         selected_unit.attributes = {}
                     selected_unit.attributes["entity_order"] = index
@@ -330,7 +332,10 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     selected_text_units.append(selected_unit)
 
         selected_text_units.sort(
-            key=lambda x: (x.attributes["entity_order"], -x.attributes["num_relationships"])
+            key=lambda x: (
+                x.attributes["entity_order"],
+                -x.attributes["num_relationships"],
+            )
         )
 
         for unit in selected_text_units:
@@ -356,10 +361,13 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 candidate_context_data["in_context"] = False
                 context_data[context_key] = candidate_context_data
             else:
-                if "id" in candidate_context_data.columns and "id" in context_data[context_key].columns:
-                    candidate_context_data["in_context"] = candidate_context_data["id"].isin(
-                        context_data[context_key]["id"]
-                    )
+                if (
+                    "id" in candidate_context_data.columns
+                    and "id" in context_data[context_key].columns
+                ):
+                    candidate_context_data["in_context"] = candidate_context_data[
+                        "id"
+                    ].isin(context_data[context_key]["id"])
                     context_data[context_key] = candidate_context_data
                 else:
                     context_data[context_key]["in_context"] = True
