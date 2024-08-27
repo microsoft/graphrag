@@ -113,6 +113,7 @@ class LocalSearch(BaseSearch):
         **kwargs,
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user question."""
+
         start_time = time.time()
         search_prompt = ""
         context_text, context_records = self.context_builder.build_context(
@@ -140,6 +141,45 @@ class LocalSearch(BaseSearch):
 
             return SearchResult(
                 response=response,
+                context_data=context_records,
+                context_text=context_text,
+                completion_time=time.time() - start_time,
+                llm_calls=1,
+                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+            )
+
+        except Exception:
+            log.exception("Exception in _map_response_single_batch")
+            return SearchResult(
+                response="",
+                context_data=context_records,
+                context_text=context_text,
+                completion_time=time.time() - start_time,
+                llm_calls=1,
+                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+            )
+
+
+    def optimized_search(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+        **kwargs,
+    ) -> SearchResult:
+        """Build local search context data."""
+        start_time = time.time()
+        search_prompt = ""
+        context_text, context_records = self.context_builder.build_context(
+            query=query,
+            conversation_history=conversation_history,
+            is_optimized_search = self.optimized_search,
+            **kwargs,
+            **self.context_builder_params,
+        )
+        log.info("GENERATE ANSWER: %d. QUERY: %s", start_time, query)
+        try:
+            return SearchResult(
+                response="",
                 context_data=context_records,
                 context_text=context_text,
                 completion_time=time.time() - start_time,

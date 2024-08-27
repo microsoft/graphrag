@@ -16,7 +16,7 @@ from aiofiles.os import remove
 from aiofiles.ospath import exists
 from datashaper import Progress
 
-from graphrag.index.progress import ProgressReporter
+from graphrag.common.progress import ProgressReporter
 
 from .typing import PipelineStorage
 
@@ -113,6 +113,7 @@ class FilePipelineStorage(PipelineStorage):
         is_bytes = isinstance(value, bytes)
         write_type = "wb" if is_bytes else "w"
         encoding = None if is_bytes else encoding or self._encoding
+        os.makedirs(os.path.dirname(join_path(self._root_dir, key)), mode=777, exist_ok=True)
         async with aiofiles.open(
             join_path(self._root_dir, key),
             cast(Any, write_type),

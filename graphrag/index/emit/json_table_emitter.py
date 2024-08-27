@@ -7,7 +7,7 @@ import logging
 
 import pandas as pd
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.common.storage import PipelineStorage
 
 from .table_emitter import TableEmitter
 

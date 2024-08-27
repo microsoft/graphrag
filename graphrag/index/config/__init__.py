@@ -25,7 +25,7 @@ from .reporting import (
     PipelineReportingConfig,
     PipelineReportingConfigTypes,
 )
-from .storage import (
+from ...common.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineMemoryStorageConfig,

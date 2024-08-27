@@ -13,7 +13,7 @@ from pydantic import Field as pydantic_Field
 from .cache import PipelineCacheConfigTypes
 from .input import PipelineInputConfigTypes
 from .reporting import PipelineReportingConfigTypes
-from .storage import PipelineStorageConfigTypes
+from ...common.config.storage import PipelineStorageConfigTypes
 from .workflow import PipelineWorkflowReference
 
 

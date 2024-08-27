@@ -108,6 +108,7 @@ def get_local_search_engine(
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
+    is_optimized_search: bool = False
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -128,6 +129,7 @@ def get_local_search_engine(
             embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
             text_embedder=text_embedder,
             token_encoder=token_encoder,
+            is_optimized_search= is_optimized_search,
         ),
         token_encoder=token_encoder,
         llm_params={

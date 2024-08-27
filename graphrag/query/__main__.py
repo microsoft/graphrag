@@ -79,6 +79,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--optimized_search",
+        help="Runs optimized search and export artifacts",
+        type=bool,
+        default=False,
+    )
+
+    parser.add_argument(
         "query",
         nargs=1,
         help="The query to run",
@@ -99,6 +106,7 @@ if __name__ == "__main__":
                 args.response_type,
                 args.context_id,
                 args.query[0],
+                optimized_search=args.optimized_search
             )
         case SearchType.GLOBAL:
             run_global_search(

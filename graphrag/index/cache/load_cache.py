@@ -12,7 +12,7 @@ from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.storage import BlobPipelineStorage, FilePipelineStorage
+from graphrag.common.storage import BlobPipelineStorage, FilePipelineStorage
 
 if TYPE_CHECKING:
     from graphrag.index.config import (

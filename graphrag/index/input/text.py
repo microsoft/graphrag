@@ -11,8 +11,8 @@ from typing import Any
 import pandas as pd
 
 from graphrag.index.config import PipelineInputConfig
-from graphrag.index.progress import ProgressReporter
-from graphrag.index.storage import PipelineStorage
+from graphrag.common.progress import ProgressReporter
+from graphrag.common.storage import PipelineStorage
 from graphrag.index.utils import gen_md5_hash
 
 DEFAULT_FILE_PATTERN = re.compile(
@@ -41,7 +41,7 @@ async def load(
         return new_item
     base_dir = config.base_dir
     if config.type == "file":
-        # base dir is already being added to root dir in case of type file.
+        #base dir is already being added to root dir in case of type file.
         base_dir = None
     files = list(
         storage.find(

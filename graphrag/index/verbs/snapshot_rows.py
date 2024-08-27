@@ -9,7 +9,7 @@ from typing import Any
 
 from datashaper import TableContainer, VerbInput, verb
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.common.storage import PipelineStorage
 
 
 @dataclass

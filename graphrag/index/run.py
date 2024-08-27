@@ -47,13 +47,13 @@ from .context import PipelineRunContext, PipelineRunStats
 from .emit import TableEmitterType, create_table_emitters
 from .input import load_input
 from .load_pipeline_config import load_pipeline_config
-from .progress import NullProgressReporter, ProgressReporter
+from graphrag.common.progress import NullProgressReporter, ProgressReporter
 from .reporting import (
     ConsoleWorkflowCallbacks,
     ProgressWorkflowCallbacks,
     load_pipeline_reporter,
 )
-from .storage import MemoryPipelineStorage, PipelineStorage, load_storage
+from graphrag.common.storage import MemoryPipelineStorage, PipelineStorage, load_storage
 from .typing import PipelineRunResult
 
 # Register all verbs

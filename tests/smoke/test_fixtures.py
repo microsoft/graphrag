@@ -15,7 +15,7 @@ from unittest import mock
 import pandas as pd
 import pytest
 
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.common.storage.blob_pipeline_storage import BlobPipelineStorage
 
 log = logging.getLogger(__name__)
 

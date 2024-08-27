@@ -4,7 +4,7 @@
 """Table Emitter Factories."""
 
 from graphrag.config.models.graphdb_config import GraphDBConfig
-from graphrag.index.storage import PipelineStorage
+from graphrag.common.storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
 
 from .csv_table_emitter import CSVTableEmitter
