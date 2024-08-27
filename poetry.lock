@@ -1219,6 +1219,7 @@ files = [
     {file = "fastparquet-2024.5.0-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5626fc72204001b7e82fedb4b02174ecb4e2d4143b38b4ea8d2f9eb65f6b000e"},
     {file = "fastparquet-2024.5.0-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:c8b2e86fe6488cce0e3d41263bb0296ef9bbb875a2fca09d67d7685640017a66"},
     {file = "fastparquet-2024.5.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:2a951106782d51e5ab110beaad29c4aa0537f045711bb0bf146f65aeaed14174"},
+    {file = "fastparquet-2024.5.0-cp312-cp312-win_amd64.whl", hash = "sha256:cd3473d3e299bfb04c0ac7726cca5d13ee450cc2387ee7fd70587ca150647315"},
     {file = "fastparquet-2024.5.0-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:47695037fdc534ef4247f25ccf17dcbd8825be6ecb70c54ca54d588a794f4a6d"},
     {file = "fastparquet-2024.5.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:fc3d35ff8341cd65baecac71062e9d73393d7afda207b3421709c1d3f4baa194"},
     {file = "fastparquet-2024.5.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:691348cc85890663dd3c0bb02544d38d4c07a0c3d68837324dc01007301150b5"},
@@ -1807,13 +1808,13 @@ files = [
 
 [[package]]
 name = "json-repair"
-version = "0.26.0"
+version = "0.28.3"
 description = "A package to repair broken json strings"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "json_repair-0.26.0-py3-none-any.whl", hash = "sha256:01a9dfd3f8611a0207eaf93989cfaf678dabdd62c6e128125aaf142cd136ec58"},
-    {file = "json_repair-0.26.0.tar.gz", hash = "sha256:dccdcfcbe910a5b3f93ea234cf41e79c900b42e16746400d7a9d8823229c7f61"},
+    {file = "json_repair-0.28.3-py3-none-any.whl", hash = "sha256:d4e428308714c36b7dcce5349e285f598c2691ad670750f0b849930127d21d87"},
+    {file = "json_repair-0.28.3.tar.gz", hash = "sha256:72987221fcca196ccbb99528d0874baed1bcce4e11018bee9c68fe8bb971111a"},
 ]
 
 [[package]]
@@ -5261,4 +5262,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "4923fbd3cfbb9873db8a5588f9e713982ff2352e275980b8df1501d764b85e45"
+content-hash = "7f7a6f6df0f7c23ba99e841ef8a6070d4b8a321e3beae739eac93488e4511f19"
