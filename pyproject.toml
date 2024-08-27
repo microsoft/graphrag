@@ -25,6 +25,9 @@ license = "MIT"
 readme = "README.md"
 packages = [{ include = "graphrag" }]
 
+[tool.poetry.urls]
+"Source" = "https://github.com/microsoft/graphrag"
+
 [tool.poetry-dynamic-versioning]
 enable = true
 style = "pep440"
