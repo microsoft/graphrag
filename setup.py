@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='graphrag',  
+    name='graphrag_shiyanjia',  
     version='0.3.1',  
     author='Hu Lei',
     author_email='hulei@shiyanjia.com',
