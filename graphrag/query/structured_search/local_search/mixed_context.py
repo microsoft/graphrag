@@ -3,7 +3,6 @@
 """Algorithms to build context data for local search prompt."""
 
 import logging
-from collections import defaultdict
 from typing import Any
 
 import pandas as pd
@@ -315,7 +314,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         selected_text_units = []
         text_unit_ids_set = set()
-        entity_order_map = defaultdict(int)
 
         for index, entity in enumerate(selected_entities):
             for text_id in entity.text_unit_ids or []:
