@@ -198,7 +198,12 @@ def _document_workflows(
             name=create_final_documents,
             config={
                 "document_raw_content_embed": _get_embedding_settings(
-                    settings.embeddings, "document_raw_content"
+                    settings.embeddings,
+                    "document_raw_content",
+                    {
+                        "title_column": "raw_content",
+                        "collection_name": "final_documents_raw_content_embedding",
+                    },
                 ),
                 "skip_raw_content_embedding": skip_document_raw_content_embedding,
             },
@@ -217,7 +222,11 @@ def _text_unit_workflows(
             name=create_base_text_units,
             config={
                 "chunk_by": settings.chunks.group_by_columns,
-                "text_chunk": {"strategy": settings.chunks.resolved_strategy()},
+                "text_chunk": {
+                    "strategy": settings.chunks.resolved_strategy(
+                        settings.encoding_model
+                    )
+                },
             },
         ),
         PipelineWorkflowReference(
@@ -239,7 +248,9 @@ def _text_unit_workflows(
             name=create_final_text_units,
             config={
                 "text_unit_text_embed": _get_embedding_settings(
-                    settings.embeddings, "text_unit_text"
+                    settings.embeddings,
+                    "text_unit_text",
+                    {"title_column": "text", "collection_name": "text_units_embedding"},
                 ),
                 "covariates_enabled": covariates_enabled,
                 "skip_text_unit_embedding": skip_text_unit_embedding,
@@ -248,11 +259,14 @@ def _text_unit_workflows(
     ]
 
 
-def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) -> dict:
+def _get_embedding_settings(
+    settings: TextEmbeddingConfig,
+    embedding_name: str,
+    vector_store_params: dict | None = None,
+) -> dict:
     vector_store_settings = settings.vector_store
     if vector_store_settings is None:
         return {"strategy": settings.resolved_strategy()}
-
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
@@ -260,7 +274,7 @@ def _get_embedding_settings(settings: TextEmbeddingConfig, embedding_name: str) 
     #
     strategy = settings.resolved_strategy()  # get the default strategy
     strategy.update({
-        "vector_store": vector_store_settings
+        "vector_store": {**vector_store_settings, **(vector_store_params or {})}
     })  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {
@@ -323,10 +337,20 @@ def _graph_workflows(
             name=create_final_entities,
             config={
                 "entity_name_embed": _get_embedding_settings(
-                    settings.embeddings, "entity_name"
+                    settings.embeddings,
+                    "entity_name",
+                    {
+                        "title_column": "name",
+                        "collection_name": "entity_name_embeddings",
+                    },
                 ),
                 "entity_name_description_embed": _get_embedding_settings(
-                    settings.embeddings, "entity_name_description"
+                    settings.embeddings,
+                    "entity_name_description",
+                    {
+                        "title_column": "description",
+                        "collection_name": "entity_description_embeddings",
+                    },
                 ),
                 "skip_name_embedding": skip_entity_name_embedding,
                 "skip_description_embedding": skip_entity_description_embedding,
@@ -336,7 +360,12 @@ def _graph_workflows(
             name=create_final_relationships,
             config={
                 "relationship_description_embed": _get_embedding_settings(
-                    settings.embeddings, "relationship_description"
+                    settings.embeddings,
+                    "relationship_description",
+                    {
+                        "title_column": "description",
+                        "collection_name": "relationships_description_embeddings",
+                    },
                 ),
                 "skip_description_embedding": skip_relationship_description_embedding,
             },
@@ -378,13 +407,25 @@ def _community_workflows(
                     ),
                 },
                 "community_report_full_content_embed": _get_embedding_settings(
-                    settings.embeddings, "community_report_full_content"
+                    settings.embeddings,
+                    "community_report_full_content",
+                    {
+                        "title_column": "full_content",
+                        "collection_name": "final_community_reports_full_content_embedding",
+                    },
                 ),
                 "community_report_summary_embed": _get_embedding_settings(
-                    settings.embeddings, "community_report_summary"
+                    settings.embeddings,
+                    "community_report_summary",
+                    {
+                        "title_column": "summary",
+                        "collection_name": "final_community_reports_summary_embedding",
+                    },
                 ),
                 "community_report_title_embed": _get_embedding_settings(
-                    settings.embeddings, "community_report_title"
+                    settings.embeddings,
+                    "community_report_title",
+                    {"title_column": "title"},
                 ),
             },
         ),
@@ -401,7 +442,7 @@ def _covariate_workflows(
                 "claim_extract": {
                     **settings.claim_extraction.parallelization.model_dump(),
                     "strategy": settings.claim_extraction.resolved_strategy(
-                        settings.root_dir
+                        settings.root_dir, settings.encoding_model
                     ),
                 },
             },
