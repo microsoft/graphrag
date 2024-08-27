@@ -65,7 +65,7 @@ Our underlying dataframe technology may change over time, but our primary goal i
 
 ### LLM Caching
 
-The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors errors due to network latency, throttling, etc..
+The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
 Because of these potential error cases, we've added a cache layer around LLM interactions.
 When completion requests are made using the same input set (prompt and tuning parameters), we return a cached result if one exists.
 This allows our indexer to be more resilient to network issues, to act idempotently, and to provide a more efficient end-user experience.
