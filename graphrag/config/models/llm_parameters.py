@@ -85,3 +85,4 @@ class LLMParameters(BaseModel):
         description="Whether to use concurrent requests for the LLM service.",
         default=defs.LLM_CONCURRENT_REQUESTS,
     )
+

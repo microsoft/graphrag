@@ -18,4 +18,5 @@ setup(
         'numpy',   # An example dependency
         # ... other dependencies
     ],  
+    python_requires='>=3.10'
 )

@@ -32,6 +32,10 @@ class TextEmbeddingConfig(LLMConfig):
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+    dimensions: int = Field(
+        description="The number of dimensions.",
+        default=defs.EMBEDDING_DIMENSIONS,
+    )
 
     def resolved_strategy(self) -> dict:
         """Get the resolved text embedding strategy."""

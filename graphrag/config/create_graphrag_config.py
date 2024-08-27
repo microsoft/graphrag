@@ -175,7 +175,7 @@ def create_graphrag_config(
             sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
             if sleep_on_rate_limit is None:
                 sleep_on_rate_limit = base.sleep_on_rate_limit_recommendation
-
+            dimensions = reader.str("dimensions") or defs.EMBEDDING_DIMENSIONS
             return LLMParameters(
                 api_key=api_key,
                 type=api_type,
@@ -310,6 +310,7 @@ def create_graphrag_config(
                 batch_max_tokens=reader.int("batch_max_tokens")
                 or defs.EMBEDDING_BATCH_MAX_TOKENS,
                 skip=reader.list("skip") or [],
+                dimensions=reader.int("dimensions") or defs.EMBEDDING_DIMENSIONS
             )
         with (
             reader.envvar_prefix(Section.node2vec),
