@@ -46,7 +46,6 @@ def map_query_to_entities_in_place(
         text_embedder=lambda t: text_embedder.embed(t),
         k=k * oversample_scaler,
     )
-    print(search_results)
     return search_results
 
 def map_query_to_entities(

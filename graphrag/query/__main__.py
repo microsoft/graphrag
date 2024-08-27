@@ -6,7 +6,7 @@
 import argparse
 from enum import Enum
 
-from .cli import run_global_search, run_local_search, run_content_store_local_search, run_content_store_global_search
+from .cli import run_global_search, run_local_search, run_kusto_local_search, run_kusto_global_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -16,8 +16,8 @@ class SearchType(Enum):
 
     LOCAL = "local"
     GLOBAL = "global"
-    CONTENT_STORE_LOCAL = "content_store_local"
-    CONTENT_STORE_GLOBAL = "content_store_global"
+    KUSTO_LOCAL = "kusto_local"
+    KUSTO_GLOBAL = "kusto_global"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         type=str,
     )
 
-   
+
 
     args = parser.parse_args()
 
@@ -110,8 +110,8 @@ if __name__ == "__main__":
                 args.context_id,
                 args.query[0],
             )
-        case SearchType.CONTENT_STORE_LOCAL:
-            run_content_store_local_search(
+        case SearchType.KUSTO_LOCAL:
+            run_kusto_local_search(
                 args.config,
                 args.data,
                 args.root,
@@ -119,8 +119,8 @@ if __name__ == "__main__":
                 args.response_type,
                 args.query[0],
             )
-        case SearchType.CONTENT_STORE_GLOBAL:
-            run_content_store_global_search(
+        case SearchType.KUSTO_GLOBAL:
+            run_kusto_global_search(
                 args.config,
                 args.data,
                 args.root,

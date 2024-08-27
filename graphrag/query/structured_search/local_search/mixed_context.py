@@ -148,6 +148,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             oversample_scaler=2,
         )
 
+        print("Selected entities titles: ", [entity.title for entity in selected_entities])
+
         # build context
         final_context = list[str]()
         final_context_data = dict[str, pd.DataFrame]()

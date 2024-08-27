@@ -15,6 +15,16 @@ from pathlib import Path
 import json
 from typing import Any, List, cast
 
+from graphrag.query.input.loaders.utils import (
+    to_list,
+    to_optional_dict,
+    to_optional_float,
+    to_optional_int,
+    to_optional_list,
+    to_optional_str,
+    to_str,
+)
+
 from .base import (
     BaseVectorStore,
     VectorStoreDocument,
@@ -74,7 +84,7 @@ class KustoVectorStore(BaseVectorStore):
         data = [
             {
                 "id": document.id,
-                "text": document.text,
+                "name": document.text,
                 "vector": document.vector,
                 "attributes": json.dumps(document.attributes),
             }
@@ -139,19 +149,35 @@ class KustoVectorStore(BaseVectorStore):
         query = f"""
         let query_vector = dynamic({query_embedding});
         {self.collection_name}
-        | extend distance = array_length(set_difference(vector, query_vector))
+        | extend distance = array_length(set_difference({self.vector_name}, query_vector))
         | top {k} by distance asc
         """
         response = self.client.execute(self.database, query)
         df = dataframe_from_result_table(response.primary_results[0])
+        print("Distances of the search results:", [row["distance"] for _, row in df.iterrows()])
+
+        # Temporary to support the original entity_description_embedding
+        if(self.vector_name == "vector"):
+            return [
+                VectorStoreSearchResult(
+                    document=VectorStoreDocument(
+                        id=row["id"],
+                        text=row["text"],
+                        vector=row[self.vector_name],
+                        attributes=row["attributes"],
+                    ),
+                    score=1 - abs(float(row["distance"])),
+                )
+                for _, row in df.iterrows()
+            ]
 
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=row["id"],
-                    text=row["text"],
-                    vector=row["vector"],
-                    attributes=json.loads(row["attributes"]),
+                    text=row["name"],
+                    vector=row[self.vector_name],
+                    attributes={"title":row["name"]},
                 ),
                 score=1 - abs(float(row["distance"])),
             )
@@ -260,6 +286,23 @@ class KustoVectorStore(BaseVectorStore):
                 self.client.execute(self.database, command)
                 command = f".create table {parq_name} {self.schema_dict[parq_name]}"
                 self.client.execute(self.database, command)
+
+                # Due to an issue with to_csv not being able to handle float64, I had to manually handle entities.
+                if parq_name == "create_final_entities":
+                    data = [
+                        {
+                            "id": to_str(row, "id"),
+                            "name": to_str(row, "name"),
+                            "type": to_optional_str(row, "type"),
+                            "description": to_optional_str(row, "description"),
+                            "human_readable_id": to_optional_str(row, "human_readable_id"),
+                            "graph_embedding": to_optional_list(row, "graph_embedding"),
+                            "text_unit_ids": to_optional_list(row, "text_unit_ids"),
+                            "description_embedding": to_optional_list(row, "description_embedding"),
+                        }
+                        for idx, row in parq.iterrows()
+                    ]
+                    parq = pd.DataFrame(data)
                 command = f".ingest inline into table {parq_name} <| {parq.to_csv(index=False, header=False)}"
                 self.client.execute(self.database, command)
             else:
