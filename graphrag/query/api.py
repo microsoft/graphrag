@@ -140,7 +140,7 @@ async def global_search_streaming(
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)
+            context_data = _reformat_context_data(stream_chunk)  # type: ignore
             yield context_data
             get_context_data = False
         else:
@@ -301,7 +301,7 @@ async def local_search_streaming(
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)
+            context_data = _reformat_context_data(stream_chunk)  # type: ignore
             yield context_data
             get_context_data = False
         else:
