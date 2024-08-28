@@ -89,6 +89,8 @@ reporting:
   # container_name: <azure_blob_storage_container_name>
 
 entity_extraction:
+  ## strategy: fully override the entity extraction strategy.
+  ##   type: one of graph_intelligence, graph_intelligence_json and nltk
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
