@@ -34,7 +34,9 @@ async def generate_entity_relationship_examples(
 
     if entity_types:
         entity_types_str = (
-            entity_types if isinstance(entity_types, str) else ", ".join(entity_types)
+            entity_types
+            if isinstance(entity_types, str)
+            else ", ".join(map(str, entity_types))
         )
 
         messages = [
