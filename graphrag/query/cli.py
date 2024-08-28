@@ -58,7 +58,7 @@ def __get_embedding_description_store(
     )
     config_args.update({"collection_name": collection_name})
     vector_name = config_args.get(
-        "vector_search_column", "vector"
+        "vector_search_column", "description_embedding"
     )
     config_args.update({"vector_name": vector_name})
 
@@ -68,7 +68,10 @@ def __get_embedding_description_store(
 
     description_embedding_store.connect(**config_args)
 
-    if config_args.get("overwrite", True):
+    if vector_store_type == VectorStoreType.Kusto:
+        description_embedding_store.load_entities(entities)
+
+    elif config_args.get("overwrite", True):
         # this step assumps the embeddings where originally stored in a file rather
         # than a vector database
 
@@ -188,7 +191,7 @@ def run_local_search(
         final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
         final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")]) # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
         final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")]) # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
-        
+
         if not optimized_search:
             final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
@@ -226,7 +229,7 @@ def run_local_search(
             final_community_reports, final_nodes, community_level
         ),
         text_units=read_indexer_text_units(final_text_units),
-        entities=entities,
+        entities=[],
         relationships=read_indexer_relationships(final_relationships),
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
@@ -260,104 +263,6 @@ def read_paraquet_file(storage: PipelineStorage, path: str):
     if file_data is None:
         return pd.DataFrame()
     return pd.read_parquet(BytesIO(file_data), engine="pyarrow")
-    
-# TODO I split this out for now to preserve how the original local search worked.
-# I don't think this will necessarily be permanently separate.
-# It was just easier without having to keep everything generic and work the same way as local search worked.
-# One last optimization: Once all the merges are done we can go back to the parquet loads and optimize those for only the fields we need and merge them right away into one big table (I think).
-def run_kusto_local_search(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    query: str,
-):
-    """Run a local search in Kusto with the given query."""
-    data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_dir
-    )
-
-
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.Kusto)
-
-    collection_name = vector_store_args.get(
-        "query_collection_name", "entities"
-    )
-    vector_store_args.update({"collection_name": collection_name})
-    vector_name = vector_store_args.get(
-        "vector_search_column", "description_embedding"
-    )
-    vector_store_args.update({"vector_name": vector_name})
-
-    description_embedding_store = VectorStoreFactory.get_vector_store(
-        vector_store_type=vector_store_type, kwargs=vector_store_args
-    )
-
-    description_embedding_store.connect(**vector_store_args)
-
-    description_embedding_store.load_parqs(data_dir, ["create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
-
-    gen_parqs = description_embedding_store.read_parqs(data_dir, ["create_final_covariates", "create_final_nodes", "create_final_community_reports", "create_final_text_units", "create_final_relationships", "create_final_entities"])
-    dict_parqs = {}
-    for parq in gen_parqs:
-        dict_parqs[parq[0]] = parq[1]
-    final_covariates = dict_parqs.get("create_final_covariates")
-    final_community_reports = dict_parqs.get("create_final_community_reports")
-    final_text_units = dict_parqs.get("create_final_text_units")
-    final_relationships = dict_parqs.get("create_final_relationships")
-    final_nodes = dict_parqs.get("create_final_nodes")
-
-    create_entities_table(description_embedding_store, community_level)
-
-    covariates = (
-        read_indexer_covariates(final_covariates)
-        if final_covariates is not None
-        else []
-    )
-
-    reports_result=kt_read_indexer_reports( description_embedding_store, community_level)
-
-    search_engine = get_local_search_engine(
-        config,
-        reports=read_indexer_reports(
-            final_community_reports, final_nodes, community_level
-        ),
-        text_units=read_indexer_text_units(final_text_units),
-        entities=[],
-        relationships=read_indexer_relationships(final_relationships),
-        covariates={"claims": covariates},
-        description_embedding_store=description_embedding_store,
-        response_type=response_type,
-    )
-
-    result = search_engine.search(query=query)
-    reporter.success(f"Local Search Response: {result.response}")
-    return result.response
-
-# Create entities table similar to read_indexer_entities, but creating that table in Kusto, not in memory.
-def create_entities_table(description_embedding_store: BaseVectorStore, community_level: int):
-    description_embedding_store.execute_query(".set-or-replace entities <| ( \
-    create_final_nodes | where level <= 2 | project name=['title'] ,rank=degree,community | \
-    summarize community=max(community) by name,rank | join kind=inner \
-    create_final_entities on name)")
-
-def run_kusto_global_search(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    query: str,
-):
-    """Run a global search in Kusto with the given query."""
-    raise NotImplementedError("This function is not implemented yet.")
-
-
 
 def _configure_paths_and_settings(
     data_dir: str | None,

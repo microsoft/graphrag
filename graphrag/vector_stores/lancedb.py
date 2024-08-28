@@ -121,20 +121,9 @@ class LanceDBVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
-    def load_parqs(self, data_path, parq_names) -> Any:
-        raise NotImplementedError("Loading Parquet files is not supported for LanceDB")
-
-    def get_extracted_entities(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[Entity]:
         raise NotImplementedError("Extracting entities is not supported for LanceDB")
 
-    def read_parqs(self, data_dir, parq_names) -> Any:
-        raise NotImplementedError("Reading Parquet files is not supported for LanceDB")
-
-    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
-        """Get related entities from the vector store."""
-        raise NotImplementedError("Getting related entities is not supported for LanceDB")
-
-    def execute_query(self, query: str) -> Any:
-        return super().execute_query(query)
+    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+        raise NotImplementedError("Loading entities is not supported for LanceDB")

@@ -35,15 +35,6 @@ from .base import (
 class KustoVectorStore(BaseVectorStore):
     """The Azure Kusto vector storage implementation."""
 
-    #TODO Currently loading in all the parquet fields, need to filter out the ones that are not needed.
-    #TODO Double check the types. This was done quickly and I may have missed something.
-    #TODO Check if there is a better way to get the fields to ingest into the Kusto table. These schemas are based off of me reading the files and manually making them. Maybe there is a better way to do this.
-    schema_dict: typing.ClassVar[dict] = {"create_final_nodes": "(level: int, title: string, type: string, description: string, source_id: string, community: int, degree: int, human_readable_id: int, id: string, size: int, graph_embedding: dynamic, entity_type: string, top_level_node_id: string, x: int, y: int)"
-                                          , "create_final_community_reports": "(community: int, full_content: string, level: int, rank: int, title: string, rank_explanation: string, summary: string, findings: string, full_content_json: string, id: string)"
-                                          , "create_final_text_units": "(id: string, text: string, n_tokens: int, document_ids: string, entity_ids: string, relationship_ids: string)"
-                                          , "create_final_relationships": "(source: string, target: string, weight: real, description: string, text_unit_ids: string, id: string, human_readable_id: string, source_degree: int, target_degree: int, rank: int)"
-                                          , "create_final_entities": "(id: string, name: string, type: string, description: string, human_readable_id: int, graph_embedding: dynamic, text_unit_ids: string, description_embedding: dynamic)"}
-
     def connect(self, **kwargs: Any) -> Any:
         """
         Connect to the vector storage.
@@ -96,7 +87,6 @@ class KustoVectorStore(BaseVectorStore):
             return
 
         # Convert data to DataFrame
-        import pandas as pd
         df = pd.DataFrame(data)
 
         # Create or replace table
@@ -157,29 +147,15 @@ class KustoVectorStore(BaseVectorStore):
         print("Similarities of the search results:", [row["similarity"] for _, row in df.iterrows()])
 
         # Temporary to support the original entity_description_embedding
-        if(self.vector_name == "vector"):
-            return [
-                VectorStoreSearchResult(
-                    document=VectorStoreDocument(
-                        id=row["id"],
-                        text=row["text"],
-                        vector=row[self.vector_name],
-                        attributes=row["attributes"],
-                    ),
-                    score= 1 + float(row["similarity"]),
-                )
-                for _, row in df.iterrows()
-            ]
-
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=row["id"],
-                    text=row["name"],
+                    text=row["text"],
                     vector=row[self.vector_name],
-                    attributes={"title":row["name"]},
+                    attributes=row["attributes"],
                 ),
-                score= 1 + float(row["similarity"]), # get a [0,2] range; work with positvie numbers
+                score= 1 + float(row["similarity"]), # 1 + similarity to make it a score between 0 and 2
             )
             for _, row in df.iterrows()
         ]
@@ -204,120 +180,50 @@ class KustoVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
-
-    def execute_query(self, query: str) -> Any:
-        return self.client.execute(self.database, f"{query}")
-
     def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[Entity]:
-        query_results = self.similarity_search_by_text(text, text_embedder, k)
-        query_ids = [result.document.id for result in query_results]
-        if query_ids not in [[], None]:
-            ids_str = "\", \"".join([str(id) for id in query_ids])
-            query = f"""
-            entities
-            | where id in ("{ids_str}")
-            """
-            print(query)
-            response = self.client.execute(self.database, query)
-            df = dataframe_from_result_table(response.primary_results[0])
-            return self.__extract_entities_from_data_frame(df)
-        return []
+        query_embedding = text_embedder(text)
+        query = f"""
+        let query_vector = dynamic({query_embedding});
+        {self.collection_name}
+        | extend similarity = series_cosine_similarity(query_vector, {self.vector_name})
+        | top {k} by similarity desc
+        """
+        response = self.client.execute(self.database, query)
+        df = dataframe_from_result_table(response.primary_results[0])
 
-    def __extract_entities_from_data_frame(self, df: pd.DataFrame) -> list[Entity]:
         return [
             Entity(
                 id=row["id"],
-                title=row["name1"],
+                title=row["title"],
                 type=row["type"],
                 description=row["description"],
                 graph_embedding=row["graph_embedding"],
                 text_unit_ids=row["text_unit_ids"],
                 description_embedding=row["description_embedding"],
                 short_id="",
-                community_ids=[row["community"]],
+                community_ids=row["community_ids"],
+                document_ids=row["document_ids"],
                 rank=row["rank"],
-                attributes={"title":row["name1"]},
-            )
-            for _, row in df.iterrows()
+                attributes=row["attributes"],
+            ) for _, row in df.iterrows()
         ]
 
-    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
-        """Get related entities based on the given titles."""
-        titles_str = "\", \"".join(titles)
+    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+        # Convert data to DataFrame
+        df = pd.DataFrame(entities)
 
-        query = f"""
-        create_final_relationships
-        | where source in ("{titles_str}")
-        | project name=target
-        | join kind=inner create_final_entities on name
-        """
-        response = self.client.execute(self.database, query)
-        df = dataframe_from_result_table(response.primary_results[0])
-        selected_entities = self.__extract_entities_from_data_frame(df)
+        # Create or replace table
+        if overwrite:
+            command = f".drop table {self.collection_name} ifexists"
+            self.client.execute(self.database, command)
+            command = f".create table {self.collection_name} (id: string, short_id: real, title: string, type: string, description: string, description_embedding: dynamic, name_embedding: dynamic, graph_embedding: dynamic, community_ids: dynamic, text_unit_ids: dynamic, document_ids: dynamic, rank: real, attributes: dynamic)"
+            self.client.execute(self.database, command)
+            command = f".alter column {self.collection_name}.graph_embedding policy encoding type = 'Vector16'"
+            self.client.execute(self.database, command)
+            command = f".alter column {self.collection_name}.description_embedding policy encoding type = 'Vector16'"
+            self.client.execute(self.database, command)
 
-        query = f"""
-        create_final_relationships
-        | where target in ("{titles_str}")
-        | project name=source
-        | join kind=inner create_final_entities on name
-        """
-        response = self.client.execute(self.database, query)
-        df = dataframe_from_result_table(response.primary_results[0])
-        selected_entities += self.__extract_entities_from_data_frame(df)
-
-        return selected_entities
-
-    def load_parqs(self, data_dir, parq_names) -> Any:
-        data_path = Path(data_dir)
-        for parq_name in parq_names:
-            parq_path = data_path / f"{parq_name}.parquet"
-            if parq_path.exists():
-                parq = pd.read_parquet(parq_path)
-
-                # I wasn't sure if was easier to rename the columns here or in the KQL queries.
-                # Most likely the KQL queries as this is a place I am trying to handle all the parquet files generically.
-                # parq.rename(columns={"id": "title"}, inplace=True)
-                # parq = cast(pd.DataFrame, parq[["title", "degree", "community"]]).rename(
-                #     columns={"title": "name", "degree": "rank"}
-                # )
-
-                command = f".drop table {parq_name} ifexists"
-                self.client.execute(self.database, command)
-                command = f".create table {parq_name} {self.schema_dict[parq_name]}"
-                self.client.execute(self.database, command)
-
-                # Due to an issue with to_csv not being able to handle float64, I had to manually handle entities.
-                if parq_name == "create_final_entities":
-                    command = f".alter column create_final_entities.graph_embedding policy encoding type = 'Vector16'"
-                    self.client.execute(self.database, command)
-                    command = f".alter column create_final_entities.description_embedding policy encoding type = 'Vector16'"
-                    self.client.execute(self.database, command)
-                    data = [
-                        {
-                            "id": to_str(row, "id"),
-                            "name": to_str(row, "name"),
-                            "type": to_optional_str(row, "type"),
-                            "description": to_optional_str(row, "description"),
-                            "human_readable_id": to_optional_str(row, "human_readable_id"),
-                            "graph_embedding": to_optional_list(row, "graph_embedding"),
-                            "text_unit_ids": to_optional_list(row, "text_unit_ids"),
-                            "description_embedding": to_optional_list(row, "description_embedding"),
-                        }
-                        for idx, row in parq.iterrows()
-                    ]
-                    parq = pd.DataFrame(data)
-                command = f".ingest inline into table {parq_name} <| {parq.to_csv(index=False, header=False)}"
-                self.client.execute(self.database, command)
-            else:
-                print(f"Parquet file {parq_path} not found.")
-
-    def read_parqs(self, data_dir, parq_names) -> Any:
-        """Return a dictionary of parquet dataframes of parq_name to data frame."""
-        data_path = Path(data_dir)
-        for parq_name in parq_names:
-            parq_path = data_path / f"{parq_name}.parquet"
-            parq = None
-            if parq_path.exists():
-                parq = pd.read_parquet(parq_path)
-            yield parq_name, parq
+        # Ingest data
+        ingestion_command = f".ingest inline into table {self.collection_name} <| {df.to_csv(index=False, header=False)}"
+        self.client.execute(self.database, ingestion_command)

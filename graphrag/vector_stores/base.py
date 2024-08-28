@@ -84,24 +84,11 @@ class BaseVectorStore(ABC):
         """Build a query filter to filter documents by id."""
 
     @abstractmethod
-    def load_parqs(self, data_path: str, parqs: list[str]) -> Any:
-        """Load documents (Parquet files) into the vector-store."""
-
-    #TODO This is temporary until I take out the client from the vector store class
-    @abstractmethod
-    def execute_query(self, query: str) -> Any:
-        """Execute a query in the vector-store."""
-
-    @abstractmethod
     def get_extracted_entities(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[Entity]:
         """From a query, build a subtable of entities which is only matching entities."""
 
     @abstractmethod
-    def read_parqs(self, data_dir, parq_names) -> Any:
-        """Return a dictionary of parquet dataframes of parq_name to data frame."""
-
-    @abstractmethod
-    def get_related_entities(self, titles: list[str], **kwargs: Any) -> list[Entity]:
-        """Get related entities from the vector store."""
+    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+        """Load entities into the vector-store."""
