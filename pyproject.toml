@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -9,6 +9,7 @@ authors = [
     "Chris Trevino <chtrevin@microsoft.com>",
     "David Tittsworth <datittsw@microsoft.com>",
     "Dayenne de Souza <ddesouza@microsoft.com>",
+    "Derek Worthen <deworthe@microsoft.com>",
     "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
     "Ha Trinh <trinhha@microsoft.com>",
     "Jonathan Larson <jolarso@microsoft.com>",
@@ -23,6 +24,9 @@ authors = [
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "graphrag" }]
+
+[tool.poetry.urls]
+"Source" = "https://github.com/microsoft/graphrag"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -89,6 +93,7 @@ azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
 json-repair = "^0.26.0"
 
+future = "^1.0.0"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
