@@ -129,7 +129,11 @@ def merge_edges(
         if not target_graph.has_edge(source, target):
             target_graph.add_edge(source, target, **(edge_data or {}))
         else:
-            merge_attributes(target_graph.edges[(source, target)], edge_data, edge_ops)
+            merge_attributes(
+                target_graph.edges[(source, target)],  # noqa
+                edge_data,
+                edge_ops,
+            )
 
 
 def merge_attributes(

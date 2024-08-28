@@ -73,6 +73,12 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--streaming",
+        help="Output response in a streaming (chunk-by-chunk) manner",
+        action="store_true",
+    )
+
+    parser.add_argument(
         "query",
         nargs=1,
         help="The query to run",
@@ -89,6 +95,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.streaming,
                 args.query[0],
             )
         case SearchType.GLOBAL:
@@ -98,6 +105,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.streaming,
                 args.query[0],
             )
         case _:

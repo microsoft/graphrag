@@ -68,6 +68,11 @@ if __name__ == "__main__":
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
     )
+    parser.add_argument(
+        "--skip-validations",
+        help="Skip any preflight validation. Useful when running no LLM steps.",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.overlay_defaults and not args.config:
@@ -85,5 +90,5 @@ if __name__ == "__main__":
         dryrun=args.dryrun or False,
         init=args.init or False,
         overlay_defaults=args.overlay_defaults or False,
-        cli=True,
+        skip_validations=args.skip_validations or False,
     )

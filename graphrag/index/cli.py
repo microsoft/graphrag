@@ -6,32 +6,28 @@
 import asyncio
 import json
 import logging
-import platform
 import sys
 import time
 import warnings
 from pathlib import Path
 
-from graphrag.config import (
-    create_graphrag_config,
+from graphrag.config import create_graphrag_config
+from graphrag.config.config_file_loader import (
+    load_config_from_file,
+    resolve_config_path_with_root,
 )
-from graphrag.index import PipelineConfig, create_pipeline_config
-from graphrag.index.cache import NoopPipelineCache
-from graphrag.index.progress import (
-    NullProgressReporter,
-    PrintProgressReporter,
-    ProgressReporter,
-)
-from graphrag.index.progress.rich import RichProgressReporter
-from graphrag.index.run import run_pipeline_with_config
-from graphrag.index.validate_config import validate_config_names
+from graphrag.config.enums import CacheType
+from graphrag.config.logging import enable_logging_with_config
 
-from .emit import TableEmitterType
+from .api import build_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .init_content import INIT_DOTENV, INIT_YAML
+from .progress import ProgressReporter
+from .progress.load_progress_reporter import load_progress_reporter
+from .validate_config import validate_config_names
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -39,7 +35,7 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 log = logging.getLogger(__name__)
 
 
-def redact(input: dict) -> str:
+def _redact(input: dict) -> str:
     """Sanitize the config json."""
 
     # Redact any sensitive configuration
@@ -56,7 +52,7 @@ def redact(input: dict) -> str:
                 "organization",
             }:
                 if value is not None:
-                    result[key] = f"REDACTED, length {len(value)}"
+                    result[key] = "==== REDACTED ===="
             elif isinstance(value, dict):
                 result[key] = redact_dict(value)
             elif isinstance(value, list):
@@ -67,6 +63,43 @@ def redact(input: dict) -> str:
 
     redacted_dict = redact_dict(input)
     return json.dumps(redacted_dict, indent=4)
+
+
+def _logger(reporter: ProgressReporter):
+    def info(msg: str, verbose: bool = False):
+        log.info(msg)
+        if verbose:
+            reporter.info(msg)
+
+    def error(msg: str, verbose: bool = False):
+        log.error(msg)
+        if verbose:
+            reporter.error(msg)
+
+    def success(msg: str, verbose: bool = False):
+        log.info(msg)
+        if verbose:
+            reporter.success(msg)
+
+    return info, error, success
+
+
+def _register_signal_handlers(reporter: ProgressReporter):
+    import signal
+
+    def handle_signal(signum, _):
+        # Handle the signal here
+        reporter.info(f"Received signal {signum}, exiting...")
+        reporter.dispose()
+        for task in asyncio.all_tasks():
+            task.cancel()
+        reporter.info("All tasks cancelled. Exiting...")
+
+    # Register signal handlers for SIGINT and SIGHUP
+    signal.signal(signal.SIGINT, handle_signal)
+
+    if sys.platform != "win32":
+        signal.signal(signal.SIGHUP, handle_signal)
 
 
 def index_cli(
@@ -81,99 +114,82 @@ def index_cli(
     emit: str | None,
     dryrun: bool,
     overlay_defaults: bool,
-    cli: bool = False,
+    skip_validations: bool,
 ):
     """Run the pipeline with the given config."""
+    progress_reporter = load_progress_reporter(reporter or "rich")
+    info, error, success = _logger(progress_reporter)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
-    _enable_logging(root, run_id, verbose)
-    progress_reporter = _get_progress_reporter(reporter)
+
     if init:
         _initialize_project_at(root, progress_reporter)
         sys.exit(0)
-    if overlay_defaults:
-        pipeline_config: str | PipelineConfig = _create_default_config(
-            root, config, verbose, dryrun or False, progress_reporter
+
+    if overlay_defaults or config:
+        config_path = (
+            Path(root) / config if config else resolve_config_path_with_root(root)
         )
+        default_config = load_config_from_file(config_path)
     else:
-        pipeline_config: str | PipelineConfig = config or _create_default_config(
-            root, None, verbose, dryrun or False, progress_reporter
+        try:
+            config_path = resolve_config_path_with_root(root)
+            default_config = load_config_from_file(config_path)
+        except FileNotFoundError:
+            default_config = create_graphrag_config(root_dir=root)
+
+    if nocache:
+        default_config.cache.type = CacheType.none
+
+    enabled_logging, log_path = enable_logging_with_config(
+        default_config, run_id, verbose
+    )
+    if enabled_logging:
+        info(f"Logging enabled at {log_path}", True)
+    else:
+        info(
+            f"Logging not enabled for config {_redact(default_config.model_dump())}",
+            True,
         )
-    cache = NoopPipelineCache() if nocache else None
+
+    if skip_validations:
+        validate_config_names(progress_reporter, default_config)
+
+    info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
+    info(
+        f"Using default configuration: {_redact(default_config.model_dump())}",
+        verbose,
+    )
+
+    if dryrun:
+        info("Dry run complete, exiting...", True)
+        sys.exit(0)
+
     pipeline_emit = emit.split(",") if emit else None
-    encountered_errors = False
 
-    # Run pre-flight validation on config model values
-    parameters = _read_config_parameters(root, config, progress_reporter)
-    validate_config_names(progress_reporter, parameters)
+    _register_signal_handlers(progress_reporter)
 
-    def _run_workflow_async() -> None:
-        import signal
+    outputs = asyncio.run(
+        build_index(
+            default_config,
+            run_id,
+            memprofile,
+            progress_reporter,
+            pipeline_emit,
+        )
+    )
+    encountered_errors = any(
+        output.errors and len(output.errors) > 0 for output in outputs
+    )
 
-        def handle_signal(signum, _):
-            # Handle the signal here
-            progress_reporter.info(f"Received signal {signum}, exiting...")
-            progress_reporter.dispose()
-            for task in asyncio.all_tasks():
-                task.cancel()
-            progress_reporter.info("All tasks cancelled. Exiting...")
-
-        # Register signal handlers for SIGINT and SIGHUP
-        signal.signal(signal.SIGINT, handle_signal)
-
-        if sys.platform != "win32":
-            signal.signal(signal.SIGHUP, handle_signal)
-
-        async def execute():
-            nonlocal encountered_errors
-            async for output in run_pipeline_with_config(
-                pipeline_config,
-                run_id=run_id,
-                memory_profile=memprofile,
-                cache=cache,
-                progress_reporter=progress_reporter,
-                emit=(
-                    [TableEmitterType(e) for e in pipeline_emit]
-                    if pipeline_emit
-                    else None
-                ),
-                is_resume_run=bool(resume),
-            ):
-                if output.errors and len(output.errors) > 0:
-                    encountered_errors = True
-                    progress_reporter.error(output.workflow)
-                else:
-                    progress_reporter.success(output.workflow)
-
-                progress_reporter.info(str(output.result))
-
-        if platform.system() == "Windows":
-            import nest_asyncio  # type: ignore Ignoring because out of windows this will cause an error
-
-            nest_asyncio.apply()
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(execute())
-        elif sys.version_info >= (3, 11):
-            import uvloop  # type: ignore Ignoring because on windows this will cause an error
-
-            with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:  # type: ignore Ignoring because minor versions this will throw an error
-                runner.run(execute())
-        else:
-            import uvloop  # type: ignore Ignoring because on windows this will cause an error
-
-            uvloop.install()
-            asyncio.run(execute())
-
-    _run_workflow_async()
     progress_reporter.stop()
     if encountered_errors:
-        progress_reporter.error(
-            "Errors occurred during the pipeline run, see logs for more details."
+        error(
+            "Errors occurred during the pipeline run, see logs for more details.", True
         )
     else:
-        progress_reporter.success("All workflows completed successfully.")
+        success("All workflows completed successfully.", True)
 
-    if cli:
-        sys.exit(1 if encountered_errors else 0)
+    sys.exit(1 if encountered_errors else 0)
 
 
 def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
@@ -225,101 +241,3 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
             file.write(
                 COMMUNITY_REPORT_PROMPT.encode(encoding="utf-8", errors="strict")
             )
-
-
-def _create_default_config(
-    root: str,
-    config: str | None,
-    verbose: bool,
-    dryrun: bool,
-    reporter: ProgressReporter,
-) -> PipelineConfig:
-    """Overlay default values on an existing config or create a default config if none is provided."""
-    if config and not Path(config).exists():
-        msg = f"Configuration file {config} does not exist"
-        raise ValueError
-
-    if not Path(root).exists():
-        msg = f"Root directory {root} does not exist"
-        raise ValueError(msg)
-
-    parameters = _read_config_parameters(root, config, reporter)
-    log.info(
-        "using default configuration: %s",
-        redact(parameters.model_dump()),
-    )
-
-    if verbose or dryrun:
-        reporter.info(f"Using default configuration: {redact(parameters.model_dump())}")
-    result = create_pipeline_config(parameters, verbose)
-    if verbose or dryrun:
-        reporter.info(f"Final Config: {redact(result.model_dump())}")
-
-    if dryrun:
-        reporter.info("dry run complete, exiting...")
-        sys.exit(0)
-    return result
-
-
-def _read_config_parameters(root: str, config: str | None, reporter: ProgressReporter):
-    _root = Path(root)
-    settings_yaml = (
-        Path(config)
-        if config and Path(config).suffix in [".yaml", ".yml"]
-        else _root / "settings.yaml"
-    )
-    if not settings_yaml.exists():
-        settings_yaml = _root / "settings.yml"
-    settings_json = (
-        Path(config)
-        if config and Path(config).suffix == ".json"
-        else _root / "settings.json"
-    )
-
-    if settings_yaml.exists():
-        reporter.success(f"Reading settings from {settings_yaml}")
-        with settings_yaml.open("rb") as file:
-            import yaml
-
-            data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
-            return create_graphrag_config(data, root)
-
-    if settings_json.exists():
-        reporter.success(f"Reading settings from {settings_json}")
-        with settings_json.open("rb") as file:
-            import json
-
-            data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
-            return create_graphrag_config(data, root)
-
-    reporter.success("Reading settings from environment variables")
-    return create_graphrag_config(root_dir=root)
-
-
-def _get_progress_reporter(reporter_type: str | None) -> ProgressReporter:
-    if reporter_type is None or reporter_type == "rich":
-        return RichProgressReporter("GraphRAG Indexer ")
-    if reporter_type == "print":
-        return PrintProgressReporter("GraphRAG Indexer ")
-    if reporter_type == "none":
-        return NullProgressReporter()
-
-    msg = f"Invalid progress reporter type: {reporter_type}"
-    raise ValueError(msg)
-
-
-def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
-    logging_file = (
-        Path(root_dir) / "output" / run_id / "reports" / "indexing-engine.log"
-    )
-    logging_file.parent.mkdir(parents=True, exist_ok=True)
-
-    logging_file.touch(exist_ok=True)
-
-    logging.basicConfig(
-        filename=str(logging_file),
-        filemode="a",
-        format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%H:%M:%S",
-        level=logging.DEBUG if verbose else logging.INFO,
-    )
