@@ -37,6 +37,7 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
+  # target: {defs.EMBEDDING_TARGET.value} # or all
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -53,7 +54,7 @@ embeddings:
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
     # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
     # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-    # target: {defs.EMBEDDING_TARGET.value} # or optional
+    
   
 
 
@@ -146,9 +147,15 @@ local_search:
   # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
+  # llm_temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
+  # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
   # data_max_tokens: {defs.GLOBAL_SEARCH_DATA_MAX_TOKENS}
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}

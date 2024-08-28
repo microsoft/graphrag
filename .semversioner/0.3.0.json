@@ -1,0 +1,30 @@
+{
+  "changes": [
+    {
+      "description": "Implement auto templating API.",
+      "type": "minor"
+    },
+    {
+      "description": "Implement query engine API.",
+      "type": "minor"
+    },
+    {
+      "description": "Fix file dumps using json for non ASCII chars",
+      "type": "patch"
+    },
+    {
+      "description": "Stabilize smoke tests for query context building",
+      "type": "patch"
+    },
+    {
+      "description": "fix query embedding",
+      "type": "patch"
+    },
+    {
+      "description": "fix sort_context & max_tokens params in verb",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-08-12T23:51:49+00:00",
+  "version": "0.3.0"
+}

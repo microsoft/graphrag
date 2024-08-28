@@ -88,10 +88,12 @@ ALL_ENV_VARS = {
     "GRAPHRAG_CHUNK_BY_COLUMNS": "a,b",
     "GRAPHRAG_CHUNK_OVERLAP": "12",
     "GRAPHRAG_CHUNK_SIZE": "500",
+    "GRAPHRAG_CHUNK_ENCODING_MODEL": "encoding-c",
     "GRAPHRAG_CLAIM_EXTRACTION_ENABLED": "True",
     "GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION": "test 123",
     "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "5000",
     "GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-a.txt",
+    "GRAPHRAG_CLAIM_EXTRACTION_ENCODING_MODEL": "encoding_a",
     "GRAPHRAG_COMMUNITY_REPORTS_MAX_LENGTH": "23456",
     "GRAPHRAG_COMMUNITY_REPORTS_PROMPT_FILE": "tests/unit/config/prompt-b.txt",
     "GRAPHRAG_EMBEDDING_BATCH_MAX_TOKENS": "17",
@@ -114,6 +116,7 @@ ALL_ENV_VARS = {
     "GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES": "cat,dog,elephant",
     "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "112",
     "GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE": "tests/unit/config/prompt-c.txt",
+    "GRAPHRAG_ENTITY_EXTRACTION_ENCODING_MODEL": "encoding_b",
     "GRAPHRAG_INPUT_BASE_DIR": "/some/input/dir",
     "GRAPHRAG_INPUT_CONNECTION_STRING": "input_cs",
     "GRAPHRAG_INPUT_CONTAINER_NAME": "input_cn",
@@ -170,11 +173,17 @@ ALL_ENV_VARS = {
     "GRAPHRAG_UMAP_ENABLED": "true",
     "GRAPHRAG_LOCAL_SEARCH_TEXT_UNIT_PROP": "0.713",
     "GRAPHRAG_LOCAL_SEARCH_COMMUNITY_PROP": "0.1234",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_LOCAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_LOCAL_SEARCH_LLM_MAX_TOKENS": "12",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_RELATIONSHIPS": "15",
     "GRAPHRAG_LOCAL_SEARCH_TOP_K_ENTITIES": "14",
     "GRAPHRAG_LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS": "2",
     "GRAPHRAG_LOCAL_SEARCH_MAX_TOKENS": "142435",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TEMPERATURE": "0.1",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_TOP_P": "0.9",
+    "GRAPHRAG_GLOBAL_SEARCH_LLM_N": "2",
     "GRAPHRAG_GLOBAL_SEARCH_MAX_TOKENS": "5123",
     "GRAPHRAG_GLOBAL_SEARCH_DATA_MAX_TOKENS": "123",
     "GRAPHRAG_GLOBAL_SEARCH_MAP_MAX_TOKENS": "4123",
@@ -448,6 +457,29 @@ class TestDefaultConfig(unittest.TestCase):
         assert config.input is not None
         assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
 
+    @mock.patch.dict(
+        os.environ,
+        {
+            "GRAPHRAG_LLM_API_KEY": "test",
+            "GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS": "0",
+            "GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS": "0",
+        },
+        clear=True,
+    )
+    def test_can_set_gleanings_to_zero(self):
+        parameters = create_graphrag_config()
+        assert parameters.claim_extraction.max_gleanings == 0
+        assert parameters.entity_extraction.max_gleanings == 0
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_LLM_API_KEY": "test", "GRAPHRAG_CHUNK_BY_COLUMNS": ""},
+        clear=True,
+    )
+    def test_can_set_no_chunk_by_columns(self):
+        parameters = create_graphrag_config()
+        assert parameters.chunks.group_by_columns == []
+
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docsite/posts/config/env_vars.md")
         query_docs_path = Path("docsite/posts/query/3-cli.md")
@@ -508,10 +540,12 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.group_by_columns == ["a", "b"]
         assert parameters.chunks.overlap == 12
         assert parameters.chunks.size == 500
+        assert parameters.chunks.encoding_model == "encoding-c"
         assert parameters.claim_extraction.enabled
         assert parameters.claim_extraction.description == "test 123"
         assert parameters.claim_extraction.max_gleanings == 5000
         assert parameters.claim_extraction.prompt == "tests/unit/config/prompt-a.txt"
+        assert parameters.claim_extraction.encoding_model == "encoding_a"
         assert parameters.cluster_graph.max_cluster_size == 123
         assert parameters.community_reports.max_length == 23456
         assert parameters.community_reports.prompt == "tests/unit/config/prompt-b.txt"
@@ -541,6 +575,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.entity_extraction.llm.api_base == "http://some/base"
         assert parameters.entity_extraction.max_gleanings == 112
         assert parameters.entity_extraction.prompt == "tests/unit/config/prompt-c.txt"
+        assert parameters.entity_extraction.encoding_model == "encoding_b"
         assert parameters.input.storage_account_blob_url == "input_account_blob_url"
         assert parameters.input.base_dir == "/some/input/dir"
         assert parameters.input.connection_string == "input_cs"
@@ -605,7 +640,14 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.local_search.top_k_relationships == 15
         assert parameters.local_search.conversation_history_max_turns == 2
         assert parameters.local_search.top_k_entities == 14
+        assert parameters.local_search.temperature == 0.1
+        assert parameters.local_search.top_p == 0.9
+        assert parameters.local_search.n == 2
         assert parameters.local_search.max_tokens == 142435
+
+        assert parameters.global_search.temperature == 0.1
+        assert parameters.global_search.top_p == 0.9
+        assert parameters.global_search.n == 2
         assert parameters.global_search.max_tokens == 5123
         assert parameters.global_search.data_max_tokens == 123
         assert parameters.global_search.map_max_tokens == 4123
@@ -872,7 +914,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert strategy["extraction_prompt"] == "Hello, World! A"
         assert strategy["encoding_name"] == "abc123"
 
-        strategy = config.claim_extraction.resolved_strategy(".")
+        strategy = config.claim_extraction.resolved_strategy(".", "encoding_b")
         assert strategy["extraction_prompt"] == "Hello, World! B"
 
         strategy = config.community_reports.resolved_strategy(".")

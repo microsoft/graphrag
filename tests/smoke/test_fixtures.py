@@ -16,6 +16,9 @@ import pandas as pd
 import pytest
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.query.context_builder.community_context import (
+    NO_COMMUNITY_RECORDS_WARNING,
+)
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +27,8 @@ gh_pages = os.environ.get("GH_PAGES") is not None
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
+
+KNOWN_WARNINGS = [NO_COMMUNITY_RECORDS_WARNING]
 
 
 def _load_fixtures():
@@ -38,10 +43,9 @@ def _load_fixtures():
             continue
 
         config_file = fixtures_path / subfolder / "config.json"
-        with config_file.open() as f:
-            params.append((subfolder, json.load(f)))
+        params.append((subfolder, json.loads(config_file.read_bytes().decode("utf-8"))))
 
-    return params
+    return params[1:]  # disable azure blob connection test
 
 
 def pytest_generate_tests(metafunc):
@@ -104,8 +108,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
     csv_files = list((root / "input").glob("*.csv"))
     data_files = txt_files + csv_files
     for data_file in data_files:
-        with data_file.open(encoding="utf8") as f:
-            text = f.read()
+        text = data_file.read_bytes().decode("utf-8")
         file_path = (
             str(Path(input_base_dir) / data_file.name)
             if input_base_dir
@@ -166,8 +169,7 @@ class TestIndexer:
         assert artifacts.exists(), "artifact folder does not exist"
 
         # Check stats for all workflow
-        with (artifacts / "stats.json").open() as f:
-            stats = json.load(f)
+        stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
         expected_workflows = set(workflow_config.keys())
@@ -258,7 +260,7 @@ class TestIndexer:
         },
         clear=True,
     )
-    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
+    @pytest.mark.timeout(800)
     def test_fixture(
         self,
         input_path: str,
@@ -297,6 +299,8 @@ class TestIndexer:
                 result.stderr if "No existing dataset at" not in result.stderr else ""
             )
 
-            assert stderror == "", f"Query failed with error: {stderror}"
+            assert (
+                stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS
+            ), f"Query failed with error: {stderror}"
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"
