@@ -6,7 +6,7 @@
 import argparse
 from enum import Enum
 
-from .cli import run_global_search, run_local_search, run_kusto_local_search, run_kusto_global_search
+from .cli import run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -116,24 +116,6 @@ if __name__ == "__main__":
                 args.community_level,
                 args.response_type,
                 args.context_id,
-                args.query[0],
-            )
-        case SearchType.KUSTO_LOCAL:
-            run_kusto_local_search(
-                args.config,
-                args.data,
-                args.root,
-                args.community_level,
-                args.response_type,
-                args.query[0],
-            )
-        case SearchType.KUSTO_GLOBAL:
-            run_kusto_global_search(
-                args.config,
-                args.data,
-                args.root,
-                args.community_level,
-                args.response_type,
                 args.query[0],
             )
         case _:
