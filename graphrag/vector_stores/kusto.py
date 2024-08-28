@@ -166,7 +166,7 @@ class KustoVectorStore(BaseVectorStore):
                         vector=row[self.vector_name],
                         attributes=row["attributes"],
                     ),
-                    score=float(row["similarity"]),
+                    score= 1 + float(row["similarity"]),
                 )
                 for _, row in df.iterrows()
             ]
@@ -179,7 +179,7 @@ class KustoVectorStore(BaseVectorStore):
                     vector=row[self.vector_name],
                     attributes={"title":row["name"]},
                 ),
-                score=float(row["similarity"]),
+                score= 1 + float(row["similarity"]), # get a [0,2] range; work with positvie numbers
             )
             for _, row in df.iterrows()
         ]
@@ -290,7 +290,9 @@ class KustoVectorStore(BaseVectorStore):
                 # Due to an issue with to_csv not being able to handle float64, I had to manually handle entities.
                 if parq_name == "create_final_entities":
                     command = f".alter column create_final_entities.graph_embedding policy encoding type = 'Vector16'"
+                    self.client.execute(self.database, command)
                     command = f".alter column create_final_entities.description_embedding policy encoding type = 'Vector16'"
+                    self.client.execute(self.database, command)
                     data = [
                         {
                             "id": to_str(row, "id"),
