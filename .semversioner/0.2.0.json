@@ -1,0 +1,94 @@
+{
+  "changes": [
+    {
+      "description": "Add content-based KNN for selecting prompt tune few shot examples",
+      "type": "minor"
+    },
+    {
+      "description": "Add dynamic community report rating to the prompt tuning engine",
+      "type": "minor"
+    },
+    {
+      "description": "Add Minute-based Rate Limiting and fix rpm, tpm settings",
+      "type": "patch"
+    },
+    {
+      "description": "Add N parameter support",
+      "type": "patch"
+    },
+    {
+      "description": "Add cli flag to overlay default values onto a provided config.",
+      "type": "patch"
+    },
+    {
+      "description": "Add exception handling on file load",
+      "type": "patch"
+    },
+    {
+      "description": "Add language support to prompt tuning",
+      "type": "patch"
+    },
+    {
+      "description": "Add llm params to local and global search",
+      "type": "patch"
+    },
+    {
+      "description": "Fix broken prompt tuning link on docs",
+      "type": "patch"
+    },
+    {
+      "description": "Fix delta none on query calls",
+      "type": "patch"
+    },
+    {
+      "description": "Fix docsite base url",
+      "type": "patch"
+    },
+    {
+      "description": "Fix encoding model parameter on prompt tune",
+      "type": "patch"
+    },
+    {
+      "description": "Fix for --limit exceeding the dataframe length",
+      "type": "patch"
+    },
+    {
+      "description": "Fix for Ruff 0.5.2",
+      "type": "patch"
+    },
+    {
+      "description": "Fixed an issue where base OpenAI embeddings can't work with Azure OpenAI LLM",
+      "type": "patch"
+    },
+    {
+      "description": "Modify defaults for CHUNK_SIZE, CHUNK_OVERLAP and GLEANINGS to reduce time and LLM calls",
+      "type": "patch"
+    },
+    {
+      "description": "fix community_report doesn't work in settings.yaml",
+      "type": "patch"
+    },
+    {
+      "description": "fix llm response content is None in query",
+      "type": "patch"
+    },
+    {
+      "description": "fix the organization parameter is ineffective during queries",
+      "type": "patch"
+    },
+    {
+      "description": "remove duplicate file read",
+      "type": "patch"
+    },
+    {
+      "description": "support non-open ai model config to prompt tune",
+      "type": "patch"
+    },
+    {
+      "description": "use binary io processing for all file io operations",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-07-25T02:01:38+00:00",
+  "version": "0.2.0"
+}

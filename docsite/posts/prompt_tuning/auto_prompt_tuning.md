@@ -24,6 +24,8 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 
 ## Command-Line Options
 
+- `--config` (required): The path to the configuration file. This is required to load the data and model settings.
+
 - `--root` (optional): The data project root directory, including the config files (YML, JSON, or .env). Defaults to the current directory.
 
 - `--domain` (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
@@ -45,13 +47,13 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 ## Example Usage
 
 ```bash
-python -m graphrag.prompt_tune --root /path/to/project --domain "environmental news" --method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --no-entity-types --output /path/to/output
+python -m graphrag.prompt_tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" --method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --no-entity-types --output /path/to/output
 ```
 
 or, with minimal configuration (suggested):
 
 ```bash
-python -m graphrag.prompt_tune --root /path/to/project --no-entity-types
+python -m graphrag.prompt_tune --root /path/to/project --config /path/to/settings.yaml --no-entity-types
 ```
 
 ## Document Selection Methods

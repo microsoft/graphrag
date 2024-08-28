@@ -4,6 +4,7 @@
 """Base classes for search algos."""
 
 from abc import ABC, abstractmethod
+from collections.abc import AsyncGenerator
 from dataclasses import dataclass
 from typing import Any
 
@@ -67,3 +68,11 @@ class BaseSearch(ABC):
         **kwargs,
     ) -> SearchResult:
         """Search for the given query asynchronously."""
+
+    @abstractmethod
+    def astream_search(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+    ) -> AsyncGenerator[str, None]:
+        """Stream search for the given query."""

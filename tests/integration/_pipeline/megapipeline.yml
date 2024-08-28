@@ -39,14 +39,6 @@ workflows:
 
   - name: create_base_documents
 
-  # - name: create_final_community_reports
-  #   config:
-  #     create_community_reports:
-  #       <<: *llm_parallel_config
-  #       strategy:
-  #         type: graph_intelligence
-  #         llm: *llm_config
-
   - name: create_final_communities
   - name: create_final_text_units
     config:

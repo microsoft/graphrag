@@ -100,7 +100,7 @@ python -m graphrag.index --root ./ragtest
 
 ![pipeline executing from the CLI](/img/pipeline-running.png)
 
-This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `.env` file).
+This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yml` file).
 Once the pipeline is complete, you should see a new folder called `./ragtest/output/<timestamp>/artifacts` with a series of parquet files.
 
 # Using the Query Engine

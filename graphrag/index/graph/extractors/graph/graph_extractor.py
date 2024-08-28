@@ -4,7 +4,6 @@
 """A module containing 'GraphExtractionResult' and 'GraphExtractor' models."""
 
 import logging
-import numbers
 import re
 import traceback
 from collections.abc import Mapping
@@ -159,24 +158,24 @@ class GraphExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            glean_response = await self._llm(
+            response = await self._llm(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
-                history=response.history or [],
+                history=response.history,
             )
-            results += glean_response.output or ""
+            results += response.output or ""
 
             # if this is the final glean, don't bother updating the continuation flag
             if i >= self._max_gleanings - 1:
                 break
 
-            continuation = await self._llm(
+            response = await self._llm(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
-                history=glean_response.history or [],
+                history=response.history,
                 model_parameters=self._loop_args,
             )
-            if continuation.output != "YES":
+            if response.output != "YES":
                 break
 
         return results
@@ -248,11 +247,11 @@ class GraphExtractor:
                     target = clean_str(record_attributes[2].upper())
                     edge_description = clean_str(record_attributes[3])
                     edge_source_id = clean_str(str(source_doc_id))
-                    weight = (
-                        float(record_attributes[-1])
-                        if isinstance(record_attributes[-1], numbers.Number)
-                        else 1.0
-                    )
+                    try:
+                        weight = float(record_attributes[-1])
+                    except ValueError:
+                        weight = 1.0
+
                     if source not in graph.nodes():
                         graph.add_node(
                             source,

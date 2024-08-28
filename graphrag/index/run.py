@@ -234,7 +234,9 @@ async def run_pipeline(
         )
 
     async def dump_stats() -> None:
-        await storage.set("stats.json", json.dumps(asdict(stats), indent=4))
+        await storage.set(
+            "stats.json", json.dumps(asdict(stats), indent=4, ensure_ascii=False)
+        )
 
     async def load_table_from_storage(name: str) -> pd.DataFrame:
         if not await storage.has(name):

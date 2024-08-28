@@ -26,7 +26,7 @@ class LLMInput(TypedDict):
     variables: NotRequired[dict]
     """The variable replacements to use in the prompt."""
 
-    history: NotRequired[list[dict]]
+    history: NotRequired[list[dict] | None]
     """The history of the LLM invocation, if available (e.g. chat mode)"""
 
     model_parameters: NotRequired[dict]
