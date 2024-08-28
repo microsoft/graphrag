@@ -20,9 +20,19 @@ def build_steps(
     * `workflow:create_base_text_units`
     """
     summarize_descriptions_config = config.get("summarize_descriptions", {})
-    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
+    graphml_snapshot_enabled = True
 
     return [
+        {
+            "verb": "restore_snapshot_rows",
+            "enabled": graphml_snapshot_enabled,
+            "args": {
+                "column": "filepath",
+                "to": "entity_graph",
+                "formats": [{"format": "text", "extension": "graphml"}],
+            },
+            "input": {"source": "workflow:create_base_extracted_entities"},
+        },
         {
             "verb": "summarize_descriptions",
             "args": {
@@ -33,7 +43,6 @@ def build_steps(
                     "async_mode", AsyncType.AsyncIO
                 ),
             },
-            "input": {"source": "workflow:create_base_extracted_entities"},
         },
         {
             "verb": "snapshot_rows",
@@ -41,7 +50,14 @@ def build_steps(
             "args": {
                 "base_name": "summarized_graph",
                 "column": "entity_graph",
+                "to": "filepath",
                 "formats": [{"format": "text", "extension": "graphml"}],
+            },
+        },
+        {
+            "verb": "select",
+            "args": {
+                "columns": (["filepath"]),
             },
         },
     ]

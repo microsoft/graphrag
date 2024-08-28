@@ -5,9 +5,11 @@
 
 import json
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from datashaper import TableContainer, VerbInput, verb
+from pandas.core.frame import DataFrame
+from pandas.core.groupby import DataFrameGroupBy
 
 from graphrag.index.storage import PipelineStorage
 
@@ -24,6 +26,7 @@ class FormatSpecifier:
 async def snapshot_rows(
     input: VerbInput,
     column: str | None,
+    to: str | None,
     base_name: str,
     storage: PipelineStorage,
     formats: list[str | dict[str, Any]],
@@ -31,7 +34,11 @@ async def snapshot_rows(
     **_kwargs: dict,
 ) -> TableContainer:
     """Take a by-row snapshot of the tabular data."""
-    data = input.get_input()
+    if isinstance(input.get_input(), DataFrameGroupBy):
+        msg = "Cannot snapshot rows of a grouped DataFrame"
+        raise TypeError(msg)
+    
+    data = cast(DataFrame, input.get_input())
     parsed_formats = _parse_formats(formats)
     num_rows = len(data)
 
@@ -42,13 +49,19 @@ async def snapshot_rows(
             return f"{base_name}.{row_idx}"
         return f"{base_name}.{row[row_name_column]}"
 
+    if to is not None:
+        # init the table column where the filenames will be stored
+        data[to] = None
+
     for row_idx, row in data.iterrows():
+        # for each row, save the data in the specified formats
         for fmt in parsed_formats:
             row_name = get_row_name(row, row_idx)
             extension = fmt.extension
+            filename = f"{row_name}.{extension}"
             if fmt.format == "json":
                 await storage.set(
-                    f"{row_name}.{extension}",
+                    filename,
                     (
                         json.dumps(row[column], ensure_ascii=False)
                         if column is not None
@@ -59,8 +72,11 @@ async def snapshot_rows(
                 if column is None:
                     msg = "column must be specified for text format"
                     raise ValueError(msg)
-                await storage.set(f"{row_name}.{extension}", str(row[column]))
-
+                await storage.set(filename, str(row[column]))
+            
+            if to is not None and isinstance(row_idx, int):
+                data.loc[row_idx, to] = filename
+    
     return TableContainer(table=data)
 
 

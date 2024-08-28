@@ -66,7 +66,7 @@ async def summarize_descriptions(
     {
         "verb": "",
         "args": {
-            "column": "the_document_text_column_to_extract_descriptions_from", /* Required: This will be a graphml graph in string form which represents the entities and their relationships */
+            "column": "the_document_text_column_to_extract_descriptions_from", /* Required: This will be a graphml graph filepath in string form which represents the entities and their relationships */
             "to": "the_column_to_output_the_summarized_descriptions_to", /* Required: This will be a graphml graph in string form which represents the entities and their relationships after being summarized */
             "strategy": {...} <strategy_config>, see strategies section below
         }

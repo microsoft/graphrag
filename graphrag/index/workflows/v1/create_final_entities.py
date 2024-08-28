@@ -31,12 +31,31 @@ def build_steps(
 
     return [
         {
+            "verb": "restore_snapshot_rows",
+            "enabled": True,
+            "args": {
+                "column": "clustered_graph_filepath",
+                "to": "clustered_graph",
+                "formats": [{"format": "text", "extension": "graphml"}],
+            },
+            "input": {"source": "workflow:create_base_entity_graph"},
+        },
+        # {
+        #     "verb": "restore_snapshot_rows",
+        #     "enabled": True,
+        #     "args": {
+        #         "column": "embedded_graph_filepath",
+        #         "to": "entity_graph",
+        #         "formats": [{"format": "text", "extension": "graphml"}],
+        #     },
+        # },
+        {
             "verb": "unpack_graph",
             "args": {
                 "column": "clustered_graph",
                 "type": "nodes",
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+            
         },
         {"verb": "rename", "args": {"columns": {"label": "title"}}},
         {

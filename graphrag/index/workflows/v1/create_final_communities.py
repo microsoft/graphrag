@@ -19,13 +19,23 @@ def build_steps(
     """
     return [
         {
+            "verb": "restore_snapshot_rows",
+            "enabled": True,
+            "args": {
+                "column": "clustered_graph_filepath",
+                "to": "clustered_graph",
+                "formats": [{"format": "text", "extension": "graphml"}],
+            },
+            "input": {"source": "workflow:create_base_entity_graph"},
+        },
+        {
             "id": "graph_nodes",
             "verb": "unpack_graph",
             "args": {
                 "column": "clustered_graph",
                 "type": "nodes",
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+            # "input": {"source": "workflow:create_base_entity_graph"},
         },
         {
             "id": "graph_edges",
@@ -34,7 +44,7 @@ def build_steps(
                 "column": "clustered_graph",
                 "type": "edges",
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+            # "input": {"source": "workflow:create_base_entity_graph"},
         },
         {
             "id": "source_clusters",

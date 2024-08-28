@@ -397,7 +397,7 @@ def create_graphrag_config(
             reader.use(values.get("snapshots")),
         ):
             snapshots_model = SnapshotsConfig(
-                graphml=reader.bool("graphml") or defs.SNAPSHOTS_GRAPHML,
+                graphml = defs.SNAPSHOTS_GRAPHML,
                 raw_entities=reader.bool("raw_entities") or defs.SNAPSHOTS_RAW_ENTITIES,
                 top_level_nodes=reader.bool("top_level_nodes")
                 or defs.SNAPSHOTS_TOP_LEVEL_NODES,

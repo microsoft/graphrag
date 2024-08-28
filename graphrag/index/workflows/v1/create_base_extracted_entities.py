@@ -20,7 +20,7 @@ def build_steps(
     * `workflow:create_base_text_units`
     """
     entity_extraction_config = config.get("entity_extract", {})
-    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
+    graphml_snapshot_enabled = True
     raw_entity_snapshot_enabled = config.get("raw_entity_snapshot", False) or False
 
     return [
@@ -84,12 +84,21 @@ def build_steps(
             },
         },
         {
+            # To-Do: update the snapshot_rows verb to include a "filename" column that
+            #        we can use to located the stored graphml file in the future.
             "verb": "snapshot_rows",
             "enabled": graphml_snapshot_enabled,
             "args": {
                 "base_name": "merged_graph",
                 "column": "entity_graph",
+                "to": "filepath",
                 "formats": [{"format": "text", "extension": "graphml"}],
+            },
+        },
+        {
+            "verb": "select",
+            "args": {
+                "columns": (["filepath"]),
             },
         },
     ]

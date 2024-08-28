@@ -78,6 +78,16 @@ def build_steps(
     )
     return [
         {
+            "verb": "restore_snapshot_rows",
+            "enabled": True,
+            "args": {
+                "column": "clustered_graph_filepath",
+                "to": "clustered_graph",
+                "formats": [{"format": "text", "extension": "graphml"}],
+            },
+            "input": {"source": "workflow:create_base_entity_graph"},
+        },
+        {
             "id": "laid_out_entity_graph",
             "verb": "layout_graph",
             "args": {
@@ -87,7 +97,7 @@ def build_steps(
                 "graph_to": "positioned_graph",
                 **layout_graph_config,
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+            # "input": {"source": "workflow:create_base_entity_graph"},
         },
         {
             "verb": "unpack_graph",
