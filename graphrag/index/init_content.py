@@ -54,7 +54,7 @@ embeddings:
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
     # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
     # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-    
+    # dimensions: None # the number of dimensions for the embedding vectors
   
 
 

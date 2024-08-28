@@ -80,12 +80,16 @@ def _get_llm(
     cache: PipelineCache,
 ) -> EmbeddingLLM:
     llm_type = config.lookup("type", "Unknown")
+    dimensions = config.lookup("dimensions")
+    llm_config = {**config.raw_config}
+    if dimensions is not None:
+        llm_config["dimensions"] = dimensions
     return load_llm_embeddings(
         "text_embedding",
         llm_type,
         callbacks,
         cache,
-        config.raw_config,
+        llm_config,
     )
 
 

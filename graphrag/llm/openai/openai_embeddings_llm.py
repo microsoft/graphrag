@@ -33,6 +33,8 @@ class OpenAIEmbeddingsLLM(BaseLLM[EmbeddingInput, EmbeddingOutput]):
             "model": self.configuration.model,
             **(kwargs.get("model_parameters") or {}),
         }
+        if self.configuration.dimensions is not None:
+            args["dimensions"] = self.configuration.dimensions
         embedding = await self.client.embeddings.create(
             input=input,
             **args,

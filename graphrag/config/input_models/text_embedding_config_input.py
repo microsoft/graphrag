@@ -21,3 +21,5 @@ class TextEmbeddingConfigInput(LLMConfigInput):
     skip: NotRequired[list[str] | str | None]
     vector_store: NotRequired[dict | None]
     strategy: NotRequired[dict | None]
+    dimensions: NotRequired[int | str | None]
+    

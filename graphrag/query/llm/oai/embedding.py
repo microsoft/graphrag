@@ -47,7 +47,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
         reporter: StatusReporter | None = None,
-        dimensions=1536,
+        dimensions: int | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,
@@ -69,7 +69,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         self.token_encoder = tiktoken.get_encoding(self.encoding_name)
         self.retry_error_types = retry_error_types
         self.dimensions = dimensions
-
+        print(f"Initialized OpenAIEmbedding with dimensions: {self.dimensions}")
     def embed(self, text: str, **kwargs: Any) -> list[float]:
         """
         Embed text using OpenAI Embedding's sync function.
@@ -132,21 +132,21 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             for attempt in retryer:
                 with attempt:
+                    embedding_params = {
+                        "input": text,
+                        "model": self.model,
+                        **kwargs,
+                    }
+                    if self.dimensions is not None:
+                        embedding_params["dimensions"] = self.dimensions
+                    
                     embedding = (
-                        self.sync_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            dimensions=self.dimensions,
-                            **kwargs,  # type: ignore
-                        )
-                        .data[0]
-                        .embedding
-                        or []
-                    )
+                        self.sync_client.embeddings.create(**embedding_params)  # type: ignore
+                    ).data[0].embedding or []
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(
-                message="Error at chunk_lens()",
+                message="Error at embed_with_retry()",
                 details={self.__class__.__name__: str(e)},
             )
             return ([], 0)
@@ -166,13 +166,16 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             async for attempt in retryer:
                 with attempt:
+                    embedding_params = {
+                        "input": text,
+                        "model": self.model,
+                        **kwargs,
+                    }
+                    if self.dimensions is not None:
+                        embedding_params["dimensions"] = self.dimensions
+                    
                     embedding = (
-                        await self.async_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            dimensions=self.dimensions
-                            **kwargs,  # type: ignore
-                        )
+                        await self.async_client.embeddings.create(**embedding_params)  # type: ignore
                     ).data[0].embedding or []
                     return (embedding, len(text))
         except RetryError as e:

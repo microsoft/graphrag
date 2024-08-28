@@ -175,7 +175,7 @@ def create_graphrag_config(
             sleep_on_rate_limit = reader.bool(Fragment.sleep_recommendation)
             if sleep_on_rate_limit is None:
                 sleep_on_rate_limit = base.sleep_on_rate_limit_recommendation
-
+            dimensions = reader.int(Fragment.dimensions)
             return LLMParameters(
                 api_key=api_key,
                 type=api_type,
@@ -198,6 +198,7 @@ def create_graphrag_config(
                 sleep_on_rate_limit_recommendation=sleep_on_rate_limit,
                 concurrent_requests=reader.int(Fragment.concurrent_requests)
                 or defs.LLM_CONCURRENT_REQUESTS,
+                dimensions=dimensions,
             )
 
     def hydrate_parallelization_params(
@@ -585,6 +586,7 @@ class Fragment(str, Enum):
     container_name = "CONTAINER_NAME"
     deployment_name = "DEPLOYMENT_NAME"
     description = "DESCRIPTION"
+    dimensions = "DIMENSIONS"
     enabled = "ENABLED"
     encoding = "ENCODING"
     encoding_model = "ENCODING_MODEL"
@@ -608,7 +610,7 @@ class Fragment(str, Enum):
     thread_stagger = "THREAD_STAGGER"
     tpm = "TOKENS_PER_MINUTE"
     type = "TYPE"
-
+    
 
 class Section(str, Enum):
     """Configuration Sections."""
