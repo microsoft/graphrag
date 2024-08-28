@@ -1,12 +1,43 @@
 # Changelog
-
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 0.3.2
+
+- patch: Add context data to query API responses.
+- patch: Add missing config parameter documentation for prompt tuning
+- patch: Add neo4j community notebook
+- patch: Ensure entity types to be str when running prompt tuning
+- patch: Fix weight casting during graph extraction
+- patch: Patch "past" dependency issues
+- patch: Update developer guide.
+- patch: Update query type hints.
+- patch: change-lancedb-placement
+
+## 0.3.1
+
+- patch: Add preflight check to check LLM connectivity.
+- patch: Add streaming support for local/global search to query cli
+- patch: Add support for both float and int on schema validation for community report generation
+- patch: Avoid running index on gh-pages publishing
+- patch: Implement Index API
+- patch: Improves filtering for data dir inferring
+- patch: Update to nltk 3.9.1
+
+## 0.3.0
+
+- minor: Implement auto templating API.
+- minor: Implement query engine API.
+- patch: Fix file dumps using json for non ASCII chars
+- patch: Stabilize smoke tests for query context building
+- patch: fix query embedding
+- patch: fix sort_context & max_tokens params in verb
 
 ## 0.2.2
 
 - patch: Add a check if there is no community record added in local search context
 - patch: Add sepparate workflow for Python Tests
 - patch: Docs updates
+- patch: Run smoke tests on 4o
 
 ## 0.2.1
 

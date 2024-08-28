@@ -23,7 +23,10 @@ class SearchType(Enum):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog="python -m graphrag.query",
+        description="The graphrag query engine",
+    )
 
     parser.add_argument(
         "--config",
@@ -49,7 +52,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--method",
-        help="The method to run, one of: local or global",
+        help="The method to run",
         required=True,
         type=SearchType,
         choices=list(SearchType),
@@ -57,16 +60,22 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--community_level",
-        help="Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities",
+        help="Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2",
         type=int,
         default=2,
     )
 
     parser.add_argument(
         "--response_type",
-        help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report",
+        help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report. Default: Multiple Paragraphs",
         type=str,
         default="Multiple Paragraphs",
+    )
+
+    parser.add_argument(
+        "--streaming",
+        help="Output response in a streaming (chunk-by-chunk) manner",
+        action="store_true",
     )
 
     parser.add_argument(
@@ -86,6 +95,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.streaming,
                 args.query[0],
             )
         case SearchType.GLOBAL:
@@ -95,6 +105,7 @@ if __name__ == "__main__":
                 args.root,
                 args.community_level,
                 args.response_type,
+                args.streaming,
                 args.query[0],
             )
         case _:
