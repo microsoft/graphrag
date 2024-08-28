@@ -149,12 +149,12 @@ class KustoVectorStore(BaseVectorStore):
         query = f"""
         let query_vector = dynamic({query_embedding});
         {self.collection_name}
-        | extend distance = array_length(set_difference({self.vector_name}, query_vector))
-        | top {k} by distance asc
+        | extend similarity = series_cosine_similarity(query_vector, {self.vector_name})
+        | top {k} by similarity desc
         """
         response = self.client.execute(self.database, query)
         df = dataframe_from_result_table(response.primary_results[0])
-        print("Distances of the search results:", [row["distance"] for _, row in df.iterrows()])
+        print("Similarities of the search results:", [row["similarity"] for _, row in df.iterrows()])
 
         # Temporary to support the original entity_description_embedding
         if(self.vector_name == "vector"):
@@ -166,7 +166,7 @@ class KustoVectorStore(BaseVectorStore):
                         vector=row[self.vector_name],
                         attributes=row["attributes"],
                     ),
-                    score=1 - abs(float(row["distance"])),
+                    score=float(row["similarity"]),
                 )
                 for _, row in df.iterrows()
             ]
@@ -179,7 +179,7 @@ class KustoVectorStore(BaseVectorStore):
                     vector=row[self.vector_name],
                     attributes={"title":row["name"]},
                 ),
-                score=1 - abs(float(row["distance"])),
+                score=float(row["similarity"]),
             )
             for _, row in df.iterrows()
         ]
@@ -289,6 +289,8 @@ class KustoVectorStore(BaseVectorStore):
 
                 # Due to an issue with to_csv not being able to handle float64, I had to manually handle entities.
                 if parq_name == "create_final_entities":
+                    command = f".alter column create_final_entities.graph_embedding policy encoding type = 'Vector16'"
+                    command = f".alter column create_final_entities.description_embedding policy encoding type = 'Vector16'"
                     data = [
                         {
                             "id": to_str(row, "id"),
