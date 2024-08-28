@@ -223,13 +223,16 @@ def run_local_search(
         else []
     )
 
+    if(isinstance(description_embedding_store, KustoVectorStore)):
+        entities = []
+
     search_engine = get_local_search_engine(
         config,
         reports=read_indexer_reports(
             final_community_reports, final_nodes, community_level
         ),
         text_units=read_indexer_text_units(final_text_units),
-        entities=[],
+        entities=entities,
         relationships=read_indexer_relationships(final_relationships),
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
