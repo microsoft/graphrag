@@ -1808,13 +1808,13 @@ files = [
 
 [[package]]
 name = "json-repair"
-version = "0.26.0"
+version = "0.28.4"
 description = "A package to repair broken json strings"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "json_repair-0.26.0-py3-none-any.whl", hash = "sha256:01a9dfd3f8611a0207eaf93989cfaf678dabdd62c6e128125aaf142cd136ec58"},
-    {file = "json_repair-0.26.0.tar.gz", hash = "sha256:dccdcfcbe910a5b3f93ea234cf41e79c900b42e16746400d7a9d8823229c7f61"},
+    {file = "json_repair-0.28.4-py3-none-any.whl", hash = "sha256:b3e138735b25773a7c02b42498c80aa7d6b7aec168a3ee100473f7c5e22334e5"},
+    {file = "json_repair-0.28.4.tar.gz", hash = "sha256:b7f1c48d8bc9e18a24e2b05459e8afb0a82cade5a242382422a9b065a6762578"},
 ]
 
 [[package]]
@@ -5262,4 +5262,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "44e17cc0ec39c1df5f3ba1fed154e8d42e3437a632dfd2c00bde19203191988e"
+content-hash = "154532c0948e34bf7459c8499d6e65ac579b2fe8ffa6597b8261829d1b760561"
