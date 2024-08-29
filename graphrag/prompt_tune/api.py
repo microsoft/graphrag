@@ -18,7 +18,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm import load_llm
 from graphrag.index.progress import PrintProgressReporter
 
-from .cli import DocSelectionType
 from .generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
@@ -36,6 +35,7 @@ from .loader import (
     MIN_CHUNK_SIZE,
     load_docs_in_chunks,
 )
+from .types import DocSelectionType
 
 
 @validate_call
