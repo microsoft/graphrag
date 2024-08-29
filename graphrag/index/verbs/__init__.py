@@ -16,6 +16,7 @@ from .graph import (
     unpack_graph,
 )
 from .overrides import aggregate, concat, merge
+from .restore_snapshot_rows import restore_snapshot_rows
 from .snapshot import snapshot
 from .snapshot_rows import snapshot_rows
 from .spread_json import spread_json
@@ -37,6 +38,7 @@ __all__ = [
     "layout_graph",
     "merge",
     "merge_graphs",
+    "restore_snapshot_rows",
     "snapshot",
     "snapshot_rows",
     "spread_json",

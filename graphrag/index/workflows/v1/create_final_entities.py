@@ -40,15 +40,6 @@ def build_steps(
             },
             "input": {"source": "workflow:create_base_entity_graph"},
         },
-        # {
-        #     "verb": "restore_snapshot_rows",
-        #     "enabled": True,
-        #     "args": {
-        #         "column": "embedded_graph_filepath",
-        #         "to": "entity_graph",
-        #         "formats": [{"format": "text", "extension": "graphml"}],
-        #     },
-        # },
         {
             "verb": "unpack_graph",
             "args": {

@@ -19,6 +19,7 @@ def build_steps(
     """
     return [
         {
+            "id": "local:create_base_entity_graph",
             "verb": "restore_snapshot_rows",
             "enabled": True,
             "args": {
@@ -35,7 +36,7 @@ def build_steps(
                 "column": "clustered_graph",
                 "type": "nodes",
             },
-            # "input": {"source": "workflow:create_base_entity_graph"},
+            "input": {"source": "local:create_base_entity_graph"},
         },
         {
             "id": "graph_edges",
@@ -44,7 +45,7 @@ def build_steps(
                 "column": "clustered_graph",
                 "type": "edges",
             },
-            # "input": {"source": "workflow:create_base_entity_graph"},
+            "input": {"source": "local:create_base_entity_graph"},
         },
         {
             "id": "source_clusters",

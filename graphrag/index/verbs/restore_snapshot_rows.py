@@ -32,30 +32,27 @@ async def restore_snapshot_rows(
     data = cast(DataFrame, input.get_input())
     parsed_formats = _parse_formats(formats)
     
-    if to not in data.columns:
-        # init the table column where the snapshot content will be stored
-        data[to] = None
-
     # do not modify the original data
     new_data = data.copy()
-    new_data[column] = None
-
+    new_data[to] = None
     for row_idx, row in data.iterrows():
         # for each row, load only the data in the specified formats
         for fmt in parsed_formats:
             row_name = Path(row[column])
-            if row_name.suffix != fmt.extension:
+            if row_name.suffix[1:] != fmt.extension:
                 continue
 
             filename = row_name.name
             data_bytes:bytes|bytearray = await storage.get(filename, as_bytes=True)
-            
+            if not isinstance(row_idx, int):
+                continue
+
             if fmt.format == "json":
-                new_data[row_idx, column] = json.loads(data_bytes)
+                new_data.loc[row_idx, to] = json.loads(data_bytes)
             elif fmt.format == "text":
-                new_data[row_idx, column] = data_bytes.decode("utf-8")
+                new_data.loc[row_idx, to] = data_bytes.decode("utf-8")
             else:
                 msg = f"Unsupported format: {fmt.format}"
                 raise ValueError(msg)
-    
-    return TableContainer(table=data.dropna(subset=[column]))
+            
+    return TableContainer(table=new_data.dropna(subset=[to]))
