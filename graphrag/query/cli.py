@@ -6,6 +6,7 @@
 import asyncio
 import re
 import sys
+import logging
 from pathlib import Path
 
 import pandas as pd
@@ -15,9 +16,12 @@ from graphrag.config import (
     create_graphrag_config,
 )
 from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
+from graphrag.config.logging import enable_logging_with_config
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
+
+log = logging.getLogger(__name__)
 
 reporter = PrintProgressReporter("")
 
@@ -29,6 +33,7 @@ def run_global_search(
     community_level: int,
     response_type: str,
     streaming: bool,
+    verbose: bool,
     query: str,
 ):
     """Perform a global search with a given query.
@@ -49,6 +54,12 @@ def run_global_search(
     final_community_reports: pd.DataFrame = pd.read_parquet(
         data_path / "create_final_community_reports.parquet"
     )
+
+    enabled_logging, log_path = enable_logging_with_config(
+        config, "query-global-engine", verbose
+    )
+    if enabled_logging:
+        reporter.info(f"Logging enabled at {log_path}")
 
     # call the Query API
     if streaming:
@@ -102,6 +113,7 @@ def run_local_search(
     community_level: int,
     response_type: str,
     streaming: bool,
+    verbose: bool,
     query: str,
 ):
     """Perform a local search with a given query.
@@ -128,6 +140,12 @@ def run_local_search(
         if final_covariates_path.exists()
         else None
     )
+
+    enabled_logging, log_path = enable_logging_with_config(
+        config, "query-local-engine", verbose
+    )
+    if enabled_logging:
+        reporter.info(f"Logging enabled at {log_path}")
 
     # call the Query API
     if streaming:

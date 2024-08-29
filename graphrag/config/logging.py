@@ -5,6 +5,7 @@
 
 import logging
 from pathlib import Path
+import re
 
 from .enums import ReportingType
 from .models.graph_rag_config import GraphRagConfig
@@ -35,7 +36,10 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
 
 
 def enable_logging_with_config(
-    config: GraphRagConfig, timestamp_value: str, verbose: bool = False
+    config: GraphRagConfig,
+    log_name: str,
+    verbose: bool = False,
+    pattern_or_timestamp_value: re.Pattern[str] | str = re.compile(r"^\d{8}-\d{6}$")
 ) -> tuple[bool, str]:
     """Enable logging to a file based on the config.
 
@@ -43,10 +47,15 @@ def enable_logging_with_config(
     ----------
     config : GraphRagConfig
         The configuration.
-    timestamp_value : str
-        The timestamp value representing the directory to place the log files.
+    log_name : str
+        Name of the log engine, eg. 'indexing-engine', 'query-local-engine', 'query-global-engine'
     verbose : bool, default=False
         Whether to log debug messages.
+    pattern_or_timestamp_value : re.Pattern[str] | str, default=re.compile(r"^\d{8}-\d{6}$")
+        The pattern to use to match the timestamp directories or the timestamp value to use.
+        If a string is provided, the path will be resolved with the given string value.
+        Otherwise, the path will be resolved with the latest available timestamp directory
+        that matches the given pattern.
 
     Returns
     -------
@@ -57,8 +66,8 @@ def enable_logging_with_config(
     """
     if config.reporting.type == ReportingType.file:
         log_path = resolve_timestamp_path(
-            Path(config.root_dir) / config.reporting.base_dir / "indexing-engine.log",
-            timestamp_value,
+            Path(config.root_dir) / config.reporting.base_dir / f"{log_name}.log",
+            pattern_or_timestamp_value,
         )
         enable_logging(log_path, verbose)
         return (True, str(log_path))

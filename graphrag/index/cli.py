@@ -141,7 +141,7 @@ def index_cli(
         default_config.cache.type = CacheType.none
 
     enabled_logging, log_path = enable_logging_with_config(
-        default_config, run_id, verbose
+        default_config, "indexing-engine", verbose, run_id
     )
     if enabled_logging:
         info(f"Logging enabled at {log_path}", True)
