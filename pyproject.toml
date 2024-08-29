@@ -48,7 +48,7 @@ datashaper = "^0.0.49"
 
 # Vector Stores
 azure-search-documents = "^11.4.0"
-lancedb = "^0.11.0"
+lancedb = "^0.12.0"
 
 # Event Loops
 uvloop = { version = "^0.20.0", markers = "platform_system != 'Windows'" }
@@ -83,7 +83,7 @@ tenacity = "^9.0.0"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.76.0"
+textual = "^0.78.0"
 devtools = "^0.12.2"
 
 typing-extensions = "^4.12.2"
@@ -91,7 +91,7 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
-json-repair = "^0.26.0"
+json-repair = "^0.28.4"
 
 future = "^1.0.0"
 [tool.poetry.group.dev.dependencies]
@@ -102,7 +102,7 @@ nbconvert = "^7.16.3"
 poethepoet = "^0.27.0"
 pyright = "^1.1.371"
 pytest = "^8.3.2"
-pytest-asyncio = "^0.23.4"
+pytest-asyncio = "^0.24.0"
 pytest-timeout = "^2.3.1"
 ruff = "^0.6.2"
 semversioner = "^2.0.3"

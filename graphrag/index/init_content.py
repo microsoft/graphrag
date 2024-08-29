@@ -38,6 +38,8 @@ embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
   # target: {defs.EMBEDDING_TARGET.value} # or all
+  # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
+  # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -52,8 +54,6 @@ embeddings:
     # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
-    # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
-    # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
     
   
 
@@ -89,6 +89,8 @@ reporting:
   # container_name: <azure_blob_storage_container_name>
 
 entity_extraction:
+  ## strategy: fully override the entity extraction strategy.
+  ##   type: one of graph_intelligence, graph_intelligence_json and nltk
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
