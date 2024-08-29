@@ -28,6 +28,7 @@ from graphrag.query.indexer_adapters import (
     read_indexer_text_units,
 )
 from graphrag.model.entity import Entity
+from azure.cosmos import CosmosClient, PartitionKey
 
 class ContextSwitcher:
     """ContextSwitcher class definition."""
@@ -83,7 +84,6 @@ class ContextSwitcher:
         #2. read the file from storage using common/blob_storage_client.py
         #3. GraphDB: use cosmos db client to load data into Cosmos DB.
         #4. KustoDB: use Kusto client to load embedding data into Kusto.
-
         data_dir=self.data_dir
         root_dir=self.root_dir
         config_dir=self.config_dir
@@ -199,7 +199,19 @@ class ContextSwitcher:
         final_entities = pd.DataFrame()
         final_covariates = pd.DataFrame()
         if config.graphdb.enabled:
-            graph_db_client = GraphDBClient(config.graphdb)
+            cosmos_client = CosmosClient(
+                f"https://{config.graphdb.account_name}.documents.azure.com:443/",
+                f"{config.graphdb.account_key}",
+            )
+            database_name = config.graphdb.username.split("/")[2]
+            database = cosmos_client.get_database_client(database_name)
+            graph_name=config.graphdb.username.split("/")[-1]+"-contextid-"+context_id
+            graph = database.create_container_if_not_exists(
+                id=graph_name,
+                partition_key=PartitionKey(path='/category'),
+                offer_throughput=400
+            )
+            graph_db_client = GraphDBClient(config.graphdb,context_id)
         for data_path in data_paths:
             #check from the config for the ouptut storage type and then read the data from the storage.
 
@@ -239,7 +251,6 @@ class ContextSwitcher:
                 entities=entities,
                 activate=1, config_args=vector_store_args,
             )
-
 
     def deactivate(self):
         """DeActivate the context."""

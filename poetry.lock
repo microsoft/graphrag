@@ -413,6 +413,21 @@ typing-extensions = ">=4.6.0"
 aio = ["aiohttp (>=3.0)"]
 
 [[package]]
+name = "azure-cosmos"
+version = "4.7.0"
+description = "Microsoft Azure Cosmos Client Library for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "azure-cosmos-4.7.0.tar.gz", hash = "sha256:72d714033134656302a2e8957c4b93590673bd288b0ca60cb123e348ae99a241"},
+    {file = "azure_cosmos-4.7.0-py3-none-any.whl", hash = "sha256:03d8c7740ddc2906fb16e07b136acc0fe6a6a02656db46c5dd6f1b127b58cc96"},
+]
+
+[package.dependencies]
+azure-core = ">=1.25.1"
+typing-extensions = ">=4.6.0"
+
+[[package]]
 name = "azure-identity"
 version = "1.17.1"
 description = "Microsoft Azure Identity Library for Python"
@@ -5858,4 +5873,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "f06dbe201e3dfea982b0b052a3d6811e1be7acde113f3276f61390bd80684447"
+content-hash = "3486484392ad6f778df36fc15643b7a0ffa7495893ba15c66ad467f946dca692"

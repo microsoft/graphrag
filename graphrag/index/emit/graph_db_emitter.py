@@ -11,8 +11,8 @@ from graphrag.config.models.graphdb_config import GraphDBConfig
 class GraphDBEmitter(TableEmitter):
     """Graph DB Emitter."""
 
-    def __init__(self, graph_db_params: GraphDBConfig|None):
-        self.graph_db_client = GraphDBClient(graph_db_params)
+    def __init__(self, graph_db_params: GraphDBConfig|None,context_id: str|None):
+        self.graph_db_client = GraphDBClient(graph_db_params,context_id)
         self.allowed_workflows = ['create_final_entities','create_final_relationships']
 
     async def emit(self, name: str, data: pd.DataFrame) -> None:

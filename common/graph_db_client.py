@@ -13,13 +13,12 @@ import os
 import json
 
 class GraphDBClient:
-    def __init__(self,graph_db_params: GraphDBConfig|None):
+    def __init__(self,graph_db_params: GraphDBConfig|None,context_id: str|None):
         self.username_prefix=graph_db_params.username
-        self.current_context="00000000-0000-0000-0000-000000000000"
         self._client=client.Client(
             url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
             traversal_source="g",
-            username=self.username_prefix+"-contextid-"+self.current_context,
+            username=self.username_prefix+"-contextid-"+context_id,
             password=f"{graph_db_params.account_key}",
             message_serializer=serializer.GraphSONSerializersV2d0(),
         )
@@ -77,22 +76,7 @@ class GraphDBClient:
             element_count=counts[0]
         return element_count>0
 
-    def switch_graphs(self,context_id:str)->None:
-        if context_id==self.current_context:
-            return
-        self.current_context=context_id
-        updated_client=client.Client(
-            url=self._client._url,
-            traversal_source="g",
-            username=self.username_prefix+"-contextid-"+self.current_context,
-            password=self._client._password,
-            message_serializer=serializer.GraphSONSerializersV2d0(),
-        )
-        self._client.close()
-        self._client=updated_client
-
     def write_vertices(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
-        self.switch_graphs(context_id)
         for row in data.itertuples():
             if self.element_exists("g.V()",row.id):
                 continue
@@ -126,7 +110,6 @@ class GraphDBClient:
 
 
     def write_edges(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
-        self.switch_graphs(context_id)
         for row in data.itertuples():
             if self.element_exists("g.E()",row.id):
                 continue

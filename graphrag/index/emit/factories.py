@@ -15,7 +15,7 @@ from .table_emitter import TableEmitter
 from .types import TableEmitterType
 
 def create_table_emitter(
-    emitter_type: TableEmitterType, storage: PipelineStorage, on_error: ErrorHandlerFn, graphdb_params: GraphDBConfig|None = None
+    emitter_type: TableEmitterType, storage: PipelineStorage, on_error: ErrorHandlerFn, graphdb_params: GraphDBConfig|None = None, context_id: str|None = None
 ) -> TableEmitter:
     """Create a table emitter based on the specified type."""
     match emitter_type:
@@ -26,7 +26,7 @@ def create_table_emitter(
         case TableEmitterType.CSV:
             return CSVTableEmitter(storage)
         case TableEmitterType.Graphdb:
-            return GraphDBEmitter(graphdb_params)
+            return GraphDBEmitter(graphdb_params,context_id)
         case _:
             msg = f"Unsupported table emitter type: {emitter_type}"
             raise ValueError(msg)
@@ -37,9 +37,10 @@ def create_table_emitters(
     storage: PipelineStorage,
     on_error: ErrorHandlerFn,
     graphdb_params: GraphDBConfig|None = None,
+    context_id: str|None = None,
 ) -> list[TableEmitter]:
     """Create a list of table emitters based on the specified types."""
     return [
-        create_table_emitter(emitter_type, storage, on_error, graphdb_params)
+        create_table_emitter(emitter_type, storage, on_error, graphdb_params,context_id)
         for emitter_type in emitter_types
     ]
