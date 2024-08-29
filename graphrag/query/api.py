@@ -149,7 +149,7 @@ async def global_search_streaming(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
-    root_dir: str | None,
+    data_path: Path,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -196,9 +196,7 @@ async def local_search(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    base_dir = Path(str(root_dir)) / config.storage.base_dir
-    resolved_base_dir = resolve_timestamp_path(base_dir)
-    lancedb_dir = resolved_base_dir / "lancedb"
+    lancedb_dir = data_path / "lancedb"
     vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
@@ -227,7 +225,7 @@ async def local_search(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search_streaming(
-    root_dir: str | None,
+    data_path: Path,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -271,9 +269,7 @@ async def local_search_streaming(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    base_dir = Path(str(root_dir)) / config.storage.base_dir
-    resolved_base_dir = resolve_timestamp_path(base_dir)
-    lancedb_dir = resolved_base_dir / "lancedb"
+    lancedb_dir = data_path / "lancedb"
     vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,

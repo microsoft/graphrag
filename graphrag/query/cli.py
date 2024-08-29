@@ -137,7 +137,7 @@ def run_local_search(
             context_data = None
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
-                root_dir=root_dir,
+                data_path=data_path,
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
@@ -163,7 +163,7 @@ def run_local_search(
     # not streaming
     response, context_data = asyncio.run(
         api.local_search(
-            root_dir=root_dir,
+            data_path=data_path,
             config=config,
             nodes=final_nodes,
             entities=final_entities,
