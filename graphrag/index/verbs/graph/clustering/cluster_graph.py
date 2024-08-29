@@ -3,6 +3,7 @@
 
 """A module containing cluster_graph, apply_clustering and run_layout methods definition."""
 
+import io
 import logging
 from enum import Enum
 from random import Random
@@ -115,7 +116,7 @@ def apply_clustering(
 ) -> nx.Graph:
     """Apply clustering to a graphml string."""
     random = Random(seed)  # noqa S311
-    graph = nx.parse_graphml(graphml)
+    graph = nx.read_graphml(io.StringIO(graphml))
     for community_level, community_id, nodes in communities:
         if level == community_level:
             for node in nodes:
