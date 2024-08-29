@@ -26,7 +26,8 @@ Before running auto tuning make sure you have already initialized your workspace
 You can run the main script from the command line with various options:
 
 ```bash
-python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--n-subset-max N_SUBSET_MAX] [--k K] [--min-examples-required MIN_EXAMPLES_REQUIRED] [--no-entity-types] [--output OUTPUT]
+python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] [--max-tokens MAX_TOKENS] \
+[--chunk-size CHUNK_SIZE] [--n-subset-max N_SUBSET_MAX] [--k K] [--min-examples-required MIN_EXAMPLES_REQUIRED] [--no-entity-types] [--output OUTPUT]
 ```
 
 ## Command-Line Options
@@ -60,7 +61,9 @@ python -m graphrag.prompt_tune [--root ROOT] [--domain DOMAIN]  [--method METHOD
 ## Example Usage
 
 ```bash
-python -m graphrag.prompt_tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" --method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 --no-entity-types --output /path/to/output
+python -m graphrag.prompt_tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" \
+--method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 \
+--no-entity-types --output /path/to/output
 ```
 
 or, with minimal configuration (suggested):
