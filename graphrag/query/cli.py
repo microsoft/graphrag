@@ -169,7 +169,7 @@ def run_local_search(
     final_entities = pd.DataFrame()
     final_covariates = pd.DataFrame()
     if config.graphdb.enabled:
-        graph_db_client = GraphDBClient(config.graphdb)
+        graph_db_client = GraphDBClient(config.graphdb,context_id)
     for data_path in data_paths:
         #check from the config for the ouptut storage type and then read the data from the storage.
 

@@ -83,6 +83,7 @@ async def run_pipeline_with_config(
     memory_profile: bool = False,
     run_id: str | None = None,
     is_resume_run: bool = False,
+    context_id: str | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run a pipeline with the given config.
@@ -166,6 +167,7 @@ async def run_pipeline_with_config(
         emit=emit,
         is_resume_run=is_resume_run,
         graphdb_params = config.graphdb_params,
+        context_id=context_id,
     ):
         yield table
 
@@ -184,6 +186,7 @@ async def run_pipeline(
     memory_profile: bool = False,
     is_resume_run: bool = False,
     graphdb_params: GraphDBConfig|None = None,
+    context_id: str | None = None,
     **_kwargs: dict,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run the pipeline.
@@ -219,7 +222,8 @@ async def run_pipeline(
         lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
             "Error emitting table", e, s, d
         ),
-        graphdb_params
+        graphdb_params,
+        context_id,
     )
     loaded_workflows = load_workflows(
         workflows,
