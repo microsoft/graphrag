@@ -73,6 +73,7 @@ def redact(input: dict) -> str:
 def index_cli(
     root: str,
     init: bool,
+    community_level: int,
     context_operation: str | None,
     context_id: str | None,
     verbose: bool,
@@ -106,8 +107,8 @@ def index_cli(
             ValueError("ContextId is invalid: It should be a valid Guid")
         if (context_operation != ContextSwitchType.Activate and context_operation != ContextSwitchType.Deactivate):
             ValueError("ContextOperation is invalid: It should be Active or DeActive")
-        graphrag_config = _read_config_parameters(root, config, progress_reporter)
-        _switch_context(graphrag_config, context_operation, context_id, progress_reporter)
+        #graphrag_config = _read_config_parameters(root, config, progress_reporter)
+        _switch_context(config,root,context_operation,context_id,progress_reporter,community_level)
         sys.exit(0)
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
@@ -182,15 +183,16 @@ def index_cli(
     if cli:
         sys.exit(1 if encountered_errors else 0)
 
-def _switch_context(config: GraphRagConfig | str, context_operation: str | None, context_id: str, reporter: ProgressReporter) -> None:
+def _switch_context(config: GraphRagConfig | str, root: str , context_operation: str | None,
+                    context_id: str, reporter: ProgressReporter,community_level: int) -> None:
     """Switch the context to the given context."""
     reporter.info(f"Switching context to {context_id} using operation {context_operation}")
     from graphrag.index.context_switch.contextSwitcher import ContextSwitcher
-    context_switcher = ContextSwitcher()
+    context_switcher = ContextSwitcher(root,config,reporter,context_id,community_level)
     if context_operation == ContextSwitchType.Activate:
-        context_switcher.activate(config, context_id, reporter)
+        context_switcher.activate()
     elif context_operation == ContextSwitchType.Deactivate:
-        context_switcher.deactivate(config, context_id, reporter)
+        context_switcher.deactivate()
     else:
         msg = f"Invalid context operation {context_operation}"
         raise ValueError(msg)

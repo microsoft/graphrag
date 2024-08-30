@@ -69,7 +69,7 @@ def __get_embedding_description_store(
     description_embedding_store.connect(**config_args)
 
     if vector_store_type == VectorStoreType.Kusto:
-        description_embedding_store.load_entities(entities)
+        return description_embedding_store
 
     elif config_args.get("overwrite", True):
         # this step assumps the embeddings where originally stored in a file rather
@@ -161,6 +161,8 @@ def run_local_search(
         data_dir, root_dir, config_dir
     )
 
+    # TODO: loading stage here must be only limited to default lancedb.
+
     # for the POC purpose input artifacts blob, output artifacts blob and input query blob storage are going to same.
     if(config.storage.type == StorageType.memory):
         ValueError("Memory storage is not supported")
@@ -208,9 +210,11 @@ def run_local_search(
     )
 
     reporter.info(f"Vector Store Args: {vector_store_args}")
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB) # verify kusto vector store here.
+    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
+
+
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
         vector_store_type=vector_store_type,

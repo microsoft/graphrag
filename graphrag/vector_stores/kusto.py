@@ -208,6 +208,9 @@ class KustoVectorStore(BaseVectorStore):
                 attributes=row["attributes"],
             ) for _, row in df.iterrows()
         ]
+    
+    def unload_entities(self) -> None:
+        self.client.execute(self.database,f".drop table {self.collection_name} ifexists")
 
     def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
         # Convert data to DataFrame

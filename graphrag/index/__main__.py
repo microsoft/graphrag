@@ -81,6 +81,12 @@ if __name__ == "__main__":
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
     )
+    parser.add_argument(
+        "--community_level",
+        help="Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities",
+        type=int,
+        default=2,
+    )
 
     args = parser.parse_args()
 
@@ -102,4 +108,5 @@ if __name__ == "__main__":
         cli=True,
         context_id=args.context_id,
         context_operation=args.context_operation,
+        community_level=args.community_level
     )
