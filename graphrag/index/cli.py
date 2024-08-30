@@ -109,7 +109,7 @@ def index_cli(
             ValueError("ContextOperation is invalid: It should be Active or DeActive")
         #graphrag_config = _read_config_parameters(root, config, progress_reporter)
         _switch_context(config,root,context_operation,context_id,progress_reporter,community_level)
-        #sys.exit(0)
+        sys.exit(0)
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False

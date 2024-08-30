@@ -43,7 +43,7 @@ class GraphDBClient:
         df = pd.DataFrame(json_data)
         return df
 
-    def query_vertices(self,context_id:str="00000000-0000-0000-0000-000000000000") -> pd.DataFrame:
+    def query_vertices(self,context_id:str) -> pd.DataFrame:
         result = self._client.submit(
             message=(
                 "g.V()"
@@ -51,7 +51,7 @@ class GraphDBClient:
         )
         return self.result_to_df(result)
 
-    def query_edges(self,context_id:str="00000000-0000-0000-0000-000000000000") -> pd.DataFrame:
+    def query_edges(self,context_id:str) -> pd.DataFrame:
         result = self._client.submit(
             message=(
                 "g.E()"
@@ -76,7 +76,7 @@ class GraphDBClient:
             element_count=counts[0]
         return element_count>0
 
-    def write_vertices(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
+    def write_vertices(self,data: pd.DataFrame)->None:
         for row in data.itertuples():
             if self.element_exists("g.V()",row.id):
                 continue
@@ -109,7 +109,7 @@ class GraphDBClient:
             time.sleep(5)
 
 
-    def write_edges(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
+    def write_edges(self,data: pd.DataFrame)->None:
         for row in data.itertuples():
             if self.element_exists("g.E()",row.id):
                 continue
