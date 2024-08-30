@@ -126,7 +126,7 @@ __all__ = [
     "enable_logging_with_config",
     "load_config",
     "load_config_from_file",
+    "read_dotenv",
     "resolve_config_path_with_root",
     "resolve_timestamp_path",
-    "read_dotenv",
 ]

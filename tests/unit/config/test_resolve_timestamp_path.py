@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
 from pathlib import Path
 
 from graphrag.config.resolve_timestamp_path import resolve_timestamp_path

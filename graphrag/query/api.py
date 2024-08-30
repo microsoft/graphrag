@@ -148,7 +148,6 @@ async def global_search_streaming(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
-    root_dir: Path,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
@@ -225,7 +224,6 @@ async def local_search(
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search_streaming(
-    root_dir: Path,
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,

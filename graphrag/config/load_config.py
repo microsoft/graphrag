@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Default method for loading config"""
+"""Default method for loading config."""
 
 from pathlib import Path
 
