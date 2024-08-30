@@ -46,6 +46,7 @@ class BaseVectorStore(ABC):
         self,
         collection_name: str,
         vector_name: str,
+        reports_name: str,
         db_connection: Any | None = None,
         document_collection: Any | None = None,
         query_filter: Any | None = None,
@@ -53,6 +54,7 @@ class BaseVectorStore(ABC):
     ):
         self.collection_name = collection_name
         self.vector_name = vector_name
+        self.reports_name = reports_name
         self.db_connection = db_connection
         self.document_collection = document_collection
         self.query_filter = query_filter
@@ -99,7 +101,7 @@ class BaseVectorStore(ABC):
         """Load reports into the vector-store."""
 
     @abstractmethod
-    def get_extracted_communities(
+    def get_extracted_reports(
         self, community_ids: list[int], **kwargs: Any
     ) -> list[CommunityReport]:
         """Get reports for a given list of community ids."""
