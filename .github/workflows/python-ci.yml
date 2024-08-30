@@ -1,9 +1,9 @@
 name: Python CI
 on:
   push:
-    branches: [main]
+    branches: [main, incremental_indexing/main]
   pull_request:
-    branches: [main]
+    branches: [main, incremental_indexing/main]
 
 permissions:
   contents: read
