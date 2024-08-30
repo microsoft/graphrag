@@ -3,6 +3,7 @@
 
 """The Indexing Engine default config package root."""
 
+from .config_file_loader import load_config_from_file, resolve_config_path_with_root
 from .create_graphrag_config import (
     create_graphrag_config,
 )
@@ -42,6 +43,8 @@ from .input_models import (
     TextEmbeddingConfigInput,
     UmapConfigInput,
 )
+from .load_config import load_config
+from .logging import enable_logging_with_config
 from .models import (
     CacheConfig,
     ChunkingConfig,
@@ -65,6 +68,7 @@ from .models import (
     UmapConfig,
 )
 from .read_dotenv import read_dotenv
+from .resolve_timestamp_path import resolve_timestamp_path
 
 __all__ = [
     "ApiKeyMissingError",
@@ -119,5 +123,10 @@ __all__ = [
     "UmapConfig",
     "UmapConfigInput",
     "create_graphrag_config",
+    "enable_logging_with_config",
+    "load_config",
+    "load_config_from_file",
+    "resolve_config_path_with_root",
+    "resolve_timestamp_path",
     "read_dotenv",
 ]
