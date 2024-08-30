@@ -94,6 +94,7 @@ def read_indexer_reports(
 
     report_df = _filter_under_community_level(report_df, community_level)
     report_df = report_df.merge(filtered_community_df, on="community", how="inner")
+    report_df = report_df.drop_duplicates(subset=["community"])
 
     return read_community_reports(
         df=report_df,

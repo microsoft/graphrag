@@ -46,6 +46,9 @@ def map_query_to_entities_in_place(
         text_embedder=lambda t: text_embedder.embed(t),
         k=k * oversample_scaler,
     )
+    import ast
+    for result in search_results:
+        result.community_ids = ast.literal_eval(result.community_ids)
     return search_results
 
 def map_query_to_entities(

@@ -194,8 +194,8 @@ def run_local_search(
         final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")]) # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
         final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")]) # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
 
-        if not optimized_search:
-            final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
+        # if not optimized_search:
+            # final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
         if config.graphdb.enabled:
             final_relationships = pd.concat([final_relationships, graph_db_client.query_edges(context_id)])
@@ -213,8 +213,9 @@ def run_local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
-
-
+    reports=read_indexer_reports(
+        final_community_reports, final_nodes, community_level
+    )
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
         vector_store_type=vector_store_type,
@@ -227,14 +228,15 @@ def run_local_search(
         else []
     )
 
+
     if(isinstance(description_embedding_store, KustoVectorStore)):
         entities = []
+        description_embedding_store.load_reports(reports)
+        reports = []
 
     search_engine = get_local_search_engine(
         config,
-        reports=read_indexer_reports(
-            final_community_reports, final_nodes, community_level
-        ),
+        reports=reports,
         text_units=read_indexer_text_units(final_text_units),
         entities=entities,
         relationships=read_indexer_relationships(final_relationships),

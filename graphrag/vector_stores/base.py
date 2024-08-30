@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
+from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
@@ -92,3 +93,13 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
         """Load entities into the vector-store."""
+
+    @abstractmethod
+    def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
+        """Load reports into the vector-store."""
+
+    @abstractmethod
+    def get_extracted_communities(
+        self, community_ids: list[int], **kwargs: Any
+    ) -> list[CommunityReport]:
+        """Get reports for a given list of community ids."""
