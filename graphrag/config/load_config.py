@@ -56,7 +56,11 @@ def load_config(
             resolve_timestamp_path((root / config.reporting.base_dir).resolve(), run_id)
         )
     else:
-        config.storage.base_dir = str((root / config.storage.base_dir).resolve())
-        config.reporting.base_dir = str((root / config.reporting.base_dir).resolve())
+        config.storage.base_dir = str(
+            resolve_timestamp_path((root / config.storage.base_dir).resolve())
+        )
+        config.reporting.base_dir = str(
+            resolve_timestamp_path((root / config.reporting.base_dir).resolve())
+        )
 
     return config
