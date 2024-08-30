@@ -124,7 +124,7 @@ def index_cli(
     if nocache:
         config.cache.type = CacheType.none
 
-    enabled_logging, log_path = enable_logging_with_config(config, run_id, verbose)
+    enabled_logging, log_path = enable_logging_with_config(config, verbose)
     if enabled_logging:
         info(f"Logging enabled at {log_path}", True)
     else:
