@@ -39,8 +39,6 @@ async def build_index(
         The run id. Creates a output directory with this name.
     memory_profile : bool
         Whether to enable memory profiling.
-    update_index : str | None default=None
-        The index id to update.
     progress_reporter : ProgressReporter | None default=None
         The progress reporter.
     emit : list[str] | None default=None
