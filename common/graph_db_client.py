@@ -109,7 +109,7 @@ class GraphDBClient:
             time.sleep(5)
 
 
-    def write_edges(self,data: pd.DataFrame)->None:
+    def write_edges(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
         for row in data.itertuples():
             if self.element_exists("g.E()",row.id):
                 continue
