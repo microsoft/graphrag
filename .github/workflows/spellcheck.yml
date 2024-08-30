@@ -4,7 +4,7 @@ on:
     branches: [main]
   pull_request:
     paths:
-      - '**/*'
+      - "**/*"
 jobs:
   spellcheck:
     runs-on: ubuntu-latest
