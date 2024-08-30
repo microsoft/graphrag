@@ -185,7 +185,7 @@ def run_local_search(
     final_entities = pd.DataFrame()
     final_covariates = pd.DataFrame()
     if config.graphdb.enabled:
-        graph_db_client = GraphDBClient(config.graphdb)
+        graph_db_client = GraphDBClient(config.graphdb,context_id)
     for data_path in data_paths:
         #check from the config for the ouptut storage type and then read the data from the storage.
 
@@ -198,8 +198,8 @@ def run_local_search(
             final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
         if config.graphdb.enabled:
-            final_relationships = pd.concat([final_relationships, graph_db_client.query_edges()])
-            final_entities = pd.concat([final_entities, graph_db_client.query_vertices()])
+            final_relationships = pd.concat([final_relationships, graph_db_client.query_edges(context_id)])
+            final_entities = pd.concat([final_entities, graph_db_client.query_vertices(context_id)])
         else:
             final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
             final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])

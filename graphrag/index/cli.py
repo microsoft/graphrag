@@ -145,6 +145,7 @@ def index_cli(
                     else None
                 ),
                 is_resume_run=bool(resume),
+                context_id=context_id,
             ):
                 if output.errors and len(output.errors) > 0:
                     encountered_errors = True

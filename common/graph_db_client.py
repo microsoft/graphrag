@@ -13,11 +13,12 @@ import os
 import json
 
 class GraphDBClient:
-    def __init__(self,graph_db_params: GraphDBConfig|None):
+    def __init__(self,graph_db_params: GraphDBConfig|None,context_id: str|None):
+        self.username_prefix=graph_db_params.username
         self._client=client.Client(
             url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
             traversal_source="g",
-            username=graph_db_params.username,
+            username=self.username_prefix+"-contextid-"+context_id,
             password=f"{graph_db_params.account_key}",
             message_serializer=serializer.GraphSONSerializersV2d0(),
         )
@@ -42,7 +43,7 @@ class GraphDBClient:
         df = pd.DataFrame(json_data)
         return df
 
-    def query_vertices(self) -> pd.DataFrame:
+    def query_vertices(self,context_id:str) -> pd.DataFrame:
         result = self._client.submit(
             message=(
                 "g.V()"
@@ -50,7 +51,7 @@ class GraphDBClient:
         )
         return self.result_to_df(result)
 
-    def query_edges(self) -> pd.DataFrame:
+    def query_edges(self,context_id:str) -> pd.DataFrame:
         result = self._client.submit(
             message=(
                 "g.E()"
@@ -58,40 +59,60 @@ class GraphDBClient:
         )
         return self.result_to_df(result)
 
-    def write_vertices(self,data: pd.DataFrame)->None:
-        for row in data.itertuples():
-            print(row.id)
-            self._client.submit(
+    def element_exists(self,element_type:str,element_id:int,conditions:str="")->bool:
+        result=self._client.submit(
                 message=(
-                    "g.addV('entity')"
-                    ".property('id', prop_id)"
-                    ".property('name', prop_name)"
-                    ".property('type', prop_type)"
-                    ".property('description','prop_description')"
-                    ".property('human_readable_id', prop_human_readable_id)"
-                    ".property('category', prop_partition_key)"
-                    ".property(list,'description_embedding',prop_description_embedding)"
-                    ".property(list,'graph_embedding',prop_graph_embedding)"
-                    ".property(list,'text_unit_ids',prop_text_unit_ids)"
+                        element_type+
+                        ".has('id',prop_id)"+
+                        conditions+
+                        ".count()"
                 ),
                 bindings={
-                    "prop_id": row.id,
-                    "prop_name": row.name,
-                    "prop_type": row.type,
-                    "prop_description": row.description,
-                    "prop_human_readable_id": row.human_readable_id,
-                    "prop_partition_key": "entities",
-                    "prop_description_embedding":json.dumps(row.description_embedding.tolist() if row.description_embedding is not None else []),
-                    "prop_graph_embedding":json.dumps(row.graph_embedding.tolist() if row.graph_embedding is not None else []),
-                    "prop_text_unit_ids":json.dumps(row.text_unit_ids if row.text_unit_ids is not None else []),
-                },
-            )
+                        "prop_id":element_id,
+                }
+        )
+        element_count=0
+        for counts in result:
+            element_count=counts[0]
+        return element_count>0
+
+    def write_vertices(self,data: pd.DataFrame)->None:
+        for row in data.itertuples():
+            if self.element_exists("g.V()",row.id):
+                continue
+            else:
+                self._client.submit(
+                    message=(
+                        "g.addV('entity')"
+                        ".property('id', prop_id)"
+                        ".property('name', prop_name)"
+                        ".property('type', prop_type)"
+                        ".property('description','prop_description')"
+                        ".property('human_readable_id', prop_human_readable_id)"
+                        ".property('category', prop_partition_key)"
+                        ".property(list,'description_embedding',prop_description_embedding)"
+                        ".property(list,'graph_embedding',prop_graph_embedding)"
+                        ".property(list,'text_unit_ids',prop_text_unit_ids)"
+                    ),
+                    bindings={
+                        "prop_id": row.id,
+                        "prop_name": row.name,
+                        "prop_type": row.type,
+                        "prop_description": row.description,
+                        "prop_human_readable_id": row.human_readable_id,
+                        "prop_partition_key": "entities",
+                        "prop_description_embedding":json.dumps(row.description_embedding.tolist() if row.description_embedding is not None else []),
+                        "prop_graph_embedding":json.dumps(row.graph_embedding.tolist() if row.graph_embedding is not None else []),
+                        "prop_text_unit_ids":json.dumps(row.text_unit_ids if row.text_unit_ids is not None else []),
+                    },
+                )
             time.sleep(5)
 
 
-    def write_edges(self,data: pd.DataFrame)->None:
+    def write_edges(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
         for row in data.itertuples():
-            print(row.source,row.target)
+            if self.element_exists("g.E()",row.id):
+                continue
             self._client.submit(
                 message=(
                     "g.V().has('name',prop_source_id)"
