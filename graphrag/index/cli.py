@@ -19,7 +19,7 @@ from graphrag.config.config_file_loader import (
 from graphrag.config.enums import CacheType
 from graphrag.config.logging import enable_logging_with_config
 
-from .api import build_index
+from .api import build_index, update_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
@@ -107,6 +107,7 @@ def index_cli(
     init: bool,
     verbose: bool,
     resume: str | None,
+    update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
     reporter: str | None,
@@ -168,15 +169,26 @@ def index_cli(
 
     _register_signal_handlers(progress_reporter)
 
-    outputs = asyncio.run(
-        build_index(
-            default_config,
-            run_id,
-            memprofile,
-            progress_reporter,
-            pipeline_emit,
+    if update_index_id:
+        outputs = asyncio.run(
+            update_index(
+                default_config,
+                memprofile,
+                update_index_id,
+                progress_reporter,
+                pipeline_emit,
+            )
         )
-    )
+    else:
+        outputs = asyncio.run(
+            build_index(
+                default_config,
+                run_id,
+                memprofile,
+                progress_reporter,
+                pipeline_emit,
+            )
+        )
     encountered_errors = any(
         output.errors and len(output.errors) > 0 for output in outputs
     )
