@@ -12,6 +12,7 @@ import pandas as pd
 
 from graphrag.config import (
     GraphRagConfig,
+    StorageType,
     create_graphrag_config,
 )
 from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
@@ -40,15 +41,13 @@ def run_global_search(
     )
     data_path = Path(data_dir)
 
-    final_nodes: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_nodes.parquet"
+    dataframe_dict = _resolve_parquet_files(
+        data_path=data_path,
+        config=config
     )
-    final_entities: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_entities.parquet"
-    )
-    final_community_reports: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
-    )
+    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
 
     # call the Query API
     if streaming:
@@ -113,22 +112,16 @@ def run_local_search(
     )
     data_path = Path(data_dir)
 
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
-    final_community_reports = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
+    dataframe_dict = _resolve_parquet_files(
+        data_path=data_path,
+        config=config
     )
-    final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
-    final_relationships = pd.read_parquet(
-        data_path / "create_final_relationships.parquet"
-    )
-    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
-    final_covariates_path = data_path / "create_final_covariates.parquet"
-    final_covariates = (
-        pd.read_parquet(final_covariates_path)
-        if final_covariates_path.exists()
-        else None
-    )
-
+    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
     # call the Query API
     if streaming:
 
@@ -210,6 +203,42 @@ def _infer_data_dir(root: str) -> str:
     msg = f"Could not infer data directory from root={root}"
     raise ValueError(msg)
 
+def _resolve_parquet_files(
+    data_path: Path,
+    config: GraphRagConfig
+) -> dict[str, pd.DataFrame]:
+    """Read parquet files to a dataframe dict."""
+    dataframe_dict = {}
+    match config.storage.type:
+        case StorageType.blob:
+            print("TODO")
+        case StorageType.file:
+            dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
+            dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
+            dataframe_dict["community_reports"] = pd.read_parquet(data_path / "create_final_community_reports.parquet")
+            dataframe_dict["text_units"] = pd.read_parquet(data_path / "create_final_text_units.parquet")
+            dataframe_dict["relationships"] = pd.read_parquet(data_path / "create_final_relationships.parquet")
+
+            final_covariates_path = data_path / "create_final_covariates.parquet"
+            dataframe_dict["covariates"] = (
+                pd.read_parquet(final_covariates_path)
+                if final_covariates_path.exists()
+                else None
+            )
+        case _:
+            dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
+            dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
+            dataframe_dict["community_reports"] = pd.read_parquet(data_path / "create_final_community_reports.parquet")
+            dataframe_dict["text_units"] = pd.read_parquet(data_path / "create_final_text_units.parquet")
+            dataframe_dict["relationships"] = pd.read_parquet(data_path / "create_final_relationships.parquet")
+
+            final_covariates_path = data_path / "create_final_covariates.parquet"
+            dataframe_dict["covariates"] = (
+                pd.read_parquet(final_covariates_path)
+                if final_covariates_path.exists()
+                else None
+            )
+    return dataframe_dict
 
 def _create_graphrag_config(
     root: str | None,
