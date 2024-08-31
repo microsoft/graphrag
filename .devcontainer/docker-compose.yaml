@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
+    volumes:
+      - ../..:/workspaces:cached
+    network_mode: host
+    command: sleep infinity
+
+# ollama docker does not work on Apple Silicon as at 31 Aug 2024
+#   ollama:
+#     image: ollama/ollama
+#     container_name: ollama
+#     volumes:
+#       - ollama:/root/.ollama
+#     ports:
+#       - "11434:11434"
+
+# volumes:
+#   ollama:
+
