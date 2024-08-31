@@ -33,7 +33,7 @@ def run_global_search(
     root = Path(root_dir).resolve()
     config = load_config(root, config_filepath)
 
-    if data_dir is not None:
+    if data_dir:
         config.storage.base_dir = str(
             resolve_timestamp_path((root / data_dir).resolve())
         )
@@ -111,7 +111,7 @@ def run_local_search(
     root = Path(root_dir).resolve()
     config = load_config(root, config_filepath)
 
-    if data_dir is not None:
+    if data_dir:
         config.storage.base_dir = str(
             resolve_timestamp_path((root / data_dir).resolve())
         )
