@@ -3,7 +3,7 @@
 
 """The Indexing Engine default config package root."""
 
-from .config_file_loader import load_config_from_file, resolve_config_path_with_root
+from .config_file_loader import load_config_from_file, search_for_config_in_root_dir
 from .create_graphrag_config import (
     create_graphrag_config,
 )
@@ -127,6 +127,6 @@ __all__ = [
     "load_config",
     "load_config_from_file",
     "read_dotenv",
-    "resolve_config_path_with_root",
+    "search_for_config_in_root_dir",
     "resolve_timestamp_path",
 ]

@@ -5,7 +5,7 @@
 
 from pathlib import Path
 
-from .config_file_loader import load_config_from_file, resolve_config_path_with_root
+from .config_file_loader import load_config_from_file, search_for_config_in_root_dir
 from .create_graphrag_config import create_graphrag_config
 from .models.graph_rag_config import GraphRagConfig
 from .resolve_timestamp_path import resolve_timestamp_path
@@ -41,11 +41,10 @@ def load_config(
             raise FileNotFoundError(msg)
 
     # Else optional resolve the config path from the root directory if it exists
-    try:
-        config_path = resolve_config_path_with_root(root)
+    config_path = search_for_config_in_root_dir(root)
+    if config_path:
         config = load_config_from_file(config_path)
-    except FileNotFoundError:
-        # If config file not found in root directory create default configuration
+    else:
         config = create_graphrag_config(root_dir=str(root))
 
     if run_id:
