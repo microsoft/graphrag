@@ -34,7 +34,7 @@ def load_config(
     root = Path(root_dir).resolve()
 
     # If user specified a config file path then it is required
-    if config_filepath is not None:
+    if config_filepath:
         config_path = (root / config_filepath).resolve()
         if not config_path.exists():
             msg = f"Specified Config file not found: {config_path}"
@@ -48,7 +48,7 @@ def load_config(
         # If config file not found in root directory create default configuration
         config = create_graphrag_config(root_dir=str(root))
 
-    if run_id is not None:
+    if run_id:
         config.storage.base_dir = str(
             resolve_timestamp_path((root / config.storage.base_dir).resolve(), run_id)
         )
