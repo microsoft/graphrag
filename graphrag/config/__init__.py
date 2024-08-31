@@ -127,6 +127,6 @@ __all__ = [
     "load_config",
     "load_config_from_file",
     "read_dotenv",
-    "search_for_config_in_root_dir",
     "resolve_timestamp_path",
+    "search_for_config_in_root_dir",
 ]
