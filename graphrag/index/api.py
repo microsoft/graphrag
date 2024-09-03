@@ -115,7 +115,7 @@ async def update_index(  # noqa: RUF029
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    # Basic initiliazation
+    # Basic init
 
     # TODO: Review input folder to check if update is viable or if should run index
 
