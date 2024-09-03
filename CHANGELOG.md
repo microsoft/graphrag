@@ -1,6 +1,18 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.2
+
+- patch: Add context data to query API responses.
+- patch: Add missing config parameter documentation for prompt tuning
+- patch: Add neo4j community notebook
+- patch: Ensure entity types to be str when running prompt tuning
+- patch: Fix weight casting during graph extraction
+- patch: Patch "past" dependency issues
+- patch: Update developer guide.
+- patch: Update query type hints.
+- patch: change-lancedb-placement
+
 ## 0.3.1
 
 - patch: Add preflight check to check LLM connectivity.
