@@ -9,8 +9,9 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobClient
+from azure.identity import DefaultAzureCredential as DefaultAzureCredentialSync
+from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
+from azure.storage.blob import BlobServiceClient
 
 from graphrag.config import (
     GraphRagConfig,
@@ -230,42 +231,69 @@ def _resolve_parquet_files(
             )
             storage_options = {
                 "account_name": storage_account_name,
-                "account_host": storage_account_blob_url,
-                "credential": DefaultAzureCredential(),
+                "credential": DefaultAzureCredentialAsync(),
             }
             container_name = config.storage.container_name
             base_dir = config.storage.base_dir
+
+            def get_abfs_path(parquet_name: str):
+                abfs_path_str = str(Path(container_name) / base_dir / parquet_name)
+                return f"abfs://{abfs_path_str}"
+            
             dataframe_dict["nodes"] = pd.read_parquet(
-                f"abfs://{container_name}/{base_dir}/create_final_nodes.parquet",
+                path=get_abfs_path("create_final_nodes.parquet"),
                 storage_options=storage_options
             )
             dataframe_dict["entities"] = pd.read_parquet(
-                f"abfs://{container_name}/{base_dir}/create_final_entities.parquet",
+                path=get_abfs_path("create_final_entities.parquet"),
                 storage_options=storage_options
             )
             dataframe_dict["community_reports"] = pd.read_parquet(
-                f"abfs://{container_name}/{base_dir}/create_final_community_reports.parquet",
+                path=get_abfs_path("create_final_community_reports.parquet"),
                 storage_options=storage_options
             )
             dataframe_dict["text_units"] = pd.read_parquet(
-                f"abfs://{container_name}/{base_dir}/create_final_text_units.parquet",
+                path=get_abfs_path("create_final_text_units.parquet"),
                 storage_options=storage_options
             )
             dataframe_dict["relationships"] = pd.read_parquet(
-                f"abfs://{container_name}/{base_dir}/create_final_relationships.parquet",
+                path=get_abfs_path("create_final_relationships.parquet"),
                 storage_options=storage_options
             )
-            final_covariates_blob = BlobClient.from_blob_url(
-                f"{storage_account_blob_url}/{container_name}/{base_dir}/create_final_covariates.parquet"
+
+            blob_service_client = BlobServiceClient(
+                account_url=str(storage_account_blob_url),
+                credential=DefaultAzureCredentialSync()
             )
-            dataframe_dict["covariates"] = (
-                pd.read_parquet(
-                    f"abfs://{container_name}/{base_dir}/create_final_covariates.parquet",
+            container_client = blob_service_client.get_container_client(container_name)
+            blob_client = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet")
+            covariate_parquet_exists = blob_client.exists()
+            if covariate_parquet_exists:
+                dataframe_dict["covariates"] = pd.read_parquet(
+                    path=get_abfs_path("create_final_covariates.parquet"),
                     storage_options=storage_options
                 )
-                if final_covariates_blob.exists()
-                else None
-            )
+            else:
+                dataframe_dict["covariates"] = None
+
+            '''
+            async with BlobServiceClientAsync(
+                account_url=str(storage_account_blob_url),
+                credential=DefaultAzureCredential()
+            ) as blob_service_client:
+                container_client = blob_service_client.get_container_client(container_name)
+                blob_client = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet")
+                covariate_parquet_exists = await blob_client.exists()
+                if covariate_parquet_exists:
+                    dataframe_dict["covariates"] = pd.read_parquet(
+                        path=get_abfs_path("create_final_covariates.parquet"),
+                        storage_options=storage_options
+                    )
+                else:
+                    dataframe_dict["covariates"] = None
+            '''
+
+            
         case StorageType.file:
             dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
             dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
