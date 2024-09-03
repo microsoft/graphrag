@@ -38,7 +38,7 @@ from graphrag.index.run.utils import (
     _create_input,
     _create_run_context,
     _validate_dataset,
-    create_reporter,
+    _create_reporter,
 )
 from graphrag.index.run.workflow import (
     _create_callback_chain,
@@ -105,7 +105,7 @@ async def run_pipeline_with_config(
     progress_reporter = progress_reporter or NullProgressReporter()
     storage = storage or _create_storage(config.storage, root_dir=root_dir)
     cache = cache or _create_cache(config.cache, root_dir)
-    callbacks = callbacks or create_reporter(config.reporting, root_dir)
+    callbacks = callbacks or _create_reporter(config.reporting, root_dir)
     dataset = (
         dataset
         if dataset
