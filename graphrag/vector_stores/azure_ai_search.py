@@ -207,3 +207,9 @@ class AzureAISearch(BaseVectorStore):
 
     def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
         raise NotImplementedError("Extracting reports is not supported for Azure AI Search")
+
+    def setup_entities(self) -> None:
+        raise NotImplementedError("Setting up entities is not supported for Azure AI Search")
+
+    def setup_reports(self) -> None:
+        raise NotImplementedError("Setting up reports is not supported for Azure AI Search")
