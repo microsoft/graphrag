@@ -140,7 +140,10 @@ def build_community_context(
         if len(record_df) == 0:
             return
         current_context_text = record_df.to_csv(index=False, sep=column_delimiter)
-        all_context_text.append(current_context_text)
+        if (not all_context_text) and single_batch:
+            all_context_text.append(f"-----{context_name}-----" + "\n" + current_context_text)
+        else:
+            all_context_text.append(current_context_text)
         all_context_records.append(record_df)
 
     # initialize the first batch
@@ -163,7 +166,7 @@ def build_community_context(
         batch_records.append(new_context)
 
     # add the last batch if it has not been added
-    if batch_text not in all_context_text:
+    if [_[0] for _ in batch_records] not in [_['id'].to_list() for _ in all_context_records]:
         _cut_batch()
 
     if len(all_context_records) == 0:
