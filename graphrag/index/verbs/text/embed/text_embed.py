@@ -83,9 +83,11 @@ async def text_embed(
 
     if vector_store_config:
         embedding_name = kwargs.get("embedding_name", "default")
+        vector_name = kwargs.get("vector_name", "vector")
         collection_name = _get_collection_name(vector_store_config, embedding_name)
+        vector_name = _get_collection_name(vector_store_config, vector_name)
         vector_store: BaseVectorStore = _create_vector_store(
-            vector_store_config, collection_name
+            vector_store_config, collection_name, vector_name, "reports"
         )
         vector_store_workflow_config = vector_store_config.get(
             embedding_name, vector_store_config
@@ -222,11 +224,15 @@ async def _text_embed_with_vector_store(
 
 
 def _create_vector_store(
-    vector_store_config: dict, collection_name: str
+    vector_store_config: dict, collection_name: str, vector_name: str, reports_name: str,
 ) -> BaseVectorStore:
     vector_store_type: str = str(vector_store_config.get("type"))
     if collection_name:
         vector_store_config.update({"collection_name": collection_name})
+    if vector_name:
+        vector_store_config.update({"vector_name": vector_name})
+    if reports_name:
+        vector_store_config.update({"reports_name": reports_name})
 
     vector_store = VectorStoreFactory.get_vector_store(
         vector_store_type, kwargs=vector_store_config
