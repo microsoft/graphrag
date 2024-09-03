@@ -36,9 +36,9 @@ from graphrag.index.run.storage import _create_storage
 from graphrag.index.run.utils import (
     _apply_substitutions,
     _create_input,
+    _create_reporter,
     _create_run_context,
     _validate_dataset,
-    _create_reporter,
 )
 from graphrag.index.run.workflow import (
     _create_callback_chain,
