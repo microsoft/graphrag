@@ -587,7 +587,8 @@ def _get_cache_config(
             )
         case CacheType.redis:
             connection_string = settings.cache.connection_string
-            return PipelineRedisCacheConfig(connection_string=connection_string)
+            ttl = settings.cache.ttl
+            return PipelineRedisCacheConfig(connection_string=connection_string, ttl=ttl)
         case _:
             # relative to root dir
             return PipelineFileCacheConfig(base_dir="./cache")

@@ -15,7 +15,8 @@ class RedisCache(PipelineCache):
             redis_: Any,
             *,
             ttl: Optional[int] = None,
-            prefix: Optional[str] = ""):
+            prefix: Optional[str] = ""
+    ):
         """
         Initialize an instance of RedisCache.
 
@@ -62,14 +63,12 @@ class RedisCache(PipelineCache):
         self._redis.set(key, json.dumps(value), ex=self._ttl)
 
     async def has(self, key: str) -> bool:
-        """Return True if the given key exists in the storage.
-        """
+        """Return True if the given key exists in the storage."""
         key = self._create_cache_key(key)
         return self._redis.exists(key)
 
     async def delete(self, key: str) -> None:
-        """Delete the given key from the storage.
-        """
+        """Delete the given key from the storage."""
         key = self._create_cache_key(key)
         self._redis.delete(key)
 
@@ -87,9 +86,14 @@ class RedisCache(PipelineCache):
 
 
 def create_redis_cache(connection_string, ttl=None) -> PipelineCache:
-    """Create a memory cache."""
-    from redis import Redis
-    _redis = Redis.from_url(connection_string, decode_responses=True)
-    _redis.ping()
+    """Create a redis cache."""
+    try:
+        from redis import Redis
+    except ImportError:
+        raise ImportError(
+            "Could not import `redis` python package. "
+            "Please install it with `pip install redis`."
+        )
 
+    _redis = Redis.from_url(connection_string, decode_responses=True)
     return RedisCache(_redis, ttl=ttl)

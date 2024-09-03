@@ -27,3 +27,6 @@ class CacheConfig(BaseModel):
     storage_account_blob_url: str | None = Field(
         description="The storage account blob url to use.", default=None
     )
+    ttl: int | None = Field(
+        description="The time-to-live (in seconds) for cache entries.", default=None
+    )
