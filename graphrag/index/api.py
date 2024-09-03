@@ -8,9 +8,9 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from graphrag.config.enums import CacheType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
+from pathlib import Path
+
+from graphrag.config import CacheType, GraphRagConfig
 
 from .cache.noop_pipeline_cache import NoopPipelineCache
 from .create_pipeline_config import create_pipeline_config
@@ -50,11 +50,7 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    try:
-        resolve_timestamp_path(config.storage.base_dir, run_id)
-        resume = True
-    except ValueError as _:
-        resume = False
+    resume = Path(config.storage.base_dir).exists()
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
