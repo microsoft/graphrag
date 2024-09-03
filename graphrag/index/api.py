@@ -8,9 +8,9 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from graphrag.config.enums import CacheType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
+from pathlib import Path
+
+from graphrag.config import CacheType, GraphRagConfig
 
 from .cache.noop_pipeline_cache import NoopPipelineCache
 from .create_pipeline_config import create_pipeline_config
@@ -25,7 +25,8 @@ from .typing import PipelineRunResult
 async def build_index(
     config: GraphRagConfig,
     run_id: str = "",
-    update_index_id: str = "",
+    is_resume_run: bool = False,
+    is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[str] | None = None,
@@ -38,6 +39,10 @@ async def build_index(
         The configuration.
     run_id : str
         The run id. Creates a output directory with this name.
+    is_resume_run : bool default=False
+        Whether to resume a previous index run.
+    is_update_run : bool default=False
+        Whether to update a previous index run.
     memory_profile : bool
         Whether to enable memory profiling.
     progress_reporter : ProgressReporter | None default=None
@@ -51,14 +56,7 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    resolved_run_id = run_id or update_index_id
-    try:
-        resolve_timestamp_path(config.storage.base_dir, resolved_run_id)
-        is_resume_run = bool(run_id)
-        is_update_run = bool(update_index_id) and not is_resume_run
-    except ValueError as _:
-        is_resume_run = False
-        is_update_run = False
+
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
