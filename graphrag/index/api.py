@@ -24,8 +24,9 @@ from .typing import PipelineRunResult
 
 async def build_index(
     config: GraphRagConfig,
-    run_id: str,
-    memory_profile: bool,
+    run_id: str = "",
+    update_index_id: str = "",
+    memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[str] | None = None,
 ) -> list[PipelineRunResult]:
@@ -50,11 +51,14 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
+    resolved_run_id = run_id or update_index_id
     try:
-        resolve_timestamp_path(config.storage.base_dir, run_id)
-        resume = True
+        resolve_timestamp_path(config.storage.base_dir, resolved_run_id)
+        is_resume_run = bool(run_id)
+        is_update_run = bool(update_index_id) and not is_resume_run
     except ValueError as _:
-        resume = False
+        is_resume_run = False
+        is_update_run = False
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
@@ -67,7 +71,8 @@ async def build_index(
         cache=pipeline_cache,
         progress_reporter=progress_reporter,
         emit=([TableEmitterType(e) for e in emit] if emit is not None else None),
-        is_resume_run=resume,
+        is_resume_run=is_resume_run,
+        is_update_run=is_update_run,
     ):
         outputs.append(output)
         if progress_reporter:
@@ -81,8 +86,9 @@ async def build_index(
 
 async def update_index(  # noqa: RUF029
     config: GraphRagConfig,  # noqa: ARG001
+    run_id: str,  # noqa: ARG001
     memory_profile: bool,  # noqa: ARG001
-    index_id: str | None = None,  # noqa: ARG001
+    update_index_id: str,  # noqa: ARG001
     progress_reporter: ProgressReporter | None = None,  # noqa: ARG001
     emit: list[str] | None = None,  # noqa: ARG001
 ) -> list[PipelineRunResult]:
@@ -92,9 +98,11 @@ async def update_index(  # noqa: RUF029
     ----------
     config : PipelineConfig
         The configuration.
+    run_id : str
+        The run id. Creates a output directory with this name.
     memory_profile : bool
         Whether to enable memory profiling.
-    index_id : str | None default=None
+    update_index_id : str
         The index id to update in incremental runs.
     progress_reporter : ProgressReporter | None default=None
         The progress reporter.
@@ -107,7 +115,12 @@ async def update_index(  # noqa: RUF029
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    # TODO: Calculate Delta
+    # Basic initiliazation
+
+    # TODO: Review input folder to check if update is viable or if should run index
+
+    # TODO: Get new files to process from input
+
     # TODO: Execute pipeline over delta
     # TODO: Update index
     # TODO: Write drift report

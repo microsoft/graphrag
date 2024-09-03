@@ -121,6 +121,7 @@ def index_cli(
     progress_reporter = load_progress_reporter(reporter or "rich")
     info, error, success = _logger(progress_reporter)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    update_index_id = update_index_id or ""
 
     if init:
         _initialize_project_at(root, progress_reporter)
@@ -169,26 +170,16 @@ def index_cli(
 
     _register_signal_handlers(progress_reporter)
 
-    if update_index_id:
-        outputs = asyncio.run(
-            update_index(
-                default_config,
-                memprofile,
-                update_index_id,
-                progress_reporter,
-                pipeline_emit,
-            )
+    outputs = asyncio.run(
+        build_index(
+            default_config,
+            run_id,
+            update_index_id,
+            memprofile,
+            progress_reporter,
+            pipeline_emit,
         )
-    else:
-        outputs = asyncio.run(
-            build_index(
-                default_config,
-                run_id,
-                memprofile,
-                progress_reporter,
-                pipeline_emit,
-            )
-        )
+    )
     encountered_errors = any(
         output.errors and len(output.errors) > 0 for output in outputs
     )

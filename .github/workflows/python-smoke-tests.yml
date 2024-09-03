@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - "**/main"
-      - "*-main"
       - "main"
 
 permissions:
