@@ -49,6 +49,7 @@ from graphrag.index.storage import MemoryPipelineStorage, PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
+from graphrag.index.verbs import *  # noqa
 from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,
