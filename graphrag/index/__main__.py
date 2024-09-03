@@ -92,6 +92,12 @@ if __name__ == "__main__":
         help="If enabled community reports are loaded into Kusto during activation",
         action="store_true",
     )
+    parser.add_argument(
+        "--optimized_search",
+        help="Runs optimized search and export artifacts",
+        type=bool,
+        default=False,
+    )
 
     args = parser.parse_args()
 
@@ -114,5 +120,6 @@ if __name__ == "__main__":
         context_id=args.context_id,
         context_operation=args.context_operation,
         community_level=args.community_level,
-        use_kusto_community_reports=args.use_kusto_community_reports
+        use_kusto_community_reports=args.use_kusto_community_reports,
+        optimized_search=args.optimized_search
     )
