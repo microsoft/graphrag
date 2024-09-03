@@ -134,3 +134,9 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
         raise NotImplementedError("Extracting community reports is not supported for LanceDB")
+
+    def setup_entities(self) -> None:
+        raise NotImplementedError("Setting up entities is not supported for LanceDB")
+
+    def setup_reports(self) -> None:
+        raise NotImplementedError("Setting up community reports is not supported for LanceDB")

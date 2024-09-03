@@ -213,24 +213,33 @@ class KustoVectorStore(BaseVectorStore):
     def unload_entities(self) -> None:
         self.client.execute(self.database,f".drop table {self.collection_name} ifexists")
 
+    def setup_entities(self) -> None:
+        command = f".create table {self.collection_name} (id: string, short_id: real, title: string, type: string, description: string, description_embedding: dynamic, name_embedding: dynamic, graph_embedding: dynamic, community_ids: dynamic, text_unit_ids: dynamic, document_ids: dynamic, rank: real, attributes: dynamic)"
+        self.client.execute(self.database, command)
+        command = f".alter column {self.collection_name}.graph_embedding policy encoding type = 'Vector16'"
+        self.client.execute(self.database, command)
+        command = f".alter column {self.collection_name}.description_embedding policy encoding type = 'Vector16'"
+        self.client.execute(self.database, command)
+
     def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
         # Convert data to DataFrame
         df = pd.DataFrame(entities)
 
         # Create or replace table
         if overwrite:
-            command = f".drop table {self.collection_name} ifexists"
-            self.client.execute(self.database, command)
-            command = f".create table {self.collection_name} (id: string, short_id: real, title: string, type: string, description: string, description_embedding: dynamic, name_embedding: dynamic, graph_embedding: dynamic, community_ids: dynamic, text_unit_ids: dynamic, document_ids: dynamic, rank: real, attributes: dynamic)"
-            self.client.execute(self.database, command)
-            command = f".alter column {self.collection_name}.graph_embedding policy encoding type = 'Vector16'"
-            self.client.execute(self.database, command)
-            command = f".alter column {self.collection_name}.description_embedding policy encoding type = 'Vector16'"
-            self.client.execute(self.database, command)
+            self.setup_entities()
 
         # Ingest data
         ingestion_command = f".ingest inline into table {self.collection_name} <| {df.to_csv(index=False, header=False)}"
         self.client.execute(self.database, ingestion_command)
+
+    def setup_reports(self) -> None:
+        command = f".create table {self.reports_name} (id: string, short_id: string, title: string, community_id: string, summary: string, full_content: string, rank: real, summary_embedding: dynamic, full_content_embedding: dynamic, attributes: dynamic)"
+        self.client.execute(self.database, command)
+        command = f".alter column {self.reports_name}.summary_embedding policy encoding type = 'Vector16'"
+        self.client.execute(self.database, command)
+        command = f".alter column {self.reports_name}.full_content_embedding policy encoding type = 'Vector16'"
+        self.client.execute(self.database, command)
 
     def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
         # Convert data to DataFrame
@@ -238,14 +247,7 @@ class KustoVectorStore(BaseVectorStore):
 
         # Create or replace table
         if overwrite:
-            command = f".drop table {self.reports_name} ifexists"
-            self.client.execute(self.database, command)
-            command = f".create table {self.reports_name} (id: string, short_id: string, title: string, community_id: string, summary: string, full_content: string, rank: real, summary_embedding: dynamic, full_content_embedding: dynamic, attributes: dynamic)"
-            self.client.execute(self.database, command)
-            command = f".alter column {self.reports_name}.summary_embedding policy encoding type = 'Vector16'"
-            self.client.execute(self.database, command)
-            command = f".alter column {self.reports_name}.full_content_embedding policy encoding type = 'Vector16'"
-            self.client.execute(self.database, command)
+            self.setup_reports()
 
         # Ingest data
         ingestion_command = f".ingest inline into table {self.reports_name} <| {df.to_csv(index=False, header=False)}"

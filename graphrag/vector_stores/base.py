@@ -105,3 +105,11 @@ class BaseVectorStore(ABC):
         self, community_ids: list[int], **kwargs: Any
     ) -> list[CommunityReport]:
         """Get reports for a given list of community ids."""
+
+    @abstractmethod
+    def setup_entities(self) -> None:
+        """Setup the entities in the vector-store."""
+
+    @abstractmethod
+    def setup_reports(self) -> None:
+        """Setup the reports in the vector-store."""
