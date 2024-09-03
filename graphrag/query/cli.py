@@ -234,7 +234,6 @@ def run_local_search(
 
     if(isinstance(description_embedding_store, KustoVectorStore)):
         entities = []
-        description_embedding_store.load_reports(reports)
         if use_kusto_community_reports:
             reports = []
 
