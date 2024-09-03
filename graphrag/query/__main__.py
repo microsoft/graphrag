@@ -16,8 +16,6 @@ class SearchType(Enum):
 
     LOCAL = "local"
     GLOBAL = "global"
-    KUSTO_LOCAL = "kusto_local"
-    KUSTO_GLOBAL = "kusto_global"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -86,13 +84,17 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--use_kusto_community_reports",
+        help="If enabled community reports are attempted to be used in Kusto during query",
+        action="store_true",
+    )
+
+    parser.add_argument(
         "query",
         nargs=1,
         help="The query to run",
         type=str,
     )
-
-
 
     args = parser.parse_args()
 
@@ -106,7 +108,8 @@ if __name__ == "__main__":
                 args.response_type,
                 args.context_id,
                 args.query[0],
-                optimized_search=args.optimized_search
+                optimized_search=args.optimized_search,
+                use_kusto_community_reports=args.use_kusto_community_reports,
             )
         case SearchType.GLOBAL:
             run_global_search(

@@ -4,6 +4,7 @@
 """The LanceDB vector storage implementation package."""
 
 import lancedb as lancedb  # noqa: I001 (Ruff was breaking on this file imports, even tho they were sorted and passed local tests)
+from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
@@ -121,9 +122,15 @@ class LanceDBVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
+    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+        raise NotImplementedError("Loading entities is not supported for LanceDB")
+
     def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[Entity]:
         raise NotImplementedError("Extracting entities is not supported for LanceDB")
 
-    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
-        raise NotImplementedError("Loading entities is not supported for LanceDB")
+    def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
+        raise NotImplementedError("Loading reports is not supported for LanceDB")
+
+    def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
+        raise NotImplementedError("Extracting community reports is not supported for LanceDB")

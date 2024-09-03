@@ -43,6 +43,7 @@ from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.kusto import KustoVectorStore
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +63,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         token_encoder: tiktoken.Encoding | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         is_optimized_search: bool = False,
+        use_kusto_community_reports: bool = False,
     ):
         if community_reports is None:
             community_reports = []
@@ -85,6 +87,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.token_encoder = token_encoder
         self.embedding_vectorstore_key = embedding_vectorstore_key
         self.is_optimized_search = is_optimized_search
+        self.use_kusto_community_reports = use_kusto_community_reports
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
         """Filter entity text embeddings by entity keys."""
@@ -238,7 +241,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         is_optimized_search: bool = False,
     ) -> tuple[str, dict[str, pd.DataFrame]]:
         """Add community data to the context window until it hits the max_tokens limit."""
-        if len(selected_entities) == 0 or len(self.community_reports) == 0:
+        if len(selected_entities) == 0 or (len(self.community_reports) == 0 and not self.use_kusto_community_reports):
             return ("", {context_name.lower(): pd.DataFrame()})
 
         community_matches = {}
@@ -250,12 +253,19 @@ class LocalSearchMixedContext(LocalContextBuilder):
                         community_matches.get(community_id, 0) + 1
                     )
 
+        selected_communities = []
+        if self.use_kusto_community_reports:
+            selected_communities = self.entity_text_embeddings.get_extracted_reports(
+                community_ids=list(community_matches.keys())
+            )
+        else:
+            selected_communities = [
+                self.community_reports[community_id]
+                for community_id in community_matches
+                if community_id in self.community_reports
+            ]
+
         # sort communities by number of matched entities and rank
-        selected_communities = [
-            self.community_reports[community_id]
-            for community_id in community_matches
-            if community_id in self.community_reports
-        ]
         for community in selected_communities:
             if community.attributes is None:
                 community.attributes = {}
@@ -450,7 +460,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 relationship_context, self.token_encoder
             )
 
-        
+
             # build covariate context
             for covariate in self.covariates:
                 covariate_context, covariate_context_data = build_covariates_context(

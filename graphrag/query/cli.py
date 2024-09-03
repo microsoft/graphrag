@@ -45,9 +45,10 @@ reporter = PrintProgressReporter("")
 reporter = PrintProgressReporter("")
 
 def __get_embedding_description_store(
-    entities: list[Entity],
+    entities: list[Entity] = [],
     vector_store_type: str = VectorStoreType.LanceDB,
     config_args: dict | None = None,
+    context_id: str = "",
 ):
     """Get the embedding description store."""
     if not config_args:
@@ -56,11 +57,12 @@ def __get_embedding_description_store(
     collection_name = config_args.get(
         "query_collection_name", "entity_description_embeddings"
     )
-    config_args.update({"collection_name": collection_name})
+    config_args.update({"collection_name": f"{collection_name}_{context_id}" if context_id else collection_name})
     vector_name = config_args.get(
         "vector_search_column", "description_embedding"
     )
     config_args.update({"vector_name": vector_name})
+    config_args.update({"reports_name": f"reports_{context_id}" if context_id else "reports"})
 
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
@@ -155,6 +157,7 @@ def run_local_search(
     context_id: str,
     query: str,
     optimized_search: bool = False,
+    use_kusto_community_reports: bool = False,
 ):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
@@ -213,12 +216,14 @@ def run_local_search(
     vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
-
-
+    reports=read_indexer_reports(
+        final_community_reports, final_nodes, community_level
+    )
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
         vector_store_type=vector_store_type,
         config_args=vector_store_args,
+        context_id=context_id,
     )
 
     covariates = (
@@ -229,12 +234,13 @@ def run_local_search(
 
     if(isinstance(description_embedding_store, KustoVectorStore)):
         entities = []
+        description_embedding_store.load_reports(reports)
+        if use_kusto_community_reports:
+            reports = []
 
     search_engine = get_local_search_engine(
         config,
-        reports=read_indexer_reports(
-            final_community_reports, final_nodes, community_level
-        ),
+        reports=reports,
         text_units=read_indexer_text_units(final_text_units),
         entities=entities,
         relationships=read_indexer_relationships(final_relationships),
@@ -242,6 +248,7 @@ def run_local_search(
         description_embedding_store=description_embedding_store,
         response_type=response_type,
         is_optimized_search=optimized_search,
+        use_kusto_community_reports=use_kusto_community_reports,
     )
 
     if optimized_search:

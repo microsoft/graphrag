@@ -6,6 +6,7 @@
 import typing
 from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
 from azure.kusto.data.helpers import dataframe_from_result_table
+from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
@@ -208,7 +209,7 @@ class KustoVectorStore(BaseVectorStore):
                 attributes=row["attributes"],
             ) for _, row in df.iterrows()
         ]
-    
+
     def unload_entities(self) -> None:
         self.client.execute(self.database,f".drop table {self.collection_name} ifexists")
 
@@ -230,3 +231,49 @@ class KustoVectorStore(BaseVectorStore):
         # Ingest data
         ingestion_command = f".ingest inline into table {self.collection_name} <| {df.to_csv(index=False, header=False)}"
         self.client.execute(self.database, ingestion_command)
+
+    def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
+        # Convert data to DataFrame
+        df = pd.DataFrame(reports)
+
+        # Create or replace table
+        if overwrite:
+            command = f".drop table {self.reports_name} ifexists"
+            self.client.execute(self.database, command)
+            command = f".create table {self.reports_name} (id: string, short_id: string, title: string, community_id: string, summary: string, full_content: string, rank: real, summary_embedding: dynamic, full_content_embedding: dynamic, attributes: dynamic)"
+            self.client.execute(self.database, command)
+            command = f".alter column {self.reports_name}.summary_embedding policy encoding type = 'Vector16'"
+            self.client.execute(self.database, command)
+            command = f".alter column {self.reports_name}.full_content_embedding policy encoding type = 'Vector16'"
+            self.client.execute(self.database, command)
+
+        # Ingest data
+        ingestion_command = f".ingest inline into table {self.reports_name} <| {df.to_csv(index=False, header=False)}"
+        self.client.execute(self.database, ingestion_command)
+
+
+    def get_extracted_reports(
+        self, community_ids: list[int], **kwargs: Any
+    ) -> list[CommunityReport]:
+        community_ids = ", ".join([str(id) for id in community_ids])
+        query = f"""
+        reports
+        | where community_id in ({community_ids})
+        """
+        response = self.client.execute(self.database, query)
+        df = dataframe_from_result_table(response.primary_results[0])
+
+        return [
+            CommunityReport(
+                id=row["id"],
+                short_id=row["short_id"],
+                title=row["title"],
+                community_id=row["community_id"],
+                summary=row["summary"],
+                full_content=row["full_content"],
+                rank=row["rank"],
+                summary_embedding=row["summary_embedding"],
+                full_content_embedding=row["full_content_embedding"],
+                attributes=row["attributes"],
+            ) for _, row in df.iterrows()
+        ]

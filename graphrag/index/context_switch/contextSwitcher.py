@@ -1,31 +1,29 @@
-from graphrag.common.progress import ProgressReporter
-from graphrag.config import GraphRagConfig
-from graphrag.config.enums import StorageType
-from graphrag.common.storage import PipelineStorage, BlobPipelineStorage, FilePipelineStorage
-from graphrag.common.utils.context_utils import get_files_by_contextid
-import pandas as pd
-from typing import cast
-from azure.core.exceptions import ResourceNotFoundError
 import asyncio
+import os
 from io import BytesIO
 from pathlib import Path
-from graphrag.config import (
-    create_graphrag_config,
-    GraphRagConfig,
-)
+from typing import cast
+
+import pandas as pd
+
 from common.graph_db_client import GraphDBClient
-import os
-from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-from graphrag.vector_stores.kusto import KustoVectorStore
+from graphrag.common.progress import ProgressReporter
+from graphrag.common.storage import (
+    BlobPipelineStorage,
+    FilePipelineStorage,
+    PipelineStorage,
+)
+from graphrag.common.utils.context_utils import get_files_by_contextid
+from graphrag.config import (
+    GraphRagConfig,
+    create_graphrag_config,
+)
+from graphrag.config.enums import StorageType
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.entity import Entity
 from graphrag.query.indexer_adapters import (
-    read_indexer_covariates,
     read_indexer_entities,
-    read_indexer_relationships,
     read_indexer_reports,
-    kt_read_indexer_reports,
-    read_indexer_text_units,
 )
 from graphrag.model.entity import Entity
 from azure.cosmos import CosmosClient, PartitionKey
@@ -36,7 +34,8 @@ class ContextSwitcher:
     def __init__(self, root_dir:str , config_dir:str,reporter: ProgressReporter,
                  context_id:str, community_level:int ,
                  data_dir: str = None,
-                 optimized_search: bool= False):
+                 optimized_search: bool= False,
+                 use_kusto_community_reports: bool = False,):
 
         self.root_dir=root_dir
         self.config_dir=config_dir
@@ -45,11 +44,13 @@ class ContextSwitcher:
         self.context_id=context_id
         self.optimized_search=optimized_search
         self.community_level = community_level
+        self.use_kusto_community_reports = use_kusto_community_reports
 
     def set_ctx_activation(
             self,
             activate: int,
             entities: list[Entity]=[],
+            reports: list[CommunityReport]=[],
             config_args: dict | None = None,
         ):
         if not config_args:
@@ -65,6 +66,7 @@ class ContextSwitcher:
                 "vector_search_column", "description_embedding"
         )
         config_args.update({"vector_name": vector_name})
+        config_args.update({"reports_name": f"reports_{self.context_id}"})
 
         description_embedding_store = VectorStoreFactory.get_vector_store(
                 vector_store_type=VectorStoreType.Kusto, kwargs=config_args
@@ -73,8 +75,11 @@ class ContextSwitcher:
 
         if activate:
             description_embedding_store.load_entities(entities)
+            if self.use_kusto_community_reports:
+                description_embedding_store.load_reports(reports)
         else:
             description_embedding_store.unload_entities()
+            # I don't think it is necessary to unload anything as the retention policy will take care of it.
 
         return 0
 
@@ -246,10 +251,13 @@ class ContextSwitcher:
                 ValueError("Context switching is only supporeted for vectore_store.type=kusto ")
 
             entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
+            reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
 
             self.set_ctx_activation(
                 entities=entities,
-                activate=1, config_args=vector_store_args,
+                reports=reports,
+                activate=1,
+                config_args=vector_store_args,
             )
 
     def deactivate(self):

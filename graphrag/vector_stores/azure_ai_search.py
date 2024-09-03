@@ -24,6 +24,7 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
+from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 
@@ -194,9 +195,15 @@ class AzureAISearch(BaseVectorStore):
             )
         return []
 
+    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+        raise NotImplementedError("Loading entities is not supported for Azure AI Search")
+
     def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[Entity]:
         raise NotImplementedError("Extracting entities is not supported for Azure AI Search")
 
-    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
-        raise NotImplementedError("Loading entities is not supported for Azure AI Search")
+    def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
+        raise NotImplementedError("Loading reports is not supported for Azure AI Search")
+
+    def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
+        raise NotImplementedError("Extracting reports is not supported for Azure AI Search")

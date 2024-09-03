@@ -53,13 +53,13 @@ if __name__ == "__main__":
         type=str,
     )
     parser.add_argument(
-        "--context-id",
+        "--context_id",
         required=False,
         help="Context id to activate or deactivate.",
         type=str
     )
     parser.add_argument(
-        "--context-operation",
+        "--context_operation",
         help="Context operation activate or deactivate.",
         required=False,
         # Only required if contextId is provided
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
-        "--overlay-defaults",
+        "--overlay_defaults",
         help="Overlay default configuration values on a provided configuration file (--config).",
         action="store_true",
     )
@@ -86,6 +86,11 @@ if __name__ == "__main__":
         help="Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities",
         type=int,
         default=2,
+    )
+    parser.add_argument(
+        "--use_kusto_community_reports",
+        help="If enabled community reports are loaded into Kusto during activation",
+        action="store_true",
     )
 
     args = parser.parse_args()
@@ -108,5 +113,6 @@ if __name__ == "__main__":
         cli=True,
         context_id=args.context_id,
         context_operation=args.context_operation,
-        community_level=args.community_level
+        community_level=args.community_level,
+        use_kusto_community_reports=args.use_kusto_community_reports
     )
