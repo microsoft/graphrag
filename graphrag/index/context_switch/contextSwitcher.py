@@ -27,6 +27,8 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.model.entity import Entity
 from azure.cosmos import CosmosClient, PartitionKey
+from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
 
 class ContextSwitcher:
     """ContextSwitcher class definition."""
@@ -46,13 +48,9 @@ class ContextSwitcher:
         self.community_level = community_level
         self.use_kusto_community_reports = use_kusto_community_reports
 
-    def set_ctx_activation(
-            self,
-            activate: int,
-            entities: list[Entity]=[],
-            reports: list[CommunityReport]=[],
-            config_args: dict | None = None,
-        ):
+    def setup_vector_store(self,
+            config_args: dict | None = None,) -> BaseVectorStore:
+        """Set up the vector store and return it."""
         if not config_args:
                 config_args = {}
 
@@ -73,15 +71,8 @@ class ContextSwitcher:
         )
         description_embedding_store.connect(**config_args)
 
-        if activate:
-            description_embedding_store.load_entities(entities)
-            if self.use_kusto_community_reports:
-                description_embedding_store.load_reports(reports)
-        else:
-            description_embedding_store.unload_entities()
-            # I don't think it is necessary to unload anything as the retention policy will take care of it.
-
-        return 0
+        description_embedding_store.setup_entities()
+        return description_embedding_store
 
     def activate(self):
         """Activate the context."""
@@ -217,6 +208,9 @@ class ContextSwitcher:
                 offer_throughput=400
             )
             graph_db_client = GraphDBClient(config.graphdb,context_id)
+
+        description_embedding_store = self.setup_vector_store(config_args=config.embeddings.vector_store)
+
         for data_path in data_paths:
             #check from the config for the ouptut storage type and then read the data from the storage.
 
@@ -253,12 +247,9 @@ class ContextSwitcher:
             entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
             reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
 
-            self.set_ctx_activation(
-                entities=entities,
-                reports=reports,
-                activate=1,
-                config_args=vector_store_args,
-            )
+            description_embedding_store.load_entities(entities)
+            if self.use_kusto_community_reports:
+                description_embedding_store.load_reports(reports)
 
     def deactivate(self):
         """DeActivate the context."""
