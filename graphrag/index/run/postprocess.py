@@ -36,7 +36,7 @@ async def _run_post_process_steps(
     Returns:
         - output - The dataset after running the post process steps
     """
-    if post_process is not None and len(post_process) > 0:
+    if post_process:
         input_workflow = create_workflow(
             "Input Post Process",
             post_process,

@@ -78,6 +78,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    if args.resume and args.update_index:
+        msg = "Cannot resume and update a run at the same time."
+        raise ValueError(msg)
+
     index_cli(
         root_dir=args.root,
         verbose=args.verbose or False,

@@ -12,6 +12,7 @@ from datashaper import (
     WorkflowCallbacks,
 )
 
+from graphrag.index.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
@@ -32,6 +33,7 @@ from graphrag.index.context import PipelineRunContext, PipelineRunStats
 from graphrag.index.input import load_input
 from graphrag.index.progress.types import ProgressReporter
 from graphrag.index.reporting import load_pipeline_reporter
+from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.index.storage.typing import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -102,13 +104,13 @@ def _apply_substitutions(config: PipelineConfig, run_id: str) -> PipelineConfig:
 
 
 def _create_run_context(
-    storage: PipelineStorage,
-    cache: PipelineCache,
-    stats: PipelineRunStats,
+    storage: PipelineStorage | None,
+    cache: PipelineCache | None,
+    stats: PipelineRunStats | None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
     return PipelineRunContext(
-        stats=stats,
-        cache=cache,
-        storage=storage,
+        stats=stats or PipelineRunStats(),
+        cache=cache or InMemoryCache(),
+        storage=storage or MemoryPipelineStorage(),
     )

@@ -13,13 +13,12 @@ from typing import cast
 import pandas as pd
 from datashaper import WorkflowCallbacks
 
-from graphrag.index.cache import InMemoryCache, PipelineCache
+from graphrag.index.cache import PipelineCache
 from graphrag.index.config import (
     PipelineConfig,
     PipelineWorkflowReference,
     PipelineWorkflowStep,
 )
-from graphrag.index.context import PipelineRunStats
 from graphrag.index.emit import TableEmitterType, create_table_emitters
 from graphrag.index.load_pipeline_config import load_pipeline_config
 from graphrag.index.progress import NullProgressReporter, ProgressReporter
@@ -31,8 +30,7 @@ from graphrag.index.run.postprocess import (
     _create_postprocess_steps,
     _run_post_process_steps,
 )
-from graphrag.index.run.profiling import _dump_stats, _write_workflow_stats
-from graphrag.index.run.storage import _create_storage
+from graphrag.index.run.profiling import _dump_stats
 from graphrag.index.run.utils import (
     _apply_substitutions,
     _create_input,
@@ -42,10 +40,9 @@ from graphrag.index.run.utils import (
 )
 from graphrag.index.run.workflow import (
     _create_callback_chain,
-    _emit_workflow_output,
-    _inject_workflow_data_dependencies,
+    _process_workflow,
 )
-from graphrag.index.storage import MemoryPipelineStorage, PipelineStorage
+from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
@@ -55,6 +52,7 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
+from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)
 
@@ -177,16 +175,16 @@ async def run_pipeline(
         - output - An iterable of workflow results as they complete running, as well as any errors that occur
     """
     start_time = time.time()
-    stats = PipelineRunStats()
-    storage = storage or MemoryPipelineStorage()
-    cache = cache or InMemoryCache()
+
+    context = _create_run_context(storage=storage, cache=cache, stats=None)
+
     progress_reporter = progress_reporter or NullProgressReporter()
     callbacks = callbacks or ConsoleWorkflowCallbacks()
     callbacks = _create_callback_chain(callbacks, progress_reporter)
     emit = emit or [TableEmitterType.Parquet]
     emitters = create_table_emitters(
         emit,
-        storage,
+        context.storage,
         lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
             "Error emitting table", e, s, d
         ),
@@ -199,8 +197,6 @@ async def run_pipeline(
     )
     workflows_to_run = loaded_workflows.workflows
     workflow_dependencies = loaded_workflows.dependencies
-
-    context = _create_run_context(storage, cache, stats)
 
     if len(emitters) == 0:
         log.info(
@@ -215,48 +211,32 @@ async def run_pipeline(
     _validate_dataset(dataset)
 
     log.info("Final # of rows loaded: %s", len(dataset))
-    stats.num_documents = len(dataset)
+    context.stats.num_documents = len(dataset)
     last_workflow = "input"
 
     try:
-        await _dump_stats(stats, storage)
+        await _dump_stats(context.stats, context.storage)
 
         for workflow_to_run in workflows_to_run:
             # Try to flush out any intermediate dataframes
             gc.collect()
 
-            workflow = workflow_to_run.workflow
-            workflow_name: str = workflow.name
-            last_workflow = workflow_name
-
-            log.info("Running workflow: %s...", workflow_name)
-
-            if is_resume_run and await storage.has(
-                f"{workflow_to_run.workflow.name}.parquet"
-            ):
-                log.info("Skipping %s because it already exists", workflow_name)
-                continue
-
-            stats.workflows[workflow_name] = {"overall": 0.0}
-            await _inject_workflow_data_dependencies(
-                workflow, workflow_dependencies, dataset, storage
+            last_workflow = workflow_to_run.workflow.name
+            result = await _process_workflow(
+                workflow_to_run.workflow,
+                context,
+                callbacks,
+                emitters,
+                workflow_dependencies,
+                dataset,
+                start_time,
+                is_resume_run,
             )
+            if result:
+                yield result
 
-            workflow_start_time = time.time()
-            result = await workflow.run(context, callbacks)
-            await _write_workflow_stats(
-                workflow, result, workflow_start_time, start_time, stats, storage
-            )
-
-            # Save the output from the workflow
-            output = await _emit_workflow_output(workflow, emitters)
-            yield PipelineRunResult(workflow_name, output, None)
-            output = None
-            workflow.dispose()
-            workflow = None
-
-        stats.total_runtime = time.time() - start_time
-        await _dump_stats(stats, storage)
+        context.stats.total_runtime = time.time() - start_time
+        await _dump_stats(context.stats, context.storage)
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         cast(WorkflowCallbacks, callbacks).on_error(

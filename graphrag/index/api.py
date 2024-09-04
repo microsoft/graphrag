@@ -54,6 +54,10 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
+    if is_resume_run and is_update_run:
+        msg = "Cannot resume and update a run at the same time."
+        raise ValueError(msg)
+
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
@@ -77,50 +81,3 @@ async def build_index(
                 progress_reporter.success(output.workflow)
             progress_reporter.info(str(output.result))
     return outputs
-
-
-async def update_index(  # noqa: RUF029
-    config: GraphRagConfig,  # noqa: ARG001
-    run_id: str,  # noqa: ARG001
-    memory_profile: bool,  # noqa: ARG001
-    update_index_id: str,  # noqa: ARG001
-    progress_reporter: ProgressReporter | None = None,  # noqa: ARG001
-    emit: list[str] | None = None,  # noqa: ARG001
-) -> list[PipelineRunResult]:
-    """Run the pipeline with the given configuration.
-
-    Parameters
-    ----------
-    config : PipelineConfig
-        The configuration.
-    run_id : str
-        The run id. Creates a output directory with this name.
-    memory_profile : bool
-        Whether to enable memory profiling.
-    update_index_id : str
-        The index id to update in incremental runs.
-    progress_reporter : ProgressReporter | None default=None
-        The progress reporter.
-    emit : list[str] | None default=None
-        The list of emitter types to emit.
-        Accepted values {"parquet", "csv"}.
-
-    Returns
-    -------
-    list[PipelineRunResult]
-        The list of pipeline run results
-    """
-    # Basic init
-
-    # TODO: Review input folder to check if update is viable or if should run index
-
-    # TODO: Get new files to process from input
-
-    # TODO: Execute pipeline over delta
-    # TODO: Update index
-    # TODO: Write drift report
-    # TODO: Return results
-
-    # TODO: After the above steps are implemented, read drift report and run full index if drift is above threshold
-    msg = "This function is not implemented yet."
-    raise NotImplementedError(msg)
