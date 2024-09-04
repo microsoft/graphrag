@@ -210,12 +210,11 @@ def _resolve_parquet_files(
                     credential=DefaultAzureCredentialSync(),
                 )
 
-            elif config.storage.connection_string is not None:
+            else:
                 connection_string = str(config.storage.connection_string)
                 storage_account_name = connection_string.split("AccountName=")[1].split(
                     ";"
                 )[0]
-
                 storage_options = {
                     "account_name": storage_account_name,
                     "connection_string": connection_string,
