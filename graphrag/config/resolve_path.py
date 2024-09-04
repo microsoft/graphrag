@@ -79,9 +79,9 @@ def _resolve_timestamp_path_with_dir(
     return _resolve_timestamp_path_with_value(path, timestamp_dirs[0].name)
 
 
-def resolve_timestamp_path(
+def _resolve_timestamp_path(
     path: str | Path,
-    pattern_or_timestamp_value: re.Pattern[str] | str = re.compile(r"^\d{8}-\d{6}$"),
+    pattern_or_timestamp_value: re.Pattern[str] | str | None = None,
 ) -> Path:
     r"""Timestamp path resolver.
 
@@ -110,6 +110,43 @@ def resolve_timestamp_path(
         If the parent directory expecting to contain timestamp directories does not exist or is not a directory.
         Or if no timestamp directories are found in the parent directory that match the pattern.
     """
+    if not pattern_or_timestamp_value:
+        pattern_or_timestamp_value = re.compile(r"^\d{8}-\d{6}$")
     if isinstance(pattern_or_timestamp_value, str):
         return _resolve_timestamp_path_with_value(path, pattern_or_timestamp_value)
     return _resolve_timestamp_path_with_dir(path, pattern_or_timestamp_value)
+
+
+def resolve_path(
+    path_to_resolve: Path | str,
+    root_dir: Path | str | None = None,
+    pattern_or_timestamp_value: re.Pattern[str] | str | None = None,
+) -> Path:
+    """Resolve the path.
+
+    Resolves any timestamp variables by either using the provided timestamp value if string or
+    by looking up the latest available timestamp directory that matches the given pattern.
+    Resolves the path against the root directory if provided.
+
+    Parameters
+    ----------
+    path_to_resolve : Path | str
+        The path to resolve.
+    root_dir : Path | str | None default=None
+        The root directory to resolve the path from, if provided.
+    pattern_or_timestamp_value : re.Pattern[str] | str, default=None
+        The pattern to use to match the timestamp directories or the timestamp value to use.
+        If a string is provided, the path will be resolved with the given string value.
+        Otherwise, the path will be resolved with the latest available timestamp directory
+        that matches the given pattern.
+
+    Returns
+    -------
+    Path
+        The resolved path.
+    """
+    if root_dir:
+        path_to_resolve = (Path(root_dir) / path_to_resolve).resolve()
+    else:
+        path_to_resolve = Path(path_to_resolve)
+    return _resolve_timestamp_path(path_to_resolve, pattern_or_timestamp_value)
