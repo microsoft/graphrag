@@ -176,6 +176,7 @@ def run_local_search(
     # External users should use the API directly to get the response and context data.
     return response, context_data
 
+
 def _resolve_parquet_files(
     data_path: Path, config: GraphRagConfig
 ) -> dict[str, pd.DataFrame]:
