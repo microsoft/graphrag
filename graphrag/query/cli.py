@@ -16,11 +16,9 @@ from graphrag.config import (
     GraphRagConfig,
     StorageType,
     create_graphrag_config,
+    load_config,
+    resolve_path,
 )
-from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
-from graphrag.config import load_config, resolve_timestamp_path
-
-from graphrag.config import load_config, resolve_path
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
@@ -49,15 +47,10 @@ def run_global_search(
 
     data_path = Path(config.storage.base_dir).resolve()
 
-    final_nodes: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_nodes.parquet"
-    )
-    final_entities: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_entities.parquet"
-    )
-    final_community_reports: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
-    )
+    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
+    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
 
     # call the Query API
     if streaming:
@@ -125,21 +118,13 @@ def run_local_search(
 
     data_path = Path(config.storage.base_dir).resolve()
 
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
-    final_community_reports = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
-    )
-    final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
-    final_relationships = pd.read_parquet(
-        data_path / "create_final_relationships.parquet"
-    )
-    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
-    final_covariates_path = data_path / "create_final_covariates.parquet"
-    final_covariates = (
-        pd.read_parquet(final_covariates_path)
-        if final_covariates_path.exists()
-        else None
-    )
+    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
+    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
 
     # call the Query API
     if streaming:
@@ -190,36 +175,6 @@ def run_local_search(
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
-
-
-def _configure_paths_and_settings(
-    data_dir: str | None,
-    root_dir: str | None,
-    config_filepath: str | None,
-) -> tuple[str, str | None, GraphRagConfig]:
-    config = _create_graphrag_config(root_dir, config_filepath)
-    if data_dir is None and root_dir is None:
-        msg = "Either data_dir or root_dir must be provided."
-        raise ValueError(msg)
-    if data_dir is None:
-        base_dir = Path(str(root_dir)) / config.storage.base_dir
-        data_dir = str(resolve_timestamp_path(base_dir))
-    return data_dir, root_dir, config
-
-
-def _infer_data_dir(root: str) -> str:
-    output = Path(root) / "output"
-    # use the latest data-run folder
-    if output.exists():
-        expr = re.compile(r"\d{8}-\d{6}")
-        filtered = [f for f in output.iterdir() if f.is_dir() and expr.match(f.name)]
-        folders = sorted(filtered, key=lambda f: f.name, reverse=True)
-        if len(folders) > 0:
-            folder = folders[0]
-            return str((folder / "artifacts").absolute())
-    msg = f"Could not infer data directory from root={root}"
-    raise ValueError(msg)
-
 
 def _resolve_parquet_files(
     data_path: Path, config: GraphRagConfig
