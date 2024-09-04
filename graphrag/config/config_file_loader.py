@@ -9,13 +9,13 @@ from pathlib import Path
 
 import yaml
 
-from . import create_graphrag_config
+from .create_graphrag_config import create_graphrag_config
 from .models.graph_rag_config import GraphRagConfig
 
 _default_config_files = ["settings.yaml", "settings.yml", "settings.json"]
 
 
-def resolve_config_path_with_root(root: str | Path) -> Path:
+def search_for_config_in_root_dir(root: str | Path) -> Path | None:
     """Resolve the config path from the given root directory.
 
     Parameters
@@ -26,13 +26,9 @@ def resolve_config_path_with_root(root: str | Path) -> Path:
 
     Returns
     -------
-    Path
-        The resolved config file path.
-
-    Raises
-    ------
-    FileNotFoundError
-        If the config file is not found or cannot be resolved for the directory.
+    Path | None
+        returns a Path if there is a config in the root directory
+        Otherwise returns None.
     """
     root = Path(root)
 
@@ -44,8 +40,7 @@ def resolve_config_path_with_root(root: str | Path) -> Path:
         if (root / file).is_file():
             return root / file
 
-    msg = f"Unable to resolve config file for parent directory: {root}"
-    raise FileNotFoundError(msg)
+    return None
 
 
 class ConfigFileLoader(ABC):

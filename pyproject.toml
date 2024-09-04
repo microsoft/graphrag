@@ -123,6 +123,7 @@ _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 _semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
+semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."
