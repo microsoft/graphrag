@@ -7,8 +7,9 @@ from pathlib import Path
 
 from .config_file_loader import load_config_from_file, search_for_config_in_root_dir
 from .create_graphrag_config import create_graphrag_config
+from .enums import ReportingType, StorageType
 from .models.graph_rag_config import GraphRagConfig
-from .resolve_timestamp_path import resolve_timestamp_path
+from .resolve_path import resolve_path
 
 
 def load_config(
@@ -47,19 +48,19 @@ def load_config(
     else:
         config = create_graphrag_config(root_dir=str(root))
 
-    if run_id:
-        config.storage.base_dir = str(
-            resolve_timestamp_path((root / config.storage.base_dir).resolve(), run_id)
+    config.storage.base_dir = str(
+        resolve_path(
+            config.storage.base_dir,
+            root if config.storage.type == StorageType.file else None,
+            run_id,
         )
-        config.reporting.base_dir = str(
-            resolve_timestamp_path((root / config.reporting.base_dir).resolve(), run_id)
+    )
+    config.reporting.base_dir = str(
+        resolve_path(
+            config.reporting.base_dir,
+            root if config.reporting.type == ReportingType.file else None,
+            run_id,
         )
-    else:
-        config.storage.base_dir = str(
-            resolve_timestamp_path((root / config.storage.base_dir).resolve())
-        )
-        config.reporting.base_dir = str(
-            resolve_timestamp_path((root / config.reporting.base_dir).resolve())
-        )
+    )
 
     return config
