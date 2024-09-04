@@ -5,11 +5,11 @@
 
 from pathlib import Path
 
+from graphrag.config import load_config
 from graphrag.index.progress import PrintProgressReporter
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import (
     MIN_CHUNK_SIZE,
-    read_config_parameters,
 )
 
 from . import api
@@ -53,11 +53,12 @@ async def prompt_tune(
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
     reporter = PrintProgressReporter("")
-    graph_config = read_config_parameters(root, reporter, config)
+    root_path = Path(root).resolve()
+    graph_config = load_config(root_path, config)
 
     prompts = await api.generate_indexing_prompts(
         config=graph_config,
-        root=root,
+        root=str(root_path),
         chunk_size=chunk_size,
         limit=limit,
         selection_method=selection_method,
@@ -70,7 +71,7 @@ async def prompt_tune(
         k=k,
     )
 
-    output_path = Path(output)
+    output_path = (root_path / output).resolve()
     if output_path:
         reporter.info(f"Writing prompts to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)
