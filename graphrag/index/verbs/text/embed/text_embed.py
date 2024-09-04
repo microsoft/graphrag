@@ -81,7 +81,7 @@ async def text_embed(
     """
     vector_store_config = strategy.get("vector_store")
 
-    if vector_store_config:
+    if vector_store_config and not vector_store_config.get("index_in_memory"):
         embedding_name = kwargs.get("embedding_name", "default")
         vector_name = kwargs.get("vector_name", "vector")
         collection_name = _get_collection_name(vector_store_config, embedding_name)
