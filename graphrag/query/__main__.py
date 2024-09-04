@@ -36,6 +36,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Runs the pipeline with verbose logging",
+        action="store_true",
+    )
+
+    parser.add_argument(
         "--data",
         help="The path with the output data from the pipeline",
         required=False,
@@ -96,6 +103,7 @@ if __name__ == "__main__":
                 args.community_level,
                 args.response_type,
                 args.streaming,
+                args.verbose,
                 args.query[0],
             )
         case SearchType.GLOBAL:
@@ -106,6 +114,7 @@ if __name__ == "__main__":
                 args.community_level,
                 args.response_type,
                 args.streaming,
+                args.verbose,
                 args.query[0],
             )
         case _:
