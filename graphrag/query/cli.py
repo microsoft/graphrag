@@ -44,10 +44,7 @@ def run_global_search(
     )
     data_path = Path(data_dir)
 
-    dataframe_dict = _resolve_parquet_files(
-        data_path=data_path,
-        config=config
-    )
+    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
     final_nodes: pd.DataFrame = dataframe_dict["nodes"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
@@ -115,10 +112,7 @@ def run_local_search(
     )
     data_path = Path(data_dir)
 
-    dataframe_dict = _resolve_parquet_files(
-        data_path=data_path,
-        config=config
-    )
+    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
     final_nodes: pd.DataFrame = dataframe_dict["nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
     final_text_units: pd.DataFrame = dataframe_dict["text_units"]
@@ -206,9 +200,9 @@ def _infer_data_dir(root: str) -> str:
     msg = f"Could not infer data directory from root={root}"
     raise ValueError(msg)
 
+
 def _resolve_parquet_files(
-    data_path: Path,
-    config: GraphRagConfig
+    data_path: Path, config: GraphRagConfig
 ) -> dict[str, pd.DataFrame]:
     """Read parquet files to a dataframe dict."""
     dataframe_dict = {}
@@ -223,10 +217,12 @@ def _resolve_parquet_files(
             ):
                 msg = "Connection string or storage account blob url required for querying blob storage"
                 raise ValueError(msg)
-            
+
             if config.storage.storage_account_blob_url is not None:
                 storage_account_blob_url = str(config.storage.storage_account_blob_url)
-                storage_account_name = storage_account_blob_url.split("//")[1].split(".")[0]
+                storage_account_name = storage_account_blob_url.split("//")[1].split(
+                    "."
+                )[0]
 
                 storage_options = {
                     "account_name": storage_account_name,
@@ -235,16 +231,18 @@ def _resolve_parquet_files(
 
                 blob_service_client = BlobServiceClient(
                     account_url=storage_account_blob_url,
-                    credential=DefaultAzureCredentialSync()
+                    credential=DefaultAzureCredentialSync(),
                 )
-                
+
             elif config.storage.connection_string is not None:
                 connection_string = str(config.storage.connection_string)
-                storage_account_name = connection_string.split("AccountName=")[1].split(";")[0]
+                storage_account_name = connection_string.split("AccountName=")[1].split(
+                    ";"
+                )[0]
 
                 storage_options = {
                     "account_name": storage_account_name,
-                    "connection_string": connection_string
+                    "connection_string": connection_string,
                 }
 
                 blob_service_client = BlobServiceClient.from_connection_string(
@@ -257,44 +255,56 @@ def _resolve_parquet_files(
             def get_abfs_path(parquet_name: str):
                 abfs_path_str = str(Path(container_name) / base_dir / parquet_name)
                 return f"abfs://{abfs_path_str}"
-            
+
             container_client = blob_service_client.get_container_client(container_name)
-            covariates_exists = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet").exists()
+            covariates_exists = container_client.get_blob_client(
+                f"{base_dir}/create_final_covariates.parquet"
+            ).exists()
             if covariates_exists:
                 dataframe_dict["covariates"] = pd.read_parquet(
                     path=get_abfs_path("create_final_covariates.parquet"),
-                    storage_options=storage_options
+                    storage_options=storage_options,
                 )
             else:
                 dataframe_dict["covariates"] = None
-            
+
             dataframe_dict["nodes"] = pd.read_parquet(
                 path=get_abfs_path("create_final_nodes.parquet"),
-                storage_options=storage_options
+                storage_options=storage_options,
             )
             dataframe_dict["entities"] = pd.read_parquet(
                 path=get_abfs_path("create_final_entities.parquet"),
-                storage_options=storage_options
+                storage_options=storage_options,
             )
             dataframe_dict["community_reports"] = pd.read_parquet(
                 path=get_abfs_path("create_final_community_reports.parquet"),
-                storage_options=storage_options
+                storage_options=storage_options,
             )
             dataframe_dict["text_units"] = pd.read_parquet(
                 path=get_abfs_path("create_final_text_units.parquet"),
-                storage_options=storage_options
+                storage_options=storage_options,
             )
             dataframe_dict["relationships"] = pd.read_parquet(
                 path=get_abfs_path("create_final_relationships.parquet"),
-                storage_options=storage_options
+                storage_options=storage_options,
             )
 
         case StorageType.file:
-            dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
-            dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
-            dataframe_dict["community_reports"] = pd.read_parquet(data_path / "create_final_community_reports.parquet")
-            dataframe_dict["text_units"] = pd.read_parquet(data_path / "create_final_text_units.parquet")
-            dataframe_dict["relationships"] = pd.read_parquet(data_path / "create_final_relationships.parquet")
+            dataframe_dict["nodes"] = pd.read_parquet(
+                data_path / "create_final_nodes.parquet"
+            )
+            dataframe_dict["entities"] = pd.read_parquet(
+                data_path / "create_final_entities.parquet"
+            )
+            dataframe_dict["community_reports"] = pd.read_parquet(
+                data_path / "create_final_community_reports.parquet"
+            )
+            dataframe_dict["text_units"] = pd.read_parquet(
+                data_path / "create_final_text_units.parquet"
+            )
+            dataframe_dict["relationships"] = pd.read_parquet(
+                data_path / "create_final_relationships.parquet"
+            )
 
             final_covariates_path = data_path / "create_final_covariates.parquet"
             dataframe_dict["covariates"] = (
@@ -303,11 +313,21 @@ def _resolve_parquet_files(
                 else None
             )
         case _:
-            dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
-            dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
-            dataframe_dict["community_reports"] = pd.read_parquet(data_path / "create_final_community_reports.parquet")
-            dataframe_dict["text_units"] = pd.read_parquet(data_path / "create_final_text_units.parquet")
-            dataframe_dict["relationships"] = pd.read_parquet(data_path / "create_final_relationships.parquet")
+            dataframe_dict["nodes"] = pd.read_parquet(
+                data_path / "create_final_nodes.parquet"
+            )
+            dataframe_dict["entities"] = pd.read_parquet(
+                data_path / "create_final_entities.parquet"
+            )
+            dataframe_dict["community_reports"] = pd.read_parquet(
+                data_path / "create_final_community_reports.parquet"
+            )
+            dataframe_dict["text_units"] = pd.read_parquet(
+                data_path / "create_final_text_units.parquet"
+            )
+            dataframe_dict["relationships"] = pd.read_parquet(
+                data_path / "create_final_relationships.parquet"
+            )
 
             final_covariates_path = data_path / "create_final_covariates.parquet"
             dataframe_dict["covariates"] = (
@@ -316,6 +336,7 @@ def _resolve_parquet_files(
                 else None
             )
     return dataframe_dict
+
 
 def _create_graphrag_config(
     root: str | None,
