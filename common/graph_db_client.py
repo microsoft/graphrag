@@ -103,13 +103,13 @@ class GraphDBClient:
                         "prop_partition_key": "entities",
                         "prop_description_embedding":json.dumps(row.description_embedding.tolist() if row.description_embedding is not None else []),
                         "prop_graph_embedding":json.dumps(row.graph_embedding.tolist() if row.graph_embedding is not None else []),
-                        "prop_text_unit_ids":json.dumps(row.text_unit_ids if row.text_unit_ids is not None else []),
+                        "prop_text_unit_ids":json.dumps(row.text_unit_ids.tolist() if row.text_unit_ids is not None else []),
                     },
                 )
             time.sleep(5)
 
 
-    def write_edges(self,data: pd.DataFrame,context_id:str="00000000-0000-0000-0000-000000000000")->None:
+    def write_edges(self,data: pd.DataFrame)->None:
         for row in data.itertuples():
             if self.element_exists("g.E()",row.id):
                 continue
@@ -134,7 +134,7 @@ class GraphDBClient:
                     "prop_source_id": row.source,
                     "prop_target_id": row.target,
                     "prop_weight": row.weight,
-                    "prop_text_unit_ids":json.dumps(row.text_unit_ids if row.text_unit_ids is not None else []),
+                    "prop_text_unit_ids":json.dumps(row.text_unit_ids.tolist() if row.text_unit_ids is not None else []),
                     "prop_description": row.description,
                     "prop_id": row.id,
                     "prop_human_readable_id": row.human_readable_id,

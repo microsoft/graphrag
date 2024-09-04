@@ -201,13 +201,11 @@ def run_local_search(
             final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
 
         if config.graphdb.enabled:
-            final_relationships = pd.concat([final_relationships, graph_db_client.query_edges(context_id)])
             final_entities = pd.concat([final_entities, graph_db_client.query_vertices(context_id)])
         else:
-            final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
             final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
 
-
+    graph_db_client._client.close()
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
@@ -242,12 +240,14 @@ def run_local_search(
         reports=reports,
         text_units=read_indexer_text_units(final_text_units),
         entities=entities,
-        relationships=read_indexer_relationships(final_relationships),
+        relationships=[],
         covariates={"claims": covariates},
         description_embedding_store=description_embedding_store,
         response_type=response_type,
+        context_id=context_id,
         is_optimized_search=optimized_search,
         use_kusto_community_reports=use_kusto_community_reports,
+        graphdb_config=config.graphdb,
     )
 
     if optimized_search:

@@ -3,6 +3,7 @@
 
 """Query Factory methods to support CLI."""
 
+from graphrag.config.models.graphdb_config import GraphDBConfig
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
@@ -108,8 +109,10 @@ def get_local_search_engine(
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
+    context_id: str,
     is_optimized_search: bool = False,
     use_kusto_community_reports: bool = False,
+    graphdb_config: GraphDBConfig|None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -132,6 +135,8 @@ def get_local_search_engine(
             token_encoder=token_encoder,
             is_optimized_search= is_optimized_search,
             use_kusto_community_reports=use_kusto_community_reports,
+            graphdb_config=graphdb_config,
+            context_id=context_id,
         ),
         token_encoder=token_encoder,
         llm_params={

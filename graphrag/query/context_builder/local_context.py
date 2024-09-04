@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, cast
 
 import pandas as pd
+from common.graph_db_client import GraphDBClient
 import tiktoken
 
 from graphrag.model import Covariate, Entity, Relationship
@@ -164,7 +165,8 @@ def build_relationship_context(
     relationship_ranking_attribute: str = "rank",
     column_delimiter: str = "|",
     context_name: str = "Relationships",
-    is_optimized_search: bool = False
+    is_optimized_search: bool = False,
+    graphdb_client: GraphDBClient|None=None,
 ) -> tuple[str, pd.DataFrame]:
     """Prepare relationship data tables as context data for system prompt."""
     selected_relationships = _filter_relationships(
@@ -172,6 +174,7 @@ def build_relationship_context(
         relationships=relationships,
         top_k_relationships=top_k_relationships,
         relationship_ranking_attribute=relationship_ranking_attribute,
+        graphdb_client=graphdb_client,
     )
 
     if len(selected_entities) == 0 or len(selected_relationships) == 0:
@@ -236,6 +239,7 @@ def _filter_relationships(
     relationships: list[Relationship],
     top_k_relationships: int = 10,
     relationship_ranking_attribute: str = "rank",
+    graphdb_client: GraphDBClient|None=None,
 ) -> list[Relationship]:
     """Filter and sort relationships based on a set of selected entities and a ranking attribute."""
     # First priority: in-network relationships (i.e. relationships between selected entities)
@@ -243,6 +247,7 @@ def _filter_relationships(
         selected_entities=selected_entities,
         relationships=relationships,
         ranking_attribute=relationship_ranking_attribute,
+        graphdb_client=graphdb_client,
     )
 
     # Second priority -  out-of-network relationships
@@ -251,6 +256,7 @@ def _filter_relationships(
         selected_entities=selected_entities,
         relationships=relationships,
         ranking_attribute=relationship_ranking_attribute,
+        graphdb_client=graphdb_client,
     )
     if len(out_network_relationships) <= 1:
         return in_network_relationships + out_network_relationships

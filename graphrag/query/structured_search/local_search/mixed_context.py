@@ -6,6 +6,8 @@ import logging
 from typing import Any
 
 import pandas as pd
+from common.graph_db_client import GraphDBClient
+from graphrag.config.models.graphdb_config import GraphDBConfig
 import tiktoken
 
 from graphrag.model import (
@@ -64,6 +66,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         is_optimized_search: bool = False,
         use_kusto_community_reports: bool = False,
+        graphdb_config: GraphDBConfig|None = None,
+        context_id:str = None,
     ):
         if community_reports is None:
             community_reports = []
@@ -88,6 +92,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.embedding_vectorstore_key = embedding_vectorstore_key
         self.is_optimized_search = is_optimized_search
         self.use_kusto_community_reports = use_kusto_community_reports
+        self.graphdb_config = graphdb_config
+        self.context_id = context_id
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
         """Filter entity text embeddings by entity keys."""
@@ -433,6 +439,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         final_context_data = {}
 
         # gradually add entities and associated metadata to the context until we reach limit
+        graphdb_client=GraphDBClient(self.graphdb_config,self.context_id) if (self.graphdb_config and self.graphdb_config.enabled) else None
         for entity in selected_entities:
             current_context = []
             current_context_data = {}
@@ -452,7 +459,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 include_relationship_weight=include_relationship_weight,
                 relationship_ranking_attribute=relationship_ranking_attribute,
                 context_name="Relationships",
-                is_optimized_search=is_optimized_search
+                is_optimized_search=is_optimized_search,
+                graphdb_client=graphdb_client,
             )
             current_context.append(relationship_context)
             current_context_data["relationships"] = relationship_context_data
@@ -484,6 +492,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context_data = current_context_data
 
         # attach entity context to final context
+        if graphdb_client:
+            graphdb_client._client.close()
         final_context_text = entity_context + "\n\n" + "\n\n".join(final_context)
         final_context_data["entities"] = entity_context_data
 

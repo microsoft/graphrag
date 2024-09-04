@@ -225,13 +225,8 @@ class ContextSwitcher:
             if not optimized_search:
                 final_covariates = read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")
 
-            if config.graphdb.enabled:
-                final_relationships = graph_db_client.query_edges(context_id)
-                final_entities = graph_db_client.query_vertices(context_id)
-            else:
-                final_relationships = read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")
-                final_entities = read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")
-
+            final_relationships = read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")
+            final_entities = read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")
 
             vector_store_args = (
                 config.embeddings.vector_store if config.embeddings.vector_store else {}
@@ -253,6 +248,10 @@ class ContextSwitcher:
             description_embedding_store.load_entities(entities)
             if self.use_kusto_community_reports:
                 description_embedding_store.load_reports(reports)
+        
+        if config.graphdb.enabled:
+            graph_db_client.write_vertices(final_entities)
+            graph_db_client.write_edges(final_relationships)
 
     def deactivate(self):
         """DeActivate the context."""
