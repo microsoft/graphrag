@@ -72,6 +72,9 @@ class ContextSwitcher:
         description_embedding_store.connect(**config_args)
 
         description_embedding_store.setup_entities()
+        if self.use_kusto_community_reports:
+            description_embedding_store.setup_reports()
+
         return description_embedding_store
 
     def activate(self):
@@ -215,19 +218,19 @@ class ContextSwitcher:
             #check from the config for the ouptut storage type and then read the data from the storage.
 
             #GraphDB: we may need to make change below to read nodes data from Graph DB
-            final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
-            final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")]) # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
-            final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")]) # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
+            final_nodes = read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")
+            final_community_reports = read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet") # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
+            final_text_units = read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet") # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
 
             if not optimized_search:
-                final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
+                final_covariates = read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")
 
             if config.graphdb.enabled:
-                final_relationships = pd.concat([final_relationships, graph_db_client.query_edges(context_id)])
-                final_entities = pd.concat([final_entities, graph_db_client.query_vertices(context_id)])
+                final_relationships = graph_db_client.query_edges(context_id)
+                final_entities = graph_db_client.query_vertices(context_id)
             else:
-                final_relationships = pd.concat([final_relationships, read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
-                final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
+                final_relationships = read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")
+                final_entities = read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")
 
 
             vector_store_args = (
