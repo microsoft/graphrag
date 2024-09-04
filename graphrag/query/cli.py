@@ -223,22 +223,50 @@ def _resolve_parquet_files(
             ):
                 msg = "Connection string or storage account blob url required for querying blob storage"
                 raise ValueError(msg)
-            storage_account_blob_url = config.storage.storage_account_blob_url
-            storage_account_name = (
-                storage_account_blob_url.split("//")[1].split(".")[0]
-                if storage_account_blob_url
-                else None
-            )
-            storage_options = {
-                "account_name": storage_account_name,
-                "credential": DefaultAzureCredentialAsync(),
-            }
+            
+            if config.storage.storage_account_blob_url is not None:
+                storage_account_blob_url = str(config.storage.storage_account_blob_url)
+                storage_account_name = storage_account_blob_url.split("//")[1].split(".")[0]
+
+                storage_options = {
+                    "account_name": storage_account_name,
+                    "credential": DefaultAzureCredentialAsync(),
+                }
+
+                blob_service_client = BlobServiceClient(
+                    account_url=storage_account_blob_url,
+                    credential=DefaultAzureCredentialSync()
+                )
+                
+            elif config.storage.connection_string is not None:
+                connection_string = str(config.storage.connection_string)
+                storage_account_name = connection_string.split("AccountName=")[1].split(";")[0]
+
+                storage_options = {
+                    "account_name": storage_account_name,
+                    "connection_string": connection_string
+                }
+
+                blob_service_client = BlobServiceClient.from_connection_string(
+                    conn_str=connection_string
+                )
+
             container_name = config.storage.container_name
             base_dir = config.storage.base_dir
 
             def get_abfs_path(parquet_name: str):
                 abfs_path_str = str(Path(container_name) / base_dir / parquet_name)
                 return f"abfs://{abfs_path_str}"
+            
+            container_client = blob_service_client.get_container_client(container_name)
+            covariates_exists = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet").exists()
+            if covariates_exists:
+                dataframe_dict["covariates"] = pd.read_parquet(
+                    path=get_abfs_path("create_final_covariates.parquet"),
+                    storage_options=storage_options
+                )
+            else:
+                dataframe_dict["covariates"] = None
             
             dataframe_dict["nodes"] = pd.read_parquet(
                 path=get_abfs_path("create_final_nodes.parquet"),
@@ -260,19 +288,6 @@ def _resolve_parquet_files(
                 path=get_abfs_path("create_final_relationships.parquet"),
                 storage_options=storage_options
             )
-
-            blob_service_client = BlobServiceClient(
-                account_url=str(storage_account_blob_url),
-                credential=DefaultAzureCredentialSync()
-            )
-            container_client = blob_service_client.get_container_client(container_name)
-            if container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet").exists():
-                dataframe_dict["covariates"] = pd.read_parquet(
-                    path=get_abfs_path("create_final_covariates.parquet"),
-                    storage_options=storage_options
-                )
-            else:
-                dataframe_dict["covariates"] = None
 
         case StorageType.file:
             dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
