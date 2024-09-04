@@ -4,7 +4,6 @@
 """Command line interface for the query module."""
 
 import asyncio
-import re
 import sys
 from pathlib import Path
 
@@ -19,6 +18,7 @@ from graphrag.config import (
     create_graphrag_config,
 )
 from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
+from graphrag.config import load_config, resolve_timestamp_path
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
@@ -29,7 +29,7 @@ reporter = PrintProgressReporter("")
 def run_global_search(
     config_filepath: str | None,
     data_dir: str | None,
-    root_dir: str | None,
+    root_dir: str,
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -39,15 +39,25 @@ def run_global_search(
 
     Loads index files required for global search and calls the Query API.
     """
-    data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_filepath
-    )
-    data_path = Path(data_dir)
+    root = Path(root_dir).resolve()
+    config = load_config(root, config_filepath)
 
-    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
-    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
-    final_entities: pd.DataFrame = dataframe_dict["entities"]
-    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
+    if data_dir:
+        config.storage.base_dir = str(
+            resolve_timestamp_path((root / data_dir).resolve())
+        )
+
+    data_path = Path(config.storage.base_dir).resolve()
+
+    final_nodes: pd.DataFrame = pd.read_parquet(
+        data_path / "create_final_nodes.parquet"
+    )
+    final_entities: pd.DataFrame = pd.read_parquet(
+        data_path / "create_final_entities.parquet"
+    )
+    final_community_reports: pd.DataFrame = pd.read_parquet(
+        data_path / "create_final_community_reports.parquet"
+    )
 
     # call the Query API
     if streaming:
@@ -97,7 +107,7 @@ def run_global_search(
 def run_local_search(
     config_filepath: str | None,
     data_dir: str | None,
-    root_dir: str | None,
+    root_dir: str,
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -107,18 +117,32 @@ def run_local_search(
 
     Loads index files required for local search and calls the Query API.
     """
-    data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_filepath
-    )
-    data_path = Path(data_dir)
+    root = Path(root_dir).resolve()
+    config = load_config(root, config_filepath)
 
-    dataframe_dict = _resolve_parquet_files(data_path=data_path, config=config)
-    final_nodes: pd.DataFrame = dataframe_dict["nodes"]
-    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
-    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["entities"]
-    final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
+    if data_dir:
+        config.storage.base_dir = str(
+            resolve_timestamp_path((root / data_dir).resolve())
+        )
+
+    data_path = Path(config.storage.base_dir).resolve()
+
+    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
+    final_community_reports = pd.read_parquet(
+        data_path / "create_final_community_reports.parquet"
+    )
+    final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
+    final_relationships = pd.read_parquet(
+        data_path / "create_final_relationships.parquet"
+    )
+    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
+    final_covariates_path = data_path / "create_final_covariates.parquet"
+    final_covariates = (
+        pd.read_parquet(final_covariates_path)
+        if final_covariates_path.exists()
+        else None
+    )
+
     # call the Query API
     if streaming:
 
@@ -127,7 +151,6 @@ def run_local_search(
             context_data = None
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
-                root_dir=root_dir,
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
@@ -153,7 +176,6 @@ def run_local_search(
     # not streaming
     response, context_data = asyncio.run(
         api.local_search(
-            root_dir=root_dir,
             config=config,
             nodes=final_nodes,
             entities=final_entities,
