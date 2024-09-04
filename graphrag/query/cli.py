@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from graphrag.config import load_config, resolve_timestamp_path
+from graphrag.config import load_config, resolve_path
 from graphrag.index.progress import PrintProgressReporter
 
 from . import api
@@ -34,9 +34,7 @@ def run_global_search(
     config = load_config(root, config_filepath)
 
     if data_dir:
-        config.storage.base_dir = str(
-            resolve_timestamp_path((root / data_dir).resolve())
-        )
+        config.storage.base_dir = str(resolve_path(data_dir, root))
 
     data_path = Path(config.storage.base_dir).resolve()
 
@@ -112,9 +110,7 @@ def run_local_search(
     config = load_config(root, config_filepath)
 
     if data_dir:
-        config.storage.base_dir = str(
-            resolve_timestamp_path((root / data_dir).resolve())
-        )
+        config.storage.base_dir = str(resolve_path(data_dir, root))
 
     data_path = Path(config.storage.base_dir).resolve()
 

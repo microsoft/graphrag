@@ -68,7 +68,7 @@ from .models import (
     UmapConfig,
 )
 from .read_dotenv import read_dotenv
-from .resolve_timestamp_path import resolve_timestamp_path
+from .resolve_path import resolve_path
 
 __all__ = [
     "ApiKeyMissingError",
@@ -127,6 +127,6 @@ __all__ = [
     "load_config",
     "load_config_from_file",
     "read_dotenv",
-    "resolve_timestamp_path",
+    "resolve_path",
     "search_for_config_in_root_dir",
 ]
