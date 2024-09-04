@@ -266,9 +266,7 @@ def _resolve_parquet_files(
                 credential=DefaultAzureCredentialSync()
             )
             container_client = blob_service_client.get_container_client(container_name)
-            blob_client = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet")
-            covariate_parquet_exists = blob_client.exists()
-            if covariate_parquet_exists:
+            if container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet").exists():
                 dataframe_dict["covariates"] = pd.read_parquet(
                     path=get_abfs_path("create_final_covariates.parquet"),
                     storage_options=storage_options
@@ -276,24 +274,6 @@ def _resolve_parquet_files(
             else:
                 dataframe_dict["covariates"] = None
 
-            '''
-            async with BlobServiceClientAsync(
-                account_url=str(storage_account_blob_url),
-                credential=DefaultAzureCredential()
-            ) as blob_service_client:
-                container_client = blob_service_client.get_container_client(container_name)
-                blob_client = container_client.get_blob_client(f"{base_dir}/create_final_covariates.parquet")
-                covariate_parquet_exists = await blob_client.exists()
-                if covariate_parquet_exists:
-                    dataframe_dict["covariates"] = pd.read_parquet(
-                        path=get_abfs_path("create_final_covariates.parquet"),
-                        storage_options=storage_options
-                    )
-                else:
-                    dataframe_dict["covariates"] = None
-            '''
-
-            
         case StorageType.file:
             dataframe_dict["nodes"] = pd.read_parquet(data_path / "create_final_nodes.parquet")
             dataframe_dict["entities"] = pd.read_parquet(data_path / "create_final_entities.parquet")
