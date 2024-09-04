@@ -214,6 +214,8 @@ class KustoVectorStore(BaseVectorStore):
         self.client.execute(self.database,f".drop table {self.collection_name} ifexists")
 
     def setup_entities(self) -> None:
+        command = f".drop table {self.collection_name} ifexists"
+        self.client.execute(self.database, command)
         command = f".create table {self.collection_name} (id: string, short_id: real, title: string, type: string, description: string, description_embedding: dynamic, name_embedding: dynamic, graph_embedding: dynamic, community_ids: dynamic, text_unit_ids: dynamic, document_ids: dynamic, rank: real, attributes: dynamic)"
         self.client.execute(self.database, command)
         command = f".alter column {self.collection_name}.graph_embedding policy encoding type = 'Vector16'"
@@ -221,7 +223,7 @@ class KustoVectorStore(BaseVectorStore):
         command = f".alter column {self.collection_name}.description_embedding policy encoding type = 'Vector16'"
         self.client.execute(self.database, command)
 
-    def load_entities(self, entities: list[Entity], overwrite: bool = True) -> None:
+    def load_entities(self, entities: list[Entity], overwrite: bool = False) -> None:
         # Convert data to DataFrame
         df = pd.DataFrame(entities)
 
@@ -234,6 +236,8 @@ class KustoVectorStore(BaseVectorStore):
         self.client.execute(self.database, ingestion_command)
 
     def setup_reports(self) -> None:
+        command = f".drop table {self.reports_name} ifexists"
+        self.client.execute(self.database, command)
         command = f".create table {self.reports_name} (id: string, short_id: string, title: string, community_id: string, summary: string, full_content: string, rank: real, summary_embedding: dynamic, full_content_embedding: dynamic, attributes: dynamic)"
         self.client.execute(self.database, command)
         command = f".alter column {self.reports_name}.summary_embedding policy encoding type = 'Vector16'"
@@ -241,7 +245,7 @@ class KustoVectorStore(BaseVectorStore):
         command = f".alter column {self.reports_name}.full_content_embedding policy encoding type = 'Vector16'"
         self.client.execute(self.database, command)
 
-    def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
+    def load_reports(self, reports: list[CommunityReport], overwrite: bool = False) -> None:
         # Convert data to DataFrame
         df = pd.DataFrame(reports)
 
@@ -259,7 +263,7 @@ class KustoVectorStore(BaseVectorStore):
     ) -> list[CommunityReport]:
         community_ids = ", ".join([str(id) for id in community_ids])
         query = f"""
-        reports
+        {self.reports_name}
         | where community_id in ({community_ids})
         """
         response = self.client.execute(self.database, query)
