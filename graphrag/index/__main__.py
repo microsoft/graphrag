@@ -68,12 +68,25 @@ if __name__ == "__main__":
         help="Skip any preflight validation. Useful when running no LLM steps.",
         action="store_true",
     )
+    parser.add_argument(
+        "--update-index",
+        help="Update a given index run id, leveraging previous outputs and applying new indexes.",
+        # Only required if config is not defined
+        required=False,
+        default=None,
+        type=str,
+    )
     args = parser.parse_args()
+
+    if args.resume and args.update_index:
+        msg = "Cannot resume and update a run at the same time."
+        raise ValueError(msg)
 
     index_cli(
         root_dir=args.root,
         verbose=args.verbose or False,
         resume=args.resume,
+        update_index_id=args.update_index,
         memprofile=args.memprofile or False,
         nocache=args.nocache or False,
         reporter=args.reporter,
