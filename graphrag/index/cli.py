@@ -357,11 +357,13 @@ def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
     logging_file.parent.mkdir(parents=True, exist_ok=True)
 
     logging_file.touch(exist_ok=True)
-
+    handler = logging.StreamHandler(stream=sys.stdout)
+    fileHandler = logging.FileHandler(logging_file, mode="a")
     logging.basicConfig(
-        filename=str(logging_file),
-        filemode="a",
+        #filename=str(logging_file),
+        #filemode="a",
         format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%H:%M:%S",
         level=logging.DEBUG if verbose else logging.INFO,
+        handlers=[handler, fileHandler]
     )
