@@ -15,6 +15,7 @@ from datashaper import TableContainer, VerbCallbacks, VerbInput, progress_iterab
 from graphrag.index.utils import gen_uuid, load_graph
 
 from .typing import Communities
+from hashlib import sha256
 
 log = logging.getLogger(__name__)
 
@@ -108,13 +109,17 @@ def cluster_graph(
 
     return TableContainer(table=output_df)
 
+def generate_entity_id(candidate: str) -> str:
+    h=sha256()
+    h.update(candidate.encode())
+    return h.hexdigest()
 
 # TODO: This should support str | nx.Graph as a graphml param
 def apply_clustering(
-    graphml: str, communities: Communities, level=0, seed=0xF001
+    graphml: str, communities: Communities, level=0
 ) -> nx.Graph:
     """Apply clustering to a graphml string."""
-    random = Random(seed)  # noqa S311
+
     graph = nx.parse_graphml(graphml)
     for community_level, community_id, nodes in communities:
         if level == community_level:
@@ -126,16 +131,17 @@ def apply_clustering(
     for node_degree in graph.degree:
         graph.nodes[str(node_degree[0])]["degree"] = int(node_degree[1])
 
-    # add node uuid and incremental record id (a human readable id used as reference in the final report)
+    # Generate a unique ID for each entitiy and incremental record id (a human readable id used as reference in the final report)
     for index, node in enumerate(graph.nodes()):
         graph.nodes[node]["human_readable_id"] = index
-        graph.nodes[node]["id"] = str(gen_uuid(random))
+        graph.nodes[node]["id"] = generate_entity_id(node)
 
     # add ids to edges
     for index, edge in enumerate(graph.edges()):
-        graph.edges[edge]["id"] = str(gen_uuid(random))
         graph.edges[edge]["human_readable_id"] = index
         graph.edges[edge]["level"] = level
+        graph.edges[edge]["id"] = generate_entity_id(f"{edge[0]}:{edge[1]}")
+
     return graph
 
 
