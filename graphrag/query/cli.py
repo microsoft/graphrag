@@ -42,8 +42,6 @@ def run_global_search(
     if data_dir:
         config.storage.base_dir = str(resolve_path(data_dir, root))
 
-    data_path = Path(config.storage.base_dir).resolve()
-
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
         config=config,
@@ -123,8 +121,6 @@ def run_local_search(
 
     if data_dir:
         config.storage.base_dir = str(resolve_path(data_dir, root))
-
-    data_path = Path(config.storage.base_dir).resolve()
 
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
