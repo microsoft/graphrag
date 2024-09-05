@@ -101,6 +101,7 @@ def index_cli(
     init: bool,
     verbose: bool,
     resume: str | None,
+    update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
     reporter: str | None,
@@ -112,7 +113,7 @@ def index_cli(
     """Run the pipeline with the given config."""
     progress_reporter = load_progress_reporter(reporter or "rich")
     info, error, success = _logger(progress_reporter)
-    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
     if init:
         _initialize_project_at(root_dir, progress_reporter)
@@ -152,11 +153,13 @@ def index_cli(
 
     outputs = asyncio.run(
         build_index(
-            config,
-            run_id,
-            memprofile,
-            progress_reporter,
-            pipeline_emit,
+            config=config,
+            run_id=run_id,
+            is_resume_run=bool(resume),
+            is_update_run=bool(update_index_id),
+            memory_profile=memprofile,
+            progress_reporter=progress_reporter,
+            emit=pipeline_emit,
         )
     )
     encountered_errors = any(

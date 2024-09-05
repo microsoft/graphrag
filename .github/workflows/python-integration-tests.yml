@@ -1,9 +1,13 @@
 name: Python Integration Tests
 on:
   push:
-    branches: [main]
+    branches:
+      - "**/main" # Matches branches like feature/main
+      - "main" # Matches the main branch
   pull_request:
-    branches: [main]
+    branches:
+      - "**/main"
+      - "main"
 
 permissions:
   contents: read
