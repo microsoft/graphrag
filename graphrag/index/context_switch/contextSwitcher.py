@@ -248,10 +248,10 @@ class ContextSwitcher:
             description_embedding_store.load_entities(entities)
             if self.use_kusto_community_reports:
                 description_embedding_store.load_reports(reports)
-        
-        if config.graphdb.enabled:
-            graph_db_client.write_vertices(final_entities)
-            graph_db_client.write_edges(final_relationships)
+
+            if config.graphdb.enabled:
+                graph_db_client.write_vertices(final_entities)
+                graph_db_client.write_edges(final_relationships)
 
     def deactivate(self):
         """DeActivate the context."""
