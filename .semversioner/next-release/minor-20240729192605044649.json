@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Added default columns for vector store at create_pipeline_config. No change for other cases."
-}

@@ -5,10 +5,12 @@
 
 import json
 import logging
+import re
 from collections.abc import Callable
 from typing import Any
 
 import tiktoken
+from json_repair import repair_json
 from openai import (
     APIConnectionError,
     InternalServerError,
@@ -87,17 +89,62 @@ def get_completion_llm_args(
     }
 
 
-def try_parse_json_object(input: str) -> dict:
-    """Generate JSON-string output using best-attempt prompting & parsing techniques."""
+def try_parse_json_object(input: str) -> tuple[str, dict]:
+    """JSON cleaning and formatting utilities."""
+    # Sometimes, the LLM returns a json string with some extra description, this function will clean it up.
+
+    result = None
+    try:
+        # Try parse first
+        result = json.loads(input)
+    except json.JSONDecodeError:
+        log.info("Warning: Error decoding faulty json, attempting repair")
+
+    if result:
+        return input, result
+
+    _pattern = r"\{(.*)\}"
+    _match = re.search(_pattern, input)
+    input = "{" + _match.group(1) + "}" if _match else input
+
+    # Clean up json string.
+    input = (
+        input.replace("{{", "{")
+        .replace("}}", "}")
+        .replace('"[{', "[{")
+        .replace('}]"', "}]")
+        .replace("\\", " ")
+        .replace("\\n", " ")
+        .replace("\n", " ")
+        .replace("\r", "")
+        .strip()
+    )
+
+    # Remove JSON Markdown Frame
+    if input.startswith("```json"):
+        input = input[len("```json") :]
+    if input.endswith("```"):
+        input = input[: len(input) - len("```")]
+
     try:
         result = json.loads(input)
     except json.JSONDecodeError:
-        log.exception("error loading json, json=%s", input)
-        raise
+        # Fixup potentially malformed json string using json_repair.
+        input = str(repair_json(json_str=input, return_objects=False))
+
+        # Generate JSON-string output using best-attempt prompting & parsing techniques.
+        try:
+            result = json.loads(input)
+        except json.JSONDecodeError:
+            log.exception("error loading json, json=%s", input)
+            return input, {}
+        else:
+            if not isinstance(result, dict):
+                log.exception("not expected dict type. type=%s:", type(result))
+                return input, {}
+            return input, result
     else:
-        if not isinstance(result, dict):
-            raise TypeError
-        return result
+        return input, result
 
 
 def get_sleep_time_from_error(e: Any) -> float:

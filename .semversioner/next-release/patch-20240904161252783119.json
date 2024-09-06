@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "add querying from azure blob storage"
+}

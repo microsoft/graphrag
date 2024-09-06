@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "fix strategy config in entity_extraction"
+}

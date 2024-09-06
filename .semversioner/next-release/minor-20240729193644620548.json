@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Fixed a bug that erased the vector database, added a new parameter to specify the config file path, and updated the documentation accordingly."
-}

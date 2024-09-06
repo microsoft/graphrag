@@ -1,0 +1,22 @@
+{
+  "changes": [
+    {
+      "description": "Add a check if there is no community record added in local search context",
+      "type": "patch"
+    },
+    {
+      "description": "Add sepparate workflow for Python Tests",
+      "type": "patch"
+    },
+    {
+      "description": "Docs updates",
+      "type": "patch"
+    },
+    {
+      "description": "Run smoke tests on 4o",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-08-08T22:40:57+00:00",
+  "version": "0.2.2"
+}

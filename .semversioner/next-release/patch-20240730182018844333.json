@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Update default entity extraction and gleaning prompts to reduce hallucinations"
-}

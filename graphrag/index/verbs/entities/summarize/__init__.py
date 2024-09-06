@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Root package for resolution entities."""
+"""Root package for entity summarization."""
 
 from .description_summarize import SummarizeStrategyType, summarize_descriptions
 

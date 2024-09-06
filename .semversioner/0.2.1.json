@@ -1,0 +1,70 @@
+{
+  "changes": [
+    {
+      "description": "Added default columns for vector store at create_pipeline_config. No change for other cases.",
+      "type": "patch"
+    },
+    {
+      "description": "Change json parsing error in the map step of global search to warning",
+      "type": "patch"
+    },
+    {
+      "description": "Fix Local Search breaking when loading Embeddings input. Defaulting overwrite to True as in the rest of the vector store config",
+      "type": "patch"
+    },
+    {
+      "description": "Fix json parsing when LLM returns faulty responses",
+      "type": "patch"
+    },
+    {
+      "description": "Fix missing community reports and refactor community context builder",
+      "type": "patch"
+    },
+    {
+      "description": "Fixed a bug that erased the vector database, added a new parameter to specify the config file path, and updated the documentation accordingly.",
+      "type": "patch"
+    },
+    {
+      "description": "Try parsing json before even repairing",
+      "type": "patch"
+    },
+    {
+      "description": "Update Prompt Tuning meta prompts with finer examples",
+      "type": "patch"
+    },
+    {
+      "description": "Update default entity extraction and gleaning prompts to reduce hallucinations",
+      "type": "patch"
+    },
+    {
+      "description": "add encoding-model to entity/claim extraction config",
+      "type": "patch"
+    },
+    {
+      "description": "add encoding-model to text chunking config",
+      "type": "patch"
+    },
+    {
+      "description": "add user prompt to history-tracking llm",
+      "type": "patch"
+    },
+    {
+      "description": "update config reader to allow for zero gleans",
+      "type": "patch"
+    },
+    {
+      "description": "update config-reader to allow for empty chunk-by arrays",
+      "type": "patch"
+    },
+    {
+      "description": "update history-tracking LLm to use 'assistant' instead of 'system' in output history.",
+      "type": "patch"
+    },
+    {
+      "description": "use history argument in hash key computation; add history input to cache data",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-08-06T00:25:52+00:00",
+  "version": "0.2.1"
+}

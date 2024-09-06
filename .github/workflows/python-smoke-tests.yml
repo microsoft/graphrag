@@ -1,0 +1,108 @@
+name: Python Smoke Tests
+on:
+  push:
+    branches:
+      - "**/main" # Matches branches like feature/main
+      - "main" # Matches the main branch
+  pull_request:
+    branches:
+      - "**/main"
+      - "main"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Only run the for the latest commit
+  cancel-in-progress: true
+
+env:
+  POETRY_VERSION: 1.8.3
+
+jobs:
+  python-ci:
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Continue running all jobs even if one fails
+    env:
+      DEBUG: 1
+      GRAPHRAG_LLM_TYPE: "azure_openai_chat"
+      GRAPHRAG_EMBEDDING_TYPE: "azure_openai_embedding"
+      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GRAPHRAG_API_BASE: ${{ secrets.GRAPHRAG_API_BASE }}
+      GRAPHRAG_API_VERSION: ${{ secrets.GRAPHRAG_API_VERSION }}
+      GRAPHRAG_LLM_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_LLM_DEPLOYMENT_NAME }}
+      GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
+      GRAPHRAG_CACHE_CONTAINER_NAME: "cicache"
+      GRAPHRAG_CACHE_BASE_DIR": "cache"
+      GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
+      GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
+      GRAPHRAG_ENTITY_EXTRACTION_ENCODING_MODEL: ${{ secrets.GRAPHRAG_ENTITY_EXTRACTION_ENCODING_MODEL }}
+      # We have Windows + Linux runners in 3.10 and 3.11, so we need to divide the rate limits by 4
+      GRAPHRAG_LLM_TPM: 45_000 # 180,000 / 4
+      GRAPHRAG_LLM_RPM: 270 # 1,080 / 4
+      GRAPHRAG_EMBEDDING_TPM: 87_500 # 350,000 / 4
+      GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
+      GRAPHRAG_CHUNK_SIZE: 1200
+      GRAPHRAG_CHUNK_OVERLAP: 0
+      # Azure AI Search config
+      AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
+      AZURE_AI_SEARCH_API_KEY: ${{ secrets.AZURE_AI_SEARCH_API_KEY }}
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'graphrag/**/*'
+              - 'poetry.lock'
+              - 'pyproject.toml'
+              - '**/*.py'
+              - '**/*.toml'
+              - '**/*.ipynb'
+              - '.github/workflows/python*.yml'
+              - 'tests/smoke/**/*'
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3.0.0
+        with:
+          poetry-version: $POETRY_VERSION
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          poetry self add setuptools wheel
+          poetry run python -m pip install gensim
+          poetry install
+
+      - name: Build
+        run: |
+          poetry build
+
+      - name: Install Azurite
+        id: azuright
+        uses: potatoqualitee/azuright@v1.1
+
+      - name: Smoke Test
+        if: steps.changes.outputs.python == 'true'
+        run: |
+          poetry run poe test_smoke
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
+          path: tests/fixtures/*/output
