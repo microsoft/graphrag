@@ -202,10 +202,11 @@ def run_local_search(
 
         if config.graphdb.enabled:
             final_entities = pd.concat([final_entities, graph_db_client.query_vertices(context_id)])
+            graph_db_client._client.close()
         else:
             final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
 
-    graph_db_client._client.close()
+    
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
