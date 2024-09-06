@@ -16,7 +16,7 @@ class GraphDBClient:
     def __init__(self,graph_db_params: GraphDBConfig|None,context_id: str|None):
         self.username_prefix=graph_db_params.username
         self._client=client.Client(
-            url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
+            url=f"{graph_db_params.gremlin_url}",
             traversal_source="g",
             username=self.username_prefix+"-contextid-"+context_id,
             password=f"{graph_db_params.account_key}",

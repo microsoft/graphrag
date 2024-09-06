@@ -167,6 +167,8 @@ graphdb:
     account_key: ''
     username: ''
     enabled: false
+    cosmos_url: ''
+    gremlin_url: ''
 """
 
 INIT_DOTENV = """
