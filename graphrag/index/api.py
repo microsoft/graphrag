@@ -8,9 +8,7 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from graphrag.config.enums import CacheType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_timestamp_path import resolve_timestamp_path
+from graphrag.config import CacheType, GraphRagConfig
 
 from .cache.noop_pipeline_cache import NoopPipelineCache
 from .create_pipeline_config import create_pipeline_config
@@ -24,8 +22,10 @@ from .typing import PipelineRunResult
 
 async def build_index(
     config: GraphRagConfig,
-    run_id: str,
-    memory_profile: bool,
+    run_id: str = "",
+    is_resume_run: bool = False,
+    is_update_run: bool = False,
+    memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[str] | None = None,
 ) -> list[PipelineRunResult]:
@@ -37,6 +37,10 @@ async def build_index(
         The configuration.
     run_id : str
         The run id. Creates a output directory with this name.
+    is_resume_run : bool default=False
+        Whether to resume a previous index run.
+    is_update_run : bool default=False
+        Whether to update a previous index run.
     memory_profile : bool
         Whether to enable memory profiling.
     progress_reporter : ProgressReporter | None default=None
@@ -50,11 +54,10 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    try:
-        resolve_timestamp_path(config.storage.base_dir, run_id)
-        resume = True
-    except ValueError as _:
-        resume = False
+    if is_resume_run and is_update_run:
+        msg = "Cannot resume and update a run at the same time."
+        raise ValueError(msg)
+
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
@@ -67,7 +70,8 @@ async def build_index(
         cache=pipeline_cache,
         progress_reporter=progress_reporter,
         emit=([TableEmitterType(e) for e in emit] if emit is not None else None),
-        is_resume_run=resume,
+        is_resume_run=is_resume_run,
+        is_update_run=is_update_run,
     ):
         outputs.append(output)
         if progress_reporter:

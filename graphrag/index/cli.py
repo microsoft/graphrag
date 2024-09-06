@@ -11,13 +11,7 @@ import time
 import warnings
 from pathlib import Path
 
-from graphrag.config import create_graphrag_config
-from graphrag.config.config_file_loader import (
-    load_config_from_file,
-    resolve_config_path_with_root,
-)
-from graphrag.config.enums import CacheType
-from graphrag.config.logging import enable_logging_with_config
+from graphrag.config import CacheType, enable_logging_with_config, load_config
 
 from .api import build_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -103,60 +97,49 @@ def _register_signal_handlers(reporter: ProgressReporter):
 
 
 def index_cli(
-    root: str,
+    root_dir: str,
     init: bool,
     verbose: bool,
     resume: str | None,
+    update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
     reporter: str | None,
-    config: str | None,
+    config_filepath: str | None,
     emit: str | None,
     dryrun: bool,
-    overlay_defaults: bool,
     skip_validations: bool,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = load_progress_reporter(reporter or "rich")
     info, error, success = _logger(progress_reporter)
-    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
+    run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
     if init:
-        _initialize_project_at(root, progress_reporter)
+        _initialize_project_at(root_dir, progress_reporter)
         sys.exit(0)
 
-    if overlay_defaults or config:
-        config_path = (
-            Path(root) / config if config else resolve_config_path_with_root(root)
-        )
-        default_config = load_config_from_file(config_path)
-    else:
-        try:
-            config_path = resolve_config_path_with_root(root)
-            default_config = load_config_from_file(config_path)
-        except FileNotFoundError:
-            default_config = create_graphrag_config(root_dir=root)
+    root = Path(root_dir).resolve()
+    config = load_config(root, config_filepath, run_id)
 
     if nocache:
-        default_config.cache.type = CacheType.none
+        config.cache.type = CacheType.none
 
-    enabled_logging, log_path = enable_logging_with_config(
-        default_config, run_id, verbose
-    )
+    enabled_logging, log_path = enable_logging_with_config(config, verbose)
     if enabled_logging:
         info(f"Logging enabled at {log_path}", True)
     else:
         info(
-            f"Logging not enabled for config {_redact(default_config.model_dump())}",
+            f"Logging not enabled for config {_redact(config.model_dump())}",
             True,
         )
 
     if skip_validations:
-        validate_config_names(progress_reporter, default_config)
+        validate_config_names(progress_reporter, config)
 
     info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
     info(
-        f"Using default configuration: {_redact(default_config.model_dump())}",
+        f"Using default configuration: {_redact(config.model_dump())}",
         verbose,
     )
 
@@ -170,11 +153,13 @@ def index_cli(
 
     outputs = asyncio.run(
         build_index(
-            default_config,
-            run_id,
-            memprofile,
-            progress_reporter,
-            pipeline_emit,
+            config=config,
+            run_id=run_id,
+            is_resume_run=bool(resume),
+            is_update_run=bool(update_index_id),
+            memory_profile=memprofile,
+            progress_reporter=progress_reporter,
+            emit=pipeline_emit,
         )
     )
     encountered_errors = any(

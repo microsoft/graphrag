@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -9,6 +9,7 @@ authors = [
     "Chris Trevino <chtrevin@microsoft.com>",
     "David Tittsworth <datittsw@microsoft.com>",
     "Dayenne de Souza <ddesouza@microsoft.com>",
+    "Derek Worthen <deworthe@microsoft.com>",
     "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
     "Ha Trinh <trinhha@microsoft.com>",
     "Jonathan Larson <jolarso@microsoft.com>",
@@ -23,6 +24,9 @@ authors = [
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "graphrag" }]
+
+[tool.poetry.urls]
+"Source" = "https://github.com/microsoft/graphrag"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -44,7 +48,7 @@ datashaper = "^0.0.49"
 
 # Vector Stores
 azure-search-documents = "^11.4.0"
-lancedb = "^0.11.0"
+lancedb = "^0.12.0"
 
 # Event Loops
 uvloop = { version = "^0.20.0", markers = "platform_system != 'Windows'" }
@@ -79,7 +83,7 @@ tenacity = "^9.0.0"
 swifter = "^1.4.0"
 pydantic = "^2"
 rich = "^13.6.0"
-textual = "^0.76.0"
+textual = "^0.78.0"
 devtools = "^0.12.2"
 
 typing-extensions = "^4.12.2"
@@ -87,8 +91,9 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
-json-repair = "^0.26.0"
+json-repair = "^0.28.4"
 
+future = "^1.0.0"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
@@ -97,9 +102,9 @@ nbconvert = "^7.16.3"
 poethepoet = "^0.27.0"
 pyright = "^1.1.371"
 pytest = "^8.3.2"
-pytest-asyncio = "^0.23.4"
+pytest-asyncio = "^0.24.0"
 pytest-timeout = "^2.3.1"
-ruff = "^0.5.2"
+ruff = "^0.6.2"
 semversioner = "^2.0.3"
 
 update-toml = "^0.2.1"
@@ -118,6 +123,7 @@ _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 _semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
+semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check --preview'
 fix = "ruff  --preview check --fix ."

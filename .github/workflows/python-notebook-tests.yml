@@ -1,9 +1,13 @@
 name: Python Notebook Tests
 on:
   push:
-    branches: [main]
+    branches:
+      - "**/main" # Matches branches like feature/main
+      - "main" # Matches the main branch
   pull_request:
-    branches: [main]
+    branches:
+      - "**/main"
+      - "main"
 
 permissions:
   contents: read
@@ -64,7 +68,6 @@ jobs:
           poetry run python -m pip install gensim
           poetry install
 
-      
       - name: Notebook Test
         run: |
           poetry run poe test_notebook

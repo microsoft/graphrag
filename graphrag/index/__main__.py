@@ -64,31 +64,35 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
-        "--overlay-defaults",
-        help="Overlay default configuration values on a provided configuration file (--config).",
-        action="store_true",
-    )
-    parser.add_argument(
         "--skip-validations",
         help="Skip any preflight validation. Useful when running no LLM steps.",
         action="store_true",
     )
+    parser.add_argument(
+        "--update-index",
+        help="Update a given index run id, leveraging previous outputs and applying new indexes.",
+        # Only required if config is not defined
+        required=False,
+        default=None,
+        type=str,
+    )
     args = parser.parse_args()
 
-    if args.overlay_defaults and not args.config:
-        parser.error("--overlay-defaults requires --config")
+    if args.resume and args.update_index:
+        msg = "Cannot resume and update a run at the same time."
+        raise ValueError(msg)
 
     index_cli(
-        root=args.root,
+        root_dir=args.root,
         verbose=args.verbose or False,
         resume=args.resume,
+        update_index_id=args.update_index,
         memprofile=args.memprofile or False,
         nocache=args.nocache or False,
         reporter=args.reporter,
-        config=args.config,
+        config_filepath=args.config,
         emit=args.emit,
         dryrun=args.dryrun or False,
         init=args.init or False,
-        overlay_defaults=args.overlay_defaults or False,
         skip_validations=args.skip_validations or False,
     )
