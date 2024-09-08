@@ -26,7 +26,7 @@ class GraphDBClient:
             url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
             traversal_source="g",
             username=self.username_prefix+"-contextid-"+context_id,
-            password=token",
+            password=token,
             message_serializer=serializer.GraphSONSerializersV2d0(),
         )
 
