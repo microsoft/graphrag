@@ -19,9 +19,9 @@ class GraphDBClient:
     def __init__(self,graph_db_params: GraphDBConfig|None,context_id: str|None):
         self.username_prefix=graph_db_params.username
         token = f"{graph_db_params.account_key}"
-        if(os.environ.get("ENVIRONMENT") == "AZURE"):
-            credential = ManagedIdentityCredential(client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3")
-            token = credential.get_token(COSMOS_DB_SCOPE)
+        #if(os.environ.get("ENVIRONMENT") == "AZURE"):
+        #    credential = ManagedIdentityCredential(client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3")
+        #    token = credential.get_token(COSMOS_DB_SCOPE)
         self._client=client.Client(
             url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
             traversal_source="g",
