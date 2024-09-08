@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 """The Azure Kusto vector storage implementation package."""
-
+import os
 import typing
 from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
 from azure.kusto.data.helpers import dataframe_from_result_table
@@ -56,10 +56,16 @@ class KustoVectorStore(BaseVectorStore):
         client_id = kwargs.get("client_id")
         client_secret = kwargs.get("client_secret")
         authority_id = kwargs.get("authority_id")
-
-        kcsb = KustoConnectionStringBuilder.with_aad_application_key_authentication(
-            str(cluster), str(client_id), str(client_secret), str(authority_id)
-        )
+        env = os.environ.get("ENVIRONMENT")
+        if(env == "AZURE"):
+            kcsb = KustoConnectionStringBuilder.with_aad_managed_service_identity_authentication(
+                str(cluster), client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3"
+            )
+        elif(env == "DEVELOPMENT"):
+            kcsb = KustoConnectionStringBuilder.with_aad_device_authentication(str(cluster))
+        else:
+             kcsb = KustoConnectionStringBuilder.with_aad_application_key_authentication(
+            str(cluster), str(client_id), str(client_secret), str(authority_id))
         self.client = KustoClient(kcsb)
         self.database = database
 

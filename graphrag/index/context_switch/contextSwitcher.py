@@ -29,6 +29,7 @@ from graphrag.model.entity import Entity
 from azure.cosmos import CosmosClient, PartitionKey
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
+import logging
 
 class ContextSwitcher:
     """ContextSwitcher class definition."""
@@ -47,6 +48,7 @@ class ContextSwitcher:
         self.optimized_search=optimized_search
         self.community_level = community_level
         self.use_kusto_community_reports = use_kusto_community_reports
+        logging.info("ContextSwitcher initialized")
 
     def setup_vector_store(self,
             config_args: dict | None = None,) -> BaseVectorStore:
@@ -181,13 +183,11 @@ class ContextSwitcher:
             ValueError("Memory storage is not supported")
         if(config.storage.type == StorageType.blob):
             if(config.storage.container_name is not None):
-                input_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
-                output_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
+                input_storage_client: PipelineStorage = BlobPipelineStorage(connection_string=config.storage.connection_string, container_name=config.storage.container_name, storage_account_blob_url=config.storage.storage_account_blob_url)
             else:
                 ValueError("Storage type is Blob but container name is invalid")
         if(config.storage.type == StorageType.file):
             input_storage_client: PipelineStorage = FilePipelineStorage(config.root_dir)
-            output_storage_client: PipelineStorage = FilePipelineStorage(config.root_dir)
 
         data_paths = []
         data_paths = get_files_by_contextid(config, context_id)

@@ -60,7 +60,6 @@ async def load_input(
                 connection_string=config.connection_string,
                 storage_account_blob_url=config.storage_account_blob_url,
                 container_name=config.container_name,
-                path_prefix=config.base_dir,
             )
         case InputType.file:
             log.info("using file storage for input")

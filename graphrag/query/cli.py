@@ -171,8 +171,8 @@ def run_local_search(
         ValueError("Memory storage is not supported")
     if(config.storage.type == StorageType.blob):
         if(config.storage.container_name is not None):
-            input_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
-            output_storage_client: PipelineStorage = BlobPipelineStorage(config.storage.connection_string, config.storage.container_name)
+            input_storage_client: PipelineStorage = BlobPipelineStorage(connection_string=config.storage.connection_string, container_name=config.storage.container_name, storage_account_blob_url=config.storage.storage_account_blob_url)
+            output_storage_client: PipelineStorage = BlobPipelineStorage(connection_string=config.storage.connection_string, container_name=config.storage.container_name, storage_account_blob_url=config.storage.storage_account_blob_url)
         else:
             ValueError("Storage type is Blob but container name is invalid")
     if(config.storage.type == StorageType.file):
@@ -206,7 +206,8 @@ def run_local_search(
         else:
             final_entities = pd.concat([final_entities, read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")])
 
-    
+    if config.graphdb.enabled:
+        graph_db_client._client.close()
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
     )
