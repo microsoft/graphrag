@@ -200,6 +200,7 @@ def _switch_context(root: str, config: str,
                     use_kusto_community_reports: bool) -> None:
     """Switch the context to the given context."""
     reporter.info(f"Switching context to {context_id} using operation {context_operation}")
+    logging.info("Switching context to {context_id}")
     from graphrag.index.context_switch.contextSwitcher import ContextSwitcher
     context_switcher = ContextSwitcher(
         root_dir=root,
