@@ -429,6 +429,7 @@ def create_graphrag_config(
                 or defs.ENTITY_EXTRACTION_ENTITY_TYPES,
                 max_gleanings=max_gleanings,
                 prompt=reader.str("prompt", Fragment.prompt_file),
+                strategy=entity_extraction_config.get("strategy"),
                 encoding_model=reader.str(Fragment.encoding_model),
             )
 

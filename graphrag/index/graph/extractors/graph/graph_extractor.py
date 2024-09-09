@@ -4,7 +4,6 @@
 """A module containing 'GraphExtractionResult' and 'GraphExtractor' models."""
 
 import logging
-import numbers
 import re
 import traceback
 from collections.abc import Mapping
@@ -248,11 +247,11 @@ class GraphExtractor:
                     target = clean_str(record_attributes[2].upper())
                     edge_description = clean_str(record_attributes[3])
                     edge_source_id = clean_str(str(source_doc_id))
-                    weight = (
-                        float(record_attributes[-1])
-                        if isinstance(record_attributes[-1], numbers.Number)
-                        else 1.0
-                    )
+                    try:
+                        weight = float(record_attributes[-1])
+                    except ValueError:
+                        weight = 1.0
+
                     if source not in graph.nodes():
                         graph.add_node(
                             source,
