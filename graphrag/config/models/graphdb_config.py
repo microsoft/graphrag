@@ -25,3 +25,13 @@ class GraphDBConfig(BaseModel):
         description="Flag to enable querying into graphdb",
         default=False
     )
+
+    cosmos_url: str|None = Field(
+        description="Cosmos account url",
+        default=None,
+    )
+
+    gremlin_url: str|None = Field(
+        description="Gremlin db url",
+        default=None,
+    )

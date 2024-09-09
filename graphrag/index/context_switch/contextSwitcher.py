@@ -199,7 +199,7 @@ class ContextSwitcher:
         final_covariates = pd.DataFrame()
         if config.graphdb.enabled:
             cosmos_client = CosmosClient(
-                f"https://{config.graphdb.account_name}.documents.azure.com:443/",
+                f"{config.graphdb.cosmos_url}",
                 f"{config.graphdb.account_key}",
             )
             database_name = config.graphdb.username.split("/")[2]
@@ -252,6 +252,9 @@ class ContextSwitcher:
             if config.graphdb.enabled:
                 graph_db_client.write_vertices(final_entities)
                 graph_db_client.write_edges(final_relationships)
+        
+        if config.graphdb.enabled:
+            graph_db_client._client.close()
 
     def deactivate(self):
         """DeActivate the context."""

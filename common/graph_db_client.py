@@ -23,7 +23,7 @@ class GraphDBClient:
         #    credential = ManagedIdentityCredential(client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3")
         #    token = credential.get_token(COSMOS_DB_SCOPE)
         self._client=client.Client(
-            url=f"wss://{graph_db_params.account_name}.gremlin.cosmos.azure.com:443/",
+            url=f"{graph_db_params.gremlin_url}",
             traversal_source="g",
             username=self.username_prefix+"-contextid-"+context_id,
             password=token,

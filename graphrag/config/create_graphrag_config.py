@@ -560,6 +560,8 @@ def create_graphrag_config(
                 account_key=reader.str("account_key") or None,
                 username=reader.str("username") or None,
                 enabled=reader.bool("enabled") or False,
+                cosmos_url=reader.str("cosmos_url") or None,
+                gremlin_url=reader.str("gremlin_url") or None,
             )
 
         encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
