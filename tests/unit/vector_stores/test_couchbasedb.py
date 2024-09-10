@@ -1,18 +1,23 @@
 # Constants for Couchbase connection
 import os
+import time
 import unittest
+
+from dotenv import load_dotenv
 
 from graphrag.vector_stores.base import VectorStoreDocument, VectorStoreSearchResult
 from graphrag.vector_stores.couchbasedb import CouchbaseVectorStore
 
-COUCHBASE_CONNECTION_STRING = os.environ.get("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
-COUCHBASE_USERNAME = os.environ.get("COUCHBASE_USERNAME", "")
-COUCHBASE_PASSWORD = os.environ.get("COUCHBASE_PASSWORD", "")
-BUCKET_NAME = os.environ.get("COUCHBASE_BUCKET_NAME", "graphrag-demo")
-SCOPE_NAME = os.environ.get("COUCHBASE_SCOPE_NAME", "shared")
-COLLECTION_NAME = os.environ.get("COUCHBASE_COLLECTION_NAME", "entity_description_embeddings")
-INDEX_NAME = os.environ.get("COUCHBASE_INDEX_NAME", "graphrag_index")
+load_dotenv()
 
+COUCHBASE_CONNECTION_STRING = os.getenv("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
+COUCHBASE_USERNAME = os.getenv("COUCHBASE_USERNAME", "")
+COUCHBASE_PASSWORD = os.getenv("COUCHBASE_PASSWORD", "")
+BUCKET_NAME = os.getenv("COUCHBASE_BUCKET_NAME", "graphrag-demo")
+SCOPE_NAME = os.getenv("COUCHBASE_SCOPE_NAME", "shared")
+COLLECTION_NAME = os.getenv("COUCHBASE_COLLECTION_NAME", "entity_description_embeddings")
+INDEX_NAME = os.getenv("COUCHBASE_INDEX_NAME", "graphrag_index")
+VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", 1536))
 
 class TestCouchbaseVectorStore(unittest.TestCase):
     @classmethod
@@ -21,7 +26,8 @@ class TestCouchbaseVectorStore(unittest.TestCase):
             collection_name=COLLECTION_NAME,
             bucket_name=BUCKET_NAME,
             scope_name=SCOPE_NAME,
-            index_name=INDEX_NAME
+            index_name=INDEX_NAME,
+            vector_size=VECTOR_SIZE
         )
         cls.vector_store.connect(
             connection_string=COUCHBASE_CONNECTION_STRING,
@@ -37,10 +43,13 @@ class TestCouchbaseVectorStore(unittest.TestCase):
 
     def test_load_documents(self):
         documents = [
-            VectorStoreDocument(id="1", text="Test 1", vector=[0.1, 0.2, 0.3], attributes={"attr": "value1"}),
-            VectorStoreDocument(id="2", text="Test 2", vector=[0.4, 0.5, 0.6], attributes={"attr": "value2"})
+            VectorStoreDocument(id="1", text="Test 1", vector=[0.1] * VECTOR_SIZE, attributes={"attr": "value1"}),
+            VectorStoreDocument(id="2", text="Test 2", vector=[0.2] * VECTOR_SIZE, attributes={"attr": "value2"})
         ]
         self.vector_store.load_documents(documents)
+
+        # Add a sleep to allow time for indexing
+        time.sleep(2)
 
         # Verify documents were loaded
         for doc in documents:
@@ -52,7 +61,10 @@ class TestCouchbaseVectorStore(unittest.TestCase):
         # Ensure we have some documents in the store
         self.test_load_documents()
 
-        results = self.vector_store.similarity_search_by_vector([0.1, 0.2, 0.3], k=2)
+        # Add a sleep to allow time for indexing
+        time.sleep(2)
+
+        results = self.vector_store.similarity_search_by_vector([0.1] * VECTOR_SIZE, k=2)
         assert len(results) == 2
         assert isinstance(results[0], VectorStoreSearchResult)
         assert isinstance(results[0].document, VectorStoreDocument)
@@ -60,7 +72,13 @@ class TestCouchbaseVectorStore(unittest.TestCase):
     def test_similarity_search_by_text(self):
         # Mock text embedder function
         def mock_text_embedder(text):
-            return [0.1, 0.2, 0.3]
+            return [0.1] * VECTOR_SIZE
+
+        # Ensure we have some documents in the store
+        self.test_load_documents()
+
+        # Add a sleep to allow time for indexing
+        time.sleep(2)
 
         results = self.vector_store.similarity_search_by_text("test query", mock_text_embedder, k=2)
         assert len(results) == 2
