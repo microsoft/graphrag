@@ -13,10 +13,9 @@ from pathlib import Path
 
 from graphrag.config import (
     CacheType,
-    ReportingType,
-    StorageType,
     enable_logging_with_config,
     load_config,
+    resolve_paths,
 )
 
 from .api import build_index
@@ -128,27 +127,11 @@ def index_cli(
         sys.exit(0)
 
     root = Path(root_dir).resolve()
-    config = load_config(root, config_filepath, run_id)
+    config = load_config(root, config_filepath)
 
-    if output_dir and output_dir.strip() == "":
-        msg = "Output directory cannot be empty."
-        raise ValueError(msg)
-    if reports_dir and reports_dir.strip() == "":
-        msg = "Logs directory cannot be empty."
-        raise ValueError(msg)
-
-    if output_dir:
-        config.storage.base_dir = (
-            str((root / output_dir).resolve())
-            if config.storage.type == StorageType.file
-            else output_dir
-        )
-    if reports_dir:
-        config.reporting.base_dir = (
-            str((root / reports_dir).resolve())
-            if config.reporting.type == ReportingType.file
-            else reports_dir
-        )
+    config.storage.base_dir = output_dir or config.storage.base_dir
+    config.reporting.base_dir = reports_dir or config.reporting.base_dir
+    resolve_paths(config, run_id)
 
     if nocache:
         config.cache.type = CacheType.none
