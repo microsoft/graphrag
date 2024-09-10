@@ -76,6 +76,20 @@ if __name__ == "__main__":
         default=None,
         type=str,
     )
+    parser.add_argument(
+        "--output",
+        help="The output directory to use for the pipeline.",
+        required=False,
+        default=None,
+        type=str,
+    )
+    parser.add_argument(
+        "--reports",
+        help="The output directory to use for reporting.",
+        required=False,
+        default=None,
+        type=str,
+    )
     args = parser.parse_args()
 
     if args.resume and args.update_index:
@@ -95,4 +109,6 @@ if __name__ == "__main__":
         dryrun=args.dryrun or False,
         init=args.init or False,
         skip_validations=args.skip_validations or False,
+        output_dir=args.output,
+        reports_dir=args.reports,
     )

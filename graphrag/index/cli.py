@@ -11,7 +11,13 @@ import time
 import warnings
 from pathlib import Path
 
-from graphrag.config import CacheType, enable_logging_with_config, load_config
+from graphrag.config import (
+    CacheType,
+    ReportingType,
+    StorageType,
+    enable_logging_with_config,
+    load_config,
+)
 
 from .api import build_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -109,6 +115,8 @@ def index_cli(
     emit: str | None,
     dryrun: bool,
     skip_validations: bool,
+    output_dir: str | None,
+    reports_dir: str | None,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = load_progress_reporter(reporter or "rich")
@@ -121,6 +129,26 @@ def index_cli(
 
     root = Path(root_dir).resolve()
     config = load_config(root, config_filepath, run_id)
+
+    if output_dir and output_dir.strip() == "":
+        msg = "Output directory cannot be empty."
+        raise ValueError(msg)
+    if reports_dir and reports_dir.strip() == "":
+        msg = "Logs directory cannot be empty."
+        raise ValueError(msg)
+
+    if output_dir:
+        config.storage.base_dir = (
+            str((root / output_dir).resolve())
+            if config.storage.type == StorageType.file
+            else output_dir
+        )
+    if reports_dir:
+        config.reporting.base_dir = (
+            str((root / reports_dir).resolve())
+            if config.reporting.type == ReportingType.file
+            else reports_dir
+        )
 
     if nocache:
         config.cache.type = CacheType.none
@@ -189,13 +217,13 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)
 
+    with settings_yaml.open("wb") as file:
+        file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
+
     dotenv = root / ".env"
     if not dotenv.exists():
-        with settings_yaml.open("wb") as file:
-            file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
-
-    with dotenv.open("wb") as file:
-        file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
+        with dotenv.open("wb") as file:
+            file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
 
     prompts_dir = root / "prompts"
     if not prompts_dir.exists():

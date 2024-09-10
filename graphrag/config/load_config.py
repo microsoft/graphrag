@@ -48,19 +48,21 @@ def load_config(
     else:
         config = create_graphrag_config(root_dir=str(root))
 
-    config.storage.base_dir = str(
-        resolve_path(
-            config.storage.base_dir,
-            root if config.storage.type == StorageType.file else None,
-            run_id,
+    if config.storage.type == StorageType.file:
+        config.storage.base_dir = str(
+            resolve_path(
+                config.storage.base_dir,
+                root if config.storage.type == StorageType.file else None,
+                run_id,
+            )
         )
-    )
-    config.reporting.base_dir = str(
-        resolve_path(
-            config.reporting.base_dir,
-            root if config.reporting.type == ReportingType.file else None,
-            run_id,
+    if config.reporting.type == ReportingType.file:
+        config.reporting.base_dir = str(
+            resolve_path(
+                config.reporting.base_dir,
+                root if config.reporting.type == ReportingType.file else None,
+                run_id,
+            )
         )
-    )
 
     return config
