@@ -224,7 +224,7 @@ def run_local_search(
             final_nodes = pd.concat([final_nodes, read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")])
             final_community_reports = pd.concat([final_community_reports,read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet")]) # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
             final_text_units = pd.concat([final_text_units, read_paraquet_file(input_storage_client, data_path + "/create_final_text_units.parquet")]) # lance db search need it for embedding mapping. we have embeddings in entities we should use from there. KustoDB already must have sorted it.
-            final_relationships = pd.concat([final_text_units,read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
+            final_relationships = pd.concat([final_relationships,read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")])
 
             if not optimized_search:
                 final_covariates = pd.concat([final_covariates, read_paraquet_file(input_storage_client, data_path + "/create_final_covariates.parquet")])
@@ -238,6 +238,8 @@ def run_local_search(
             final_community_reports, final_nodes, community_level
         )
 
+        final_relationships=read_indexer_relationships(final_relationships)
+
         covariates = (
             read_indexer_covariates(final_covariates)
             if final_covariates.empty is False
@@ -245,10 +247,11 @@ def run_local_search(
         )
         text_units=read_indexer_text_units(final_text_units)
 
-    elif not  use_kusto_community_reports:
-        print("\n\n[!] WARNING: Passing empty reports.\n\n")
 
     ########################################################################################
+
+    if use_kusto_community_reports:
+        ValueError("Using community reports is not supported.")
 
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
