@@ -50,6 +50,9 @@ class GraphDBClient:
         df = pd.DataFrame(json_data)
         return df
 
+    def remove_graph(self):
+        self._client.submit(message=("g.V().drop()"))
+
     def query_vertices(self,context_id:str) -> pd.DataFrame:
         result = self._client.submit(
             message=(
