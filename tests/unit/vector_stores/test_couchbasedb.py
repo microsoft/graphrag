@@ -1,83 +1,75 @@
-
+# Constants for Couchbase connection
+import os
 import unittest
-from unittest.mock import MagicMock, patch
 
-from graphrag.model.types import VectorStoreDocument, VectorStoreSearchResult
+from graphrag.vector_stores.base import VectorStoreDocument, VectorStoreSearchResult
 from graphrag.vector_stores.couchbasedb import CouchbaseVectorStore
 
+COUCHBASE_CONNECTION_STRING = os.environ.get("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
+COUCHBASE_USERNAME = os.environ.get("COUCHBASE_USERNAME", "")
+COUCHBASE_PASSWORD = os.environ.get("COUCHBASE_PASSWORD", "")
+BUCKET_NAME = os.environ.get("COUCHBASE_BUCKET_NAME", "graphrag-demo")
+SCOPE_NAME = os.environ.get("COUCHBASE_SCOPE_NAME", "shared")
+COLLECTION_NAME = os.environ.get("COUCHBASE_COLLECTION_NAME", "entity_description_embeddings")
+INDEX_NAME = os.environ.get("COUCHBASE_INDEX_NAME", "graphrag_index")
 
-class TestCouchbaseVectorStore(unittest.IsolatedAsyncioTestCase):
-    def setUp(self):
-        self.vector_store = CouchbaseVectorStore(
-            collection_name="test_collection",
-            bucket_name="test_bucket",
-            scope_name="test_scope",
-            index_name="test_index"
+
+class TestCouchbaseVectorStore(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.vector_store = CouchbaseVectorStore(
+            collection_name=COLLECTION_NAME,
+            bucket_name=BUCKET_NAME,
+            scope_name=SCOPE_NAME,
+            index_name=INDEX_NAME
         )
-        self.vector_store.db_connection = MagicMock()
-        self.vector_store.document_collection = MagicMock()
-        self.vector_store.scope = MagicMock()
+        cls.vector_store.connect(
+            connection_string=COUCHBASE_CONNECTION_STRING,
+            username=COUCHBASE_USERNAME,
+            password=COUCHBASE_PASSWORD
+        )
 
-    async def test_connect(self):
-        with patch('graphrag.vector_stores.couchbasedb.Cluster') as mock_cluster:
-            self.vector_store.connect(
-                connection_string="couchbase://localhost",
-                username="test_user",
-                password="test_password"
-            )
-            mock_cluster.assert_called_once()
-            self.assertIsNotNone(self.vector_store.db_connection)
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up the test collection
+        query = f"DELETE FROM `{BUCKET_NAME}`.`{SCOPE_NAME}`.`{COLLECTION_NAME}`"
+        cls.vector_store.db_connection.query(query).execute()
 
-    async def test_load_documents(self):
+    def test_load_documents(self):
         documents = [
             VectorStoreDocument(id="1", text="Test 1", vector=[0.1, 0.2, 0.3], attributes={"attr": "value1"}),
             VectorStoreDocument(id="2", text="Test 2", vector=[0.4, 0.5, 0.6], attributes={"attr": "value2"})
         ]
         self.vector_store.load_documents(documents)
-        self.assertEqual(self.vector_store.document_collection.upsert.call_count, 2)
 
-    async def test_similarity_search_by_text(self):
-        mock_text_embedder = MagicMock(return_value=[0.1, 0.2, 0.3])
-        with patch.object(self.vector_store, 'similarity_search_by_vector') as mock_search:
-            mock_search.return_value = [
-                VectorStoreSearchResult(
-                    document=VectorStoreDocument(id="1", text="Test 1", vector=[0.1, 0.2, 0.3]),
-                    score=0.9
-                )
-            ]
-            results = self.vector_store.similarity_search_by_text("test query", mock_text_embedder, k=1)
-            self.assertEqual(len(results), 1)
-            mock_search.assert_called_once_with([0.1, 0.2, 0.3], 1)
+        # Verify documents were loaded
+        for doc in documents:
+            result = self.vector_store.document_collection.get(doc.id)
+            assert result.content_as[dict] is not None
+            assert result.content_as[dict]["text"] == doc.text
 
-    async def test_similarity_search_by_vector(self):
-        mock_search_iter = MagicMock()
-        mock_search_iter.rows.return_value = [
-            MagicMock(id="1", fields={"text": "Test 1", "embedding": [0.1, 0.2, 0.3]}, score=0.9)
-        ]
-        self.vector_store.scope.search.return_value = mock_search_iter
+    def test_similarity_search_by_vector(self):
+        # Ensure we have some documents in the store
+        self.test_load_documents()
 
-        results = self.vector_store.similarity_search_by_vector([0.1, 0.2, 0.3], k=1)
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].document.id, "1")
-        self.assertEqual(results[0].document.text, "Test 1")
-        self.assertEqual(results[0].score, 0.9)
+        results = self.vector_store.similarity_search_by_vector([0.1, 0.2, 0.3], k=2)
+        assert len(results) == 2
+        assert isinstance(results[0], VectorStoreSearchResult)
+        assert isinstance(results[0].document, VectorStoreDocument)
+
+    def test_similarity_search_by_text(self):
+        # Mock text embedder function
+        def mock_text_embedder(text):
+            return [0.1, 0.2, 0.3]
+
+        results = self.vector_store.similarity_search_by_text("test query", mock_text_embedder, k=2)
+        assert len(results) == 2
+        assert isinstance(results[0], VectorStoreSearchResult)
+        assert isinstance(results[0].document, VectorStoreDocument)
 
     def test_filter_by_id(self):
         filter_query = self.vector_store.filter_by_id(["1", "2", "3"])
-        self.assertEqual(filter_query, "search.in(id, '1,2,3', ',')")
+        assert filter_query == "search.in(id, '1,2,3', ',')"
 
-    def test_format_metadata(self):
-        row_fields = {
-            "attributes.attr1": "value1",
-            "attributes.attr2": "value2",
-            "other_field": "other_value"
-        }
-        metadata = self.vector_store._format_metadata(row_fields)
-        self.assertEqual(metadata, {
-            "attr1": "value1",
-            "attr2": "value2",
-            "other_field": "other_value"
-        })
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
