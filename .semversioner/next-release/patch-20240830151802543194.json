@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Consistent config loading. Resolves #99 and Resolves #1049"
-}
