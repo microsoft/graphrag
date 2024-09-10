@@ -50,27 +50,33 @@ class ContextSwitcher:
         self.use_kusto_community_reports = use_kusto_community_reports
         logging.info("ContextSwitcher initialized")
 
-    def setup_vector_store(self,
-            config_args: dict | None = None,) -> BaseVectorStore:
+    def get_embedding_store(self,config_args):
         """Set up the vector store and return it."""
         if not config_args:
-                config_args = {}
+            config_args = {}
 
         collection_name = config_args.get(
-                "query_collection_name", "entity_description_embeddings"
+            "query_collection_name", "entity_description_embeddings"
         )
 
         collection_name += "_" + self.context_id
         config_args.update({"collection_name": collection_name})
         vector_name = config_args.get(
-                "vector_search_column", "description_embedding"
+            "vector_search_column", "description_embedding"
         )
         config_args.update({"vector_name": vector_name})
         config_args.update({"reports_name": f"reports_{self.context_id}"})
 
-        description_embedding_store = VectorStoreFactory.get_vector_store(
-                vector_store_type=VectorStoreType.Kusto, kwargs=config_args
+        return VectorStoreFactory.get_vector_store(
+            vector_store_type=VectorStoreType.Kusto, kwargs=config_args
         )
+
+
+
+    def setup_vector_store(self,
+            config_args: dict | None = None,) -> BaseVectorStore:
+
+        description_embedding_store = self.get_embedding_store(config_args)
         description_embedding_store.connect(**config_args)
 
         description_embedding_store.setup_entities()
@@ -78,6 +84,43 @@ class ContextSwitcher:
             description_embedding_store.setup_reports()
 
         return description_embedding_store
+
+    def _read_config_parameters(self,root: str, config: str | None):
+        reporter=self.reporter
+        _root = Path(root)
+        settings_yaml = (
+            Path(config)
+            if config and Path(config).suffix in [".yaml", ".yml"]
+            else _root / "settings.yaml"
+        )
+        if not settings_yaml.exists():
+            settings_yaml = _root / "settings.yml"
+
+        if settings_yaml.exists():
+            reporter.info(f"Reading settings from {settings_yaml}")
+            with settings_yaml.open(
+                    "rb",
+            ) as file:
+                import yaml
+
+                data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
+                return create_graphrag_config(data, root)
+
+        settings_json = (
+            Path(config)
+            if config and Path(config).suffix == ".json"
+            else _root / "settings.json"
+        )
+        if settings_json.exists():
+            reporter.info(f"Reading settings from {settings_json}")
+            with settings_json.open("rb") as file:
+                import json
+
+                data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
+                return create_graphrag_config(data, root)
+
+        reporter.info("Reading settings from environment variables")
+        return create_graphrag_config(root_dir=root)
 
     def activate(self):
         """Activate the context."""
@@ -131,46 +174,7 @@ class ContextSwitcher:
             config_dir: str | None,
         ) -> GraphRagConfig:
             """Create a GraphRag configuration."""
-            return _read_config_parameters(root or "./", config_dir)
-
-
-        def _read_config_parameters(root: str, config: str | None):
-            _root = Path(root)
-            settings_yaml = (
-                Path(config)
-                if config and Path(config).suffix in [".yaml", ".yml"]
-                else _root / "settings.yaml"
-            )
-            if not settings_yaml.exists():
-                settings_yaml = _root / "settings.yml"
-
-            if settings_yaml.exists():
-                reporter.info(f"Reading settings from {settings_yaml}")
-                with settings_yaml.open(
-                    "rb",
-                ) as file:
-                    import yaml
-
-                    data = yaml.safe_load(file.read().decode(encoding="utf-8", errors="strict"))
-                    return create_graphrag_config(data, root)
-
-            settings_json = (
-                Path(config)
-                if config and Path(config).suffix == ".json"
-                else _root / "settings.json"
-            )
-            if settings_json.exists():
-                reporter.info(f"Reading settings from {settings_json}")
-                with settings_json.open("rb") as file:
-                    import json
-
-                    data = json.loads(file.read().decode(encoding="utf-8", errors="strict"))
-                    return create_graphrag_config(data, root)
-
-            reporter.info("Reading settings from environment variables")
-            return create_graphrag_config(root_dir=root)
-
-
+            return self._read_config_parameters(root or "./", config_dir)
 
         ################################################################################
 
@@ -197,6 +201,8 @@ class ContextSwitcher:
         final_relationships = pd.DataFrame()
         final_entities = pd.DataFrame()
         final_covariates = pd.DataFrame()
+        graph_db_client=None
+
         if config.graphdb.enabled:
             cosmos_client = CosmosClient(
                 f"{config.graphdb.cosmos_url}",
@@ -252,11 +258,15 @@ class ContextSwitcher:
             if config.graphdb.enabled:
                 graph_db_client.write_vertices(final_entities)
                 graph_db_client.write_edges(final_relationships)
-        
+
         if config.graphdb.enabled:
             graph_db_client._client.close()
 
     def deactivate(self):
         """DeActivate the context."""
-        #1. Delete all the data for a given context id.
-        self.set_ctx_activation(0)
+
+        config=self._read_config_parameters(self.root_dir or "./",self.config_dir)
+        config_args = config.embeddings.vector_store
+        description_embedding_store = self.get_embedding_store(config_args)
+        description_embedding_store.connect(**config_args)
+        description_embedding_store.unload_entities()

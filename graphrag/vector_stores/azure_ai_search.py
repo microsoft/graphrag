@@ -213,3 +213,6 @@ class AzureAISearch(BaseVectorStore):
 
     def setup_reports(self) -> None:
         raise NotImplementedError("Setting up reports is not supported for Azure AI Search")
+
+    def unload_entities(self) -> None:
+        raise NotImplementedError("unload_entities(): Unsupported for this vector store.")
