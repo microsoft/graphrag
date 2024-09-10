@@ -140,3 +140,6 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def setup_reports(self) -> None:
         raise NotImplementedError("Setting up community reports is not supported for LanceDB")
+
+    def unload_entities(self) -> None:
+        raise NotImplementedError("unload_entities(): Unsupported for this vector store.")

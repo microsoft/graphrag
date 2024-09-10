@@ -113,3 +113,7 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def setup_reports(self) -> None:
         """Setup the reports in the vector-store."""
+
+    @abstractmethod
+    def unload_entities(self) -> None:
+        """Remove context from the databases."""
