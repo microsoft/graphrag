@@ -9,11 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from graphrag.config import (
-    GraphRagConfig,
-    load_config,
-    resolve_path,
-)
+from graphrag.config import GraphRagConfig, StorageType, load_config
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.progress import PrintProgressReporter
 from graphrag.utils.storage import _create_storage, _load_table_from_storage
@@ -40,7 +36,11 @@ def run_global_search(
     config = load_config(root, config_filepath)
 
     if data_dir:
-        config.storage.base_dir = str(resolve_path(data_dir, root))
+        config.storage.base_dir = (
+            str(root / data_dir)
+            if config.storage.type == StorageType.file
+            else data_dir
+        )
 
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
@@ -120,7 +120,11 @@ def run_local_search(
     config = load_config(root, config_filepath)
 
     if data_dir:
-        config.storage.base_dir = str(resolve_path(data_dir, root))
+        config.storage.base_dir = (
+            str(root / data_dir)
+            if config.storage.type == StorageType.file
+            else data_dir
+        )
 
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
