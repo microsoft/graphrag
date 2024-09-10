@@ -270,3 +270,7 @@ class ContextSwitcher:
         description_embedding_store = self.get_embedding_store(config_args)
         description_embedding_store.connect(**config_args)
         description_embedding_store.unload_entities()
+
+        if config.graphdb.enabled:
+            g_client=GraphDBClient(config.graphdb,self.context_id)
+            g_client.remove_graph()
