@@ -2,6 +2,7 @@
 # Licensed under the MIT License
 """Algorithms to build context data for local search prompt."""
 
+from copy import deepcopy
 import logging
 from typing import Any
 
@@ -319,7 +320,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             for text_id in entity.text_unit_ids or []:
                 if text_id not in text_unit_ids_set and text_id in self.text_units:
                     text_unit_ids_set.add(text_id)
-                    selected_unit = self.text_units[text_id]
+                    selected_unit = deepcopy(self.text_units[text_id])
                     num_relationships = count_relationships(
                         selected_unit, entity, self.relationships
                     )
