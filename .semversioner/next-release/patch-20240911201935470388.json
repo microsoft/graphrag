@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Calculate new inputs and deleted inputs on update"
+}
