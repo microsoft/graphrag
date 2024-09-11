@@ -3,7 +3,6 @@
 
 """File management and utils for Incremental Indexing."""
 
-from collections import namedtuple
 from dataclasses import dataclass
 
 import pandas as pd
