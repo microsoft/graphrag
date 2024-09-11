@@ -67,7 +67,7 @@ class SummarizeExtractor:
         result = ""
         if len(descriptions) == 0:
             result = ""
-        if len(descriptions) == 1:
+        elif len(descriptions) == 1:
             result = descriptions[0]
         else:
             result = await self._summarize_descriptions(items, descriptions)
