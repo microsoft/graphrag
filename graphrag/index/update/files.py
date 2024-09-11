@@ -41,8 +41,8 @@ async def get_delta_docs(
     )
 
     # Select distinct title from final docs and from dataset
-    previous_docs = final_docs["title"].unique()
-    dataset_docs = input_dataset["title"].unique()
+    previous_docs: list[str] = final_docs["title"].unique().tolist()
+    dataset_docs: list[str] = input_dataset["title"].unique().tolist()
 
     # Get the new documents
     new_docs = input_dataset[~input_dataset["title"].isin(previous_docs)]
