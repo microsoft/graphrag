@@ -113,7 +113,7 @@ class CouchbaseVectorStore(BaseVectorStore):
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
-        """Perform ANN search by text."""
+        """Perform KNN search by text."""
         logger.info("Performing similarity search by text with k=%d", k)
         query_embedding = text_embedder(text)
         if query_embedding:
@@ -124,7 +124,7 @@ class CouchbaseVectorStore(BaseVectorStore):
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
-        """Perform ANN search by vector."""
+        """Perform KNN search by vector."""
         logger.info("Performing similarity search by vector with k=%d", k)
 
         search_req = SearchRequest.create(
