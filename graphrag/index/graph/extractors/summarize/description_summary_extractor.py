@@ -87,7 +87,11 @@ class SummarizeExtractor:
         if not isinstance(descriptions, list):
             descriptions = [descriptions]
 
-            # Iterate over descriptions, adding all until the max input tokens is reached
+        # Sort description lists
+        if len(descriptions) > 1:
+            descriptions = sorted(descriptions)
+
+        # Iterate over descriptions, adding all until the max input tokens is reached
         usable_tokens = self._max_input_tokens - num_tokens_from_string(
             self._summarization_prompt
         )
