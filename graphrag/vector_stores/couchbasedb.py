@@ -6,7 +6,6 @@ from typing import Any
 
 from couchbase.auth import PasswordAuthenticator
 from couchbase.cluster import Cluster
-from couchbase.exceptions import DocumentExistsException
 from couchbase.options import ClusterOptions, SearchOptions
 from couchbase.search import SearchRequest
 from couchbase.vector_search import VectorQuery, VectorSearch
@@ -47,7 +46,8 @@ class CouchbaseVectorStore(BaseVectorStore):
         self.scoped_index = scoped_index
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
         logger.debug(
-            f"Initialized CouchbaseVectorStore with collection: {collection_name}, bucket: {bucket_name}, scope: {scope_name}, index: {index_name}"
+            "Initialized CouchbaseVectorStore with collection: %s, bucket: %s, scope: %s, index: %s",
+            collection_name, bucket_name, scope_name, index_name
         )
 
     def connect(self, **kwargs: Any) -> None:
@@ -57,13 +57,15 @@ class CouchbaseVectorStore(BaseVectorStore):
         password = kwargs.get("password")
 
         if not isinstance(username, str) or not isinstance(password, str):
-            logger.error("Username and password must be strings")
-            raise TypeError("Username and password must be strings")
+            error_msg = "Username and password must be strings"
+            logger.error(error_msg)
+            raise TypeError(error_msg)
         if not isinstance(connection_string, str):
-            logger.error("Connection string must be a string")
-            raise TypeError("Connection string must be a string")
+            error_msg = "Connection string must be a string"
+            logger.error(error_msg)
+            raise TypeError(error_msg)
 
-        logger.info(f"Connecting to Couchbase at {connection_string}")
+        logger.info("Connecting to Couchbase at %s", connection_string)
         auth = PasswordAuthenticator(username, password)
         options = ClusterOptions(auth)
         cluster = Cluster(connection_string, options)
@@ -73,43 +75,38 @@ class CouchbaseVectorStore(BaseVectorStore):
         self.document_collection = self.scope.collection(self.collection_name)
         logger.info("Successfully connected to Couchbase")
 
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into vector storage."""
-        logger.info(f"Loading {len(documents)} documents into vector storage")
-        batch = [
-            {
-                "id": doc.id,
+        logger.info("Loading %d documents into vector storage", len(documents))
+        batch = {
+            doc.id: {
                 self.text_key: doc.text,
                 self.embedding_key: doc.vector,
                 "attributes": json.dumps(doc.attributes),
             }
             for doc in documents
             if doc.vector is not None
-        ]
+        }
         if batch:
-            successful_loads = 0
-            for doc in batch:
-                try:
-                    if overwrite:
-                        self.document_collection.upsert(doc["id"], doc)
+            try:
+                result = self.document_collection.upsert_multi(batch)
+                
+                # Assuming the result has an 'all_ok' attribute
+                if hasattr(result, "all_ok"):
+                    if result.all_ok:
+                        logger.info("Successfully loaded all %d documents", len(batch))
                     else:
-                        self.document_collection.insert(doc["id"], doc)
-                    successful_loads += 1
-                except DocumentExistsException:
-                    if not overwrite:
-                        logger.warning(
-                            f"Document with id {doc['id']} already exists and overwrite is set to False"
-                        )
-                except Exception as e:
-                    logger.error(
-                        f"Error occurred while loading document {doc['id']}: {str(e)}"
-                    )
-
-            logger.info(
-                f"Successfully loaded {successful_loads} out of {len(batch)} documents"
-            )
+                        logger.warning("Some documents failed to load")
+                else:
+                    logger.info("Unable to determine success status of document loading")
+                
+                # If there's a way to access individual results, log them
+                if hasattr(result, "__iter__"):
+                    for key, value in result:
+                        logger.info("Document %s: %s", key, "Success" if value.success else "Failed")
+                
+            except Exception as e:
+                logger.exception("Error occurred while loading documents: %s", str(e))
         else:
             logger.warning("No valid documents to load")
 
@@ -117,7 +114,7 @@ class CouchbaseVectorStore(BaseVectorStore):
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform ANN search by text."""
-        logger.info(f"Performing similarity search by text with k={k}")
+        logger.info("Performing similarity search by text with k=%d", k)
         query_embedding = text_embedder(text)
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
@@ -128,7 +125,7 @@ class CouchbaseVectorStore(BaseVectorStore):
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform ANN search by vector."""
-        logger.info(f"Performing similarity search by vector with k={k}")
+        logger.info("Performing similarity search by vector with k=%d", k)
 
         search_req = SearchRequest.create(
             VectorSearch.from_vector_query(
@@ -140,7 +137,7 @@ class CouchbaseVectorStore(BaseVectorStore):
             )
         )
 
-        fields = kwargs.get('fields', ["*"])
+        fields = kwargs.get("fields", ["*"])
         
         if self.scoped_index:
             search_iter = self.scope.search(
@@ -171,13 +168,13 @@ class CouchbaseVectorStore(BaseVectorStore):
             )
             results.append(VectorStoreSearchResult(document=doc, score=score))
 
-        logger.info(f"Found {len(results)} results in similarity search by vector")
+        logger.info("Found %d results in similarity search by vector", len(results))
         return results
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
         id_filter = ",".join([f"{id!s}" for id in include_ids])
-        logger.debug(f"Created filter by ID: {id_filter}")
+        logger.debug("Created filter by ID: %s", id_filter)
         return f"search.in(id, '{id_filter}', ',')"
 
     def _format_metadata(self, row_fields: dict[str, Any]) -> dict[str, Any]:

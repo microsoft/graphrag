@@ -4,9 +4,9 @@ import os
 import traceback
 from typing import Any, Callable, Dict, List, Union
 
-from dotenv import load_dotenv
 import pandas as pd
 import tiktoken
+from dotenv import load_dotenv
 
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.indexer_adapters import (
