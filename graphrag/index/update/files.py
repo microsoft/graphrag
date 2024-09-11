@@ -3,7 +3,8 @@
 
 """File management and utils for Incremental Indexing."""
 
-from typing import NamedTuple
+from collections import namedtuple
+from dataclasses import dataclass
 
 import pandas as pd
 
@@ -11,9 +12,17 @@ from graphrag.index.storage.typing import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
 
-# Output delta named tuple
-class InputDelta(NamedTuple):
-    """Named tuple for output delta."""
+@dataclass
+class InputDelta:
+    """Dataclass to hold the input delta.
+
+    Attributes
+    ----------
+    new_inputs : pd.DataFrame
+        The new inputs.
+    deleted_inputs : pd.DataFrame
+        The deleted inputs.
+    """
 
     new_inputs: pd.DataFrame
     deleted_inputs: pd.DataFrame
@@ -44,7 +53,10 @@ async def get_delta_docs(
     previous_docs: list[str] = final_docs["title"].unique().tolist()
     dataset_docs: list[str] = input_dataset["title"].unique().tolist()
 
-    # Get the new documents
-    new_docs = input_dataset[~input_dataset["title"].isin(previous_docs)]
-    deleted_docs = final_docs[~final_docs["title"].isin(dataset_docs)]
+    # Get the new documents (using loc to ensure DataFrame)
+    new_docs = input_dataset.loc[~input_dataset["title"].isin(previous_docs)]
+
+    # Get the deleted documents (again using loc to ensure DataFrame)
+    deleted_docs = final_docs.loc[~final_docs["title"].isin(dataset_docs)]
+
     return InputDelta(new_docs, deleted_docs)

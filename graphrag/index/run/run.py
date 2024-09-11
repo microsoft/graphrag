@@ -122,15 +122,14 @@ async def run_pipeline_with_config(
         raise ValueError(msg)
 
     if is_update_run:
-        delta_docs = await get_delta_docs(dataset, storage)
-        new_docs_dataset = delta_docs.new_inputs
+        delta_dataset = await get_delta_docs(dataset, storage)
 
         delta_storage = storage.child("delta")
 
         # Run the pipeline on the new documents
         async for table in run_pipeline(
             workflows=workflows,
-            dataset=new_docs_dataset,
+            dataset=delta_dataset.new_inputs,
             storage=delta_storage,
             cache=cache,
             callbacks=callbacks,
