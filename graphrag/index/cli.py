@@ -13,7 +13,7 @@ from pathlib import Path
 
 from graphrag.config import CacheType, enable_logging_with_config, load_config
 
-from .api import build_index, update_index
+from .api import build_index
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT

@@ -8,7 +8,6 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
-from pathlib import Path
 from typing import cast
 
 import pandas as pd
@@ -54,7 +53,7 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.utils.storage import _create_storage, _load_table_from_storage
+from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)
 
@@ -123,7 +122,6 @@ async def run_pipeline_with_config(
         raise ValueError(msg)
 
     if is_update_run:
-
         delta_docs = await get_delta_docs(dataset, storage)
         new_docs_dataset = delta_docs.new_inputs
 
@@ -147,7 +145,6 @@ async def run_pipeline_with_config(
             yield table
 
     else:
-
         async for table in run_pipeline(
             workflows=workflows,
             dataset=dataset,

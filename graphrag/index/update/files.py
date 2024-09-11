@@ -7,7 +7,6 @@ from typing import NamedTuple
 
 import pandas as pd
 
-from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.storage.typing import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
@@ -23,6 +22,20 @@ class InputDelta(NamedTuple):
 async def get_delta_docs(
     input_dataset: pd.DataFrame, storage: PipelineStorage
 ) -> InputDelta:
+    """Get the delta between the input dataset and the final documents.
+
+    Parameters
+    ----------
+    input_dataset : pd.DataFrame
+        The input dataset.
+    storage : PipelineStorage
+        The Pipeline storage.
+
+    Returns
+    -------
+    InputDelta
+        The input delta. With new inputs and deleted inputs.
+    """
     final_docs = await _load_table_from_storage(
         "create_final_documents.parquet", storage
     )
