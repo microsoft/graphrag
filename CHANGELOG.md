@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.4
+
+- patch: Deep copy txt units on local search to avoid race conditions
+- patch: Fix summarization including empty descriptions
+
 ## 0.3.3
 
 - patch: Add entrypoints for incremental indexing
