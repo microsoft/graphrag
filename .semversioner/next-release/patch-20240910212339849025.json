@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Deep copy txt units on local search to avoid race conditions"
+}
