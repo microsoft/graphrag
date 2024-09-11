@@ -140,20 +140,22 @@ class CouchbaseVectorStore(BaseVectorStore):
             )
         )
 
+        fields = kwargs.get('fields', ["*"])
+        
         if self.scoped_index:
             search_iter = self.scope.search(
                 self.index_name,
                 search_req,
                 SearchOptions(
                     limit=k,
-                    fields=["*"],
+                    fields=fields,
                 ),
             )
         else:
             search_iter = self.db_connection.search(
                 index=self.index_name,
                 request=search_req,
-                options=SearchOptions(limit=k, fields=["*"]),
+                options=SearchOptions(limit=k, fields=fields),
             )
 
         results = []

@@ -4,6 +4,7 @@ import os
 import traceback
 from typing import Any, Callable, Dict, List, Union
 
+from dotenv import load_dotenv
 import pandas as pd
 import tiktoken
 
@@ -31,7 +32,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
+load_dotenv()
 
 INPUT_DIR = os.getenv("INPUT_DIR")
 COUCHBASE_CONNECTION_STRING = os.getenv("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
@@ -43,6 +44,7 @@ COUCHBASE_VECTOR_INDEX_NAME = os.getenv("COUCHBASE_VECTOR_INDEX_NAME", "graphrag
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-ada-002")
+
 
 # Constants
 COMMUNITY_LEVEL = 2
@@ -65,20 +67,20 @@ def load_data() -> Dict[str, Any]:
 
     def load_table(table_name: str, read_function: Callable, *args) -> Any:
         try:
-            table_data = pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES[table_name]}.parquet")
+            table_data = pd.read_parquet(
+                f"{INPUT_DIR}/{TABLE_NAMES[table_name]}.parquet"
+            )
             return read_function(table_data, *args)
         except FileNotFoundError:
-            logger.warning(f"{table_name} file not found. Setting {table_name.lower()} to None.")
+            logger.warning(
+                f"{table_name} file not found. Setting {table_name.lower()} to None."
+            )
             return None
 
-    data["entities"] = load_table("ENTITY_TABLE", read_indexer_entities, 
-                                  pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_EMBEDDING_TABLE']}.parquet"), 
-                                  COMMUNITY_LEVEL)
+    data["entities"] = load_table("ENTITY_TABLE", read_indexer_entities, pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_EMBEDDING_TABLE']}.parquet"), COMMUNITY_LEVEL)
     data["relationships"] = load_table("RELATIONSHIP_TABLE", read_indexer_relationships)
     data["covariates"] = load_table("COVARIATE_TABLE", read_indexer_covariates)
-    data["reports"] = load_table("COMMUNITY_REPORT_TABLE", read_indexer_reports, 
-                                 pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_TABLE']}.parquet"), 
-                                 COMMUNITY_LEVEL)
+    data["reports"] = load_table("COMMUNITY_REPORT_TABLE", read_indexer_reports, pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_TABLE']}.parquet"), COMMUNITY_LEVEL)
     data["text_units"] = load_table("TEXT_UNIT_TABLE", read_indexer_text_units)
 
     logger.info("Data loading completed")
@@ -140,6 +142,7 @@ def setup_models() -> Dict[str, Any]:
         "token_encoder": token_encoder,
         "text_embedder": text_embedder,
     }
+
 
 def store_embeddings(
     entities: Union[Dict[str, Any], List[Any]], vector_store: CouchbaseVectorStore
