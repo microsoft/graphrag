@@ -2,8 +2,8 @@
 # Licensed under the MIT License
 """Algorithms to build context data for local search prompt."""
 
-from copy import deepcopy
 import logging
+from copy import deepcopy
 from typing import Any
 
 import pandas as pd
