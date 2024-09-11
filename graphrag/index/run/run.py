@@ -8,6 +8,7 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
+from pathlib import Path
 from typing import cast
 
 import pandas as pd
@@ -46,13 +47,14 @@ from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
+from graphrag.index.update.files import get_delta_docs
 from graphrag.index.verbs import *  # noqa
 from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.utils.storage import _create_storage
+from graphrag.utils.storage import _create_storage, _load_table_from_storage
 
 log = logging.getLogger(__name__)
 
@@ -111,9 +113,6 @@ async def run_pipeline_with_config(
         else await _create_input(config.input, progress_reporter, root_dir)
     )
 
-    if is_update_run:
-        # TODO: Filter dataset to only include new data (this should be done in the input module)
-        pass
     post_process_steps = input_post_process_steps or _create_postprocess_steps(
         config.input
     )
@@ -123,21 +122,47 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    async for table in run_pipeline(
-        workflows=workflows,
-        dataset=dataset,
-        storage=storage,
-        cache=cache,
-        callbacks=callbacks,
-        input_post_process_steps=post_process_steps,
-        memory_profile=memory_profile,
-        additional_verbs=additional_verbs,
-        additional_workflows=additional_workflows,
-        progress_reporter=progress_reporter,
-        emit=emit,
-        is_resume_run=is_resume_run,
-    ):
-        yield table
+    if is_update_run:
+
+        delta_docs = await get_delta_docs(dataset, storage)
+        new_docs_dataset = delta_docs.new_inputs
+
+        delta_storage = storage.child("delta")
+
+        # Run the pipeline on the new documents
+        async for table in run_pipeline(
+            workflows=workflows,
+            dataset=new_docs_dataset,
+            storage=delta_storage,
+            cache=cache,
+            callbacks=callbacks,
+            input_post_process_steps=post_process_steps,
+            memory_profile=memory_profile,
+            additional_verbs=additional_verbs,
+            additional_workflows=additional_workflows,
+            progress_reporter=progress_reporter,
+            emit=emit,
+            is_resume_run=False,
+        ):
+            yield table
+
+    else:
+
+        async for table in run_pipeline(
+            workflows=workflows,
+            dataset=dataset,
+            storage=storage,
+            cache=cache,
+            callbacks=callbacks,
+            input_post_process_steps=post_process_steps,
+            memory_profile=memory_profile,
+            additional_verbs=additional_verbs,
+            additional_workflows=additional_workflows,
+            progress_reporter=progress_reporter,
+            emit=emit,
+            is_resume_run=is_resume_run,
+        ):
+            yield table
 
 
 async def run_pipeline(
