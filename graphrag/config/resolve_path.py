@@ -174,25 +174,20 @@ def resolve_paths(
         Otherwise, the path will be resolved with the latest available timestamp directory
         that matches the given pattern.
     """
-    match config.storage.type:
-        case StorageType.file:
-            config.storage.base_dir = str(
-                resolve_path(
-                    config.storage.base_dir,
-                    config.root_dir,
-                    pattern_or_timestamp_value,
-                )
+    if config.storage.type == StorageType.file:
+        config.storage.base_dir = str(
+            resolve_path(
+                config.storage.base_dir,
+                config.root_dir,
+                pattern_or_timestamp_value,
             )
-        case _:
-            pass
-    match config.reporting.type:
-        case ReportingType.file:
-            config.reporting.base_dir = str(
-                resolve_path(
-                    config.reporting.base_dir,
-                    config.root_dir,
-                    pattern_or_timestamp_value,
-                )
+        )
+
+    if config.reporting.type == ReportingType.file:
+        config.reporting.base_dir = str(
+            resolve_path(
+                config.reporting.base_dir,
+                config.root_dir,
+                pattern_or_timestamp_value,
             )
-        case _:
-            pass
+        )
