@@ -59,6 +59,7 @@ log = logging.getLogger(__name__)
 
 async def run_pipeline_with_config(
     config_or_path: PipelineConfig | str,
+    emit: list[TableEmitterType],
     workflows: list[PipelineWorkflowReference] | None = None,
     dataset: pd.DataFrame | None = None,
     storage: PipelineStorage | None = None,
@@ -68,7 +69,6 @@ async def run_pipeline_with_config(
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
-    emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     run_id: str | None = None,
     is_resume_run: bool = False,
@@ -143,6 +143,7 @@ async def run_pipeline_with_config(
 async def run_pipeline(
     workflows: list[PipelineWorkflowReference],
     dataset: pd.DataFrame,
+    emit: list[TableEmitterType],
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
@@ -150,7 +151,6 @@ async def run_pipeline(
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
-    emit: list[TableEmitterType] | None = None,
     memory_profile: bool = False,
     is_resume_run: bool = False,
     **_kwargs: dict,

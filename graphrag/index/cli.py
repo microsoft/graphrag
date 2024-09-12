@@ -104,14 +104,14 @@ def index_cli(
     update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
-    reporter: str | None,
+    reporter: str,
     config_filepath: str | None,
-    emit: str | None,
+    emit: str,
     dryrun: bool,
     skip_validations: bool,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_reporter(reporter or "rich")
+    progress_reporter = load_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
@@ -147,7 +147,7 @@ def index_cli(
         info("Dry run complete, exiting...", True)
         sys.exit(0)
 
-    pipeline_emit = emit.split(",") if emit else None
+    pipeline_emit = emit.split(",")
 
     _register_signal_handlers(progress_reporter)
 
