@@ -55,11 +55,7 @@ async def load(
     if len(files) == 0:
         msg = f"No text files found in {config.base_dir}"
         raise ValueError(msg)
-    
-    if len(files) > 1:
-        msg = f"found more than 1 files in base dir  {config.base_dir}"
-        raise ValueError(msg)
-    
+
     found_files = f"found text files from {config.base_dir}, found {files}"
     log.info(found_files)
 
