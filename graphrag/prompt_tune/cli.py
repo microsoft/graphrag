@@ -7,10 +7,6 @@ from pathlib import Path
 
 from graphrag.config import load_config
 from graphrag.index.progress import PrintProgressReporter
-from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
-from graphrag.prompt_tune.loader import (
-    MIN_CHUNK_SIZE,
-)
 
 from . import api
 from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
@@ -23,16 +19,16 @@ async def prompt_tune(
     config: str,
     root: str,
     domain: str,
-    selection_method: DocSelectionType = DocSelectionType.RANDOM,
-    limit: int = 15,
-    max_tokens: int = MAX_TOKEN_COUNT,
-    chunk_size: int = MIN_CHUNK_SIZE,
-    language: str | None = None,
-    skip_entity_types: bool = False,
-    output: str = "prompts",
-    n_subset_max: int = 300,
-    k: int = 15,
-    min_examples_required: int = 2,
+    selection_method: DocSelectionType,
+    limit: int,
+    max_tokens: int,
+    chunk_size: int,
+    language: str | None,
+    skip_entity_types: bool,
+    output: str,
+    n_subset_max: int,
+    k: int,
+    min_examples_required: int,
 ):
     """Prompt tune the model.
 
@@ -71,7 +67,7 @@ async def prompt_tune(
         k=k,
     )
 
-    output_path = (root_path / output).resolve()
+    output_path = Path(output).resolve()
     if output_path:
         reporter.info(f"Writing prompts to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)

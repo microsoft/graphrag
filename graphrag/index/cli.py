@@ -100,7 +100,7 @@ def index_cli(
     root_dir: str,
     init: bool,
     verbose: bool,
-    resume: str | None,
+    resume: str,
     update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
