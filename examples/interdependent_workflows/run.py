@@ -47,7 +47,7 @@ async def run_python():
             name="aggregate_workflow",
             steps=[
                 {
-                    "verb": "aggregate",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/aggregate.py
+                    "verb": "aggregate",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/verbs/aggregate.py
                     "args": {
                         "groupby": "type",
                         "column": "col_multiplied",
@@ -66,7 +66,7 @@ async def run_python():
             steps=[
                 {
                     # built-in verb
-                    "verb": "derive",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/derive.py
+                    "verb": "derive",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/verbs/derive.py
                     "args": {
                         "column1": "col1",  # from above
                         "column2": "col2",  # from above
