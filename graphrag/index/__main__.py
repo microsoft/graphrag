@@ -62,17 +62,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "-v",
         "--verbose",
-        help="Runs the pipeline with verbose logging",
+        help="Run the pipeline with verbose logging",
         action="store_true",
     )
     parser.add_argument(
         "--memprofile",
-        help="Runs the pipeline with memory profiling",
+        help="Run the pipeline with memory profiling",
         action="store_true",
     )
     parser.add_argument(
         "--root",
-        help="If no configuration is defined, the root directory to use for input data and output data. Default: current directory",
+        help="The root directory to use for input data and output data, if no configuration is defined. Default: current directory",
         # Only required if config is not defined
         required=False,
         default=".",
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dryrun",
-        help="Run the pipeline without actually executing any steps and inspect the configuration",
+        help="Run the pipeline without executing any steps to inspect/validate the configuration",
         action="store_true",
     )
     parser.add_argument(
