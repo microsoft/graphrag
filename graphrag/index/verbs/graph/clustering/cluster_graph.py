@@ -87,6 +87,7 @@ def cluster_graph(
                         cast(str, row[column]),
                         cast(Communities, row[community_map_to]),
                         level,
+                        seed=strategy.get("seed"),
                     )
                 )
             )
@@ -111,7 +112,7 @@ def cluster_graph(
 
 # TODO: This should support str | nx.Graph as a graphml param
 def apply_clustering(
-    graphml: str, communities: Communities, level=0, seed=0xF001
+    graphml: str, communities: Communities, level: int = 0, seed: int | None = None
 ) -> nx.Graph:
     """Apply clustering to a graphml string."""
     random = Random(seed)  # noqa S311
