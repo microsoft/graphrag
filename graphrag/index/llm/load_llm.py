@@ -201,6 +201,7 @@ def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
         "concurrent_requests": config.get("concurrent_requests", 4),
         "encoding_model": config.get("encoding_model", "cl100k_base"),
         "cognitive_services_endpoint": config.get("cognitive_services_endpoint"),
+        "dimensions": config.get("dimensions"),
     }
 
 

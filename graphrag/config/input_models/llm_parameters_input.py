@@ -29,3 +29,4 @@ class LLMParametersInput(TypedDict):
     max_retry_wait: NotRequired[float | str | None]
     sleep_on_rate_limit_recommendation: NotRequired[bool | str | None]
     concurrent_requests: NotRequired[int | str | None]
+    dimensions: NotRequired[int | str | None]

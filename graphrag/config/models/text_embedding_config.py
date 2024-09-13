@@ -32,15 +32,21 @@ class TextEmbeddingConfig(LLMConfig):
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+    dimensions: int | None = Field(
+        description="The dimensions of the embedding vectors.", default=None
+    )
 
     def resolved_strategy(self) -> dict:
         """Get the resolved text embedding strategy."""
         from graphrag.index.verbs.text.embed import TextEmbedStrategyType
 
-        return self.strategy or {
+        strategy = self.strategy or {
             "type": TextEmbedStrategyType.openai,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
             "batch_size": self.batch_size,
             "batch_max_tokens": self.batch_max_tokens,
         }
+        if self.dimensions is not None:
+            strategy["dimensions"] = self.dimensions
+        return strategy

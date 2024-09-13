@@ -127,6 +127,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
             "sleep_on_rate_limit_recommendation"
         )
         self._raw_config = config
+        self._dimensions = lookup_int("dimensions")
 
     @property
     def api_key(self) -> str:
@@ -264,6 +265,11 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     def raw_config(self) -> dict:
         """Raw config method definition."""
         return self._raw_config
+
+    @property
+    def dimensions(self) -> int | None:
+        """Dimensions property definition."""
+        return self._dimensions
 
     def lookup(self, name: str, default_value: Any = None) -> Any:
         """Lookup method definition."""
