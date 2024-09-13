@@ -71,10 +71,11 @@ input:
   file_pattern: ".*\\\\.txt$"
 
 cache:
-  type: {defs.CACHE_TYPE.value} # or blob
+  type: {defs.CACHE_TYPE.value} # blob、redis
   base_dir: "{defs.CACHE_BASE_DIR}"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
+  # ttl: <seconds>
 
 storage:
   type: {defs.STORAGE_TYPE.value} # or blob

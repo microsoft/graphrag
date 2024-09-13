@@ -24,6 +24,7 @@ from graphrag.index.config.cache import (
     PipelineFileCacheConfig,
     PipelineMemoryCacheConfig,
     PipelineNoneCacheConfig,
+    PipelineRedisCacheConfig,
 )
 from graphrag.index.config.input import (
     PipelineCSVInputConfig,
@@ -584,6 +585,10 @@ def _get_cache_config(
                 base_dir=settings.cache.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
             )
+        case CacheType.redis:
+            connection_string = settings.cache.connection_string
+            ttl = settings.cache.ttl
+            return PipelineRedisCacheConfig(connection_string=connection_string, ttl=ttl)
         case _:
             # relative to root dir
             return PipelineFileCacheConfig(base_dir="./cache")

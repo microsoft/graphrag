@@ -33,7 +33,8 @@ class PipelineFileCacheConfig(PipelineCacheConfig[Literal[CacheType.file]]):
     """The base directory for the cache."""
 
 
-class PipelineMemoryCacheConfig(PipelineCacheConfig[Literal[CacheType.memory]]):
+class PipelineMemoryCacheConfig(
+        PipelineCacheConfig[Literal[CacheType.memory]]):
     """Represent the memory cache configuration for the pipeline."""
 
     type: Literal[CacheType.memory] = CacheType.memory
@@ -59,8 +60,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     """The base directory for the cache."""
 
     connection_string: str | None = pydantic_Field(
-        description="The blob cache connection string for the cache.", default=None
-    )
+        description="The blob cache connection string for the cache.", default=None)
     """The blob cache connection string for the cache."""
 
     container_name: str = pydantic_Field(
@@ -74,9 +74,20 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     """The storage account blob url for cache"""
 
 
+class PipelineRedisCacheConfig(PipelineCacheConfig[Literal[CacheType.redis]]):
+    """Represent the redis cache configuration for the pipeline."""
+
+    type: Literal[CacheType.redis] = CacheType.redis
+    connection_string: str | None = pydantic_Field(
+        description="The redis cache connection string for the cache.", default=None)
+    ttl: int | None = pydantic_Field(
+        description="The Time-To-Live (TTL) for the cache items in seconds.", default=None)
+
+
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig
     | PipelineMemoryCacheConfig
     | PipelineBlobCacheConfig
     | PipelineNoneCacheConfig
+    | PipelineRedisCacheConfig
 )
