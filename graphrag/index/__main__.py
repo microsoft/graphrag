@@ -5,21 +5,11 @@
 
 import argparse
 from enum import Enum
-from pathlib import Path
+
+from graphrag.utils.cli import dir_exist, file_exist
 
 from .cli import index_cli
-
-
-class ReporterType(Enum):
-    """The type of reporter to use."""
-
-    RICH = "rich"
-    PRINT = "print"
-    NONE = "none"
-
-    def __str__(self):
-        """Return the string representation of the enum value."""
-        return self.value
+from .progress.types import ReporterType
 
 
 class EmitType(Enum):
@@ -31,22 +21,6 @@ class EmitType(Enum):
     def __str__(self):
         """Return the string representation of the enum value."""
         return self.value
-
-
-def file_exist(path):
-    """Check for file existence."""
-    if not Path(path).is_file():
-        msg = f"File not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
-
-
-def dir_exist(path):
-    """Check for directory existence."""
-    if not Path(path).is_dir():
-        msg = f"Directory not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
 
 
 if __name__ == "__main__":

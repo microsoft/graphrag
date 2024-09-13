@@ -5,29 +5,13 @@
 
 import argparse
 import asyncio
-from pathlib import Path
+
+from graphrag.utils.cli import dir_exist, file_exist
 
 from .api import DocSelectionType
 from .cli import prompt_tune
 from .generator import MAX_TOKEN_COUNT
 from .loader import MIN_CHUNK_SIZE
-
-
-def file_exist(path):
-    """Check for file existence."""
-    if not Path(path).is_file():
-        msg = f"File not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
-
-
-def dir_exist(path):
-    """Check for directory existence."""
-    if not Path(path).is_dir():
-        msg = f"Directory not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

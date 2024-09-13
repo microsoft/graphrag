@@ -5,7 +5,8 @@
 
 import argparse
 from enum import Enum
-from pathlib import Path
+
+from graphrag.utils.cli import dir_exist, file_exist
 
 from .cli import run_global_search, run_local_search
 
@@ -21,22 +22,6 @@ class SearchType(Enum):
     def __str__(self):
         """Return the string representation of the enum value."""
         return self.value
-
-
-def file_exist(path):
-    """Check for file existence."""
-    if not Path(path).is_file():
-        msg = f"File not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
-
-
-def dir_exist(path):
-    """Check for directory existence."""
-    if not Path(path).is_dir():
-        msg = f"Directory not found: {path}"
-        raise argparse.ArgumentTypeError(msg)
-    return path
 
 
 if __name__ == "__main__":
