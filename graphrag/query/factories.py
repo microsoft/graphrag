@@ -65,6 +65,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         deployment_name=config.llm.deployment_name,
         api_version=config.llm.api_version,
         max_retries=config.llm.max_retries,
+        request_timeout=config.llm.request_timeout,
     )
 
 
