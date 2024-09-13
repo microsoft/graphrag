@@ -12,3 +12,7 @@ class TableEmitterType(str, Enum):
     Json = "json"
     Parquet = "parquet"
     CSV = "csv"
+
+    def __str__(self):
+        """Return the string representation of the enum value."""
+        return self.value

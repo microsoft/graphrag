@@ -22,12 +22,12 @@ from .typing import PipelineRunResult
 
 async def build_index(
     config: GraphRagConfig,
-    emit: list[str],
     run_id: str = "",
     is_resume_run: bool = False,
     is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
+    emit: list[str] = ["parquet"],  # noqa: B006
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 

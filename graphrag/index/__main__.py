@@ -4,23 +4,20 @@
 """The Indexing Engine package root."""
 
 import argparse
-from enum import Enum
 
 from graphrag.utils.cli import dir_exist, file_exist
 
 from .cli import index_cli
+from .emit.types import TableEmitterType
 from .progress.types import ReporterType
 
 
-class EmitType(Enum):
-    """The type of emitter to use."""
+class MultipleEnumAction(argparse.Action):
+    """Action to parse multiple enum values."""
 
-    PARQUET = "parquet"
-    CSV = "csv"
-
-    def __str__(self):
-        """Return the string representation of the enum value."""
-        return self.value
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: D102
+        enums = [TableEmitterType(value) for value in values.split(",")] # type: ignore
+        setattr(namespace, self.dest, enums)
 
 
 if __name__ == "__main__":
@@ -70,9 +67,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--emit",
         help="The data formats to emit, comma-separated. Default: parquet",
-        default=EmitType.PARQUET,
-        type=EmitType,
-        choices=list(EmitType),
+        default=TableEmitterType.Parquet.value,
+        type=str,
+        choices=list(TableEmitterType),
     )
     parser.add_argument(
         "--dryrun",
@@ -106,6 +103,7 @@ if __name__ == "__main__":
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
 
+    emitters = [TableEmitterType(value) for value in args.emit.split(",")]
     index_cli(
         root_dir=args.root,
         verbose=args.verbose,
@@ -113,9 +111,9 @@ if __name__ == "__main__":
         update_index_id=args.update_index,
         memprofile=args.memprofile,
         nocache=args.nocache,
-        reporter=args.reporter.value,
+        reporter=args.reporter,
         config_filepath=args.config,
-        emit=args.emit.value,
+        emit=emitters,
         dryrun=args.dryrun,
         init=args.init,
         skip_validations=args.skip_validations,

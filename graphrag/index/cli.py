@@ -14,12 +14,13 @@ from pathlib import Path
 from graphrag.config import CacheType, enable_logging_with_config, load_config
 
 from .api import build_index
+from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .init_content import INIT_DOTENV, INIT_YAML
-from .progress import ProgressReporter
+from .progress import ProgressReporter, ReporterType
 from .progress.load_progress_reporter import load_progress_reporter
 from .validate_config import validate_config_names
 
@@ -104,9 +105,9 @@ def index_cli(
     update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
-    reporter: str,
+    reporter: ReporterType,
     config_filepath: str | None,
-    emit: str,
+    emit: list[TableEmitterType],
     dryrun: bool,
     skip_validations: bool,
 ):
@@ -147,8 +148,6 @@ def index_cli(
         info("Dry run complete, exiting...", True)
         sys.exit(0)
 
-    pipeline_emit = emit.split(",")
-
     _register_signal_handlers(progress_reporter)
 
     outputs = asyncio.run(
@@ -159,7 +158,7 @@ def index_cli(
             is_update_run=bool(update_index_id),
             memory_profile=memprofile,
             progress_reporter=progress_reporter,
-            emit=pipeline_emit,
+            emit=[emitter.value for emitter in emit],
         )
     )
     encountered_errors = any(

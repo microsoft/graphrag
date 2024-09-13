@@ -4,10 +4,15 @@
 """Load a progress reporter."""
 
 from .rich import RichProgressReporter
-from .types import NullProgressReporter, PrintProgressReporter, ProgressReporter
+from .types import (
+    NullProgressReporter,
+    PrintProgressReporter,
+    ProgressReporter,
+    ReporterType,
+)
 
 
-def load_progress_reporter(reporter_type: str = "none") -> ProgressReporter:
+def load_progress_reporter(reporter_type: ReporterType = ReporterType.NONE) -> ProgressReporter:
     """Load a progress reporter.
 
     Parameters
@@ -20,11 +25,11 @@ def load_progress_reporter(reporter_type: str = "none") -> ProgressReporter:
     ProgressReporter
     """
     match reporter_type:
-        case "rich":
+        case ReporterType.RICH:
             return RichProgressReporter("GraphRAG Indexer ")
-        case "print":
+        case ReporterType.PRINT:
             return PrintProgressReporter("GraphRAG Indexer ")
-        case "none":
+        case ReporterType.NONE:
             return NullProgressReporter()
         case _:
             msg = f"Invalid progress reporter type: {reporter_type}"
