@@ -11,15 +11,6 @@ from .cli import index_cli
 from .emit.types import TableEmitterType
 from .progress.types import ReporterType
 
-
-class MultipleEnumAction(argparse.Action):
-    """Action to parse multiple enum values."""
-
-    def __call__(self, parser, namespace, values, option_string=None):  # noqa: D102
-        enums = [TableEmitterType(value) for value in values.split(",")]  # type: ignore
-        setattr(namespace, self.dest, enums)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="python -m graphrag.index",
@@ -103,7 +94,6 @@ if __name__ == "__main__":
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
 
-    emitters = [TableEmitterType(value) for value in args.emit.split(",")]
     index_cli(
         root_dir=args.root,
         verbose=args.verbose,
@@ -113,7 +103,7 @@ if __name__ == "__main__":
         nocache=args.nocache,
         reporter=args.reporter,
         config_filepath=args.config,
-        emit=emitters,
+        emit=[TableEmitterType(value) for value in args.emit.split(",")],
         dryrun=args.dryrun,
         init=args.init,
         skip_validations=args.skip_validations,

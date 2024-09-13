@@ -158,7 +158,7 @@ def index_cli(
             is_update_run=bool(update_index_id),
             memory_profile=memprofile,
             progress_reporter=progress_reporter,
-            emit=[emitter.value for emitter in emit],
+            emit=emit,
         )
     )
     encountered_errors = any(
