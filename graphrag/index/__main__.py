@@ -16,7 +16,7 @@ class MultipleEnumAction(argparse.Action):
     """Action to parse multiple enum values."""
 
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: D102
-        enums = [TableEmitterType(value) for value in values.split(",")] # type: ignore
+        enums = [TableEmitterType(value) for value in values.split(",")]  # type: ignore
         setattr(namespace, self.dest, enums)
 
 

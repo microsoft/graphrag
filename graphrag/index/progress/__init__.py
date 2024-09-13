@@ -10,4 +10,9 @@ from .types import (
     ReporterType,
 )
 
-__all__ = ["NullProgressReporter", "PrintProgressReporter", "ProgressReporter", "ReporterType"]
+__all__ = [
+    "NullProgressReporter",
+    "PrintProgressReporter",
+    "ProgressReporter",
+    "ReporterType",
+]

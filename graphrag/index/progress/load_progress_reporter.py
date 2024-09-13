@@ -12,7 +12,9 @@ from .types import (
 )
 
 
-def load_progress_reporter(reporter_type: ReporterType = ReporterType.NONE) -> ProgressReporter:
+def load_progress_reporter(
+    reporter_type: ReporterType = ReporterType.NONE,
+) -> ProgressReporter:
     """Load a progress reporter.
 
     Parameters
