@@ -1,8 +1,6 @@
 import pandas as pd
 from datashaper import Workflow
-
-# import any non-built-in verbs so they get registered
-from graphrag.index.verbs.overrides.aggregate import aggregate
+from graphrag.index.workflows.v1.join_text_units_to_entity_ids import build_steps
 
 # list out any inputs from the schema so they are loaded into the table context for the workflow
 INPUTS = [
@@ -13,38 +11,9 @@ OUTPUT = 'join_text_units_to_entity_ids'
 
 # a copy of the schema. we could load these from their actual workflow python files, but this is easier for now
 SCHEMA = {
-    "steps": [
-        {
-            "verb": "select",
-            "args": {"columns": ["id", "text_unit_ids"]},
-            "input": {"source": "workflow:create_final_entities"},
-        },
-        {
-            "verb": "unroll",
-            "args": {
-                "column": "text_unit_ids",
-            },
-        },
-        {
-            "verb": "aggregate_override",
-            "args": {
-                "groupby": ["text_unit_ids"],
-                "aggregations": [
-                    {
-                        "column": "id",
-                        "operation": "array_agg_distinct",
-                        "to": "entity_ids",
-                    },
-                    {
-                        "column": "text_unit_ids",
-                        "operation": "any",
-                        "to": "id",
-                    },
-                ],
-            },
-        },
-    ]
+    "steps": build_steps(None),
 }
+
 
 async def test_join_text_units_to_entity_ids():
     # stick all the inputs in a map - Workflow looks them up by name
