@@ -35,14 +35,10 @@ def build_steps(
                         "operation": "any",
                         "to": "id",
                     },
-                ]
+                ],
+                "final_select_columns": ["id", "relationship_ids"],
             },
             "input": {"source": "workflow:create_final_relationships"},
-        },
-        {
-            "id": "text_unit_id_to_relationship_ids",
-            "verb": "select",
-            "args": {"columns": ["id", "relationship_ids"]},
         },
     ]
 

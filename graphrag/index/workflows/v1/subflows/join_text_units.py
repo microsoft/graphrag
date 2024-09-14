@@ -12,10 +12,13 @@ def join_text_units(
     unroll_column: str,
     aggregate_aggregations: list[dict[str, Any]],
     aggregate_groupby: list[str] | None = None,
+    final_select_columns: list[str] | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     table = input.get_input()
     selected = cast(Table, table[select_columns])
     unrolled = table.explode(unroll_column).reset_index(drop=True)
     aggregated = aggregate_df(unrolled, aggregate_aggregations, aggregate_groupby)
+    if final_select_columns is not None:
+        aggregated = cast(Table, aggregated[final_select_columns])
     return create_verb_result(aggregated)
