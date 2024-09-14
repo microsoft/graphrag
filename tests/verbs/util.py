@@ -31,3 +31,13 @@ async def get_workflow_output(input_tables: dict[str, pd.DataFrame], schema: dic
 
     # if there's only one output, it is the default here, no name required
     return workflow.output()
+
+def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
+    try:
+        assert actual.shape == expected.shape
+    except AssertionError:
+        print("Expected:")
+        print(expected.head())
+        print("Actual:")
+        print(actual.head())
+        raise AssertionError

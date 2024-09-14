@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 from graphrag.index.workflows.v1.join_text_units_to_relationship_ids import build_steps
-from .util import load_input_tables, load_expected, get_workflow_output
+from .util import load_input_tables, load_expected, get_workflow_output, compare_outputs
 
 async def test_join_text_units_to_relationship_ids():
 
@@ -15,11 +15,4 @@ async def test_join_text_units_to_relationship_ids():
         "steps": build_steps(None),
     })
 
-    try:
-        assert actual.shape == expected.shape
-    except AssertionError:
-        print("Expected:")
-        print(expected.head())
-        print("Actual:")
-        print(actual.head())
-        raise AssertionError
+    compare_outputs(actual, expected)
