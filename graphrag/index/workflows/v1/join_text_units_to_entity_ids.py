@@ -19,7 +19,7 @@ def build_steps(
     """
     return [
         {
-            "verb": "join_text_units_to_entity_ids",
+            "verb": "join_text_units",
             "args": {
                 "select_columns": ["id", "text_unit_ids"],
                 "unroll_column": "text_unit_ids",

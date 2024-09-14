@@ -5,8 +5,8 @@ from datashaper.engine.verbs.verbs_mapping import verb
 from datashaper.table_store.types import Table, VerbResult, create_verb_result
 from graphrag.index.verbs.overrides.aggregate import aggregate_df
 
-@verb(name="join_text_units_to_entity_ids", treats_input_tables_as_immutable=True)
-def join_text_units_to_entity_ids(
+@verb(name="join_text_units", treats_input_tables_as_immutable=True)
+def join_text_units(
     input: VerbInput,
     select_columns: list[str],
     unroll_column: str,

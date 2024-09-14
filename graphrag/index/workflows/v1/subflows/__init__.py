@@ -3,8 +3,8 @@
 
 """The Indexing Engine workflows -> subflows package root."""
 
-from .join_text_units_to_entity_ids import join_text_units_to_entity_ids
+from .join_text_units import join_text_units
 
 __all__ = [
-    "join_text_units_to_entity_ids",
+    "join_text_units",
 ]

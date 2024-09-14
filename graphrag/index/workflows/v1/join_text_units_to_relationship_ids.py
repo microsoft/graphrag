@@ -19,21 +19,12 @@ def build_steps(
     """
     return [
         {
-            "verb": "select",
-            "args": {"columns": ["id", "text_unit_ids"]},
-            "input": {"source": "workflow:create_final_relationships"},
-        },
-        {
-            "verb": "unroll",
+            "verb": "join_text_units",
             "args": {
-                "column": "text_unit_ids",
-            },
-        },
-        {
-            "verb": "aggregate_override",
-            "args": {
-                "groupby": ["text_unit_ids"],
-                "aggregations": [
+                "select_columns": ["id", "text_unit_ids"],
+                "unroll_column": "text_unit_ids",
+                "aggregate_groupby": ["text_unit_ids"],
+                "aggregate_aggregations": [
                     {
                         "column": "id",
                         "operation": "array_agg_distinct",
@@ -44,8 +35,9 @@ def build_steps(
                         "operation": "any",
                         "to": "id",
                     },
-                ],
+                ]
             },
+            "input": {"source": "workflow:create_final_relationships"},
         },
         {
             "id": "text_unit_id_to_relationship_ids",
@@ -53,3 +45,5 @@ def build_steps(
             "args": {"columns": ["id", "relationship_ids"]},
         },
     ]
+
+
