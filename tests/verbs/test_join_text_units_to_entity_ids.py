@@ -9,7 +9,7 @@ INPUTS = [
 # this is the final output (usually the name of the workflow we're running), which we will load from the test data to assert against
 OUTPUT = 'join_text_units_to_entity_ids'
 
-# a copy of the schema. we could load these from their actual workflow python files, but this is easier for now
+# load up the schema with the factory function (this one does not use a config, conveniently)
 SCHEMA = {
     "steps": build_steps(None),
 }
