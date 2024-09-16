@@ -3,6 +3,9 @@
 
 """A package containing default workflows definitions."""
 
+# load and register all subflows
+from .v1.subflows import *  # noqa
+
 from .typing import WorkflowDefinitions
 from .v1.create_base_documents import (
     build_steps as build_create_base_documents_steps,
