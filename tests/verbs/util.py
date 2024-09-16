@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+from typing import cast
+
 import pandas as pd
 from datashaper import Workflow
 
@@ -35,7 +37,7 @@ async def get_workflow_output(
     await workflow.run()
 
     # if there's only one output, it is the default here, no name required
-    return workflow.output()
+    return cast(pd.DataFrame, workflow.output())
 
 
 def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
@@ -46,4 +48,4 @@ def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
         print(expected.head())
         print("Actual:")
         print(actual.head())
-        raise AssertionError
+        raise AssertionError from None

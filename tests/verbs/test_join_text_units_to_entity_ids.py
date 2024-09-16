@@ -15,7 +15,7 @@ async def test_join_text_units_to_entity_ids():
     actual = await get_workflow_output(
         input_tables,
         {
-            "steps": build_steps(None),
+            "steps": build_steps({}),
         },
     )
 

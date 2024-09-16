@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""join_text_units verb (subtask)."""
+
 from typing import Any, cast
 
 from datashaper.engine.verbs.verb_input import VerbInput
@@ -17,6 +22,7 @@ def join_text_units(
     final_select_columns: list[str] | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
+    """Subtask to select and unroll items using an id."""
     table = input.get_input()
     selected = cast(Table, table[select_columns])
     unrolled = selected.explode(unroll_column).reset_index(drop=True)

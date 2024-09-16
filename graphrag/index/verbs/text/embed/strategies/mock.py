@@ -14,7 +14,7 @@ from graphrag.index.cache import PipelineCache
 from .typing import TextEmbeddingResult
 
 
-async def run(  # noqa RUF029 async is required for interface
+async def run(  # RUF029 async is required for interface
     input: list[str],
     callbacks: VerbCallbacks,
     cache: PipelineCache,
