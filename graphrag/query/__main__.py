@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 args.query[0],
                 optimized_search=args.optimized_search,
                 use_kusto_community_reports=args.use_kusto_community_reports,
-                paths=paths,
+                paths=args.paths,
             )
         case SearchType.GLOBAL:
             run_global_search(
