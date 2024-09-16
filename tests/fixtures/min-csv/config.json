@@ -101,7 +101,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 3,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "join_text_units_to_relationship_ids": {
@@ -109,7 +109,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 4,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_text_units": {
