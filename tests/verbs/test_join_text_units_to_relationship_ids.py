@@ -1,19 +1,18 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.config import create_graphrag_config
-from graphrag.index.workflows.v1.join_text_units_to_relationship_ids import build_steps
+from graphrag.index.workflows.v1.join_text_units_to_relationship_ids import build_steps, workflow_name
 
-from .util import compare_outputs, get_workflow_output, load_expected, load_input_tables
+from .util import compare_outputs, get_config_for_workflow, get_workflow_output, load_expected, load_input_tables
 
 
 async def test_join_text_units_to_relationship_ids():
     input_tables = load_input_tables([
         "workflow:create_final_relationships",
     ])
-    expected = load_expected("join_text_units_to_relationship_ids")
+    expected = load_expected(workflow_name)
 
-    config = create_graphrag_config()
+    config = get_config_for_workflow(workflow_name)
 
     actual = await get_workflow_output(
         input_tables,

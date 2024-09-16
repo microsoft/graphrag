@@ -2,6 +2,8 @@
 # Licensed under the MIT License
 
 from typing import cast
+from graphrag.config import create_graphrag_config
+from graphrag.index import create_pipeline_config, PipelineWorkflowConfig, PipelineWorkflowStep
 
 import pandas as pd
 from datashaper import Workflow
@@ -21,6 +23,13 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
 def load_expected(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
+
+
+def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
+    """ Instantiates the bare minimum config to get a default workflow config for testing."""
+    config = create_graphrag_config()
+    pipeline_config = create_pipeline_config(config)
+    return [x for x in pipeline_config.workflows if x.name == "create_final_text_units"][0].config
 
 
 async def get_workflow_output(
@@ -49,3 +58,9 @@ def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
         print("Actual:")
         print(actual.head())
         raise AssertionError from None
+
+
+def remove_disabled_steps(
+    steps: list[PipelineWorkflowStep],
+) -> list[PipelineWorkflowStep]:
+    return [step for step in steps if step.get("enabled", True)]
