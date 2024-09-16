@@ -35,7 +35,7 @@ def build_steps(
                         "operation": "any",
                         "to": "id",
                     },
-                ]
+                ],
             },
             "input": {"source": "workflow:create_final_entities"},
         }

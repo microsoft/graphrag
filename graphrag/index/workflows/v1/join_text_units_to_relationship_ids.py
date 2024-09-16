@@ -41,5 +41,3 @@ def build_steps(
             "input": {"source": "workflow:create_final_relationships"},
         },
     ]
-
-

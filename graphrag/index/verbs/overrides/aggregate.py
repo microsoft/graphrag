@@ -47,7 +47,11 @@ def aggregate(
     return TableContainer(table=output)
 
 
-def aggregate_df(input_table: Table, aggregations: list[dict[str, Any]], groupby: list[str] | None = None) -> pd.DataFrame:
+def aggregate_df(
+    input_table: Table,
+    aggregations: list[dict[str, Any]],
+    groupby: list[str] | None = None,
+) -> pd.DataFrame:
     aggregations_to_apply = _load_aggregations(aggregations)
     df_aggregations = {
         agg.column: _get_pandas_agg_operation(agg)
