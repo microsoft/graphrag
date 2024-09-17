@@ -220,7 +220,7 @@ class KustoVectorStore(BaseVectorStore):
     def unload_entities(self) -> None:
         self.client.execute(self.database,f".drop table {self.collection_name} ifexists")
         self.client.execute(self.database,f".drop table {self.text_units_name} ifexists")
-
+        self.client.execute(self.database,f".drop table {self.reports_name} ifexists")
 
     def setup_entities(self) -> None:
         command = f".drop table {self.collection_name} ifexists"
@@ -263,7 +263,7 @@ class KustoVectorStore(BaseVectorStore):
             self.setup_reports()
 
         # Ingest data
-        ingestion_command = f".ingest inline into table {self.text_units_name} <| {df.to_csv(index=False, header=False)}"
+        ingestion_command = f".ingest inline into table {self.reports_name} <| {df.to_csv(index=False, header=False)}"
         self.client.execute(self.database, ingestion_command)
 
     def setup_text_units(self) -> None:

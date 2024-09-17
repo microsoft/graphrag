@@ -256,7 +256,7 @@ def path0(
     ########################################################################################
 
     if use_kusto_community_reports:
-        ValueError("Using community reports is not supported.")
+        raise ValueError("Using community reports is not supported.")
 
     description_embedding_store = __get_embedding_description_store(
         entities=entities,
