@@ -1,8 +1,15 @@
+"""
+Couchbase Vector Store Demo for GraphRAG.
+
+This module demonstrates the usage of Couchbase as a vector store for GraphRAG,
+including data loading, vector store setup, and query execution.
+"""
+
 import asyncio
 import logging
 import os
-import traceback
-from typing import Any, Callable, Dict, List, Union
+from collections.abc import Callable
+from typing import Any
 
 import pandas as pd
 import tiktoken
@@ -45,7 +52,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-ada-002")
 
-
 # Constants
 COMMUNITY_LEVEL = 2
 
@@ -60,7 +66,7 @@ TABLE_NAMES = {
 }
 
 
-def load_data() -> Dict[str, Any]:
+def load_data() -> dict[str, Any]:
     """Load data from parquet files."""
     logger.info("Loading data from parquet files")
     data = {}
@@ -73,7 +79,8 @@ def load_data() -> Dict[str, Any]:
             return read_function(table_data, *args)
         except FileNotFoundError:
             logger.warning(
-                f"{table_name} file not found. Setting {table_name.lower()} to None."
+                "%(table_name)s file not found. Setting %(table_name_lower)s to None.",
+                {"table_name": table_name, "table_name_lower": table_name.lower()}
             )
             return None
 
@@ -103,14 +110,14 @@ def setup_vector_store() -> CouchbaseVectorStore:
             password=COUCHBASE_PASSWORD,
         )
         logger.info("CouchbaseVectorStore setup completed")
-    except Exception as e:
-        logger.error(f"Error setting up CouchbaseVectorStore: {str(e)}")
+    except Exception:
+        logger.exception("Error setting up CouchbaseVectorStore:")
         raise
 
     return description_embedding_store
 
 
-def setup_models() -> Dict[str, Any]:
+def setup_models() -> dict[str, Any]:
     """Set up LLM and embedding models."""
     logger.info("Setting up LLM and embedding models")
     try:
@@ -134,7 +141,7 @@ def setup_models() -> Dict[str, Any]:
 
         logger.info("LLM and embedding models setup completed")
     except Exception as e:
-        logger.error(f"Error setting up models: {str(e)}")
+        logger.exception("Error setting up models: %s", str(e))
         raise
 
     return {
@@ -145,34 +152,32 @@ def setup_models() -> Dict[str, Any]:
 
 
 def store_embeddings(
-    entities: Union[Dict[str, Any], List[Any]], vector_store: CouchbaseVectorStore
+    entities: dict[str, Any] | list[Any], vector_store: CouchbaseVectorStore
 ) -> None:
     """Store entity semantic embeddings in Couchbase."""
-    logger.info(f"Storing entity embeddings")
+    logger.info("Storing entity embeddings")
 
     try:
         if isinstance(entities, dict):
             entities_list = list(entities.values())
         elif isinstance(entities, list):
             entities_list = entities
-        else:
-            raise TypeError("Entities must be either a list or a dictionary")
 
         store_entity_semantic_embeddings(
             entities=entities_list, vectorstore=vector_store
         )
         logger.info("Entity semantic embeddings stored successfully")
     except AttributeError as e:
-        logger.error(f"Error storing entity semantic embeddings: {str(e)}")
+        logger.exception("Error storing entity semantic embeddings: %s", str(e))
         logger.error("Ensure all entities have an 'id' attribute")
         raise
     except Exception as e:
-        logger.error(f"Error storing entity semantic embeddings: {str(e)}")
+        logger.exception("Error storing entity semantic embeddings: %s", str(e))
         raise
 
 
 def create_search_engine(
-    data: Dict[str, Any], models: Dict[str, Any], vector_store: CouchbaseVectorStore
+    data: dict[str, Any], models: dict[str, Any], vector_store: CouchbaseVectorStore
 ) -> LocalSearch:
     """Create and configure the search engine."""
     logger.info("Creating search engine")
@@ -223,18 +228,17 @@ def create_search_engine(
 async def run_query(search_engine: LocalSearch, question: str) -> None:
     """Run a query using the search engine."""
     try:
-        logger.info(f"Running query: {question}")
+        logger.info("Running query: %s", question)
         result = await search_engine.asearch(question)
         print(f"Question: {question}")
         print(f"Answer: {result.response}")
         logger.info("Query completed successfully")
     except Exception as e:
-        logger.error(f"An error occurred while processing the query: {str(e)}")
-        print(f"An error occurred while processing the query: {str(e)}")
+        logger.exception("An error occurred while processing the query: %s", str(e))
 
 
 async def main() -> None:
-    """Main function to orchestrate the demo."""
+    """Orchestrate the demo."""
     try:
         logger.info("Starting Couchbase demo")
         data = load_data()
@@ -253,9 +257,7 @@ async def main() -> None:
 
         logger.info("Couchbase demo completed")
     except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
-        logger.error(f"Traceback: {traceback.format_exc()}")
-        print(f"An error occurred: {str(e)}")
+        logger.exception("An error occurred: %s", str(e))
 
 
 if __name__ == "__main__":

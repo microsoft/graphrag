@@ -55,6 +55,7 @@ class CouchbaseVectorStore(BaseVectorStore):
         connection_string = kwargs.get("connection_string")
         username = kwargs.get("username")
         password = kwargs.get("password")
+        cluster_options = kwargs.get("cluster_options", {})
 
         if not isinstance(username, str) or not isinstance(password, str):
             error_msg = "Username and password must be strings"
@@ -67,7 +68,7 @@ class CouchbaseVectorStore(BaseVectorStore):
 
         logger.info("Connecting to Couchbase at %s", connection_string)
         auth = PasswordAuthenticator(username, password)
-        options = ClusterOptions(auth)
+        options = ClusterOptions(auth, **cluster_options)
         cluster = Cluster(connection_string, options)
         self.db_connection = cluster
         self.bucket = cluster.bucket(self.bucket_name)
