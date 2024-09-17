@@ -6,6 +6,13 @@ from typing import cast
 import pandas as pd
 from datashaper import Workflow
 
+from graphrag.config import create_graphrag_config
+from graphrag.index import (
+    PipelineWorkflowConfig,
+    PipelineWorkflowStep,
+    create_pipeline_config,
+)
+
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     """Harvest all the referenced input IDs from the workflow being tested and pass them here."""
@@ -21,6 +28,15 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
 def load_expected(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
+
+
+def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
+    """Instantiates the bare minimum config to get a default workflow config for testing."""
+    config = create_graphrag_config()
+    pipeline_config = create_pipeline_config(config)
+    print(pipeline_config.workflows)
+    result = next(conf for conf in pipeline_config.workflows if conf.name == name)
+    return cast(PipelineWorkflowConfig, result.config)
 
 
 async def get_workflow_output(
@@ -43,9 +59,16 @@ async def get_workflow_output(
 def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
     try:
         assert actual.shape == expected.shape
+        assert (actual.columns == expected.columns).all()
     except AssertionError:
         print("Expected:")
         print(expected.head())
         print("Actual:")
         print(actual.head())
         raise AssertionError from None
+
+
+def remove_disabled_steps(
+    steps: list[PipelineWorkflowStep],
+) -> list[PipelineWorkflowStep]:
+    return [step for step in steps if step.get("enabled", True)]
