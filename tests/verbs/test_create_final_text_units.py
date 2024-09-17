@@ -19,9 +19,9 @@ from .util import (
 async def test_create_final_text_units():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
-        "workflow:join_text_units_to_entity_ids",
-        "workflow:join_text_units_to_relationship_ids",
-        "workflow:join_text_units_to_covariate_ids",
+        "workflow:create_final_entities",
+        "workflow:create_final_relationships",
+        "workflow:create_final_covariates",
     ])
     expected = load_expected(workflow_name)
 

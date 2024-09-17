@@ -28,12 +28,12 @@ def build_steps(
         is not None
     )
 
-    join_others = [
-        "workflow:join_text_units_to_entity_ids",
-        "workflow:join_text_units_to_relationship_ids",
+    others = [
+        "workflow:create_final_entities",
+        "workflow:create_final_relationships",
     ]
     if covariates_enabled:
-        join_others.append("workflow:join_text_units_to_covariate_ids")
+        others.append("workflow:create_final_covariates")
 
     return [
         {
@@ -43,7 +43,7 @@ def build_steps(
             },
             "input": {
                 "source": "workflow:create_base_text_units",
-                "others": join_others,
+                "others": others,
             },
         },
         # Text-Embed after final aggregations

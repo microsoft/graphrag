@@ -30,15 +30,18 @@ def create_final_text_units_pre_embedding(
         columns={"chunk": "text"}
     )
 
-    entity_join = others[0]
-    relationship_join = others[1]
+    final_entities = others[0]
+    final_relationships = others[1]
+    entity_join = _entities(final_entities)
+    relationship_join = _relationships(final_relationships)
 
     entity_joined = _join(selected, entity_join)
     relationship_joined = _join(entity_joined, relationship_join)
     final_joined = relationship_joined
 
     if covariates_enabled:
-        covariate_join = others[2]
+        final_covariates = others[2]
+        covariate_join = _covariates(final_covariates)
         final_joined = _join(relationship_joined, covariate_join)
 
     aggregated = aggregate_df(
@@ -85,6 +88,71 @@ def create_final_text_units_pre_embedding(
     )
 
     return create_verb_result(aggregated)
+
+
+def _entities(table):
+    selected = cast(Table, table[["id", "text_unit_ids"]])
+    unrolled = selected.explode("text_unit_ids").reset_index(drop=True)
+    aggregated = aggregate_df(
+        unrolled,
+        [
+            {
+                "column": "id",
+                "operation": "array_agg_distinct",
+                "to": "entity_ids",
+            },
+            {
+                "column": "text_unit_ids",
+                "operation": "any",
+                "to": "id",
+            },
+        ],
+        ["text_unit_ids"],
+    )
+    return aggregated
+
+
+def _relationships(table):
+    selected = cast(Table, table[["id", "text_unit_ids"]])
+    unrolled = selected.explode("text_unit_ids").reset_index(drop=True)
+    aggregated = aggregate_df(
+        unrolled,
+        [
+            {
+                "column": "id",
+                "operation": "array_agg_distinct",
+                "to": "relationship_ids",
+            },
+            {
+                "column": "text_unit_ids",
+                "operation": "any",
+                "to": "id",
+            },
+        ],
+        ["text_unit_ids"],
+    )
+    return aggregated[["id", "relationship_ids"]]
+
+
+def _covariates(table):
+    selected = cast(Table, table[["id", "text_unit_id"]])
+    aggregated = aggregate_df(
+        selected,
+        [
+            {
+                "column": "id",
+                "operation": "array_agg_distinct",
+                "to": "covariate_ids",
+            },
+            {
+                "column": "text_unit_id",
+                "operation": "any",
+                "to": "id",
+            },
+        ],
+        ["text_unit_id"],
+    )
+    return aggregated
 
 
 def _join(left, right):
