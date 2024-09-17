@@ -7,7 +7,6 @@ from graphrag.index.workflows.v1.create_final_communities import (
 )
 
 from .util import (
-    compare_outputs,
     get_workflow_output,
     load_expected,
     load_input_tables,
