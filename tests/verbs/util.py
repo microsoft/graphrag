@@ -2,11 +2,16 @@
 # Licensed under the MIT License
 
 from typing import cast
-from graphrag.config import create_graphrag_config
-from graphrag.index import create_pipeline_config, PipelineWorkflowConfig, PipelineWorkflowStep
 
 import pandas as pd
 from datashaper import Workflow
+
+from graphrag.config import create_graphrag_config
+from graphrag.index import (
+    PipelineWorkflowConfig,
+    PipelineWorkflowStep,
+    create_pipeline_config,
+)
 
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
@@ -29,7 +34,9 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     """ Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
     pipeline_config = create_pipeline_config(config)
-    return [x for x in pipeline_config.workflows if x.name == "create_final_text_units"][0].config
+    print(pipeline_config.workflows)
+    result = next(conf for conf in pipeline_config.workflows if conf.name == name)
+    return cast(PipelineWorkflowConfig, result.config)
 
 
 async def get_workflow_output(

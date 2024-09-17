@@ -3,17 +3,16 @@
 
 """All the steps to transform before we embed the text units."""
 
+from typing import cast
+
 import pandas as pd
-
-from typing import Any, cast
-
 from datashaper.engine.verbs.verb_input import VerbInput
 from datashaper.engine.verbs.verbs_mapping import verb
 from datashaper.table_store.types import Table, VerbResult, create_verb_result
+from pandas._typing import Suffixes
 
 from graphrag.index.verbs.overrides.aggregate import aggregate_df
 
-from pandas._typing import MergeHow, Suffixes
 
 @verb(name="create_final_text_units_pre_embedding", treats_input_tables_as_immutable=True)
 def create_final_text_units_pre_embedding(
@@ -21,22 +20,22 @@ def create_final_text_units_pre_embedding(
     covariates_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
-    
+    """All the steps to transform before we embed the text units."""
     table = input.get_input()
+    others = input.get_others()
     
-    # initial formatting
     selected = cast(Table, table[["id", "chunk", "document_ids", "n_tokens"]]).rename(columns={"chunk": "text"})
 
-    entity_join = input.others[0].table
-    relationship_join = input.others[1].table
+    entity_join = others[0]
+    relationship_join = others[1]
 
-    entity_joined = join(selected, entity_join)
-    relationship_joined = join(entity_joined, relationship_join)
+    entity_joined = _join(selected, entity_join)
+    relationship_joined = _join(entity_joined, relationship_join)
     final_joined = relationship_joined
 
     if covariates_enabled:
-        covariate_join = input.others[2].table
-        final_joined = join(relationship_joined, covariate_join)
+        covariate_join = others[2]
+        final_joined = _join(relationship_joined, covariate_join)
 
     aggregated = aggregate_df(final_joined, [
         {
@@ -80,7 +79,7 @@ def create_final_text_units_pre_embedding(
     return create_verb_result(aggregated)
 
 
-def join(left, right):
+def _join(left, right):
     return __clean_result(left.merge(
         right,
         left_on="id",
