@@ -7,6 +7,7 @@ import lancedb as lancedb  # noqa: I001 (Ruff was breaking on this file imports,
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
+from graphrag.model import TextUnit
 
 import json
 from typing import Any
@@ -132,6 +133,9 @@ class LanceDBVectorStore(BaseVectorStore):
     def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
         raise NotImplementedError("Loading reports is not supported for LanceDB")
 
+    def load_text_units(self, units: list[TextUnit], overwrite: bool = True) -> None:
+        raise NotImplementedError("load_text_units(): Unsupported for this vector store.")
+
     def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
         raise NotImplementedError("Extracting community reports is not supported for LanceDB")
 
@@ -140,6 +144,9 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def setup_reports(self) -> None:
         raise NotImplementedError("Setting up community reports is not supported for LanceDB")
+
+    def setup_text_units(self) -> None:
+        raise NotImplementedError("setup_text_units(): Unsupported for this vector store.")
 
     def unload_entities(self) -> None:
         raise NotImplementedError("unload_entities(): Unsupported for this vector store.")
