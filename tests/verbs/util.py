@@ -31,7 +31,7 @@ def load_expected(output: str) -> pd.DataFrame:
 
 
 def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
-    """ Instantiates the bare minimum config to get a default workflow config for testing."""
+    """Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
     pipeline_config = create_pipeline_config(config)
     print(pipeline_config.workflows)

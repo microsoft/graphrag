@@ -27,10 +27,10 @@ def build_steps(
         text_unit_text_embed_config.get("strategy", {}).get("vector_store", None)
         is not None
     )
-    
+
     join_others = [
         "workflow:join_text_units_to_entity_ids",
-        "workflow:join_text_units_to_relationship_ids"
+        "workflow:join_text_units_to_relationship_ids",
     ]
     if covariates_enabled:
         join_others.append("workflow:join_text_units_to_covariate_ids")
@@ -43,7 +43,7 @@ def build_steps(
             },
             "input": {
                 "source": "workflow:create_base_text_units",
-                "others": join_others
+                "others": join_others,
             },
         },
         # Text-Embed after final aggregations

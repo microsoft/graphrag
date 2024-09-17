@@ -24,9 +24,9 @@ async def test_create_final_text_units():
         "workflow:join_text_units_to_covariate_ids",
     ])
     expected = load_expected(workflow_name)
-    
+
     config = get_config_for_workflow(workflow_name)
-    
+
     config["covariates_enabled"] = True
     config["skip_text_unit_embedding"] = True
 
@@ -40,4 +40,3 @@ async def test_create_final_text_units():
     )
 
     compare_outputs(actual, expected)
-
