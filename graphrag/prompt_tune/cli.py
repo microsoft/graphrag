@@ -3,8 +3,8 @@
 
 """Command line interface for the fine_tune module."""
 
-from pathlib import Path
 import time
+from pathlib import Path
 
 from graphrag.config import load_config
 from graphrag.index.progress import PrintProgressReporter
