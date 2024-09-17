@@ -14,7 +14,7 @@ from .resolve_path import resolve_path
 
 def load_config(
     root_dir: str | Path,
-    config_filepath: str | Path | None = None,
+    config_filepath: str | None = None,
     run_id: str | None = None,
 ) -> GraphRagConfig:
     """Load configuration from a file or create a default configuration.
@@ -25,7 +25,7 @@ def load_config(
     ----------
     root_dir : str | Path
         The root directory of the project. Will search for the config file in this directory.
-    config_filepath : str | Path | None
+    config_filepath : str | None
         The path to the config file.
         If None, searches for config file in root and
         if not found creates a default configuration.
@@ -36,13 +36,13 @@ def load_config(
 
     # If user specified a config file path then it is required
     if config_filepath:
-        config_path = (root / config_filepath).resolve()
+        config_path = Path(config_filepath).resolve()
         if not config_path.exists():
             msg = f"Specified Config file not found: {config_path}"
             raise FileNotFoundError(msg)
-
-    # Else optional resolve the config path from the root directory if it exists
-    config_path = search_for_config_in_root_dir(root)
+    else:
+        # resolve config filepath from the root directory if it exists
+        config_path = search_for_config_in_root_dir(root)
     if config_path:
         config = load_config_from_file(config_path)
     else:
