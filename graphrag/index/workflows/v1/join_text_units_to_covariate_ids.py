@@ -19,15 +19,11 @@ def build_steps(
     """
     return [
         {
-            "verb": "select",
-            "args": {"columns": ["id", "text_unit_id"]},
-            "input": {"source": "workflow:create_final_covariates"},
-        },
-        {
-            "verb": "aggregate_override",
+            "verb": "join_text_units_to_covariate_ids",
             "args": {
-                "groupby": ["text_unit_id"],
-                "aggregations": [
+                "select_columns": ["id", "text_unit_id"],
+                "aggregate_groupby": ["text_unit_id"],
+                "aggregate_aggregations": [
                     {
                         "column": "id",
                         "operation": "array_agg_distinct",
@@ -40,5 +36,6 @@ def build_steps(
                     },
                 ],
             },
+            "input": {"source": "workflow:create_final_covariates"},
         },
     ]

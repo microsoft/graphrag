@@ -43,7 +43,7 @@ async def run_python():
             steps=[
                 {
                     # built-in verb
-                    "verb": "derive",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/engine/verbs/derive.py
+                    "verb": "derive",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/verbs/derive.py
                     "args": {
                         "column1": "col1",  # from above
                         "column2": "col2",  # from above

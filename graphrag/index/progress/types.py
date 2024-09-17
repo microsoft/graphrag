@@ -4,8 +4,21 @@
 """Types for status reporting."""
 
 from abc import ABC, abstractmethod
+from enum import Enum
 
 from datashaper import Progress
+
+
+class ReporterType(Enum):
+    """The type of reporter to use."""
+
+    RICH = "rich"
+    PRINT = "print"
+    NONE = "none"
+
+    def __str__(self):
+        """Return the string representation of the enum value."""
+        return self.value
 
 
 class ProgressReporter(ABC):

@@ -181,6 +181,8 @@ async def run_pipeline(
     progress_reporter = progress_reporter or NullProgressReporter()
     callbacks = callbacks or ConsoleWorkflowCallbacks()
     callbacks = _create_callback_chain(callbacks, progress_reporter)
+    # TODO: This default behavior is already defined at the API level. Update tests
+    # of this function to pass in an emit type before removing this default setting.
     emit = emit or [TableEmitterType.Parquet]
     emitters = create_table_emitters(
         emit,
