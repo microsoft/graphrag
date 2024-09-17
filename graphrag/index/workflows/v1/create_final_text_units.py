@@ -23,109 +23,27 @@ def build_steps(
     text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
     covariates_enabled = config.get("covariates_enabled", False)
     skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
-    print("skip_text_unit_embedding", skip_text_unit_embedding)
     is_using_vector_store = (
         text_unit_text_embed_config.get("strategy", {}).get("vector_store", None)
         is not None
     )
     
+    join_others = [
+        "workflow:join_text_units_to_entity_ids",
+        "workflow:join_text_units_to_relationship_ids"
+    ]
+    if covariates_enabled:
+        join_others.append("workflow:join_text_units_to_covariate_ids")
+
     return [
         {
-            "verb": "select",
-            "args": {"columns": ["id", "chunk", "document_ids", "n_tokens"]},
-            "input": {"source": "workflow:create_base_text_units"},
-        },
-        {
-            "id": "pre_entity_join",
-            "verb": "rename",
+            "verb": "create_final_text_units_pre_embedding",
             "args": {
-                "columns": {
-                    "chunk": "text",
-                },
-            },
-        },
-        # Expand the TextUnits with EntityIDs
-        {
-            "id": "pre_relationship_join",
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
+                "covariates_enabled": covariates_enabled,
             },
             "input": {
-                "source": "pre_entity_join",
-                "others": ["workflow:join_text_units_to_entity_ids"],
-            },
-        },
-        # Expand the TextUnits with RelationshipIDs
-        {
-            "id": "pre_covariate_join",
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
-            },
-            "input": {
-                "source": "pre_relationship_join",
-                "others": ["workflow:join_text_units_to_relationship_ids"],
-            },
-        },
-        # Expand the TextUnits with CovariateIDs
-        {
-            "enabled": covariates_enabled,
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
-            },
-            "input": {
-                "source": "pre_covariate_join",
-                "others": ["workflow:join_text_units_to_covariate_ids"],
-            },
-        },
-        # Mash the entities and relationships into arrays
-        {
-            "verb": "aggregate_override",
-            "args": {
-                "groupby": ["id"],  # from the join above
-                "aggregations": [
-                    {
-                        "column": "text",
-                        "operation": "any",
-                        "to": "text",
-                    },
-                    {
-                        "column": "n_tokens",
-                        "operation": "any",
-                        "to": "n_tokens",
-                    },
-                    {
-                        "column": "document_ids",
-                        "operation": "any",
-                        "to": "document_ids",
-                    },
-                    {
-                        "column": "entity_ids",
-                        "operation": "any",
-                        "to": "entity_ids",
-                    },
-                    {
-                        "column": "relationship_ids",
-                        "operation": "any",
-                        "to": "relationship_ids",
-                    },
-                    *(
-                        []
-                        if not covariates_enabled
-                        else [
-                            {
-                                "column": "covariate_ids",
-                                "operation": "any",
-                                "to": "covariate_ids",
-                            }
-                        ]
-                    ),
-                ],
+                "source": "workflow:create_base_text_units",
+                "others": join_others
             },
         },
         # Text-Embed after final aggregations
