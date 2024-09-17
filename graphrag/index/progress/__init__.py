@@ -3,6 +3,16 @@
 
 """Progress-reporting components."""
 
-from .types import NullProgressReporter, PrintProgressReporter, ProgressReporter
+from .types import (
+    NullProgressReporter,
+    PrintProgressReporter,
+    ProgressReporter,
+    ReporterType,
+)
 
-__all__ = ["NullProgressReporter", "PrintProgressReporter", "ProgressReporter"]
+__all__ = [
+    "NullProgressReporter",
+    "PrintProgressReporter",
+    "ProgressReporter",
+    "ReporterType",
+]
