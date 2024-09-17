@@ -93,7 +93,7 @@ def create_final_text_units_pre_embedding(
 def _entities(table):
     selected = cast(Table, table[["id", "text_unit_ids"]])
     unrolled = selected.explode("text_unit_ids").reset_index(drop=True)
-    aggregated = aggregate_df(
+    return aggregate_df(
         unrolled,
         [
             {
@@ -109,7 +109,6 @@ def _entities(table):
         ],
         ["text_unit_ids"],
     )
-    return aggregated
 
 
 def _relationships(table):
@@ -136,7 +135,7 @@ def _relationships(table):
 
 def _covariates(table):
     selected = cast(Table, table[["id", "text_unit_id"]])
-    aggregated = aggregate_df(
+    return aggregate_df(
         selected,
         [
             {
@@ -152,7 +151,6 @@ def _covariates(table):
         ],
         ["text_unit_id"],
     )
-    return aggregated
 
 
 def _join(left, right):
