@@ -92,7 +92,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--paths",
         help="Different paths for the query",
-        action="store_true",
+        type=int,
         default=0, # Default to normal graphrag search
     )
 
