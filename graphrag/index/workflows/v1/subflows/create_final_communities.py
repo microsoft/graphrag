@@ -3,7 +3,6 @@
 
 """All the steps to transform final communities."""
 
-from functools import partial
 from typing import Any, cast
 
 import pandas as pd
@@ -20,7 +19,6 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 from pandas._typing import Suffixes
-from pandas.api.types import is_bool
 
 from graphrag.index.verbs.graph.unpack import unpack_graph_df
 from graphrag.index.verbs.overrides.aggregate import aggregate_df
@@ -57,7 +55,10 @@ def create_final_communities(
         [source_clusters, target_clusters], ignore_index=True
     )
 
-    combined_clusters = _filter_clusters(concatenated_clusters)
+    # level_1 is the left side of the join
+    # level_2 is the right side of the join
+    # we only want to keep the clusters that are the same on both sides
+    combined_clusters = concatenated_clusters[concatenated_clusters["level_1"] == concatenated_clusters["level_2"]].reset_index(drop=True)
 
     cluster_relationships = aggregate_df(
         combined_clusters,
@@ -93,89 +94,21 @@ def create_final_communities(
         suffixes=cast(Suffixes, ["_1", "_2"]),
     )
 
-    filtered = _filter_secondary(joined)
+    filtered = joined[joined["level"] == joined["level_1"]].reset_index(drop=True)
 
-    titled = _create_title(filtered)
+    filtered["title"] = "Community" + filtered["id"].astype(str)
 
-    titled["raw_community"] = titled[
-        "id"
-    ]  # TODO: Rodrigo says "raw_community" is temporary
     return create_verb_result(
         cast(
             Table,
-            titled[
+            filtered[
                 [
                     "id",
                     "title",
                     "level",
-                    "raw_community",
                     "relationship_ids",
                     "text_unit_ids",
                 ]
             ],
         )
     )
-
-
-def _filter_clusters(table: pd.DataFrame) -> pd.DataFrame:
-    # level_1 is the left side of the join
-    # level_2 is the right side of the join
-    args = FilterArgs(
-        column="level_1",
-        criteria=[
-            Criterion(
-                type=FilterCompareType.Column,
-                operator=StringComparisonOperator.Equals,
-                value="level_2",
-            ),
-        ],
-    )
-    filter_index = filter_df(table, args)
-    sub_idx = filter_index == True  # noqa: E712
-    idx = filter_index[sub_idx].index  # type: ignore
-    return cast(pd.DataFrame, table[table.index.isin(idx)].reset_index(drop=True))
-
-
-# we've filtered on the left, now we filter on the right
-def _filter_secondary(table: pd.DataFrame) -> pd.DataFrame:
-    args = FilterArgs(
-        column="level",
-        criteria=[
-            Criterion(
-                type=FilterCompareType.Column,
-                operator=StringComparisonOperator.Equals,
-                value="level_1",
-            ),
-        ],
-    )
-    filter_index = filter_df(table, args)
-    sub_idx = filter_index == True  # noqa: E712
-    idx = filter_index[sub_idx].index  # type: ignore
-    return cast(pd.DataFrame, table[table.index.isin(idx)].reset_index(drop=True))
-
-
-def _create_title(table: pd.DataFrame) -> pd.DataFrame:
-    table["__temp"] = "Community"
-
-    table["title"] = table[["__temp", "id"]].apply(
-        partial(
-            lambda values, delim, **_kwargs: _create_array(values, delim), delim=""
-        ),
-        axis=1,
-    )
-
-    return table
-
-
-def _correct_type(value: Any) -> str | int | Any:
-    if is_bool(value):
-        return str(value).lower()
-    try:
-        return int(value) if value.is_integer() else value
-    except AttributeError:
-        return value
-
-
-def _create_array(column: pd.Series, delim: str) -> str:
-    col: pd.DataFrame | pd.Series = column.dropna().apply(lambda x: _correct_type(x))
-    return delim.join(col.astype(str))
