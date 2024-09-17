@@ -45,14 +45,6 @@
             "subworkflows": 1,
             "max_runtime": 300
         },
-        "join_text_units_to_covariate_ids": {
-            "row_range": [
-                1,
-                2000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 10
-        },
         "create_base_entity_graph": {
             "row_range": [
                 1,
@@ -123,22 +115,6 @@
             "subworkflows": 7,
             "max_runtime": 300
         },
-        "join_text_units_to_entity_ids": {
-            "row_range": [
-                1,
-                2000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 10
-        },
-        "join_text_units_to_relationship_ids": {
-            "row_range": [
-                1,
-                2000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 10
-        },
         "create_final_text_units": {
             "row_range": [
                 1,
@@ -148,7 +124,7 @@
                 "relationship_ids",
                 "entity_ids"
             ],
-            "subworkflows": 7,
+            "subworkflows": 2,
             "max_runtime": 100
         },
         "create_base_documents": {
