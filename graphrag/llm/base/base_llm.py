@@ -54,8 +54,8 @@ class BaseLLM(ABC, LLM[TIn, TOut], Generic[TIn, TOut]):
             output = await self._execute_llm(input, **kwargs)
             return LLMOutput(output=output)
         except RateLimitError:
-            # for improved readability, do not log rate limit exceptions (in logs.json)
-            # as they are logged/handled elsewhere
+            # for improved readability, do not log rate limit exceptions,
+            # they are logged/handled elsewhere
             raise
         except Exception as e:
             stack_trace = traceback.format_exc()
