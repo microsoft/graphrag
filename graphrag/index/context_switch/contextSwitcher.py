@@ -20,6 +20,7 @@ from graphrag.config import (
 )
 from graphrag.config.enums import StorageType
 from graphrag.model.community_report import CommunityReport
+from graphrag.model import TextUnit
 from graphrag.model.entity import Entity
 from graphrag.query.indexer_adapters import (
     read_indexer_entities,
@@ -261,7 +262,9 @@ class ContextSwitcher:
 
             description_embedding_store.load_entities(entities)
             if self.use_kusto_community_reports:
-                description_embedding_store.load_reports(reports)
+                raise ValueError("Community reports not supported for kusto.")
+                #description_embedding_store.load_reports(reports)
+
             description_embedding_store.load_text_units(text_units)
 
             if config.graphdb.enabled:

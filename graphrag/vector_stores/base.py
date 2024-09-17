@@ -10,6 +10,7 @@ from typing import Any
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
+from graphrag.model import TextUnit
 
 DEFAULT_VECTOR_SIZE: int = 1536
 
@@ -119,6 +120,10 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def setup_text_units(self) -> None:
         """Setup the reports in the vector-store."""
+
+    @abstractmethod
+    def load_text_units(self, units: list[TextUnit], overwrite: bool = True) -> None:
+        """Load reports into the vector-store."""
 
     @abstractmethod
     def unload_entities(self) -> None:

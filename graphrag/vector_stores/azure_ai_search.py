@@ -27,6 +27,7 @@ from azure.search.documents.models import VectorizedQuery
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
+from graphrag.model import TextUnit
 
 from .base import (
     DEFAULT_VECTOR_SIZE,
@@ -204,6 +205,9 @@ class AzureAISearch(BaseVectorStore):
 
     def load_reports(self, reports: list[CommunityReport], overwrite: bool = True) -> None:
         raise NotImplementedError("Loading reports is not supported for Azure AI Search")
+
+    def load_text_units(self, units: list[TextUnit], overwrite: bool = True) -> None:
+        raise NotImplementedError("load_text_units(): Unsupported for this vector store.")
 
     def get_extracted_reports(self, community_ids: list[int], **kwargs: Any) -> list[CommunityReport]:
         raise NotImplementedError("Extracting reports is not supported for Azure AI Search")
