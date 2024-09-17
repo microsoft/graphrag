@@ -8,7 +8,6 @@ from typing import cast
 from datashaper.engine.verbs.verb_input import VerbInput
 from datashaper.engine.verbs.verbs_mapping import verb
 from datashaper.table_store.types import Table, VerbResult, create_verb_result
-from pandas._typing import Suffixes
 
 from graphrag.index.verbs.overrides.aggregate import aggregate_df
 
@@ -158,5 +157,5 @@ def _join(left, right):
         left_on="id",
         right_on="id",
         how="left",
-        suffixes=cast(Suffixes, ["_1", "_2"]),
+        suffixes=["_1", "_2"],
     )
