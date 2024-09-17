@@ -24,6 +24,7 @@ from graphrag.model.entity import Entity
 from graphrag.query.indexer_adapters import (
     read_indexer_entities,
     read_indexer_reports,
+    read_indexer_text_units,
 )
 from graphrag.model.entity import Entity
 from azure.cosmos import CosmosClient, PartitionKey
@@ -61,11 +62,15 @@ class ContextSwitcher:
 
         collection_name += "_" + self.context_id
         config_args.update({"collection_name": collection_name})
+
         vector_name = config_args.get(
             "vector_search_column", "description_embedding"
         )
         config_args.update({"vector_name": vector_name})
         config_args.update({"reports_name": f"reports_{self.context_id}"})
+
+
+        config_args.update({"text_units_name": f"text_units_{self.context_id}"})
 
         return VectorStoreFactory.get_vector_store(
             vector_store_type=VectorStoreType.Kusto, kwargs=config_args
@@ -82,6 +87,8 @@ class ContextSwitcher:
         description_embedding_store.setup_entities()
         if self.use_kusto_community_reports:
             description_embedding_store.setup_reports()
+
+        description_embedding_store.setup_text_units()
 
         return description_embedding_store
 
@@ -250,10 +257,12 @@ class ContextSwitcher:
 
             entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
             reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
+            text_units = read_indexer_text_units(final_text_units)
 
             description_embedding_store.load_entities(entities)
             if self.use_kusto_community_reports:
                 description_embedding_store.load_reports(reports)
+            description_embedding_store.load_text_units(text_units)
 
             if config.graphdb.enabled:
                 graph_db_client.write_vertices(final_entities)

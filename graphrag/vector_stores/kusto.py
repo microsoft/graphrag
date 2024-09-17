@@ -260,9 +260,23 @@ class KustoVectorStore(BaseVectorStore):
             self.setup_reports()
 
         # Ingest data
-        ingestion_command = f".ingest inline into table {self.reports_name} <| {df.to_csv(index=False, header=False)}"
+        ingestion_command = f".ingest inline into table {self.text_units_name} <| {df.to_csv(index=False, header=False)}"
         self.client.execute(self.database, ingestion_command)
 
+    def setup_text_units(self) -> None:
+        command = f".drop table {self.text_units_name} ifexists"
+        self.client.execute(self.database, command)
+        command = f".create table {self.text_units_name} (id: string, text: string, n_tokens: string, document_ids: string, entity_ids: string, relationship_ids: string)"
+        self.client.execute(self.database, command)
+
+
+    def load_text_units(self, units: list[Entity], overwrite: bool = False) -> None:
+        df = pd.DataFrame(units)
+        if overwrite:
+            self.setup_text_units()
+
+        ingestion_command = f".ingest inline into table {self.text_units_name} <| {df.to_csv(index=False, header=False)}"
+        self.client.execute(self.database, ingestion_command)
 
     def get_extracted_reports(
         self, community_ids: list[int], **kwargs: Any
