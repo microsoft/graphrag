@@ -62,7 +62,6 @@ from graphrag.index.workflows.default_workflows import (
     create_final_relationships,
     create_final_text_units,
     create_summarized_entities,
-    join_text_units_to_relationship_ids,
 )
 
 log = logging.getLogger(__name__)
@@ -216,9 +215,6 @@ def _text_unit_workflows(
                     )
                 },
             },
-        ),
-        PipelineWorkflowReference(
-            name=join_text_units_to_relationship_ids,
         ),
         PipelineWorkflowReference(
             name=create_final_text_units,
