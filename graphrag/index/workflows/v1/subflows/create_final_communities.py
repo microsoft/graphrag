@@ -58,7 +58,9 @@ def create_final_communities(
     # level_1 is the left side of the join
     # level_2 is the right side of the join
     # we only want to keep the clusters that are the same on both sides
-    combined_clusters = concatenated_clusters[concatenated_clusters["level_1"] == concatenated_clusters["level_2"]].reset_index(drop=True)
+    combined_clusters = concatenated_clusters[
+        concatenated_clusters["level_1"] == concatenated_clusters["level_2"]
+    ].reset_index(drop=True)
 
     cluster_relationships = aggregate_df(
         combined_clusters,
