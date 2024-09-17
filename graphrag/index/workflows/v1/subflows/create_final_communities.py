@@ -96,7 +96,7 @@ def create_final_communities(
 
     filtered = joined[joined["level"] == joined["level_1"]].reset_index(drop=True)
 
-    filtered["title"] = "Community" + filtered["id"].astype(str)
+    filtered["title"] = "Community " + filtered["id"].astype(str)
 
     return create_verb_result(
         cast(
