@@ -59,6 +59,7 @@ async def get_workflow_output(
 def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
     try:
         assert actual.shape == expected.shape
+        assert (actual.columns == expected.columns).all()
     except AssertionError:
         print("Expected:")
         print(expected.head())

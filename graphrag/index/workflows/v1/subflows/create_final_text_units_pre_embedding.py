@@ -5,7 +5,6 @@
 
 from typing import cast
 
-import pandas as pd
 from datashaper.engine.verbs.verb_input import VerbInput
 from datashaper.engine.verbs.verbs_mapping import verb
 from datashaper.table_store.types import Table, VerbResult, create_verb_result
@@ -44,50 +43,50 @@ def create_final_text_units_pre_embedding(
         covariate_join = _covariates(final_covariates)
         final_joined = _join(relationship_joined, covariate_join)
 
-    aggregated = aggregate_df(
-        final_joined,
-        [
-            {
-                "column": "text",
-                "operation": "any",
-                "to": "text",
-            },
-            {
-                "column": "n_tokens",
-                "operation": "any",
-                "to": "n_tokens",
-            },
-            {
-                "column": "document_ids",
-                "operation": "any",
-                "to": "document_ids",
-            },
-            {
-                "column": "entity_ids",
-                "operation": "any",
-                "to": "entity_ids",
-            },
-            {
-                "column": "relationship_ids",
-                "operation": "any",
-                "to": "relationship_ids",
-            },
-            *(
-                []
-                if not covariates_enabled
-                else [
-                    {
-                        "column": "covariate_ids",
-                        "operation": "any",
-                        "to": "covariate_ids",
-                    }
-                ]
-            ),
-        ],
-        ["id"],
-    )
+    aggregated = _final_aggregation(final_joined, covariates_enabled)
 
     return create_verb_result(aggregated)
+
+
+def _final_aggregation(table, covariates_enabled):
+    aggregations = [
+        {
+            "column": "text",
+            "operation": "any",
+            "to": "text",
+        },
+        {
+            "column": "n_tokens",
+            "operation": "any",
+            "to": "n_tokens",
+        },
+        {
+            "column": "document_ids",
+            "operation": "any",
+            "to": "document_ids",
+        },
+        {
+            "column": "entity_ids",
+            "operation": "any",
+            "to": "entity_ids",
+        },
+        {
+            "column": "relationship_ids",
+            "operation": "any",
+            "to": "relationship_ids",
+        },
+    ]
+    if covariates_enabled:
+        aggregations.append({
+            "column": "covariate_ids",
+            "operation": "any",
+            "to": "covariate_ids",
+        })
+    return aggregate_df(
+        table,
+        aggregations,
+        ["id"],
+    )
 
 
 def _entities(table):
@@ -154,25 +153,10 @@ def _covariates(table):
 
 
 def _join(left, right):
-    return __clean_result(
-        left.merge(
-            right,
-            left_on="id",
-            right_on="id",
-            how="left",
-            suffixes=cast(Suffixes, ["_1", "_2"]),
-            indicator=True,
-        )
+    return left.merge(
+        right,
+        left_on="id",
+        right_on="id",
+        how="left",
+        suffixes=cast(Suffixes, ["_1", "_2"]),
     )
-
-
-def __clean_result(result: pd.DataFrame) -> pd.DataFrame:
-    result = cast(
-        pd.DataFrame,
-        pd.concat([
-            result[result["_merge"] == "both"],
-            result[result["_merge"] == "left_only"],
-            result[result["_merge"] == "right_only"],
-        ]),
-    )
-    return result.drop("_merge", axis=1)
