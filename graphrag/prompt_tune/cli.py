@@ -4,6 +4,7 @@
 """Command line interface for the fine_tune module."""
 
 from pathlib import Path
+import time
 
 from graphrag.config import load_config
 from graphrag.index.progress import PrintProgressReporter
@@ -50,7 +51,8 @@ async def prompt_tune(
     """
     reporter = PrintProgressReporter("")
     root_path = Path(root).resolve()
-    graph_config = load_config(root_path, config)
+    run_id = time.strftime("%Y%m%d-%H%M%S")
+    graph_config = load_config(root_path, config, run_id)
 
     prompts = await api.generate_indexing_prompts(
         config=graph_config,
