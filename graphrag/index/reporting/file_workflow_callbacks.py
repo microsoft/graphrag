@@ -42,6 +42,7 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
                     "source": str(cause),
                     "details": details,
                 },
+                indent=4,
                 ensure_ascii=False,
             )
             + "\n"
