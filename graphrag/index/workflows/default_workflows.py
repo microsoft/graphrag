@@ -85,12 +85,6 @@ from .v1.create_summarized_entities import (
 from .v1.create_summarized_entities import (
     workflow_name as create_summarized_entities,
 )
-from .v1.join_text_units_to_entity_ids import (
-    build_steps as join_text_units_to_entity_ids_steps,
-)
-from .v1.join_text_units_to_entity_ids import (
-    workflow_name as join_text_units_to_entity_ids,
-)
 from .v1.join_text_units_to_relationship_ids import (
     build_steps as join_text_units_to_relationship_ids_steps,
 )
@@ -112,6 +106,5 @@ default_workflows: WorkflowDefinitions = {
     create_final_entities: build_create_final_entities_steps,
     create_final_communities: build_create_final_communities_steps,
     create_summarized_entities: build_create_summarized_entities_steps,
-    join_text_units_to_entity_ids: join_text_units_to_entity_ids_steps,
     join_text_units_to_relationship_ids: join_text_units_to_relationship_ids_steps,
 }
