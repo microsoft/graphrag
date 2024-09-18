@@ -152,7 +152,7 @@ def _group_and_resolve_entities(
     combined = pd.concat([df_a, df_b], copy=False)
 
     # Group by Name and resolve conflicts
-    resolved: pd.DataFrame = (
+    resolved = pd.DataFrame(
         combined.groupby("name")
         .agg({
             "id": "first",
