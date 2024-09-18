@@ -71,6 +71,9 @@ def cluster_graph(
 
     num_total = len(output_df)
 
+    # Create a seed for this run (if not provided)
+    seed = strategy.get("seed", Random().randint(0, 0xFFFFFFFF))  # noqa S311
+
     # Go through each of the rows
     graph_level_pairs_column: list[list[tuple[int, str]]] = []
     for _, row in progress_iterable(
@@ -87,7 +90,7 @@ def cluster_graph(
                         cast(str, row[column]),
                         cast(Communities, row[community_map_to]),
                         level,
-                        seed=strategy.get("seed"),
+                        seed=seed,
                     )
                 )
             )
