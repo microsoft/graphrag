@@ -7,6 +7,9 @@ import re
 from pathlib import Path
 from string import Template
 
+from .enums import ReportingType, StorageType
+from .models.graph_rag_config import GraphRagConfig
+
 
 def _resolve_timestamp_path_with_value(path: str | Path, timestamp_value: str) -> Path:
     """Resolve the timestamp in the path with the given timestamp value.
@@ -150,3 +153,41 @@ def resolve_path(
     else:
         path_to_resolve = Path(path_to_resolve)
     return _resolve_timestamp_path(path_to_resolve, pattern_or_timestamp_value)
+
+
+def resolve_paths(
+    config: GraphRagConfig,
+    pattern_or_timestamp_value: re.Pattern[str] | str | None = None,
+) -> None:
+    """Resolve storage and reporting paths in the configuration for local file handling.
+
+    Resolves any timestamp variables in the configuration paths by either using the provided timestamp value if string or
+    by looking up the latest available timestamp directory that matches the given pattern.
+
+    Parameters
+    ----------
+    config : GraphRagConfig
+        The configuration to resolve the paths in.
+    pattern_or_timestamp_value : re.Pattern[str] | str, default=None
+        The pattern to use to match the timestamp directories or the timestamp value to use.
+        If a string is provided, the path will be resolved with the given string value.
+        Otherwise, the path will be resolved with the latest available timestamp directory
+        that matches the given pattern.
+    """
+    if config.storage.type == StorageType.file:
+        config.storage.base_dir = str(
+            resolve_path(
+                config.storage.base_dir,
+                config.root_dir,
+                pattern_or_timestamp_value,
+            )
+        )
+
+    if config.reporting.type == ReportingType.file:
+        config.reporting.base_dir = str(
+            resolve_path(
+                config.reporting.base_dir,
+                config.root_dir,
+                pattern_or_timestamp_value,
+            )
+        )
