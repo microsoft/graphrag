@@ -151,22 +151,25 @@ def _group_and_resolve_entities(
     # Concat A and B
     combined = pd.concat([df_a, df_b], copy=False)
 
-    # Group by Name and resolve conflicts
-    resolved = pd.DataFrame(
+    # Group by name and resolve conflicts
+    aggregated = (
         combined.groupby("name")
         .agg({
             "id": "first",
             "type": "first",
             "human_readable_id": "first",
             "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x),
+            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions were the original value wasn't modified
+            # Keep only descriptions where the original value wasn't modified
             "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
         })
         .reset_index()
     )
+
+    # Force the result into a DataFrame
+    resolved = pd.DataFrame(aggregated)
 
     # Recreate humand readable id with an autonumeric
     resolved["human_readable_id"] = range(len(resolved))
