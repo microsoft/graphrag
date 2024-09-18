@@ -87,13 +87,16 @@ class GlobalCommunityContext(GlobalContextBuilder):
             context_name=context_name,
             random_state=self.random_state,
         )
+        # check whether conversation_history_context is empty
+        context_prefix = f"{conversation_history_context}\n\n" if conversation_history_context else ""
+
         if isinstance(community_context, list):
             final_context = [
-                f"{conversation_history_context}\n\n{context}"
+                f"{context_prefix}{context}"
                 for context in community_context
             ]
         else:
-            final_context = f"{conversation_history_context}\n\n{community_context}"
+            final_context = f"{context_prefix}{community_context}"
 
         final_context_data.update(community_context_data)
         return (final_context, final_context_data)
