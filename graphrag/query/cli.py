@@ -68,6 +68,7 @@ def __get_embedding_description_store(
     )
     config_args.update({"vector_name": vector_name})
     config_args.update({"reports_name": f"reports_{context_id}" if context_id else "reports"})
+    config_args.update({"text_units_name": f"text_units_{context_id}"})
 
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
@@ -168,8 +169,6 @@ def path0(
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
     )
-
-
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
