@@ -92,7 +92,7 @@ async def update_dataframe_outputs(
 
     merged_entities_df, _ = _group_and_resolve_entities(old_entities, delta_entities)
     # Save the updated entities back to storage
-    # TODO: Using _new in the mean time, to compare ouputs wihout overwriting the original
+    # TODO: Using _new in the mean time, to compare outputs without overwriting the original
     await storage.set(
         "create_final_entities_new.parquet", merged_entities_df.to_parquet()
     )
@@ -116,7 +116,7 @@ async def _concat_dataframes(name, dataframe_dict, storage):
     # Merge the final documents
     final_df = pd.concat([old_df, delta_df], copy=False)
 
-    # TODO: Using _new in the mean time, to compare ouputs wihout overwriting the original
+    # TODO: Using _new in the mean time, to compare outputs without overwriting the original
     await storage.set(f"{name}_new.parquet", final_df.to_parquet())
 
 
@@ -152,7 +152,7 @@ def _group_and_resolve_entities(
     combined = pd.concat([df_a, df_b], copy=False)
 
     # Group by Name and resolve conflicts
-    resolved = (
+    resolved: pd.DataFrame = (
         combined.groupby("name")
         .agg({
             "id": "first",
