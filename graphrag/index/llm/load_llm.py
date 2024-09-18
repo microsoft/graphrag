@@ -77,7 +77,6 @@ def load_llm_embeddings(
             raise ValueError(msg)
         if cache is not None:
             cache = cache.child(name)
-
         return loaders[llm_type]["load"](on_error, cache, llm_config or {})
 
     msg = f"Unknown LLM type {llm_type}"

@@ -27,7 +27,7 @@ async def build_index(
     is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
-    emit: list[str] | None = None,
+    emit: list[TableEmitterType] = [TableEmitterType.Parquet],  # noqa: B006
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -45,7 +45,7 @@ async def build_index(
         Whether to enable memory profiling.
     progress_reporter : ProgressReporter | None default=None
         The progress reporter.
-    emit : list[str] | None default=None
+    emit : list[str]
         The list of emitter types to emit.
         Accepted values {"parquet", "csv"}.
 
@@ -69,7 +69,7 @@ async def build_index(
         memory_profile=memory_profile,
         cache=pipeline_cache,
         progress_reporter=progress_reporter,
-        emit=([TableEmitterType(e) for e in emit] if emit is not None else None),
+        emit=emit,
         is_resume_run=is_resume_run,
         is_update_run=is_update_run,
     ):

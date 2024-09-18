@@ -28,103 +28,22 @@ def build_steps(
         is not None
     )
 
+    others = [
+        "workflow:create_final_entities",
+        "workflow:create_final_relationships",
+    ]
+    if covariates_enabled:
+        others.append("workflow:create_final_covariates")
+
     return [
         {
-            "verb": "select",
-            "args": {"columns": ["id", "chunk", "document_ids", "n_tokens"]},
-            "input": {"source": "workflow:create_base_text_units"},
-        },
-        {
-            "id": "pre_entity_join",
-            "verb": "rename",
+            "verb": "create_final_text_units_pre_embedding",
             "args": {
-                "columns": {
-                    "chunk": "text",
-                },
-            },
-        },
-        # Expand the TextUnits with EntityIDs
-        {
-            "id": "pre_relationship_join",
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
+                "covariates_enabled": covariates_enabled,
             },
             "input": {
-                "source": "pre_entity_join",
-                "others": ["workflow:join_text_units_to_entity_ids"],
-            },
-        },
-        # Expand the TextUnits with RelationshipIDs
-        {
-            "id": "pre_covariate_join",
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
-            },
-            "input": {
-                "source": "pre_relationship_join",
-                "others": ["workflow:join_text_units_to_relationship_ids"],
-            },
-        },
-        # Expand the TextUnits with CovariateIDs
-        {
-            "enabled": covariates_enabled,
-            "verb": "join",
-            "args": {
-                "on": ["id", "id"],
-                "strategy": "left outer",
-            },
-            "input": {
-                "source": "pre_covariate_join",
-                "others": ["workflow:join_text_units_to_covariate_ids"],
-            },
-        },
-        # Mash the entities and relationships into arrays
-        {
-            "verb": "aggregate_override",
-            "args": {
-                "groupby": ["id"],  # from the join above
-                "aggregations": [
-                    {
-                        "column": "text",
-                        "operation": "any",
-                        "to": "text",
-                    },
-                    {
-                        "column": "n_tokens",
-                        "operation": "any",
-                        "to": "n_tokens",
-                    },
-                    {
-                        "column": "document_ids",
-                        "operation": "any",
-                        "to": "document_ids",
-                    },
-                    {
-                        "column": "entity_ids",
-                        "operation": "any",
-                        "to": "entity_ids",
-                    },
-                    {
-                        "column": "relationship_ids",
-                        "operation": "any",
-                        "to": "relationship_ids",
-                    },
-                    *(
-                        []
-                        if not covariates_enabled
-                        else [
-                            {
-                                "column": "covariate_ids",
-                                "operation": "any",
-                                "to": "covariate_ids",
-                            }
-                        ]
-                    ),
-                ],
+                "source": "workflow:create_base_text_units",
+                "others": others,
             },
         },
         # Text-Embed after final aggregations

@@ -78,7 +78,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
         )
-        blob_client.append_block(json.dumps(log, ensure_ascii=False) + "\n")
+        blob_client.append_block(json.dumps(log, indent=4, ensure_ascii=False) + "\n")
 
         # update the blob's block count
         self._num_blocks += 1
