@@ -62,9 +62,6 @@ from graphrag.index.workflows.default_workflows import (
     create_final_relationships,
     create_final_text_units,
     create_summarized_entities,
-    join_text_units_to_covariate_ids,
-    join_text_units_to_entity_ids,
-    join_text_units_to_relationship_ids,
 )
 
 log = logging.getLogger(__name__)
@@ -113,7 +110,7 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
     if verbose:
         _log_llm_settings(settings)
 
-    skip_workflows = _determine_skip_workflows(settings)
+    skip_workflows = settings.skip_workflows
     embedded_fields = _get_embedded_fields(settings)
     covariates_enabled = (
         settings.claim_extraction.enabled
@@ -150,16 +147,6 @@ def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
-
-
-def _determine_skip_workflows(settings: GraphRagConfig) -> list[str]:
-    skip_workflows = settings.skip_workflows
-    if (
-        create_final_covariates in skip_workflows
-        and join_text_units_to_covariate_ids not in skip_workflows
-    ):
-        skip_workflows.append(join_text_units_to_covariate_ids)
-    return skip_workflows
 
 
 def _log_llm_settings(settings: GraphRagConfig) -> None:
@@ -228,21 +215,6 @@ def _text_unit_workflows(
                     )
                 },
             },
-        ),
-        PipelineWorkflowReference(
-            name=join_text_units_to_entity_ids,
-        ),
-        PipelineWorkflowReference(
-            name=join_text_units_to_relationship_ids,
-        ),
-        *(
-            [
-                PipelineWorkflowReference(
-                    name=join_text_units_to_covariate_ids,
-                )
-            ]
-            if covariates_enabled
-            else []
         ),
         PipelineWorkflowReference(
             name=create_final_text_units,
