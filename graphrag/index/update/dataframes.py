@@ -179,7 +179,8 @@ def _group_and_resolve_entities(
     resolved["human_readable_id"] = range(len(resolved))
 
     # Modify column order to keep consistency
-    resolved = resolved[
+    resolved = resolved.loc[
+        :,
         [
             "id",
             "name",
@@ -189,7 +190,7 @@ def _group_and_resolve_entities(
             "graph_embedding",
             "text_unit_ids",
             "description_embedding",
-        ]
+        ],
     ]
 
-    return pd.DataFrame(resolved), id_mapping
+    return resolved, id_mapping
