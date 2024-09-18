@@ -151,25 +151,25 @@ def _group_and_resolve_entities(
     # Concat A and B
     combined = pd.concat([df_a, df_b], copy=False)
 
-    # Group by name and resolve conflicts
-    aggregated = (
-        combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
-        .reset_index()
+    # Group by Name and resolve conflicts
+    aggregated = combined.groupby("name").agg(
+        id=("id", "first"),
+        type=("type", "first"),
+        human_readable_id=("human_readable_id", "first"),
+        graph_embedding=("graph_embedding", "first"),
+        description=("description", lambda x: os.linesep.join(x.astype(str))),
+        text_unit_ids=(
+            "text_unit_ids",
+            lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+        ),
+        description_embedding=(
+            "description_embedding",
+            lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+        ),
     )
 
-    # Force the result into a DataFrame
-    resolved = pd.DataFrame(aggregated)
+    # Ensure the result is a DataFrame
+    resolved: pd.DataFrame = aggregated.reset_index()
 
     # Recreate humand readable id with an autonumeric
     resolved["human_readable_id"] = range(len(resolved))
