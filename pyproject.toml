@@ -50,16 +50,12 @@ datashaper = "^0.0.49"
 azure-search-documents = "^11.4.0"
 lancedb = "^0.12.0"
 
-# Event Loops
-uvloop = { version = "^0.20.0", markers = "platform_system != 'Windows'" }
-nest-asyncio = { version = "^1.6.0", markers = "platform_system == 'Windows'" }
-
 # Async IO
 aiolimiter = "^1.1.0"
 aiofiles = "^24.1.0"
 
 # LLM
-openai = "^1.37.1"
+openai = "^1.46.1"
 nltk = "3.9.1"
 tiktoken = "^0.7.0"
 
@@ -90,18 +86,17 @@ azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
 json-repair = "^0.28.4"
 
-future = "^1.0.0"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
-jupyter = "^1.0.0"
+jupyter = "^1.1.1"
 nbconvert = "^7.16.3"
-poethepoet = "^0.27.0"
+poethepoet = "^0.28.0"
 pyright = "^1.1.371"
 pytest = "^8.3.2"
 pytest-asyncio = "^0.24.0"
 pytest-timeout = "^2.3.1"
-ruff = "^0.6.2"
+ruff = "^0.6.5"
 semversioner = "^2.0.3"
 update-toml = "^0.2.1"
 deptry = "^0.16.1"
