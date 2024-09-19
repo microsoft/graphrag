@@ -3,6 +3,8 @@ import os
 import time
 import unittest
 
+from couchbase.auth import PasswordAuthenticator
+from couchbase.options import ClusterOptions
 from dotenv import load_dotenv
 
 from graphrag.vector_stores.base import VectorStoreDocument, VectorStoreSearchResult
@@ -29,10 +31,12 @@ class TestCouchbaseVectorStore(unittest.TestCase):
             index_name=INDEX_NAME,
             vector_size=VECTOR_SIZE
         )
+        auth = PasswordAuthenticator(COUCHBASE_USERNAME, COUCHBASE_PASSWORD)
+        cluster_options = ClusterOptions(auth)
+
         cls.vector_store.connect(
             connection_string=COUCHBASE_CONNECTION_STRING,
-            username=COUCHBASE_USERNAME,
-            password=COUCHBASE_PASSWORD
+            cluster_options=cluster_options
         )
 
     @classmethod
