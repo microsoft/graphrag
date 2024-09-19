@@ -29,8 +29,8 @@ class CouchbaseVectorStore(BaseVectorStore):
         self,
         collection_name: str,
         bucket_name: str,
-        scope_name: str,
-        index_name: str,
+        scope_name: str = "_default",
+        index_name: str = "graphrag_index",
         text_key: str = "text",
         embedding_key: str = "embedding",
         scoped_index: bool = True,
@@ -68,7 +68,12 @@ class CouchbaseVectorStore(BaseVectorStore):
             self._cluster = Cluster(connection_string, cluster_options)
             self.db_connection = self._cluster
             self.bucket = self._cluster.bucket(self.bucket_name)
-            self.scope = self.bucket.scope(self.scope_name)
+
+            if self.scoped_index and self.scope_name:
+                self.scope = self.bucket.scope(self.scope_name)
+            else:
+                self.scope = self.bucket.default_scope()
+
             self.document_collection = self.scope.collection(self.collection_name)
             logger.info("Successfully connected to Couchbase")
         except Exception as e:
@@ -92,27 +97,19 @@ class CouchbaseVectorStore(BaseVectorStore):
             try:
                 result = self.document_collection.upsert_multi(batch)
 
-                # Assuming the result has an 'all_ok' attribute
-                if hasattr(result, "all_ok"):
-                    if result.all_ok:
-                        logger.info("Successfully loaded all %d documents", len(batch))
-                    else:
-                        logger.warning("Some documents failed to load")
-                else:
-                    logger.info(
-                        "Unable to determine success status of document loading"
-                    )
+                if hasattr(result, "results"):
+                    for doc_id, result_item in result.results.items():
+                        if result_item.success:
+                            logger.info("Document %s loaded successfully", doc_id)
+                        else:
+                            logger.error(
+                                "Failed to load document %s: %s",
+                                doc_id,
+                                result_item.err,
+                            )
 
-                # If there's a way to access individual results, log them
-                if hasattr(result, "__iter__"):
-                    for key, value in result:
-                        logger.info(
-                            "Document %s: %s",
-                            key,
-                            "Success" if value.success else "Failed",
-                        )
-            except Exception:
-                logger.exception("Error occurred while loading documents")
+            except Exception as e:
+                logger.exception("Error occurred while loading documents: %s", e)
         else:
             logger.warning("No valid documents to load")
 
