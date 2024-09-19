@@ -1,6 +1,51 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.4
+
+- patch: Deep copy txt units on local search to avoid race conditions
+- patch: Fix summarization including empty descriptions
+
+## 0.3.3
+
+- patch: Add entrypoints for incremental indexing
+- patch: Clean up and organize run index code
+- patch: Consistent config loading. Resolves #99 and Resolves #1049
+- patch: Fix circular dependency when running prompt tune api directly
+- patch: Fix default settings for embedding
+- patch: Fix img for auto tune
+- patch: Fix img width
+- patch: Fixed a bug in prompt tuning process
+- patch: Refactor text unit build at local search
+- patch: Update Prompt Tuning docs
+- patch: Update create_pipeline_config.py
+- patch: Update prompt tune command in docs
+- patch: add querying from azure blob storage
+- patch: fix setting base_dir to full paths when not using file system.
+- patch: fix strategy config in entity_extraction
+
+## 0.3.2
+
+- patch: Add context data to query API responses.
+- patch: Add missing config parameter documentation for prompt tuning
+- patch: Add neo4j community notebook
+- patch: Ensure entity types to be str when running prompt tuning
+- patch: Fix weight casting during graph extraction
+- patch: Patch "past" dependency issues
+- patch: Update developer guide.
+- patch: Update query type hints.
+- patch: change-lancedb-placement
+
+## 0.3.1
+
+- patch: Add preflight check to check LLM connectivity.
+- patch: Add streaming support for local/global search to query cli
+- patch: Add support for both float and int on schema validation for community report generation
+- patch: Avoid running index on gh-pages publishing
+- patch: Implement Index API
+- patch: Improves filtering for data dir inferring
+- patch: Update to nltk 3.9.1
+
 ## 0.3.0
 
 - minor: Implement auto templating API.

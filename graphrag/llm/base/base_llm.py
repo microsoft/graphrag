@@ -7,6 +7,7 @@ import traceback
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
+from openai import RateLimitError
 from typing_extensions import Unpack
 
 from graphrag.llm.types import (
@@ -52,6 +53,10 @@ class BaseLLM(ABC, LLM[TIn, TOut], Generic[TIn, TOut]):
         try:
             output = await self._execute_llm(input, **kwargs)
             return LLMOutput(output=output)
+        except RateLimitError:
+            # for improved readability, do not log rate limit exceptions,
+            # they are logged/handled elsewhere
+            raise
         except Exception as e:
             stack_trace = traceback.format_exc()
             if self._on_error:

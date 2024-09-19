@@ -34,7 +34,7 @@ class VectorStoreSearchResult:
     """Document that was found."""
 
     score: float
-    """Similarity score between 0 and 1. Higher is more similar."""
+    """Similarity score between -1 and 1. Higher is more similar."""
 
 
 class BaseVectorStore(ABC):
