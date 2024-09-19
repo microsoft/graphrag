@@ -15,6 +15,8 @@ import pandas as pd
 import tiktoken
 from dotenv import load_dotenv
 
+from couchbase.auth import PasswordAuthenticator
+from couchbase.options import ClusterOptions
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.indexer_adapters import (
     read_indexer_covariates,
@@ -42,11 +44,16 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 INPUT_DIR = os.getenv("INPUT_DIR")
-COUCHBASE_CONNECTION_STRING = os.getenv("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
+COUCHBASE_CONNECTION_STRING = os.getenv(
+    "COUCHBASE_CONNECTION_STRING", "couchbase://localhost"
+)
 COUCHBASE_USERNAME = os.getenv("COUCHBASE_USERNAME", "Administrator")
 COUCHBASE_PASSWORD = os.getenv("COUCHBASE_PASSWORD", "password")
 COUCHBASE_BUCKET_NAME = os.getenv("COUCHBASE_BUCKET_NAME", "graphrag-demo")
 COUCHBASE_SCOPE_NAME = os.getenv("COUCHBASE_SCOPE_NAME", "shared")
+COUCHBASE_COLLECTION_NAME = os.getenv(
+    "COUCHBASE_COLLECTION_NAME", "entity_description_embeddings"
+)
 COUCHBASE_VECTOR_INDEX_NAME = os.getenv("COUCHBASE_VECTOR_INDEX_NAME", "graphrag_index")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
@@ -76,18 +83,32 @@ def load_data() -> dict[str, Any]:
             table_data = pd.read_parquet(
                 f"{INPUT_DIR}/{TABLE_NAMES[table_name]}.parquet"
             )
-            return read_function(table_data, *args)
+            result = read_function(table_data, *args)
         except FileNotFoundError:
             logger.warning(
                 "%(table_name)s file not found. Setting %(table_name_lower)s to None.",
-                {"table_name": table_name, "table_name_lower": table_name.lower()}
+                {"table_name": table_name, "table_name_lower": table_name.lower()},
             )
-            return None
+            result = None
+        except Exception:
+            logger.exception("Error loading %s", table_name)
+            result = None
+        return result
 
-    data["entities"] = load_table("ENTITY_TABLE", read_indexer_entities, pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_EMBEDDING_TABLE']}.parquet"), COMMUNITY_LEVEL)
+    data["entities"] = load_table(
+        "ENTITY_TABLE",
+        read_indexer_entities,
+        pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_EMBEDDING_TABLE']}.parquet"),
+        COMMUNITY_LEVEL,
+    )
     data["relationships"] = load_table("RELATIONSHIP_TABLE", read_indexer_relationships)
     data["covariates"] = load_table("COVARIATE_TABLE", read_indexer_covariates)
-    data["reports"] = load_table("COMMUNITY_REPORT_TABLE", read_indexer_reports, pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_TABLE']}.parquet"), COMMUNITY_LEVEL)
+    data["reports"] = load_table(
+        "COMMUNITY_REPORT_TABLE",
+        read_indexer_reports,
+        pd.read_parquet(f"{INPUT_DIR}/{TABLE_NAMES['ENTITY_TABLE']}.parquet"),
+        COMMUNITY_LEVEL,
+    )
     data["text_units"] = load_table("TEXT_UNIT_TABLE", read_indexer_text_units)
 
     logger.info("Data loading completed")
@@ -99,21 +120,23 @@ def setup_vector_store() -> CouchbaseVectorStore:
     logger.info("Setting up CouchbaseVectorStore")
     try:
         description_embedding_store = CouchbaseVectorStore(
-            collection_name="entity_description_embeddings",
+            collection_name=COUCHBASE_COLLECTION_NAME,
             bucket_name=COUCHBASE_BUCKET_NAME,
             scope_name=COUCHBASE_SCOPE_NAME,
             index_name=COUCHBASE_VECTOR_INDEX_NAME,
         )
+
+        auth = PasswordAuthenticator(COUCHBASE_USERNAME, COUCHBASE_PASSWORD)
+        cluster_options = ClusterOptions(auth)
+
         description_embedding_store.connect(
             connection_string=COUCHBASE_CONNECTION_STRING,
-            username=COUCHBASE_USERNAME,
-            password=COUCHBASE_PASSWORD,
+            cluster_options=cluster_options,
         )
         logger.info("CouchbaseVectorStore setup completed")
     except Exception:
-        logger.exception("Error setting up CouchbaseVectorStore:")
+        logger.exception("Error setting up CouchbaseVectorStore")
         raise
-
     return description_embedding_store
 
 
@@ -140,8 +163,8 @@ def setup_models() -> dict[str, Any]:
         )
 
         logger.info("LLM and embedding models setup completed")
-    except Exception as e:
-        logger.exception("Error setting up models: %s", str(e))
+    except Exception:
+        logger.exception("Error setting up models")
         raise
 
     return {
@@ -151,28 +174,20 @@ def setup_models() -> dict[str, Any]:
     }
 
 
-def store_embeddings(
-    entities: dict[str, Any] | list[Any], vector_store: CouchbaseVectorStore
-) -> None:
+def store_embeddings(entities: list[Any], vector_store: CouchbaseVectorStore) -> None:
     """Store entity semantic embeddings in Couchbase."""
     logger.info("Storing entity embeddings")
 
     try:
-        if isinstance(entities, dict):
-            entities_list = list(entities.values())
-        elif isinstance(entities, list):
-            entities_list = entities
-
-        store_entity_semantic_embeddings(
-            entities=entities_list, vectorstore=vector_store
-        )
+        store_entity_semantic_embeddings(entities=entities, vectorstore=vector_store)
         logger.info("Entity semantic embeddings stored successfully")
-    except AttributeError as e:
-        logger.exception("Error storing entity semantic embeddings: %s", str(e))
-        logger.error("Ensure all entities have an 'id' attribute")
+    except AttributeError:
+        logger.exception(
+            "Error storing entity semantic embeddings. Ensure all entities have an 'id' attribute"
+        )
         raise
-    except Exception as e:
-        logger.exception("Error storing entity semantic embeddings: %s", str(e))
+    except Exception:
+        logger.exception("Error storing entity semantic embeddings")
         raise
 
 
@@ -181,47 +196,51 @@ def create_search_engine(
 ) -> LocalSearch:
     """Create and configure the search engine."""
     logger.info("Creating search engine")
-    context_builder = LocalSearchMixedContext(
-        community_reports=data["reports"],
-        text_units=data["text_units"],
-        entities=data["entities"],
-        relationships=data["relationships"],
-        covariates=data["covariates"],
-        entity_text_embeddings=vector_store,
-        embedding_vectorstore_key=EntityVectorStoreKey.ID,
-        text_embedder=models["text_embedder"],
-        token_encoder=models["token_encoder"],
-    )
+    try:
+        context_builder = LocalSearchMixedContext(
+            community_reports=data["reports"],
+            text_units=data["text_units"],
+            entities=data["entities"],
+            relationships=data["relationships"],
+            covariates=data["covariates"],
+            entity_text_embeddings=vector_store,
+            embedding_vectorstore_key=EntityVectorStoreKey.ID,
+            text_embedder=models["text_embedder"],
+            token_encoder=models["token_encoder"],
+        )
 
-    local_context_params = {
-        "text_unit_prop": 0.5,
-        "community_prop": 0.1,
-        "conversation_history_max_turns": 5,
-        "conversation_history_user_turns_only": True,
-        "top_k_mapped_entities": 10,
-        "top_k_relationships": 10,
-        "include_entity_rank": True,
-        "include_relationship_weight": True,
-        "include_community_rank": False,
-        "return_candidate_context": False,
-        "embedding_vectorstore_key": EntityVectorStoreKey.ID,
-        "max_tokens": 12_000,
-    }
+        local_context_params = {
+            "text_unit_prop": 0.5,
+            "community_prop": 0.1,
+            "conversation_history_max_turns": 5,
+            "conversation_history_user_turns_only": True,
+            "top_k_mapped_entities": 10,
+            "top_k_relationships": 10,
+            "include_entity_rank": True,
+            "include_relationship_weight": True,
+            "include_community_rank": False,
+            "return_candidate_context": False,
+            "embedding_vectorstore_key": EntityVectorStoreKey.ID,
+            "max_tokens": 12_000,
+        }
 
-    llm_params = {
-        "max_tokens": 2_000,
-        "temperature": 0.0,
-    }
+        llm_params = {
+            "max_tokens": 2_000,
+            "temperature": 0.0,
+        }
 
-    search_engine = LocalSearch(
-        llm=models["llm"],
-        context_builder=context_builder,
-        token_encoder=models["token_encoder"],
-        llm_params=llm_params,
-        context_builder_params=local_context_params,
-        response_type="multiple paragraphs",
-    )
-    logger.info("Search engine created")
+        search_engine = LocalSearch(
+            llm=models["llm"],
+            context_builder=context_builder,
+            token_encoder=models["token_encoder"],
+            llm_params=llm_params,
+            context_builder_params=local_context_params,
+            response_type="multiple paragraphs",
+        )
+        logger.info("Search engine created")
+    except Exception:
+        logger.exception("Error creating search engine")
+        raise
     return search_engine
 
 
@@ -230,34 +249,44 @@ async def run_query(search_engine: LocalSearch, question: str) -> None:
     try:
         logger.info("Running query: %s", question)
         result = await search_engine.asearch(question)
-        print(f"Question: {question}")
-        print(f"Answer: {result.response}")
+        logger.info("Question: %s", question)
+        logger.info("Answer: %s", result.response)
         logger.info("Query completed successfully")
-    except Exception as e:
-        logger.exception("An error occurred while processing the query: %s", str(e))
+    except Exception:
+        logger.exception("An error occurred while processing the query")
 
 
 async def main() -> None:
     """Orchestrate the demo."""
     try:
+        # Start the Couchbase demo
         logger.info("Starting Couchbase demo")
+
+        # Load data from parquet files
         data = load_data()
+
+        # Set up the Couchbase vector store
         vector_store = setup_vector_store()
+
+        # Set up the language models
         models = setup_models()
 
+        # Store entity embeddings if entities exist
         if data["entities"]:
             store_embeddings(data["entities"], vector_store)
         else:
             logger.warning("No entities found to store in Couchbase")
 
+        # Create the search engine
         search_engine = create_search_engine(data, models, vector_store)
 
+        # Run a sample query
         question = "Give me a summary about the story"
         await run_query(search_engine, question)
 
         logger.info("Couchbase demo completed")
-    except Exception as e:
-        logger.exception("An error occurred: %s", str(e))
+    except Exception:
+        logger.exception("An error occurred in the main function")
 
 
 if __name__ == "__main__":

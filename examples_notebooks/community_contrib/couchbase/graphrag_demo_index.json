@@ -1,6 +1,6 @@
 {
     "type": "fulltext-index",
-    "name": "grapghrag_index",
+    "name": "graphrag_index",
     "uuid": "1797bd6bd434cdd2",
     "sourceType": "gocbcore",
     "sourceName": "graphrag-demo",

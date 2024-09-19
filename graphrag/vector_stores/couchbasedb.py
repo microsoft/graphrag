@@ -4,9 +4,8 @@ import json
 import logging
 from typing import Any
 
-from couchbase.auth import PasswordAuthenticator
 from couchbase.cluster import Cluster
-from couchbase.options import ClusterOptions, SearchOptions
+from couchbase.options import SearchOptions
 from couchbase.search import SearchRequest
 from couchbase.vector_search import VectorQuery, VectorSearch
 
@@ -45,36 +44,37 @@ class CouchbaseVectorStore(BaseVectorStore):
         self.embedding_key = embedding_key
         self.scoped_index = scoped_index
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
+        self._cluster = None
         logger.debug(
             "Initialized CouchbaseVectorStore with collection: %s, bucket: %s, scope: %s, index: %s",
-            collection_name, bucket_name, scope_name, index_name
+            collection_name,
+            bucket_name,
+            scope_name,
+            index_name,
         )
 
     def connect(self, **kwargs: Any) -> None:
         """Connect to the Couchbase vector store."""
         connection_string = kwargs.get("connection_string")
-        username = kwargs.get("username")
-        password = kwargs.get("password")
-        cluster_options = kwargs.get("cluster_options", {})
+        cluster_options = kwargs.get("cluster_options")
 
-        if not isinstance(username, str) or not isinstance(password, str):
-            error_msg = "Username and password must be strings"
-            logger.error(error_msg)
-            raise TypeError(error_msg)
         if not isinstance(connection_string, str):
             error_msg = "Connection string must be a string"
             logger.error(error_msg)
             raise TypeError(error_msg)
 
-        logger.info("Connecting to Couchbase at %s", connection_string)
-        auth = PasswordAuthenticator(username, password)
-        options = ClusterOptions(auth, **cluster_options)
-        cluster = Cluster(connection_string, options)
-        self.db_connection = cluster
-        self.bucket = cluster.bucket(self.bucket_name)
-        self.scope = self.bucket.scope(self.scope_name)
-        self.document_collection = self.scope.collection(self.collection_name)
-        logger.info("Successfully connected to Couchbase")
+        try:
+            logger.info("Connecting to Couchbase at %s", connection_string)
+            self._cluster = Cluster(connection_string, cluster_options)
+            self.db_connection = self._cluster
+            self.bucket = self._cluster.bucket(self.bucket_name)
+            self.scope = self.bucket.scope(self.scope_name)
+            self.document_collection = self.scope.collection(self.collection_name)
+            logger.info("Successfully connected to Couchbase")
+        except Exception as e:
+            error_msg = f"Failed to connect to Couchbase: {e}"
+            logger.exception(error_msg)
+            raise ConnectionError(error_msg) from e
 
     def load_documents(self, documents: list[VectorStoreDocument]) -> None:
         """Load documents into vector storage."""
@@ -91,7 +91,7 @@ class CouchbaseVectorStore(BaseVectorStore):
         if batch:
             try:
                 result = self.document_collection.upsert_multi(batch)
-                
+
                 # Assuming the result has an 'all_ok' attribute
                 if hasattr(result, "all_ok"):
                     if result.all_ok:
@@ -99,15 +99,20 @@ class CouchbaseVectorStore(BaseVectorStore):
                     else:
                         logger.warning("Some documents failed to load")
                 else:
-                    logger.info("Unable to determine success status of document loading")
-                
+                    logger.info(
+                        "Unable to determine success status of document loading"
+                    )
+
                 # If there's a way to access individual results, log them
                 if hasattr(result, "__iter__"):
                     for key, value in result:
-                        logger.info("Document %s: %s", key, "Success" if value.success else "Failed")
-                
-            except Exception as e:
-                logger.exception("Error occurred while loading documents: %s", str(e))
+                        logger.info(
+                            "Document %s: %s",
+                            key,
+                            "Success" if value.success else "Failed",
+                        )
+            except Exception:
+                logger.exception("Error occurred while loading documents")
         else:
             logger.warning("No valid documents to load")
 
@@ -139,7 +144,7 @@ class CouchbaseVectorStore(BaseVectorStore):
         )
 
         fields = kwargs.get("fields", ["*"])
-        
+
         if self.scoped_index:
             search_iter = self.scope.search(
                 self.index_name,
