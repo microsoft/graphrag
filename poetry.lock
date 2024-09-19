@@ -1140,6 +1140,17 @@ files = [
 ]
 
 [[package]]
+name = "future"
+version = "1.0.0"
+description = "Clean single-source support for Python 3 and 2"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+files = [
+    {file = "future-1.0.0-py3-none-any.whl", hash = "sha256:929292d34f5872e70396626ef385ec22355a1fae8ad29e1a734c3e43f9fbc216"},
+    {file = "future-1.0.0.tar.gz", hash = "sha256:bd2968309307861edae1458a4f8a4f3598c03be43b97521076aebf5d94c07b05"},
+]
+
+[[package]]
 name = "gensim"
 version = "4.3.3"
 description = "Python framework for fast Vector Space Modelling"
@@ -4813,4 +4824,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "b9db5ef824e841e153f3db1ac395999a3fd2cdd66d39a024038951abba599324"
+content-hash = "d8b47d42be105bd76c19c55e8b78d181162d45206894e8459cba5c6944d78b65"

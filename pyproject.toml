@@ -86,6 +86,8 @@ azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
 json-repair = "^0.28.4"
 
+future = "^1.0.0" # Needed until graspologic fixes their dependency
+
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
