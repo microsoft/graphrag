@@ -24,7 +24,7 @@ def load_pipeline_reporter(
     config: PipelineReportingConfig | None, root_dir: str | None
 ) -> WorkflowCallbacks:
     """Create a reporter for the given pipeline config."""
-    config = config or PipelineFileReportingConfig(base_dir="reports")
+    config = config or PipelineFileReportingConfig(base_dir="logs")
 
     match config.type:
         case ReportingType.file:

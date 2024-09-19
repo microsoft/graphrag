@@ -37,9 +37,32 @@ def unpack_graph(
         column: <column name> # The name of the column containing the graph, should be a graphml graph
     ```
     """
+    input_df = input.get_input()
+    output_df = unpack_graph_df(
+        cast(pd.DataFrame, input_df),
+        callbacks,
+        column,
+        type,
+        copy,
+        embeddings_column,
+        kwargs=kwargs,
+    )
+    return TableContainer(table=output_df)
+
+
+def unpack_graph_df(
+    input_df: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    column: str,
+    type: str,  # noqa A002
+    copy: list[str] | None = None,
+    embeddings_column: str = "embeddings",
+    **kwargs,
+) -> pd.DataFrame:
+    """Unpack nodes or edges from a graphml graph, into a list of nodes or edges."""
     if copy is None:
         copy = default_copy
-    input_df = input.get_input()
+
     num_total = len(input_df)
     result = []
     copy = [col for col in copy if col in input_df.columns]
@@ -64,8 +87,7 @@ def unpack_graph(
             )
         ])
 
-    output_df = pd.DataFrame(result)
-    return TableContainer(table=output_df)
+    return pd.DataFrame(result)
 
 
 def _run_unpack(

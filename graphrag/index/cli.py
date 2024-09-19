@@ -11,7 +11,12 @@ import time
 import warnings
 from pathlib import Path
 
-from graphrag.config import CacheType, enable_logging_with_config, load_config
+from graphrag.config import (
+    CacheType,
+    enable_logging_with_config,
+    load_config,
+    resolve_paths,
+)
 
 from .api import build_index
 from .emit.types import TableEmitterType
@@ -110,6 +115,7 @@ def index_cli(
     emit: list[TableEmitterType],
     dryrun: bool,
     skip_validations: bool,
+    output_dir: str | None,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = load_progress_reporter(reporter)
@@ -121,7 +127,11 @@ def index_cli(
         sys.exit(0)
 
     root = Path(root_dir).resolve()
-    config = load_config(root, config_filepath, run_id)
+    config = load_config(root, config_filepath)
+
+    config.storage.base_dir = output_dir or config.storage.base_dir
+    config.reporting.base_dir = output_dir or config.reporting.base_dir
+    resolve_paths(config, run_id)
 
     if nocache:
         config.cache.type = CacheType.none
@@ -188,13 +198,13 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)
 
+    with settings_yaml.open("wb") as file:
+        file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
+
     dotenv = root / ".env"
     if not dotenv.exists():
-        with settings_yaml.open("wb") as file:
-            file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
-
-    with dotenv.open("wb") as file:
-        file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
+        with dotenv.open("wb") as file:
+            file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
 
     prompts_dir = root / "prompts"
     if not prompts_dir.exists():

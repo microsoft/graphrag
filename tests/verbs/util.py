@@ -5,6 +5,7 @@ from typing import cast
 
 import pandas as pd
 from datashaper import Workflow
+from pandas.testing import assert_series_equal
 
 from graphrag.config import create_graphrag_config
 from graphrag.index import (
@@ -56,16 +57,24 @@ async def get_workflow_output(
     return cast(pd.DataFrame, workflow.output())
 
 
-def compare_outputs(actual: pd.DataFrame, expected: pd.DataFrame) -> None:
+def compare_outputs(
+    actual: pd.DataFrame, expected: pd.DataFrame, columns: list[str] | None = None
+) -> None:
+    """Compare the actual and expected dataframes, optionally specifying columns to compare.
+    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
+    cols = expected.columns if columns is None else columns
     try:
-        assert actual.shape == expected.shape
-        assert (actual.columns == expected.columns).all()
+        assert len(actual) == len(expected)
+        assert len(actual.columns) == len(cols)
+        for column in cols:
+            # dtypes can differ since the test data is read from parquet and our workflow runs in memory
+            assert_series_equal(actual[column], expected[column], check_dtype=False)
     except AssertionError:
         print("Expected:")
         print(expected.head())
         print("Actual:")
         print(actual.head())
-        raise AssertionError from None
+        raise
 
 
 def remove_disabled_steps(

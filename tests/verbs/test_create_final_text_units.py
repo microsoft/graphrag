@@ -65,5 +65,9 @@ async def test_create_final_text_units_no_covariates():
         },
     )
 
-    # just check that we're short a covariate_ids column
-    assert len(actual.columns) == len(expected.columns) - 1
+    # we're short a covariate_ids column
+    compare_outputs(
+        actual,
+        expected,
+        ["id", "text", "n_tokens", "document_ids", "entity_ids", "relationship_ids"],
+    )
