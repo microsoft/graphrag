@@ -218,16 +218,11 @@ class GlobalSearch(BaseSearch):
             try:
                 # parse search response json
                 processed_response = self.parse_search_response(search_response)
-            except ValueError:
-                # Clean up and retry parse
-                try:
-                    # parse search response json
-                    processed_response = self.parse_search_response(search_response)
-                except ValueError:
-                    log.warning(
-                        "Warning: Error parsing search response json - skipping this batch"
-                    )
-                    processed_response = []
+            except ValueError:                
+                log.warning(
+                    "Warning: Error parsing search response json - skipping this batch"
+                )
+                processed_response = []
 
             return SearchResult(
                 response=processed_response,
