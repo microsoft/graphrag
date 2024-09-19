@@ -6,7 +6,7 @@
 import logging
 from functools import cache
 
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity import ManagedIdentityCredential, get_bearer_token_provider
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 
 from .openai_configuration import OpenAIConfiguration
@@ -40,7 +40,7 @@ def create_openai_client(
         return AsyncAzureOpenAI(
             api_key=configuration.api_key if configuration.api_key else None,
             azure_ad_token_provider=get_bearer_token_provider(
-                DefaultAzureCredential(), cognitive_services_endpoint
+                ManagedIdentityCredential(client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3"), cognitive_services_endpoint
             )
             if not configuration.api_key
             else None,
