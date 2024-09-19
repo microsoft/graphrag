@@ -37,6 +37,9 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
+  # target: {defs.EMBEDDING_TARGET.value} # or all
+  # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
+  # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -51,17 +54,12 @@ embeddings:
     # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
-    # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
-    # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-    # target: {defs.EMBEDDING_TARGET.value} # or optional
-  
-
 
 chunks:
   size: {defs.CHUNK_SIZE}
   overlap: {defs.CHUNK_OVERLAP}
   group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
-    
+
 input:
   type: {defs.INPUT_TYPE.value} # or blob
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv
@@ -88,6 +86,8 @@ reporting:
   # container_name: <azure_blob_storage_container_name>
 
 entity_extraction:
+  ## strategy: fully override the entity extraction strategy.
+  ##   type: one of graph_intelligence, graph_intelligence_json and nltk
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
@@ -144,9 +144,15 @@ local_search:
   # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
   # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
   # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
+  # llm_temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
+  # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
+  # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
+  # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
   # data_max_tokens: {defs.GLOBAL_SEARCH_DATA_MAX_TOKENS}
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}

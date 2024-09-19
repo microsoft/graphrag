@@ -3,210 +3,220 @@
 
 """Command line interface for the query module."""
 
-import os
+import asyncio
+import sys
 from pathlib import Path
-from typing import cast
 
 import pandas as pd
 
-from graphrag.config import (
-    GraphRagConfig,
-    create_graphrag_config,
-)
+from graphrag.config import GraphRagConfig, load_config, resolve_paths
+from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.progress import PrintProgressReporter
-from graphrag.query.input.loaders.dfs import (
-    store_entity_semantic_embeddings,
-)
-from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
+from graphrag.utils.storage import _create_storage, _load_table_from_storage
 
-from .factories import get_global_search_engine, get_local_search_engine
-from .indexer_adapters import (
-    read_indexer_covariates,
-    read_indexer_entities,
-    read_indexer_relationships,
-    read_indexer_reports,
-    read_indexer_text_units,
-)
+from . import api
 
 reporter = PrintProgressReporter("")
 
 
-def __get_embedding_description_store(
-    vector_store_type: str = VectorStoreType.LanceDB, config_args: dict | None = None
-):
-    """Get the embedding description store."""
-    if not config_args:
-        config_args = {}
-
-    config_args.update({
-        "collection_name": config_args.get(
-            "query_collection_name",
-            config_args.get("collection_name", "description_embedding"),
-        ),
-    })
-
-    description_embedding_store = VectorStoreFactory.get_vector_store(
-        vector_store_type=vector_store_type, kwargs=config_args
-    )
-
-    description_embedding_store.connect(**config_args)
-    return description_embedding_store
-
-
 def run_global_search(
+    config_filepath: str | None,
     data_dir: str | None,
-    root_dir: str | None,
+    root_dir: str,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
-    """Run a global search with the given query."""
-    data_dir, root_dir, config = _configure_paths_and_settings(data_dir, root_dir)
-    data_path = Path(data_dir)
+    """Perform a global search with a given query.
 
-    final_nodes: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_nodes.parquet"
-    )
-    final_entities: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_entities.parquet"
-    )
-    final_community_reports: pd.DataFrame = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
-    )
+    Loads index files required for global search and calls the Query API.
+    """
+    root = Path(root_dir).resolve()
+    config = load_config(root, config_filepath)
 
-    reports = read_indexer_reports(
-        final_community_reports, final_nodes, community_level
-    )
-    entities = read_indexer_entities(final_nodes, final_entities, community_level)
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=entities,
-        response_type=response_type,
-    )
+    config.storage.base_dir = data_dir or config.storage.base_dir
+    resolve_paths(config)
 
-    result = search_engine.search(query=query)
+    dataframe_dict = _resolve_parquet_files(
+        root_dir=root_dir,
+        config=config,
+        parquet_list=[
+            "create_final_nodes.parquet",
+            "create_final_entities.parquet",
+            "create_final_community_reports.parquet",
+        ],
+        optional_list=[],
+    )
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_community_reports: pd.DataFrame = dataframe_dict[
+        "create_final_community_reports"
+    ]
 
-    reporter.success(f"Global Search Response: {result.response}")
-    return result.response
+    # call the Query API
+    if streaming:
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.global_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
+    # not streaming
+    response, context_data = asyncio.run(
+        api.global_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
+        )
+    )
+    reporter.success(f"Global Search Response:\n{response}")
+    # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+    # External users should use the API directly to get the response and context data.
+    return response, context_data
 
 
 def run_local_search(
+    config_filepath: str | None,
     data_dir: str | None,
-    root_dir: str | None,
+    root_dir: str,
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
 ):
-    """Run a local search with the given query."""
-    data_dir, root_dir, config = _configure_paths_and_settings(data_dir, root_dir)
-    data_path = Path(data_dir)
+    """Perform a local search with a given query.
 
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
-    final_community_reports = pd.read_parquet(
-        data_path / "create_final_community_reports.parquet"
+    Loads index files required for local search and calls the Query API.
+    """
+    root = Path(root_dir).resolve()
+    config = load_config(root, config_filepath)
+
+    config.storage.base_dir = data_dir or config.storage.base_dir
+    resolve_paths(config)
+
+    dataframe_dict = _resolve_parquet_files(
+        root_dir=root_dir,
+        config=config,
+        parquet_list=[
+            "create_final_nodes.parquet",
+            "create_final_community_reports.parquet",
+            "create_final_text_units.parquet",
+            "create_final_relationships.parquet",
+            "create_final_entities.parquet",
+        ],
+        optional_list=["create_final_covariates.parquet"],
     )
-    final_text_units = pd.read_parquet(data_path / "create_final_text_units.parquet")
-    final_relationships = pd.read_parquet(
-        data_path / "create_final_relationships.parquet"
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_community_reports: pd.DataFrame = dataframe_dict[
+        "create_final_community_reports"
+    ]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
+
+    # call the Query API
+    if streaming:
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.local_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                text_units=final_text_units,
+                relationships=final_relationships,
+                covariates=final_covariates,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
+    # not streaming
+    response, context_data = asyncio.run(
+        api.local_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            text_units=final_text_units,
+            relationships=final_relationships,
+            covariates=final_covariates,
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
+        )
     )
-    final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
-    final_entities = pd.read_parquet(data_path / "create_final_entities.parquet")
-    final_covariates_path = data_path / "create_final_covariates.parquet"
-    final_covariates = (
-        pd.read_parquet(final_covariates_path)
-        if final_covariates_path.exists()
-        else None
-    )
-
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
-    description_embedding_store = __get_embedding_description_store(
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-    entities = read_indexer_entities(final_nodes, final_entities, community_level)
-    store_entity_semantic_embeddings(
-        entities=entities, vectorstore=description_embedding_store
-    )
-    covariates = (
-        read_indexer_covariates(final_covariates)
-        if final_covariates is not None
-        else []
-    )
-
-    search_engine = get_local_search_engine(
-        config,
-        reports=read_indexer_reports(
-            final_community_reports, final_nodes, community_level
-        ),
-        text_units=read_indexer_text_units(final_text_units),
-        entities=entities,
-        relationships=read_indexer_relationships(final_relationships),
-        covariates={"claims": covariates},
-        description_embedding_store=description_embedding_store,
-        response_type=response_type,
-    )
-
-    result = search_engine.search(query=query)
-    reporter.success(f"Local Search Response: {result.response}")
-    return result.response
+    reporter.success(f"Local Search Response:\n{response}")
+    # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+    # External users should use the API directly to get the response and context data.
+    return response, context_data
 
 
-def _configure_paths_and_settings(
-    data_dir: str | None, root_dir: str | None
-) -> tuple[str, str | None, GraphRagConfig]:
-    if data_dir is None and root_dir is None:
-        msg = "Either data_dir or root_dir must be provided."
-        raise ValueError(msg)
-    if data_dir is None:
-        data_dir = _infer_data_dir(cast(str, root_dir))
-    config = _create_graphrag_config(root_dir, data_dir)
-    return data_dir, root_dir, config
+def _resolve_parquet_files(
+    root_dir: str,
+    config: GraphRagConfig,
+    parquet_list: list[str],
+    optional_list: list[str],
+) -> dict[str, pd.DataFrame]:
+    """Read parquet files to a dataframe dict."""
+    dataframe_dict = {}
+    pipeline_config = create_pipeline_config(config)
+    storage_obj = _create_storage(root_dir=root_dir, config=pipeline_config.storage)
+    for parquet_file in parquet_list:
+        df_key = parquet_file.split(".")[0]
+        df_value = asyncio.run(
+            _load_table_from_storage(name=parquet_file, storage=storage_obj)
+        )
+        dataframe_dict[df_key] = df_value
 
+    # for optional parquet files, set the dict entry to None instead of erroring out if it does not exist
+    for optional_file in optional_list:
+        file_exists = asyncio.run(storage_obj.has(optional_file))
+        df_key = optional_file.split(".")[0]
+        if file_exists:
+            df_value = asyncio.run(
+                _load_table_from_storage(name=optional_file, storage=storage_obj)
+            )
+            dataframe_dict[df_key] = df_value
+        else:
+            dataframe_dict[df_key] = None
 
-def _infer_data_dir(root: str) -> str:
-    output = Path(root) / "output"
-    # use the latest data-run folder
-    if output.exists():
-        folders = sorted(output.iterdir(), key=os.path.getmtime, reverse=True)
-        if len(folders) > 0:
-            folder = folders[0]
-            return str((folder / "artifacts").absolute())
-    msg = f"Could not infer data directory from root={root}"
-    raise ValueError(msg)
-
-
-def _create_graphrag_config(root: str | None, data_dir: str | None) -> GraphRagConfig:
-    """Create a GraphRag configuration."""
-    return _read_config_parameters(cast(str, root or data_dir))
-
-
-def _read_config_parameters(root: str):
-    _root = Path(root)
-    settings_yaml = _root / "settings.yaml"
-    if not settings_yaml.exists():
-        settings_yaml = _root / "settings.yml"
-    settings_json = _root / "settings.json"
-
-    if settings_yaml.exists():
-        reporter.info(f"Reading settings from {settings_yaml}")
-        with settings_yaml.open("r") as file:
-            import yaml
-
-            data = yaml.safe_load(file)
-            return create_graphrag_config(data, root)
-
-    if settings_json.exists():
-        reporter.info(f"Reading settings from {settings_json}")
-        with settings_json.open("r") as file:
-            import json
-
-            data = json.loads(file.read())
-            return create_graphrag_config(data, root)
-
-    reporter.info("Reading settings from environment variables")
-    return create_graphrag_config(root_dir=root)
+    return dataframe_dict

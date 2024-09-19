@@ -93,7 +93,6 @@ These settings control the text embedding model used by the pipeline. Any settin
 | `GRAPHRAG_EMBEDDING_REQUESTS_PER_MINUTE`                |                          | The number of requests per minute to allow for the embedding client. 0 = Bypass                                            | `int`   | 0                        |
 | `GRAPHRAG_EMBEDDING_MAX_RETRIES`                        |                          | The maximum number of retries to attempt when a request fails.                                                             | `int`   | 10                       |
 | `GRAPHRAG_EMBEDDING_MAX_RETRY_WAIT`                     |                          | The maximum number of seconds to wait between retries.                                                                     | `int`   | 10                       |
-| `GRAPHRAG_EMBEDDING_TARGET`                             |                          | The target fields to embed. Either `required` or `all`.                                                                    | `str`   | `required`               |
 | `GRAPHRAG_EMBEDDING_SLEEP_ON_RATE_LIMIT_RECOMMENDATION` |                          | Whether to sleep on rate limit recommendation. (Azure Only)                                                                | `bool`  | `True`                   |
 
 ## Input Settings
@@ -132,11 +131,12 @@ These settings control the data input used by the pipeline. Any settings with a 
 
 ## Data Chunking
 
-| Parameter                   | Description                                                                                 | Type  | Required or Optional | Default |
-| --------------------------- | ------------------------------------------------------------------------------------------- | ----- | -------------------- | ------- |
-| `GRAPHRAG_CHUNK_SIZE`       | The chunk size in tokens for text-chunk analysis windows.                                   | `str` | optional             | 1200    |
-| `GRAPHRAG_CHUNK_OVERLAP`    | The chunk overlap in tokens for text-chunk analysis windows.                                | `str` | optional             | 100     |
-| `GRAPHRAG_CHUNK_BY_COLUMNS` | A comma-separated list of document attributes to groupby when performing TextUnit chunking. | `str` | optional             | `id`    |
+| Parameter                       | Description                                                                                 | Type  | Required or Optional | Default                       |
+| ------------------------------- | ------------------------------------------------------------------------------------------- | ----- | -------------------- | ----------------------------- |
+| `GRAPHRAG_CHUNK_SIZE`           | The chunk size in tokens for text-chunk analysis windows.                                   | `str` | optional             | 1200                          |
+| `GRAPHRAG_CHUNK_OVERLAP`        | The chunk overlap in tokens for text-chunk analysis windows.                                | `str` | optional             | 100                           |
+| `GRAPHRAG_CHUNK_BY_COLUMNS`     | A comma-separated list of document attributes to groupby when performing TextUnit chunking. | `str` | optional             | `id`                          |
+| `GRAPHRAG_CHUNK_ENCODING_MODEL` | The encoding model to use for chunking.                                                     | `str` | optional             | The top-level encoding model. |
 
 ## Prompting Overrides
 
@@ -145,12 +145,14 @@ These settings control the data input used by the pipeline. Any settings with a 
 | `GRAPHRAG_ENTITY_EXTRACTION_PROMPT_FILE`      | The path (relative to the root) of an entity extraction prompt template text file.         | `str`    | optional             | `None`                                                           |
 | `GRAPHRAG_ENTITY_EXTRACTION_MAX_GLEANINGS`    | The maximum number of redrives (gleanings) to invoke when extracting entities in a loop.   | `int`    | optional             | 1                                                                |
 | `GRAPHRAG_ENTITY_EXTRACTION_ENTITY_TYPES`     | A comma-separated list of entity types to extract.                                         | `str`    | optional             | `organization,person,event,geo`                                  |
+| `GRAPHRAG_ENTITY_EXTRACTION_ENCODING_MODEL`		| The encoding model to use for entity extraction.                                           | `str`    | optional             | The top-level encoding model.                                    |
 | `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_PROMPT_FILE` | The path (relative to the root) of an description summarization prompt template text file. | `str`    | optional             | `None`                                                           |
 | `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_MAX_LENGTH`  | The maximum number of tokens to generate per description summarization.                    | `int`    | optional             | 500                                                              |
 | `GRAPHRAG_CLAIM_EXTRACTION_ENABLED`           | Whether claim extraction is enabled for this pipeline.                                     | `bool`   | optional             | `False`                                                          |
 | `GRAPHRAG_CLAIM_EXTRACTION_DESCRIPTION`       | The claim_description prompting argument to utilize.                                       | `string` | optional             | "Any claims or facts that could be relevant to threat analysis." |
 | `GRAPHRAG_CLAIM_EXTRACTION_PROMPT_FILE`       | The claim extraction prompt to utilize.                                                    | `string` | optional             | `None`                                                           |
 | `GRAPHRAG_CLAIM_EXTRACTION_MAX_GLEANINGS`     | The maximum number of redrives (gleanings) to invoke when extracting claims in a loop.     | `int`    | optional             | 1                                                                |
+| `GRAPHRAG_CLAIM_EXTRACTION_ENCODING_MODEL`		| The encoding model to use for claim extraction.                                            | `str`    | optional             | The top-level encoding model                                     |
 | `GRAPHRAG_COMMUNITY_REPORTS_PROMPT_FILE`      | The community reports extraction prompt to utilize.                                        | `string` | optional             | `None`                                                           |
 | `GRAPHRAG_COMMUNITY_REPORTS_MAX_LENGTH`       | The maximum number of tokens to generate per community reports.                            | `int`    | optional             | 1500                                                             |
 

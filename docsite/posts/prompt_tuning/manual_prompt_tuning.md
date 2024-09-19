@@ -44,7 +44,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 - **{record_delimiter}** - A delimiter for separating tuple instances.
 - **{completion_delimiter}** - An indicator for when generation is complete.
 
-Note: there is additional paramater for the `Claim Description` that is used in claim extraction.
+Note: there is additional parameter for the `Claim Description` that is used in claim extraction.
 The default value is
 
 `"Any claims or facts that could be relevant to information discovery."`

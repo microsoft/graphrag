@@ -21,6 +21,7 @@ from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKe
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.structured_search.base import BaseSearch
 from graphrag.query.structured_search.global_search.community_context import (
     GlobalCommunityContext,
 )
@@ -58,11 +59,13 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
             else None
         ),
         api_base=config.llm.api_base,
+        organization=config.llm.organization,
         model=config.llm.model,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         deployment_name=config.llm.deployment_name,
         api_version=config.llm.api_version,
         max_retries=config.llm.max_retries,
+        request_timeout=config.llm.request_timeout,
     )
 
 
@@ -89,6 +92,7 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
             else None
         ),
         api_base=config.embeddings.llm.api_base,
+        organization=config.llm.organization,
         api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
         model=config.embeddings.llm.model,
         deployment_name=config.embeddings.llm.deployment_name,
@@ -106,7 +110,7 @@ def get_local_search_engine(
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
-) -> LocalSearch:
+) -> BaseSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
@@ -130,7 +134,9 @@ def get_local_search_engine(
         token_encoder=token_encoder,
         llm_params={
             "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
-            "temperature": 0.0,
+            "temperature": ls_config.temperature,
+            "top_p": ls_config.top_p,
+            "n": ls_config.n,
         },
         context_builder_params={
             "text_unit_prop": ls_config.text_unit_prop,
@@ -155,7 +161,7 @@ def get_global_search_engine(
     reports: list[CommunityReport],
     entities: list[Entity],
     response_type: str,
-):
+) -> BaseSearch:
     """Create a global search engine based on data + configuration."""
     token_encoder = tiktoken.get_encoding(config.encoding_model)
     gs_config = config.global_search

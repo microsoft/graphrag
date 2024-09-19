@@ -1,0 +1,73 @@
+name: Python Notebook Tests
+on:
+  push:
+    branches:
+      - "**/main" # Matches branches like feature/main
+      - "main" # Matches the main branch
+  pull_request:
+    branches:
+      - "**/main"
+      - "main"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Only run the for the latest commit
+  cancel-in-progress: true
+
+env:
+  POETRY_VERSION: 1.8.3
+
+jobs:
+  python-ci:
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Continue running all jobs even if one fails
+    env:
+      DEBUG: 1
+      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_NOTEBOOK_KEY }}
+      GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
+      GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'graphrag/**/*'
+              - 'poetry.lock'
+              - 'pyproject.toml'
+              - '**/*.py'
+              - '**/*.toml'
+              - '**/*.ipynb'
+              - '.github/workflows/python*.yml'
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3.0.0
+        with:
+          poetry-version: $POETRY_VERSION
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          poetry self add setuptools wheel
+          poetry run python -m pip install gensim
+          poetry install
+
+      - name: Notebook Test
+        run: |
+          poetry run poe test_notebook

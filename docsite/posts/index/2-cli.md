@@ -24,3 +24,5 @@ python -m graphrag.index --verbose --root </workspace/project/root> --config <cu
 - `--reporter <reporter>` - This will specify the progress reporter to use. The default is `rich`. Valid values are `rich`, `print`, and `none`.
 - `--emit <types>` - This specifies the table output formats the pipeline should emit. The default is `parquet`. Valid values are `parquet`, `csv`, and `json`, comma-separated.
 - `--nocache` - This will disable the caching mechanism. This is useful for debugging and development, but should not be used in production.
+- `--output <directory>` - Specify the output directory for pipeline artifacts. 
+- `--reports <directory>` - Specify the output directory for reporting. 

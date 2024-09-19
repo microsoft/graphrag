@@ -4,3 +4,4 @@ posts/query/notebooks/*.ipynb
 posts/query/notebooks/*_nb.md
 *.parquet
 *.zip
+!data/operation_dulce/*.zip

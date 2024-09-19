@@ -18,3 +18,16 @@ embeddings:
     # community_report_title: ...
     # document_raw_content: ...
     # text_unit_text: ...
+
+
+storage:
+  type: file # or blob
+  base_dir: "output/${timestamp}/artifacts"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+reporting:
+  type: file # or console, blob
+  base_dir: "output/${timestamp}/reports"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
