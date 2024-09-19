@@ -32,9 +32,33 @@ def compute_edge_combined_degree(
     - to: The name of the column to output the combined degree to. Default="rank"
     """
     edge_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
-    if to in edge_df.columns:
-        return TableContainer(table=edge_df)
     node_degree_df = _get_node_degree_table(input, node_name_column, node_degree_column)
+
+    output_df = compute_edge_combined_degree_df(
+        edge_df,
+        node_degree_df,
+        to,
+        node_name_column,
+        node_degree_column,
+        edge_source_column,
+        edge_target_column,
+    )
+
+    return TableContainer(table=output_df)
+
+
+def compute_edge_combined_degree_df(
+    edge_df: pd.DataFrame,
+    node_degree_df: pd.DataFrame,
+    to: str,
+    node_name_column: str,
+    node_degree_column: str,
+    edge_source_column: str,
+    edge_target_column: str,
+) -> pd.DataFrame:
+    """Compute the combined degree for each edge in a graph."""
+    if to in edge_df.columns:
+        return edge_df
 
     def join_to_degree(df: pd.DataFrame, column: str) -> pd.DataFrame:
         degree_column = _degree_colname(column)
@@ -48,14 +72,13 @@ def compute_edge_combined_degree(
         result[degree_column] = result[degree_column].fillna(0)
         return result
 
-    edge_df = join_to_degree(edge_df, edge_source_column)
-    edge_df = join_to_degree(edge_df, edge_target_column)
-    edge_df[to] = (
-        edge_df[_degree_colname(edge_source_column)]
-        + edge_df[_degree_colname(edge_target_column)]
+    output_df = join_to_degree(edge_df, edge_source_column)
+    output_df = join_to_degree(output_df, edge_target_column)
+    output_df[to] = (
+        output_df[_degree_colname(edge_source_column)]
+        + output_df[_degree_colname(edge_target_column)]
     )
-
-    return TableContainer(table=edge_df)
+    return output_df
 
 
 def _degree_colname(column: str) -> str:
