@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix circular dependency when running prompt tune api directly"
-}

@@ -1,0 +1,66 @@
+{
+  "changes": [
+    {
+      "description": "Add entrypoints for incremental indexing",
+      "type": "patch"
+    },
+    {
+      "description": "Clean up and organize run index code",
+      "type": "patch"
+    },
+    {
+      "description": "Consistent config loading. Resolves #99 and Resolves #1049",
+      "type": "patch"
+    },
+    {
+      "description": "Fix circular dependency when running prompt tune api directly",
+      "type": "patch"
+    },
+    {
+      "description": "Fix default settings for embedding",
+      "type": "patch"
+    },
+    {
+      "description": "Fix img for auto tune",
+      "type": "patch"
+    },
+    {
+      "description": "Fix img width",
+      "type": "patch"
+    },
+    {
+      "description": "Fixed a bug in prompt tuning process",
+      "type": "patch"
+    },
+    {
+      "description": "Refactor text unit build at local search",
+      "type": "patch"
+    },
+    {
+      "description": "Update Prompt Tuning docs",
+      "type": "patch"
+    },
+    {
+      "description": "Update create_pipeline_config.py",
+      "type": "patch"
+    },
+    {
+      "description": "Update prompt tune command in docs",
+      "type": "patch"
+    },
+    {
+      "description": "add querying from azure blob storage",
+      "type": "patch"
+    },
+    {
+      "description": "fix setting base_dir to full paths when not using file system.",
+      "type": "patch"
+    },
+    {
+      "description": "fix strategy config in entity_extraction",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-09-10T19:51:24+00:00",
+  "version": "0.3.3"
+}

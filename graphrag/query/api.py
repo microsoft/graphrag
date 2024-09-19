@@ -267,7 +267,7 @@ async def local_search_streaming(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    lancedb_dir = lancedb_dir = Path(config.storage.base_dir) / "lancedb"
+    lancedb_dir = Path(config.storage.base_dir) / "lancedb"
 
     vector_store_args.update({"db_uri": str(lancedb_dir)})
     description_embedding_store = _get_embedding_description_store(
