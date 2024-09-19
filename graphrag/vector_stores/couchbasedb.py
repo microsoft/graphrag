@@ -179,9 +179,13 @@ class CouchbaseVectorStore(BaseVectorStore):
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
-        id_filter = ",".join([f"{id!s}" for id in include_ids])
-        logger.debug("Created filter by ID: %s", id_filter)
-        return f"search.in(id, '{id_filter}', ',')"
+        # id_filter = ",".join([f"{id!s}" for id in include_ids])
+        # logger.debug("Created filter by ID: %s", id_filter)
+        # return f"search.in(id, '{id_filter}', ',')"
+
+        raise NotImplementedError(
+            "filter_by_id method is not implemented for CouchbaseVectorStore"
+        )
 
     def _format_metadata(self, row_fields: dict[str, Any]) -> dict[str, Any]:
         """Format the metadata from the Couchbase Search API.
