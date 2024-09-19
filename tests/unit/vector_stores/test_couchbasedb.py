@@ -13,8 +13,8 @@ from graphrag.vector_stores.couchbasedb import CouchbaseVectorStore
 load_dotenv()
 
 COUCHBASE_CONNECTION_STRING = os.getenv("COUCHBASE_CONNECTION_STRING", "couchbase://localhost")
-COUCHBASE_USERNAME = os.getenv("COUCHBASE_USERNAME", "")
-COUCHBASE_PASSWORD = os.getenv("COUCHBASE_PASSWORD", "")
+COUCHBASE_USERNAME = os.getenv("COUCHBASE_USERNAME", "Administrator")
+COUCHBASE_PASSWORD = os.getenv("COUCHBASE_PASSWORD", "password")
 BUCKET_NAME = os.getenv("COUCHBASE_BUCKET_NAME", "graphrag-demo")
 SCOPE_NAME = os.getenv("COUCHBASE_SCOPE_NAME", "shared")
 COLLECTION_NAME = os.getenv("COUCHBASE_COLLECTION_NAME", "entity_description_embeddings")
