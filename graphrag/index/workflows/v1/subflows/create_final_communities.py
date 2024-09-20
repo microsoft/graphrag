@@ -15,7 +15,6 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.verbs.graph.unpack import unpack_graph_df
-from graphrag.index.verbs.overrides.aggregate import aggregate_df
 
 
 @verb(name="create_final_communities", treats_input_tables_as_immutable=True)
@@ -30,54 +29,28 @@ def create_final_communities(
     graph_nodes = unpack_graph_df(table, callbacks, "clustered_graph", "nodes")
     graph_edges = unpack_graph_df(table, callbacks, "clustered_graph", "edges")
 
-    source_clusters = graph_nodes.merge(
-        graph_edges,
-        left_on="label",
-        right_on="source",
-        how="inner",
-    )
-    target_clusters = graph_nodes.merge(
-        graph_edges,
-        left_on="label",
-        right_on="target",
-        how="inner",
+    # Merge graph_nodes with graph_edges and filter rows based on matching source or target in a single step
+    clusters = graph_nodes.merge(
+        graph_edges, left_on="label", right_on=["source", "target"], how="inner"
     )
 
-    concatenated_clusters = pd.concat(
-        [source_clusters, target_clusters], ignore_index=True
-    )
-
-    # level_x is the left side of the join
-    # level_y is the right side of the join
-    # we only want to keep the clusters that are the same on both sides
-    combined_clusters = concatenated_clusters[
-        concatenated_clusters["level_x"] == concatenated_clusters["level_y"]
+    # Keep only rows where level_x == level_y
+    combined_clusters = clusters[
+        clusters["level_x"] == clusters["level_y"]
     ].reset_index(drop=True)
 
-    cluster_relationships = aggregate_df(
-        cast(Table, combined_clusters),
-        aggregations=[
-            {
-                "column": "id_y",  # this is the id of the edge from the join steps above
-                "to": "relationship_ids",
-                "operation": "array_agg_distinct",
-            },
-            {
-                "column": "source_id_x",
-                "to": "text_unit_ids",
-                "operation": "array_agg_distinct",
-            },
-        ],
-        groupby=[
-            "cluster",
-            "level_x",  # level_x is the left side of the join
-        ],
+    cluster_relationships = (
+        combined_clusters.groupby(["cluster", "level_x"], sort=False)
+        .agg(
+            relationship_ids=("id_y", "unique"), text_unit_ids=("source_id_x", "unique")
+        )
+        .reset_index()
     )
 
-    all_clusters = aggregate_df(
-        graph_nodes,
-        aggregations=[{"column": "cluster", "to": "id", "operation": "any"}],
-        groupby=["cluster", "level"],
+    all_clusters = (
+        graph_nodes.groupby(["cluster", "level"], sort=False)
+        .agg(id=("cluster", "any"))
+        .reset_index()
     )
 
     joined = all_clusters.merge(
