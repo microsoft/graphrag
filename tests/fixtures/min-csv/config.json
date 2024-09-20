@@ -67,7 +67,7 @@
                 "community",
                 "level"
             ],
-            "subworkflows": 10,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_communities": {
