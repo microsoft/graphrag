@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Merge existing and new entities, updating values accordingly"
+}
