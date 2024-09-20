@@ -29,10 +29,17 @@ def create_final_communities(
     graph_nodes = unpack_graph_df(table, callbacks, "clustered_graph", "nodes")
     graph_edges = unpack_graph_df(table, callbacks, "clustered_graph", "edges")
 
-    # Merge graph_nodes with graph_edges and filter rows based on matching source or target in a single step
-    clusters = graph_nodes.merge(
-        graph_edges, left_on="label", right_on=["source", "target"], how="inner"
+    # Merge graph_nodes with graph_edges for both source and target matches
+    source_clusters = graph_nodes.merge(
+        graph_edges, left_on="label", right_on="source", how="inner"
     )
+
+    target_clusters = graph_nodes.merge(
+        graph_edges, left_on="label", right_on="target", how="inner"
+    )
+
+    # Concatenate the source and target clusters
+    clusters = pd.concat([source_clusters, target_clusters], ignore_index=True)
 
     # Keep only rows where level_x == level_y
     combined_clusters = clusters[

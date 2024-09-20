@@ -23,7 +23,7 @@ def create_final_text_units_pre_embedding(
     table = cast(pd.DataFrame, input.get_input())
     others = input.get_others()
 
-    selected = table[["id", "chunk", "document_ids", "n_tokens"]].rename(
+    selected = table.loc[:, ["id", "chunk", "document_ids", "n_tokens"]].rename(
         columns={"chunk": "text"}
     )
 
