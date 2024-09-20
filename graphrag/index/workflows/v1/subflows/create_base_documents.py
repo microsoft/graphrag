@@ -59,19 +59,18 @@ def create_base_documents(
 
     rejoined = docs_with_text_units.merge(
         source,
-        left_on="id",
-        right_on="id",
+        on="id",
         how="right",
     )
     rejoined.rename(columns={"text": "raw_content"}, inplace=True)
     rejoined["id"] = rejoined["id"].astype(str)
 
     # attribute columns are converted to strings and then collapsed into a single json object
-    if document_attribute_columns is not None and len(document_attribute_columns) > 0:
+    if document_attribute_columns:
         for column in document_attribute_columns:
             rejoined[column] = rejoined[column].astype(str)
         rejoined["attributes"] = rejoined[document_attribute_columns].apply(
-            lambda row: ({**row}),
+            lambda row: {**row},
             axis=1,
         )
         rejoined.drop(columns=document_attribute_columns, inplace=True)

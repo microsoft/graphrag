@@ -71,12 +71,10 @@ def compare_outputs(
     """Compare the actual and expected dataframes, optionally specifying columns to compare.
     This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
     cols = expected.columns if columns is None else columns
-    try:
-        assert len(actual) == len(expected)
-    except AssertionError:
-        print("Expected:", cols)
-        print("Actual:", actual.columns)
-        raise
+
+    assert len(actual) == len(
+        expected
+    ), f"Expected: {len(expected)}, Actual: {len(actual)}"
 
     for column in cols:
         assert column in actual.columns
