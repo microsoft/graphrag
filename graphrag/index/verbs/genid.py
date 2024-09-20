@@ -52,6 +52,19 @@ def genid(
     """
     data = cast(pd.DataFrame, input.source.table)
 
+    output = genid_df(data, to, method, hash)
+
+    return TableContainer(table=output)
+
+
+def genid_df(
+    input: pd.DataFrame,
+    to: str,
+    method: str = "md5_hash",
+    hash: list[str] = [],  # noqa A002
+):
+    """Generate a unique id for each row in the tabular data."""
+    data = input
     if method == "md5_hash":
         if len(hash) == 0:
             msg = 'Must specify the "hash" columns to use md5_hash method'
@@ -63,4 +76,4 @@ def genid(
     else:
         msg = f"Unknown method {method}"
         raise ValueError(msg)
-    return TableContainer(table=data)
+    return data

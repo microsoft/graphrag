@@ -16,13 +16,13 @@ from .util import (
 
 
 async def test_create_base_text_units():
-    input_tables = load_input_tables()
+    input_tables = load_input_tables(inputs=[])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
     # test data was created with 4o, so we need to match the encoding for chunks to be identical
     config["text_chunk"]["strategy"]["encoding_name"] = "o200k_base"
-    
+
     steps = build_steps(config)
 
     actual = await get_workflow_output(
@@ -33,4 +33,3 @@ async def test_create_base_text_units():
     )
 
     compare_outputs(actual, expected)
-    

@@ -15,7 +15,7 @@ from graphrag.index import (
 )
 
 
-def load_input_tables(inputs: list[str] = []) -> dict[str, pd.DataFrame]:
+def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     """Harvest all the referenced input IDs from the workflow being tested and pass them here."""
     # stick all the inputs in a map - Workflow looks them up by name
     input_tables: dict[str, pd.DataFrame] = {}
@@ -31,6 +31,7 @@ def load_input_tables(inputs: list[str] = []) -> dict[str, pd.DataFrame]:
         # remove the workflow: prefix if it exists, because that is not part of the actual table filename
         name = input.replace("workflow:", "")
         input_tables[input] = pd.read_parquet(f"tests/verbs/data/{name}.parquet")
+
     return input_tables
 
 
