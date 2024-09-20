@@ -92,7 +92,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output",
-        help="Directory to save generated prompts to. Default: 'prompts'",
+        help="Directory to save generated prompts to, relative to the root directory. Default: 'prompts'",
         type=str,
         default="prompts",
     )

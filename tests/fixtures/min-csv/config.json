@@ -52,7 +52,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 8,
+            "subworkflows": 2,
             "max_runtime": 100
         },
         "create_final_nodes": {
