@@ -54,7 +54,7 @@ def create_final_nodes(
     nodes = nodes[nodes["level"] == level_for_node_positions].reset_index(drop=True)
     nodes = cast(pd.DataFrame, nodes[["id", "x", "y"]])
 
-    # TODO: original worklfow saved an optional snapshot of top level nodes
+    # TODO: original workflow saved an optional snapshot of top level nodes
     # Combining the verbs loses the `storage` injection, so it would fail
     # verb arg: snapshot_top_level_nodes: bool,
     # (name: "top_level_nodes", formats: ["json"])
