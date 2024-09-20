@@ -5,7 +5,9 @@ import logging
 from typing import Any
 
 from couchbase.cluster import Cluster
+from couchbase.exceptions import CouchbaseException, DocumentExistsException
 from couchbase.options import SearchOptions
+from couchbase.result import MultiMutationResult
 from couchbase.search import SearchRequest
 from couchbase.vector_search import VectorQuery, VectorSearch
 
@@ -81,8 +83,15 @@ class CouchbaseVectorStore(BaseVectorStore):
             logger.exception(error_msg)
             raise ConnectionError(error_msg) from e
 
-    def load_documents(self, documents: list[VectorStoreDocument]) -> None:
-        """Load documents into vector storage."""
+    def load_documents(self, documents: list[VectorStoreDocument]) -> int:
+        """
+        Load documents into vector storage.
+
+        :param documents: A list of VectorStoreDocuments to load into the vector store.
+        :raises DuplicateDocumentError: If a document with the same ID already exists in the vector store.
+        :raises DocumentStoreError: If there's an error writing documents to Couchbase.
+        :returns: The number of documents loaded into the vector store.
+        """
         logger.info("Loading %d documents into vector storage", len(documents))
         batch = {
             doc.id: {
@@ -93,25 +102,38 @@ class CouchbaseVectorStore(BaseVectorStore):
             for doc in documents
             if doc.vector is not None
         }
-        if batch:
-            try:
-                result = self.document_collection.upsert_multi(batch)
 
-                if hasattr(result, "results"):
-                    for doc_id, result_item in result.results.items():
-                        if result_item.success:
-                            logger.info("Document %s loaded successfully", doc_id)
-                        else:
-                            logger.error(
-                                "Failed to load document %s: %s",
-                                doc_id,
-                                result_item.err,
-                            )
-
-            except Exception as e:
-                logger.exception("Error occurred while loading documents: %s", e)
-        else:
+        if not batch:
             logger.warning("No valid documents to load")
+            return 0
+
+        try:
+            result: MultiMutationResult = self.document_collection.upsert_multi(batch)
+
+            if not result.all_ok and result.exceptions:
+                duplicate_ids = []
+                other_errors = []
+                for doc_id, ex in result.exceptions.items():
+                    if isinstance(ex, DocumentExistsException):
+                        duplicate_ids.append(doc_id)
+                    else:
+                        other_errors.append({"id": doc_id, "exception": str(ex)})
+
+                if duplicate_ids:
+                    msg = f"IDs '{', '.join(duplicate_ids)}' already exist in the vector store."
+                    raise DocumentExistsException(msg)
+
+                if other_errors:
+                    msg = f"Failed to load documents into Couchbase. Errors:\n{other_errors}"
+                    raise CouchbaseException(msg)
+
+            logger.info("Successfully loaded %d documents", len(batch))
+            return len(batch)
+
+        except Exception as e:
+            logger.exception("Error occurred while loading documents: %s", e)
+            msg = f"Failed to load documents into Couchbase. Error: {e}"
+            raise CouchbaseException(msg) from e
 
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
