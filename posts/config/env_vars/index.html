@@ -304,7 +304,7 @@ a {
 <li><code>community.full_content</code></li>
 </ul>
 <h2>Input Data</h2>
-<p>Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with <code>GRAPHRAG_INPUT_</code> below. In general, CSV-based data provides the most customizeability. Each CSV should at least contain a <code>text</code> field (which can be mapped with environment variables), but it's helpful if they also have <code>title</code>, <code>timestamp</code>, and <code>source</code> fields. Additional fields can be included as well, which will land as extra fields on the <code>Document</code> table.</p>
+<p>Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with <code>GRAPHRAG_INPUT_</code> below. In general, CSV-based data provides the most customizability. Each CSV should at least contain a <code>text</code> field (which can be mapped with environment variables), but it's helpful if they also have <code>title</code>, <code>timestamp</code>, and <code>source</code> fields. Additional fields can be included as well, which will land as extra fields on the <code>Document</code> table.</p>
 <h2>Base LLM Settings</h2>
 <p>These are the primary settings for configuring LLM connectivity.</p>
 <table>
