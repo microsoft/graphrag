@@ -15,7 +15,7 @@ from graphrag.index import (
 )
 
 
-def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
+def load_input_tables(inputs: list[str] = []) -> dict[str, pd.DataFrame]:
     """Harvest all the referenced input IDs from the workflow being tested and pass them here."""
     # stick all the inputs in a map - Workflow looks them up by name
     input_tables: dict[str, pd.DataFrame] = {}
@@ -42,6 +42,7 @@ def load_expected(output: str) -> pd.DataFrame:
 def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     """Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
+    print(config)
     pipeline_config = create_pipeline_config(config)
     print(pipeline_config.workflows)
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)

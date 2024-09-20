@@ -22,6 +22,7 @@ def build_steps(
     chunk_column_name = config.get("chunk_column", "chunk")
     chunk_by_columns = config.get("chunk_by", []) or []
     n_tokens_column_name = config.get("n_tokens_column", "n_tokens")
+    text_chunk = config.get("text_chunk", {})
     return [
         {
             "verb": "orderby",
@@ -57,7 +58,7 @@ def build_steps(
         },
         {
             "verb": "chunk",
-            "args": {"column": "texts", "to": "chunks", **config.get("text_chunk", {})},
+            "args": {"column": "texts", "to": "chunks", **text_chunk},
         },
         {
             "verb": "select",
