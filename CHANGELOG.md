@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.6
+
+- patch: Collapse create_final_relationships.
+- patch: Dependency update and cleanup
+
 ## 0.3.5
 
 - patch: Add compound verbs with tests infra.
