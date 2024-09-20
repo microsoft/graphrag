@@ -37,8 +37,6 @@ async def _inject_workflow_data_dependencies(
 ) -> None:
     """Inject the data dependencies into the workflow."""
     workflow.add_table(DEFAULT_INPUT_NAME, dataset)
-    log.info(dataset.columns)
-    log.info(dataset.head())
     deps = workflow_dependencies[workflow.name]
     log.info("dependencies for %s: %s", workflow.name, deps)
     for id in deps:

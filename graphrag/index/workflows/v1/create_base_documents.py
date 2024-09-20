@@ -23,30 +23,12 @@ def build_steps(
     return [
         {
             "verb": "create_base_documents",
+            "args": {
+                "document_attribute_columns": document_attribute_columns,
+            },
             "input": {
                 "source": DEFAULT_INPUT_NAME,
                 "others": ["workflow:create_final_text_units"],
             },
         },
-        *[
-            {
-                "verb": "convert",
-                "args": {
-                    "column": column,
-                    "to": column,
-                    "type": "string",
-                },
-            }
-            for column in document_attribute_columns
-        ],
-        {
-            "verb": "merge_override",
-            "enabled": len(document_attribute_columns) > 0,
-            "args": {
-                "columns": document_attribute_columns,
-                "strategy": "json",
-                "to": "attributes",
-            },
-        },
-        {"verb": "convert", "args": {"column": "id", "to": "id", "type": "string"}},
     ]

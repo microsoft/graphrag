@@ -73,16 +73,22 @@ def compare_outputs(
     cols = expected.columns if columns is None else columns
     try:
         assert len(actual) == len(expected)
-        assert len(actual.columns) == len(cols)
-        for column in cols:
+    except AssertionError:
+        print("Expected:", cols)
+        print("Actual:", actual.columns)
+        raise
+
+    for column in cols:
+        assert column in actual.columns
+        try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             assert_series_equal(actual[column], expected[column], check_dtype=False)
-    except AssertionError:
-        print("Expected:")
-        print(expected.head())
-        print("Actual:")
-        print(actual.head())
-        raise
+        except AssertionError:
+            print("Expected:")
+            print(expected[column])
+            print("Actual:")
+            print(actual[columns])
+            raise
 
 
 def remove_disabled_steps(
