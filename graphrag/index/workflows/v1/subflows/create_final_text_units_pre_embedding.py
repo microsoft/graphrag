@@ -6,7 +6,6 @@
 from typing import cast
 
 import pandas as pd
-from datashaper import TableContainer
 from datashaper.engine.verbs.verb_input import VerbInput
 from datashaper.engine.verbs.verbs_mapping import verb
 from datashaper.table_store.types import Table, VerbResult, create_verb_result
@@ -28,8 +27,8 @@ def create_final_text_units_pre_embedding(
         columns={"chunk": "text"}
     )
 
-    final_entities = others[0]
-    final_relationships = others[1]
+    final_entities = cast(pd.DataFrame, others[0])
+    final_relationships = cast(pd.DataFrame, others[1])
     entity_join = _entities(final_entities)
     relationship_join = _relationships(final_relationships)
 
@@ -38,7 +37,7 @@ def create_final_text_units_pre_embedding(
     final_joined = relationship_joined
 
     if covariates_enabled:
-        final_covariates = others[2]
+        final_covariates = cast(pd.DataFrame, others[2])
         covariate_join = _covariates(final_covariates)
         final_joined = _join(relationship_joined, covariate_join)
 
@@ -66,7 +65,7 @@ def _final_aggregation(df: pd.DataFrame, covariates_enabled: bool) -> pd.DataFra
 
 def _entities(df: pd.DataFrame) -> pd.DataFrame:
     selected = df[["id", "text_unit_ids"]]
-    unrolled = selected.explode("text_unit_ids").reset_index(drop=True)
+    unrolled = selected.explode(column="text_unit_ids").reset_index(drop=True)
 
     return (
         unrolled.groupby("text_unit_ids", sort=False)
@@ -78,7 +77,7 @@ def _entities(df: pd.DataFrame) -> pd.DataFrame:
 
 def _relationships(df: pd.DataFrame) -> pd.DataFrame:
     selected = df[["id", "text_unit_ids"]]
-    unrolled = selected.explode("text_unit_ids").reset_index(drop=True)
+    unrolled = selected.explode(column="text_unit_ids").reset_index(drop=True)
 
     return (
         unrolled.groupby("text_unit_ids", sort=False)
