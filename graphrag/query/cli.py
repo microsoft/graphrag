@@ -98,8 +98,7 @@ def run_global_search(
             dynamic_selection=dynamic_selection,
             response_type=response_type,
             query=query,
-        ),
-        debug=True,
+        )
     )
     reporter.success(f"Global Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
