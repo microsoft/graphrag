@@ -16,8 +16,11 @@ class GlobalContextBuilder(ABC):
     """Base class for global-search context builders."""
 
     @abstractmethod
-    def build_context(
-        self, conversation_history: ConversationHistory | None = None, **kwargs
+    async def build_context(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+        **kwargs,
     ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
         """Build the context for the global search mode."""
 

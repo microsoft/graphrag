@@ -34,6 +34,9 @@ class CommunityReport(Named):
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the report (optional)."""
 
+    level: str = ""
+    """The level of the community report in the community hierarchy."""
+
     @classmethod
     def from_dict(
         cls,
@@ -48,6 +51,7 @@ class CommunityReport(Named):
         summary_embedding_key: str = "summary_embedding",
         full_content_embedding_key: str = "full_content_embedding",
         attributes_key: str = "attributes",
+        level: str = "level"
     ) -> "CommunityReport":
         """Create a new community report from the dict data."""
         return CommunityReport(
@@ -61,4 +65,5 @@ class CommunityReport(Named):
             summary_embedding=d.get(summary_embedding_key),
             full_content_embedding=d.get(full_content_embedding_key),
             attributes=d.get(attributes_key),
+            level=d.get(level)
         )

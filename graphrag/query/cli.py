@@ -23,7 +23,8 @@ def run_global_search(
     config_filepath: str | None,
     data_dir: str | None,
     root_dir: str,
-    community_level: int,
+    community_level: int | None,
+    dynamic_selection: bool,
     response_type: str,
     streaming: bool,
     query: str,
@@ -37,6 +38,10 @@ def run_global_search(
 
     config.storage.base_dir = data_dir or config.storage.base_dir
     resolve_paths(config)
+
+    if dynamic_selection:
+        print(f"Enable dynamic community selection.")
+        community_level = -1
 
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
@@ -67,6 +72,7 @@ def run_global_search(
                 entities=final_entities,
                 community_reports=final_community_reports,
                 community_level=community_level,
+                dynamic_selection=dynamic_selection,
                 response_type=response_type,
                 query=query,
             ):
@@ -89,9 +95,11 @@ def run_global_search(
             entities=final_entities,
             community_reports=final_community_reports,
             community_level=community_level,
+            dynamic_selection=dynamic_selection,
             response_type=response_type,
             query=query,
-        )
+        ),
+        debug=True,
     )
     reporter.success(f"Global Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.

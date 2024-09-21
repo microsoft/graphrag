@@ -113,12 +113,14 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(*[
-            self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
-            )
-            for data in context_chunks
-        ])
+        map_responses = await asyncio.gather(
+            *[
+                self._map_response_single_batch(
+                    context_data=data, query=query, **self.map_llm_params
+                )
+                for data in context_chunks
+            ]
+        )
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
@@ -146,26 +148,36 @@ class GlobalSearch(BaseSearch):
         - Step 1: Run parallel LLM calls on communities' short summaries to generate answer for each batch
         - Step 2: Combine the answers from step 2 to generate the final answer
         """
-        # Step 1: Generate answers for each batch of community short summaries
+        llm_calls, prompt_tokens = 0, 0
+
         start_time = time.time()
-        context_chunks, context_records = self.context_builder.build_context(
-            conversation_history=conversation_history, **self.context_builder_params
+        # Step 1: Generate answers for each batch of community short summaries
+        context_chunks, context_records = await self.context_builder.build_context(
+            query=query,
+            conversation_history=conversation_history,
+            **self.context_builder_params,
         )
+        if hasattr(self.context_builder, "llm_calls"):
+            llm_calls += self.context_builder.llm_calls
+        if hasattr(self.context_builder, "prompt_tokens"):
+            prompt_tokens += self.context_builder.prompt_tokens
 
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(*[
-            self._map_response_single_batch(
-                context_data=data, query=query, **self.map_llm_params
-            )
-            for data in context_chunks
-        ])
+        map_responses = await asyncio.gather(
+            *[
+                self._map_response_single_batch(
+                    context_data=data, query=query, **self.map_llm_params
+                )
+                for data in context_chunks
+            ]
+        )
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
-        map_llm_calls = sum(response.llm_calls for response in map_responses)
-        map_prompt_tokens = sum(response.prompt_tokens for response in map_responses)
+        llm_calls += sum(response.llm_calls for response in map_responses)
+        prompt_tokens += sum(response.prompt_tokens for response in map_responses)
 
         # Step 2: Combine the intermediate answers from step 2 to generate the final answer
         reduce_response = await self._reduce_response(
@@ -173,6 +185,9 @@ class GlobalSearch(BaseSearch):
             query=query,
             **self.reduce_llm_params,
         )
+
+        llm_calls += reduce_response.llm_calls
+        prompt_tokens += reduce_response.prompt_tokens
 
         return GlobalSearchResult(
             response=reduce_response.response,
@@ -182,8 +197,8 @@ class GlobalSearch(BaseSearch):
             reduce_context_data=reduce_response.context_data,
             reduce_context_text=reduce_response.context_text,
             completion_time=time.time() - start_time,
-            llm_calls=map_llm_calls + reduce_response.llm_calls,
-            prompt_tokens=map_prompt_tokens + reduce_response.prompt_tokens,
+            llm_calls=llm_calls,
+            prompt_tokens=prompt_tokens,
         )
 
     def search(
@@ -295,17 +310,17 @@ class GlobalSearch(BaseSearch):
                         continue
                     if "answer" not in element or "score" not in element:
                         continue
-                    key_points.append({
-                        "analyst": index,
-                        "answer": element["answer"],
-                        "score": element["score"],
-                    })
+                    key_points.append(
+                        {
+                            "analyst": index,
+                            "answer": element["answer"],
+                            "score": element["score"],
+                        }
+                    )
 
             # filter response with score = 0 and rank responses by descending order of score
             filtered_key_points = [
-                point
-                for point in key_points
-                if point["score"] > 0  # type: ignore
+                point for point in key_points if point["score"] > 0  # type: ignore
             ]
 
             if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
@@ -401,17 +416,17 @@ class GlobalSearch(BaseSearch):
                     continue
                 if "answer" not in element or "score" not in element:
                     continue
-                key_points.append({
-                    "analyst": index,
-                    "answer": element["answer"],
-                    "score": element["score"],
-                })
+                key_points.append(
+                    {
+                        "analyst": index,
+                        "answer": element["answer"],
+                        "score": element["score"],
+                    }
+                )
 
         # filter response with score = 0 and rank responses by descending order of score
         filtered_key_points = [
-            point
-            for point in key_points
-            if point["score"] > 0  # type: ignore
+            point for point in key_points if point["score"] > 0  # type: ignore
         ]
 
         if len(filtered_key_points) == 0 and not self.allow_general_knowledge:

@@ -67,16 +67,17 @@ def read_indexer_reports(
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
     entity_df = final_nodes
-    entity_df = _filter_under_community_level(entity_df, community_level)
-    entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
-    entity_df.loc[:, "community"] = entity_df["community"].astype(int)
 
-    entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-    entity_df["community"] = entity_df["community"].astype(str)
-    filtered_community_df = entity_df["community"].drop_duplicates()
+    if community_level >= 0:
+        entity_df = _filter_under_community_level(entity_df, community_level)
+        entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
+        entity_df.loc[:, "community"] = entity_df["community"].astype(int)
 
-    report_df = _filter_under_community_level(report_df, community_level)
-    report_df = report_df.merge(filtered_community_df, on="community", how="inner")
+        entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
+        entity_df["community"] = entity_df["community"].astype(str)
+        filtered_community_df = entity_df["community"].drop_duplicates()
+        report_df = _filter_under_community_level(report_df, community_level)
+        report_df = report_df.merge(filtered_community_df, on="community", how="inner")
 
     return read_community_reports(
         df=report_df,
@@ -96,7 +97,8 @@ def read_indexer_entities(
     entity_df = final_nodes
     entity_embedding_df = final_entities
 
-    entity_df = _filter_under_community_level(entity_df, community_level)
+    if community_level >= 0:
+        entity_df = _filter_under_community_level(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
     )

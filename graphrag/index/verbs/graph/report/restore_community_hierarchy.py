@@ -64,12 +64,14 @@ def restore_community_hierarchy(
             for next_level_community in next_level_communities:
                 next_entities = next_level_communities[next_level_community]
                 if set(next_entities).issubset(set(current_entities)):
-                    community_hierarchy.append({
-                        community_column: current_community,
-                        schemas.COMMUNITY_LEVEL: level,
-                        schemas.SUB_COMMUNITY: next_level_community,
-                        schemas.SUB_COMMUNITY_SIZE: len(next_entities),
-                    })
+                    community_hierarchy.append(
+                        {
+                            community_column: current_community,
+                            schemas.COMMUNITY_LEVEL: level,
+                            schemas.SUB_COMMUNITY: next_level_community,
+                            schemas.SUB_COMMUNITY_SIZE: len(next_entities),
+                        }
+                    )
 
                     entities_found += len(next_entities)
                     if entities_found == len(current_entities):

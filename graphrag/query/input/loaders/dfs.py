@@ -234,6 +234,7 @@ def read_community_reports(
     summary_embedding_col: str | None = "summary_embedding",
     content_embedding_col: str | None = "full_content_embedding",
     attributes_cols: list[str] | None = None,
+    level: str | None = "level",
 ) -> list[CommunityReport]:
     """Read community reports from a dataframe."""
     reports = []
@@ -257,6 +258,7 @@ def read_community_reports(
                 if attributes_cols
                 else None
             ),
+            level=to_str(row, level),
         )
         reports.append(report)
     return reports

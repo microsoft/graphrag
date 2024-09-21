@@ -16,6 +16,10 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import GlobalContextBuilder
+from graphrag.query.llm.oai.chat_openai import ChatOpenAI
+from graphrag.query.structured_search.global_search.dynamic_community_selection import (
+    DynamicCommunitySelection,
+)
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -25,16 +29,32 @@ class GlobalCommunityContext(GlobalContextBuilder):
         self,
         community_reports: list[CommunityReport],
         entities: list[Entity] | None = None,
+        nodes: pd.DataFrame | None = None,
+        llm: ChatOpenAI | None = None,
         token_encoder: tiktoken.Encoding | None = None,
+        dynamic_selection: bool = False,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
         self.entities = entities
+        self.llm = llm
         self.token_encoder = token_encoder
+        self.llm_calls = 0
+        self.prompt_tokens = 0
+        self.dynamic_selection = None
+        if dynamic_selection:
+            self.dynamic_selection = DynamicCommunitySelection(
+                community_reports=community_reports,
+                nodes=nodes,
+                llm=llm,
+                token_encoder=token_encoder,
+                keep_parent=False,
+            )
         self.random_state = random_state
 
-    def build_context(
+    async def build_context(
         self,
+        query: str,
         conversation_history: ConversationHistory | None = None,
         use_community_summary: bool = True,
         column_delimiter: str = "|",
@@ -69,8 +89,16 @@ class GlobalCommunityContext(GlobalContextBuilder):
             if conversation_history_context != "":
                 final_context_data = conversation_history_context_data
 
+        community_reports = self.community_reports
+        if self.dynamic_selection is not None:
+            community_reports, llm_calls, prompt_tokens = (
+                await self.dynamic_selection.select(query)
+            )
+            self.llm_calls += llm_calls
+            self.prompt_tokens += prompt_tokens
+
         community_context, community_context_data = build_community_context(
-            community_reports=self.community_reports,
+            community_reports=community_reports,
             entities=self.entities,
             token_encoder=self.token_encoder,
             use_community_summary=use_community_summary,

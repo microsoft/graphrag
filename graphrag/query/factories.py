@@ -5,6 +5,7 @@
 
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+import pandas as pd
 
 from graphrag.config import (
     GraphRagConfig,
@@ -160,16 +161,24 @@ def get_global_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
     entities: list[Entity],
+    nodes: pd.DataFrame,
     response_type: str,
+    dynamic_selection: bool,
 ) -> BaseSearch:
     """Create a global search engine based on data + configuration."""
+    llm = get_llm(config)
     token_encoder = tiktoken.get_encoding(config.encoding_model)
     gs_config = config.global_search
 
     return GlobalSearch(
-        llm=get_llm(config),
+        llm=llm,
         context_builder=GlobalCommunityContext(
-            community_reports=reports, entities=entities, token_encoder=token_encoder
+            community_reports=reports,
+            entities=entities,
+            nodes=nodes,
+            llm=llm,
+            token_encoder=token_encoder,
+            dynamic_selection=dynamic_selection,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,

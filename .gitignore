@@ -67,3 +67,4 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+*.patch

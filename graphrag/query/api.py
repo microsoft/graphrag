@@ -51,6 +51,7 @@ async def global_search(
     entities: pd.DataFrame,
     community_reports: pd.DataFrame,
     community_level: int,
+    dynamic_selection: bool,
     response_type: str,
     query: str,
 ) -> tuple[
@@ -66,6 +67,7 @@ async def global_search(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_selection (bool): Enable dynamic community selection and ignore community_level.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -83,7 +85,9 @@ async def global_search(
         config,
         reports=reports,
         entities=_entities,
+        nodes=nodes,
         response_type=response_type,
+        dynamic_selection=dynamic_selection,
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
@@ -98,6 +102,7 @@ async def global_search_streaming(
     entities: pd.DataFrame,
     community_reports: pd.DataFrame,
     community_level: int,
+    dynamic_selection: bool,
     response_type: str,
     query: str,
 ) -> AsyncGenerator:
@@ -112,6 +117,7 @@ async def global_search_streaming(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_selection (bool): Enable dynamic community selection and ignore community_level.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -129,7 +135,9 @@ async def global_search_streaming(
         config,
         reports=reports,
         entities=_entities,
+        nodes=nodes,
         response_type=response_type,
+        dynamic_selection=dynamic_selection,
     )
     search_result = search_engine.astream_search(query=query)
 
