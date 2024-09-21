@@ -56,7 +56,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--community_level",
-        help="Community level in the Leiden community hierarchy from which we will load the community reports. A higher value means we will use reports from smaller communities. Set None to enable dynamic community selection. Default: 2",
+        help="Community level in the Leiden community hierarchy from which we will load the community reports. A higher value means we will use reports from smaller communities. Default: 2",
         type=int,
         default=2,
     )

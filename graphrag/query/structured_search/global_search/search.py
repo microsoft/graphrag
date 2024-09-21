@@ -107,8 +107,10 @@ class GlobalSearch(BaseSearch):
         conversation_history: ConversationHistory | None = None,
     ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, context_records = self.context_builder.build_context(
-            conversation_history=conversation_history, **self.context_builder_params
+        context_chunks, context_records = await self.context_builder.build_context(
+            query=query,
+            conversation_history=conversation_history,
+            **self.context_builder_params,
         )
         if self.callbacks:
             for callback in self.callbacks:
