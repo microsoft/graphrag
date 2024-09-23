@@ -167,7 +167,7 @@ def get_global_search_engine(
 ) -> BaseSearch:
     """Create a global search engine based on data + configuration."""
     llm = get_llm(config)
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    token_encoder = tiktoken.encoding_for_model(llm.model)
     gs_config = config.global_search
 
     return GlobalSearch(

@@ -10,6 +10,6 @@ if __name__ == "__main__":
         community_level=2,
         dynamic_selection=True,
         response_type="Multiple Paragraphs",
-        streaming=True,
+        streaming=False,
         query="Are there any common educational or career paths among the guests?",
     )

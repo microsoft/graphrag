@@ -30,7 +30,7 @@ Information
 Question
 {question}
 ######
-Please return the rating as a single value.
+Please only return the rating value.
 """
 
 
@@ -45,7 +45,18 @@ class DynamicCommunitySelection:
         token_encoder: tiktoken.Encoding,
         keep_parent: bool = False,
         num_repeats: int = 1,
+        use_logit_bias: bool = True,
     ):
+        """
+        Args:
+            community_reports: list of community reports
+            nodes: DataFrame containing final nodes to reconstruct community hierarchy
+            llm: OpenAI language model
+            token_encoder: token encoder
+            keep_parent: keep the parent node if the child node is relevant (default: False)
+            num_repeats: number of times to repeat the rating process for the same community (default: 1)
+            use_logit_bias: use logit_bias to bias the output to the rating tokens (default: True)
+        """
         self.community_reports = {
             report.community_id: report for report in community_reports
         }
@@ -56,14 +67,12 @@ class DynamicCommunitySelection:
         self.token_encoder = token_encoder
         self.keep_parent = keep_parent
         self.num_repeats = num_repeats
-        self.llm_kwargs = {
-            "temperature": 0.0,
-            "max_tokens": 1,
-            "logit_bias": {
-                token_encoder.encode(token)[0]: 100
-                for token in ["1", "2", "3", "4", "5"]
-            },  # bias the output to the rating tokens
-        }
+        self.llm_kwargs = {"temperature": 0.0, "max_tokens": 2}
+        if use_logit_bias:
+            # bias the output to the rating tokens
+            self.llm_kwargs["logit_bias"] = {
+                token_encoder.encode(token)[0]: 5 for token in ["1", "2", "3", "4", "5"]
+            }
 
     async def rate_community_report(
         self, query: str, description: str, **llm_kwargs: Any
@@ -77,6 +86,13 @@ class DynamicCommunitySelection:
             query: the query (or question) to rate against
             description: the community description to rate, it can be the community
                 title, summary, or the full content.
+        Returns:
+            result: a dictionary containing
+                decision: the rating of the community. In the case of multiple repeats,
+                    the rating wit h the most vote is selected.
+                decisions: list of ratings of size num_repeats
+                llm_calls: number of calls to LLM
+                prompt_tokens: number of tokens used in the LLM calls
         """
         result = {"llm_calls": 0, "prompt_tokens": 0, "decisions": []}
         messages = [
@@ -88,7 +104,7 @@ class DynamicCommunitySelection:
         ]
         for repeat in range(self.num_repeats):
             decision = await self.llm.agenerate(messages=messages, **llm_kwargs)
-            result["decisions"].append(decision[0])  # the first token is the decision
+            result["decisions"].append(decision[0])
             result["llm_calls"] += 1
             result["prompt_tokens"] += len(
                 self.token_encoder.encode(messages[0]["content"])
