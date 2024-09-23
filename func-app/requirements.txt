@@ -106,6 +106,7 @@ pyparsing==3.1.4
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
+pywin32==306 ## This needs to be commented when deploying to the func app.
 pyyaml==6.0.2
 ratelimiter==1.2.0.post0
 referencing==0.35.1
@@ -139,4 +140,3 @@ zipp==3.20.2
 azure.functions
 future
 pandas
-PyYAML
