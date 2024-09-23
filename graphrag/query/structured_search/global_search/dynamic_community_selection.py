@@ -56,9 +56,17 @@ class DynamicCommunitySelection:
         self.token_encoder = token_encoder
         self.keep_parent = keep_parent
         self.num_repeats = num_repeats
+        self.llm_kwargs = {
+            "temperature": 0.0,
+            "max_tokens": 1,
+            "logit_bias": {
+                token_encoder.encode(token)[0]: 100
+                for token in ["1", "2", "3", "4", "5"]
+            },  # bias the output to the rating tokens
+        }
 
     async def rate_community_report(
-        self, query: str, community: str, description: str
+        self, query: str, description: str, **llm_kwargs: Any
     ) -> Dict[str, Any]:
         """
         Rate how relevant a community report is with respect to the query on a scale of 1 to 5.
@@ -66,18 +74,11 @@ class DynamicCommunitySelection:
         indicates the community directly answers the query.
 
         Args:
-            query: the query (or question) to rate the community report against
-            community: the community number
-            description: the community description to rate, it can be the
-                community title, summary, or the full content.
+            query: the query (or question) to rate against
+            description: the community description to rate, it can be the community
+                title, summary, or the full content.
         """
-        result = {
-            "community": community,
-            "llm_calls": 0,
-            "prompt_tokens": 0,
-            "decisions": [],  # store the rating from the LLM, typically a single digit scalar.
-            "outputs": [],  # store the raw output from the LLM
-        }
+        result = {"llm_calls": 0, "prompt_tokens": 0, "decisions": []}
         messages = [
             {
                 "role": "system",
@@ -86,11 +87,8 @@ class DynamicCommunitySelection:
             {"role": "user", "content": query},
         ]
         for repeat in range(self.num_repeats):
-            decision = await self.llm.agenerate(
-                messages=messages, max_tokens=2000, temperature=0.0
-            )
+            decision = await self.llm.agenerate(messages=messages, **llm_kwargs)
             result["decisions"].append(decision[0])  # the first token is the decision
-            result["outputs"].append(decision)
             result["llm_calls"] += 1
             result["prompt_tokens"] += len(
                 self.token_encoder.encode(messages[0]["content"])
@@ -113,29 +111,25 @@ class DynamicCommunitySelection:
 
         llm_calls, prompt_tokens = 0, 0
         relevant_communities = set()
-
         while queue:
             gather_results = await asyncio.gather(
                 *[
                     self.rate_community_report(
                         query=query,
-                        community=community,
                         description=self.community_reports[community].full_content,
+                        **self.llm_kwargs,
                     )
                     for community in queue
                 ]
             )
 
-            queue = []
-            for result in gather_results:
-                community = result["community"]
+            communities_to_rate = []
+            for community, result in zip(queue, gather_results):
                 decision = result["decision"]
                 llm_calls += result["llm_calls"]
                 prompt_tokens += result["prompt_tokens"]
-
                 if decision > 1:
                     relevant_communities.add(community)
-
                     # find child nodes of the current node and append them to the queue
                     sub_communities = self.community_hierarchy.loc[
                         self.community_hierarchy.community == community
@@ -143,8 +137,7 @@ class DynamicCommunitySelection:
                     for sub_community in sub_communities:
                         # TODO check why some sub_communities are NOT in report_df
                         if sub_community in self.community_reports:
-                            queue.append(sub_community)
-
+                            communities_to_rate.append(sub_community)
                     # remove parent node since the current node is deemed relevant
                     if not self.keep_parent:
                         parent_community = self.community_hierarchy.loc[
@@ -155,6 +148,7 @@ class DynamicCommunitySelection:
                             relevant_communities.discard(
                                 parent_community.iloc[0].community
                             )
+            queue = communities_to_rate
 
         community_reports = [
             self.community_reports[community] for community in relevant_communities
