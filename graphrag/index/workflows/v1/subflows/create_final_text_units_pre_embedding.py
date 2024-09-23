@@ -64,7 +64,7 @@ def _final_aggregation(df: pd.DataFrame, covariates_enabled: bool) -> pd.DataFra
 
 
 def _entities(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df[["id", "text_unit_ids"]]
+    selected = df.loc[:, ["id", "text_unit_ids"]]
     unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
 
     return (
@@ -76,7 +76,7 @@ def _entities(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _relationships(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df[["id", "text_unit_ids"]]
+    selected = df.loc[:, ["id", "text_unit_ids"]]
     unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
 
     return (
@@ -88,7 +88,7 @@ def _relationships(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _covariates(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df[["id", "text_unit_id"]]
+    selected = df.loc[:, ["id", "text_unit_id"]]
 
     return (
         selected.groupby("text_unit_id", sort=False)

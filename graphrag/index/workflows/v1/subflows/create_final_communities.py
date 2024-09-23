@@ -54,9 +54,12 @@ def create_final_communities(
         .reset_index()
     )
 
+    print("CLUSTER RELATIONSHIPS OUTPUT!!!")
+    print(cluster_relationships.head())
+
     all_clusters = (
         graph_nodes.groupby(["cluster", "level"], sort=False)
-        .agg(id=("cluster", "any"))
+        .agg(id=("cluster", "first"))
         .reset_index()
     )
 
@@ -67,6 +70,9 @@ def create_final_communities(
         how="inner",
     )
 
+    print("JOINED OUTPUT!!!")
+    print(joined.head())
+
     filtered = joined[joined["level"] == joined["level_x"]].reset_index(drop=True)
 
     filtered["title"] = "Community " + filtered["id"].astype(str)
@@ -74,14 +80,15 @@ def create_final_communities(
     return create_verb_result(
         cast(
             Table,
-            filtered[
+            filtered.loc[
+                :,
                 [
                     "id",
                     "title",
                     "level",
                     "relationship_ids",
                     "text_unit_ids",
-                ]
+                ],
             ],
         )
     )
