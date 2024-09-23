@@ -1,5 +1,4 @@
 import json
-import time
 from typing import Any
 import psycopg2
 from graphrag.model.types import TextEmbedder
