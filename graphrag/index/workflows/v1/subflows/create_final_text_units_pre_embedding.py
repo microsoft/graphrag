@@ -41,26 +41,9 @@ def create_final_text_units_pre_embedding(
         covariate_join = _covariates(final_covariates)
         final_joined = _join(relationship_joined, covariate_join)
 
-    aggregated = _final_aggregation(final_joined, covariates_enabled)
+    aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
     return create_verb_result(cast(Table, aggregated))
-
-
-def _final_aggregation(df: pd.DataFrame, covariates_enabled: bool) -> pd.DataFrame:
-    # Build the aggregation dictionary, conditionally adding 'covariate_ids'
-    agg_dict = {
-        "text": "first",
-        "n_tokens": "first",
-        "document_ids": "first",
-        "entity_ids": "first",
-        "relationship_ids": "first",
-    }
-
-    if covariates_enabled:
-        agg_dict["covariate_ids"] = "first"
-
-    # Group by 'id' and aggregate using 'first'
-    return df.groupby("id", sort=False).agg(agg_dict).reset_index()
 
 
 def _entities(df: pd.DataFrame) -> pd.DataFrame:
