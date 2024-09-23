@@ -3,6 +3,7 @@
 
 """The Indexing Engine workflows -> subflows package root."""
 
+from .create_base_documents import create_base_documents
 from .create_final_communities import create_final_communities
 from .create_final_nodes import create_final_nodes
 from .create_final_relationships_post_embedding import (
@@ -14,6 +15,7 @@ from .create_final_relationships_pre_embedding import (
 from .create_final_text_units_pre_embedding import create_final_text_units_pre_embedding
 
 __all__ = [
+    "create_base_documents",
     "create_final_communities",
     "create_final_nodes",
     "create_final_relationships_post_embedding",
