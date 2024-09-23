@@ -1,0 +1,1 @@
+# create Gremlin and cosmos db clients by reading settings from settings.yaml
