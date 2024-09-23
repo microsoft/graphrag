@@ -17,7 +17,7 @@ from graphrag.query.context_builder.conversation_history import (
 )
 from graphrag.query.structured_search.base import GlobalContextBuilder
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.structured_search.global_search.dynamic_community_selection import (
+from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
 

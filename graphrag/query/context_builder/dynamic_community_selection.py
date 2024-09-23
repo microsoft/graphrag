@@ -10,28 +10,7 @@ from graphrag.model import CommunityReport
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.index.graph.extractors.community_reports import schemas
 from graphrag.index.verbs.graph.report import restore_community_hierarchy
-
-RATE_QUERY = """
-You are a helpful assistant responsible for deciding whether the provided information 
-is useful in answering a given question, even if it is only partially relevant.
-
-On a scale from 1 to 5, please rate how relevant or helpful is the provided information in answering the question:
-1 - Not relevant in any way to the question
-2 - Potentially relevant to the question
-3 - Relevant to the question
-4 - Highly relevant to the question
-5 - It directly answers to the question
-
-
-#######
-Information
-{description}
-######
-Question
-{question}
-######
-Please only return the rating value.
-"""
+from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 
 
 class DynamicCommunitySelection:
@@ -74,49 +53,6 @@ class DynamicCommunitySelection:
                 token_encoder.encode(token)[0]: 5 for token in ["1", "2", "3", "4", "5"]
             }
 
-    async def rate_community_report(
-        self, query: str, description: str, **llm_kwargs: Any
-    ) -> Dict[str, Any]:
-        """
-        Rate how relevant a community report is with respect to the query on a scale of 1 to 5.
-        A rating of 1 indicates the community is not relevant to the query and a rating of 5
-        indicates the community directly answers the query.
-
-        Args:
-            query: the query (or question) to rate against
-            description: the community description to rate, it can be the community
-                title, summary, or the full content.
-        Returns:
-            result: a dictionary containing
-                decision: the rating of the community. In the case of multiple repeats,
-                    the rating wit h the most vote is selected.
-                decisions: list of ratings of size num_repeats
-                llm_calls: number of calls to LLM
-                prompt_tokens: number of tokens used in the LLM calls
-        """
-        result = {"llm_calls": 0, "prompt_tokens": 0, "decisions": []}
-        messages = [
-            {
-                "role": "system",
-                "content": RATE_QUERY.format(description=description, question=query),
-            },
-            {"role": "user", "content": query},
-        ]
-        for repeat in range(self.num_repeats):
-            decision = await self.llm.agenerate(messages=messages, **llm_kwargs)
-            result["decisions"].append(decision[0])
-            result["llm_calls"] += 1
-            result["prompt_tokens"] += len(
-                self.token_encoder.encode(messages[0]["content"])
-            )
-            result["prompt_tokens"] += len(
-                self.token_encoder.encode(messages[1]["content"])
-            )
-        # select the decision with the most votes
-        options, counts = np.unique(result["decisions"], return_counts=True)
-        result["decision"] = int(options[np.argmax(counts)])
-        return result
-
     async def select(self, query: str) -> (list[CommunityReport], int, int):
         # get all communities at level 0
         queue = [
@@ -130,9 +66,12 @@ class DynamicCommunitySelection:
         while queue:
             gather_results = await asyncio.gather(
                 *[
-                    self.rate_community_report(
+                    rate_relevancy(
                         query=query,
                         description=self.community_reports[community].full_content,
+                        llm=self.llm,
+                        token_encoder=self.token_encoder,
+                        num_repeats=self.num_repeats,
                         **self.llm_kwargs,
                     )
                     for community in queue
@@ -141,10 +80,10 @@ class DynamicCommunitySelection:
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results):
-                decision = result["decision"]
+                rating = result["rating"]
                 llm_calls += result["llm_calls"]
                 prompt_tokens += result["prompt_tokens"]
-                if decision > 1:
+                if rating > 1:
                     relevant_communities.add(community)
                     # find child nodes of the current node and append them to the queue
                     sub_communities = self.community_hierarchy.loc[
