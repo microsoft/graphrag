@@ -16,6 +16,7 @@ def build_steps(
 
     ## Dependencies
     * `workflow:create_base_entity_graph`
+    * `workflow:create_final_nodes`
     """
     base_text_embed = config.get("text_embed", {})
     relationship_description_embed_config = config.get(
@@ -25,25 +26,12 @@ def build_steps(
 
     return [
         {
-            "verb": "unpack_graph",
-            "args": {
-                "column": "clustered_graph",
-                "type": "edges",
-            },
+            "id": "pre_embedding",
+            "verb": "create_final_relationships_pre_embedding",
             "input": {"source": "workflow:create_base_entity_graph"},
         },
         {
-            "verb": "rename",
-            "args": {"columns": {"source_id": "text_unit_ids"}},
-        },
-        {
-            "verb": "filter",
-            "args": {
-                "column": "level",
-                "criteria": [{"type": "value", "operator": "equals", "value": 0}],
-            },
-        },
-        {
+            "id": "description_embedding",
             "verb": "text_embed",
             "enabled": not skip_description_embedding,
             "args": {
@@ -54,41 +42,12 @@ def build_steps(
             },
         },
         {
-            "id": "pruned_edges",
-            "verb": "drop",
-            "args": {"columns": ["level"]},
-        },
-        {
-            "id": "filtered_nodes",
-            "verb": "filter",
-            "args": {
-                "column": "level",
-                "criteria": [{"type": "value", "operator": "equals", "value": 0}],
-            },
-            "input": "workflow:create_final_nodes",
-        },
-        {
-            "verb": "compute_edge_combined_degree",
-            "args": {"to": "rank"},
+            "verb": "create_final_relationships_post_embedding",
             "input": {
-                "source": "pruned_edges",
-                "nodes": "filtered_nodes",
-            },
-        },
-        {
-            "verb": "convert",
-            "args": {
-                "column": "human_readable_id",
-                "type": "string",
-                "to": "human_readable_id",
-            },
-        },
-        {
-            "verb": "convert",
-            "args": {
-                "column": "text_unit_ids",
-                "type": "array",
-                "to": "text_unit_ids",
+                "source": "pre_embedding"
+                if skip_description_embedding
+                else "description_embedding",
+                "nodes": "workflow:create_final_nodes",
             },
         },
     ]

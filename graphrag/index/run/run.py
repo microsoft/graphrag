@@ -46,7 +46,7 @@ from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
-from graphrag.index.update.files import get_delta_docs
+from graphrag.index.update.dataframes import get_delta_docs, update_dataframe_outputs
 from graphrag.index.verbs import *  # noqa
 from graphrag.index.workflows import (
     VerbDefinitions,
@@ -127,6 +127,7 @@ async def run_pipeline_with_config(
         delta_storage = storage.child("delta")
 
         # Run the pipeline on the new documents
+        tables_dict = {}
         async for table in run_pipeline(
             workflows=workflows,
             dataset=delta_dataset.new_inputs,
@@ -141,7 +142,9 @@ async def run_pipeline_with_config(
             emit=emit,
             is_resume_run=False,
         ):
-            yield table
+            tables_dict[table.workflow] = table.result
+
+        await update_dataframe_outputs(tables_dict, storage)
 
     else:
         async for table in run_pipeline(

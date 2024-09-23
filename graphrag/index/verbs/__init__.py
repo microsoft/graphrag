@@ -15,7 +15,7 @@ from .graph import (
     merge_graphs,
     unpack_graph,
 )
-from .overrides import aggregate, concat, merge
+from .overrides import aggregate, concat
 from .snapshot import snapshot
 from .snapshot_rows import snapshot_rows
 from .spread_json import spread_json
@@ -35,7 +35,6 @@ __all__ = [
     "extract_covariates",
     "genid",
     "layout_graph",
-    "merge",
     "merge_graphs",
     "snapshot",
     "snapshot_rows",
