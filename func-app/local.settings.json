@@ -1,0 +1,13 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+      "FUNCTIONS_WORKER_RUNTIME": "python",
+      "AzureWebJobsStorage": "${AZURE_STORAGE_CONNECTIONSTRING}",
+      "StorageKey" : "${AZURE_STORAGE_KEY}",
+      "APPINSIGHTS_INSTRUMENTATIONKEY" : "${AZURE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY}"
+    },
+    "ConnectionStrings": {
+      "DbConnectionString": ""
+    }
+  }
+  
