@@ -23,7 +23,7 @@ def run_global_search(
     config_filepath: str | None,
     data_dir: str | None,
     root_dir: str,
-    community_level: int | None,
+    community_level: int,
     dynamic_selection: bool,
     response_type: str,
     streaming: bool,
@@ -40,7 +40,6 @@ def run_global_search(
     resolve_paths(config)
 
     if dynamic_selection:
-        print(f"Enable dynamic community selection.")
         community_level = -1
 
     dataframe_dict = _resolve_parquet_files(

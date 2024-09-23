@@ -15,11 +15,11 @@ from graphrag.query.context_builder.community_context import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.structured_search.base import GlobalContextBuilder
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
+from graphrag.query.llm.oai.chat_openai import ChatOpenAI
+from graphrag.query.structured_search.base import GlobalContextBuilder
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -28,16 +28,15 @@ class GlobalCommunityContext(GlobalContextBuilder):
     def __init__(
         self,
         community_reports: list[CommunityReport],
+        nodes: pd.DataFrame,
+        llm: ChatOpenAI,
+        token_encoder: tiktoken.Encoding,
         entities: list[Entity] | None = None,
-        nodes: pd.DataFrame | None = None,
-        llm: ChatOpenAI | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
         dynamic_selection: bool = False,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
         self.entities = entities
-        self.llm = llm
         self.token_encoder = token_encoder
         self.llm_calls = 0
         self.prompt_tokens = 0
@@ -91,9 +90,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
         community_reports = self.community_reports
         if self.dynamic_selection is not None:
-            community_reports, llm_calls, prompt_tokens = (
-                await self.dynamic_selection.select(query)
-            )
+            (
+                community_reports,
+                llm_calls,
+                prompt_tokens,
+            ) = await self.dynamic_selection.select(query)
             self.llm_calls += llm_calls
             self.prompt_tokens += prompt_tokens
 

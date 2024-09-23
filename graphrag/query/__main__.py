@@ -86,7 +86,8 @@ if __name__ == "__main__":
 
     match args.method:
         case SearchType.LOCAL:
-            assert not args.dynamic_selection, DYNAMIC_SELECTION_ERROR
+            if args.dynamic_selection:
+                raise ValueError(DYNAMIC_SELECTION_ERROR)
             run_local_search(
                 args.config,
                 args.data,

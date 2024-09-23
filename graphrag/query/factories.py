@@ -3,9 +3,9 @@
 
 """Query Factory methods to support CLI."""
 
+import pandas as pd
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-import pandas as pd
 
 from graphrag.config import (
     GraphRagConfig,
@@ -115,7 +115,7 @@ def get_local_search_engine(
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.encoding_for_model(llm.model)
+    token_encoder = tiktoken.encoding_for_model(config.llm.model)
 
     ls_config = config.local_search
 
@@ -167,17 +167,17 @@ def get_global_search_engine(
 ) -> BaseSearch:
     """Create a global search engine based on data + configuration."""
     llm = get_llm(config)
-    token_encoder = tiktoken.encoding_for_model(llm.model)
+    token_encoder = tiktoken.encoding_for_model(config.llm.model)
     gs_config = config.global_search
 
     return GlobalSearch(
         llm=llm,
         context_builder=GlobalCommunityContext(
             community_reports=reports,
-            entities=entities,
             nodes=nodes,
             llm=llm,
             token_encoder=token_encoder,
+            entities=entities,
             dynamic_selection=dynamic_selection,
         ),
         token_encoder=token_encoder,

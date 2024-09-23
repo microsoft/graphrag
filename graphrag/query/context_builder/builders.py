@@ -15,6 +15,12 @@ from graphrag.query.context_builder.conversation_history import (
 class GlobalContextBuilder(ABC):
     """Base class for global-search context builders."""
 
+    llm_calls: int = 0
+    """The number of LLM calls made."""
+
+    prompt_tokens: int = 0
+    """The number of tokens in the prompt."""
+
     @abstractmethod
     async def build_context(
         self,
@@ -27,6 +33,12 @@ class GlobalContextBuilder(ABC):
 
 class LocalContextBuilder(ABC):
     """Base class for local-search context builders."""
+
+    llm_calls: int = 0
+    """The number of LLM calls made."""
+
+    prompt_tokens: int = 0
+    """The number of tokens in the prompt."""
 
     @abstractmethod
     def build_context(

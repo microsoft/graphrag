@@ -1,12 +1,17 @@
-import tiktoken
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Algorithm to rate the relevancy between a query and description text."""
+
+from typing import Any
+
 import numpy as np
-from typing import Dict, Any
+import tiktoken
 
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 
 RATE_QUERY = """
-You are a helpful assistant responsible for deciding whether the provided information 
-is useful in answering a given question, even if it is only partially relevant.
+You are a helpful assistant responsible for deciding whether the provided information is useful in answering a given question, even if it is only partially relevant.
 
 On a scale from 1 to 5, please rate how relevant or helpful is the provided information in answering the question:
 1 - Not relevant in any way to the question
@@ -33,10 +38,11 @@ async def rate_relevancy(
     llm: ChatOpenAI,
     token_encoder: tiktoken.Encoding,
     num_repeats: int = 1,
-    **llm_kwargs: Any
-) -> Dict[str, Any]:
+    **llm_kwargs: Any,
+) -> dict[str, Any]:
     """
     Rate the relevancy between the query and description on a scale of 1 to 5.
+
     A rating of 1 indicates the community is not relevant to the query and a rating of 5
     indicates the community directly answers the query.
 
@@ -44,13 +50,10 @@ async def rate_relevancy(
         query: the query (or question) to rate against
         description: the community description to rate, it can be the community
             title, summary, or the full content.
-    Returns:
-        result: a dictionary containing
-            rating: the relevancy rating between the query and description.
-                In the case of multiple repeats, the rating wit h the most vote is selected.
-            ratings: list of ratings of size num_repeats
-            llm_calls: number of calls to LLM
-            prompt_tokens: number of tokens used in the LLM calls
+        llm: LLM model to use for rating
+        token_encoder: token encoder
+        num_repeats: number of times to repeat the rating process for the same community (default: 1)
+        llm_kwargs: additional arguments to pass to the LLM model
     """
     llm_calls, prompt_tokens, ratings = 0, 0, []
     messages = [
@@ -60,7 +63,7 @@ async def rate_relevancy(
         },
         {"role": "user", "content": query},
     ]
-    for repeat in range(num_repeats):
+    for _ in range(num_repeats):
         response = await llm.agenerate(messages=messages, **llm_kwargs)
         ratings.append(int(response[0]))
         llm_calls += 1

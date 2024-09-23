@@ -1,16 +1,19 @@
-import numpy as np
-from typing import Dict, Any
-import tiktoken
-import pandas as pd
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Algorithm to dynamically select relevant communities with respect to a query."""
+
 import asyncio
 
+import pandas as pd
+import tiktoken
 from datashaper import TableContainer, VerbInput
 
-from graphrag.model import CommunityReport
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.index.graph.extractors.community_reports import schemas
 from graphrag.index.verbs.graph.report import restore_community_hierarchy
+from graphrag.model import CommunityReport
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
+from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 
 
 class DynamicCommunitySelection:
@@ -26,20 +29,10 @@ class DynamicCommunitySelection:
         num_repeats: int = 1,
         use_logit_bias: bool = True,
     ):
-        """
-        Args:
-            community_reports: list of community reports
-            nodes: DataFrame containing final nodes to reconstruct community hierarchy
-            llm: OpenAI language model
-            token_encoder: token encoder
-            keep_parent: keep the parent node if the child node is relevant (default: False)
-            num_repeats: number of times to repeat the rating process for the same community (default: 1)
-            use_logit_bias: use logit_bias to bias the output to the rating tokens (default: True)
-        """
         self.community_reports = {
             report.community_id: report for report in community_reports
         }
-        self.community_hierarchy: pd.DataFrame = restore_community_hierarchy(
+        self.community_hierarchy = restore_community_hierarchy(
             VerbInput(source=TableContainer(nodes))
         ).table
         self.llm = llm
@@ -53,7 +46,13 @@ class DynamicCommunitySelection:
                 token_encoder.encode(token)[0]: 5 for token in ["1", "2", "3", "4", "5"]
             }
 
-    async def select(self, query: str) -> (list[CommunityReport], int, int):
+    async def select(self, query: str) -> tuple[list[CommunityReport], int, int]:
+        """
+        Select relevant communities with respect to the query.
+
+        Args:
+            query: the query to rate against
+        """
         # get all communities at level 0
         queue = [
             report.community_id
@@ -79,7 +78,7 @@ class DynamicCommunitySelection:
             )
 
             communities_to_rate = []
-            for community, result in zip(queue, gather_results):
+            for community, result in zip(queue, gather_results, strict=True):
                 rating = result["rating"]
                 llm_calls += result["llm_calls"]
                 prompt_tokens += result["prompt_tokens"]
@@ -89,17 +88,20 @@ class DynamicCommunitySelection:
                     sub_communities = self.community_hierarchy.loc[
                         self.community_hierarchy.community == community
                     ][schemas.SUB_COMMUNITY]
-                    for sub_community in sub_communities:
-                        # TODO check why some sub_communities are NOT in report_df
-                        if sub_community in self.community_reports:
-                            communities_to_rate.append(sub_community)
+                    # TODO check why some sub_communities are NOT in report_df
+                    communities_to_rate.extend(
+                        [
+                            sub_community
+                            for sub_community in sub_communities
+                            if sub_community in self.community_reports
+                        ]
+                    )
                     # remove parent node since the current node is deemed relevant
                     if not self.keep_parent:
                         parent_community = self.community_hierarchy.loc[
                             self.community_hierarchy[schemas.SUB_COMMUNITY] == community
                         ]
                         if len(parent_community):
-                            assert len(parent_community) == 1
                             relevant_communities.discard(
                                 parent_community.iloc[0].community
                             )
