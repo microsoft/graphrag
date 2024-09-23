@@ -54,9 +54,6 @@ def create_final_communities(
         .reset_index()
     )
 
-    print("CLUSTER RELATIONSHIPS OUTPUT!!!")
-    print(cluster_relationships.head())
-
     all_clusters = (
         graph_nodes.groupby(["cluster", "level"], sort=False)
         .agg(id=("cluster", "first"))
@@ -69,9 +66,6 @@ def create_final_communities(
         right_on="cluster",
         how="inner",
     )
-
-    print("JOINED OUTPUT!!!")
-    print(joined.head())
 
     filtered = joined[joined["level"] == joined["level_x"]].reset_index(drop=True)
 
