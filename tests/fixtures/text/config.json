@@ -132,7 +132,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 8,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_documents": {
