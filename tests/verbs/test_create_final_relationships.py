@@ -49,8 +49,8 @@ async def test_create_final_relationships_with_embeddings():
     config = get_config_for_workflow(workflow_name)
 
     config["skip_description_embedding"] = False
-    # default config has a detailed standrd embed config
-    # just override the strategy to mock so the rest of the required parameters are in palce
+    # default config has a detailed standard embed config
+    # just override the strategy to mock so the rest of the required parameters are in place
     config["relationship_description_embed"]["strategy"]["type"] = "mock"
 
     steps = remove_disabled_steps(build_steps(config))
