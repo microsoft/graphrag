@@ -37,7 +37,6 @@ def create_base_text_units(
     sort["text_with_ids"] = list(
         zip(*[sort[col] for col in ["id", "text"]], strict=True)
     )
-    sort.reset_index(drop=True)
 
     aggregated = aggregate_df(
         sort,
