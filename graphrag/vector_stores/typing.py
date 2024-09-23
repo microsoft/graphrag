@@ -6,13 +6,13 @@
 from enum import Enum
 from typing import ClassVar
 
-from .azure_ai_search import AzureAISearch
-from .lancedb import LanceDBVectorStore
+from . import AstraDBVectorStore, AzureAISearch, BaseVectorStore, LanceDBVectorStore
 
 
 class VectorStoreType(str, Enum):
     """The supported vector store types."""
 
+    AstraDB = "astradb"
     LanceDB = "lancedb"
     AzureAISearch = "azure_ai_search"
 
@@ -30,9 +30,11 @@ class VectorStoreFactory:
     @classmethod
     def get_vector_store(
         cls, vector_store_type: VectorStoreType | str, kwargs: dict
-    ) -> LanceDBVectorStore | AzureAISearch:
+    ) -> BaseVectorStore:
         """Get the vector store type from a string."""
         match vector_store_type:
+            case VectorStoreType.AstraDB:
+                return AstraDBVectorStore(**kwargs)
             case VectorStoreType.LanceDB:
                 return LanceDBVectorStore(**kwargs)
             case VectorStoreType.AzureAISearch:

@@ -63,6 +63,7 @@ numpy
 pypi
 nbformat
 semversioner
+astrapy
 
 # Library Methods
 iterrows
