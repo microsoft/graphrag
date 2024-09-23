@@ -5,12 +5,14 @@
 
 from .azure_ai_search import AzureAISearch
 from .base import BaseVectorStore, VectorStoreDocument, VectorStoreSearchResult
+from .cassandra import CassandraVectorStore
 from .lancedb import LanceDBVectorStore
 from .typing import VectorStoreFactory, VectorStoreType
 
 __all__ = [
     "AzureAISearch",
     "BaseVectorStore",
+    "CassandraVectorStore",
     "LanceDBVectorStore",
     "VectorStoreDocument",
     "VectorStoreFactory",
