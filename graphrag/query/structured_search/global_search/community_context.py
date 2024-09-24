@@ -34,7 +34,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         entities: list[Entity] | None = None,
         dynamic_selection: bool = False,
         random_state: int = 86,
-        concurrent_coroutines: int = 32,
+        concurrent_coroutines: int = 8,
     ):
         self.community_reports = community_reports
         self.entities = entities
