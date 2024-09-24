@@ -70,3 +70,4 @@ ragtest/
 *.patch
 
 dynamic_search.py
+build/

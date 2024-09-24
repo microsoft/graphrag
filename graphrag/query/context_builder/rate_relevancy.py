@@ -2,12 +2,12 @@
 # Licensed under the MIT License
 
 """Algorithm to rate the relevancy between a query and description text."""
-
+from contextlib import nullcontext
 from typing import Any
 
 import numpy as np
 import tiktoken
-
+import asyncio
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 
 RATE_QUERY = """
@@ -38,6 +38,7 @@ async def rate_relevancy(
     llm: ChatOpenAI,
     token_encoder: tiktoken.Encoding,
     num_repeats: int = 1,
+    semaphore: asyncio.Semaphore = nullcontext(),
     **llm_kwargs: Any,
 ) -> dict[str, Any]:
     """
@@ -54,6 +55,7 @@ async def rate_relevancy(
         token_encoder: token encoder
         num_repeats: number of times to repeat the rating process for the same community (default: 1)
         llm_kwargs: additional arguments to pass to the LLM model
+        semaphore: asyncio.Semaphore to limit the number of concurrent LLM calls (default: nullcontext())
     """
     llm_calls, prompt_tokens, ratings = 0, 0, []
     messages = [
@@ -64,7 +66,8 @@ async def rate_relevancy(
         {"role": "user", "content": query},
     ]
     for _ in range(num_repeats):
-        response = await llm.agenerate(messages=messages, **llm_kwargs)
+        async with semaphore:
+            response = await llm.agenerate(messages=messages, **llm_kwargs)
         ratings.append(int(response[0]))
         llm_calls += 1
         prompt_tokens += len(token_encoder.encode(messages[0]["content"]))
