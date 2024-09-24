@@ -13,6 +13,7 @@ from graphrag.index import (
     PipelineWorkflowStep,
     create_pipeline_config,
 )
+from graphrag.index.run.utils import _create_run_context
 
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
@@ -61,7 +62,9 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    await workflow.run()
+    context = _create_run_context(None, None, None)
+
+    await workflow.run(context=context)
 
     # if there's only one output, it is the default here, no name required
     return cast(pd.DataFrame, workflow.output())
