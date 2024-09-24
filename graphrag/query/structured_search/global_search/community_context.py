@@ -38,8 +38,6 @@ class GlobalCommunityContext(GlobalContextBuilder):
         self.community_reports = community_reports
         self.entities = entities
         self.token_encoder = token_encoder
-        self.llm_calls = 0
-        self.prompt_tokens = 0
         self.dynamic_selection = None
         if dynamic_selection:
             self.dynamic_selection = DynamicCommunitySelection(
