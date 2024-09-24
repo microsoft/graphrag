@@ -8,10 +8,10 @@ llm:
   model_supports_json: true # recommended if this is available for your model.
   # max_tokens: 4000
   # request_timeout: 180.0
-  api_base: https://spe-pds-ais-ai.openai.azure.com
+  api_base: https://contentstore-oai.openai.azure.com
   api_version: 2024-04-01-preview
   # organization: <organization_id>
-  deployment_name: spepdsaigpt
+  deployment_name: gpt-4o
   # tokens_per_minute: 150_000 # set a leaky bucket throttle
   # requests_per_minute: 10_000 # set a leaky bucket throttle
   # max_retries: 10
@@ -34,11 +34,11 @@ embeddings:
   llm:
     api_key: ${GRAPHRAG_API_KEY}
     type: azure_openai_embedding #openai_embedding # or azure_openai_embedding
-    model: text-embedding-ada-002
-    api_base: https://spe-pds-ais-ai.openai.azure.com
+    model: text-embedding-3-small
+    api_base: https://contentstore-oai.openai.azure.com
     api_version: 2024-04-01-preview
     # organization: <organization_id>
-    deployment_name: spepdsaista
+    deployment_name: text-embedding-3-small
     # tokens_per_minute: 150_000 # set a leaky bucket throttle
     # requests_per_minute: 10_000 # set a leaky bucket throttle
     # max_retries: 10
