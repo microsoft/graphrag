@@ -31,7 +31,7 @@ class DynamicCommunitySelection:
         keep_parent: bool = False,
         num_repeats: int = 1,
         use_logit_bias: bool = True,
-        concurrent_coroutines: int = 8,
+        concurrent_coroutines: int = 4,
     ):
         self.community_reports = {
             report.community_id: report for report in community_reports
@@ -119,10 +119,10 @@ class DynamicCommunitySelection:
             self.community_reports[community] for community in relevant_communities
         ]
 
-        log.debug(
+        log.info(
             f"Dynamic community selection rating distribution: {dict(sorted(Counter(ratings).items()))}"
         )
-        log.debug(
+        log.info(
             f"Dynamic community selection: {len(relevant_communities)} out of {len(self.community_reports)} community reports are relevant."
         )
 
