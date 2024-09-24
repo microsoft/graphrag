@@ -3926,6 +3926,33 @@ files = [
 cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
+name = "qdrant-client"
+version = "1.11.2"
+description = "Client library for the Qdrant vector search engine"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "qdrant_client-1.11.2-py3-none-any.whl", hash = "sha256:3151e3da61588ad138dfcd6760c2f13e57251c8b0c62001bfd0e03bb7bcd6c8e"},
+    {file = "qdrant_client-1.11.2.tar.gz", hash = "sha256:0d5aa3f778077762963a754459c9c7144ba48e13dea62e559323924126a1b4a4"},
+]
+
+[package.dependencies]
+grpcio = ">=1.41.0"
+grpcio-tools = ">=1.41.0"
+httpx = {version = ">=0.20.0", extras = ["http2"]}
+numpy = [
+    {version = ">=1.21", markers = "python_version >= \"3.8\" and python_version < \"3.12\""},
+    {version = ">=1.26", markers = "python_version >= \"3.12\""},
+]
+portalocker = ">=2.7.0,<3.0.0"
+pydantic = ">=1.10.8"
+urllib3 = ">=1.26.14,<3"
+
+[package.extras]
+fastembed = ["fastembed (==0.3.6)"]
+fastembed-gpu = ["fastembed-gpu (==0.3.6)"]
+
+[[package]]
 name = "referencing"
 version = "0.35.1"
 description = "JSON Referencing + Python"
@@ -4985,4 +5012,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "93cf502b6a767cfeb8e89450aa2f336175595556c844a65174a26c204e78cc80"
+content-hash = "74e8b80552bc63fe28e14b2975eac1323310fde1aedfddeaadc3647626bd4c3f"
