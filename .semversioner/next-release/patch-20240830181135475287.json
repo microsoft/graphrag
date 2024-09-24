@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Add entrypoints for incremental indexing"
-}

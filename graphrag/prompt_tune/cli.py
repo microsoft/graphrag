@@ -7,10 +7,6 @@ from pathlib import Path
 
 from graphrag.config import load_config
 from graphrag.index.progress import PrintProgressReporter
-from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
-from graphrag.prompt_tune.loader import (
-    MIN_CHUNK_SIZE,
-)
 
 from . import api
 from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
@@ -23,16 +19,16 @@ async def prompt_tune(
     config: str,
     root: str,
     domain: str,
-    selection_method: DocSelectionType = DocSelectionType.RANDOM,
-    limit: int = 15,
-    max_tokens: int = MAX_TOKEN_COUNT,
-    chunk_size: int = MIN_CHUNK_SIZE,
-    language: str | None = None,
-    skip_entity_types: bool = False,
-    output: str = "prompts",
-    n_subset_max: int = 300,
-    k: int = 15,
-    min_examples_required: int = 2,
+    selection_method: DocSelectionType,
+    limit: int,
+    max_tokens: int,
+    chunk_size: int,
+    language: str | None,
+    skip_entity_types: bool,
+    output: str,
+    n_subset_max: int,
+    k: int,
+    min_examples_required: int,
 ):
     """Prompt tune the model.
 
@@ -47,7 +43,7 @@ async def prompt_tune(
     - chunk_size: The chunk token size to use.
     - language: The language to use for the prompts.
     - skip_entity_types: Skip generating entity types.
-    - output: The output folder to store the prompts.
+    - output: The output folder to store the prompts. Relative to the root directory.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.

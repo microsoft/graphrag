@@ -1,6 +1,48 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.6
+
+- patch: Collapse create_final_relationships.
+- patch: Dependency update and cleanup
+
+## 0.3.5
+
+- patch: Add compound verbs with tests infra.
+- patch: Collapse create_final_communities.
+- patch: Collapse create_final_text_units.
+- patch: Covariate verb collapse.
+- patch: Fix duplicates in community context builder
+- patch: Fix prompt tune output path
+- patch: Fix seed hardcoded init
+- patch: Fix seeded random gen on clustering
+- patch: Improve logging.
+- patch: Set default values for cli parameters.
+- patch: Use static output directories.
+
+## 0.3.4
+
+- patch: Deep copy txt units on local search to avoid race conditions
+- patch: Fix summarization including empty descriptions
+
+## 0.3.3
+
+- patch: Add entrypoints for incremental indexing
+- patch: Clean up and organize run index code
+- patch: Consistent config loading. Resolves #99 and Resolves #1049
+- patch: Fix circular dependency when running prompt tune api directly
+- patch: Fix default settings for embedding
+- patch: Fix img for auto tune
+- patch: Fix img width
+- patch: Fixed a bug in prompt tuning process
+- patch: Refactor text unit build at local search
+- patch: Update Prompt Tuning docs
+- patch: Update create_pipeline_config.py
+- patch: Update prompt tune command in docs
+- patch: add querying from azure blob storage
+- patch: fix setting base_dir to full paths when not using file system.
+- patch: fix strategy config in entity_extraction
+
 ## 0.3.2
 
 - patch: Add context data to query API responses.

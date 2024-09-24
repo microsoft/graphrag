@@ -20,6 +20,7 @@ isna
 getcwd
 fillna
 noqa
+dtypes
 
 # Azure
 abfs
@@ -98,6 +99,9 @@ retryer
 agenerate
 aembed
 dedupe
+dropna
+dtypes
+notna
 
 # LLM Terms
 AOAI

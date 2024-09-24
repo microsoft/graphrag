@@ -68,7 +68,7 @@ from .models import (
     UmapConfig,
 )
 from .read_dotenv import read_dotenv
-from .resolve_path import resolve_path
+from .resolve_path import resolve_path, resolve_paths
 
 __all__ = [
     "ApiKeyMissingError",
@@ -128,5 +128,6 @@ __all__ = [
     "load_config_from_file",
     "read_dotenv",
     "resolve_path",
+    "resolve_paths",
     "search_for_config_in_root_dir",
 ]

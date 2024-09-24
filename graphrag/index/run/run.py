@@ -46,6 +46,7 @@ from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
+from graphrag.index.update.dataframes import get_delta_docs, update_dataframe_outputs
 from graphrag.index.verbs import *  # noqa
 from graphrag.index.workflows import (
     VerbDefinitions,
@@ -111,9 +112,6 @@ async def run_pipeline_with_config(
         else await _create_input(config.input, progress_reporter, root_dir)
     )
 
-    if is_update_run:
-        # TODO: Filter dataset to only include new data (this should be done in the input module)
-        pass
     post_process_steps = input_post_process_steps or _create_postprocess_steps(
         config.input
     )
@@ -123,21 +121,47 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    async for table in run_pipeline(
-        workflows=workflows,
-        dataset=dataset,
-        storage=storage,
-        cache=cache,
-        callbacks=callbacks,
-        input_post_process_steps=post_process_steps,
-        memory_profile=memory_profile,
-        additional_verbs=additional_verbs,
-        additional_workflows=additional_workflows,
-        progress_reporter=progress_reporter,
-        emit=emit,
-        is_resume_run=is_resume_run,
-    ):
-        yield table
+    if is_update_run:
+        delta_dataset = await get_delta_docs(dataset, storage)
+
+        delta_storage = storage.child("delta")
+
+        # Run the pipeline on the new documents
+        tables_dict = {}
+        async for table in run_pipeline(
+            workflows=workflows,
+            dataset=delta_dataset.new_inputs,
+            storage=delta_storage,
+            cache=cache,
+            callbacks=callbacks,
+            input_post_process_steps=post_process_steps,
+            memory_profile=memory_profile,
+            additional_verbs=additional_verbs,
+            additional_workflows=additional_workflows,
+            progress_reporter=progress_reporter,
+            emit=emit,
+            is_resume_run=False,
+        ):
+            tables_dict[table.workflow] = table.result
+
+        await update_dataframe_outputs(tables_dict, storage)
+
+    else:
+        async for table in run_pipeline(
+            workflows=workflows,
+            dataset=dataset,
+            storage=storage,
+            cache=cache,
+            callbacks=callbacks,
+            input_post_process_steps=post_process_steps,
+            memory_profile=memory_profile,
+            additional_verbs=additional_verbs,
+            additional_workflows=additional_workflows,
+            progress_reporter=progress_reporter,
+            emit=emit,
+            is_resume_run=is_resume_run,
+        ):
+            yield table
 
 
 async def run_pipeline(
@@ -181,6 +205,8 @@ async def run_pipeline(
     progress_reporter = progress_reporter or NullProgressReporter()
     callbacks = callbacks or ConsoleWorkflowCallbacks()
     callbacks = _create_callback_chain(callbacks, progress_reporter)
+    # TODO: This default behavior is already defined at the API level. Update tests
+    # of this function to pass in an emit type before removing this default setting.
     emit = emit or [TableEmitterType.Parquet]
     emitters = create_table_emitters(
         emit,
