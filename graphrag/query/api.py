@@ -38,6 +38,7 @@ from .indexer_adapters import (
     read_indexer_relationships,
     read_indexer_reports,
     read_indexer_text_units,
+    read_indexer_nodes,
 )
 from .input.loaders.dfs import store_entity_semantic_embeddings
 
@@ -79,8 +80,10 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    # nodes = read_indexer_nodes(nodes)
     reports = read_indexer_reports(community_reports, nodes, community_level)
     _entities = read_indexer_entities(nodes, entities, community_level)
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,

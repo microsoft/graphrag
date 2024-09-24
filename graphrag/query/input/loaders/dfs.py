@@ -13,6 +13,7 @@ from graphrag.model import (
     Entity,
     Relationship,
     TextUnit,
+    Node,
 )
 from graphrag.query.input.loaders.utils import (
     to_list,
@@ -340,3 +341,25 @@ def read_documents(
         )
         docs.append(doc)
     return docs
+
+
+def read_nodes(
+    df: pd.DataFrame,
+    id_col: str = "id",
+    short_id_col: str = "short_id",
+    title_col: str = "title",
+    community_col: str = "community",
+    level_col: str = "level",
+    type_col: str = "type",
+):
+    nodes = []
+    for idx, row in df.iterrows():
+        node = Node(
+            id=to_str(row, id_col),
+            title=to_str(row, title_col),
+            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            community_id=to_str(row, community_col),
+            level=to_str(row, level_col),
+            type=to_str(row, type_col),
+        )
+        nodes.append(node)

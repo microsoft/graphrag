@@ -10,13 +10,21 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.model import CommunityReport, Covariate, Entity, Relationship, TextUnit
+from graphrag.model import (
+    CommunityReport,
+    Covariate,
+    Entity,
+    Relationship,
+    TextUnit,
+    Node,
+)
 from graphrag.query.input.loaders.dfs import (
     read_community_reports,
     read_covariates,
     read_entities,
     read_relationships,
     read_text_units,
+    read_nodes,
 )
 
 
@@ -131,6 +139,19 @@ def read_indexer_entities(
         graph_embedding_col=None,
         text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
+    )
+
+
+def read_indexer_nodes(final_nodes: pd.DataFrame) -> list[Node]:
+    """Read in the Nodes from the raw indexing outputs."""
+    return read_nodes(
+        df=final_nodes,
+        id_col="id",
+        title_col="title",
+        community_col="community",
+        level_col="level",
+        short_id_col="human_readable_id",
+        type_col="type",
     )
 
 

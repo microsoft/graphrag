@@ -179,6 +179,7 @@ def get_global_search_engine(
             token_encoder=token_encoder,
             entities=entities,
             dynamic_selection=dynamic_selection,
+            concurrent_coroutines=gs_config.concurrency,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,

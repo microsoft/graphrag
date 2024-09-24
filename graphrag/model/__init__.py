@@ -17,7 +17,7 @@ from .identified import Identified
 from .named import Named
 from .relationship import Relationship
 from .text_unit import TextUnit
-
+from .node import Node
 __all__ = [
     "Community",
     "CommunityReport",
@@ -27,5 +27,5 @@ __all__ = [
     "Identified",
     "Named",
     "Relationship",
-    "TextUnit",
+    "TextUnit","Node"
 ]
