@@ -93,7 +93,8 @@ def index_cli(
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
     _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter("none")
-    _initialize_project_at(root, progress_reporter)
+    if init:
+        _initialize_project_at(root, progress_reporter)
     if overlay_defaults:
         pipeline_config: str | PipelineConfig = _create_default_config(
             root, config, verbose, dryrun or False, progress_reporter
