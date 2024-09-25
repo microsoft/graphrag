@@ -23,30 +23,15 @@ def build_steps(
         "relationship_description_embed", base_text_embed
     )
     skip_description_embedding = config.get("skip_description_embedding", False)
-
     return [
         {
-            "id": "pre_embedding",
-            "verb": "create_final_relationships_pre_embedding",
-            "input": {"source": "workflow:create_base_entity_graph"},
-        },
-        {
-            "id": "description_embedding",
-            "verb": "text_embed",
-            "enabled": not skip_description_embedding,
+            "verb": "create_final_relationships",
             "args": {
-                "embedding_name": "relationship_description",
-                "column": "description",
-                "to": "description_embedding",
-                **relationship_description_embed_config,
+                "skip_embedding": skip_description_embedding,
+                "text_embed": relationship_description_embed_config,
             },
-        },
-        {
-            "verb": "create_final_relationships_post_embedding",
             "input": {
-                "source": "pre_embedding"
-                if skip_description_embedding
-                else "description_embedding",
+                "source": "workflow:create_base_entity_graph",
                 "nodes": "workflow:create_final_nodes",
             },
         },
