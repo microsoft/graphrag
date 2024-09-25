@@ -100,7 +100,6 @@ def create_covariate(item: dict[str, Any]) -> Covariate:
         end_date=item.get("end_date"),
         description=item.get("description"),
         source_text=item.get("source_text"),
-        doc_id=item.get("doc_id"),
         record_id=item.get("record_id"),
         id=item.get("id"),
     )

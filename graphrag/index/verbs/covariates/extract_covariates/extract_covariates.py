@@ -123,8 +123,4 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
 
 def create_row_from_claim_data(row, covariate_data: Covariate, covariate_type: str):
     """Create a row from the claim data and the input row."""
-    item = {**row, **asdict(covariate_data), "covariate_type": covariate_type}
-    # TODO: doc_id from extraction isn't necessary
-    # since chunking happens before this
-    del item["doc_id"]
-    return item
+    return {**row, **asdict(covariate_data), "covariate_type": covariate_type}
