@@ -6,8 +6,9 @@ The parts of these functions that do type adaptation, renaming, collating, etc. 
 Ideally this is just a straight read-through into the object model.
 """
 
-from typing import cast
 import logging
+from typing import cast
+
 import pandas as pd
 from datashaper import TableContainer, VerbInput
 
@@ -86,7 +87,7 @@ def read_indexer_reports(
     entity_df = final_nodes
 
     if community_level is not None:
-        log.info("filter under community level {0}".format(community_level))
+        log.info("filter under community level %s", community_level)
         entity_df = _filter_under_community_level(entity_df, community_level)
         report_df = _filter_under_community_level(report_df, community_level)
 
@@ -158,9 +159,9 @@ def read_indexer_entities(
 def read_indexer_communities(
     final_communities: pd.DataFrame, final_nodes: pd.DataFrame
 ) -> list[Community]:
-    """
-    Read in the Communities from the raw indexing outputs and reconstruct the
-    community hierarchy information.
+    """Read in the Communities from the raw indexing outputs.
+
+    Reconstruct the community hierarchy information and add to the sub-community field.
     """
     community_df = final_communities
     node_df = final_nodes
