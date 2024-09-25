@@ -91,16 +91,13 @@ def create_covariate(item: dict[str, Any]) -> Covariate:
     """Create a covariate from the item."""
     return Covariate(
         subject_id=item.get("subject_id"),
-        subject_type=item.get("subject_type"),
         object_id=item.get("object_id"),
-        object_type=item.get("object_type"),
         type=item.get("type"),
         status=item.get("status"),
         start_date=item.get("start_date"),
         end_date=item.get("end_date"),
         description=item.get("description"),
         source_text=item.get("source_text"),
-        doc_id=item.get("doc_id"),
         record_id=item.get("record_id"),
         id=item.get("id"),
     )
