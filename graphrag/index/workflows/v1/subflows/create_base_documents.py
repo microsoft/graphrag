@@ -13,8 +13,6 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.verbs.overrides.aggregate import aggregate_df
-
 
 @verb(name="create_base_documents", treats_input_tables_as_immutable=True)
 def create_base_documents(
@@ -26,16 +24,16 @@ def create_base_documents(
     source = cast(pd.DataFrame, input.get_input())
     text_units = cast(pd.DataFrame, input.get_others()[0])
 
-    text_units = cast(
-        pd.DataFrame, text_units.explode("document_ids")[["id", "document_ids", "text"]]
-    )
-    text_units.rename(
-        columns={
-            "document_ids": "chunk_doc_id",
-            "id": "chunk_id",
-            "text": "chunk_text",
-        },
-        inplace=True,
+    text_units = (
+        text_units.explode("document_ids")
+        .loc[:, ["id", "document_ids", "text"]]
+        .rename(
+            columns={
+                "document_ids": "chunk_doc_id",
+                "id": "chunk_id",
+                "text": "chunk_text",
+            }
+        )
     )
 
     joined = text_units.merge(
@@ -43,38 +41,37 @@ def create_base_documents(
         left_on="chunk_doc_id",
         right_on="id",
         how="inner",
+        copy=False,
     )
 
-    docs_with_text_units = aggregate_df(
-        joined,
-        groupby=["id"],
-        aggregations=[
-            {
-                "column": "chunk_id",
-                "operation": "array_agg",
-                "to": "text_units",
-            }
-        ],
+    docs_with_text_units = joined.groupby("id", sort=False).agg(
+        text_units=("chunk_id", list)
     )
 
     rejoined = docs_with_text_units.merge(
         source,
         on="id",
         how="right",
-    )
+        copy=False,
+    ).reset_index(drop=True)
+
     rejoined.rename(columns={"text": "raw_content"}, inplace=True)
     rejoined["id"] = rejoined["id"].astype(str)
 
-    # attribute columns are converted to strings and then collapsed into a single json object
+    # Convert attribute columns to strings and collapse them into a JSON object
     if document_attribute_columns:
-        for column in document_attribute_columns:
-            rejoined[column] = rejoined[column].astype(str)
-        rejoined["attributes"] = rejoined[document_attribute_columns].apply(
-            lambda row: {**row},
-            axis=1,
+        # Convert all specified columns to string at once
+        rejoined[document_attribute_columns] = rejoined[
+            document_attribute_columns
+        ].astype(str)
+
+        # Collapse the document_attribute_columns into a single JSON object column
+        rejoined["attributes"] = rejoined[document_attribute_columns].to_dict(
+            orient="records"
         )
+
+        # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
-        rejoined.reset_index()
 
     return create_verb_result(
         cast(
