@@ -21,12 +21,8 @@ def build_steps(
     """
     base_text_embed = config.get("text_embed", {})
     text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
-    covariates_enabled = config.get("covariates_enabled", False)
     skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
-    is_using_vector_store = (
-        text_unit_text_embed_config.get("strategy", {}).get("vector_store", None)
-        is not None
-    )
+    covariates_enabled = config.get("covariates_enabled", False)
 
     others = [
         "workflow:create_final_entities",
@@ -37,44 +33,15 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_text_units_pre_embedding",
+            "verb": "create_final_text_units",
             "args": {
+                "skip_embedding": skip_text_unit_embedding,
+                "text_embed": text_unit_text_embed_config,
                 "covariates_enabled": covariates_enabled,
             },
             "input": {
                 "source": "workflow:create_base_text_units",
                 "others": others,
-            },
-        },
-        # Text-Embed after final aggregations
-        {
-            "id": "embedded_text_units",
-            "verb": "text_embed",
-            "enabled": not skip_text_unit_embedding,
-            "args": {
-                "column": config.get("column", "text"),
-                "to": config.get("to", "text_embedding"),
-                **text_unit_text_embed_config,
-            },
-        },
-        {
-            "verb": "select",
-            "args": {
-                # Final select to get output in the correct shape
-                "columns": [
-                    "id",
-                    "text",
-                    *(
-                        []
-                        if (skip_text_unit_embedding or is_using_vector_store)
-                        else ["text_embedding"]
-                    ),
-                    "n_tokens",
-                    "document_ids",
-                    "entity_ids",
-                    "relationship_ids",
-                    *([] if not covariates_enabled else ["covariate_ids"]),
-                ],
             },
         },
     ]
