@@ -5,7 +5,7 @@
 
 import argparse
 
-from graphrag.logging import ReporterType
+from graphrag.logging import LoggerType
 from graphrag.utils.cli import dir_exist, file_exist
 
 from .cli import index_cli
@@ -51,9 +51,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--reporter",
         help="The progress reporter to use. Default: rich",
-        default=ReporterType.RICH,
-        type=ReporterType,
-        choices=list(ReporterType),
+        default=LoggerType.RICH,
+        type=LoggerType,
+        choices=list(LoggerType),
     )
     parser.add_argument(
         "--emit",

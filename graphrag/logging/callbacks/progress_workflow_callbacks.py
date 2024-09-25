@@ -1,22 +1,22 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A workflow callback manager that emits updates to a ProgressReporter."""
+"""A workflow callback manager that emits updates to a ProgressLogger."""
 
 from typing import Any
 
 from datashaper import ExecutionNode, NoopWorkflowCallbacks, Progress, TableContainer
 
-from graphrag.logging import ProgressReporter
+from graphrag.logging import ProgressLogger
 
 
 class ProgressWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A callbackmanager that delegates to a ProgressReporter."""
+    """A callbackmanager that delegates to a ProgressLogger."""
 
-    _root_progress: ProgressReporter
-    _progress_stack: list[ProgressReporter]
+    _root_progress: ProgressLogger
+    _progress_stack: list[ProgressLogger]
 
-    def __init__(self, progress: ProgressReporter) -> None:
+    def __init__(self, progress: ProgressLogger) -> None:
         """Create a new ProgressWorkflowCallbacks."""
         self._progress = progress
         self._progress_stack = [progress]
@@ -28,7 +28,7 @@ class ProgressWorkflowCallbacks(NoopWorkflowCallbacks):
         self._progress_stack.append(self._latest.child(name))
 
     @property
-    def _latest(self) -> ProgressReporter:
+    def _latest(self) -> ProgressLogger:
         return self._progress_stack[-1]
 
     def on_workflow_start(self, name: str, instance: object) -> None:

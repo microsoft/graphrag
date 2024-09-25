@@ -18,7 +18,7 @@ from graphrag.config import (
     load_config,
     resolve_paths,
 )
-from graphrag.logging import ProgressReporter, ReporterType, load_progress_reporter
+from graphrag.logging import LoggerType, ProgressLogger, load_progress_logger
 
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -64,7 +64,7 @@ def _redact(input: dict) -> str:
     return json.dumps(redacted_dict, indent=4)
 
 
-def _logger(reporter: ProgressReporter):
+def _logger(reporter: ProgressLogger):
     def info(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
@@ -83,7 +83,7 @@ def _logger(reporter: ProgressReporter):
     return info, error, success
 
 
-def _register_signal_handlers(reporter: ProgressReporter):
+def _register_signal_handlers(reporter: ProgressLogger):
     import signal
 
     def handle_signal(signum, _):
@@ -109,7 +109,7 @@ def index_cli(
     update_index_id: str | None,
     memprofile: bool,
     nocache: bool,
-    reporter: ReporterType,
+    reporter: LoggerType,
     config_filepath: str | None,
     emit: list[TableEmitterType],
     dryrun: bool,
@@ -117,7 +117,7 @@ def index_cli(
     output_dir: str | None,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_reporter(reporter)
+    progress_reporter = load_progress_logger(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
@@ -185,7 +185,7 @@ def index_cli(
     sys.exit(1 if encountered_errors else 0)
 
 
-def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
+def _initialize_project_at(path: str, reporter: ProgressLogger) -> None:
     """Initialize the project at the given path."""
     reporter.info(f"Initializing project at {path}")
     root = Path(path)

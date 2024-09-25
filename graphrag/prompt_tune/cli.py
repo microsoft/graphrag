@@ -7,7 +7,7 @@ from pathlib import Path
 
 import graphrag.api as api
 from graphrag.config import load_config
-from graphrag.logging import PrintProgressReporter
+from graphrag.logging import PrintProgressLogger
 
 from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
 from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME
@@ -47,7 +47,7 @@ async def prompt_tune(
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
-    reporter = PrintProgressReporter("")
+    reporter = PrintProgressLogger("")
     root_path = Path(root).resolve()
     graph_config = load_config(root_path, config)
 

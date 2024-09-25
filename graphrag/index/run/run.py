@@ -51,8 +51,8 @@ from graphrag.index.workflows import (
 )
 from graphrag.logging import (
     ConsoleWorkflowCallbacks,
-    NullProgressReporter,
-    ProgressReporter,
+    NullProgressLogger,
+    ProgressLogger,
 )
 from graphrag.utils.storage import _create_storage
 
@@ -66,7 +66,7 @@ async def run_pipeline_with_config(
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -103,7 +103,7 @@ async def run_pipeline_with_config(
     config = _apply_substitutions(config, run_id)
     root_dir = config.root_dir or ""
 
-    progress_reporter = progress_reporter or NullProgressReporter()
+    progress_reporter = progress_reporter or NullProgressLogger()
     storage = storage or _create_storage(config.storage, root_dir=root_dir)
     cache = cache or _create_cache(config.cache, root_dir)
     callbacks = callbacks or _create_reporter(config.reporting, root_dir)
@@ -171,7 +171,7 @@ async def run_pipeline(
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -203,7 +203,7 @@ async def run_pipeline(
 
     context = _create_run_context(storage=storage, cache=cache, stats=None)
 
-    progress_reporter = progress_reporter or NullProgressReporter()
+    progress_reporter = progress_reporter or NullProgressLogger()
     callbacks = callbacks or ConsoleWorkflowCallbacks()
     callbacks = _create_callback_chain(callbacks, progress_reporter)
     # TODO: This default behavior is already defined at the API level. Update tests

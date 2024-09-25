@@ -22,7 +22,7 @@ from .callbacks import (
 )
 
 
-def load_pipeline_reporter(
+def load_pipeline_logger(
     config: PipelineReportingConfig | None, root_dir: str | None
 ) -> WorkflowCallbacks:
     """Create a reporter for the given pipeline config."""

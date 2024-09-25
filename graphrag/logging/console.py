@@ -5,10 +5,10 @@
 
 from typing import Any
 
-from .types import StatusReporter
+from .types import StatusLogger
 
 
-class ConsoleStatusReporter(StatusReporter):
+class ConsoleLogger(StatusLogger):
     """A reporter that writes to a console."""
 
     def error(self, message: str, details: dict[str, Any] | None = None):

@@ -14,7 +14,7 @@ from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter
+from graphrag.logging import ProgressLogger
 
 
 async def build_index(
@@ -23,7 +23,7 @@ async def build_index(
     is_resume_run: bool = False,
     is_update_run: bool = False,
     memory_profile: bool = False,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
     emit: list[TableEmitterType] = [TableEmitterType.Parquet],  # noqa: B006
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
@@ -40,7 +40,7 @@ async def build_index(
         Whether to update a previous index run.
     memory_profile : bool
         Whether to enable memory profiling.
-    progress_reporter : ProgressReporter | None default=None
+    progress_reporter : ProgressLogger | None default=None
         The progress reporter.
     emit : list[str]
         The list of emitter types to emit.

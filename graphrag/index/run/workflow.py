@@ -20,7 +20,7 @@ from graphrag.index.emit.table_emitter import TableEmitter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.storage.typing import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter, ProgressWorkflowCallbacks
+from graphrag.logging import ProgressLogger, ProgressWorkflowCallbacks
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ async def _emit_workflow_output(
 
 
 def _create_callback_chain(
-    callbacks: WorkflowCallbacks | None, progress: ProgressReporter | None
+    callbacks: WorkflowCallbacks | None, progress: ProgressLogger | None
 ) -> WorkflowCallbacks:
     """Create a callbacks manager."""
     manager = WorkflowCallbacksManager()

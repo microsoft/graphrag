@@ -3,10 +3,10 @@
 
 """Null Progress Reporter."""
 
-from .types import Progress, ProgressReporter
+from .types import Progress, ProgressLogger
 
 
-class NullProgressReporter(ProgressReporter):
+class NullProgressLogger(ProgressLogger):
     """A progress reporter that does nothing."""
 
     def __call__(self, update: Progress) -> None:
@@ -15,7 +15,7 @@ class NullProgressReporter(ProgressReporter):
     def dispose(self) -> None:
         """Dispose of the progress reporter."""
 
-    def child(self, prefix: str, transient: bool = True) -> ProgressReporter:
+    def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress bar."""
         return self
 
