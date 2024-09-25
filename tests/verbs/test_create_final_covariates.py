@@ -18,6 +18,8 @@ from .util import (
 
 from graphrag.index.verbs.covariates.extract_covariates.strategies.graph_intelligence.defaults import MOCK_LLM_RESPONSES
 
+import pandas as pd
+from pandas.testing import assert_series_equal
 
 async def test_create_final_covariates():
     input_tables = load_input_tables(["workflow:create_base_text_units"])
@@ -41,3 +43,25 @@ async def test_create_final_covariates():
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
     assert len(actual) == len(input)
+
+    # assert all of the columns that covariates copied from the input
+    assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
+    assert_series_equal(actual["text_unit_id"], input["chunk_id"], check_names=False)
+    assert_series_equal(actual["document_ids"], input["document_ids"])
+    assert_series_equal(actual["n_tokens"], input["n_tokens"])
+    
+    # make sure the human ids are incrementing and cast to strings
+    assert actual["human_readable_id"][0] == '1'
+    assert actual["human_readable_id"][1] == '2'
+    
+    # check that the mock data is parsed and inserted into the correct columns
+    assert actual["covariate_type"][0] == 'claim'
+    assert actual["subject_id"][0] == 'COMPANY A'
+    assert actual["object_id"][0] == 'GOVERNMENT AGENCY B'
+    assert actual["type"][0] == 'ANTI-COMPETITIVE PRACTICES'
+    assert actual["status"][0] == 'TRUE'
+    assert actual["start_date"][0] == '2022-01-10T00:00:00'
+    assert actual["end_date"][0] == '2022-01-10T00:00:00'
+    assert actual["description"][0] == 'Company A was found to engage in anti-competitive practices because it was fined for bid rigging in multiple public tenders published by Government Agency B according to an article published on 2022/01/10'
+    assert actual["source_text"][0] == 'According to an article published on 2022/01/10, Company A was fined for bid rigging while participating in multiple public tenders published by Government Agency B.'
+    
