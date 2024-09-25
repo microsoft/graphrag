@@ -47,7 +47,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
 
     # this flag needs to be set before creating the pipeline config, or the entire covariate workflow will be excluded
     config.claim_extraction.enabled = True
-    
+
     pipeline_config = create_pipeline_config(config)
 
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
