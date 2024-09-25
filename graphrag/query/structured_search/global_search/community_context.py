@@ -33,7 +33,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         token_encoder: tiktoken.Encoding,
         entities: list[Entity] | None = None,
         dynamic_selection: bool = False,
-        use_summary: bool = False,
+        dynamic_selection_use_summary: bool = False,
         random_state: int = 86,
         concurrent_coroutines: int = 4,
     ):
@@ -48,7 +48,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
                 llm=llm,
                 token_encoder=token_encoder,
                 keep_parent=False,
-                use_summary=use_summary,
+                use_summary=dynamic_selection_use_summary,
                 concurrent_coroutines=concurrent_coroutines,
             )
         self.random_state = random_state

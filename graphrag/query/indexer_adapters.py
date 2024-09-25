@@ -167,6 +167,7 @@ def read_indexer_communities(
     node_df = final_nodes
 
     # reconstruct the community hierarchy
+    # note that restore_community_hierarchy only return communities with sub communities
     community_hierarchy = restore_community_hierarchy(
         VerbInput(source=TableContainer(node_df))
     ).table
@@ -177,7 +178,14 @@ def read_indexer_communities(
         .rename(columns={"community": "id", "sub_community": "sub_community_ids"})
     )
     # add sub community IDs to community DataFrame
-    community_df = community_df.merge(community_hierarchy, on="id", how="inner")
+    community_df = community_df.merge(community_hierarchy, on="id", how="left")
+    community_df = community_df.drop(
+        columns=["raw_community", "relationship_ids", "text_unit_ids"]
+    )
+    # replace NaN sub community IDs with empty list
+    community_df.sub_community_ids = community_df.sub_community_ids.apply(
+        lambda x: x if isinstance(x, list) else []
+    )
 
     return read_communities(
         community_df,

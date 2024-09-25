@@ -34,6 +34,7 @@ class DynamicCommunitySelection:
         concurrent_coroutines: int = 4,
     ):
         self.reports = {report.community_id: report for report in community_reports}
+
         # mapping from community to sub communities
         self.node2children = {
             community.id: set(community.sub_community_ids) for community in communities
@@ -72,6 +73,7 @@ class DynamicCommunitySelection:
         """
         start = time()
         queue = deepcopy(self.root_communities)  # start search from level 0 communities
+        print(f"queue: {queue}")
 
         ratings = []  # store the ratings for each community
         llm_calls, prompt_tokens, output_tokens = 0, 0, 0
@@ -99,6 +101,14 @@ class DynamicCommunitySelection:
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):
                 rating = result["rating"]
+                log.debug(
+                    "dynamic community selection: community %s rating %s",
+                    community,
+                    rating,
+                )
+                print(
+                    f"dynamic community selection: community {community} rating {rating}"
+                )
                 ratings.append(rating)
                 llm_calls += result["llm_calls"]
                 prompt_tokens += result["prompt_tokens"]
@@ -128,10 +138,13 @@ class DynamicCommunitySelection:
         log.info(
             "Dynamic community selection (took: %ss)\n"
             "\trating distribution %s\n"
-            "\t%s out of %s community reports are relevant",
+            "\t%s out of %s community reports are relevant\n",
+            "\tprompt tokens: %s, output tokens: %s",
             int(end - start),
             dict(sorted(Counter(ratings).items())),
             len(relevant_communities),
             len(self.reports),
+            prompt_tokens,
+            output_tokens,
         )
         return community_reports, llm_calls, prompt_tokens, output_tokens
