@@ -11,6 +11,7 @@ import numpy as np
 import tiktoken
 
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
+from graphrag.query.llm.text_utils import num_tokens
 
 RATE_QUERY = """
 You are a helpful assistant responsible for deciding whether the provided information is useful in answering a given question, even if it is only partially relevant.
@@ -59,7 +60,7 @@ async def rate_relevancy(
         llm_kwargs: additional arguments to pass to the LLM model
         semaphore: asyncio.Semaphore to limit the number of concurrent LLM calls (default: None)
     """
-    llm_calls, prompt_tokens, ratings = 0, 0, []
+    llm_calls, prompt_tokens, output_tokens, ratings = 0, 0, 0, []
     messages = [
         {
             "role": "system",
@@ -72,14 +73,16 @@ async def rate_relevancy(
             response = await llm.agenerate(messages=messages, **llm_kwargs)
         ratings.append(int(response[0]))
         llm_calls += 1
-        prompt_tokens += len(token_encoder.encode(messages[0]["content"]))
-        prompt_tokens += len(token_encoder.encode(messages[1]["content"]))
+        prompt_tokens += num_tokens(messages[0]["content"], token_encoder)
+        prompt_tokens += num_tokens(messages[1]["content"], token_encoder)
+        output_tokens += num_tokens(response, token_encoder)
     # select the decision with the most votes
     options, counts = np.unique(ratings, return_counts=True)
-    rating = options[np.argmax(counts)]
+    rating = int(options[np.argmax(counts)])
     return {
         "rating": rating,
         "ratings": ratings,
         "llm_calls": llm_calls,
         "prompt_tokens": prompt_tokens,
+        "output_tokens": output_tokens,
     }

@@ -62,7 +62,7 @@ class LocalSearch(BaseSearch):
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
-        search_prompt = ""
+        search_prompt, response = "", ""
 
         context_text, context_records = self.context_builder.build_context(
             query=query,
@@ -94,6 +94,7 @@ class LocalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(response, self.token_encoder),
             )
 
         except Exception:
@@ -105,6 +106,7 @@ class LocalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(response, self.token_encoder),
             )
 
     async def astream_search(
@@ -146,7 +148,7 @@ class LocalSearch(BaseSearch):
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user question."""
         start_time = time.time()
-        search_prompt = ""
+        search_prompt, response = "", ""
         context_text, context_records = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
@@ -177,6 +179,7 @@ class LocalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(response, self.token_encoder),
             )
 
         except Exception:
@@ -188,4 +191,5 @@ class LocalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(response, self.token_encoder),
             )

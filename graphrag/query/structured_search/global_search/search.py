@@ -148,7 +148,7 @@ class GlobalSearch(BaseSearch):
         - Step 1: Run parallel LLM calls on communities' short summaries to generate answer for each batch
         - Step 2: Combine the answers from step 2 to generate the final answer
         """
-        llm_calls, prompt_tokens = 0, 0
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
 
         start_time = time.time()
         # Step 1: Generate answers for each batch of community short summaries
@@ -159,6 +159,7 @@ class GlobalSearch(BaseSearch):
         )
         llm_calls += self.context_builder.llm_calls
         prompt_tokens += self.context_builder.prompt_tokens
+        output_tokens += self.context_builder.output_tokens
 
         if self.callbacks:
             for callback in self.callbacks:
@@ -174,6 +175,7 @@ class GlobalSearch(BaseSearch):
                 callback.on_map_response_end(map_responses)
         llm_calls += sum(response.llm_calls for response in map_responses)
         prompt_tokens += sum(response.prompt_tokens for response in map_responses)
+        output_tokens += sum(response.output_tokens for response in map_responses)
 
         # Step 2: Combine the intermediate answers from step 2 to generate the final answer
         reduce_response = await self._reduce_response(
@@ -184,6 +186,7 @@ class GlobalSearch(BaseSearch):
 
         llm_calls += reduce_response.llm_calls
         prompt_tokens += reduce_response.prompt_tokens
+        output_tokens += reduce_response.output_tokens
 
         return GlobalSearchResult(
             response=reduce_response.response,
@@ -195,6 +198,7 @@ class GlobalSearch(BaseSearch):
             completion_time=time.time() - start_time,
             llm_calls=llm_calls,
             prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
         )
 
     def search(
@@ -214,7 +218,7 @@ class GlobalSearch(BaseSearch):
     ) -> SearchResult:
         """Generate answer for a single chunk of community reports."""
         start_time = time.time()
-        search_prompt = ""
+        search_prompt, search_response = "", ""
         try:
             search_prompt = self.map_system_prompt.format(context_data=context_data)
             search_messages = [
@@ -242,6 +246,7 @@ class GlobalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
 
         except Exception:
@@ -253,6 +258,7 @@ class GlobalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
 
     def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
@@ -294,6 +300,7 @@ class GlobalSearch(BaseSearch):
         """Combine all intermediate responses from single batches into a final answer to the user query."""
         text_data = ""
         search_prompt = ""
+        search_response = ""
         start_time = time.time()
         try:
             # collect all key points into a single list to prepare for sorting
@@ -331,6 +338,7 @@ class GlobalSearch(BaseSearch):
                     completion_time=time.time() - start_time,
                     llm_calls=0,
                     prompt_tokens=0,
+                    output_tokens=0,
                 )
 
             filtered_key_points = sorted(
@@ -384,6 +392,7 @@ class GlobalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
         except Exception:
             log.exception("Exception in reduce_response")
@@ -394,6 +403,7 @@ class GlobalSearch(BaseSearch):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
 
     async def _stream_reduce_response(

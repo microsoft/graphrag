@@ -19,7 +19,10 @@ class GlobalContextBuilder(ABC):
     """The number of LLM calls made."""
 
     prompt_tokens: int = 0
-    """The number of tokens in the prompt."""
+    """The number of prompt tokens used in LLM calls."""
+
+    output_tokens: int = 0
+    """The number of output tokens from LLM calls."""
 
     @abstractmethod
     async def build_context(
@@ -39,6 +42,9 @@ class LocalContextBuilder(ABC):
 
     prompt_tokens: int = 0
     """The number of tokens in the prompt."""
+
+    output_tokens: int = 0
+    """The number of output tokens from LLM calls."""
 
     @abstractmethod
     def build_context(

@@ -96,9 +96,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
                 community_reports,
                 llm_calls,
                 prompt_tokens,
+                output_tokens,
             ) = await self.dynamic_selection.select(query)
             self.llm_calls += llm_calls
             self.prompt_tokens += prompt_tokens
+            self.output_tokens += output_tokens
 
         community_context, community_context_data = build_community_context(
             community_reports=community_reports,

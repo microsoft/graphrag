@@ -63,7 +63,7 @@ class DynamicCommunitySelection:
             }
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
 
-    async def select(self, query: str) -> tuple[list[CommunityReport], int, int]:
+    async def select(self, query: str) -> tuple[list[CommunityReport], int, int, int]:
         """
         Select relevant communities with respect to the query.
 
@@ -74,25 +74,27 @@ class DynamicCommunitySelection:
         queue = deepcopy(self.root_communities)  # start search from level 0 communities
 
         ratings = []  # store the ratings for each community
-        llm_calls, prompt_tokens = 0, 0
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(*[
-                rate_relevancy(
-                    query=query,
-                    description=(
-                        self.reports[community].summary
-                        if self.use_summary
-                        else self.reports[community].full_content
-                    ),
-                    llm=self.llm,
-                    token_encoder=self.token_encoder,
-                    num_repeats=self.num_repeats,
-                    semaphore=self.semaphore,
-                    **self.llm_kwargs,
-                )
-                for community in queue
-            ])
+            gather_results = await asyncio.gather(
+                *[
+                    rate_relevancy(
+                        query=query,
+                        description=(
+                            self.reports[community].summary
+                            if self.use_summary
+                            else self.reports[community].full_content
+                        ),
+                        llm=self.llm,
+                        token_encoder=self.token_encoder,
+                        num_repeats=self.num_repeats,
+                        semaphore=self.semaphore,
+                        **self.llm_kwargs,
+                    )
+                    for community in queue
+                ]
+            )
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):
@@ -100,16 +102,19 @@ class DynamicCommunitySelection:
                 ratings.append(rating)
                 llm_calls += result["llm_calls"]
                 prompt_tokens += result["prompt_tokens"]
+                output_tokens += result["output_tokens"]
                 if rating > 1:
                     relevant_communities.add(community)
                     # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
                     if community in self.node2children:
-                        communities_to_rate.extend([
-                            sub_community
-                            for sub_community in self.node2children[community]
-                            if sub_community in self.reports
-                        ])
+                        communities_to_rate.extend(
+                            [
+                                sub_community
+                                for sub_community in self.node2children[community]
+                                if sub_community in self.reports
+                            ]
+                        )
                     # remove parent node if the current node is deemed relevant
                     if not self.keep_parent and community in self.node2parent:
                         relevant_communities.discard(self.node2parent[community])
@@ -129,4 +134,4 @@ class DynamicCommunitySelection:
             len(relevant_communities),
             len(self.reports),
         )
-        return community_reports, llm_calls, prompt_tokens
+        return community_reports, llm_calls, prompt_tokens, output_tokens
