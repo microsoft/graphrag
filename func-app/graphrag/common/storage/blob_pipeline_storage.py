@@ -4,6 +4,7 @@
 """Azure Blob Storage implementation of PipelineStorage."""
 
 import logging
+import os
 import re
 from collections.abc import Iterator
 from pathlib import Path
@@ -50,7 +51,7 @@ class BlobPipelineStorage(PipelineStorage):
 
             self._blob_service_client = BlobServiceClient(
                 account_url=storage_account_blob_url,
-                credential=DefaultAzureCredential(managed_identity_client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3"),
+                credential=DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
             )
         self._encoding = encoding or "utf-8"
         self._container_name = container_name
@@ -215,7 +216,7 @@ class BlobPipelineStorage(PipelineStorage):
                 self._abfs_url(key),
                 storage_options={
                     "account_name": self._storage_account_name,
-                    "credential": DefaultAzureCredential(),
+                    "credential": DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
                 },
                 orient="records",
                 lines=True,
@@ -237,7 +238,7 @@ class BlobPipelineStorage(PipelineStorage):
                 self._abfs_url(key),
                 storage_options={
                     "account_name": self._storage_account_name,
-                    "credential": DefaultAzureCredential(),
+                    "credential": DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
                 },
             )
         else:
