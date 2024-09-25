@@ -76,12 +76,12 @@ def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
     community_level: int | None,
-    dynamic_search: bool = False,
+    dynamic_selection: bool = False,
 ) -> list[CommunityReport]:
     """
     Read in the Community Reports from the raw indexing outputs.
 
-    If dynamic_search is False, then select reports with the max community level that an entity belongs to.
+    If dynamic_selection is False, then select reports with the max community level that an entity belongs to.
     """
     report_df = final_community_reports
     entity_df = final_nodes
@@ -91,7 +91,7 @@ def read_indexer_reports(
         entity_df = _filter_under_community_level(entity_df, community_level)
         report_df = _filter_under_community_level(report_df, community_level)
 
-    if not dynamic_search:
+    if not dynamic_selection:
         entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
         entity_df.loc[:, "community"] = entity_df["community"].astype(int)
         # community level roll up
