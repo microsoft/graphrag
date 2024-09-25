@@ -11,6 +11,7 @@ import time
 import warnings
 from pathlib import Path
 
+import graphrag.api as api
 from graphrag.config import (
     CacheType,
     enable_logging_with_config,
@@ -18,7 +19,6 @@ from graphrag.config import (
     resolve_paths,
 )
 
-from .api import build_index
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
@@ -161,7 +161,7 @@ def index_cli(
     _register_signal_handlers(progress_reporter)
 
     outputs = asyncio.run(
-        build_index(
+        api.build_index(
             config=config,
             run_id=run_id,
             is_resume_run=bool(resume),

@@ -108,9 +108,9 @@ requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-_sort_imports = "ruff check --select I --fix . --preview"
-_format_code = "ruff format  . --preview"
-_ruff_check = 'ruff check . --preview'
+_sort_imports = "ruff check --select I --fix ."
+_format_code = "ruff format  ."
+_ruff_check = 'ruff check .'
 _pyright = "pyright"
 _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
@@ -119,9 +119,9 @@ _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 _semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
-check_format = 'ruff format . --check --preview'
-fix = "ruff  --preview check --fix ."
-fix_unsafe = "ruff check --preview --fix --unsafe-fixes ."
+check_format = 'ruff format . --check'
+fix = "ruff check --fix ."
+fix_unsafe = "ruff check --fix --unsafe-fixes ."
 
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
@@ -164,10 +164,12 @@ target-version = "py310"
 extend-include = ["*.ipynb"]
 
 [tool.ruff.format]
+preview = true
 docstring-code-format = true
 docstring-code-line-length = 20
 
 [tool.ruff.lint]
+preview = true
 select = [
     "E4",
     "E7",
