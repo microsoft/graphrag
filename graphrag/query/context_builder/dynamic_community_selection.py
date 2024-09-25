@@ -73,30 +73,27 @@ class DynamicCommunitySelection:
         """
         start = time()
         queue = deepcopy(self.root_communities)  # start search from level 0 communities
-        print(f"queue: {queue}")
 
         ratings = []  # store the ratings for each community
         llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(
-                *[
-                    rate_relevancy(
-                        query=query,
-                        description=(
-                            self.reports[community].summary
-                            if self.use_summary
-                            else self.reports[community].full_content
-                        ),
-                        llm=self.llm,
-                        token_encoder=self.token_encoder,
-                        num_repeats=self.num_repeats,
-                        semaphore=self.semaphore,
-                        **self.llm_kwargs,
-                    )
-                    for community in queue
-                ]
-            )
+            gather_results = await asyncio.gather(*[
+                rate_relevancy(
+                    query=query,
+                    description=(
+                        self.reports[community].summary
+                        if self.use_summary
+                        else self.reports[community].full_content
+                    ),
+                    llm=self.llm,
+                    token_encoder=self.token_encoder,
+                    num_repeats=self.num_repeats,
+                    semaphore=self.semaphore,
+                    **self.llm_kwargs,
+                )
+                for community in queue
+            ])
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):
@@ -105,9 +102,6 @@ class DynamicCommunitySelection:
                     "dynamic community selection: community %s rating %s",
                     community,
                     rating,
-                )
-                print(
-                    f"dynamic community selection: community {community} rating {rating}"
                 )
                 ratings.append(rating)
                 llm_calls += result["llm_calls"]
@@ -118,13 +112,11 @@ class DynamicCommunitySelection:
                     # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
                     if community in self.node2children:
-                        communities_to_rate.extend(
-                            [
-                                sub_community
-                                for sub_community in self.node2children[community]
-                                if sub_community in self.reports
-                            ]
-                        )
+                        communities_to_rate.extend([
+                            sub_community
+                            for sub_community in self.node2children[community]
+                            if sub_community in self.reports
+                        ])
                     # remove parent node if the current node is deemed relevant
                     if not self.keep_parent and community in self.node2parent:
                         relevant_communities.discard(self.node2parent[community])
@@ -136,9 +128,9 @@ class DynamicCommunitySelection:
         end = time()
 
         log.info(
-            "Dynamic community selection (took: %ss)\n"
+            "dynamic community selection (took: %ss)\n"
             "\trating distribution %s\n"
-            "\t%s out of %s community reports are relevant\n",
+            "\t%s out of %s community reports are relevant\n"
             "\tprompt tokens: %s, output tokens: %s",
             int(end - start),
             dict(sorted(Counter(ratings).items())),
