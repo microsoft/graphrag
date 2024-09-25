@@ -7,7 +7,7 @@ import asyncio
 import logging
 from collections import Counter
 from copy import deepcopy
-
+from time import time
 import tiktoken
 
 from graphrag.model import Community, CommunityReport
@@ -46,7 +46,9 @@ class DynamicCommunitySelection:
         }
         # get all communities at level 0
         self.root_communities = [
-            community.id for community in communities if community.level == "0"
+            community.id
+            for community in communities
+            if community.level == "0" and community.id in self.community_reports
         ]
         self.llm = llm
         self.token_encoder = token_encoder
@@ -67,6 +69,7 @@ class DynamicCommunitySelection:
         Args:
             query: the query to rate against
         """
+        start = time()
         queue = deepcopy(self.root_communities)  # start search from level 0 communities
 
         ratings = []  # store the ratings for each community
@@ -77,7 +80,7 @@ class DynamicCommunitySelection:
                 *[
                     rate_relevancy(
                         query=query,
-                        description=self.community_reports[community].full_content,
+                        description=self.community_reports[community].summary,
                         llm=self.llm,
                         token_encoder=self.token_encoder,
                         num_repeats=self.num_repeats,
@@ -114,15 +117,16 @@ class DynamicCommunitySelection:
         community_reports = [
             self.community_reports[community] for community in relevant_communities
         ]
+        end = time()
 
         log.info(
-            "Dynamic community selection: rating distribution {0}".format(
-                dict(sorted(Counter(ratings).items()))
-            )
-        )
-        log.info(
-            "Dynamic community selection: {0} out of {1} community reports are relevant.".format(
-                len(relevant_communities), len(self.community_reports)
+            "Dynamic community selection (took: {0:.0f}s)\n"
+            "\trating distribution {1}\n"
+            "\t{2} out of {3} community reports are relevant".format(
+                end - start,
+                dict(sorted(Counter(ratings).items())),
+                len(relevant_communities),
+                len(self.community_reports),
             )
         )
 

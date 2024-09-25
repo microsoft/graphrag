@@ -7,7 +7,7 @@ Ideally this is just a straight read-through into the object model.
 """
 
 from typing import cast
-
+import logging
 import pandas as pd
 from datashaper import TableContainer, VerbInput
 
@@ -28,6 +28,8 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
+
+log = logging.getLogger(__name__)
 
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
@@ -73,20 +75,29 @@ def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
     community_level: int | None,
+    dynamic_search: bool = False,
 ) -> list[CommunityReport]:
-    """Read in the Community Reports from the raw indexing outputs."""
+    """
+    Read in the Community Reports from the raw indexing outputs.
+
+    If dynamic_search is False, then select reports with the max community level that an entity belongs to.
+    """
     report_df = final_community_reports
     entity_df = final_nodes
 
     if community_level is not None:
+        log.info("filter under community level {0}".format(community_level))
         entity_df = _filter_under_community_level(entity_df, community_level)
+        report_df = _filter_under_community_level(report_df, community_level)
+
+    if not dynamic_search:
         entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
         entity_df.loc[:, "community"] = entity_df["community"].astype(int)
-
+        # community level roll up
+        log.info("roll up community level")
         entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
         entity_df["community"] = entity_df["community"].astype(str)
         filtered_community_df = entity_df["community"].drop_duplicates()
-        report_df = _filter_under_community_level(report_df, community_level)
         report_df = report_df.merge(filtered_community_df, on="community", how="inner")
 
     return read_community_reports(

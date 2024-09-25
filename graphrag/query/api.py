@@ -70,7 +70,7 @@ async def global_search(
     - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
-    - dynamic_selection (bool): Enable dynamic community selection and ignore community_level.
+    - dynamic_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level to fix the community level that dynamic community selection would be operated on.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -83,7 +83,9 @@ async def global_search(
     TODO: Document any exceptions to expect.
     """
     communities = read_indexer_communities(communities, nodes)
-    reports = read_indexer_reports(community_reports, nodes, community_level)
+    reports = read_indexer_reports(
+        community_reports, nodes, community_level, dynamic_selection
+    )
     _entities = read_indexer_entities(nodes, entities, community_level)
 
     search_engine = get_global_search_engine(
@@ -123,7 +125,7 @@ async def global_search_streaming(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
-    - dynamic_selection (bool): Enable dynamic community selection and ignore community_level.
+    - dynamic_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level to fix the community level that dynamic community selection would be operated on.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -136,7 +138,9 @@ async def global_search_streaming(
     TODO: Document any exceptions to expect.
     """
     communities = read_indexer_communities(communities, nodes)
-    reports = read_indexer_reports(community_reports, nodes, community_level)
+    reports = read_indexer_reports(
+        community_reports, nodes, community_level, dynamic_selection
+    )
     _entities = read_indexer_entities(nodes, entities, community_level)
 
     search_engine = get_global_search_engine(

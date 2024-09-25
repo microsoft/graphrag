@@ -39,9 +39,6 @@ def run_global_search(
     config.storage.base_dir = data_dir or config.storage.base_dir
     resolve_paths(config)
 
-    if dynamic_selection:
-        community_level = None
-
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
         config=config,
