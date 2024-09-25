@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A reporter that writes to a blob storage."""
+"""Logging utilities and implementations."""
 
 import json
 from datetime import datetime, timezone

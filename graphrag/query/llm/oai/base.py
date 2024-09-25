@@ -8,9 +8,9 @@ from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
+from graphrag.logging import ConsoleStatusReporter, StatusReporter
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
-from graphrag.query.progress import ConsoleStatusReporter, StatusReporter
 
 
 class BaseOpenAILLM(ABC):

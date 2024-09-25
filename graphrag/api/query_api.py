@@ -25,7 +25,7 @@ import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config import GraphRagConfig
-from graphrag.index.progress.types import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 from graphrag.model.entity import Entity
 from graphrag.query.factories import get_global_search_engine, get_local_search_engine
 from graphrag.query.indexer_adapters import (

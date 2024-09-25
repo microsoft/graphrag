@@ -7,7 +7,7 @@ from pathlib import Path
 
 import graphrag.api as api
 from graphrag.config import load_config
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 
 from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
 from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME

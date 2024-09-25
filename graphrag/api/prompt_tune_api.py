@@ -16,7 +16,7 @@ from pydantic import PositiveInt, validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm import load_llm
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 from graphrag.prompt_tune.generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
