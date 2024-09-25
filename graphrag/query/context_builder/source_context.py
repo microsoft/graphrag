@@ -4,7 +4,7 @@
 """Context Build utility methods."""
 
 import random
-from typing import Any, cast
+from typing import Any, List, cast
 
 import pandas as pd
 import tiktoken
@@ -63,7 +63,7 @@ def build_text_unit_context(
 
         if current_tokens + new_tokens > max_tokens:
             break
-
+        
         current_context_text += new_context_text
         all_context_records.append(new_context)
         current_tokens += new_tokens
@@ -76,35 +76,20 @@ def build_text_unit_context(
         record_df = pd.DataFrame()
     return current_context_text, {context_name.lower(): record_df}
 
-
 def count_relationships(
-    text_unit: TextUnit, entity: Entity, relationships: dict[str, Relationship]
+    entity_relationships: List[Relationship], text_unit: TextUnit
 ) -> int:
     """Count the number of relationships of the selected entity that are associated with the text unit."""
-    matching_relationships = list[Relationship]()
+    matching_relationship_count = 0
+    
     if text_unit.relationship_ids is None:
-        entity_relationships = [
-            rel
-            for rel in relationships.values()
-            if rel.source == entity.title or rel.target == entity.title
-        ]
-        entity_relationships = [
-            rel for rel in entity_relationships if rel.text_unit_ids
-        ]
-        matching_relationships = [
-            rel
-            for rel in entity_relationships
-            if text_unit.id in rel.text_unit_ids  # type: ignore
-        ]  # type: ignore
+        for rel in entity_relationships:
+            if rel.text_unit_ids:                
+                if text_unit.id in rel.text_unit_ids:
+                    matching_relationship_count += 1
     else:
-        text_unit_relationships = [
-            relationships[rel_id]
-            for rel_id in text_unit.relationship_ids
-            if rel_id in relationships
-        ]
-        matching_relationships = [
-            rel
-            for rel in text_unit_relationships
-            if rel.source == entity.title or rel.target == entity.title
-        ]
-    return len(matching_relationships)
+        for rel_id in text_unit.relationship_ids:
+            if rel_id in entity_relationships:                
+                matching_relationship_count += 1
+    
+    return matching_relationship_count
