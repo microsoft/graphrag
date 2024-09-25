@@ -167,9 +167,9 @@ def index_cli(
                 runner.run(execute())
         else:
             logging.info("Step 6")
-            #import uvloop  # type: ignore Ignoring because on windows this will cause an error
+            import uvloop  # type: ignore Ignoring because on windows this will cause an error
 
-            #uvloop.install()
+            uvloop.install()
             asyncio.run(execute())
 
     _run_workflow_async()
