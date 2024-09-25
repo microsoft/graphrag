@@ -26,15 +26,13 @@
             "nan_allowed_columns": [
                 "type",
                 "description",
-                "subject_type",
                 "object_id",
-                "object_type",
                 "status",
                 "start_date",
                 "end_date",
                 "source_text"
             ],
-            "subworkflows": 6,
+            "subworkflows": 1,
             "max_runtime": 300
         },
         "create_summarized_entities": {
