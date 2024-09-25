@@ -1,25 +1,35 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""All the steps to transform before we embed the text units."""
+"""All the steps to transform the text units."""
 
 from typing import cast
 
 import pandas as pd
-from datashaper.engine.verbs.verb_input import VerbInput
-from datashaper.engine.verbs.verbs_mapping import verb
-from datashaper.table_store.types import Table, VerbResult, create_verb_result
-
-
-@verb(
-    name="create_final_text_units_pre_embedding", treats_input_tables_as_immutable=True
+from datashaper import (
+    Table,
+    VerbCallbacks,
+    VerbInput,
+    VerbResult,
+    create_verb_result,
+    verb,
 )
-def create_final_text_units_pre_embedding(
+
+from graphrag.index.cache import PipelineCache
+from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+
+
+@verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
+async def create_final_text_units(
     input: VerbInput,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
+    text_embed: dict,
+    skip_embedding: bool = False,
     covariates_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
-    """All the steps to transform before we embed the text units."""
+    """All the steps to transform the text units."""
     table = cast(pd.DataFrame, input.get_input())
     others = input.get_others()
 
@@ -43,7 +53,33 @@ def create_final_text_units_pre_embedding(
 
     aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
-    return create_verb_result(cast(Table, aggregated))
+    if not skip_embedding:
+        aggregated = await text_embed_df(
+            aggregated,
+            callbacks,
+            cache,
+            column="text",
+            strategy=text_embed["strategy"],
+            to="text_embedding",
+        )
+
+    is_using_vector_store = (
+        text_embed.get("strategy", {}).get("vector_store", None) is not None
+    )
+
+    final = aggregated[
+        [
+            "id",
+            "text",
+            *([] if (skip_embedding or is_using_vector_store) else ["text_embedding"]),
+            "n_tokens",
+            "document_ids",
+            "entity_ids",
+            "relationship_ids",
+            *([] if not covariates_enabled else ["covariate_ids"]),
+        ]
+    ]
+    return create_verb_result(cast(Table, final))
 
 
 def _entities(df: pd.DataFrame) -> pd.DataFrame:
