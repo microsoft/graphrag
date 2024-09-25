@@ -44,9 +44,12 @@ def load_expected(output: str) -> pd.DataFrame:
 def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     """Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
-    print(config)
+
+    # this flag needs to be set before creating the pipeline config, or the entire covariate workflow will be excluded
+    config.claim_extraction.enabled = True
+
     pipeline_config = create_pipeline_config(config)
-    print(pipeline_config.workflows)
+
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
     return cast(PipelineWorkflowConfig, result.config)
 
