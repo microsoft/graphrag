@@ -13,9 +13,7 @@ from graphrag.index.llm import load_llm, load_llm_embeddings
 from graphrag.logging import ProgressLogger
 
 
-def validate_config_names(
-    reporter: ProgressLogger, parameters: GraphRagConfig
-) -> None:
+def validate_config_names(reporter: ProgressLogger, parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     llm = load_llm(

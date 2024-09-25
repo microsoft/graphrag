@@ -13,6 +13,7 @@ from .types import (
     LoggerType,
     StatusLogger,
 )
+
 # must import callbacks after ProgressLogger to prevent circular import
 from .load_pipeline_logger import load_pipeline_logger
 from .callbacks import (
