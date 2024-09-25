@@ -15,9 +15,11 @@ from graphrag.index.config import (
     PipelineReportingConfig,
 )
 
-from .blob_workflow_callbacks import BlobWorkflowCallbacks
-from .console_workflow_callbacks import ConsoleWorkflowCallbacks
-from .file_workflow_callbacks import FileWorkflowCallbacks
+from .callbacks import (
+    BlobWorkflowCallbacks,
+    ConsoleWorkflowCallbacks,
+    FileWorkflowCallbacks,
+)
 
 
 def load_pipeline_reporter(

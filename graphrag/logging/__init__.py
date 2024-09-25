@@ -15,10 +15,12 @@ from .types import (
 )
 # must import callbacks after ProgressReporter to prevent circular import
 from .load_pipeline_reporter import load_pipeline_reporter
-from .blob_workflow_callbacks import BlobWorkflowCallbacks
-from .console_workflow_callbacks import ConsoleWorkflowCallbacks
-from .file_workflow_callbacks import FileWorkflowCallbacks
-from .progress_workflow_callbacks import ProgressWorkflowCallbacks
+from .callbacks import (
+    BlobWorkflowCallbacks,
+    ConsoleWorkflowCallbacks,
+    FileWorkflowCallbacks,
+    ProgressWorkflowCallbacks,
+)
 
 __all__ = [  # noqa: RUF022
     # Progress Reporters
