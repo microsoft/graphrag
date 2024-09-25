@@ -79,6 +79,23 @@ async def text_embed(
             <...>
     ```
     """
+    input_df = cast(pd.DataFrame, input.get_input())
+    result_df = await text_embed_df(
+        input_df, callbacks, cache, column, strategy, **kwargs
+    )
+    return TableContainer(table=result_df)
+
+
+# TODO: this ultimately just creates a new column, so our embed function could just generate a series instead of updating the dataframe
+async def text_embed_df(
+    input: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
+    column: str,
+    strategy: dict,
+    **kwargs,
+):
+    """Embed a piece of text into a vector space."""
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
@@ -113,28 +130,28 @@ async def text_embed(
 
 
 async def _text_embed_in_memory(
-    input: VerbInput,
+    input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     column: str,
     strategy: dict,
     to: str,
 ):
-    output_df = cast(pd.DataFrame, input.get_input())
+    output_df = input
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
     strategy_args = {**strategy}
-    input_table = input.get_input()
+    input_table = input
 
     texts: list[str] = input_table[column].to_numpy().tolist()
     result = await strategy_exec(texts, callbacks, cache, strategy_args)
 
     output_df[to] = result.embeddings
-    return TableContainer(table=output_df)
+    return output_df
 
 
 async def _text_embed_with_vector_store(
-    input: VerbInput,
+    input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     column: str,
@@ -144,7 +161,7 @@ async def _text_embed_with_vector_store(
     store_in_table: bool = False,
     to: str = "",
 ):
-    output_df = cast(pd.DataFrame, input.get_input())
+    output_df = input
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
     strategy_args = {**strategy}
@@ -179,10 +196,8 @@ async def _text_embed_with_vector_store(
 
     all_results = []
 
-    while insert_batch_size * i < input.get_input().shape[0]:
-        batch = input.get_input().iloc[
-            insert_batch_size * i : insert_batch_size * (i + 1)
-        ]
+    while insert_batch_size * i < input.shape[0]:
+        batch = input.iloc[insert_batch_size * i : insert_batch_size * (i + 1)]
         texts: list[str] = batch[column].to_numpy().tolist()
         titles: list[str] = batch[title_column].to_numpy().tolist()
         ids: list[str] = batch[id_column].to_numpy().tolist()
@@ -218,7 +233,7 @@ async def _text_embed_with_vector_store(
     if store_in_table:
         output_df[to] = all_results
 
-    return TableContainer(table=output_df)
+    return output_df
 
 
 def _create_vector_store(
