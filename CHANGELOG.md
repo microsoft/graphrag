@@ -1,6 +1,25 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.3.6
+
+- patch: Collapse create_final_relationships.
+- patch: Dependency update and cleanup
+
+## 0.3.5
+
+- patch: Add compound verbs with tests infra.
+- patch: Collapse create_final_communities.
+- patch: Collapse create_final_text_units.
+- patch: Covariate verb collapse.
+- patch: Fix duplicates in community context builder
+- patch: Fix prompt tune output path
+- patch: Fix seed hardcoded init
+- patch: Fix seeded random gen on clustering
+- patch: Improve logging.
+- patch: Set default values for cli parameters.
+- patch: Use static output directories.
+
 ## 0.3.4
 
 - patch: Deep copy txt units on local search to avoid race conditions

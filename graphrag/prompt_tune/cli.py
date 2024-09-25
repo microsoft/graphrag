@@ -43,7 +43,7 @@ async def prompt_tune(
     - chunk_size: The chunk token size to use.
     - language: The language to use for the prompts.
     - skip_entity_types: Skip generating entity types.
-    - output: The output folder to store the prompts.
+    - output: The output folder to store the prompts. Relative to the root directory.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
@@ -67,7 +67,7 @@ async def prompt_tune(
         k=k,
     )
 
-    output_path = Path(output).resolve()
+    output_path = (root_path / output).resolve()
     if output_path:
         reporter.info(f"Writing prompts to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)

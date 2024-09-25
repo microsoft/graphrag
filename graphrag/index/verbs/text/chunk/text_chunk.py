@@ -85,9 +85,24 @@ def chunk(
         type: sentence
     ```
     """
+    input_table = cast(pd.DataFrame, input.get_input())
+
+    output = chunk_df(input_table, column, to, callbacks, strategy)
+
+    return TableContainer(table=output)
+
+
+def chunk_df(
+    input: pd.DataFrame,
+    column: str,
+    to: str,
+    callbacks: VerbCallbacks,
+    strategy: dict[str, Any] | None = None,
+) -> pd.DataFrame:
+    """Chunk a piece of text into smaller pieces."""
+    output = input
     if strategy is None:
         strategy = {}
-    output = cast(pd.DataFrame, input.get_input())
     strategy_name = strategy.get("type", ChunkStrategyType.tokens)
     strategy_config = {**strategy}
     strategy_exec = load_strategy(strategy_name)
@@ -102,7 +117,7 @@ def chunk(
         ),
         axis=1,
     )
-    return TableContainer(table=output)
+    return output
 
 
 def run_strategy(
