@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""All the steps to transform final relationships before they are embedded."""
+"""All the steps to transform final relationships."""
 
 from typing import Any, cast
 
@@ -35,7 +35,7 @@ async def create_final_relationships(
     skip_embedding: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
-    """All the steps to transform final relationships before they are embedded."""
+    """All the steps to transform final relationships."""
     table = cast(pd.DataFrame, input.get_input())
     nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
 
