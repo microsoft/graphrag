@@ -157,8 +157,7 @@ def read_covariates(
     id_col: str = "id",
     short_id_col: str | None = "short_id",
     subject_col: str = "subject_id",
-    subject_type_col: str | None = "subject_type",
-    covariate_type_col: str | None = "covariate_type",
+    covariate_type_col: str | None = "type",
     text_unit_ids_col: str | None = "text_unit_ids",
     document_ids_col: str | None = "document_ids",
     attributes_cols: list[str] | None = None,
@@ -170,9 +169,6 @@ def read_covariates(
             id=to_str(row, id_col),
             short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
             subject_id=to_str(row, subject_col),
-            subject_type=(
-                to_str(row, subject_type_col) if subject_type_col else "entity"
-            ),
             covariate_type=(
                 to_str(row, covariate_type_col) if covariate_type_col else "claim"
             ),

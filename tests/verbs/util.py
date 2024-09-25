@@ -13,6 +13,7 @@ from graphrag.index import (
     PipelineWorkflowStep,
     create_pipeline_config,
 )
+from graphrag.index.run.utils import _create_run_context
 
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
@@ -31,6 +32,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
         # remove the workflow: prefix if it exists, because that is not part of the actual table filename
         name = input.replace("workflow:", "")
         input_tables[input] = pd.read_parquet(f"tests/verbs/data/{name}.parquet")
+
     return input_tables
 
 
@@ -42,8 +44,12 @@ def load_expected(output: str) -> pd.DataFrame:
 def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     """Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
+
+    # this flag needs to be set before creating the pipeline config, or the entire covariate workflow will be excluded
+    config.claim_extraction.enabled = True
+
     pipeline_config = create_pipeline_config(config)
-    print(pipeline_config.workflows)
+
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
     return cast(PipelineWorkflowConfig, result.config)
 
@@ -59,7 +65,9 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    await workflow.run()
+    context = _create_run_context(None, None, None)
+
+    await workflow.run(context=context)
 
     # if there's only one output, it is the default here, no name required
     return cast(pd.DataFrame, workflow.output())

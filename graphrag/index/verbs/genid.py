@@ -16,7 +16,7 @@ def genid(
     input: VerbInput,
     to: str,
     method: str = "md5_hash",
-    hash: list[str] = [],  # noqa A002
+    hash: list[str] | None = None,  # noqa A002
     **_kwargs: dict,
 ) -> TableContainer:
     """
@@ -52,15 +52,29 @@ def genid(
     """
     data = cast(pd.DataFrame, input.source.table)
 
-    if method == "md5_hash":
-        if len(hash) == 0:
-            msg = 'Must specify the "hash" columns to use md5_hash method'
+    output = genid_df(data, to, method, hash)
+
+    return TableContainer(table=output)
+
+
+def genid_df(
+    input: pd.DataFrame,
+    to: str,
+    method: str = "md5_hash",
+    hash: list[str] | None = None,  # noqa A002
+):
+    """Generate a unique id for each row in the tabular data."""
+    data = input
+    match method:
+        case "md5_hash":
+            if not hash:
+                msg = 'Must specify the "hash" columns to use md5_hash method'
+                raise ValueError(msg)
+            data[to] = data.apply(lambda row: gen_md5_hash(row, hash), axis=1)
+        case "increment":
+            data[to] = data.index + 1
+        case _:
+            msg = f"Unknown method {method}"
             raise ValueError(msg)
 
-        data[to] = data.apply(lambda row: gen_md5_hash(row, hash), axis=1)
-    elif method == "increment":
-        data[to] = data.index + 1
-    else:
-        msg = f"Unknown method {method}"
-        raise ValueError(msg)
-    return TableContainer(table=data)
+    return data

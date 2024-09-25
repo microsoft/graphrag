@@ -21,70 +21,19 @@ def build_steps(
     * `workflow:create_base_extracted_entities`
     """
     claim_extract_config = config.get("claim_extract", {})
-
-    input = {"source": "workflow:create_base_text_units"}
-
+    chunk_column = config.get("chunk_column", "chunk")
+    chunk_id_column = config.get("chunk_id_column", "chunk_id")
+    async_mode = config.get("async_mode", AsyncType.AsyncIO)
     return [
         {
-            "verb": "extract_covariates",
+            "verb": "create_final_covariates",
             "args": {
-                "column": config.get("chunk_column", "chunk"),
-                "id_column": config.get("chunk_id_column", "chunk_id"),
-                "resolved_entities_column": "resolved_entities",
+                "column": chunk_column,
+                "id_column": chunk_id_column,
                 "covariate_type": "claim",
-                "async_mode": config.get("async_mode", AsyncType.AsyncIO),
+                "async_mode": async_mode,
                 **claim_extract_config,
             },
-            "input": input,
-        },
-        {
-            "verb": "window",
-            "args": {"to": "id", "operation": "uuid", "column": "covariate_type"},
-        },
-        {
-            "verb": "genid",
-            "args": {
-                "to": "human_readable_id",
-                "method": "increment",
-            },
-        },
-        {
-            "verb": "convert",
-            "args": {
-                "column": "human_readable_id",
-                "type": "string",
-                "to": "human_readable_id",
-            },
-        },
-        {
-            "verb": "rename",
-            "args": {
-                "columns": {
-                    "chunk_id": "text_unit_id",
-                }
-            },
-        },
-        {
-            "verb": "select",
-            "args": {
-                "columns": [
-                    "id",
-                    "human_readable_id",
-                    "covariate_type",
-                    "type",
-                    "description",
-                    "subject_id",
-                    "subject_type",
-                    "object_id",
-                    "object_type",
-                    "status",
-                    "start_date",
-                    "end_date",
-                    "source_text",
-                    "text_unit_id",
-                    "document_ids",
-                    "n_tokens",
-                ]
-            },
+            "input": {"source": "workflow:create_base_text_units"},
         },
     ]
