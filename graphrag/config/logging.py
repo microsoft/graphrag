@@ -8,7 +8,6 @@ from pathlib import Path
 
 from .enums import ReportingType
 from .models.graph_rag_config import GraphRagConfig
-from .resolve_timestamp_path import resolve_timestamp_path
 
 
 def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
@@ -35,7 +34,7 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
 
 
 def enable_logging_with_config(
-    config: GraphRagConfig, timestamp_value: str, verbose: bool = False
+    config: GraphRagConfig, verbose: bool = False
 ) -> tuple[bool, str]:
     """Enable logging to a file based on the config.
 
@@ -56,10 +55,7 @@ def enable_logging_with_config(
         (True, str) if logging was enabled.
     """
     if config.reporting.type == ReportingType.file:
-        log_path = resolve_timestamp_path(
-            Path(config.root_dir) / config.reporting.base_dir / "indexing-engine.log",
-            timestamp_value,
-        )
+        log_path = Path(config.reporting.base_dir) / "indexing-engine.log"
         enable_logging(log_path, verbose)
         return (True, str(log_path))
     return (False, "")

@@ -63,8 +63,25 @@ def layout_graph(
         min_dist: 0.75 # Optional, The min distance to use for the umap algorithm, default: 0.75
     ```
     """
-    output_df = cast(pd.DataFrame, input.get_input())
+    input_df = cast(pd.DataFrame, input.get_input())
+    output_df = layout_graph_df(
+        input_df, callbacks, strategy, embeddings_column, graph_column, to, graph_to
+    )
 
+    return TableContainer(table=output_df)
+
+
+def layout_graph_df(
+    input_df: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    strategy: dict[str, Any],
+    embeddings_column: str,
+    graph_column: str,
+    to: str,
+    graph_to: str | None = None,
+):
+    """Apply a layout algorithm to a graph."""
+    output_df = input_df
     num_items = len(output_df)
     strategy_type = strategy.get("type", LayoutGraphStrategyType.umap)
     strategy_args = {**strategy}
@@ -93,7 +110,7 @@ def layout_graph(
             ),
             axis=1,
         )
-    return TableContainer(table=output_df)
+    return output_df
 
 
 def _run_layout(

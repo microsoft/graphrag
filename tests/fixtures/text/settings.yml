@@ -17,3 +17,16 @@ community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000
   max_input_length: 8000
+
+
+storage:
+  type: file # or blob
+  base_dir: "output/${timestamp}/artifacts"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+reporting:
+  type: file # or console, blob
+  base_dir: "output/${timestamp}/reports"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>

@@ -12,6 +12,7 @@ import pandas as pd
 from datashaper import (
     FieldAggregateOperation,
     Progress,
+    Table,
     TableContainer,
     VerbCallbacks,
     VerbInput,
@@ -36,14 +37,27 @@ def aggregate(
     **_kwargs: dict,
 ) -> TableContainer:
     """Aggregate method definition."""
+    input_table = input.get_input()
+    callbacks.progress(Progress(percent=0))
+
+    output = aggregate_df(input_table, aggregations, groupby)
+
+    callbacks.progress(Progress(percent=1))
+
+    return TableContainer(table=output)
+
+
+def aggregate_df(
+    input_table: Table,
+    aggregations: list[dict[str, Any]],
+    groupby: list[str] | None = None,
+) -> pd.DataFrame:
+    """Aggregate method definition."""
     aggregations_to_apply = _load_aggregations(aggregations)
     df_aggregations = {
         agg.column: _get_pandas_agg_operation(agg)
         for agg in aggregations_to_apply.values()
     }
-    input_table = input.get_input()
-    callbacks.progress(Progress(percent=0))
-
     if groupby is None:
         output_grouped = input_table.groupby(lambda _x: True)
     else:
@@ -54,10 +68,7 @@ def aggregate(
         inplace=True,
     )
     output.columns = [agg.to for agg in aggregations_to_apply.values()]
-
-    callbacks.progress(Progress(percent=1))
-
-    return TableContainer(table=output.reset_index())
+    return output.reset_index()
 
 
 @dataclass

@@ -132,7 +132,7 @@ async def generate_indexing_prompts(
         entity_types=entity_types,
         docs=doc_list,
         language=language,
-        json_mode=False,  # config.llm.model_supports_json should be used, but this prompts are used in non-json by the index engine
+        json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
     )
 
     reporter.info("Generating entity extraction prompt...")
@@ -141,7 +141,7 @@ async def generate_indexing_prompts(
         docs=doc_list,
         examples=examples,
         language=language,
-        json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json by the index engine
+        json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
         encoding_model=config.encoding_model,
         max_token_count=max_tokens,
         min_examples_required=min_examples_required,
