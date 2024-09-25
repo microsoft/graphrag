@@ -115,14 +115,12 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(
-            *[
-                self._map_response_single_batch(
-                    context_data=data, query=query, **self.map_llm_params
-                )
-                for data in context_chunks
-            ]
-        )
+        map_responses = await asyncio.gather(*[
+            self._map_response_single_batch(
+                context_data=data, query=query, **self.map_llm_params
+            )
+            for data in context_chunks
+        ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
@@ -165,14 +163,12 @@ class GlobalSearch(BaseSearch):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_start(context_chunks)  # type: ignore
-        map_responses = await asyncio.gather(
-            *[
-                self._map_response_single_batch(
-                    context_data=data, query=query, **self.map_llm_params
-                )
-                for data in context_chunks
-            ]
-        )
+        map_responses = await asyncio.gather(*[
+            self._map_response_single_batch(
+                context_data=data, query=query, **self.map_llm_params
+            )
+            for data in context_chunks
+        ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
@@ -310,17 +306,17 @@ class GlobalSearch(BaseSearch):
                         continue
                     if "answer" not in element or "score" not in element:
                         continue
-                    key_points.append(
-                        {
-                            "analyst": index,
-                            "answer": element["answer"],
-                            "score": element["score"],
-                        }
-                    )
+                    key_points.append({
+                        "analyst": index,
+                        "answer": element["answer"],
+                        "score": element["score"],
+                    })
 
             # filter response with score = 0 and rank responses by descending order of score
             filtered_key_points = [
-                point for point in key_points if point["score"] > 0  # type: ignore
+                point
+                for point in key_points
+                if point["score"] > 0  # type: ignore
             ]
 
             if len(filtered_key_points) == 0 and not self.allow_general_knowledge:
@@ -416,17 +412,17 @@ class GlobalSearch(BaseSearch):
                     continue
                 if "answer" not in element or "score" not in element:
                     continue
-                key_points.append(
-                    {
-                        "analyst": index,
-                        "answer": element["answer"],
-                        "score": element["score"],
-                    }
-                )
+                key_points.append({
+                    "analyst": index,
+                    "answer": element["answer"],
+                    "score": element["score"],
+                })
 
         # filter response with score = 0 and rank responses by descending order of score
         filtered_key_points = [
-            point for point in key_points if point["score"] > 0  # type: ignore
+            point
+            for point in key_points
+            if point["score"] > 0  # type: ignore
         ]
 
         if len(filtered_key_points) == 0 and not self.allow_general_knowledge:

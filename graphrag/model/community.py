@@ -25,6 +25,9 @@ class Community(Named):
     covariate_ids: dict[str, list[str]] | None = None
     """Dictionary of different types of covariates related to the community (optional), e.g. claims"""
 
+    sub_community_ids: list[str] | None = None
+    """List of community IDs that are the children nodes of this community (optional)"""
+
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the community (optional). To be included in the search prompt."""
 
@@ -39,6 +42,7 @@ class Community(Named):
         entities_key: str = "entity_ids",
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
+        sub_communities_key: str = "sub_community_ids",
         attributes_key: str = "attributes",
     ) -> "Community":
         """Create a new community from the dict data."""
@@ -50,5 +54,6 @@ class Community(Named):
             entity_ids=d.get(entities_key),
             relationship_ids=d.get(relationships_key),
             covariate_ids=d.get(covariates_key),
+            sub_community_ids=d.get(sub_communities_key),
             attributes=d.get(attributes_key),
         )

@@ -13,7 +13,6 @@ from graphrag.model import (
     Entity,
     Relationship,
     TextUnit,
-    Node,
 )
 from graphrag.query.input.loaders.utils import (
     to_list,
@@ -198,6 +197,7 @@ def read_communities(
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
     covariates_col: str | None = "covariate_ids",
+    sub_communities_col: str = "sub_community_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Community]:
     """Read communities from a dataframe."""
@@ -213,6 +213,7 @@ def read_communities(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
+            sub_community_ids=to_optional_list(row, sub_communities_col, item_type=str),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
@@ -235,7 +236,6 @@ def read_community_reports(
     summary_embedding_col: str | None = "summary_embedding",
     content_embedding_col: str | None = "full_content_embedding",
     attributes_cols: list[str] | None = None,
-    level_col: str = "level",
 ) -> list[CommunityReport]:
     """Read community reports from a dataframe."""
     reports = []
@@ -259,7 +259,6 @@ def read_community_reports(
                 if attributes_cols
                 else None
             ),
-            level=to_str(row, level_col),
         )
         reports.append(report)
     return reports
@@ -341,25 +340,3 @@ def read_documents(
         )
         docs.append(doc)
     return docs
-
-
-def read_nodes(
-    df: pd.DataFrame,
-    id_col: str = "id",
-    short_id_col: str = "short_id",
-    title_col: str = "title",
-    community_col: str = "community",
-    level_col: str = "level",
-    type_col: str = "type",
-):
-    nodes = []
-    for idx, row in df.iterrows():
-        node = Node(
-            id=to_str(row, id_col),
-            title=to_str(row, title_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
-            community_id=to_str(row, community_col),
-            level=to_str(row, level_col),
-            type=to_str(row, type_col),
-        )
-        nodes.append(node)

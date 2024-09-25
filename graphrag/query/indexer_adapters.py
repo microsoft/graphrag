@@ -3,28 +3,30 @@
 """Indexing-Engine to Query Read Adapters.
 
 The parts of these functions that do type adaptation, renaming, collating, etc. should eventually go away.
-Ideally this is just a straight read-thorugh into the object model.
+Ideally this is just a straight read-through into the object model.
 """
 
 from typing import cast
 
 import pandas as pd
+from datashaper import TableContainer, VerbInput
 
+from graphrag.index.verbs.graph.report import restore_community_hierarchy
 from graphrag.model import (
+    Community,
     CommunityReport,
     Covariate,
     Entity,
     Relationship,
     TextUnit,
-    Node,
 )
 from graphrag.query.input.loaders.dfs import (
+    read_communities,
     read_community_reports,
     read_covariates,
     read_entities,
     read_relationships,
     read_text_units,
-    read_nodes,
 )
 
 
@@ -70,13 +72,13 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
 def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
     entity_df = final_nodes
 
-    if community_level >= 0:
+    if community_level is not None:
         entity_df = _filter_under_community_level(entity_df, community_level)
         entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
         entity_df.loc[:, "community"] = entity_df["community"].astype(int)
@@ -99,13 +101,13 @@ def read_indexer_reports(
 def read_indexer_entities(
     final_nodes: pd.DataFrame,
     final_entities: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
 ) -> list[Entity]:
     """Read in the Entities from the raw indexing outputs."""
     entity_df = final_nodes
     entity_embedding_df = final_entities
 
-    if community_level >= 0:
+    if community_level is not None:
         entity_df = _filter_under_community_level(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
         columns={"title": "name", "degree": "rank"}
@@ -142,16 +144,40 @@ def read_indexer_entities(
     )
 
 
-def read_indexer_nodes(final_nodes: pd.DataFrame) -> list[Node]:
-    """Read in the Nodes from the raw indexing outputs."""
-    return read_nodes(
-        df=final_nodes,
+def read_indexer_communities(
+    final_communities: pd.DataFrame, final_nodes: pd.DataFrame
+) -> list[Community]:
+    """
+    Read in the Communities from the raw indexing outputs and reconstruct the
+    community hierarchy information.
+    """
+    community_df = final_communities
+    node_df = final_nodes
+
+    # reconstruct the community hierarchy
+    community_hierarchy = restore_community_hierarchy(
+        VerbInput(source=TableContainer(node_df))
+    ).table
+    community_hierarchy = (
+        community_hierarchy.groupby(["community"])
+        .agg({"sub_community": list})
+        .reset_index()
+        .rename(columns={"community": "id", "sub_community": "sub_community_ids"})
+    )
+    # add sub community IDs to community DataFrame
+    community_df = community_df.merge(community_hierarchy, on="id", how="inner")
+
+    return read_communities(
+        community_df,
         id_col="id",
+        short_id_col="id",
         title_col="title",
-        community_col="community",
         level_col="level",
-        short_id_col="human_readable_id",
-        type_col="type",
+        entities_col=None,
+        relationships_col=None,
+        covariates_col=None,
+        sub_communities_col="sub_community_ids",
+        attributes_cols=None,
     )
 
 

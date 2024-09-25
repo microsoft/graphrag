@@ -5,14 +5,12 @@
 
 import asyncio
 import logging
-
-import pandas as pd
-import tiktoken
-from datashaper import TableContainer, VerbInput
 from collections import Counter
-from graphrag.index.graph.extractors.community_reports import schemas
-from graphrag.index.verbs.graph.report import restore_community_hierarchy
-from graphrag.model import CommunityReport
+from copy import deepcopy
+
+import tiktoken
+
+from graphrag.model import Community, CommunityReport
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 
@@ -25,7 +23,7 @@ class DynamicCommunitySelection:
     def __init__(
         self,
         community_reports: list[CommunityReport],
-        nodes: pd.DataFrame,
+        communities: list[Community],
         llm: ChatOpenAI,
         token_encoder: tiktoken.Encoding,
         keep_parent: bool = False,
@@ -36,9 +34,20 @@ class DynamicCommunitySelection:
         self.community_reports = {
             report.community_id: report for report in community_reports
         }
-        self.community_hierarchy = restore_community_hierarchy(
-            VerbInput(source=TableContainer(nodes))
-        ).table
+        # mapping from community to sub communities
+        self.node2children = {
+            community.id: set(community.sub_community_ids) for community in communities
+        }
+        # mapping from community to parent community
+        self.node2parent = {
+            sub_community: community
+            for community, sub_communities in self.node2children.items()
+            for sub_community in sub_communities
+        }
+        # get all communities at level 0
+        self.root_communities = [
+            community.id for community in communities if community.level == "0"
+        ]
         self.llm = llm
         self.token_encoder = token_encoder
         self.keep_parent = keep_parent
@@ -58,12 +67,7 @@ class DynamicCommunitySelection:
         Args:
             query: the query to rate against
         """
-        # get all communities at level 0
-        queue = [
-            report.community_id
-            for report in self.community_reports.values()
-            if report.level == "0"
-        ]
+        queue = deepcopy(self.root_communities)  # start search from level 0 communities
 
         ratings = []  # store the ratings for each community
         llm_calls, prompt_tokens = 0, 0
@@ -92,27 +96,19 @@ class DynamicCommunitySelection:
                 prompt_tokens += result["prompt_tokens"]
                 if rating > 1:
                     relevant_communities.add(community)
-                    # find child nodes of the current node and append them to the queue
-                    sub_communities = self.community_hierarchy.loc[
-                        self.community_hierarchy.community == community
-                    ][schemas.SUB_COMMUNITY]
+                    # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
-                    communities_to_rate.extend(
-                        [
-                            sub_community
-                            for sub_community in sub_communities
-                            if sub_community in self.community_reports
-                        ]
-                    )
-                    # remove parent node since the current node is deemed relevant
-                    if not self.keep_parent:
-                        parent_community = self.community_hierarchy.loc[
-                            self.community_hierarchy[schemas.SUB_COMMUNITY] == community
-                        ]
-                        if len(parent_community):
-                            relevant_communities.discard(
-                                parent_community.iloc[0].community
-                            )
+                    if community in self.node2children:
+                        communities_to_rate.extend(
+                            [
+                                sub_community
+                                for sub_community in self.node2children[community]
+                                if sub_community in self.community_reports
+                            ]
+                        )
+                    # remove parent node if the current node is deemed relevant
+                    if not self.keep_parent and community in self.node2parent:
+                        relevant_communities.discard(self.node2parent[community])
             queue = communities_to_rate
 
         community_reports = [
@@ -120,10 +116,14 @@ class DynamicCommunitySelection:
         ]
 
         log.info(
-            f"Dynamic community selection rating distribution: {dict(sorted(Counter(ratings).items()))}"
+            "Dynamic community selection: rating distribution {0}".format(
+                dict(sorted(Counter(ratings).items()))
+            )
         )
         log.info(
-            f"Dynamic community selection: {len(relevant_communities)} out of {len(self.community_reports)} community reports are relevant."
+            "Dynamic community selection: {0} out of {1} community reports are relevant.".format(
+                len(relevant_communities), len(self.community_reports)
+            )
         )
 
         return community_reports, llm_calls, prompt_tokens

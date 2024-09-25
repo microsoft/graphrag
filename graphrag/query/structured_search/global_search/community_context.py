@@ -8,7 +8,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model import Community, CommunityReport, Entity
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -28,7 +28,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
     def __init__(
         self,
         community_reports: list[CommunityReport],
-        nodes: pd.DataFrame,
+        communities: list[Community],
         llm: ChatOpenAI,
         token_encoder: tiktoken.Encoding,
         entities: list[Entity] | None = None,
@@ -43,7 +43,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
         if dynamic_selection:
             self.dynamic_selection = DynamicCommunitySelection(
                 community_reports=community_reports,
-                nodes=nodes,
+                communities=communities,
                 llm=llm,
                 token_encoder=token_encoder,
                 keep_parent=False,

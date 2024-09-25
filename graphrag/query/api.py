@@ -33,12 +33,12 @@ from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
 
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
+    read_indexer_communities,
     read_indexer_covariates,
     read_indexer_entities,
     read_indexer_relationships,
     read_indexer_reports,
     read_indexer_text_units,
-    read_indexer_nodes,
 )
 from .input.loaders.dfs import store_entity_semantic_embeddings
 
@@ -50,8 +50,9 @@ async def global_search(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
     dynamic_selection: bool,
     response_type: str,
     query: str,
@@ -66,6 +67,7 @@ async def global_search(
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
     - dynamic_selection (bool): Enable dynamic community selection and ignore community_level.
@@ -80,7 +82,7 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    # nodes = read_indexer_nodes(nodes)
+    communities = read_indexer_communities(communities, nodes)
     reports = read_indexer_reports(community_reports, nodes, community_level)
     _entities = read_indexer_entities(nodes, entities, community_level)
 
@@ -88,7 +90,7 @@ async def global_search(
         config,
         reports=reports,
         entities=_entities,
-        nodes=nodes,
+        communities=communities,
         response_type=response_type,
         dynamic_selection=dynamic_selection,
     )
@@ -103,8 +105,9 @@ async def global_search_streaming(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
     dynamic_selection: bool,
     response_type: str,
     query: str,
@@ -132,13 +135,15 @@ async def global_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
+    communities = read_indexer_communities(communities, nodes)
     reports = read_indexer_reports(community_reports, nodes, community_level)
     _entities = read_indexer_entities(nodes, entities, community_level)
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,
         entities=_entities,
-        nodes=nodes,
+        communities=communities,
         response_type=response_type,
         dynamic_selection=dynamic_selection,
     )

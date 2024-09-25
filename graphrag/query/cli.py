@@ -40,7 +40,7 @@ def run_global_search(
     resolve_paths(config)
 
     if dynamic_selection:
-        community_level = -1
+        community_level = None
 
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
@@ -48,12 +48,14 @@ def run_global_search(
         parquet_list=[
             "create_final_nodes.parquet",
             "create_final_entities.parquet",
+            "create_final_communities.parquet",
             "create_final_community_reports.parquet",
         ],
         optional_list=[],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -92,6 +94,7 @@ def run_global_search(
             config=config,
             nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             community_level=community_level,
             dynamic_selection=dynamic_selection,

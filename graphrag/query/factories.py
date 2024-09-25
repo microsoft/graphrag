@@ -3,7 +3,6 @@
 
 """Query Factory methods to support CLI."""
 
-import pandas as pd
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
@@ -12,6 +11,7 @@ from graphrag.config import (
     LLMType,
 )
 from graphrag.model import (
+    Community,
     CommunityReport,
     Covariate,
     Entity,
@@ -161,7 +161,7 @@ def get_global_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
     entities: list[Entity],
-    nodes: pd.DataFrame,
+    communities: list[Community],
     response_type: str,
     dynamic_selection: bool,
 ) -> BaseSearch:
@@ -174,7 +174,7 @@ def get_global_search_engine(
         llm=llm,
         context_builder=GlobalCommunityContext(
             community_reports=reports,
-            nodes=nodes,
+            communities=communities,
             llm=llm,
             token_encoder=token_encoder,
             entities=entities,
