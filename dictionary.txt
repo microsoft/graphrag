@@ -1,151 +1,169 @@
-# Azure
-# Broken Upstream
-# Charting
-# English
-# Galaxy-Brain Terms
-# Libraries
-# Library Methods
-# LLM Terms
-# Microsoft
-# Misc
-# NLTK Terms
-# Prompt Inputs
-# Pythonisms
-# Resilience Team Terms
 # Team
-# TODO FIX IN DATASHAPER
-# Verbs
-abfs
-Abila
-ABILA
-aembed
-agenerate
-aiofiles
-Alhamia
-ALHAMIA
 Alonso
-AOAI
-Arrary
-arun
-Arxiv
-Asadi
+
+# Pythonisms
+PYTHONPATH
+pycache
+nopython
+virtualenv
+Pythonisms
+pyproject
+ipynb
+pymodule
+virtualenv
+virtualenvs
+signum
+ospath
+msecs
 asdict
-asearch
-astype
+isna
+getcwd
+fillna
+noqa
+dtypes
+
+# Azure
+abfs
+Hnsw
+odata
+
+# NLTK Terms
+chunker
+wordnet
+maxent
+punkt
+
+# Libraries
+Langchain
+networkx
+graspologic
+graphml
+dataframe
+dataframes
+nltk
+datashaper
+numba
+graphintelligence
+dotenv
+tiktoken
+pydantic
+faiss
+pyarrow
+pyaml
+Chakra
+poethepoet
+pyodbc
+lancedb
+httpx
+pymongo
+uvloop
+aiofiles
 asyncio
+numpy
+pypi
+nbformat
+semversioner
+
+# Library Methods
+iterrows
+rprint
+ndarray
+nprobe
+astype
+monkeypatches
+nlist
+ntotal
+quantizer
+arun
+tiktokens
+dtype
+linewidths
+asearch
+iloc
+itertuples
+isin
+nocache
+nbconvert
+
+# Verbs
+binarize
+prechunked
+openai
+genid
+umap
+concat
+unhot
+groupby
+retryer
+agenerate
+aembed
+dedupe
+dropna
+dtypes
+notna
+
+# LLM Terms
+AOAI
+embedder
+llm
+llms
+
+# Galaxy-Brain Terms
+Unipartite
+idempotently
+covariate
+covariates
+logit
+confusors
+
+# Charting
+plottable
+scatterplot
+
+# Resilience Team Terms
+megapipeline
+columnwise
+docstore
+datasource
+devcontainers
+codebases
+
+# Microsoft
+MSRC
+
+# Broken Upstream
+# TODO FIX IN DATASHAPER
+Arrary
+
+# Prompt Inputs
+ABILA
+Abila
+ALHAMIA
+Alhamia
+Asadi
 Aurelians
 Bataglani
 BATAGLANI
-binarize
 Bratinas
-Chakra
-chunker
-codebases
-columnwise
-concat
-confusors
-covariate
-covariates
-dataframe
-dataframes
-datashaper
-datasource
-dedupe
-devcontainers
-docstore
-dotenv
-dropna
-dtype
-dtypes
 dulce
 Durke
-embedder
-faiss
-fillna
 Firuzabad
-FIRUZABAD
 Firuzabad's
-genid
-getcwd
-graphintelligence
-graphml
-graspologic
-groupby
-Hnsw
-httpx
-idempotently
-iloc
-ipynb
-isin
-isna
-iterrows
-itertuples
+FIRUZABAD
 Krohaara
 KROHAARA
-lancedb
-Langchain
-linewidths
-llm
-llms
-logit
-maxent
-megapipeline
-monkeypatches
-msecs
-MSRC
-nbconvert
-nbformat
-ndarray
-networkx
-nlist
-nltk
-nocache
-nopython
-noqa
-nprobe
-ntotal
-numba
-numpy
-odata
-openai
-ospath
-pgvector
-plottable
-poethepoet
 POKRALLY
-prechunked
-punkt
-pyaml
-pyarrow
-pycache
-pydantic
-pymodule
-pymongo
-pyodbc
-pypi
-pyproject
-Pythonisms
-PYTHONPATH
-quantizer
-retryer
-rprint
-scatterplot
-semversioner
-signum
-skippable
 Tazbah
-tiktoken
-tiktokens
-Tiruzia
 TIRUZIA
+Tiruzia
 Tiruzia's
-umap
-unhot
-Unipartite
-upvote
-uvloop
 Verdantis
 Verdantis's
-virtualenv
-virtualenvs
-wordnet
+
+
+# English
+skippable
+upvote
+
+# Misc
+Arxiv
