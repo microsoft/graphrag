@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Merge text_embed into create-final-relationships subflow."
+}
