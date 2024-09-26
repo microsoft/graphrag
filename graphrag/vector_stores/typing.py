@@ -8,13 +8,14 @@ from typing import ClassVar
 
 from .azure_ai_search import AzureAISearch
 from .lancedb import LanceDBVectorStore
-
+from .pgvector import PgVectorStore
 
 class VectorStoreType(str, Enum):
     """The supported vector store types."""
 
     LanceDB = "lancedb"
     AzureAISearch = "azure_ai_search"
+    PgVector = "pgvector"
 
 
 class VectorStoreFactory:
@@ -30,13 +31,15 @@ class VectorStoreFactory:
     @classmethod
     def get_vector_store(
         cls, vector_store_type: VectorStoreType | str, kwargs: dict
-    ) -> LanceDBVectorStore | AzureAISearch:
+    ) -> LanceDBVectorStore | AzureAISearch | PgVectorStore:
         """Get the vector store type from a string."""
         match vector_store_type:
             case VectorStoreType.LanceDB:
                 return LanceDBVectorStore(**kwargs)
             case VectorStoreType.AzureAISearch:
                 return AzureAISearch(**kwargs)
+            case VectorStoreType.PgVector:
+                return PgVectorStore(**kwargs)
             case _:
                 if vector_store_type in cls.vector_store_types:
                     return cls.vector_store_types[vector_store_type](**kwargs)

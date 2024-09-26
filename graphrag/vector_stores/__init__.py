@@ -4,6 +4,7 @@
 """A package containing vector-storage implementations."""
 
 from .azure_ai_search import AzureAISearch
+from .pgvector import PgVectorStore
 from .base import BaseVectorStore, VectorStoreDocument, VectorStoreSearchResult
 from .lancedb import LanceDBVectorStore
 from .typing import VectorStoreFactory, VectorStoreType
@@ -12,6 +13,7 @@ __all__ = [
     "AzureAISearch",
     "BaseVectorStore",
     "LanceDBVectorStore",
+    "PgVectorStore",
     "VectorStoreDocument",
     "VectorStoreFactory",
     "VectorStoreSearchResult",
