@@ -49,16 +49,37 @@ async def extract_covariates(
     entity_types: list[str] | None = None,
     **kwargs,
 ) -> TableContainer:
-    """
-    Extract claims from a piece of text.
+    """Extract claims from a piece of text."""
+    source = cast(pd.DataFrame, input.get_input())
+    output = await extract_covariates_df(
+        source,
+        cache,
+        callbacks,
+        column,
+        covariate_type,
+        strategy,
+        async_mode,
+        entity_types,
+        **kwargs,
+    )
+    return TableContainer(table=output)
 
-    ## Usage
-    TODO
-    """
+
+async def extract_covariates_df(
+    input: pd.DataFrame,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    column: str,
+    covariate_type: str,
+    strategy: dict[str, Any] | None,
+    async_mode: AsyncType = AsyncType.AsyncIO,
+    entity_types: list[str] | None = None,
+    **kwargs,
+):
+    """Extract claims from a piece of text."""
     log.debug("extract_covariates strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
-    output = cast(pd.DataFrame, input.get_input())
 
     resolved_entities_map = {}
 
@@ -79,14 +100,13 @@ async def extract_covariates(
         ]
 
     results = await derive_from_rows(
-        output,
+        input,
         run_strategy,
         callbacks,
         scheduling_type=async_mode,
         num_threads=kwargs.get("num_threads", 4),
     )
-    output = pd.DataFrame([item for row in results for item in row or []])
-    return TableContainer(table=output)
+    return pd.DataFrame([item for row in results for item in row or []])
 
 
 def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractStrategy:
@@ -103,8 +123,4 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
 
 def create_row_from_claim_data(row, covariate_data: Covariate, covariate_type: str):
     """Create a row from the claim data and the input row."""
-    item = {**row, **asdict(covariate_data), "covariate_type": covariate_type}
-    # TODO: doc_id from extraction isn't necessary
-    # since chunking happens before this
-    del item["doc_id"]
-    return item
+    return {**row, **asdict(covariate_data), "covariate_type": covariate_type}

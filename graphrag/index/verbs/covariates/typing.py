@@ -18,9 +18,7 @@ class Covariate:
 
     covariate_type: str | None = None
     subject_id: str | None = None
-    subject_type: str | None = None
     object_id: str | None = None
-    object_type: str | None = None
     type: str | None = None
     status: str | None = None
     start_date: str | None = None
