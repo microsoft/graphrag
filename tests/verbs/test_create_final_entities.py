@@ -1,8 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pandas as pd
-
 from graphrag.index.workflows.v1.create_final_entities import (
     build_steps,
     workflow_name,
@@ -38,12 +36,6 @@ async def test_create_final_entities():
         },
     )
 
-    pd.set_option("display.max_columns", None)
-    print("Actual")
-    print(actual.head())
-    print("Expected")
-    print(expected.head())
-    print("*************")
     # ignore the description_embedding column, which is included in the expected output due to default config
     compare_outputs(
         actual,

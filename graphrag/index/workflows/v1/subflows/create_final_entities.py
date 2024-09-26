@@ -81,6 +81,7 @@ async def create_final_entities(
         )
 
     if not skip_description_embedding:
+        # description embedding is a concat of the name + description, so we'll create a temporary column
         embedded["name_description"] = embedded["name"] + ":" + embedded["description"]
         embedded = await text_embed_df(
             embedded,
