@@ -34,19 +34,23 @@ class DynamicCommunitySelection:
         concurrent_coroutines: int = 4,
     ):
         self.reports = {report.community_id: report for report in community_reports}
-
         # mapping from community to sub communities
         self.node2children = {
-            community.id: set(community.sub_community_ids) for community in communities
+            community.id: (
+                []
+                if community.sub_community_ids is None
+                else community.sub_community_ids
+            )
+            for community in communities
         }
         # mapping from community to parent community
-        self.node2parent = {
+        self.node2parent: dict[str, str] = {
             sub_community: community
             for community, sub_communities in self.node2children.items()
             for sub_community in sub_communities
         }
         # get all communities at level 0
-        self.root_communities = [
+        self.root_communities: list[str] = [
             community.id
             for community in communities
             if community.level == "0" and community.id in self.reports
@@ -64,7 +68,7 @@ class DynamicCommunitySelection:
             }
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
 
-    async def select(self, query: str) -> tuple[list[CommunityReport], int, int, int]:
+    async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, int]]:
         """
         Select relevant communities with respect to the query.
 
@@ -75,7 +79,7 @@ class DynamicCommunitySelection:
         queue = deepcopy(self.root_communities)  # start search from level 0 communities
 
         ratings = []  # store the ratings for each community
-        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
+        llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
         relevant_communities = set()
         while queue:
             gather_results = await asyncio.gather(*[
@@ -104,9 +108,9 @@ class DynamicCommunitySelection:
                     rating,
                 )
                 ratings.append(rating)
-                llm_calls += result["llm_calls"]
-                prompt_tokens += result["prompt_tokens"]
-                output_tokens += result["output_tokens"]
+                llm_info["llm_calls"] += result["llm_calls"]
+                llm_info["prompt_tokens"] += result["prompt_tokens"]
+                llm_info["output_tokens"] += result["output_tokens"]
                 if rating > 1:
                     relevant_communities.add(community)
                     # find children nodes of the current node and append them to the queue
@@ -136,7 +140,7 @@ class DynamicCommunitySelection:
             dict(sorted(Counter(ratings).items())),
             len(relevant_communities),
             len(self.reports),
-            prompt_tokens,
-            output_tokens,
+            llm_info["prompt_tokens"],
+            llm_info["output_tokens"],
         )
-        return community_reports, llm_calls, prompt_tokens, output_tokens
+        return community_reports, llm_info

@@ -107,7 +107,7 @@ class GlobalSearch(BaseSearch):
         conversation_history: ConversationHistory | None = None,
     ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, context_records = await self.context_builder.build_context(
+        context_chunks, context_records, _ = await self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
@@ -152,14 +152,18 @@ class GlobalSearch(BaseSearch):
 
         start_time = time.time()
         # Step 1: Generate answers for each batch of community short summaries
-        context_chunks, context_records = await self.context_builder.build_context(
+        (
+            context_chunks,
+            context_records,
+            _llm_info,
+        ) = await self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        llm_calls += self.context_builder.llm_calls
-        prompt_tokens += self.context_builder.prompt_tokens
-        output_tokens += self.context_builder.output_tokens
+        llm_calls += _llm_info["llm_calls"]
+        prompt_tokens += _llm_info["prompt_tokens"]
+        output_tokens += _llm_info["output_tokens"]
 
         if self.callbacks:
             for callback in self.callbacks:

@@ -71,10 +71,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
         **kwargs: Any,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> tuple[str | list[str], dict[str, pd.DataFrame], dict[str, int]]:
         """Prepare batches of community report data table as context data for global search."""
         conversation_history_context = ""
         final_context_data = {}
+        llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
         if conversation_history:
             # build conversation history context
             (
@@ -92,15 +93,8 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
         community_reports = self.community_reports
         if self.dynamic_selection is not None:
-            (
-                community_reports,
-                llm_calls,
-                prompt_tokens,
-                output_tokens,
-            ) = await self.dynamic_selection.select(query)
-            self.llm_calls += llm_calls
-            self.prompt_tokens += prompt_tokens
-            self.output_tokens += output_tokens
+            community_reports, _llm_info = await self.dynamic_selection.select(query)
+            llm_info = {k: v + _llm_info[k] for k, v in llm_info.items()}
 
         community_context, community_context_data = build_community_context(
             community_reports=community_reports,
@@ -129,4 +123,4 @@ class GlobalCommunityContext(GlobalContextBuilder):
             final_context = f"{conversation_history_context}\n\n{community_context}"
 
         final_context_data.update(community_context_data)
-        return (final_context, final_context_data)
+        return final_context, final_context_data, llm_info
