@@ -211,6 +211,10 @@ class ContextSwitcher:
         final_covariates = pd.DataFrame()
         graph_db_client=None
 
+        if len(data_paths) > 1:
+            raise ValueError("Place only one datapath in files. Will auto-itrate through internal folders.")
+
+
         if config.graphdb.enabled:
             cosmos_client = CosmosClient(
                 f"{config.graphdb.cosmos_url}",
@@ -228,9 +232,26 @@ class ContextSwitcher:
 
         description_embedding_store = self.setup_vector_store(config_args=config.embeddings.vector_store)
 
-        for data_path in data_paths:
-            #check from the config for the ouptut storage type and then read the data from the storage.
+        i_count=len(os.listdir(data_paths[0]))
+        vector_store_args = (
+                config.embeddings.vector_store if config.embeddings.vector_store else {}
+        )
 
+        reporter.info(f"Vector Store Args: {vector_store_args}")
+
+        if "type" not in vector_store_args:
+            ValueError("vectore_store.type can't be empty")
+
+        vector_store_type = vector_store_args.get("type")
+
+        if vector_store_type != VectorStoreType.Kusto:
+            ValueError("Context switching is only supporeted for vectore_store.type=kusto ")
+
+        for p_id in range(i_count):
+            data_path=f"{data_paths[0]}\\{p_id}" #windows
+            #data_path=f"{data_paths[0]}/{p_id}" #linux
+            #check from the config for the ouptut storage type and then read the data from the storage.
+            logging.info("Working with "+data_path)
             #GraphDB: we may need to make change below to read nodes data from Graph DB
             final_nodes = read_paraquet_file(input_storage_client, data_path + "/create_final_nodes.parquet")
             final_community_reports = read_paraquet_file(input_storage_client, data_path + "/create_final_community_reports.parquet") # KustoDB: Final_entities, Final_Nodes, Final_report should be merged and inserted to kusto
@@ -242,24 +263,15 @@ class ContextSwitcher:
             final_relationships = read_paraquet_file(input_storage_client, data_path + "/create_final_relationships.parquet")
             final_entities = read_paraquet_file(input_storage_client, data_path + "/create_final_entities.parquet")
 
-            vector_store_args = (
-                config.embeddings.vector_store if config.embeddings.vector_store else {}
-            )
-
-            reporter.info(f"Vector Store Args: {vector_store_args}")
-
-            if "type" not in vector_store_args:
-                ValueError("vectore_store.type can't be empty")
-
-            vector_store_type = vector_store_args.get("type")
-
-            if vector_store_type != VectorStoreType.Kusto:
-                ValueError("Context switching is only supporeted for vectore_store.type=kusto ")
+            if len(final_nodes)==0:
+                logging.info("Empty table. Skipping to next instance")
+                continue
 
             entities = read_indexer_entities(final_nodes, final_entities, community_level) # KustoDB: read Final nodes data and entities data and merge it.
             reports = read_indexer_reports(final_community_reports, final_nodes, community_level)
             text_units = read_indexer_text_units(final_text_units)
 
+            logging.info(f"loading {len(entities)} entities in kusto")
             description_embedding_store.load_entities(entities)
             if self.use_kusto_community_reports:
                 raise ValueError("Community reports not supported for kusto.")
@@ -273,6 +285,8 @@ class ContextSwitcher:
 
         if config.graphdb.enabled:
             graph_db_client._client.close()
+
+        logging.info("Operation completed. Loaded all instances.")
 
     def deactivate(self):
         """DeActivate the context."""
