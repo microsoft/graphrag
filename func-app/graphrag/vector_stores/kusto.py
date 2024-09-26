@@ -193,7 +193,7 @@ class KustoVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
-    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, 
+    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10,
                                preselected_entities=[],
                                **kwargs: Any
     ) -> list[Entity]:
@@ -207,7 +207,7 @@ class KustoVectorStore(BaseVectorStore):
             | top {k} by similarity desc
             """
         else:
-            
+
             chosen_ids=", ".join(f"'{id}'" for id in preselected_entities )
             query = f"""
             let query_vector = dynamic({query_embedding});
@@ -295,7 +295,7 @@ class KustoVectorStore(BaseVectorStore):
             text: string, text_embedding:string, entity_ids: string, relationship_ids: \
                 string, covariate_ids:string, n_tokens: string, document_ids: string, \
                     attributes:string )"
-        
+
         self.exe(command)
 
 
@@ -344,7 +344,7 @@ class KustoVectorStore(BaseVectorStore):
             cite_index+=1
 
         return res
-    
+
     def get_extracted_reports(
         self, community_ids: list[int], **kwargs: Any
     ) -> list[CommunityReport]:

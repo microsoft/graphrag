@@ -182,9 +182,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
             q_entities=q_entities.entities
 
             preselected_entities=[generate_entity_id(entity['name']) for entity in q_entities]
-            
+
             names = [entity['name'] for entity in q_entities]
-            
+
             print("Entities: ", names)
 
             if path == 3:
@@ -271,7 +271,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             # build text unit context
             text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
 
-            
+
             if isinstance(self.entity_text_embeddings,KustoVectorStore):
                 text_unit_context, text_unit_context_data = self._build_text_unit_context_kusto(
                     selected_entities=selected_entities,
@@ -394,7 +394,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         context_name: str = "Sources",
         vector_store: BaseVectorStore = None,
     ) -> tuple[str, dict[str, pd.DataFrame]]:
-        
+
         selected_text_units=vector_store.retrieve_text_units(selected_entities)
 
         #ignore sorting selected_text_usnits based on relationship count
@@ -416,7 +416,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             loc = txt.find("\"body\"")
             if loc > -1:
                 unit.text = txt[loc+9:]
-            
+
 
         context_text, context_data = build_text_unit_context(
             text_units=selected_text_units,
@@ -564,7 +564,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         final_context_data = {}
 
         # gradually add entities and associated metadata to the context until we reach limit
-        graphdb_client=GraphDBClient(self.graphdb_config,self.context_id) if (self.graphdb_config and self.graphdb_config.enabled) else None
+        graphdb_client=GraphDBClient(self.config.graphdb,self.context_id) if (self.config.graphdb and self.config.graphdb.enabled) else None
         for entity in selected_entities:
             current_context = []
             current_context_data = {}
