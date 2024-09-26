@@ -109,6 +109,7 @@ class LocalSearch(BaseSearch):
     def search(
         self,
         query: str,
+        path: int = 0,
         conversation_history: ConversationHistory | None = None,
         **kwargs,
     ) -> SearchResult:
@@ -118,6 +119,7 @@ class LocalSearch(BaseSearch):
         search_prompt = ""
         context_text, context_records = self.context_builder.build_context(
             query=query,
+            path=path,
             conversation_history=conversation_history,
             **kwargs,
             **self.context_builder_params,

@@ -113,7 +113,6 @@ def get_local_search_engine(
     context_id: str,
     is_optimized_search: bool = False,
     use_kusto_community_reports: bool = False,
-    graphdb_config: GraphDBConfig|None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -136,7 +135,7 @@ def get_local_search_engine(
             token_encoder=token_encoder,
             is_optimized_search= is_optimized_search,
             use_kusto_community_reports=use_kusto_community_reports,
-            graphdb_config=graphdb_config,
+            config=config,
             context_id=context_id,
         ),
         token_encoder=token_encoder,
