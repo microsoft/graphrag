@@ -107,26 +107,26 @@ class GlobalSearch(BaseSearch):
         conversation_history: ConversationHistory | None = None,
     ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, context_records, _ = await self.context_builder.build_context(
+        context_result = await self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
         if self.callbacks:
             for callback in self.callbacks:
-                callback.on_map_response_start(context_chunks)  # type: ignore
+                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
-            for data in context_chunks
+            for data in context_result.context_chunks
         ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
 
         # send context records first before sending the reduce response
-        yield context_records
+        yield context_result.context_records
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
@@ -152,27 +152,23 @@ class GlobalSearch(BaseSearch):
 
         start_time = time.time()
         # Step 1: Generate answers for each batch of community short summaries
-        (
-            context_chunks,
-            context_records,
-            _llm_info,
-        ) = await self.context_builder.build_context(
+        context_result = await self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        llm_calls += _llm_info["llm_calls"]
-        prompt_tokens += _llm_info["prompt_tokens"]
-        output_tokens += _llm_info["output_tokens"]
+        llm_calls += context_result.llm_calls
+        prompt_tokens += context_result.prompt_tokens
+        output_tokens += context_result.output_tokens
 
         if self.callbacks:
             for callback in self.callbacks:
-                callback.on_map_response_start(context_chunks)  # type: ignore
+                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
-            for data in context_chunks
+            for data in context_result.context_chunks
         ])
         if self.callbacks:
             for callback in self.callbacks:
@@ -194,8 +190,8 @@ class GlobalSearch(BaseSearch):
 
         return GlobalSearchResult(
             response=reduce_response.response,
-            context_data=context_records,
-            context_text=context_chunks,
+            context_data=context_result.context_records,
+            context_text=context_result.context_chunks,
             map_responses=map_responses,
             reduce_context_data=reduce_response.context_data,
             reduce_context_text=reduce_response.context_text,

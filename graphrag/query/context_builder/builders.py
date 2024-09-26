@@ -4,12 +4,24 @@
 """Base classes for global and local context builders."""
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import pandas as pd
 
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
+
+
+@dataclass
+class ContextBuilderResult:
+    """A class to hold the results of the build_context."""
+
+    context_chunks: str | list[str]
+    context_records: dict[str, pd.DataFrame]
+    llm_calls: int = 0
+    prompt_tokens: int = 0
+    output_tokens: int = 0
 
 
 class GlobalContextBuilder(ABC):
@@ -21,7 +33,7 @@ class GlobalContextBuilder(ABC):
         query: str,
         conversation_history: ConversationHistory | None = None,
         **kwargs,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame], dict[str, int]]:
+    ) -> ContextBuilderResult:
         """Build the context for the global search mode."""
 
 
@@ -34,5 +46,5 @@ class LocalContextBuilder(ABC):
         query: str,
         conversation_history: ConversationHistory | None = None,
         **kwargs,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> ContextBuilderResult:
         """Build the context for the local search mode."""

@@ -5,10 +5,10 @@
 
 from typing import Any
 
-import pandas as pd
 import tiktoken
 
 from graphrag.model import Community, CommunityReport, Entity
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -71,11 +71,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
         **kwargs: Any,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame], dict[str, int]]:
+    ) -> ContextBuilderResult:
         """Prepare batches of community report data table as context data for global search."""
         conversation_history_context = ""
         final_context_data = {}
-        llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         if conversation_history:
             # build conversation history context
             (
@@ -93,8 +93,10 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
         community_reports = self.community_reports
         if self.dynamic_selection is not None:
-            community_reports, _llm_info = await self.dynamic_selection.select(query)
-            llm_info = {k: v + _llm_info[k] for k, v in llm_info.items()}
+            community_reports, llm_info = await self.dynamic_selection.select(query)
+            llm_calls += llm_info["llm_calls"]
+            prompt_tokens += llm_info["prompt_tokens"]
+            output_tokens += llm_info["output_tokens"]
 
         community_context, community_context_data = build_community_context(
             community_reports=community_reports,
@@ -123,4 +125,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
             final_context = f"{conversation_history_context}\n\n{community_context}"
 
         final_context_data.update(community_context_data)
-        return final_context, final_context_data, llm_info
+
+        return ContextBuilderResult(
+            context_chunks=final_context,
+            context_records=final_context_data,
+            llm_calls=llm_calls,
+            prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
+        )

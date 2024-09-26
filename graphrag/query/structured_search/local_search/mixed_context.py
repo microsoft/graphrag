@@ -16,6 +16,7 @@ from graphrag.model import (
     Relationship,
     TextUnit,
 )
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -113,7 +114,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         community_context_name: str = "Reports",
         column_delimiter: str = "|",
         **kwargs: dict[str, Any],
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> ContextBuilderResult:
         """
         Build data context for local search prompt.
 
@@ -217,7 +218,10 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context.append(text_unit_context)
             final_context_data = {**final_context_data, **text_unit_context_data}
 
-        return ("\n\n".join(final_context), final_context_data)
+        return ContextBuilderResult(
+            context_chunks="\n\n".join(final_context),
+            context_records=final_context_data,
+        )
 
     def _build_community_context(
         self,
