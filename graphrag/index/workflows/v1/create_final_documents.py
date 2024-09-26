@@ -16,7 +16,6 @@ def build_steps(
 
     ## Dependencies
     * `workflow:create_base_documents`
-    * `workflow:create_base_document_nodes`
     """
     base_text_embed = config.get("text_embed", {})
     document_raw_content_embed_config = config.get(
@@ -25,17 +24,12 @@ def build_steps(
     skip_raw_content_embedding = config.get("skip_raw_content_embedding", False)
     return [
         {
-            "verb": "rename",
-            "args": {"columns": {"text_units": "text_unit_ids"}},
-            "input": {"source": "workflow:create_base_documents"},
-        },
-        {
-            "verb": "text_embed",
-            "enabled": not skip_raw_content_embedding,
+            "verb": "create_final_documents",
             "args": {
-                "column": "raw_content",
-                "to": "raw_content_embedding",
-                **document_raw_content_embed_config,
+                "columns": {"text_units": "text_unit_ids"},
+                "skip_embedding": skip_raw_content_embedding,
+                "text_embed": document_raw_content_embed_config,
             },
+            "input": {"source": "workflow:create_base_documents"},
         },
     ]
