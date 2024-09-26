@@ -4,6 +4,7 @@
 """A package containing the Azure AI Search  vector store implementation."""
 
 import json
+import os
 from typing import Any
 
 from azure.core.credentials import AzureKeyCredential
@@ -60,14 +61,14 @@ class AzureAISearch(BaseVectorStore):
                 index_name=self.collection_name,
                 credential=AzureKeyCredential(api_key)
                 if api_key
-                else DefaultAzureCredential(),
+                else DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
                 **audience_arg,
             )
             self.index_client = SearchIndexClient(
                 endpoint=url,
                 credential=AzureKeyCredential(api_key)
                 if api_key
-                else DefaultAzureCredential(),
+                else DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
                 **audience_arg,
             )
         else:
