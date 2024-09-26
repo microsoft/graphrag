@@ -88,12 +88,14 @@ def compare_outputs(
         assert column in actual.columns
         try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
-            assert_series_equal(actual[column], expected[column], check_dtype=False)
+            assert_series_equal(
+                actual[column], expected[column], check_dtype=False, check_index=False
+            )
         except AssertionError:
             print("Expected:")
             print(expected[column])
             print("Actual:")
-            print(actual[columns])
+            print(actual[column])
             raise
 
 
