@@ -7,7 +7,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 11,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_base_extracted_entities": {
@@ -44,7 +44,7 @@
                 "description",
                 "graph_embedding"
             ],
-            "subworkflows": 11,
+            "subworkflows": 1,
             "max_runtime": 300
         },
         "create_final_relationships": {
@@ -52,7 +52,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 2,
+            "subworkflows": 1,
             "max_runtime": 100
         },
         "create_final_nodes": {
@@ -105,7 +105,7 @@
                 "relationship_ids",
                 "entity_ids"
             ],
-            "subworkflows": 2,
+            "subworkflows": 1,
             "max_runtime": 100
         },
         "create_base_documents": {
@@ -113,7 +113,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 8,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_documents": {
