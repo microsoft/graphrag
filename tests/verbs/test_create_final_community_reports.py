@@ -15,6 +15,8 @@ from .util import (
     remove_disabled_steps,
 )
 
+import pandas as pd
+pd.set_option('display.max_columns', None)
 
 async def test_create_final_community_reports():
     input_tables = load_input_tables([
@@ -41,7 +43,6 @@ async def test_create_final_community_reports():
     assert len(actual.columns) == len(expected.columns)
 
     # only assert a couple of columns that are not mock - most of this table is LLM-generated
-    actual.to_parquet("/Users/naevans/Desktop/reports.parquet")
     compare_outputs(actual, expected, columns=["community", "level"])
 
     # assert a handful of mock data items to confirm they get put in the right spot

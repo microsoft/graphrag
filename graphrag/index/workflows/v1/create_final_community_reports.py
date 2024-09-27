@@ -19,10 +19,6 @@ def build_steps(
     """
     covariates_enabled = config.get("covariates_enabled", False)
     create_community_reports_config = config.get("create_community_reports", {})
-    community_report_strategy = create_community_reports_config.get("strategy", {})
-    community_report_max_input_length = community_report_strategy.get(
-        "max_input_length", 16_000
-    )
     base_text_embed = config.get("text_embed", {})
     community_report_full_content_embed_config = config.get(
         "community_report_full_content_embed", base_text_embed
@@ -36,77 +32,21 @@ def build_steps(
     skip_title_embedding = config.get("skip_title_embedding", False)
     skip_summary_embedding = config.get("skip_summary_embedding", False)
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
+    input = {
+        "source": "workflow:create_final_nodes",
+        "relationships": "workflow:create_final_relationships",
+    }
+    if (covariates_enabled):
+        input["covariates"] = "workflow:create_final_covariates"
 
     return [
         {
             "verb": "create_final_community_reports",
-            "input": {"source": "workflow:create_final_nodes"},
-        },
-        #
-        # Subworkflow: Prepare Nodes
-        #
-        {
-            "id": "nodes",
-            "verb": "prepare_community_reports_nodes",
-        },
-        #
-        # Subworkflow: Prepare Edges
-        #
-        {
-            "id": "edges",
-            "verb": "prepare_community_reports_edges",
-            "input": {"source": "workflow:create_final_relationships"},
-        },
-        #
-        # Subworkflow: Prepare Claims Table
-        #
-        {
-            "id": "claims",
-            "enabled": covariates_enabled,
-            "verb": "prepare_community_reports_claims",
-            "input": {
-                "source": "workflow:create_final_covariates",
-            }
-            if covariates_enabled
-            else {},
-        },
-        #
-        # Subworkflow: Get Community Hierarchy
-        #
-        {
-            "id": "community_hierarchy",
-            "verb": "restore_community_hierarchy",
-            "input": {"source": "nodes"},
-        },
-        #
-        # Main Workflow: Create Community Reports
-        #
-        {
-            "id": "local_contexts",
-            "verb": "prepare_community_reports",
-            "args": {"max_tokens": community_report_max_input_length},
-            "input": {
-                "source": "nodes",
-                "nodes": "nodes",
-                "edges": "edges",
-                **({"claims": "claims"} if covariates_enabled else {}),
-            },
-        },
-        {
-            "verb": "create_community_reports",
             "args": {
+                "covariates_enabled": covariates_enabled,
                 **create_community_reports_config,
             },
-            "input": {
-                "source": "local_contexts",
-                "community_hierarchy": "community_hierarchy",
-                "nodes": "nodes",
-            },
-        },
-        {
-            # Generate a unique ID for each community report distinct from the community ID
-            "verb": "window",
-            "args": {"to": "id", "operation": "uuid", "column": "community"},
+            "input": input
         },
         {
             "verb": "text_embed",

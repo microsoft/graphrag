@@ -56,11 +56,33 @@ async def create_community_reports(
     """Generate entities for each row, and optionally a graph of those entities."""
     log.debug("create_community_reports strategy=%s", strategy)
     local_contexts = cast(pd.DataFrame, input.get_input())
-    nodes_ctr = get_required_input_table(input, "nodes")
-    nodes = cast(pd.DataFrame, nodes_ctr.table)
-    community_hierarchy_ctr = get_required_input_table(input, "community_hierarchy")
-    community_hierarchy = cast(pd.DataFrame, community_hierarchy_ctr.table)
+    nodes = get_required_input_table(input, "nodes").table
+    community_hierarchy = get_required_input_table(input, "community_hierarchy").table
 
+    output = await create_community_reports_df(
+        local_contexts,
+        nodes,
+        community_hierarchy,
+        callbacks,
+        cache,
+        strategy,
+        async_mode=async_mode,
+        num_threads=num_threads,
+    )
+
+    return TableContainer(table=output)
+
+
+async def create_community_reports_df(
+    local_contexts,
+    nodes,
+    community_hierarchy,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
+    strategy: dict,
+    async_mode: AsyncType = AsyncType.AsyncIO,
+    num_threads: int = 4,
+):
     levels = get_levels(nodes)
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
@@ -98,8 +120,8 @@ async def create_community_reports(
             scheduling_type=async_mode,
         )
         reports.extend([lr for lr in local_reports if lr is not None])
-
-    return TableContainer(table=pd.DataFrame(reports))
+    
+    return pd.DataFrame(reports)
 
 
 async def _generate_report(
