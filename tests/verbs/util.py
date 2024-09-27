@@ -15,6 +15,8 @@ from graphrag.index import (
 )
 from graphrag.index.run.utils import _create_run_context
 
+pd.set_option("display.max_columns", None)
+
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     """Harvest all the referenced input IDs from the workflow being tested and pass them here."""

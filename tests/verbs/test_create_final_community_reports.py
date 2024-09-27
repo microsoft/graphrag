@@ -1,8 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pandas as pd
-
 from graphrag.index.workflows.v1.create_final_community_reports import (
     build_steps,
     workflow_name,
@@ -16,8 +14,6 @@ from .util import (
     load_input_tables,
     remove_disabled_steps,
 )
-
-pd.set_option("display.max_columns", None)
 
 
 async def test_create_final_community_reports():
