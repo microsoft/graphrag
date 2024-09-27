@@ -38,13 +38,16 @@ def build_steps(
     skip_full_content_embedding = config.get("skip_full_content_embedding", False)
 
     return [
+        {
+            "verb": "create_final_community_reports",
+            "input": {"source": "workflow:create_final_nodes"},
+        },
         #
         # Subworkflow: Prepare Nodes
         #
         {
             "id": "nodes",
             "verb": "prepare_community_reports_nodes",
-            "input": {"source": "workflow:create_final_nodes"},
         },
         #
         # Subworkflow: Prepare Edges

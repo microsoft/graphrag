@@ -35,3 +35,6 @@ class MockCompletionLLM(
         **kwargs: Unpack[LLMInput],
     ) -> CompletionOutput:
         return self.responses[0]
+
+    async def _invoke_json(self, input: CompletionInput, **kwargs: Unpack[LLMInput]):
+        return self.responses[0]
