@@ -50,6 +50,7 @@ datashaper = "^0.0.49"
 azure-search-documents = "^11.4.0"
 lancedb = "^0.13.0"
 
+
 # Async IO
 aiolimiter = "^1.1.0"
 aiofiles = "^24.1.0"
@@ -87,6 +88,7 @@ azure-identity = "^1.17.1"
 json-repair = "^0.28.4"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
+cassio = "^0.1.9"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"

@@ -63,6 +63,7 @@ numpy
 pypi
 nbformat
 semversioner
+cassio
 
 # Library Methods
 iterrows
