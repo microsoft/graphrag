@@ -42,7 +42,7 @@ def prepare_community_reports(
     nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
     edges = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
     claims = get_named_input_table(input, "claims")
-    if claims is not None:
+    if claims:
         claims = cast(pd.DataFrame, claims.table)
 
     output = prepare_community_reports_df(nodes, edges, claims, callbacks, max_tokens)
