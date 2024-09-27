@@ -15,22 +15,8 @@ from datashaper import (
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
-from graphrag.index.utils.ds_util import get_required_input_table
-from graphrag.index.graph.extractors.community_reports.schemas import (
-    NODE_DEGREE,
-    NODE_DESCRIPTION,
-    NODE_DETAILS,
-    NODE_ID,
-    NODE_NAME,
-)
-from graphrag.index.graph.extractors.community_reports.schemas import (
-    EDGE_DEGREE,
-    EDGE_DESCRIPTION,
-    EDGE_DETAILS,
-    EDGE_ID,
-    EDGE_SOURCE,
-    EDGE_TARGET,
-)
+
+from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -38,12 +24,29 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_STATUS,
     CLAIM_SUBJECT,
     CLAIM_TYPE,
+    EDGE_DEGREE,
+    EDGE_DESCRIPTION,
+    EDGE_DETAILS,
+    EDGE_ID,
+    EDGE_SOURCE,
+    EDGE_TARGET,
+    NODE_DEGREE,
+    NODE_DESCRIPTION,
+    NODE_DETAILS,
+    NODE_ID,
+    NODE_NAME,
 )
-from graphrag.index.verbs.graph.report.restore_community_hierarchy import restore_community_hierarchy_df
-from graphrag.index.verbs.graph.report.prepare_community_reports import prepare_community_reports_df
-from graphrag.index.verbs.graph.report.create_community_reports import create_community_reports_df
+from graphrag.index.utils.ds_util import get_required_input_table
+from graphrag.index.verbs.graph.report.create_community_reports import (
+    create_community_reports_df,
+)
+from graphrag.index.verbs.graph.report.prepare_community_reports import (
+    prepare_community_reports_df,
+)
+from graphrag.index.verbs.graph.report.restore_community_hierarchy import (
+    restore_community_hierarchy_df,
+)
 from graphrag.index.verbs.text.embed.text_embed import text_embed_df
-from graphrag.index.cache import PipelineCache
 
 
 @verb(name="create_final_community_reports", treats_input_tables_as_immutable=True)
@@ -64,18 +67,18 @@ async def create_final_community_reports(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform community reports."""
-    source = cast(pd.DataFrame, input.get_input())
-    
     nodes = _prep_nodes(cast(pd.DataFrame, input.get_input()))
-    edges = _prep_edges(cast(pd.DataFrame, get_required_input_table(input, "relationships").table))
+    edges = _prep_edges(
+        cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
+    )
 
     claims = None
     if covariates_enabled:
-        claims = _prep_claims(cast(pd.DataFrame, get_required_input_table(input, "covariates").table))
+        claims = _prep_claims(
+            cast(pd.DataFrame, get_required_input_table(input, "covariates").table)
+        )
 
-    community_hierarchy = restore_community_hierarchy_df(
-        nodes
-    )
+    community_hierarchy = restore_community_hierarchy_df(nodes)
 
     local_contexts = prepare_community_reports_df(
         nodes, edges, claims, callbacks, strategy.get("max_input_length", 16_000)
@@ -92,7 +95,9 @@ async def create_final_community_reports(
         num_threads=num_threads,
     )
 
-    community_reports["id"] = community_reports["community"].apply(lambda _x: str(uuid4()))
+    community_reports["id"] = community_reports["community"].apply(
+        lambda _x: str(uuid4())
+    )
 
     # Embed full content if not skipped
     if not skip_full_content_embedding:
@@ -105,7 +110,7 @@ async def create_final_community_reports(
             to="full_content_embedding",
             embedding_name="community_report_full_content",
         )
-    
+
     # Embed summary if not skipped
     if not skip_summary_embedding:
         community_reports = await text_embed_df(

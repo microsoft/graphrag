@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+import pandas as pd
+
 from graphrag.index.workflows.v1.create_final_community_reports import (
     build_steps,
     workflow_name,
@@ -15,8 +17,8 @@ from .util import (
     remove_disabled_steps,
 )
 
-import pandas as pd
-pd.set_option('display.max_columns', None)
+pd.set_option("display.max_columns", None)
+
 
 async def test_create_final_community_reports():
     input_tables = load_input_tables([
@@ -63,7 +65,6 @@ async def test_create_final_community_reports_with_embeddings():
     # deleting the llm config results in a default mock injection in run_graph_intelligence
     del config["create_community_reports"]["strategy"]["llm"]
 
-    
     config["skip_full_content_embedding"] = False
     config["community_report_full_content_embed"]["strategy"]["type"] = "mock"
     config["skip_summary_embedding"] = False
@@ -79,7 +80,7 @@ async def test_create_final_community_reports_with_embeddings():
             "steps": steps,
         },
     )
-    
+
     assert len(actual.columns) == len(expected.columns) + 3
     assert "full_content_embedding" in actual.columns
     assert len(actual["full_content_embedding"][:1][0]) == 3
@@ -87,5 +88,3 @@ async def test_create_final_community_reports_with_embeddings():
     assert len(actual["summary_embedding"][:1][0]) == 3
     assert "title_embedding" in actual.columns
     assert len(actual["title_embedding"][:1][0]) == 3
-
-

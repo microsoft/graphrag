@@ -24,7 +24,7 @@ def restore_community_hierarchy(
 ) -> TableContainer:
     """Restore the community hierarchy from the node data."""
     node_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
-    
+
     output = restore_community_hierarchy_df(
         node_df,
         name_column=name_column,
@@ -40,6 +40,7 @@ def restore_community_hierarchy_df(
     community_column: str = schemas.NODE_COMMUNITY,
     level_column: str = schemas.NODE_LEVEL,
 ) -> pd.DataFrame:
+    """Restore the community hierarchy from the node data."""
     community_df = (
         input.groupby([community_column, level_column])
         .agg({name_column: list})
@@ -90,5 +91,5 @@ def restore_community_hierarchy_df(
                     entities_found += len(next_entities)
                     if entities_found == len(current_entities):
                         break
-    
+
     return pd.DataFrame(community_hierarchy)

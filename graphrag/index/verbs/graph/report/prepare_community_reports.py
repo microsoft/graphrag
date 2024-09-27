@@ -37,7 +37,7 @@ def prepare_community_reports(
     max_tokens: int = 16_000,
     **_kwargs,
 ) -> TableContainer:
-    """Generate entities for each row, and optionally a graph of those entities."""
+    """Prep communities for report generation."""
     # Prepare Community Reports
     nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
     edges = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
@@ -45,10 +45,8 @@ def prepare_community_reports(
     if claims is not None:
         claims = cast(pd.DataFrame, claims.table)
 
-    output = prepare_community_reports_df(
-        nodes, edges, claims, callbacks, max_tokens
-    )
-    
+    output = prepare_community_reports_df(nodes, edges, claims, callbacks, max_tokens)
+
     return TableContainer(table=output)
 
 
@@ -59,6 +57,7 @@ def prepare_community_reports_df(
     callbacks: VerbCallbacks,
     max_tokens: int = 16_000,
 ):
+    """Prep communities for report generation."""
     levels = get_levels(nodes, schemas.NODE_LEVEL)
     dfs = []
 

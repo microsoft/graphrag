@@ -36,7 +36,7 @@ def build_steps(
         "source": "workflow:create_final_nodes",
         "relationships": "workflow:create_final_relationships",
     }
-    if (covariates_enabled):
+    if covariates_enabled:
         input["covariates"] = "workflow:create_final_covariates"
 
     return [
@@ -52,6 +52,6 @@ def build_steps(
                 "title_text_embed": community_report_title_embed_config,
                 **create_community_reports_config,
             },
-            "input": input
+            "input": input,
         },
     ]

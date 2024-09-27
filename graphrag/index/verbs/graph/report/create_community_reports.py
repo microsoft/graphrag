@@ -53,7 +53,7 @@ async def create_community_reports(
     num_threads: int = 4,
     **_kwargs,
 ) -> TableContainer:
-    """Generate entities for each row, and optionally a graph of those entities."""
+    """Generate community summaries."""
     log.debug("create_community_reports strategy=%s", strategy)
     local_contexts = cast(pd.DataFrame, input.get_input())
     nodes = get_required_input_table(input, "nodes").table
@@ -83,6 +83,7 @@ async def create_community_reports_df(
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
 ):
+    """Generate community summaries."""
     levels = get_levels(nodes)
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
@@ -120,7 +121,7 @@ async def create_community_reports_df(
             scheduling_type=async_mode,
         )
         reports.extend([lr for lr in local_reports if lr is not None])
-    
+
     return pd.DataFrame(reports)
 
 
