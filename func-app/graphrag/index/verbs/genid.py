@@ -8,14 +8,14 @@ from typing import cast
 import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
-from graphrag.index.utils import gen_md5_hash
+from graphrag.index.utils import gen_md5_hash, gen_sha256_hash
 
 
 @verb(name="genid")
 def genid(
     input: VerbInput,
     to: str,
-    method: str = "md5_hash",
+    method: str = "sha256_hash",
     hash: list[str] = [],  # noqa A002
     **_kwargs: dict,
 ) -> TableContainer:
@@ -58,6 +58,12 @@ def genid(
             raise ValueError(msg)
 
         data[to] = data.apply(lambda row: gen_md5_hash(row, hash), axis=1)
+    elif method=="sha256_hash":
+        if len(hash) == 0:
+            msg = 'Must specify the "hash" columns to use md5_hash method'
+            raise ValueError(msg)
+
+        data[to] = data.apply(lambda row: gen_sha256_hash(row, hash), axis=1)
     elif method == "increment":
         data[to] = data.index + 1
     else:
