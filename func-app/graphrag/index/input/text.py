@@ -13,7 +13,7 @@ import pandas as pd
 from graphrag.index.config import PipelineInputConfig
 from graphrag.common.progress import ProgressReporter
 from graphrag.common.storage import PipelineStorage
-from graphrag.index.utils import gen_md5_hash
+from graphrag.index.utils import gen_md5_hash,gen_sha256_hash
 
 DEFAULT_FILE_PATTERN = re.compile(
     r".*[\\/](?P<source>[^\\/]+)[\\/](?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})_(?P<author>[^_]+)_\d+\.txt"
@@ -36,7 +36,7 @@ async def load(
             group = {}
         text = await storage.get(path, encoding="utf-8")
         new_item = {**group, "text": text}
-        new_item["id"] = gen_md5_hash(new_item, new_item.keys())
+        new_item["id"] = gen_sha256_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
         return new_item
     base_dir = config.base_dir
@@ -56,6 +56,9 @@ async def load(
         msg = f"No text files found in {config.base_dir}"
         raise ValueError(msg)
 
+    if len(files) > 1:
+        raise ValueError("Put only one file in each directory.")
+        
     found_files = f"found text files from {config.base_dir}, found {files}"
     log.info(found_files)
 
