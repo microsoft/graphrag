@@ -37,6 +37,7 @@ def map_query_to_entities_in_place(
     text_embedder: BaseTextEmbedding,
     k: int = 10,
     oversample_scaler: int = 2,
+    preselected_entities=[]
 ) -> list[Entity]:
     """Extract entities that match a given query using semantic similarity of text embeddings of query and entity descriptions."""
     # get entities with highest semantic similarity to query
@@ -45,6 +46,7 @@ def map_query_to_entities_in_place(
         text=query,
         text_embedder=lambda t: text_embedder.embed(t),
         k=k * oversample_scaler,
+        preselected_entities=preselected_entities
     )
     import ast
     for result in search_results:
@@ -61,6 +63,7 @@ def map_query_to_entities(
     exclude_entity_names: list[str] | None = None,
     k: int = 10,
     oversample_scaler: int = 2,
+    preselected_entities=[]
 ) -> list[Entity]:
     """Extract entities that match a given query using semantic similarity of text embeddings of query and entity descriptions."""
     if all_entities == []:
@@ -70,6 +73,7 @@ def map_query_to_entities(
             text_embedder,
             k,
             oversample_scaler,
+            preselected_entities=preselected_entities
         )
 
     if include_entity_names is None:

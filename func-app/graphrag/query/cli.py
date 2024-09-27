@@ -153,7 +153,7 @@ def run_global_search(
     reporter.success(f"Global Search Response: {result.response}")
     return result.response
 
-def path0(
+def run_local_search(
     config_dir: str | None,
     data_dir: str | None,
     root_dir: str | None,
@@ -163,8 +163,7 @@ def path0(
     query: str,
     optimized_search: bool = False,
     use_kusto_community_reports: bool = False,
-    ):
-
+    path: int = 0,):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
@@ -268,7 +267,7 @@ def path0(
         *** If KUSTO is enabled, both entities and final_relationships must be empty.
     '''
     search_engine = get_local_search_engine(
-        config,
+        config=config,
         reports=reports,
         text_units=text_units,
         entities=entities,
@@ -279,109 +278,16 @@ def path0(
         context_id=context_id,
         is_optimized_search=optimized_search,
         use_kusto_community_reports=use_kusto_community_reports,
-        graphdb_config=config.graphdb,
     )
 
     if optimized_search:
-        result = search_engine.optimized_search(query=query)
+        result = search_engine.optimized_search(query=query, path=path)
     else:
-        result = search_engine.search(query=query)
+        result = search_engine.search(query=query, path=path)
     for key in  result.context_data.keys():
         asyncio.run(output_storage_client.set("query/output/"+ key +".paraquet", result.context_data[key].to_parquet())) #it shows as error in editor but not an error.
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
-
-def path1(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    context_id: str,
-    query: str,
-    optimized_search: bool = False,
-    use_kusto_community_reports: bool = False,
-    ):
-    ValueError("Not implemented")
-
-def path2(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    context_id: str,
-    query: str,
-    optimized_search: bool = False,
-    use_kusto_community_reports: bool = False,
-    ):
-    """Path 2
-    Find all the emails sent to trader by Tim Belden
-    a. Query -> LLM -> Entity Extracted -> 5 entities -> Set A [TimBelden1]
-    b. Query -> LLM -> Embeddings -> Y [x1..... Xn]
-    c. Run the query on Kusto for embedding Y [x1.....xn] for entitYid in [TimBelden1]
-    4. Get the text units and get the response"""
-    data_dir, root_dir, config = _configure_paths_and_settings(
-        data_dir, root_dir, config_dir
-    )
-
-    # Populate args with dict of arguments for the LLM
-    args = {}
-    args['api_key'] = config.llm.api_key
-    args['type'] = config.llm.type
-    args['model'] = config.llm.model
-    args['model_supports_json'] = config.llm.model_supports_json
-    args['api_base'] = config.llm.api_base
-    args['api_version'] = config.llm.api_version
-    args['deployment_name'] = config.llm.deployment_name
-    llmm = {}
-    llmm['llm'] = args
-
-
-    result = asyncio.run(run_gi(
-        docs=[Document(text=query, id='0')],
-        entity_types=config.entity_extraction.entity_types,
-        reporter = None,
-        pipeline_cache=None,
-        args=llmm,
-    ))
-
-    print(result.entities)
-    exit(0)
-
-def path3(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    context_id: str,
-    query: str,
-    optimized_search: bool = False,
-    use_kusto_community_reports: bool = False,
-    ):
-    ValueError("Not implemented")
-
-
-def run_local_search(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    context_id: str,
-    query: str,
-    optimized_search: bool = False,
-    use_kusto_community_reports: bool = False,
-    paths: int = 0,):
-    """Run a local search with the given query."""
-    if(paths==1):
-        return path1(config_dir, data_dir, root_dir, community_level, response_type, context_id, query, optimized_search, use_kusto_community_reports)
-    elif(paths==2):
-        return path2(config_dir, data_dir, root_dir, community_level, response_type, context_id, query, optimized_search, use_kusto_community_reports)
-    elif(paths==3):
-        return path3(config_dir, data_dir, root_dir, community_level, response_type, context_id, query, optimized_search, use_kusto_community_reports)
-    return path0(config_dir, data_dir, root_dir, community_level, response_type, context_id, query, optimized_search, use_kusto_community_reports)
 
 def blob_exists(container_client, blob_name):
     blob_client = container_client.get_blob_client(blob_name)

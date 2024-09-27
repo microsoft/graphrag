@@ -4,12 +4,17 @@
 
 import logging
 from typing import Any
-
+import ast
+import json
+import asyncio
 import pandas as pd
 from common.graph_db_client import GraphDBClient
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.graphdb_config import GraphDBConfig
 import tiktoken
-
+from graphrag.index.verbs.entities.extraction.strategies.typing import Document
+import hashlib
+from graphrag.index.verbs.graph.clustering.cluster_graph import generate_entity_id
 from graphrag.model import (
     CommunityReport,
     Covariate,
@@ -46,6 +51,7 @@ from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores import BaseVectorStore
 from graphrag.vector_stores.kusto import KustoVectorStore
+from graphrag.index.verbs.entities.extraction.strategies.graph_intelligence.run_graph_intelligence import run_gi
 
 log = logging.getLogger(__name__)
 
@@ -66,7 +72,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         is_optimized_search: bool = False,
         use_kusto_community_reports: bool = False,
-        graphdb_config: GraphDBConfig|None = None,
+        config: GraphRagConfig | None = None,
         context_id:str = None,
     ):
         if community_reports is None:
@@ -92,7 +98,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self.embedding_vectorstore_key = embedding_vectorstore_key
         self.is_optimized_search = is_optimized_search
         self.use_kusto_community_reports = use_kusto_community_reports
-        self.graphdb_config = graphdb_config
+        self.config = config
         self.context_id = context_id
 
     def filter_by_entity_keys(self, entity_keys: list[int] | list[str]):
@@ -102,6 +108,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
     def build_context(
         self,
         query: str,
+        path: int = 0,
         conversation_history: ConversationHistory | None = None,
         include_entity_names: list[str] | None = None,
         exclude_entity_names: list[str] | None = None,
@@ -130,6 +137,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         Build a context by combining community reports and entity/relationship/covariate tables, and text units using a predefined ratio set by summary_prop.
         """
+        print("Query: ", query)
         if include_entity_names is None:
             include_entity_names = []
         if exclude_entity_names is None:
@@ -148,6 +156,41 @@ class LocalSearchMixedContext(LocalContextBuilder):
             )
             query = f"{query}\n{pre_user_questions}"
 
+
+        preselected_entities, selected_entities = [], []
+        local_context, local_context_data = "", {}
+
+        if path in (2,3):
+            args = {}
+            args['type'] = self.config.llm.type
+            args['model'] = self.config.llm.model
+            args['model_supports_json'] = self.config.llm.model_supports_json
+            args['api_base'] = self.config.llm.api_base
+            args['api_version'] = self.config.llm.api_version
+            args['deployment_name'] = self.config.llm.deployment_name
+            llm_conf = {}
+            llm_conf['llm'] = args
+
+            q_entities = asyncio.run(run_gi(
+                docs=[Document(text=query, id='0')],
+                entity_types=self.config.entity_extraction.entity_types,
+                reporter = None,
+                pipeline_cache=None,
+                args=llm_conf,
+            ))
+
+            q_entities=q_entities.entities
+
+            preselected_entities=[generate_entity_id(entity['name']) for entity in q_entities]
+
+            names = [entity['name'] for entity in q_entities]
+
+            print("Entities: ", names)
+
+            if path == 3:
+                # TODO Find the top 10 related entities to [preselected_entities] -> [SetB]
+                print("To be implemented")
+
         selected_entities = map_query_to_entities(
             query=query,
             text_embedding_vectorstore=self.entity_text_embeddings,
@@ -158,6 +201,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             exclude_entity_names=exclude_entity_names,
             k=top_k_mapped_entities,
             oversample_scaler=2,
+            preselected_entities=preselected_entities
         )
 
         print("Selected entities titles: ", [entity.title for entity in selected_entities])
@@ -185,49 +229,63 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     conversation_history_context, self.token_encoder
                 )
 
-        if not is_optimized_search:
-            community_tokens = max(int(max_tokens * community_prop), 0)
-            community_context, community_context_data = self._build_community_context(
+        if path == 0:
+            if not is_optimized_search:
+                community_tokens = max(int(max_tokens * community_prop), 0)
+                community_context, community_context_data = self._build_community_context(
+                    selected_entities=selected_entities,
+                    max_tokens=community_tokens,
+                    use_community_summary=use_community_summary,
+                    column_delimiter=column_delimiter,
+                    include_community_rank=include_community_rank,
+                    min_community_rank=min_community_rank,
+                    return_candidate_context=return_candidate_context,
+                    context_name=community_context_name,
+                    is_optimized_search=is_optimized_search
+                )
+                if community_context.strip() != "":
+                    final_context.append(community_context)
+                    final_context_data = {**final_context_data, **community_context_data}
+
+            # build local (i.e. entity-relationship-covariate) context
+            local_prop = 1 - community_prop - text_unit_prop
+            local_tokens = max(int(max_tokens * local_prop), 0)
+            local_context, local_context_data = self._build_local_context(
                 selected_entities=selected_entities,
-                max_tokens=community_tokens,
-                use_community_summary=use_community_summary,
-                column_delimiter=column_delimiter,
-                include_community_rank=include_community_rank,
-                min_community_rank=min_community_rank,
+                max_tokens=local_tokens,
+                include_entity_rank=include_entity_rank,
+                rank_description=rank_description,
+                include_relationship_weight=include_relationship_weight,
+                top_k_relationships=top_k_relationships,
+                relationship_ranking_attribute=relationship_ranking_attribute,
                 return_candidate_context=return_candidate_context,
-                context_name=community_context_name,
+                column_delimiter=column_delimiter,
                 is_optimized_search=is_optimized_search
             )
-            if community_context.strip() != "":
-                final_context.append(community_context)
-                final_context_data = {**final_context_data, **community_context_data}
 
-        # build local (i.e. entity-relationship-covariate) context
-        local_prop = 1 - community_prop - text_unit_prop
-        local_tokens = max(int(max_tokens * local_prop), 0)
-        local_context, local_context_data = self._build_local_context(
-            selected_entities=selected_entities,
-            max_tokens=local_tokens,
-            include_entity_rank=include_entity_rank,
-            rank_description=rank_description,
-            include_relationship_weight=include_relationship_weight,
-            top_k_relationships=top_k_relationships,
-            relationship_ranking_attribute=relationship_ranking_attribute,
-            return_candidate_context=return_candidate_context,
-            column_delimiter=column_delimiter,
-            is_optimized_search=is_optimized_search
-        )
+
         if local_context.strip() != "":
             final_context.append(str(local_context))
             final_context_data = {**final_context_data, **local_context_data}
         if not self.is_optimized_search:
             # build text unit context
             text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
-            text_unit_context, text_unit_context_data = self._build_text_unit_context(
-                selected_entities=selected_entities,
-                max_tokens=text_unit_tokens,
-                return_candidate_context=return_candidate_context,
-            )
+
+
+            if isinstance(self.entity_text_embeddings,KustoVectorStore):
+                text_unit_context, text_unit_context_data = self._build_text_unit_context_kusto(
+                    selected_entities=selected_entities,
+                    max_tokens=text_unit_tokens,
+                    return_candidate_context=return_candidate_context,
+                    vector_store=self.entity_text_embeddings
+                )
+            else: #legacy
+                text_unit_context, text_unit_context_data = self._build_text_unit_context(
+                    selected_entities=selected_entities,
+                    max_tokens=text_unit_tokens,
+                    return_candidate_context=return_candidate_context,
+                )
+
             if text_unit_context.strip() != "":
                 final_context.append(text_unit_context)
                 final_context_data = {**final_context_data, **text_unit_context_data}
@@ -326,6 +384,73 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     else:
                         context_data[context_key]["in_context"] = True
         return (str(context_text), context_data)
+
+    def _build_text_unit_context_kusto(
+        self,
+        selected_entities: list[Entity],
+        max_tokens: int = 8000,
+        return_candidate_context: bool = False,
+        column_delimiter: str = "|",
+        context_name: str = "Sources",
+        vector_store: BaseVectorStore = None,
+    ) -> tuple[str, dict[str, pd.DataFrame]]:
+
+        selected_text_units=vector_store.retrieve_text_units(selected_entities)
+
+        #ignore sorting selected_text_usnits based on relationship count
+
+        def str_to_list(unit,column):
+            cvar = getattr(unit,column)
+            if cvar == '' or cvar==None:
+                setattr(unit,column,[])
+                return
+            setattr(unit,column,ast.literal_eval(cvar))
+
+        for unit in selected_text_units:
+            str_to_list(unit,'entity_ids')
+            str_to_list(unit,'relationship_ids')
+            str_to_list(unit,'document_ids')
+
+            ### EMAIL DATASET
+            txt=unit.text
+            loc = txt.find("\"body\"")
+            if loc > -1:
+                unit.text = txt[loc+9:]
+
+
+        context_text, context_data = build_text_unit_context(
+            text_units=selected_text_units,
+            token_encoder=self.token_encoder,
+            max_tokens=max_tokens,
+            shuffle_data=False,
+            context_name=context_name,
+            column_delimiter=column_delimiter,
+        )
+
+        if return_candidate_context:
+            candidate_context_data = get_candidate_text_units(
+                selected_entities=selected_entities,
+                text_units=list(self.text_units.values()),
+            )
+            context_key = context_name.lower()
+            if context_key not in context_data:
+                context_data[context_key] = candidate_context_data
+                context_data[context_key]["in_context"] = False
+            else:
+                if (
+                    "id" in candidate_context_data.columns
+                    and "id" in context_data[context_key].columns
+                ):
+                    candidate_context_data["in_context"] = candidate_context_data[
+                        "id"
+                    ].isin(  # cspell:disable-line
+                        context_data[context_key]["id"]
+                    )
+                    context_data[context_key] = candidate_context_data
+                else:
+                    context_data[context_key]["in_context"] = True
+        return (str(context_text), context_data)
+
 
     def _build_text_unit_context(
         self,
@@ -439,7 +564,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         final_context_data = {}
 
         # gradually add entities and associated metadata to the context until we reach limit
-        graphdb_client=GraphDBClient(self.graphdb_config,self.context_id) if (self.graphdb_config and self.graphdb_config.enabled) else None
+        graphdb_client=GraphDBClient(self.config.graphdb,self.context_id) if (self.config.graphdb and self.config.graphdb.enabled) else None
         for entity in selected_entities:
             current_context = []
             current_context_data = {}
