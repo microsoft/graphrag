@@ -42,6 +42,7 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
 from graphrag.index.verbs.graph.report.restore_community_hierarchy import restore_community_hierarchy_df
 from graphrag.index.verbs.graph.report.prepare_community_reports import prepare_community_reports_df
 from graphrag.index.verbs.graph.report.create_community_reports import create_community_reports_df
+from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 from graphrag.index.cache import PipelineCache
 
 
@@ -51,8 +52,14 @@ async def create_final_community_reports(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     strategy: dict,
+    full_content_text_embed: dict,
+    summary_text_embed: dict,
+    title_text_embed: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
+    skip_full_content_embedding: bool = False,
+    skip_summary_embedding: bool = False,
+    skip_title_embedding: bool = False,
     covariates_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
@@ -86,6 +93,42 @@ async def create_final_community_reports(
     )
 
     community_reports["id"] = community_reports["community"].apply(lambda _x: str(uuid4()))
+
+    # Embed full content if not skipped
+    if not skip_full_content_embedding:
+        community_reports = await text_embed_df(
+            community_reports,
+            callbacks,
+            cache,
+            column="full_content",
+            strategy=full_content_text_embed["strategy"],
+            to="full_content_embedding",
+            embedding_name="community_report_full_content",
+        )
+    
+    # Embed summary if not skipped
+    if not skip_summary_embedding:
+        community_reports = await text_embed_df(
+            community_reports,
+            callbacks,
+            cache,
+            column="summary",
+            strategy=summary_text_embed["strategy"],
+            to="summary_embedding",
+            embedding_name="community_report_summary",
+        )
+
+    # Embed title if not skipped
+    if not skip_title_embedding:
+        community_reports = await text_embed_df(
+            community_reports,
+            callbacks,
+            cache,
+            column="title",
+            strategy=title_text_embed["strategy"],
+            to="title_embedding",
+            embedding_name="community_report_title",
+        )
 
     return create_verb_result(
         cast(
