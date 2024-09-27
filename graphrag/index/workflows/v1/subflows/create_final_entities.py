@@ -91,6 +91,7 @@ async def create_final_entities(
         # Drop rows with NaN 'description_embedding' if not using vector store
         if not description_text_embed.get("strategy", {}).get("vector_store"):
             nodes = nodes.loc[nodes["description_embedding"].notna()]
+        nodes.drop(columns="name_description", inplace=True)
 
     # Return final result
     return create_verb_result(cast(Table, nodes))
