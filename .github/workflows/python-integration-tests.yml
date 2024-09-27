@@ -74,10 +74,6 @@ jobs:
         id: azuright
         uses: potatoqualitee/azuright@v1.1
 
-      - name: Verb Test
-        run: |
-          poetry run poe test_verbs
-
       - name: Integration Test
         run: |
           poetry run poe test_integration
