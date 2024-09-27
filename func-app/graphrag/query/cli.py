@@ -410,7 +410,7 @@ def _configure_paths_and_settings(
         msg = "Either data_dir or root_dir must be provided."
         raise ValueError(msg)
     if data_dir is None:
-        data_dir = _infer_data_dir(cast(str, root_dir))
+        data_dir = root_dir # _infer_data_dir(cast(str, root_dir))
     config = _create_graphrag_config(root_dir, config_dir)
     return data_dir, root_dir, config
 
