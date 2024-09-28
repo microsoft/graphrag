@@ -3,7 +3,7 @@
 
 """All the steps to transform final documents."""
 
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 from datashaper import (
@@ -14,7 +14,6 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
 from graphrag.index.verbs.graph.embed.embed_graph import embed_graph_df
@@ -28,10 +27,9 @@ from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 async def create_base_entity_graph(
     input: VerbInput,
     callbacks: VerbCallbacks,
-    cache: PipelineCache,
     storage: PipelineStorage,
-    clustering_config: dict,
-    embedding_config: dict,
+    clustering_config: dict[str, Any],
+    embedding_config: dict[str, Any],
     graphml_snapshot_enabled: bool = False,
     embed_graph_enabled: bool = False,
     **_kwargs: dict,
@@ -39,11 +37,13 @@ async def create_base_entity_graph(
     """All the steps to transform final documents."""
     source = cast(pd.DataFrame, input.get_input())
 
+    clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
+
     clustered = cluster_graph_df(
         source,
         callbacks,
         column="entity_graph",
-        strategy=clustering_config.get("strategy"),
+        strategy=clustering_strategy,
         to="clustered_graph",
         level_to="level",
     )
@@ -57,12 +57,13 @@ async def create_base_entity_graph(
             formats=[{"format": "text", "extension": "graphml"}],
         )
 
-    if embed_graph_enabled:
+    embedding_strategy = embedding_config.get("strategy")
+    if embed_graph_enabled and embedding_strategy:
         clustered = await embed_graph_df(
             clustered,
             callbacks,
             column="clustered_graph",
-            strategy=embedding_config.get("strategy"),
+            strategy=embedding_strategy,
             to="embeddings",
         )
 

@@ -3,14 +3,13 @@
 
 import networkx as nx
 
-from graphrag.index.storage.memory_pipeline_storage import create_memory_storage
+from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.index.workflows.v1.create_base_entity_graph import (
     build_steps,
     workflow_name,
 )
 
 from .util import (
-    compare_outputs,
     get_config_for_workflow,
     get_workflow_output,
     load_expected,
@@ -37,8 +36,6 @@ async def test_create_base_entity_graph():
     )
 
     # the serialization of the graph may differ so we can't assert the dataframes directly
-    ashape = actual.shape
-    eshape = expected.shape
     assert actual.shape == expected.shape, "Graph dataframe shapes differ"
 
     # let's parse a sample of the raw graphml
@@ -87,7 +84,7 @@ async def test_create_base_entity_graph_with_snapshots():
     ])
     expected = load_expected(workflow_name)
 
-    storage = create_memory_storage()
+    storage = MemoryPipelineStorage()
 
     config = get_config_for_workflow(workflow_name)
 
@@ -103,11 +100,9 @@ async def test_create_base_entity_graph_with_snapshots():
         storage=storage,
     )
 
-    ashape = actual.shape
-    eshape = expected.shape
     assert actual.shape == expected.shape, "Graph dataframe shapes differ"
 
-    assert list(storage._storage.keys()) == [
+    assert storage.keys() == [
         "clustered_graph.0.graphml",
         "clustered_graph.1.graphml",
         "clustered_graph.2.graphml",
