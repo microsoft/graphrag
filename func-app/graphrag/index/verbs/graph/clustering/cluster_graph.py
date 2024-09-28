@@ -5,7 +5,6 @@
 
 import logging
 from enum import Enum
-from random import Random
 from typing import Any, cast
 
 import networkx as nx
@@ -16,6 +15,8 @@ from graphrag.index.utils import gen_uuid, load_graph
 
 from .typing import Communities
 from hashlib import sha256
+import random
+import time
 
 log = logging.getLogger(__name__)
 
@@ -120,6 +121,10 @@ def apply_clustering(
 ) -> nx.Graph:
     """Apply clustering to a graphml string."""
 
+    # True: Same (source,target) will be handled as a new edge in graph when 
+    # working with multiple index results.
+    UNIQUE_EDGES= True
+
     graph = nx.parse_graphml(graphml)
     for community_level, community_id, nodes in communities:
         if level == community_level:
@@ -140,7 +145,11 @@ def apply_clustering(
     for index, edge in enumerate(graph.edges()):
         graph.edges[edge]["human_readable_id"] = index
         graph.edges[edge]["level"] = level
-        graph.edges[edge]["id"] = generate_entity_id(f"{edge[0]}:{edge[1]}")
+        if UNIQUE_EDGES:
+            graph.edges[edge]["id"] = generate_entity_id(str(random.getrandbits(64))
+                                                         +str(time.time_ns()))
+        else:
+            graph.edges[edge]["id"] = generate_entity_id(f"{edge[0]}:{edge[1]}")
 
     return graph
 
