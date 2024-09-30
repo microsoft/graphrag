@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A workflow callback manager that emits updates to a ProgressLogger."""
+"""A workflow callback manager that emits updates."""
 
 from typing import Any
 
