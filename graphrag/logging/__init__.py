@@ -27,6 +27,5 @@ __all__ = [  # noqa: RUF022
     "RichProgressLogger",
     "StatusLogger",
     "load_progress_logger",
-    # Callback reporters
     "load_pipeline_logger",
 ]
