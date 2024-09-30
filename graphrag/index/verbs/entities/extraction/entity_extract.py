@@ -54,9 +54,7 @@ async def entity_extract(
     entity_types=DEFAULT_ENTITY_TYPES,
     **kwargs,
 ) -> TableContainer:
-    """
-    Extract entities from a piece of text.
-    """
+    """Extract entities from a piece of text."""
     source = cast(pd.DataFrame, input.get_input())
     output = await entity_extract_df(
         source,
@@ -198,7 +196,7 @@ async def entity_extract_df(
         scheduling_type=async_mode,
         num_threads=kwargs.get("num_threads", 4),
     )
-    print(results)
+
     to_result = []
     graph_to_result = []
     for result in results:

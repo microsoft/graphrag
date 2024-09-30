@@ -28,6 +28,39 @@ def build_steps(
     num_threads = entity_extraction_config.get("num_threads", 4)
     entity_types = entity_extraction_config.get("entity_types")
 
+    graph_merge_operations_config = config.get(
+        "graph_merge_operations",
+        {
+            "nodes": {
+                "source_id": {
+                    "operation": "concat",
+                    "delimiter": ", ",
+                    "distinct": True,
+                },
+                "description": ({
+                    "operation": "concat",
+                    "separator": "\n",
+                    "distinct": False,
+                }),
+            },
+            "edges": {
+                "source_id": {
+                    "operation": "concat",
+                    "delimiter": ", ",
+                    "distinct": True,
+                },
+                "description": ({
+                    "operation": "concat",
+                    "separator": "\n",
+                    "distinct": False,
+                }),
+                "weight": "sum",
+            },
+        },
+    )
+    nodes = graph_merge_operations_config.get("nodes")
+    edges = graph_merge_operations_config.get("edges")
+
     graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
     raw_entity_snapshot_enabled = config.get("raw_entity_snapshot", False) or False
 
@@ -41,62 +74,11 @@ def build_steps(
                 "strategy": strategy,
                 "num_threads": num_threads,
                 "entity_types": entity_types,
-    
+                "nodes": nodes,
+                "edges": edges,
+                "raw_entity_snapshot_enabled": raw_entity_snapshot_enabled,
+                "graphml_snapshot_enabled": graphml_snapshot_enabled,
             },
             "input": {"source": "workflow:create_base_text_units"},
-        },
-        {
-            "verb": "snapshot",
-            "enabled": raw_entity_snapshot_enabled,
-            "args": {
-                "name": "raw_extracted_entities",
-                "formats": ["json"],
-            },
-        },
-        {
-            "verb": "merge_graphs",
-            "args": {
-                "column": "entity_graph",
-                "to": "entity_graph",
-                **config.get(
-                    "graph_merge_operations",
-                    {
-                        "nodes": {
-                            "source_id": {
-                                "operation": "concat",
-                                "delimiter": ", ",
-                                "distinct": True,
-                            },
-                            "description": ({
-                                "operation": "concat",
-                                "separator": "\n",
-                                "distinct": False,
-                            }),
-                        },
-                        "edges": {
-                            "source_id": {
-                                "operation": "concat",
-                                "delimiter": ", ",
-                                "distinct": True,
-                            },
-                            "description": ({
-                                "operation": "concat",
-                                "separator": "\n",
-                                "distinct": False,
-                            }),
-                            "weight": "sum",
-                        },
-                    },
-                ),
-            },
-        },
-        {
-            "verb": "snapshot_rows",
-            "enabled": graphml_snapshot_enabled,
-            "args": {
-                "base_name": "merged_graph",
-                "column": "entity_graph",
-                "formats": [{"format": "text", "extension": "graphml"}],
-            },
         },
     ]
