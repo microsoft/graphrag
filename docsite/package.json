@@ -12,7 +12,7 @@
         "@11ty/eleventy": "^2.0.1",
         "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
         "@kevingimbel/eleventy-plugin-mermaid": "^2.2.1",
-        "eleventy-plugin-code-clipboard": "^0.1.1",
+        "eleventy-plugin-code-clipboard": "^0.2.0",
         "markdown-it": "^14.1.0"
     }
 }

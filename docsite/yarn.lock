@@ -147,7 +147,7 @@ __metadata:
     "@11ty/eleventy": "npm:^2.0.1"
     "@11ty/eleventy-plugin-syntaxhighlight": "npm:^5.0.0"
     "@kevingimbel/eleventy-plugin-mermaid": "npm:^2.2.1"
-    eleventy-plugin-code-clipboard: "npm:^0.1.1"
+    eleventy-plugin-code-clipboard: "npm:^0.2.0"
     markdown-it: "npm:^14.1.0"
   languageName: unknown
   linkType: soft
@@ -782,12 +782,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eleventy-plugin-code-clipboard@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "eleventy-plugin-code-clipboard@npm:0.1.1"
+"eleventy-plugin-code-clipboard@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "eleventy-plugin-code-clipboard@npm:0.2.0"
   dependencies:
-    uglify-js: "npm:^3.14.5"
-  checksum: c3bd659bd9d950cad786fd4ff14fcdd7dc9046269de3f3694d4cc1a87c51ea3bb6b263acd7b78a5954d0fef103463808cdb17269c86455f0e2a4a5790905db45
+    uglify-js: "npm:^3.19.3"
+  checksum: 6dd62b3aa0f79fcd21b3cdf964b896538a3945913dbbfa8845189b1d334393342d5d8f529f5aa857a4caab1818fd645a05e22548290df8b4bcbc1cc91de7205a
   languageName: node
   linkType: hard
 
@@ -2659,12 +2659,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uglify-js@npm:^3.1.4, uglify-js@npm:^3.14.5":
+"uglify-js@npm:^3.1.4":
   version: 3.17.4
   resolution: "uglify-js@npm:3.17.4"
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 4c0b800e0ff192079d2c3ce8414fd3b656a570028c7c79af5c29c53d5c532b68bbcae4ad47307f89c2ee124d11826fff7a136b59d5c5bb18422bcdf5568afe1e
+  languageName: node
+  linkType: hard
+
+"uglify-js@npm:^3.19.3":
+  version: 3.19.3
+  resolution: "uglify-js@npm:3.19.3"
+  bin:
+    uglifyjs: bin/uglifyjs
+  checksum: 6b9639c1985d24580b01bb0ab68e78de310d38eeba7db45bec7850ab4093d8ee464d80ccfaceda9c68d1c366efbee28573b52f95e69ac792354c145acd380b11
   languageName: node
   linkType: hard
 
