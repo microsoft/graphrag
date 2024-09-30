@@ -26,7 +26,6 @@ def build_steps(
         {
             "verb": "create_final_documents",
             "args": {
-                "columns": {"text_units": "text_unit_ids"},
                 "skip_embedding": skip_raw_content_embedding,
                 "text_embed": document_raw_content_embed_config,
             },
