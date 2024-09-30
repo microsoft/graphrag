@@ -317,6 +317,9 @@ class KustoVectorStore(BaseVectorStore):
             id_list=ast.literal_eval(e.text_unit_ids)
             unit_ids.extend([id for id in id_list])
 
+        return self.retrieve_text_units_by_id(unit_ids)
+
+    def retrieve_text_units_by_id(self, unit_ids: list[str]) -> list[TextUnit]:
         unit_ids_str=", ".join(f"'{id}'" for id in unit_ids )
 
         command=f"{self.text_units_name} | where id in ({unit_ids_str})"

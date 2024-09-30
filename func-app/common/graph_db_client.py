@@ -156,3 +156,50 @@ class GraphDBClient:
                 },
             )
             time.sleep(5)
+
+    def get_top_related_unique_edges(self, entity_id: str, top: int) -> [dict[str, str]]:
+        """Retrieve the top related unique edges for a given entity.
+        This method queries the graph database to find the top related unique edges
+        connected to the specified entity. The edges are sorted by weight in descending
+        order, and the top N edges are returned.
+        Args:
+            entity_id (str): The ID of the entity for which to find related edges.
+            top (int): The number of top related edges to retrieve.
+
+        Returns
+        -------
+            A list of dictionaries containing the related entity IDs, weights, and text unit IDs.
+        """
+        result = self._client.submit(
+            message=(
+                f"""g.V().has('id', '{entity_id}')
+                  .bothE('connects')
+                  .project('source_id', 'target_id', 'weight','text_unit_ids')
+                    .by(outV().values('id'))
+                    .by(inV().values('id'))
+                    .by('weight')
+                    .by('text_unit_ids')
+                  .group()
+                    .by(select('source_id', 'target_id'))
+                    .by(fold())
+                  .unfold()
+                  .select(values)
+                  .unfold()
+                  .order().by(select('weight'), decr)
+                  .dedup('source_id','target_id')
+                  .limit({top})
+                """
+            ),
+        )
+
+        json_data = []
+        for rows in result:
+            for row in rows:
+                source_id = row['source_id']
+                target_id = row['target_id']
+                weight = row['weight']
+                text_unit_ids = row['text_unit_ids']
+                related_entity_id = source_id if source_id != entity_id else target_id
+                json_data.append({'entity_id': related_entity_id, 'weight': weight, 'text_unit_ids': text_unit_ids})
+
+        return json_data
