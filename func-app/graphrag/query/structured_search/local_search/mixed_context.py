@@ -157,7 +157,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             query = f"{query}\n{pre_user_questions}"
 
 
-        preselected_entities, selected_entities = [], []
+        preselected_entities, selected_entities, entity_to_related_entities = [], [], []
         local_context, local_context_data = "", {}
 
         if path in (2,3):
@@ -188,8 +188,13 @@ class LocalSearchMixedContext(LocalContextBuilder):
             print("Entities: ", names)
 
             if path == 3:
-                # TODO Find the top 10 related entities to [preselected_entities] -> [SetB]
-                print("To be implemented")
+                graphdb_client=GraphDBClient(self.config.graphdb,self.context_id)# if (self.config.graphdb and self.config.graphdb.enabled) else None
+                if graphdb_client:
+                    # Call graphdb making a list of dictionary of entity_id to related entities mapping
+                    entity_to_related_entities = {preselected_entity: graphdb_client.get_top_related_unique_edges(preselected_entity, top_k_relationships) for preselected_entity in preselected_entities}
+                    print("Related entities: ", entity_to_related_entities)
+                else:
+                    print("No graphdb, cannot add relationship context")
 
         selected_entities = map_query_to_entities(
             query=query,
@@ -277,7 +282,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     selected_entities=selected_entities,
                     max_tokens=text_unit_tokens,
                     return_candidate_context=return_candidate_context,
-                    vector_store=self.entity_text_embeddings
+                    vector_store=self.entity_text_embeddings,
+                    entity_to_related_entities=entity_to_related_entities
                 )
             else: #legacy
                 text_unit_context, text_unit_context_data = self._build_text_unit_context(
@@ -393,11 +399,17 @@ class LocalSearchMixedContext(LocalContextBuilder):
         column_delimiter: str = "|",
         context_name: str = "Sources",
         vector_store: BaseVectorStore = None,
+        entity_to_related_entities: [dict[str, str]] = [],
     ) -> tuple[str, dict[str, pd.DataFrame]]:
 
         selected_text_units=vector_store.retrieve_text_units(selected_entities)
 
-        #ignore sorting selected_text_usnits based on relationship count
+        #ignore sorting selected_text_units based on relationship count
+
+        # if path 3, we have related text units to add to the context
+        for related_groups in entity_to_related_entities.values():
+            for related in related_groups:
+                selected_text_units += vector_store.retrieve_text_units_by_id(related['text_unit_ids'])
 
         def str_to_list(unit,column):
             cvar = getattr(unit,column)
