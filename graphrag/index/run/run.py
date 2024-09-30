@@ -13,6 +13,7 @@ from typing import cast
 import pandas as pd
 from datashaper import WorkflowCallbacks
 
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.index.cache import PipelineCache
 from graphrag.index.config import (
     PipelineConfig,
@@ -50,7 +51,6 @@ from graphrag.index.workflows import (
     load_workflows,
 )
 from graphrag.logging import (
-    ConsoleWorkflowCallbacks,
     NullProgressLogger,
     ProgressLogger,
 )

@@ -8,17 +8,14 @@ from typing import cast
 
 from datashaper import WorkflowCallbacks
 
+from graphrag.callbacks.blob_workflow_callbacks import BlobWorkflowCallbacks
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
+from graphrag.callbacks.file_workflow_callbacks import FileWorkflowCallbacks
 from graphrag.config import ReportingType
 from graphrag.index.config import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
     PipelineReportingConfig,
-)
-
-from .callbacks import (
-    BlobWorkflowCallbacks,
-    ConsoleWorkflowCallbacks,
-    FileWorkflowCallbacks,
 )
 
 
