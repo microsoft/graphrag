@@ -92,9 +92,24 @@ async def update_dataframe_outputs(
 
     merged_entities_df, _ = _group_and_resolve_entities(old_entities, delta_entities)
     # Save the updated entities back to storage
-    # TODO: Using _new in the mean time, to compare outputs without overwriting the original
+    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set(
         "create_final_entities_new.parquet", merged_entities_df.to_parquet()
+    )
+
+    # Update relationships with the entities id mapping
+    old_relationships = await _load_table_from_storage(
+        "create_final_relationships.parquet", storage
+    )
+    delta_relationships = dataframe_dict["create_final_relationships"]
+    merged_relationships_df = _update_and_merge_relationships(
+        old_relationships,
+        delta_relationships,
+    )
+
+    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
+    await storage.set(
+        "create_final_relationships_new.parquet", merged_relationships_df.to_parquet()
     )
 
 
@@ -148,6 +163,9 @@ def _group_and_resolve_entities(
     )
     id_mapping = dict(zip(merged["id_B"], merged["id_A"], strict=True))
 
+    # Increment human readable id in b by the max of a
+    df_b["human_readable_id"] += df_a["human_readable_id"].max() + 1
+
     # Concat A and B
     combined = pd.concat([df_a, df_b], copy=False)
 
@@ -171,9 +189,6 @@ def _group_and_resolve_entities(
     # Force the result into a DataFrame
     resolved: pd.DataFrame = pd.DataFrame(aggregated)
 
-    # Recreate humand readable id with an autonumeric
-    resolved["human_readable_id"] = range(len(resolved))
-
     # Modify column order to keep consistency
     resolved = resolved.loc[
         :,
@@ -190,3 +205,46 @@ def _group_and_resolve_entities(
     ]
 
     return resolved, id_mapping
+
+
+def _update_and_merge_relationships(
+    old_relationships: pd.DataFrame, delta_relationships: pd.DataFrame
+) -> pd.DataFrame:
+    """Update and merge relationships.
+
+    Parameters
+    ----------
+    old_relationships : pd.DataFrame
+        The old relationships.
+    delta_relationships : pd.DataFrame
+        The delta relationships.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated relationships.
+    """
+    # Increment the human readable id in b by the max of a
+    delta_relationships["human_readable_id"] += (
+        old_relationships["human_readable_id"].max() + 1
+    )
+
+    # Merge the final relationships
+    final_relationships = pd.concat(
+        [old_relationships, delta_relationships], copy=False
+    )
+
+    # Recalculate target and source degrees
+    final_relationships["source_degree"] = final_relationships.groupby("source")[
+        "target"
+    ].transform("count")
+    final_relationships["target_degree"] = final_relationships.groupby("target")[
+        "source"
+    ].transform("count")
+
+    # Recalculate the rank of the relationships (source degree + target degree)
+    final_relationships["rank"] = (
+        final_relationships["source_degree"] + final_relationships["target_degree"]
+    )
+
+    return final_relationships
