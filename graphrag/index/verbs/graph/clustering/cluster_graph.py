@@ -86,7 +86,7 @@ def cluster_graph_df(
     input[level_to] = input.apply(
         lambda x: list({level for level, _, _ in x[community_map_to]}), axis=1
     )
-    input[to] = [None] * len(input)
+    input[to] = None
 
     num_total = len(input)
 
