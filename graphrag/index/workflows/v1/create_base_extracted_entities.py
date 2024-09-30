@@ -25,6 +25,10 @@ def build_steps(
 
     return [
         {
+            "verb": "create_base_extracted_entities",
+            "input": {"source": "workflow:create_base_text_units"},
+        },
+        {
             "verb": "entity_extract",
             "args": {
                 **entity_extraction_config,
