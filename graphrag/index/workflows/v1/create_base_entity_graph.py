@@ -40,52 +40,13 @@ def build_steps(
 
     return [
         {
-            "verb": "cluster_graph",
+            "verb": "create_base_entity_graph",
             "args": {
-                **clustering_config,
-                "column": "entity_graph",
-                "to": "clustered_graph",
-                "level_to": "level",
+                "clustering_config": clustering_config,
+                "graphml_snapshot_enabled": graphml_snapshot_enabled,
+                "embed_graph_enabled": embed_graph_enabled,
+                "embedding_config": embed_graph_config,
             },
             "input": ({"source": "workflow:create_summarized_entities"}),
-        },
-        {
-            "verb": "snapshot_rows",
-            "enabled": graphml_snapshot_enabled,
-            "args": {
-                "base_name": "clustered_graph",
-                "column": "clustered_graph",
-                "formats": [{"format": "text", "extension": "graphml"}],
-            },
-        },
-        {
-            "verb": "embed_graph",
-            "enabled": embed_graph_enabled,
-            "args": {
-                "column": "clustered_graph",
-                "to": "embeddings",
-                **embed_graph_config,
-            },
-        },
-        {
-            "verb": "snapshot_rows",
-            "enabled": graphml_snapshot_enabled,
-            "args": {
-                "base_name": "embedded_graph",
-                "column": "entity_graph",
-                "formats": [{"format": "text", "extension": "graphml"}],
-            },
-        },
-        {
-            "verb": "select",
-            "args": {
-                # only selecting for documentation sake, so we know what is contained in
-                # this workflow
-                "columns": (
-                    ["level", "clustered_graph", "embeddings"]
-                    if embed_graph_enabled
-                    else ["level", "clustered_graph"]
-                ),
-            },
         },
     ]

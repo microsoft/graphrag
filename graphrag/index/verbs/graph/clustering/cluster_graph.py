@@ -57,28 +57,45 @@ def cluster_graph(
 
     ```
     """
-    output_df = cast(pd.DataFrame, input.get_input())
-    results = output_df[column].apply(lambda graph: run_layout(strategy, graph))
+    output_df = cluster_graph_df(
+        cast(pd.DataFrame, input.get_input()),
+        callbacks,
+        strategy,
+        column,
+        to,
+        level_to=level_to,
+    )
+    return TableContainer(table=output_df)
+
+
+def cluster_graph_df(
+    input: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    strategy: dict[str, Any],
+    column: str,
+    to: str,
+    level_to: str | None = None,
+) -> pd.DataFrame:
+    """Apply a hierarchical clustering algorithm to a graph."""
+    results = input[column].apply(lambda graph: run_layout(strategy, graph))
 
     community_map_to = "communities"
-    output_df[community_map_to] = results
+    input[community_map_to] = results
 
     level_to = level_to or f"{to}_level"
-    output_df[level_to] = output_df.apply(
+    input[level_to] = input.apply(
         lambda x: list({level for level, _, _ in x[community_map_to]}), axis=1
     )
-    output_df[to] = [None] * len(output_df)
+    input[to] = None
 
-    num_total = len(output_df)
+    num_total = len(input)
 
     # Create a seed for this run (if not provided)
     seed = strategy.get("seed", Random().randint(0, 0xFFFFFFFF))  # noqa S311
 
     # Go through each of the rows
     graph_level_pairs_column: list[list[tuple[int, str]]] = []
-    for _, row in progress_iterable(
-        output_df.iterrows(), callbacks.progress, num_total
-    ):
+    for _, row in progress_iterable(input.iterrows(), callbacks.progress, num_total):
         levels = row[level_to]
         graph_level_pairs: list[tuple[int, str]] = []
 
@@ -96,21 +113,18 @@ def cluster_graph(
             )
             graph_level_pairs.append((level, graph))
         graph_level_pairs_column.append(graph_level_pairs)
-    output_df[to] = graph_level_pairs_column
+    input[to] = graph_level_pairs_column
 
     # explode the list of (level, graph) pairs into separate rows
-    output_df = output_df.explode(to, ignore_index=True)
+    input = input.explode(to, ignore_index=True)
 
     # split the (level, graph) pairs into separate columns
     # TODO: There is probably a better way to do this
-    output_df[[level_to, to]] = pd.DataFrame(
-        output_df[to].tolist(), index=output_df.index
-    )
+    input[[level_to, to]] = pd.DataFrame(input[to].tolist(), index=input.index)
 
     # clean up the community map
-    output_df.drop(columns=[community_map_to], inplace=True)
-
-    return TableContainer(table=output_df)
+    input.drop(columns=[community_map_to], inplace=True)
+    return input
 
 
 # TODO: This should support str | nx.Graph as a graphml param

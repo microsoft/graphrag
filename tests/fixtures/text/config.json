@@ -48,7 +48,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 2,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_entities": {
