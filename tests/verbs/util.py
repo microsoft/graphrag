@@ -87,7 +87,7 @@ def compare_outputs(
 
     assert len(actual) == len(
         expected
-    ), f"Expected: {len(expected)}, Actual: {len(actual)}"
+    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
 
     for column in cols:
         assert column in actual.columns
