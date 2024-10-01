@@ -21,10 +21,12 @@ def get_relationships_from_graphdb(query:str,selected_entity_names:list[str],gra
         }
     )
     time.sleep(5)
-    print(graphdb_client.result_to_df(relationships_result))
+    #print(graphdb_client.result_to_df(relationships_result))
     return read_relationships(
         graphdb_client.result_to_df(relationships_result),
-        short_id_col="human_readable_id"
+        short_id_col="human_readable_id",
+        source_col="inV",
+        target_col="outV"
     )
 
 def get_in_network_relationships(
@@ -34,7 +36,7 @@ def get_in_network_relationships(
     graphdb_client: GraphDBClient|None=None,
 ) -> list[Relationship]:
     """Get all directed relationships between selected entities, sorted by ranking_attribute."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = [entity.id for entity in selected_entities]
     if not graphdb_client:
         selected_relationships = [
             relationship
@@ -46,8 +48,8 @@ def get_in_network_relationships(
         selected_relationships = get_relationships_from_graphdb(
             query=(
                 "g.E()"
-                ".where(inV().has('name',within(prop_selected_entity_names)))"
-                ".where(outV().has('name',within(prop_selected_entity_names)))"
+                ".where(inV().has('id',within(prop_selected_entity_names)))"
+                ".where(outV().has('id',within(prop_selected_entity_names)))"
             ),
             selected_entity_names=selected_entity_names,
             graphdb_client=graphdb_client
@@ -68,7 +70,7 @@ def get_out_network_relationships(
     graphdb_client: GraphDBClient|None=None,
 ) -> list[Relationship]:
     """Get relationships from selected entities to other entities that are not within the selected entities, sorted by ranking_attribute."""
-    selected_entity_names = [entity.title for entity in selected_entities]
+    selected_entity_names = [entity.id for entity in selected_entities]
     if not graphdb_client:
         source_relationships = [
             relationship
@@ -87,10 +89,10 @@ def get_out_network_relationships(
         selected_relationships = get_relationships_from_graphdb(
             query=(
                 "g.E().union("
-                "__.where(outV().has('name',without(prop_selected_entity_names)))"
-                ".where(inV().has('name',within(prop_selected_entity_names))),"
-                "__.where(inV().has('name',without(prop_selected_entity_names)))"
-                ".where(outV().has('name',within(prop_selected_entity_names)))"
+                "__.where(outV().has('id',without(prop_selected_entity_names)))"
+                ".where(inV().has('id',within(prop_selected_entity_names))),"
+                "__.where(inV().has('id',without(prop_selected_entity_names)))"
+                ".where(outV().has('id',within(prop_selected_entity_names)))"
                 ")"
             ),
             selected_entity_names= selected_entity_names,
