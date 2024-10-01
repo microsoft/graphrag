@@ -53,6 +53,29 @@ async def summarize_descriptions(
     strategy: dict[str, Any] | None = None,
     **kwargs,
 ) -> TableContainer:
+    """Summarize entity and relationship descriptions from an entity graph."""
+    source = cast(pd.DataFrame, input.get_input())
+    output = await summarize_descriptions_df(
+        source,
+        cache,
+        callbacks,
+        column=column,
+        to=to,
+        strategy=strategy,
+        **kwargs,
+    )
+    return TableContainer(table=output)
+
+
+async def summarize_descriptions_df(
+    input: pd.DataFrame,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    column: str,
+    to: str,
+    strategy: dict[str, Any] | None = None,
+    **kwargs,
+) -> pd.DataFrame:
     """
     Summarize entity and relationship descriptions from an entity graph.
 
@@ -111,7 +134,6 @@ async def summarize_descriptions(
     ```
     """
     log.debug("summarize_descriptions strategy=%s", strategy)
-    output = cast(pd.DataFrame, input.get_input())
     strategy = strategy or {}
     strategy_exec = load_strategy(
         strategy.get("type", SummarizeStrategyType.graph_intelligence)
@@ -181,7 +203,7 @@ async def summarize_descriptions(
     semaphore = asyncio.Semaphore(kwargs.get("num_threads", 4))
 
     results = [
-        await get_resolved_entities(row, semaphore) for row in output.itertuples()
+        await get_resolved_entities(row, semaphore) for row in input.itertuples()
     ]
 
     to_result = []
@@ -191,8 +213,8 @@ async def summarize_descriptions(
             to_result.append(result.graph)
         else:
             to_result.append(None)
-    output[to] = to_result
-    return TableContainer(table=output)
+    input[to] = to_result
+    return input
 
 
 def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy:
