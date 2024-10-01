@@ -213,7 +213,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         )
 
         print("Selected entities titles: ", [entity.title for entity in selected_entities])
-        
+
 
         # build context
         final_context = list[str]()
@@ -277,7 +277,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             # build text unit context
             text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
 
-            
+
             if isinstance(self.entity_text_embeddings,KustoVectorStore):
                 text_unit_context, text_unit_context_data = self._build_text_unit_context_kusto(
                     selected_entities=selected_entities,
@@ -420,13 +420,13 @@ class LocalSearchMixedContext(LocalContextBuilder):
         vector_store: BaseVectorStore = None,
         entity_to_related_entities: [dict[str, str]] = [],
     ) -> tuple[str, dict[str, pd.DataFrame]]:
-        
+
         selected_text_units=vector_store.retrieve_text_units(selected_entities)
 
         # if path 3, we have related text units to add to the context
         for related_groups in entity_to_related_entities.values() if entity_to_related_entities else []:
             for related in related_groups:
-                selected_text_units += vector_store.retrieve_text_units_by_id(related['text_unit_ids'])
+                selected_text_units += vector_store.retrieve_text_units_by_id(ast.literal_eval(related['text_unit_ids']))
 
         hmap={}
         text_units_kusto={}
@@ -434,12 +434,12 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if unit.id not in hmap:
                 hmap[unit.id]=unit
                 text_units_kusto[unit.id]=unit.document_ids
-        
+
         selected_text_units=[]
         for id in hmap:
             selected_text_units.append(hmap[id])
 
-            
+
         self.text_units_kusto=text_units_kusto
 
         #ignore sorting selected_text_usnits based on relationship count
@@ -461,9 +461,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
             loc = txt.find("\"body\"")
             if loc > -1:
                 unit.text = txt[loc+9:]
-            
+
             logging.info("Adding source: "+unit.text)
-            
+
 
         context_text, context_data = build_text_unit_context(
             text_units=selected_text_units,
