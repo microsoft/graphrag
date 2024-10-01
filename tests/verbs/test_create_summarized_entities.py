@@ -14,7 +14,6 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
@@ -30,7 +29,7 @@ async def test_create_summarized_entities():
 
     del config["summarize_descriptions"]["strategy"]["llm"]
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -80,7 +79,7 @@ async def test_create_summarized_entities_with_snapshots():
     del config["summarize_descriptions"]["strategy"]["llm"]
     config["graphml_snapshot"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,

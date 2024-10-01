@@ -13,7 +13,6 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
@@ -31,7 +30,7 @@ async def test_create_final_nodes():
     # we don't have graph embeddings in the test data, so this will fail if True
     config["layout_graph_enabled"] = False
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -61,7 +60,7 @@ async def test_create_final_nodes_with_snapshot():
     config["layout_graph_enabled"] = False
     config["snapshot_top_level_nodes"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
