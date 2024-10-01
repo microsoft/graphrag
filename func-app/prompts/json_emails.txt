@@ -1,0 +1,95 @@
+
+-Goal-
+Given a json document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+
+The document contains at least one email and each email with the following information:
+- "index" which is a number
+- "from" which is the email address of the sender
+- "to" which is a list of the email addresses of the recipients. Each email address is separated by a , character
+- "subject" which is the subject of the email
+- "date" which is the date that the email has been composed
+- "body" which is the textual content of the email written by the sender
+
+
+-Steps-
+For each email, do steps 1 through 5:
+1. Identify the email address of the sender and consider it an EMAIL entity
+2. Identify the email addresses of the all the recipients and consider each one an EMAIL entity
+3. Identify the date the email has been sent
+4. Identify all entities in the email body
+
+For each identified entity, extract the following information:
+- entity_name: Name of the entity, capitalized
+- entity_type: One of the following types: [{entity_types}]
+- entity_description: Comprehensive description of the entity's attributes and activities
+Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+ 
+5. From the entities identified in steps 1 through 4, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
+For each pair of related entities, extract the following information:
+- source_entity: name of the source entity, as identified in previous steps
+- target_entity: name of the target entity, as identified in previous steps
+- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
+- relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
+ Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+After you have extracted the requested information:
+1. Return output in English as list of all the entities and relationships identified in previous steps. Use **{record_delimiter}** as the list delimiter
+2. Output {completion_delimiter} after the list of all entities
+ 
+######################
+-Examples-
+######################
+Example 1:
+Entity_types: EMAIL, GEO
+Text:
+[
+{
+    "index":"10",
+    "date":"2000-10-16T06:42:00Z",
+    "from":"sender@test.com",
+    "to":[
+        "receiver@test.com"
+    ],
+    "subject":"subject4",
+    "body":"Hi Lucy, the meeting happens tomrrow at the first level."
+},
+
+{
+    "index":"11",
+    "date":"2000-11-16T06:42:00Z",
+    "from":"sender2@test.com",
+    "to":[
+        "receiver2@test.com"
+    ],
+    "subject":"Test2",
+    "body":"Hi Sam, I'll see you on February 1st in Redmond."
+}
+
+]
+######################
+Output:
+("entity"{tuple_delimiter}sender@test.com{tuple_delimiter}EMAIL{tuple_delimiter}sender@test.com is the email address of the sender)
+{record_delimiter}
+("entity"{tuple_delimiter}receiver@test.com{tuple_delimiter}EMAIL{tuple_delimiter}receiver@test.com is the email address of Lucy as the recipient)
+{record_delimiter}
+("entity"{tuple_delimiter}2000-10-16T06:42:00Z{tuple_delimiter}DATE{tuple_delimiter}2000-10-16T06:42:00Z is the date that the first email was sent)
+{record_delimiter}
+("entity"{tuple_delimiter}FIRST LEVEL{tuple_delimiter}GEO{tuple_delimiter}First level is where the meeting will take place tomorrow)
+{record_delimiter}
+("entity"{tuple_delimiter}sender2@test.com{tuple_delimiter}EMAIL{tuple_delimiter}sender2@test.com is the email address of the sender)
+{record_delimiter}
+("entity"{tuple_delimiter}receiver2@test.com{tuple_delimiter}EMAIL{tuple_delimiter}receiver2@test.com is the email address of Sam as the recipient)
+{record_delimiter}
+("entity"{tuple_delimiter}2000-11-16T06:42:00Z{tuple_delimiter}DATE{tuple_delimiter}2000-10-16T06:42:00Z is the date that the second email was sent)
+{record_delimiter}
+("entity"{tuple_delimiter}REDMOND{tuple_delimiter}GEO{tuple_delimiter}REDMOND is the city that sender wants to see the receiver)
+{record_delimiter}
+("entity"{tuple_delimiter}February 1st{tuple_delimiter}DATE{tuple_delimiter}The meeting is going to happen in February 1st)
+{completion_delimiter}
+######################
+-Real Data-
+######################
+Entity_types: {entity_types}
+Text: {input_text}
+######################
+Output:
