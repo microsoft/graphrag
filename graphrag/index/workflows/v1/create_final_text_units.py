@@ -35,8 +35,9 @@ def build_steps(
         {
             "verb": "create_final_text_units",
             "args": {
-                "skip_embedding": skip_text_unit_embedding,
-                "text_embed": text_unit_text_embed_config,
+                "text_embed": text_unit_text_embed_config
+                if not skip_text_unit_embedding
+                else None,
                 "covariates_enabled": covariates_enabled,
             },
             "input": {
