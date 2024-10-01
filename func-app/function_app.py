@@ -125,7 +125,7 @@ def query(req: func.HttpRequest) -> func.HttpResponse:
                 query=query,
                 optimized_search=False,
                 use_kusto_community_reports=False,
-                paths=path
+                path=path
             )
 
     return func.HttpResponse(

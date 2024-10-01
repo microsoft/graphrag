@@ -42,7 +42,7 @@ def build_entity_context(
 
     # add headers
     current_context_text = f"-----{context_name}-----" + "\n"
-    header = ["id", "entity", "description"]
+    header = ["short_id","id", "entity", "description", "text_unit_ids", "document_ids"]
     if include_entity_rank:
         header.append(rank_description)
     attribute_cols = (
@@ -58,8 +58,11 @@ def build_entity_context(
     for entity in selected_entities:
         new_context = [
             entity.short_id if entity.short_id else "",
+            entity.id,
             entity.title,
             entity.description if entity.description else "",
+            entity.text_unit_ids if entity.text_unit_ids else "[]",
+            entity.document_ids if entity.document_ids else "[]"
         ]
         if include_entity_rank:
             new_context.append(str(entity.rank))
@@ -199,7 +202,7 @@ def build_relationship_context(
     all_context_records = [header]
     for rel in selected_relationships:
         new_context = [
-            rel.short_id if rel.short_id else "",
+            rel.id, # rel.id will never be empty.
             rel.source,
             rel.target,
             rel.description if rel.description else "",

@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from typing import cast
 from io import BytesIO
+import uuid
 
 from datashaper import VerbCallbacks
 from graphrag.common.progress.rich import RichProgressReporter
@@ -163,7 +164,8 @@ def run_local_search(
     query: str,
     optimized_search: bool = False,
     use_kusto_community_reports: bool = False,
-    path: int = 0,):
+    path: int = 0
+    ):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
         data_dir, root_dir, config_dir
@@ -280,14 +282,36 @@ def run_local_search(
         use_kusto_community_reports=use_kusto_community_reports,
     )
 
+    query_id= uuid.uuid4()
     if optimized_search:
         result = search_engine.optimized_search(query=query, path=path)
     else:
         result = search_engine.search(query=query, path=path)
-    for key in  result.context_data.keys():
-        asyncio.run(output_storage_client.set("query/output/"+ key +".paraquet", result.context_data[key].to_parquet())) #it shows as error in editor but not an error.
+    result_df = format_output(result, query_id)
+    #result = remove_PII(result)
+    asyncio.run(output_storage_client.set(f"query/{query_id}/output.json", result_df.to_json(orient="records"))) #it shows as error in editor but not an error.
+    result.response = f"\n query_id: {query_id}"
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
+
+def format_output(result, query_id)-> pd.DataFrame:
+    # Step 1: Rename `id` in entities to `entity_id` to avoid conflicts
+    entities = result.context_data["entities"]
+    relationships = result.context_data["relationships"]
+    entities = entities.rename(columns={'id': 'entity_id'})
+    source_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='source', how='left', suffixes=('', '_source'))
+    target_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='target', how='left', suffixes=('', '_target'))
+    combined_df = pd.concat([source_merged, target_merged], ignore_index=True)
+    grouped_relationships = combined_df.groupby('entity_id').apply(
+        lambda x: x[['id', 'source', 'target', 'description','in_context', 'weight']].dropna().to_dict('records')
+    ).reset_index(name='relationships')
+    result_df = pd.merge(entities, grouped_relationships, on='entity_id', how='left')
+    result_df = result_df.rename(columns={'entity_id': 'id'})
+    return result_df
+
+def remove_PII(result: pd.DataFrame) -> pd.DataFrame:
+    result.drop(["description","title"], axis = 1) #drop columns
+    return result
 
 def blob_exists(container_client, blob_name):
     blob_client = container_client.get_blob_client(blob_name)
