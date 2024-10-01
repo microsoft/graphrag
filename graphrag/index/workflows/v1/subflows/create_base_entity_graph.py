@@ -14,12 +14,11 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
+from graphrag.index.flows.create_base_entity_graph import (
+    create_base_entity_graph as create_base_entity_graph_flow,
+)
 from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
-from graphrag.index.verbs.graph.embed.embed_graph import embed_graph_df
-from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
-from graphrag.index.flows.create_base_entity_graph import create_base_entity_graph as create_base_entity_graph_flow
 
 @verb(
     name="create_base_entity_graph",

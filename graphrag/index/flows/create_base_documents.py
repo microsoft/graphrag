@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Transforms base documents by joining them with their text_units and adding optional attributes."""
+"""Transform base documents by joining them with their text_units and adding optional attributes."""
 
 import pandas as pd
 
@@ -11,7 +11,7 @@ def create_base_documents(
     text_units: pd.DataFrame,
     document_attribute_columns: list[str] | None = None,
 ) -> pd.DataFrame:
-    """Transforms base documents by joining them with their text_units and adding optional attributes."""
+    """Transform base documents by joining them with their text_units and adding optional attributes."""
     exploded = (
         text_units.explode("document_ids")
         .loc[:, ["id", "document_ids", "text"]]

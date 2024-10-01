@@ -9,7 +9,6 @@ import pandas as pd
 from datashaper import (
     VerbCallbacks,
 )
-from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
@@ -27,7 +26,6 @@ async def create_base_entity_graph(
     embed_graph_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
-
     clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
 
     clustered = cluster_graph_df(
@@ -73,4 +71,4 @@ async def create_base_entity_graph(
     if embed_graph_enabled:
         final_columns.append("embeddings")
 
-    return clustered[final_columns]
+    return cast(pd.DataFrame, clustered[final_columns])
