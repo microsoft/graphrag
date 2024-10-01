@@ -1,0 +1,86 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""All the steps to transform final relationships."""
+
+from typing import Any, cast
+
+import pandas as pd
+from datashaper import (
+    VerbCallbacks,
+)
+
+from graphrag.index.cache import PipelineCache
+from graphrag.index.verbs.graph.compute_edge_combined_degree import (
+    compute_edge_combined_degree_df,
+)
+from graphrag.index.verbs.graph.unpack import unpack_graph_df
+from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+
+
+async def create_final_relationships(
+    entity_graph: pd.DataFrame,
+    nodes: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
+    text_embed: dict | None = None,
+) -> pd.DataFrame:
+    """All the steps to transform final relationships."""
+    graph_edges = unpack_graph_df(entity_graph, callbacks, "clustered_graph", "edges")
+
+    graph_edges.rename(columns={"source_id": "text_unit_ids"}, inplace=True)
+
+    filtered = cast(
+        pd.DataFrame, graph_edges[graph_edges["level"] == 0].reset_index(drop=True)
+    )
+
+    if text_embed:
+        filtered = await text_embed_df(
+            filtered,
+            callbacks,
+            cache,
+            column="description",
+            strategy=text_embed["strategy"],
+            to="description_embedding",
+            embedding_name="relationship_description",
+        )
+
+    pruned_edges = filtered.drop(columns=["level"])
+
+    filtered_nodes = cast(
+        pd.DataFrame,
+        nodes[nodes["level"] == 0].reset_index(drop=True)[["title", "degree"]],
+    )
+
+    edge_combined_degree = compute_edge_combined_degree_df(
+        pruned_edges,
+        filtered_nodes,
+        to="rank",
+        node_name_column="title",
+        node_degree_column="degree",
+        edge_source_column="source",
+        edge_target_column="target",
+    )
+
+    edge_combined_degree["human_readable_id"] = edge_combined_degree[
+        "human_readable_id"
+    ].astype(str)
+    edge_combined_degree["text_unit_ids"] = _to_array(
+        edge_combined_degree["text_unit_ids"], ","
+    )
+
+    return edge_combined_degree
+
+
+# from datashaper, we should be able to inline this
+def _to_array(column, delimiter: str):
+    def convert_value(value: Any) -> list:
+        if pd.isna(value):
+            return []
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            return value.split(delimiter)
+        return [value]
+
+    return column.apply(convert_value)
