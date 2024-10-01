@@ -113,8 +113,7 @@ def _covariates(df: pd.DataFrame) -> pd.DataFrame:
 def _join(left, right):
     return left.merge(
         right,
-        left_on="id",
-        right_on="id",
+        on="id",
         how="left",
         suffixes=["_1", "_2"],
     )

@@ -3,7 +3,7 @@
 
 """All the steps to transform final relationships."""
 
-from typing import Any, cast
+from typing import cast
 
 import pandas as pd
 from datashaper import (
@@ -46,10 +46,8 @@ async def create_final_relationships(
 
     pruned_edges = filtered.drop(columns=["level"])
 
-    filtered_nodes = cast(
-        pd.DataFrame,
-        nodes[nodes["level"] == 0].reset_index(drop=True)[["title", "degree"]],
-    )
+    filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
+    filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
     edge_combined_degree = compute_edge_combined_degree_df(
         pruned_edges,
@@ -64,22 +62,8 @@ async def create_final_relationships(
     edge_combined_degree["human_readable_id"] = edge_combined_degree[
         "human_readable_id"
     ].astype(str)
-    edge_combined_degree["text_unit_ids"] = _to_array(
-        edge_combined_degree["text_unit_ids"], ","
-    )
+    edge_combined_degree["text_unit_ids"] = edge_combined_degree[
+        "text_unit_ids"
+    ].str.split(",")
 
     return edge_combined_degree
-
-
-# from datashaper, we should be able to inline this
-def _to_array(column, delimiter: str):
-    def convert_value(value: Any) -> list:
-        if pd.isna(value):
-            return []
-        if isinstance(value, list):
-            return value
-        if isinstance(value, str):
-            return value.split(delimiter)
-        return [value]
-
-    return column.apply(convert_value)
