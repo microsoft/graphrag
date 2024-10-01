@@ -24,6 +24,8 @@ async def test_create_base_entity_graph():
     ])
     expected = load_expected(workflow_name)
 
+    storage = MemoryPipelineStorage()
+
     config = get_config_for_workflow(workflow_name)
 
     steps = remove_disabled_steps(build_steps(config))
@@ -33,6 +35,7 @@ async def test_create_base_entity_graph():
         {
             "steps": steps,
         },
+        storage=storage,
     )
 
     # the serialization of the graph may differ so we can't assert the dataframes directly
@@ -51,6 +54,8 @@ async def test_create_base_entity_graph():
     assert (
         actual_graph_0.number_of_edges() == expected_graph_0.number_of_edges()
     ), "Graphml edge count differs"
+
+    assert len(storage.keys()) == 0, "Storage should be empty"
 
 
 async def test_create_base_entity_graph_with_embeddings():

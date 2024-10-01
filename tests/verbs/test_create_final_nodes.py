@@ -23,6 +23,8 @@ async def test_create_final_nodes():
     ])
     expected = load_expected(workflow_name)
 
+    storage = MemoryPipelineStorage()
+
     config = get_config_for_workflow(workflow_name)
 
     # default config turns UMAP off, which translates into false for layout
@@ -36,9 +38,12 @@ async def test_create_final_nodes():
         {
             "steps": steps,
         },
+        storage=storage,
     )
 
     compare_outputs(actual, expected)
+
+    assert len(storage.keys()) == 0, "Storage should be empty"
 
 
 async def test_create_final_nodes_with_snapshot():

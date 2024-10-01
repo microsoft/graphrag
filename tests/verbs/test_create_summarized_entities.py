@@ -24,6 +24,8 @@ async def test_create_summarized_entities():
     ])
     expected = load_expected(workflow_name)
 
+    storage = MemoryPipelineStorage()
+
     config = get_config_for_workflow(workflow_name)
 
     del config["summarize_descriptions"]["strategy"]["llm"]
@@ -35,6 +37,7 @@ async def test_create_summarized_entities():
         {
             "steps": steps,
         },
+        storage=storage,
     )
 
     # the serialization of the graph may differ so we can't assert the dataframes directly
@@ -60,6 +63,8 @@ async def test_create_summarized_entities():
         nodes[0][1]["description"]
         == "This is a MOCK response for the LLM. It is summarized!"
     )
+
+    assert len(storage.keys()) == 0, "Storage should be empty"
 
 
 async def test_create_summarized_entities_with_snapshots():
