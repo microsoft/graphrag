@@ -88,37 +88,34 @@ async def create_final_community_reports(
 
     # Embed full content if not skipped
     if full_content_text_embed:
-        community_reports = await text_embed_df(
+        community_reports["full_content_embedding"] = await text_embed_df(
             community_reports,
             callbacks,
             cache,
             column="full_content",
             strategy=full_content_text_embed["strategy"],
-            to="full_content_embedding",
             embedding_name="community_report_full_content",
         )
 
     # Embed summary if not skipped
     if summary_text_embed:
-        community_reports = await text_embed_df(
+        community_reports["summary_embedding"] = await text_embed_df(
             community_reports,
             callbacks,
             cache,
             column="summary",
             strategy=summary_text_embed["strategy"],
-            to="summary_embedding",
             embedding_name="community_report_summary",
         )
 
     # Embed title if not skipped
     if title_text_embed:
-        community_reports = await text_embed_df(
+        community_reports["title_embedding"] = await text_embed_df(
             community_reports,
             callbacks,
             cache,
             column="title",
             strategy=title_text_embed["strategy"],
-            to="title_embedding",
             embedding_name="community_report_title",
         )
 

@@ -43,13 +43,12 @@ async def create_final_text_units(
 
     is_using_vector_store = False
     if text_embed:
-        aggregated = await text_embed_df(
+        aggregated["text_embedding"] = await text_embed_df(
             aggregated,
             callbacks,
             cache,
             column="text",
             strategy=text_embed["strategy"],
-            to="text_embedding",
         )
         is_using_vector_store = (
             text_embed.get("strategy", {}).get("vector_store", None) is not None

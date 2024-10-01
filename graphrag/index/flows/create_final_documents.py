@@ -22,13 +22,12 @@ async def create_final_documents(
     documents.rename(columns={"text_units": "text_unit_ids"}, inplace=True)
 
     if text_embed:
-        documents = await text_embed_df(
+        documents["raw_content_embedding"] = await text_embed_df(
             documents,
             callbacks,
             cache,
             column="raw_content",
             strategy=text_embed["strategy"],
-            to="raw_content_embedding",
         )
 
     return documents

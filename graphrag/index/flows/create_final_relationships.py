@@ -35,13 +35,12 @@ async def create_final_relationships(
     )
 
     if text_embed:
-        filtered = await text_embed_df(
+        filtered["description_embedding"] = await text_embed_df(
             filtered,
             callbacks,
             cache,
             column="description",
             strategy=text_embed["strategy"],
-            to="description_embedding",
             embedding_name="relationship_description",
         )
 

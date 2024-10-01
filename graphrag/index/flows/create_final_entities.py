@@ -50,26 +50,25 @@ async def create_final_entities(
 
     # Embed name if not skipped
     if name_text_embed:
-        nodes = await text_embed_df(
+        nodes["name_embedding"] = await text_embed_df(
             nodes,
             callbacks,
             cache,
             column="name",
             strategy=name_text_embed["strategy"],
-            to="name_embedding",
             embedding_name="entity_name",
         )
 
     # Embed description if not skipped
     if description_text_embed:
         # Concatenate 'name' and 'description' and embed
-        nodes = await text_embed_df(
-            nodes.assign(name_description=nodes["name"] + ":" + nodes["description"]),
+        nodes["name_description"] = nodes["name"] + ":" + nodes["description"]
+        nodes["description_embedding"] = await text_embed_df(
+            nodes,
             callbacks,
             cache,
             column="name_description",
             strategy=description_text_embed["strategy"],
-            to="description_embedding",
             embedding_name="entity_name_description",
         )
 
