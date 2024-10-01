@@ -43,7 +43,6 @@ def build_steps(
         {
             "verb": "create_final_community_reports",
             "args": {
-                "covariates_enabled": covariates_enabled,
                 "skip_full_content_embedding": skip_full_content_embedding,
                 "skip_summary_embedding": skip_summary_embedding,
                 "skip_title_embedding": skip_title_embedding,

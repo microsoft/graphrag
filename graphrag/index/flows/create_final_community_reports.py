@@ -52,7 +52,6 @@ async def create_final_community_reports(
     strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
-    covariates_enabled: bool = False,
     full_content_text_embed: dict | None = None,
     summary_text_embed: dict | None = None,
     title_text_embed: dict | None = None,
@@ -62,7 +61,7 @@ async def create_final_community_reports(
     edges = _prep_edges(edges_input)
 
     claims = None
-    if covariates_enabled and claims_input is not None:
+    if claims_input is not None:
         claims = _prep_claims(claims_input)
 
     community_hierarchy = restore_community_hierarchy_df(nodes)

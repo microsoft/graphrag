@@ -19,7 +19,7 @@ from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports as create_final_community_reports_flow,
 )
-from graphrag.index.utils.ds_util import get_required_input_table
+from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 
 @verb(name="create_final_community_reports", treats_input_tables_as_immutable=True)
@@ -30,7 +30,6 @@ async def create_final_community_reports(
     strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
-    covariates_enabled: bool = False,
     full_content_text_embed: dict | None = None,
     summary_text_embed: dict | None = None,
     title_text_embed: dict | None = None,
@@ -40,9 +39,9 @@ async def create_final_community_reports(
     nodes = cast(pd.DataFrame, input.get_input())
     edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
 
-    claims = None
-    if covariates_enabled:
-        claims = cast(pd.DataFrame, get_required_input_table(input, "covariates").table)
+    claims = get_named_input_table(input, "covariates")
+    if claims:
+        claims = cast(pd.DataFrame, claims.table)
 
     output = await create_final_community_reports_flow(
         nodes,
@@ -53,7 +52,6 @@ async def create_final_community_reports(
         strategy,
         async_mode,
         num_threads,
-        covariates_enabled,
         full_content_text_embed,
         summary_text_embed,
         title_text_embed,
