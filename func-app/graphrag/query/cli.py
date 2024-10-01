@@ -302,13 +302,17 @@ def format_output(result, query_id, path=0, removePII: bool = False)-> pd.DataFr
     relationships = result.context_data["relationships"]
     entities = entities.rename(columns={'id': 'entity_id'})
     if remove_PII:
-        entities = entities.drop(["entity","description"], axis=1)
-        relationships = relationships.drop(["description"], axis=1)
+        if "entity" in entities.columns:
+            entities = entities.drop(["entity"], axis=1)
+        if "description" in entities.columns:
+            entities = entities.drop(["description"], axis=1)
+        if "description" in relationships.columns:
+            relationships = relationships.drop(["description"], axis=1)
     source_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='source', how='left', suffixes=('', '_source'))
     target_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='target', how='left', suffixes=('', '_target'))
     combined_df = pd.concat([source_merged, target_merged], ignore_index=True)
     grouped_relationships = combined_df.groupby('entity_id').apply(
-        lambda x: x[['id', 'source', 'target', 'description','in_context', 'weight']].dropna().to_dict('records')
+        lambda x: x[['id', 'source', 'target', 'in_context', 'weight']].dropna().to_dict('records')
     ).reset_index(name='relationships')
     result_df = pd.merge(entities, grouped_relationships, on='entity_id', how='left')
     result_df = result_df.rename(columns={'entity_id': 'id'})
