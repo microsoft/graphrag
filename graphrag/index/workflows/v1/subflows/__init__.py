@@ -16,6 +16,7 @@ from .create_final_relationships import (
     create_final_relationships,
 )
 from .create_final_text_units import create_final_text_units
+from .create_summarized_entities import create_summarized_entities
 
 __all__ = [
     "create_base_documents",
@@ -29,4 +30,5 @@ __all__ = [
     "create_final_nodes",
     "create_final_relationships",
     "create_final_text_units",
+    "create_summarized_entities",
 ]
