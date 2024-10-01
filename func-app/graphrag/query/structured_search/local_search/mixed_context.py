@@ -234,39 +234,37 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     conversation_history_context, self.token_encoder
                 )
 
-        if path == 0:
-            if not is_optimized_search:
-                community_tokens = max(int(max_tokens * community_prop), 0)
-                community_context, community_context_data = self._build_community_context(
-                    selected_entities=selected_entities,
-                    max_tokens=community_tokens,
-                    use_community_summary=use_community_summary,
-                    column_delimiter=column_delimiter,
-                    include_community_rank=include_community_rank,
-                    min_community_rank=min_community_rank,
-                    return_candidate_context=return_candidate_context,
-                    context_name=community_context_name,
-                    is_optimized_search=is_optimized_search
-                )
-                if community_context.strip() != "":
-                    final_context.append(community_context)
-                    final_context_data = {**final_context_data, **community_context_data}
-
-            # build local (i.e. entity-relationship-covariate) context
-            local_prop = 1 - community_prop - text_unit_prop
-            local_tokens = max(int(max_tokens * local_prop), 0)
-            local_context, local_context_data = self._build_local_context(
+        if not is_optimized_search:
+            community_tokens = max(int(max_tokens * community_prop), 0)
+            community_context, community_context_data = self._build_community_context(
                 selected_entities=selected_entities,
-                max_tokens=local_tokens,
-                include_entity_rank=include_entity_rank,
-                rank_description=rank_description,
-                include_relationship_weight=include_relationship_weight,
-                top_k_relationships=top_k_relationships,
-                relationship_ranking_attribute=relationship_ranking_attribute,
-                return_candidate_context=return_candidate_context,
+                max_tokens=community_tokens,
+                use_community_summary=use_community_summary,
                 column_delimiter=column_delimiter,
+                include_community_rank=include_community_rank,
+                min_community_rank=min_community_rank,
+                return_candidate_context=return_candidate_context,
+                context_name=community_context_name,
                 is_optimized_search=is_optimized_search
             )
+            if community_context.strip() != "":
+                final_context.append(community_context)
+                final_context_data = {**final_context_data, **community_context_data}
+        # build local (i.e. entity-relationship-covariate) context
+        local_prop = 1 - community_prop - text_unit_prop
+        local_tokens = max(int(max_tokens * local_prop), 0)
+        local_context, local_context_data = self._build_local_context(
+            selected_entities=selected_entities,
+            max_tokens=local_tokens,
+            include_entity_rank=include_entity_rank,
+            rank_description=rank_description,
+            include_relationship_weight=include_relationship_weight,
+            top_k_relationships=top_k_relationships,
+            relationship_ranking_attribute=relationship_ranking_attribute,
+            return_candidate_context=return_candidate_context,
+            column_delimiter=column_delimiter,
+            is_optimized_search=is_optimized_search
+        )
 
 
         if local_context.strip() != "":

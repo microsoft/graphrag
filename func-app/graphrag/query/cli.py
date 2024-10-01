@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import cast
 from io import BytesIO
 import uuid
+import uuid
 
 from datashaper import VerbCallbacks
 from graphrag.common.progress.rich import RichProgressReporter
@@ -287,18 +288,22 @@ def run_local_search(
         result = search_engine.optimized_search(query=query, path=path)
     else:
         result = search_engine.search(query=query, path=path)
-    result_df = format_output(result, query_id)
-    #result = remove_PII(result)
+    result_df = format_output(result, query_id, path, True) #remove description title from entities and relationships
     asyncio.run(output_storage_client.set(f"query/{query_id}/output.json", result_df.to_json(orient="records"))) #it shows as error in editor but not an error.
-    result.response = f"\n query_id: {query_id}"
+    result.response += f"\n query_id: {query_id}"
     reporter.success(f"Local Search Response: {result.response}")
     return result.response
 
-def format_output(result, query_id)-> pd.DataFrame:
-    # Step 1: Rename `id` in entities to `entity_id` to avoid conflicts
+def format_output(result, query_id, path=0, removePII: bool = False)-> pd.DataFrame:
+    if path == 1:
+        return result.context_data["sources"]
+    
     entities = result.context_data["entities"]
     relationships = result.context_data["relationships"]
     entities = entities.rename(columns={'id': 'entity_id'})
+    if remove_PII:
+        entities = entities.drop(["entity","description"], axis=1)
+        relationships = relationships.drop(["description"], axis=1)
     source_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='source', how='left', suffixes=('', '_source'))
     target_merged = pd.merge(entities, relationships, left_on='entity_id', right_on='target', how='left', suffixes=('', '_target'))
     combined_df = pd.concat([source_merged, target_merged], ignore_index=True)
