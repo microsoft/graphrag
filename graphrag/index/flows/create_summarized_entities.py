@@ -19,7 +19,7 @@ from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
 async def create_summarized_entities(
-    base_entities: pd.DataFrame,
+    entities: pd.DataFrame,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
@@ -29,7 +29,7 @@ async def create_summarized_entities(
 ) -> pd.DataFrame:
     """All the steps to summarize entities."""
     summarized = await summarize_descriptions_df(
-        base_entities,
+        entities,
         cache,
         callbacks,
         column="entity_graph",

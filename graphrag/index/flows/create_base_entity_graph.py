@@ -17,7 +17,7 @@ from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
 async def create_base_entity_graph(
-    source: pd.DataFrame,
+    entities: pd.DataFrame,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
     clustering_config: dict[str, Any],
@@ -29,7 +29,7 @@ async def create_base_entity_graph(
     clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
 
     clustered = cluster_graph_df(
-        source,
+        entities,
         callbacks,
         column="entity_graph",
         strategy=clustering_strategy,
