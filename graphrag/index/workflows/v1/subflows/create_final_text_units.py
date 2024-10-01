@@ -19,6 +19,7 @@ from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units as create_final_text_units_flow,
 )
+from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 
 @verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
@@ -27,18 +28,20 @@ async def create_final_text_units(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     text_embed: dict | None = None,
-    covariates_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform the text units."""
     source = cast(pd.DataFrame, input.get_input())
-    others = input.get_others()
-    final_entities = cast(pd.DataFrame, others[0])
-    final_relationships = cast(pd.DataFrame, others[1])
-    final_covariates = None
+    final_entities = cast(
+        pd.DataFrame, get_required_input_table(input, "entities").table
+    )
+    final_relationships = cast(
+        pd.DataFrame, get_required_input_table(input, "relationships").table
+    )
+    final_covariates = get_named_input_table(input, "covariates")
 
-    if covariates_enabled:
-        final_covariates = cast(pd.DataFrame, others[2])
+    if final_covariates:
+        final_covariates = cast(pd.DataFrame, final_covariates.table)
 
     output = await create_final_text_units_flow(
         source,
