@@ -407,7 +407,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         #ignore sorting selected_text_units based on relationship count
 
         # if path 3, we have related text units to add to the context
-        for related_groups in entity_to_related_entities.values():
+        for related_groups in entity_to_related_entities.values() if entity_to_related_entities else []:
             for related in related_groups:
                 selected_text_units += vector_store.retrieve_text_units_by_id(related['text_unit_ids'])
 
