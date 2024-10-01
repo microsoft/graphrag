@@ -9,12 +9,11 @@ import json
 import asyncio
 import pandas as pd
 from common.graph_db_client import GraphDBClient
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.graphdb_config import GraphDBConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 import tiktoken
 from graphrag.index.verbs.entities.extraction.strategies.typing import Document
 import hashlib
-from graphrag.index.verbs.graph.clustering.cluster_graph import generate_entity_id
 from graphrag.model import (
     CommunityReport,
     Covariate,
@@ -52,6 +51,7 @@ from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores import BaseVectorStore
 from graphrag.vector_stores.kusto import KustoVectorStore
 from graphrag.index.verbs.entities.extraction.strategies.graph_intelligence.run_graph_intelligence import run_gi
+from graphrag.index.verbs.graph.clustering.cluster_graph import generate_entity_id
 
 log = logging.getLogger(__name__)
 
@@ -108,8 +108,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
     def build_context(
         self,
         query: str,
-        path: int = 0,
         conversation_history: ConversationHistory | None = None,
+        path=0,
         include_entity_names: list[str] | None = None,
         exclude_entity_names: list[str] | None = None,
         conversation_history_max_turns: int | None = 5,
@@ -137,7 +137,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         Build a context by combining community reports and entity/relationship/covariate tables, and text units using a predefined ratio set by summary_prop.
         """
-        print("Query: ", query)
         if include_entity_names is None:
             include_entity_names = []
         if exclude_entity_names is None:
@@ -158,7 +157,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
 
         preselected_entities, selected_entities, entity_to_related_entities = [], [], []
-        local_context, local_context_data = "", {}
+
+        #path = 4 #1: base, 2,3: paths 4:graphdb simulation
 
         if path in (2,3):
             args = {}
@@ -188,6 +188,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             print("Entities: ", names)
 
             if path == 3:
+                #graph search: get relationships
+
                 graphdb_client=GraphDBClient(self.config.graphdb,self.context_id)# if (self.config.graphdb and self.config.graphdb.enabled) else None
                 if graphdb_client:
                     # Call graphdb making a list of dictionary of entity_id to related entities mapping
@@ -195,6 +197,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     print("Related entities: ", entity_to_related_entities)
                 else:
                     print("No graphdb, cannot add relationship context")
+
 
         selected_entities = map_query_to_entities(
             query=query,
@@ -210,6 +213,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         )
 
         print("Selected entities titles: ", [entity.title for entity in selected_entities])
+
 
         # build context
         final_context = list[str]()
@@ -250,10 +254,11 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if community_context.strip() != "":
                 final_context.append(community_context)
                 final_context_data = {**final_context_data, **community_context_data}
+
         # build local (i.e. entity-relationship-covariate) context
         local_prop = 1 - community_prop - text_unit_prop
         local_tokens = max(int(max_tokens * local_prop), 0)
-        local_context, local_context_data = self._build_local_context(
+        local_context, local_context_data = self._build_local_context( #RELATIONSHIPS HERE
             selected_entities=selected_entities,
             max_tokens=local_tokens,
             include_entity_rank=include_entity_rank,
@@ -265,8 +270,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
             column_delimiter=column_delimiter,
             is_optimized_search=is_optimized_search
         )
-
-
         if local_context.strip() != "":
             final_context.append(str(local_context))
             final_context_data = {**final_context_data, **local_context_data}
@@ -293,6 +296,24 @@ class LocalSearchMixedContext(LocalContextBuilder):
             if text_unit_context.strip() != "":
                 final_context.append(text_unit_context)
                 final_context_data = {**final_context_data, **text_unit_context_data}
+
+        ############### get doc ids
+        entity_to_units={}
+        for e in selected_entities:
+            text_units=[]
+            if e.text_unit_ids!='' and e.text_unit_ids!=None:
+                text_units.extend(ast.literal_eval(e.text_unit_ids))
+            if e.title not in entity_to_units:
+                #TODO: change title to id later
+                entity_to_units[e.title]=[]
+            entity_to_units[e.title].extend(text_units)
+
+
+        for title in entity_to_units:
+            for unit in entity_to_units[title]:
+                docs=self.text_units_kusto[unit]
+                ## Documents IDs per TextUnit per Entity:
+                print(f"> {title}: {unit}: {docs}")
 
         return ("\n\n".join(final_context), final_context_data)
 
@@ -402,13 +423,26 @@ class LocalSearchMixedContext(LocalContextBuilder):
 
         selected_text_units=vector_store.retrieve_text_units(selected_entities)
 
-        #ignore sorting selected_text_units based on relationship count
-
         # if path 3, we have related text units to add to the context
-        if len(entity_to_related_entities) > 0: #path 3
-            for related_groups in entity_to_related_entities.values():
-                for related in related_groups:
-                    selected_text_units += vector_store.retrieve_text_units_by_id(related['text_unit_ids'])
+        for related_groups in entity_to_related_entities.values() if entity_to_related_entities else []:
+            for related in related_groups:
+                selected_text_units += vector_store.retrieve_text_units_by_id(ast.literal_eval(related['text_unit_ids']))
+
+        hmap={}
+        text_units_kusto={}
+        for unit in selected_text_units:
+            if unit.id not in hmap:
+                hmap[unit.id]=unit
+                text_units_kusto[unit.id]=unit.document_ids
+
+        selected_text_units=[]
+        for id in hmap:
+            selected_text_units.append(hmap[id])
+
+
+        self.text_units_kusto=text_units_kusto
+
+        #ignore sorting selected_text_usnits based on relationship count
 
         def str_to_list(unit,column):
             cvar = getattr(unit,column)
@@ -427,6 +461,8 @@ class LocalSearchMixedContext(LocalContextBuilder):
             loc = txt.find("\"body\"")
             if loc > -1:
                 unit.text = txt[loc+9:]
+
+            logging.info("Adding source: "+unit.text)
 
 
         context_text, context_data = build_text_unit_context(
