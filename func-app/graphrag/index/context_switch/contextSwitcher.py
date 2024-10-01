@@ -233,6 +233,7 @@ class ContextSwitcher:
 
         description_embedding_store = self.setup_vector_store(config_args=config.embeddings.vector_store)
 
+        added_vertices = set()
         for data_path in data_paths:
             #check from the config for the ouptut storage type and then read the data from the storage.
 
@@ -273,7 +274,7 @@ class ContextSwitcher:
             description_embedding_store.load_text_units(text_units)
 
             if config.graphdb.enabled:
-                graph_db_client.write_vertices(final_entities)
+                graph_db_client.write_vertices(final_entities, added_vertices)
                 graph_db_client.write_edges(final_relationships)
 
         if config.graphdb.enabled:
