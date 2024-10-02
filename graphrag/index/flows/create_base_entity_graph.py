@@ -10,9 +10,9 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.embed_graph.embed_graph import embed_graph
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
-from graphrag.index.verbs.graph.embed.embed_graph import embed_graph_df
 from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
@@ -48,7 +48,7 @@ async def create_base_entity_graph(
 
     embedding_strategy = embedding_config.get("strategy")
     if embed_graph_enabled and embedding_strategy:
-        clustered = await embed_graph_df(
+        clustered = await embed_graph(
             clustered,
             callbacks,
             column="clustered_graph",
