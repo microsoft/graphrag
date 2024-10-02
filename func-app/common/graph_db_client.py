@@ -115,7 +115,6 @@ class GraphDBClient:
                         "prop_text_unit_ids":json.dumps(row.text_unit_ids.tolist() if row.text_unit_ids is not None else []),
                     },
                 )
-                time.sleep(5)
 
 
     def write_edges(self,data: pd.DataFrame)->None:
@@ -152,4 +151,3 @@ class GraphDBClient:
                     "prop_target": row.target,
                 },
             )
-            time.sleep(5)
