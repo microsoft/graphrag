@@ -1,0 +1,74 @@
+{
+    "type": "fulltext-index",
+    "name": "graphrag_index",
+    "uuid": "1797bd6bd434cdd2",
+    "sourceType": "gocbcore",
+    "sourceName": "graphrag-demo",
+    "sourceUUID": "4bbae514001eaf402caed43976ec4120",
+    "planParams": {
+        "maxPartitionsPerPIndex": 64,
+        "indexPartitions": 16
+    },
+    "params": {
+        "doc_config": {
+            "docid_prefix_delim": "",
+            "docid_regexp": "",
+            "mode": "scope.collection.type_field",
+            "type_field": "type"
+        },
+        "mapping": {
+            "analysis": {},
+            "default_analyzer": "standard",
+            "default_datetime_parser": "dateTimeOptional",
+            "default_field": "_all",
+            "default_mapping": {
+                "dynamic": true,
+                "enabled": false
+            },
+            "default_type": "_default",
+            "docvalues_dynamic": false,
+            "index_dynamic": true,
+            "store_dynamic": false,
+            "type_field": "_type",
+            "types": {
+                "shared.entity_description_embeddings": {
+                    "dynamic": true,
+                    "enabled": true,
+                    "properties": {
+                        "embedding": {
+                            "dynamic": false,
+                            "enabled": true,
+                            "fields": [
+                                {
+                                    "dims": 1536,
+                                    "index": true,
+                                    "name": "embedding",
+                                    "similarity": "dot_product",
+                                    "type": "vector",
+                                    "vector_index_optimized_for": "recall"
+                                }
+                            ]
+                        },
+                        "text": {
+                            "dynamic": false,
+                            "enabled": true,
+                            "fields": [
+                                {
+                                    "index": true,
+                                    "name": "text",
+                                    "store": true,
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "store": {
+            "indexType": "scorch",
+            "segmentVersion": 16
+        }
+    },
+    "sourceParams": {}
+}

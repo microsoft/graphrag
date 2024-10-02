@@ -11,6 +11,7 @@ from .typing import VectorStoreFactory, VectorStoreType
 __all__ = [
     "AzureAISearch",
     "BaseVectorStore",
+    "CouchbaseVectorStore",
     "LanceDBVectorStore",
     "VectorStoreDocument",
     "VectorStoreFactory",
