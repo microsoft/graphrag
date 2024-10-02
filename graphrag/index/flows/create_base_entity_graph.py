@@ -48,12 +48,11 @@ async def create_base_entity_graph(
 
     embedding_strategy = embedding_config.get("strategy")
     if embed_graph_enabled and embedding_strategy:
-        clustered = await embed_graph(
+        clustered["embeddings"] = await embed_graph(
             clustered,
             callbacks,
             column="clustered_graph",
             strategy=embedding_strategy,
-            to="embeddings",
         )
 
     # take second snapshot after embedding

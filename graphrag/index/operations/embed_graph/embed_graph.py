@@ -30,9 +30,8 @@ async def embed_graph(
     callbacks: VerbCallbacks,
     strategy: dict[str, Any],
     column: str,
-    to: str,
-    num_threads: int | None = None,
-) -> pd.DataFrame:
+    num_threads: int = 4,
+):
     """
     Embed a graph into a vector space. The graph is expected to be in graphml format. The operation outputs a new column containing a mapping between node_id and vector.
 
@@ -73,8 +72,8 @@ async def embed_graph(
         callbacks=callbacks,
         num_threads=num_threads,
     )
-    input[to] = list(results)
-    return input
+
+    return list(results)
 
 
 def run_embeddings(
