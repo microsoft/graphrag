@@ -10,7 +10,6 @@ from pandas.testing import assert_series_equal
 from graphrag.config import create_graphrag_config
 from graphrag.index import (
     PipelineWorkflowConfig,
-    PipelineWorkflowStep,
     create_pipeline_config,
 )
 from graphrag.index.run.utils import _create_run_context
@@ -87,7 +86,7 @@ def compare_outputs(
 
     assert len(actual) == len(
         expected
-    ), f"Expected: {len(expected)}, Actual: {len(actual)}"
+    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
 
     for column in cols:
         assert column in actual.columns
@@ -102,9 +101,3 @@ def compare_outputs(
             print("Actual:")
             print(actual[column])
             raise
-
-
-def remove_disabled_steps(
-    steps: list[PipelineWorkflowStep],
-) -> list[PipelineWorkflowStep]:
-    return [step for step in steps if step.get("enabled", True)]

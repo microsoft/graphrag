@@ -43,13 +43,18 @@ def build_steps(
         {
             "verb": "create_final_community_reports",
             "args": {
-                "covariates_enabled": covariates_enabled,
                 "skip_full_content_embedding": skip_full_content_embedding,
                 "skip_summary_embedding": skip_summary_embedding,
                 "skip_title_embedding": skip_title_embedding,
-                "full_content_text_embed": community_report_full_content_embed_config,
-                "summary_text_embed": community_report_summary_embed_config,
-                "title_text_embed": community_report_title_embed_config,
+                "full_content_text_embed": community_report_full_content_embed_config
+                if not skip_full_content_embedding
+                else None,
+                "summary_text_embed": community_report_summary_embed_config
+                if not skip_summary_embedding
+                else None,
+                "title_text_embed": community_report_title_embed_config
+                if not skip_title_embedding
+                else None,
                 **create_community_reports_config,
             },
             "input": input,

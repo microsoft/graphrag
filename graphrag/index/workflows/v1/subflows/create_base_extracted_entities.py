@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""All the steps to extract and format covariates."""
+"""All the steps to extract and format base entities."""
 
 from typing import Any, cast
 
@@ -16,11 +16,10 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.flows.create_base_extracted_entities import (
+    create_base_extracted_entities as create_base_extracted_entities_flow,
+)
 from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.entities.extraction.entity_extract import entity_extract_df
-from graphrag.index.verbs.graph.merge.merge_graphs import merge_graphs_df
-from graphrag.index.verbs.snapshot import snapshot_df
-from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
 @verb(name="create_base_extracted_entities", treats_input_tables_as_immutable=True)
@@ -36,51 +35,29 @@ async def create_base_extracted_entities(
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
+    num_threads: int = 4,
     graphml_snapshot_enabled: bool = False,
     raw_entity_snapshot_enabled: bool = False,
-    **kwargs: dict,
+    **_kwargs: dict,
 ) -> VerbResult:
-    """All the steps to extract and format covariates."""
+    """All the steps to extract and format base entities."""
     source = cast(pd.DataFrame, input.get_input())
 
-    entity_graph = await entity_extract_df(
+    output = await create_base_extracted_entities_flow(
         source,
         cache,
         callbacks,
-        column=column,
-        id_column=id_column,
-        strategy=strategy,
-        async_mode=async_mode,
-        entity_types=entity_types,
-        to="entities",
-        graph_to="entity_graph",
-        **kwargs,
+        storage,
+        column,
+        id_column,
+        nodes,
+        edges,
+        strategy,
+        async_mode,
+        entity_types,
+        graphml_snapshot_enabled,
+        raw_entity_snapshot_enabled,
+        num_threads=num_threads,
     )
 
-    if raw_entity_snapshot_enabled:
-        await snapshot_df(
-            entity_graph,
-            name="raw_extracted_entities",
-            storage=storage,
-            formats=["json"],
-        )
-
-    merged_graph = merge_graphs_df(
-        entity_graph,
-        callbacks,
-        column="entity_graph",
-        to="entity_graph",
-        nodes=nodes,
-        edges=edges,
-    )
-
-    if graphml_snapshot_enabled:
-        await snapshot_rows_df(
-            merged_graph,
-            base_name="merged_graph",
-            column="entity_graph",
-            storage=storage,
-            formats=[{"format": "text", "extension": "graphml"}],
-        )
-
-    return create_verb_result(cast(Table, merged_graph))
+    return create_verb_result(cast(Table, output))

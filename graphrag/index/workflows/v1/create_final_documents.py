@@ -26,8 +26,9 @@ def build_steps(
         {
             "verb": "create_final_documents",
             "args": {
-                "skip_embedding": skip_raw_content_embedding,
-                "text_embed": document_raw_content_embed_config,
+                "text_embed": document_raw_content_embed_config
+                if not skip_raw_content_embedding
+                else None,
             },
             "input": {"source": "workflow:create_base_documents"},
         },

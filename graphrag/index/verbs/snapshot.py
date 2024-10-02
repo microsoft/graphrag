@@ -20,11 +20,11 @@ async def snapshot(
     **_kwargs: dict,
 ) -> TableContainer:
     """Take a entire snapshot of the tabular data."""
-    data = cast(pd.DataFrame, input.get_input())
+    source = cast(pd.DataFrame, input.get_input())
 
-    await snapshot_df(data, name, formats, storage)
+    await snapshot_df(source, name, formats, storage)
 
-    return TableContainer(table=data)
+    return TableContainer(table=source)
 
 
 async def snapshot_df(
@@ -32,7 +32,7 @@ async def snapshot_df(
     name: str,
     formats: list[str],
     storage: PipelineStorage,
-):
+) -> None:
     """Take a entire snapshot of the tabular data."""
     for fmt in formats:
         if fmt == "parquet":
