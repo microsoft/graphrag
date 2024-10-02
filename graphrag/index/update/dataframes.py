@@ -90,7 +90,9 @@ async def update_dataframe_outputs(
     )
     delta_entities = dataframe_dict["create_final_entities"]
 
-    merged_entities_df, _ = _group_and_resolve_entities(old_entities, delta_entities)
+    merged_entities_df, entity_id_mapping = _group_and_resolve_entities(
+        old_entities, delta_entities
+    )
     # Save the updated entities back to storage
     # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set(
@@ -110,6 +112,21 @@ async def update_dataframe_outputs(
     # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set(
         "create_final_relationships_new.parquet", merged_relationships_df.to_parquet()
+    )
+
+    # Update and merge final text units
+    old_text_units = await _load_table_from_storage(
+        "create_final_text_units.parquet", storage
+    )
+    delta_text_units = dataframe_dict["create_final_text_units"]
+
+    merged_text_units = _update_and_merge_text_units(
+        old_text_units, delta_text_units, entity_id_mapping
+    )
+
+    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
+    await storage.set(
+        "create_final_text_units_new.parquet", merged_text_units.to_parquet()
     )
 
 
@@ -172,17 +189,21 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
+        .agg(
+            {
+                "id": "first",
+                "type": "first",
+                "human_readable_id": "first",
+                "graph_embedding": "first",
+                "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
+                # Concatenate nd.array into a single list
+                "text_unit_ids": lambda x: ",".join(
+                    str(i) for j in x.tolist() for i in j
+                ),
+                # Keep only descriptions where the original value wasn't modified
+                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+            }
+        )
         .reset_index()
     )
 
@@ -225,13 +246,21 @@ def _update_and_merge_relationships(
         The updated relationships.
     """
     # Increment the human readable id in b by the max of a
-    delta_relationships["human_readable_id"] += (
-        old_relationships["human_readable_id"].max() + 1
-    )
+    # Ensure both columns are integers
+    delta_relationships["human_readable_id"] = delta_relationships[
+        "human_readable_id"
+    ].astype(int)
+    old_relationships["human_readable_id"] = old_relationships[
+        "human_readable_id"
+    ].astype(int)
 
-    # Merge the final relationships
+    # Adjust delta_relationships IDs to be greater than any in old_relationships
+    max_old_id = old_relationships["human_readable_id"].max()
+    delta_relationships["human_readable_id"] += max_old_id + 1
+
+    # Merge the DataFrames without copying if possible
     final_relationships = pd.concat(
-        [old_relationships, delta_relationships], copy=False
+        [old_relationships, delta_relationships], ignore_index=True, copy=False
     )
 
     # Recalculate target and source degrees
@@ -248,3 +277,37 @@ def _update_and_merge_relationships(
     )
 
     return final_relationships
+
+
+def _update_and_merge_text_units(
+    old_text_units: pd.DataFrame,
+    delta_text_units: pd.DataFrame,
+    entity_id_mapping: dict,
+) -> pd.DataFrame:
+    """Update and merge text units.
+
+    Parameters
+    ----------
+    old_text_units : pd.DataFrame
+        The old text units.
+    delta_text_units : pd.DataFrame
+        The delta text units.
+    entity_id_mapping : dict
+        The entity id mapping.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated text units.
+    """
+    # Look for entity ids in entity_ids and replace them with the corresponding id in the mapping
+    delta_text_units["entity_ids"] = delta_text_units["entity_ids"].apply(
+        lambda x: [entity_id_mapping.get(i, i) for i in x]
+    )
+
+    # Merge the final text units
+    final_text_units = pd.concat(
+        [old_text_units, delta_text_units], ignore_index=True, copy=False
+    )
+
+    return final_text_units
