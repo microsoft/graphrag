@@ -86,11 +86,10 @@ class GraphDBClient:
             element_count=counts[0]
         return element_count>0
 
-    def write_vertices(self,data: pd.DataFrame)->None:
+    def write_vertices(self,data: pd.DataFrame, added_vertices: set)->None:
         for row in data.itertuples():
-            if self.element_exists("g.V()",row.id):
-                continue
-            else:
+            if row.id not in added_vertices:
+                added_vertices.add(row.id)
                 self._client.submit(
                     message=(
                         "g.addV('entity')"
@@ -116,13 +115,10 @@ class GraphDBClient:
                         "prop_text_unit_ids":json.dumps(row.text_unit_ids.tolist() if row.text_unit_ids is not None else []),
                     },
                 )
-            time.sleep(5)
 
 
     def write_edges(self,data: pd.DataFrame)->None:
         for row in data.itertuples():
-            if self.element_exists("g.E()",row.id):
-                continue
             self._client.submit(
                 message=(
                     "g.V().has('name',prop_source_id)"
@@ -155,7 +151,6 @@ class GraphDBClient:
                     "prop_target": row.target,
                 },
             )
-            time.sleep(5)
 
     def get_top_related_unique_edges(self, entity_id: str, top: int) -> [dict[str, str]]:
         """Retrieve the top related unique edges for a given entity.
