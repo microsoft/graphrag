@@ -27,7 +27,7 @@ def build_steps(
         {
             "verb": "create_final_relationships",
             "args": {
-                "text_embed": relationship_description_embed_config
+                "description_text_embed": relationship_description_embed_config
                 if not skip_description_embedding
                 else None,
             },

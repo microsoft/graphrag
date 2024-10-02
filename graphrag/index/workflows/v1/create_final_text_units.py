@@ -37,7 +37,7 @@ def build_steps(
         {
             "verb": "create_final_text_units",
             "args": {
-                "text_embed": text_unit_text_embed_config
+                "text_text_embed": text_unit_text_embed_config
                 if not skip_text_unit_embedding
                 else None,
             },

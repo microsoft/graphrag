@@ -19,7 +19,7 @@ from .overrides import aggregate, concat
 from .snapshot import snapshot
 from .snapshot_rows import snapshot_rows
 from .spread_json import spread_json
-from .text import chunk, text_embed, text_split, text_translate
+from .text import chunk, text_split, text_translate
 from .unzip import unzip
 from .zip import zip_verb
 
@@ -40,7 +40,6 @@ __all__ = [
     "snapshot_rows",
     "spread_json",
     "summarize_descriptions",
-    "text_embed",
     "text_split",
     "text_translate",
     "unpack_graph",

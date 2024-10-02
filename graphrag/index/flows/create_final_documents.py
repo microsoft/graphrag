@@ -9,25 +9,25 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+from graphrag.index.operations.embed_text.embed_text import embed_text
 
 
 async def create_final_documents(
     documents: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    raw_content_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     documents.rename(columns={"text_units": "text_unit_ids"}, inplace=True)
 
-    if text_embed:
-        documents["raw_content_embedding"] = await text_embed_df(
+    if raw_content_text_embed:
+        documents["raw_content_embedding"] = await embed_text(
             documents,
             callbacks,
             cache,
             column="raw_content",
-            strategy=text_embed["strategy"],
+            strategy=raw_content_text_embed["strategy"],
         )
 
     return documents

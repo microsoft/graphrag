@@ -11,7 +11,7 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+from graphrag.index.operations.embed_text.embed_text import embed_text
 
 
 async def create_final_text_units(
@@ -21,7 +21,7 @@ async def create_final_text_units(
     final_covariates: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    text_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform the text units."""
     selected = text_units.loc[:, ["id", "chunk", "document_ids", "n_tokens"]].rename(
@@ -42,16 +42,16 @@ async def create_final_text_units(
     aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
     is_using_vector_store = False
-    if text_embed:
-        aggregated["text_embedding"] = await text_embed_df(
+    if text_text_embed:
+        aggregated["text_embedding"] = await embed_text(
             aggregated,
             callbacks,
             cache,
             column="text",
-            strategy=text_embed["strategy"],
+            strategy=text_text_embed["strategy"],
         )
         is_using_vector_store = (
-            text_embed.get("strategy", {}).get("vector_store", None) is not None
+            text_text_embed.get("strategy", {}).get("vector_store", None) is not None
         )
 
     return cast(
@@ -62,7 +62,7 @@ async def create_final_text_units(
                 "text",
                 *(
                     []
-                    if (not text_embed or is_using_vector_store)
+                    if (not text_text_embed or is_using_vector_store)
                     else ["text_embedding"]
                 ),
                 "n_tokens",
