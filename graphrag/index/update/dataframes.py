@@ -189,21 +189,17 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg(
-            {
-                "id": "first",
-                "type": "first",
-                "human_readable_id": "first",
-                "graph_embedding": "first",
-                "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-                # Concatenate nd.array into a single list
-                "text_unit_ids": lambda x: ",".join(
-                    str(i) for j in x.tolist() for i in j
-                ),
-                # Keep only descriptions where the original value wasn't modified
-                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-            }
-        )
+        .agg({
+            "id": "first",
+            "type": "first",
+            "human_readable_id": "first",
+            "graph_embedding": "first",
+            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
+            # Concatenate nd.array into a single list
+            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+            # Keep only descriptions where the original value wasn't modified
+            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+        })
         .reset_index()
     )
 
@@ -306,8 +302,4 @@ def _update_and_merge_text_units(
     )
 
     # Merge the final text units
-    final_text_units = pd.concat(
-        [old_text_units, delta_text_units], ignore_index=True, copy=False
-    )
-
-    return final_text_units
+    return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
