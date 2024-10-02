@@ -153,16 +153,16 @@ async def _concat_dataframes(name, dataframe_dict, storage):
 
 
 def _group_and_resolve_entities(
-    df_a: pd.DataFrame, df_b: pd.DataFrame
+    old_entities_df: pd.DataFrame, delta_entities_df: pd.DataFrame
 ) -> tuple[pd.DataFrame, dict]:
     """Group and resolve entities.
 
     Parameters
     ----------
-    df_a : pd.DataFrame
+    old_entities_df : pd.DataFrame
         The first dataframe.
-    df_b : pd.DataFrame
-        The second dataframe.
+    delta_entities_df : pd.DataFrame
+        The delta dataframe.
 
     Returns
     -------
@@ -172,8 +172,8 @@ def _group_and_resolve_entities(
         The id mapping for existing entities. In the form of {df_b.id: df_a.id}.
     """
     # If a name exists in A and B, make a dictionary for {B.id : A.id}
-    merged = df_b[["id", "name"]].merge(
-        df_a[["id", "name"]],
+    merged = delta_entities_df[["id", "name"]].merge(
+        old_entities_df[["id", "name"]],
         on="name",
         suffixes=("_B", "_A"),
         copy=False,
@@ -181,10 +181,14 @@ def _group_and_resolve_entities(
     id_mapping = dict(zip(merged["id_B"], merged["id_A"], strict=True))
 
     # Increment human readable id in b by the max of a
-    df_b["human_readable_id"] += df_a["human_readable_id"].max() + 1
-
+    initial_id = old_entities_df["human_readable_id"].max() + 1
+    delta_entities_df["human_readable_id"] = np.arange(
+        initial_id, initial_id + len(delta_entities_df)
+    )
     # Concat A and B
-    combined = pd.concat([df_a, df_b], copy=False)
+    combined = pd.concat(
+        [old_entities_df, delta_entities_df], ignore_index=True, copy=False
+    )
 
     # Group by name and resolve conflicts
     aggregated = (
@@ -251,8 +255,10 @@ def _update_and_merge_relationships(
     ].astype(int)
 
     # Adjust delta_relationships IDs to be greater than any in old_relationships
-    max_old_id = old_relationships["human_readable_id"].max()
-    delta_relationships["human_readable_id"] += max_old_id + 1
+    initial_id = old_relationships["human_readable_id"].max() + 1
+    delta_relationships["human_readable_id"] = np.arange(
+        initial_id, initial_id + len(delta_relationships)
+    )
 
     # Merge the DataFrames without copying if possible
     final_relationships = pd.concat(
