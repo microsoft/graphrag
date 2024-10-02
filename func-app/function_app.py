@@ -1,10 +1,15 @@
 import azure.functions as func
 import logging
 import os
+import sys
 from graphrag.index.cli import index_cli
 from graphrag.query.cli import run_local_search
 
 app = func.FunctionApp()
+# Create a handler that writes log messages to stdout
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+logging.getLogger().addHandler(handler)
 
 @app.function_name('csindexer')
 @app.route(route="index", auth_level=func.AuthLevel.FUNCTION)
