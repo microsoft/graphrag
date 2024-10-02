@@ -12,16 +12,17 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
 async def test_create_final_community_reports():
-    input_tables = load_input_tables([
-        "workflow:create_final_nodes",
-        "workflow:create_final_covariates",
-        "workflow:create_final_relationships",
-    ])
+    input_tables = load_input_tables(
+        [
+            "workflow:create_final_nodes",
+            "workflow:create_final_covariates",
+            "workflow:create_final_relationships",
+        ]
+    )
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
@@ -29,7 +30,7 @@ async def test_create_final_community_reports():
     # deleting the llm config results in a default mock injection in run_graph_intelligence
     del config["create_community_reports"]["strategy"]["llm"]
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -49,11 +50,13 @@ async def test_create_final_community_reports():
 
 
 async def test_create_final_community_reports_with_embeddings():
-    input_tables = load_input_tables([
-        "workflow:create_final_nodes",
-        "workflow:create_final_covariates",
-        "workflow:create_final_relationships",
-    ])
+    input_tables = load_input_tables(
+        [
+            "workflow:create_final_nodes",
+            "workflow:create_final_covariates",
+            "workflow:create_final_relationships",
+        ]
+    )
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
@@ -68,7 +71,7 @@ async def test_create_final_community_reports_with_embeddings():
     config["skip_title_embedding"] = False
     config["community_report_title_embed"]["strategy"]["type"] = "mock"
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,

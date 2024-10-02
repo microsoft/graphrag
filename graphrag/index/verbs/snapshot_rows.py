@@ -33,7 +33,7 @@ async def snapshot_rows(
 ) -> TableContainer:
     """Take a by-row snapshot of the tabular data."""
     source = cast(pd.DataFrame, input.get_input())
-    output = await snapshot_rows_df(
+    await snapshot_rows_df(
         source,
         column,
         base_name,
@@ -41,10 +41,9 @@ async def snapshot_rows(
         formats,
         row_name_column,
     )
-    return TableContainer(table=output)
+    return TableContainer(table=source)
 
 
-# todo: once this is out of "verb land", it does not need to return the input
 async def snapshot_rows_df(
     input: pd.DataFrame,
     column: str | None,
@@ -52,7 +51,7 @@ async def snapshot_rows_df(
     storage: PipelineStorage,
     formats: list[str | dict[str, Any]],
     row_name_column: str | None = None,
-) -> pd.DataFrame:
+) -> None:
     """Take a by-row snapshot of the tabular data."""
     parsed_formats = _parse_formats(formats)
     num_rows = len(input)
@@ -82,7 +81,6 @@ async def snapshot_rows_df(
                     msg = "column must be specified for text format"
                     raise ValueError(msg)
                 await storage.set(f"{row_name}.{extension}", str(row[column]))
-    return input
 
 
 def _parse_formats(formats: list[str | dict[str, Any]]) -> list[FormatSpecifier]:

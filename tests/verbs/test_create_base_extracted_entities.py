@@ -21,6 +21,8 @@ async def test_create_base_extracted_entities():
     input_tables = load_input_tables(["workflow:create_base_text_units"])
     expected = load_expected(workflow_name)
 
+    storage = MemoryPipelineStorage()
+
     config = get_config_for_workflow(workflow_name)
 
     del config["entity_extract"]["strategy"]["llm"]
@@ -32,6 +34,7 @@ async def test_create_base_extracted_entities():
         {
             "steps": steps,
         },
+        storage=storage,
     )
 
     # let's parse a sample of the raw graphml
@@ -42,6 +45,8 @@ async def test_create_base_extracted_entities():
     assert actual_graph_0.number_of_edges() == 2
 
     assert actual.columns == expected.columns
+
+    assert len(storage.keys()) == 0, "Storage should be empty"
 
 
 async def test_create_base_extracted_entities_with_snapshots():

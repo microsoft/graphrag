@@ -14,25 +14,29 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
 async def test_create_base_entity_graph():
-    input_tables = load_input_tables([
-        "workflow:create_summarized_entities",
-    ])
+    input_tables = load_input_tables(
+        [
+            "workflow:create_summarized_entities",
+        ]
+    )
     expected = load_expected(workflow_name)
+
+    storage = MemoryPipelineStorage()
 
     config = get_config_for_workflow(workflow_name)
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
         {
             "steps": steps,
         },
+        storage=storage,
     )
 
     # the serialization of the graph may differ so we can't assert the dataframes directly
@@ -52,18 +56,22 @@ async def test_create_base_entity_graph():
         actual_graph_0.number_of_edges() == expected_graph_0.number_of_edges()
     ), "Graphml edge count differs"
 
+    assert len(storage.keys()) == 0, "Storage should be empty"
+
 
 async def test_create_base_entity_graph_with_embeddings():
-    input_tables = load_input_tables([
-        "workflow:create_summarized_entities",
-    ])
+    input_tables = load_input_tables(
+        [
+            "workflow:create_summarized_entities",
+        ]
+    )
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
 
     config["embed_graph_enabled"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -79,9 +87,11 @@ async def test_create_base_entity_graph_with_embeddings():
 
 
 async def test_create_base_entity_graph_with_snapshots():
-    input_tables = load_input_tables([
-        "workflow:create_summarized_entities",
-    ])
+    input_tables = load_input_tables(
+        [
+            "workflow:create_summarized_entities",
+        ]
+    )
     expected = load_expected(workflow_name)
 
     storage = MemoryPipelineStorage()
@@ -90,7 +100,7 @@ async def test_create_base_entity_graph_with_snapshots():
 
     config["graphml_snapshot"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,

@@ -4,7 +4,6 @@
 """All the steps to extract and format covariates."""
 
 from typing import Any, cast
-from uuid import uuid4
 
 import pandas as pd
 from datashaper import (
@@ -17,8 +16,8 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.covariates.extract_covariates.extract_covariates import (
-    extract_covariates_df,
+from graphrag.index.flows.create_final_covariates import (
+    create_final_covariates as create_final_covariates_flow,
 )
 
 
@@ -32,12 +31,13 @@ async def create_final_covariates(
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
-    **kwargs: dict,
+    num_threads: int = 4,
+    **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to extract and format covariates."""
     source = cast(pd.DataFrame, input.get_input())
 
-    covariates = await extract_covariates_df(
+    output = await create_final_covariates_flow(
         source,
         cache,
         callbacks,
@@ -46,33 +46,7 @@ async def create_final_covariates(
         strategy,
         async_mode,
         entity_types,
-        **kwargs,
+        num_threads,
     )
 
-    covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
-    covariates["human_readable_id"] = (covariates.index + 1).astype(str)
-    covariates.rename(columns={"chunk_id": "text_unit_id"}, inplace=True)
-
-    return create_verb_result(
-        cast(
-            Table,
-            covariates[
-                [
-                    "id",
-                    "human_readable_id",
-                    "covariate_type",
-                    "type",
-                    "description",
-                    "subject_id",
-                    "object_id",
-                    "status",
-                    "start_date",
-                    "end_date",
-                    "source_text",
-                    "text_unit_id",
-                    "document_ids",
-                    "n_tokens",
-                ]
-            ],
-        )
-    )
+    return create_verb_result(cast(Table, output))

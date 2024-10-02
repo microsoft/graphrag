@@ -84,7 +84,7 @@ async def entity_extract_df(
     graph_to: str | None = None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types=DEFAULT_ENTITY_TYPES,
-    **kwargs,
+    num_threads: int = 4,
 ) -> pd.DataFrame:
     """
     Extract entities from a piece of text.
@@ -194,7 +194,7 @@ async def entity_extract_df(
         run_strategy,
         callbacks,
         scheduling_type=async_mode,
-        num_threads=kwargs.get("num_threads", 4),
+        num_threads=num_threads,
     )
 
     to_result = []
