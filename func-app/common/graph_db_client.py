@@ -115,7 +115,6 @@ class GraphDBClient:
                         "prop_text_unit_ids":json.dumps(row.text_unit_ids.tolist() if row.text_unit_ids is not None else []),
                     },
                 )
-                time.sleep(5)
 
 
     def write_edges(self,data: pd.DataFrame)->None:
@@ -152,7 +151,6 @@ class GraphDBClient:
                     "prop_target": row.target,
                 },
             )
-            time.sleep(5)
 
     def get_top_related_unique_edges(self, entity_id: str, top: int) -> [dict[str, str]]:
         """Retrieve the top related unique edges for a given entity.
