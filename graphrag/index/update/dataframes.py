@@ -141,6 +141,7 @@ async def update_dataframe_outputs(
     merged_nodes = _merge_and_update_nodes(
         old_nodes,
         delta_nodes,
+        merged_entities_df,
         merged_relationships_df,
     )
 
@@ -336,6 +337,7 @@ def _update_and_merge_text_units(
 def _merge_and_update_nodes(
     old_nodes: pd.DataFrame,
     delta_nodes: pd.DataFrame,
+    merged_entities_df: pd.DataFrame,
     merged_relationships_df: pd.DataFrame,
     community_count_threshold: int = 2,
 ) -> pd.DataFrame:
@@ -347,6 +349,8 @@ def _merge_and_update_nodes(
         The old nodes.
     delta_nodes : pd.DataFrame
         The delta nodes.
+    merged_entities_df : pd.DataFrame
+        The merged entities.
     merged_relationships_df : pd.DataFrame
         The merged relationships.
     community_count_threshold : int, optional
@@ -361,6 +365,23 @@ def _merge_and_update_nodes(
     # Increment all community ids by the max of the old nodes
     old_max_community_id = old_nodes["community"].fillna(0).astype(int).max()
 
+    # Merge delta_nodes with merged_entities_df to get the new human_readable_id
+    delta_nodes = delta_nodes.merge(
+        merged_entities_df[["name", "human_readable_id"]],
+        left_on="title",
+        right_on="name",
+        how="left",
+        suffixes=("", "_new"),
+    )
+
+    # Replace existing human_readable_id with the new one from merged_entities_df
+    delta_nodes["human_readable_id"] = delta_nodes[
+        "human_readable_id_new"
+    ].combine_first(delta_nodes["human_readable_id"])
+
+    # Drop the auxiliary column from the merge
+    delta_nodes.drop(columns=["name", "human_readable_id_new"], inplace=True)
+
     # Increment only the non-NaN values in delta_nodes["community"]
     delta_nodes["community"] = delta_nodes["community"].where(
         delta_nodes["community"].isna(),
@@ -372,7 +393,7 @@ def _merge_and_update_nodes(
     delta_nodes_index = delta_nodes.set_index(["level", "title"]).index
 
     # Get all delta nodes that are not in the old nodes
-    new_delta_nodes_df = delta_nodes[
+    new_delta_nodes_df = delta_nodes.loc[
         ~delta_nodes_index.isin(old_nodes_index)
     ].reset_index(drop=True)
 
@@ -401,6 +422,8 @@ def _merge_and_update_nodes(
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
 
+    old_nodes["community"] = old_nodes["community"].astype("Int64")
+
     new_delta_nodes_df = _assign_communities(
         new_delta_nodes_df,
         merged_relationships_df,
@@ -411,10 +434,6 @@ def _merge_and_update_nodes(
     # Concatenate the old nodes with the new delta nodes
     merged_final_nodes = pd.concat(
         [old_nodes, new_delta_nodes_df], ignore_index=True, copy=False
-    )
-
-    merged_final_nodes["community"] = (
-        merged_final_nodes["community"].fillna("").astype(str)
     )
 
     # Merge both source and target degrees
@@ -434,8 +453,10 @@ def _merge_and_update_nodes(
     merged_final_nodes["size"] = merged_final_nodes["source_degree"]
 
     # Fill NaN values in 'size' and 'degree' with target_degree
-    merged_final_nodes["size"] = merged_final_nodes["size"].fillna(
-        merged_final_nodes["target_degree"]
+    merged_final_nodes["size"] = (
+        merged_final_nodes["size"]
+        .fillna(merged_final_nodes["target_degree"])
+        .astype("Int64")
     )
     merged_final_nodes["degree"] = merged_final_nodes["size"]
 
@@ -472,9 +493,9 @@ def _assign_communities(
     ]
 
     # Find old nodes that are related to these relationships
-    related_communities = old_nodes[
-        old_nodes["title"].isin(node_relationships["source"])
-        | old_nodes["title"].isin(node_relationships["target"])
+    related_communities = old_nodes.loc[
+        old_nodes.loc[:, "title"].isin(node_relationships["source"])
+        | old_nodes.loc[:, "title"].isin(node_relationships["target"])
     ]
 
     # Merge with new_delta_nodes_df to get the level and community info
@@ -506,8 +527,10 @@ def _assign_communities(
     )
 
     # Update the community in new_delta_nodes_df if a common community was found
-    new_delta_nodes_df["community"] = new_delta_nodes_df["community_new"].combine_first(
-        new_delta_nodes_df["community"]
+    new_delta_nodes_df["community"] = (
+        new_delta_nodes_df.loc[:, "community_new"]
+        .combine_first(new_delta_nodes_df.loc[:, "community"])
+        .astype("Int64")
     )
 
     # Drop the auxiliary column used for merging
