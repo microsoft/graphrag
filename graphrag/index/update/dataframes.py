@@ -210,17 +210,21 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
+        .agg(
+            {
+                "id": "first",
+                "type": "first",
+                "human_readable_id": "first",
+                "graph_embedding": "first",
+                "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
+                # Concatenate nd.array into a single list
+                "text_unit_ids": lambda x: ",".join(
+                    str(i) for j in x.tolist() for i in j
+                ),
+                # Keep only descriptions where the original value wasn't modified
+                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+            }
+        )
         .reset_index()
     )
 
@@ -343,10 +347,11 @@ def _merge_and_update_nodes(
         The old nodes.
     delta_nodes : pd.DataFrame
         The delta nodes.
-    merged_entities_df : pd.DataFrame
-        The merged entities.
     merged_relationships_df : pd.DataFrame
         The merged relationships.
+    community_count_threshold : int, optional
+        The community count threshold, by default 2.
+        If a node has enough relationships to a community, it will be assigned to that community.
 
     Returns
     -------
@@ -385,10 +390,12 @@ def _merge_and_update_nodes(
     }
 
     # Specify custom aggregation for description and source_id
-    columns_to_agg.update({
-        "description": lambda x: os.linesep.join(x.astype(str)),
-        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-    })
+    columns_to_agg.update(
+        {
+            "description": lambda x: os.linesep.join(x.astype(str)),
+            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+        }
+    )
 
     old_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
@@ -444,6 +451,20 @@ def _assign_communities(
     old_nodes: pd.DataFrame,
     community_count_threshold: int = 2,
 ) -> pd.DataFrame:
+    """Assign communities to new delta nodes based on the most common community of related nodes.
+
+    Parameters
+    ----------
+    new_delta_nodes_df : pd.DataFrame
+        The new delta nodes.
+    merged_relationships_df : pd.DataFrame
+        The merged relationships.
+    old_nodes : pd.DataFrame
+        The old nodes.
+    community_count_threshold : int, optional
+        The community count threshold, by default 2.
+        If a node has enough relationships to a community, it will be assigned to that community.
+    """
     # Find all relationships for the new delta nodes
     node_relationships = merged_relationships_df[
         merged_relationships_df["source"].isin(new_delta_nodes_df["title"])
