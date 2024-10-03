@@ -8,10 +8,10 @@ from typing import Any, cast
 
 import networkx as nx
 import pandas as pd
-from datashaper import TableContainer, VerbCallbacks, VerbInput, progress_callback, verb
+from datashaper import VerbCallbacks, progress_callback
 
 from graphrag.index.graph.visualization import GraphLayout
-from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
+from graphrag.index.operations.embed_graph import NodeEmbeddings
 from graphrag.index.utils import load_graph
 
 
@@ -26,23 +26,20 @@ class LayoutGraphStrategyType(str, Enum):
         return f'"{self.value}"'
 
 
-@verb(name="layout_graph")
 def layout_graph(
-    input: VerbInput,
+    input_df: pd.DataFrame,
     callbacks: VerbCallbacks,
     strategy: dict[str, Any],
     embeddings_column: str,
     graph_column: str,
     to: str,
     graph_to: str | None = None,
-    **_kwargs: dict,
-) -> TableContainer:
+):
     """
     Apply a layout algorithm to a graph. The graph is expected to be in graphml format. The verb outputs a new column containing the laid out graph.
 
     ## Usage
     ```yaml
-    verb: layout_graph
     args:
         graph_column: clustered_graph # The name of the column containing the graph, should be a graphml graph
         embeddings_column: embeddings # The name of the column containing the embeddings
@@ -63,24 +60,6 @@ def layout_graph(
         min_dist: 0.75 # Optional, The min distance to use for the umap algorithm, default: 0.75
     ```
     """
-    input_df = cast(pd.DataFrame, input.get_input())
-    output_df = layout_graph_df(
-        input_df, callbacks, strategy, embeddings_column, graph_column, to, graph_to
-    )
-
-    return TableContainer(table=output_df)
-
-
-def layout_graph_df(
-    input_df: pd.DataFrame,
-    callbacks: VerbCallbacks,
-    strategy: dict[str, Any],
-    embeddings_column: str,
-    graph_column: str,
-    to: str,
-    graph_to: str | None = None,
-):
-    """Apply a layout algorithm to a graph."""
     output_df = input_df
     num_items = len(output_df)
     strategy_type = strategy.get("type", LayoutGraphStrategyType.umap)

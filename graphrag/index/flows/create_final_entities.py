@@ -9,7 +9,7 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text.embed_text import embed_text
+from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.operations.text_split import text_split
 from graphrag.index.operations.unpack_graph import unpack_graph
 

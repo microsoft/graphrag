@@ -31,7 +31,7 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     NODE_ID,
     NODE_NAME,
 )
-from graphrag.index.operations.embed_text.embed_text import embed_text
+from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.verbs.graph.report.create_community_reports import (
     create_community_reports_df,
 )

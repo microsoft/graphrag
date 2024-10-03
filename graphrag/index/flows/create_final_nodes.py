@@ -10,10 +10,10 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.layout_graph import layout_graph
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.graph.layout.layout_graph import layout_graph_df
 
 
 async def create_final_nodes(
@@ -27,7 +27,7 @@ async def create_final_nodes(
     """All the steps to transform final nodes."""
     laid_out_entity_graph = cast(
         pd.DataFrame,
-        layout_graph_df(
+        layout_graph(
             entity_graph,
             callbacks,
             strategy,

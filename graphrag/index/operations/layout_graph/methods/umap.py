@@ -15,7 +15,7 @@ from graphrag.index.graph.visualization import (
     NodePosition,
     compute_umap_positions,
 )
-from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
+from graphrag.index.operations.embed_graph import NodeEmbeddings
 from graphrag.index.typing import ErrorHandlerFn
 
 # TODO: This could be handled more elegantly, like what columns to use

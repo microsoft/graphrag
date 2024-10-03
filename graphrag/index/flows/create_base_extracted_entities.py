@@ -12,7 +12,7 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.merge_graphs.merge_graphs import merge_graphs
+from graphrag.index.operations.merge_graphs import merge_graphs
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage

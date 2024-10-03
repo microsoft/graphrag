@@ -14,7 +14,7 @@ from datashaper import (
     aggregate_operation_mapping,
 )
 
-from graphrag.index.operations.text_chunk.text_chunk import text_chunk
+from graphrag.index.operations.text_chunk import text_chunk
 from graphrag.index.utils import gen_md5_hash
 
 

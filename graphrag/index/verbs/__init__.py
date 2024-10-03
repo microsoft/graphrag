@@ -7,13 +7,11 @@ from .covariates import extract_covariates
 from .entities import entity_extract, summarize_descriptions
 from .graph import (
     create_community_reports,
-    layout_graph,
 )
 
 __all__ = [
     "create_community_reports",
     "entity_extract",
     "extract_covariates",
-    "layout_graph",
     "summarize_descriptions",
 ]

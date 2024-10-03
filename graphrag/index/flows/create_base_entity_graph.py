@@ -11,7 +11,7 @@ from datashaper import (
 )
 
 from graphrag.index.operations.cluster_graph import cluster_graph
-from graphrag.index.operations.embed_graph.embed_graph import embed_graph
+from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
 
