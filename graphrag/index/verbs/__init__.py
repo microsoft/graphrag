@@ -16,7 +16,6 @@ from .graph import (
 )
 from .overrides import aggregate, concat
 from .text import chunk, text_embed, text_split, text_translate
-from .zip import zip_verb
 
 __all__ = [
     "aggregate",
@@ -35,5 +34,4 @@ __all__ = [
     "text_split",
     "text_translate",
     "unpack_graph",
-    "zip_verb",
 ]
