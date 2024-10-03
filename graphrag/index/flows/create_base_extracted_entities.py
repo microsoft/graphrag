@@ -12,11 +12,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.merge_graphs.merge_graphs import merge_graphs
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.entities.extraction.entity_extract import entity_extract_df
-from graphrag.index.verbs.graph.merge.merge_graphs import merge_graphs_df
 
 
 async def create_base_extracted_entities(
@@ -58,7 +58,7 @@ async def create_base_extracted_entities(
             formats=["json"],
         )
 
-    merged_graph = merge_graphs_df(
+    merged_graph = merge_graphs(
         entity_graph,
         callbacks,
         column="entity_graph",

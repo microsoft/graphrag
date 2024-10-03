@@ -9,7 +9,6 @@ from .graph import (
     create_community_reports,
     embed_graph,
     layout_graph,
-    merge_graphs,
 )
 from .text import chunk, text_embed
 
@@ -20,7 +19,6 @@ __all__ = [
     "entity_extract",
     "extract_covariates",
     "layout_graph",
-    "merge_graphs",
     "summarize_descriptions",
     "text_embed",
 ]

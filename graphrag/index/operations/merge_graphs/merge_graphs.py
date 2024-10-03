@@ -7,15 +7,10 @@ from typing import Any, cast
 
 import networkx as nx
 import pandas as pd
-from datashaper import TableContainer, VerbCallbacks, VerbInput, progress_iterable, verb
+from datashaper import VerbCallbacks, progress_iterable
 
 from graphrag.index.utils import load_graph
 
-from .defaults import (
-    DEFAULT_CONCAT_SEPARATOR,
-    DEFAULT_EDGE_OPERATIONS,
-    DEFAULT_NODE_OPERATIONS,
-)
 from .typing import (
     BasicMergeOperation,
     DetailedAttributeMergeOperation,
@@ -23,25 +18,23 @@ from .typing import (
     StringOperation,
 )
 
+DEFAULT_NODE_OPERATIONS = {
+    "*": {
+        "operation": BasicMergeOperation.Replace,
+    }
+}
 
-@verb(name="merge_graphs")
+DEFAULT_EDGE_OPERATIONS = {
+    "*": {
+        "operation": BasicMergeOperation.Replace,
+    },
+    "weight": "sum",
+}
+
+DEFAULT_CONCAT_SEPARATOR = ","
+
+
 def merge_graphs(
-    input: VerbInput,
-    callbacks: VerbCallbacks,
-    column: str,
-    to: str,
-    nodes: dict[str, Any] = DEFAULT_NODE_OPERATIONS,
-    edges: dict[str, Any] = DEFAULT_EDGE_OPERATIONS,
-    **_kwargs,
-) -> TableContainer:
-    """Merge multiple graphs together. The graphs are expected to be in graphml format. The verb outputs a new column containing the merged graph."""
-    input_df = cast(pd.DataFrame, input.get_input())
-    output = merge_graphs_df(input_df, callbacks, column, to, nodes, edges)
-
-    return TableContainer(table=output)
-
-
-def merge_graphs_df(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     column: str,
