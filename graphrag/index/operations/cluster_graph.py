@@ -10,65 +10,29 @@ from typing import Any, cast
 
 import networkx as nx
 import pandas as pd
-from datashaper import TableContainer, VerbCallbacks, VerbInput, progress_iterable, verb
+from datashaper import VerbCallbacks, progress_iterable
+from graspologic.partition import hierarchical_leiden
 
+from graphrag.index.graph.utils import stable_largest_connected_component
 from graphrag.index.utils import gen_uuid, load_graph
 
-from .typing import Communities
+Communities = list[tuple[int, str, list[str]]]
+
+
+class GraphCommunityStrategyType(str, Enum):
+    """GraphCommunityStrategyType class definition."""
+
+    leiden = "leiden"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'
+
 
 log = logging.getLogger(__name__)
 
 
-@verb(name="cluster_graph")
 def cluster_graph(
-    input: VerbInput,
-    callbacks: VerbCallbacks,
-    strategy: dict[str, Any],
-    column: str,
-    to: str,
-    level_to: str | None = None,
-    **_kwargs,
-) -> TableContainer:
-    """
-    Apply a hierarchical clustering algorithm to a graph. The graph is expected to be in graphml format. The verb outputs a new column containing the clustered graph, and a new column containing the level of the graph.
-
-    ## Usage
-    ```yaml
-    verb: cluster_graph
-    args:
-        column: entity_graph # The name of the column containing the graph, should be a graphml graph
-        to: clustered_graph # The name of the column to output the clustered graph to
-        level_to: level # The name of the column to output the level to
-        strategy: <strategy config> # See strategies section below
-    ```
-
-    ## Strategies
-    The cluster graph verb uses a strategy to cluster the graph. The strategy is a json object which defines the strategy to use. The following strategies are available:
-
-    ### leiden
-    This strategy uses the leiden algorithm to cluster a graph. The strategy config is as follows:
-    ```yaml
-    strategy:
-        type: leiden
-        max_cluster_size: 10 # Optional, The max cluster size to use, default: 10
-        use_lcc: true # Optional, if the largest connected component should be used with the leiden algorithm, default: true
-        seed: 0xDEADBEEF # Optional, the seed to use for the leiden algorithm, default: 0xDEADBEEF
-        levels: [0, 1] # Optional, the levels to output, default: all the levels detected
-
-    ```
-    """
-    output_df = cluster_graph_df(
-        cast(pd.DataFrame, input.get_input()),
-        callbacks,
-        strategy,
-        column,
-        to,
-        level_to=level_to,
-    )
-    return TableContainer(table=output_df)
-
-
-def cluster_graph_df(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     strategy: dict[str, Any],
@@ -157,16 +121,6 @@ def apply_clustering(
     return graph
 
 
-class GraphCommunityStrategyType(str, Enum):
-    """GraphCommunityStrategyType class definition."""
-
-    leiden = "leiden"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 def run_layout(
     strategy: dict[str, Any], graphml_or_graph: str | nx.Graph
 ) -> Communities:
@@ -180,8 +134,6 @@ def run_layout(
     strategy_type = strategy.get("type", GraphCommunityStrategyType.leiden)
     match strategy_type:
         case GraphCommunityStrategyType.leiden:
-            from .strategies.leiden import run as run_leiden
-
             clusters = run_leiden(graph, strategy)
         case _:
             msg = f"Unknown clustering strategy {strategy_type}"
@@ -191,4 +143,61 @@ def run_layout(
     for level in clusters:
         for cluster_id, nodes in clusters[level].items():
             results.append((level, cluster_id, nodes))
+    return results
+
+
+def run_leiden(
+    graph: nx.Graph, args: dict[str, Any]
+) -> dict[int, dict[str, list[str]]]:
+    """Run method definition."""
+    max_cluster_size = args.get("max_cluster_size", 10)
+    use_lcc = args.get("use_lcc", True)
+    if args.get("verbose", False):
+        log.info(
+            "Running leiden with max_cluster_size=%s, lcc=%s", max_cluster_size, use_lcc
+        )
+
+    node_id_to_community_map = _compute_leiden_communities(
+        graph=graph,
+        max_cluster_size=max_cluster_size,
+        use_lcc=use_lcc,
+        seed=args.get("seed", 0xDEADBEEF),
+    )
+    levels = args.get("levels")
+
+    # If they don't pass in levels, use them all
+    if levels is None:
+        levels = sorted(node_id_to_community_map.keys())
+
+    results_by_level: dict[int, dict[str, list[str]]] = {}
+    for level in levels:
+        result = {}
+        results_by_level[level] = result
+        for node_id, raw_community_id in node_id_to_community_map[level].items():
+            community_id = str(raw_community_id)
+            if community_id not in result:
+                result[community_id] = []
+            result[community_id].append(node_id)
+    return results_by_level
+
+
+# Taken from graph_intelligence & adapted
+def _compute_leiden_communities(
+    graph: nx.Graph | nx.DiGraph,
+    max_cluster_size: int,
+    use_lcc: bool,
+    seed=0xDEADBEEF,
+) -> dict[int, dict[str, int]]:
+    """Return Leiden root communities."""
+    if use_lcc:
+        graph = stable_largest_connected_component(graph)
+
+    community_mapping = hierarchical_leiden(
+        graph, max_cluster_size=max_cluster_size, random_seed=seed
+    )
+    results: dict[int, dict[str, int]] = {}
+    for partition in community_mapping:
+        results[partition.level] = results.get(partition.level, {})
+        results[partition.level][partition.node] = partition.cluster
+
     return results

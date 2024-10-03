@@ -6,7 +6,6 @@
 from .covariates import extract_covariates
 from .entities import entity_extract, summarize_descriptions
 from .graph import (
-    cluster_graph,
     create_community_reports,
     embed_graph,
     layout_graph,
@@ -16,7 +15,6 @@ from .text import chunk, text_embed
 
 __all__ = [
     "chunk",
-    "cluster_graph",
     "create_community_reports",
     "embed_graph",
     "entity_extract",

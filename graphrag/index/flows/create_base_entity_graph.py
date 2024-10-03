@@ -10,9 +10,9 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
 from graphrag.index.verbs.graph.embed.embed_graph import embed_graph_df
 
 
@@ -28,7 +28,7 @@ async def create_base_entity_graph(
     """All the steps to create the base entity graph."""
     clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
 
-    clustered = cluster_graph_df(
+    clustered = cluster_graph(
         entities,
         callbacks,
         column="entity_graph",

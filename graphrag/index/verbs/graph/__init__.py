@@ -3,7 +3,6 @@
 
 """The Indexing Engine graph package root."""
 
-from .clustering import cluster_graph
 from .embed import embed_graph
 from .layout import layout_graph
 from .merge import merge_graphs
@@ -16,7 +15,6 @@ from .report import (
 )
 
 __all__ = [
-    "cluster_graph",
     "create_community_reports",
     "embed_graph",
     "layout_graph",
