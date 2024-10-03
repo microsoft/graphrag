@@ -12,14 +12,13 @@ from .graph import (
     layout_graph,
     merge_graphs,
 )
-from .overrides import aggregate, concat
+from .overrides import aggregate
 from .text import chunk, text_embed, text_split, text_translate
 
 __all__ = [
     "aggregate",
     "chunk",
     "cluster_graph",
-    "concat",
     "create_community_reports",
     "embed_graph",
     "entity_extract",
