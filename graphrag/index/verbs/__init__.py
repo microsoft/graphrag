@@ -8,7 +8,6 @@ from .entities import entity_extract, summarize_descriptions
 from .graph import (
     cluster_graph,
     create_community_reports,
-    create_graph,
     embed_graph,
     layout_graph,
     merge_graphs,
@@ -22,7 +21,6 @@ __all__ = [
     "cluster_graph",
     "concat",
     "create_community_reports",
-    "create_graph",
     "embed_graph",
     "entity_extract",
     "extract_covariates",
