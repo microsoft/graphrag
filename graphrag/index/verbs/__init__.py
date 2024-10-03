@@ -12,11 +12,9 @@ from .graph import (
     layout_graph,
     merge_graphs,
 )
-from .overrides import aggregate
 from .text import chunk, text_embed
 
 __all__ = [
-    "aggregate",
     "chunk",
     "cluster_graph",
     "create_community_reports",
