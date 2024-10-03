@@ -381,7 +381,7 @@ def _merge_and_update_nodes(
         delta_nodes_index.isin(old_nodes_index)
     ].reset_index(drop=True)
 
-    # Cocnat the DataFrames
+    # Concat the DataFrames
     concat_nodes = pd.concat([old_nodes, existing_delta_nodes_df], ignore_index=True)
     columns_to_agg: dict[str, str | Callable] = {
         col: "first"
