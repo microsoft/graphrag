@@ -38,7 +38,7 @@ class ClaimExtractionConfig(LLMConfig):
 
     def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
         """Get the resolved claim extraction strategy."""
-        from graphrag.index.verbs.covariates.extract_covariates import (
+        from graphrag.index.operations.extract_covariates import (
             ExtractClaimsStrategyType,
         )
 

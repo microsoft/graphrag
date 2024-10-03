@@ -5,67 +5,26 @@
 
 import logging
 from dataclasses import asdict
-from enum import Enum
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from datashaper import (
     AsyncType,
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     derive_from_rows,
-    verb,
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.covariates.typing import Covariate, CovariateExtractStrategy
+
+from .typing import Covariate, CovariateExtractStrategy, ExtractClaimsStrategyType
 
 log = logging.getLogger(__name__)
-
-
-class ExtractClaimsStrategyType(str, Enum):
-    """ExtractClaimsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
-@verb(name="extract_covariates")
 async def extract_covariates(
-    input: VerbInput,
-    cache: PipelineCache,
-    callbacks: VerbCallbacks,
-    column: str,
-    covariate_type: str,
-    strategy: dict[str, Any] | None,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    entity_types: list[str] | None = None,
-    **kwargs,
-) -> TableContainer:
-    """Extract claims from a piece of text."""
-    source = cast(pd.DataFrame, input.get_input())
-    output = await extract_covariates_df(
-        source,
-        cache,
-        callbacks,
-        column,
-        covariate_type,
-        strategy,
-        async_mode,
-        entity_types,
-        **kwargs,
-    )
-    return TableContainer(table=output)
-
-
-async def extract_covariates_df(
     input: pd.DataFrame,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
@@ -113,9 +72,9 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
     """Load strategy method definition."""
     match strategy_type:
         case ExtractClaimsStrategyType.graph_intelligence:
-            from .strategies.graph_intelligence import run as run_gi
+            from .strategies import run_graph_intelligence
 
-            return run_gi
+            return run_graph_intelligence
         case _:
             msg = f"Unknown strategy: {strategy_type}"
             raise ValueError(msg)

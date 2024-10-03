@@ -13,16 +13,21 @@ from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
 from graphrag.index.llm import load_llm
-from graphrag.index.verbs.covariates.typing import (
+from graphrag.llm import CompletionLLM
+
+from .typing import (
     Covariate,
     CovariateExtractionResult,
 )
-from graphrag.llm import CompletionLLM
 
-from .defaults import MOCK_LLM_RESPONSES
+MOCK_LLM_RESPONSES = [
+    """
+(COMPANY A<|>GOVERNMENT AGENCY B<|>ANTI-COMPETITIVE PRACTICES<|>TRUE<|>2022-01-10T00:00:00<|>2022-01-10T00:00:00<|>Company A was found to engage in anti-competitive practices because it was fined for bid rigging in multiple public tenders published by Government Agency B according to an article published on 2022/01/10<|>According to an article published on 2022/01/10, Company A was fined for bid rigging while participating in multiple public tenders published by Government Agency B.)
+    """.strip()
+]
 
 
-async def run(
+async def run_graph_intelligence(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
