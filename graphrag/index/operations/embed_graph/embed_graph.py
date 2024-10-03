@@ -8,7 +8,7 @@ from typing import Any, cast
 
 import networkx as nx
 import pandas as pd
-from datashaper import TableContainer, VerbCallbacks, VerbInput, derive_from_rows, verb
+from datashaper import VerbCallbacks, derive_from_rows
 
 from graphrag.index.utils import load_graph
 
@@ -25,71 +25,18 @@ class EmbedGraphStrategyType(str, Enum):
         return f'"{self.value}"'
 
 
-@verb(name="embed_graph")
 async def embed_graph(
-    input: VerbInput,
-    callbacks: VerbCallbacks,
-    strategy: dict[str, Any],
-    column: str,
-    to: str,
-    **kwargs,
-) -> TableContainer:
-    """
-    Embed a graph into a vector space. The graph is expected to be in graphml format. The verb outputs a new column containing a mapping between node_id and vector.
-
-    ## Usage
-    ```yaml
-    verb: embed_graph
-    args:
-        column: clustered_graph # The name of the column containing the graph, should be a graphml graph
-        to: embeddings # The name of the column to output the embeddings to
-        strategy: <strategy config> # See strategies section below
-    ```
-
-    ## Strategies
-    The embed_graph verb uses a strategy to embed the graph. The strategy is an object which defines the strategy to use. The following strategies are available:
-
-    ### node2vec
-    This strategy uses the node2vec algorithm to embed a graph. The strategy config is as follows:
-
-    ```yaml
-    strategy:
-        type: node2vec
-        dimensions: 1536 # Optional, The number of dimensions to use for the embedding, default: 1536
-        num_walks: 10 # Optional, The number of walks to use for the embedding, default: 10
-        walk_length: 40 # Optional, The walk length to use for the embedding, default: 40
-        window_size: 2 # Optional, The window size to use for the embedding, default: 2
-        iterations: 3 # Optional, The number of iterations to use for the embedding, default: 3
-        random_seed: 86 # Optional, The random seed to use for the embedding, default: 86
-    ```
-    """
-    input_df = cast(pd.DataFrame, input.get_input())
-
-    output_df = await embed_graph_df(
-        input_df,
-        callbacks,
-        strategy,
-        column,
-        to,
-        **kwargs,
-    )
-    return TableContainer(table=output_df)
-
-
-async def embed_graph_df(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     strategy: dict[str, Any],
     column: str,
-    to: str,
-    **kwargs,
-) -> pd.DataFrame:
+    num_threads: int = 4,
+):
     """
-    Embed a graph into a vector space. The graph is expected to be in graphml format. The verb outputs a new column containing a mapping between node_id and vector.
+    Embed a graph into a vector space. The graph is expected to be in graphml format. The operation outputs a new column containing a mapping between node_id and vector.
 
     ## Usage
     ```yaml
-    verb: embed_graph
     args:
         column: clustered_graph # The name of the column containing the graph, should be a graphml graph
         to: embeddings # The name of the column to output the embeddings to
@@ -97,7 +44,7 @@ async def embed_graph_df(
     ```
 
     ## Strategies
-    The embed_graph verb uses a strategy to embed the graph. The strategy is an object which defines the strategy to use. The following strategies are available:
+    The embed_graph operation uses a strategy to embed the graph. The strategy is an object which defines the strategy to use. The following strategies are available:
 
     ### node2vec
     This strategy uses the node2vec algorithm to embed a graph. The strategy config is as follows:
@@ -123,10 +70,10 @@ async def embed_graph_df(
         input,
         run_strategy,
         callbacks=callbacks,
-        num_threads=kwargs.get("num_threads", None),
+        num_threads=num_threads,
     )
-    input[to] = list(results)
-    return input
+
+    return list(results)
 
 
 def run_embeddings(

@@ -35,7 +35,9 @@ class TextEmbeddingConfig(LLMConfig):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved text embedding strategy."""
-        from graphrag.index.verbs.text.embed import TextEmbedStrategyType
+        from graphrag.index.operations.embed_text.embed_text import (
+            TextEmbedStrategyType,
+        )
 
         return self.strategy or {
             "type": TextEmbedStrategyType.openai,

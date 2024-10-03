@@ -21,6 +21,8 @@ def build_steps(
         "cluster_graph",
         {"strategy": {"type": "leiden"}},
     )
+    clustering_strategy = clustering_config["strategy"]
+
     embed_graph_config = config.get(
         "embed_graph",
         {
@@ -34,18 +36,20 @@ def build_steps(
             }
         },
     )
+    embedding_strategy = embed_graph_config["strategy"]
+    embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
     graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
-    embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
     return [
         {
             "verb": "create_base_entity_graph",
             "args": {
-                "clustering_config": clustering_config,
+                "clustering_strategy": clustering_strategy,
                 "graphml_snapshot_enabled": graphml_snapshot_enabled,
-                "embed_graph_enabled": embed_graph_enabled,
-                "embedding_config": embed_graph_config,
+                "embedding_strategy": embedding_strategy
+                if embed_graph_enabled
+                else None,
             },
             "input": ({"source": "workflow:create_summarized_entities"}),
         },

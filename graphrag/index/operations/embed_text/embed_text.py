@@ -1,15 +1,15 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing text_embed, load_strategy and create_row_from_embedding_data methods definition."""
+"""A module containing embed_text, load_strategy and create_row_from_embedding_data methods definition."""
 
 import logging
 from enum import Enum
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 import pandas as pd
-from datashaper import TableContainer, VerbCallbacks, VerbInput, verb
+from datashaper import VerbCallbacks
 
 from graphrag.index.cache import PipelineCache
 from graphrag.vector_stores import (
@@ -38,21 +38,19 @@ class TextEmbedStrategyType(str, Enum):
         return f'"{self.value}"'
 
 
-@verb(name="text_embed")
-async def text_embed(
-    input: VerbInput,
+async def embed_text(
+    input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     column: str,
     strategy: dict,
-    **kwargs,
-) -> TableContainer:
+    embedding_name: str = "default",
+):
     """
-    Embed a piece of text into a vector space. The verb outputs a new column containing a mapping between doc_id and vector.
+    Embed a piece of text into a vector space. The operation outputs a new column containing a mapping between doc_id and vector.
 
     ## Usage
     ```yaml
-    verb: text_embed
     args:
         column: text # The name of the column containing the text to embed, this can either be a column with text, or a column with a list[tuple[doc_id, str]]
         to: embedding # The name of the column to output the embedding to
@@ -60,7 +58,7 @@ async def text_embed(
     ```
 
     ## Strategies
-    The text embed verb uses a strategy to embed the text. The strategy is an object which defines the strategy to use. The following strategies are available:
+    The text embed operation uses a strategy to embed the text. The strategy is an object which defines the strategy to use. The following strategies are available:
 
     ### openai
     This strategy uses openai to embed a piece of text. In particular it uses a LLM to embed a piece of text. The strategy config is as follows:
@@ -79,28 +77,9 @@ async def text_embed(
             <...>
     ```
     """
-    input_df = cast(pd.DataFrame, input.get_input())
-    to = kwargs.get("to", f"{column}_embedding")
-    input_df[to] = await text_embed_df(
-        input_df, callbacks, cache, column, strategy, **kwargs
-    )
-    return TableContainer(table=input_df)
-
-
-# TODO: this ultimately just creates a new column, so our embed function could just generate a series instead of updating the dataframe
-async def text_embed_df(
-    input: pd.DataFrame,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
-    column: str,
-    strategy: dict,
-    **kwargs,
-):
-    """Embed a piece of text into a vector space."""
     vector_store_config = strategy.get("vector_store")
 
     if vector_store_config:
-        embedding_name = kwargs.get("embedding_name", "default")
         collection_name = _get_collection_name(vector_store_config, embedding_name)
         vector_store: BaseVectorStore = _create_vector_store(
             vector_store_config, collection_name

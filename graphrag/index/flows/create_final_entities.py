@@ -9,8 +9,8 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.verbs.graph.unpack import unpack_graph_df
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 from graphrag.index.verbs.text.split import text_split_df
 
 
@@ -50,7 +50,7 @@ async def create_final_entities(
 
     # Embed name if not skipped
     if name_text_embed:
-        nodes["name_embedding"] = await text_embed_df(
+        nodes["name_embedding"] = await embed_text(
             nodes,
             callbacks,
             cache,
@@ -63,7 +63,7 @@ async def create_final_entities(
     if description_text_embed:
         # Concatenate 'name' and 'description' and embed
         nodes["name_description"] = nodes["name"] + ":" + nodes["description"]
-        nodes["description_embedding"] = await text_embed_df(
+        nodes["description_embedding"] = await embed_text(
             nodes,
             callbacks,
             cache,

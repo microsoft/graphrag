@@ -29,7 +29,7 @@ async def create_final_relationships(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final relationships."""
@@ -41,7 +41,7 @@ async def create_final_relationships(
         nodes,
         callbacks,
         cache,
-        text_embed,
+        description_text_embed,
     )
 
     return create_verb_result(cast(Table, output))
