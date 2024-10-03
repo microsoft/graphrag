@@ -11,11 +11,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.entities.summarize.description_summarize import (
     summarize_descriptions_df,
 )
-from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
 async def create_summarized_entities(
@@ -39,7 +39,7 @@ async def create_summarized_entities(
     )
 
     if graphml_snapshot_enabled:
-        await snapshot_rows_df(
+        await snapshot_rows(
             summarized,
             column="entity_graph",
             base_name="summarized_graph",

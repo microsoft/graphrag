@@ -5,10 +5,9 @@
 
 import json
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
-from datashaper import TableContainer, VerbInput, verb
 
 from graphrag.index.storage import PipelineStorage
 
@@ -21,30 +20,7 @@ class FormatSpecifier:
     extension: str
 
 
-@verb(name="snapshot_rows")
 async def snapshot_rows(
-    input: VerbInput,
-    column: str | None,
-    base_name: str,
-    storage: PipelineStorage,
-    formats: list[str | dict[str, Any]],
-    row_name_column: str | None = None,
-    **_kwargs: dict,
-) -> TableContainer:
-    """Take a by-row snapshot of the tabular data."""
-    source = cast(pd.DataFrame, input.get_input())
-    await snapshot_rows_df(
-        source,
-        column,
-        base_name,
-        storage,
-        formats,
-        row_name_column,
-    )
-    return TableContainer(table=source)
-
-
-async def snapshot_rows_df(
     input: pd.DataFrame,
     column: str | None,
     base_name: str,

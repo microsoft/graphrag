@@ -10,10 +10,10 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.clustering.cluster_graph import cluster_graph_df
 from graphrag.index.verbs.graph.embed.embed_graph import embed_graph_df
-from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
 
 
 async def create_base_entity_graph(
@@ -38,7 +38,7 @@ async def create_base_entity_graph(
     )
 
     if graphml_snapshot_enabled:
-        await snapshot_rows_df(
+        await snapshot_rows(
             clustered,
             column="clustered_graph",
             base_name="clustered_graph",
@@ -59,7 +59,7 @@ async def create_base_entity_graph(
     # take second snapshot after embedding
     # todo: this could be skipped if embedding isn't performed, other wise it is a copy of the regular graph?
     if graphml_snapshot_enabled:
-        await snapshot_rows_df(
+        await snapshot_rows(
             clustered,
             column="entity_graph",
             base_name="embedded_graph",
