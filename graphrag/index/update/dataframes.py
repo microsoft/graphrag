@@ -498,7 +498,7 @@ def _assign_communities(
 
     # Merge with new_delta_nodes_df to get the level and community info
     related_communities = related_communities.merge(
-        new_delta_nodes_df[["level", "title"]], on=["level", "title"], how="inner"
+        new_delta_nodes_df[["level", "title"]], on=["level", "title"]
     )
 
     # Count the communities for each (level, title) pair
