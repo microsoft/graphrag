@@ -11,10 +11,10 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.unpack_graph import unpack_graph
-from graphrag.index.verbs.graph.compute_edge_combined_degree import (
-    compute_edge_combined_degree_df,
+from graphrag.index.operations.compute_edge_combined_degree import (
+    compute_edge_combined_degree,
 )
+from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 
 
@@ -49,7 +49,7 @@ async def create_final_relationships(
     filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
     filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
-    edge_combined_degree = compute_edge_combined_degree_df(
+    edge_combined_degree = compute_edge_combined_degree(
         pruned_edges,
         filtered_nodes,
         to="rank",
