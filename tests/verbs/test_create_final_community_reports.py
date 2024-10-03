@@ -16,13 +16,11 @@ from .util import (
 
 
 async def test_create_final_community_reports():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_final_nodes",
-            "workflow:create_final_covariates",
-            "workflow:create_final_relationships",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_final_nodes",
+        "workflow:create_final_covariates",
+        "workflow:create_final_relationships",
+    ])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
@@ -50,13 +48,11 @@ async def test_create_final_community_reports():
 
 
 async def test_create_final_community_reports_with_embeddings():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_final_nodes",
-            "workflow:create_final_covariates",
-            "workflow:create_final_relationships",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_final_nodes",
+        "workflow:create_final_covariates",
+        "workflow:create_final_relationships",
+    ])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
