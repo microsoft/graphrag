@@ -9,10 +9,8 @@ from .graph import (
     create_community_reports,
     layout_graph,
 )
-from .text import chunk
 
 __all__ = [
-    "chunk",
     "create_community_reports",
     "entity_extract",
     "extract_covariates",

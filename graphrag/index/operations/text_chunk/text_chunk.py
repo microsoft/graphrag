@@ -3,59 +3,30 @@
 
 """A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
 
-from enum import Enum
 from typing import Any, cast
 
 import pandas as pd
 from datashaper import (
     ProgressTicker,
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     progress_ticker,
-    verb,
 )
 
-from .strategies.typing import ChunkStrategy as ChunkStrategy
-from .typing import ChunkInput
+from .typing import ChunkInput, ChunkStrategy, ChunkStrategyType
 
 
-def _get_num_total(output: pd.DataFrame, column: str) -> int:
-    num_total = 0
-    for row in output[column]:
-        if isinstance(row, str):
-            num_total += 1
-        else:
-            num_total += len(row)
-    return num_total
-
-
-class ChunkStrategyType(str, Enum):
-    """ChunkStrategy class definition."""
-
-    tokens = "tokens"
-    sentence = "sentence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-@verb(name="chunk")
-def chunk(
-    input: VerbInput,
+def text_chunk(
+    input: pd.DataFrame,
     column: str,
     to: str,
     callbacks: VerbCallbacks,
     strategy: dict[str, Any] | None = None,
-    **_kwargs,
-) -> TableContainer:
+) -> pd.DataFrame:
     """
     Chunk a piece of text into smaller pieces.
 
     ## Usage
     ```yaml
-    verb: text_chunk
     args:
         column: <column name> # The name of the column containing the text to chunk, this can either be a column with text, or a column with a list[tuple[doc_id, str]]
         to: <column name> # The name of the column to output the chunks to
@@ -85,21 +56,6 @@ def chunk(
         type: sentence
     ```
     """
-    input_table = cast(pd.DataFrame, input.get_input())
-
-    output = chunk_df(input_table, column, to, callbacks, strategy)
-
-    return TableContainer(table=output)
-
-
-def chunk_df(
-    input: pd.DataFrame,
-    column: str,
-    to: str,
-    callbacks: VerbCallbacks,
-    strategy: dict[str, Any] | None = None,
-) -> pd.DataFrame:
-    """Chunk a piece of text into smaller pieces."""
     output = input
     if strategy is None:
         strategy = {}
@@ -161,17 +117,27 @@ def load_strategy(strategy: ChunkStrategyType) -> ChunkStrategy:
     """Load strategy method definition."""
     match strategy:
         case ChunkStrategyType.tokens:
-            from .strategies.tokens import run as run_tokens
+            from .strategies import run_tokens
 
             return run_tokens
         case ChunkStrategyType.sentence:
             # NLTK
             from graphrag.index.bootstrap import bootstrap
 
-            from .strategies.sentence import run as run_sentence
+            from .strategies import run_sentences
 
             bootstrap()
-            return run_sentence
+            return run_sentences
         case _:
             msg = f"Unknown strategy: {strategy}"
             raise ValueError(msg)
+
+
+def _get_num_total(output: pd.DataFrame, column: str) -> int:
+    num_total = 0
+    for row in output[column]:
+        if isinstance(row, str):
+            num_total += 1
+        else:
+            num_total += len(row)
+    return num_total
