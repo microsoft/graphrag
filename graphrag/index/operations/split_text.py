@@ -1,12 +1,12 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the text_split method definition."""
+"""A module containing the split_text method definition."""
 
 import pandas as pd
 
 
-def text_split(
+def split_text(
     input: pd.DataFrame, column: str, to: str, separator: str = ","
 ) -> pd.DataFrame:
     """Split a column into a list of strings."""
