@@ -10,10 +10,10 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.layout.layout_graph import layout_graph_df
 from graphrag.index.verbs.graph.unpack import unpack_graph_df
-from graphrag.index.verbs.snapshot import snapshot_df
 
 
 async def create_final_nodes(
@@ -51,7 +51,7 @@ async def create_final_nodes(
     nodes = cast(pd.DataFrame, nodes[["id", "x", "y"]])
 
     if snapshot_top_level_nodes:
-        await snapshot_df(
+        await snapshot(
             nodes,
             name="top_level_nodes",
             storage=storage,

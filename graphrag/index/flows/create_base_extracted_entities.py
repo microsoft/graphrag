@@ -12,11 +12,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.entities.extraction.entity_extract import entity_extract_df
 from graphrag.index.verbs.graph.merge.merge_graphs import merge_graphs_df
-from graphrag.index.verbs.snapshot import snapshot_df
 
 
 async def create_base_extracted_entities(
@@ -51,7 +51,7 @@ async def create_base_extracted_entities(
     )
 
     if raw_entity_snapshot_enabled:
-        await snapshot_df(
+        await snapshot(
             entity_graph,
             name="raw_extracted_entities",
             storage=storage,

@@ -15,7 +15,6 @@ from .graph import (
     unpack_graph,
 )
 from .overrides import aggregate, concat
-from .snapshot import snapshot
 from .spread_json import spread_json
 from .text import chunk, text_embed, text_split, text_translate
 from .unzip import unzip
@@ -33,7 +32,6 @@ __all__ = [
     "extract_covariates",
     "layout_graph",
     "merge_graphs",
-    "snapshot",
     "spread_json",
     "summarize_descriptions",
     "text_embed",
