@@ -9,9 +9,9 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.text_split import text_split
 from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.verbs.text.embed.text_embed import text_embed_df
-from graphrag.index.verbs.text.split import text_split_df
 
 
 async def create_final_entities(
@@ -44,7 +44,7 @@ async def create_final_entities(
     nodes = nodes.loc[nodes["name"].notna()]
 
     # Split 'source_id' column into 'text_unit_ids'
-    nodes = text_split_df(
+    nodes = text_split(
         nodes, column="source_id", separator=",", to="text_unit_ids"
     ).drop(columns=["source_id"])
 

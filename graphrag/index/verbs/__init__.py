@@ -13,7 +13,7 @@ from .graph import (
     merge_graphs,
 )
 from .overrides import aggregate
-from .text import chunk, text_embed, text_split
+from .text import chunk, text_embed
 
 __all__ = [
     "aggregate",
@@ -27,5 +27,4 @@ __all__ = [
     "merge_graphs",
     "summarize_descriptions",
     "text_embed",
-    "text_split",
 ]

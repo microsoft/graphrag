@@ -5,10 +5,8 @@
 
 from .chunk.text_chunk import chunk
 from .embed import text_embed
-from .split import text_split
 
 __all__ = [
     "chunk",
     "text_embed",
-    "text_split",
 ]
