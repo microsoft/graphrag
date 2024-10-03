@@ -14,8 +14,8 @@ from graphrag.index.cache import PipelineCache
 from graphrag.index.operations.compute_edge_combined_degree import (
     compute_edge_combined_degree,
 )
+from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.operations.unpack_graph import unpack_graph
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 
 
 async def create_final_relationships(
@@ -23,7 +23,7 @@ async def create_final_relationships(
     nodes: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
     graph_edges = unpack_graph(entity_graph, callbacks, "clustered_graph", "edges")
@@ -34,13 +34,13 @@ async def create_final_relationships(
         pd.DataFrame, graph_edges[graph_edges["level"] == 0].reset_index(drop=True)
     )
 
-    if text_embed:
-        filtered["description_embedding"] = await text_embed_df(
+    if description_text_embed:
+        filtered["description_embedding"] = await embed_text(
             filtered,
             callbacks,
             cache,
             column="description",
-            strategy=text_embed["strategy"],
+            strategy=description_text_embed["strategy"],
             embedding_name="relationship_description",
         )
 

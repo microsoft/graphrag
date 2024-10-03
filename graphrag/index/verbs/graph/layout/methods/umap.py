@@ -15,8 +15,8 @@ from graphrag.index.graph.visualization import (
     NodePosition,
     compute_umap_positions,
 )
+from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.verbs.graph.embed.typing import NodeEmbeddings
 
 # TODO: This could be handled more elegantly, like what columns to use
 # for "size" or "cluster"

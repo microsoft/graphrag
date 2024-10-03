@@ -11,8 +11,8 @@ import pandas as pd
 from datashaper import TableContainer, VerbCallbacks, VerbInput, progress_callback, verb
 
 from graphrag.index.graph.visualization import GraphLayout
+from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.utils import load_graph
-from graphrag.index.verbs.graph.embed.typing import NodeEmbeddings
 
 
 class LayoutGraphStrategyType(str, Enum):

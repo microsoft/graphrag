@@ -3,7 +3,6 @@
 
 """The Indexing Engine graph package root."""
 
-from .embed import embed_graph
 from .layout import layout_graph
 from .report import (
     create_community_reports,
@@ -15,7 +14,6 @@ from .report import (
 
 __all__ = [
     "create_community_reports",
-    "embed_graph",
     "layout_graph",
     "prepare_community_reports",
     "prepare_community_reports_claims",

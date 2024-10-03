@@ -36,7 +36,9 @@ class EmbedGraphConfig(BaseModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved node2vec strategy."""
-        from graphrag.index.verbs.graph.embed import EmbedGraphStrategyType
+        from graphrag.index.operations.embed_graph.embed_graph import (
+            EmbedGraphStrategyType,
+        )
 
         return self.strategy or {
             "type": EmbedGraphStrategyType.node2vec,

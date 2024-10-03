@@ -27,7 +27,7 @@ async def create_final_text_units(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    text_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform the text units."""
@@ -50,7 +50,7 @@ async def create_final_text_units(
         final_covariates,
         callbacks,
         cache,
-        text_embed,
+        text_text_embed,
     )
 
     return create_verb_result(cast(Table, output))
