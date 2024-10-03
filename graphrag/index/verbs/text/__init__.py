@@ -6,11 +6,9 @@
 from .chunk.text_chunk import chunk
 from .embed import text_embed
 from .split import text_split
-from .translate import text_translate
 
 __all__ = [
     "chunk",
     "text_embed",
     "text_split",
-    "text_translate",
 ]
