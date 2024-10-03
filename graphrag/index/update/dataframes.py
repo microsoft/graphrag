@@ -211,17 +211,21 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
+        .agg(
+            {
+                "id": "first",
+                "type": "first",
+                "human_readable_id": "first",
+                "graph_embedding": "first",
+                "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
+                # Concatenate nd.array into a single list
+                "text_unit_ids": lambda x: ",".join(
+                    str(i) for j in x.tolist() for i in j
+                ),
+                # Keep only descriptions where the original value wasn't modified
+                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+            }
+        )
         .reset_index()
     )
 
@@ -407,10 +411,12 @@ def _merge_and_update_nodes(
     }
 
     # Specify custom aggregation for description and source_id
-    columns_to_agg.update({
-        "description": lambda x: os.linesep.join(x.astype(str)),
-        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-    })
+    columns_to_agg.update(
+        {
+            "description": lambda x: os.linesep.join(x.astype(str)),
+            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+        }
+    )
 
     old_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
@@ -498,7 +504,7 @@ def _assign_communities(
 
     # Merge with new_delta_nodes_df to get the level and community info
     related_communities = related_communities.merge(
-        new_delta_nodes_df[["level", "title"]], on=["level", "title"]
+        new_delta_nodes_df[["level", "title"]], on=["level", "title"], how="outer"
     )
 
     # Count the communities for each (level, title) pair
