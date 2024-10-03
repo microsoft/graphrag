@@ -8,7 +8,7 @@ from typing import Any, cast
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.verbs.genid import genid_df
+from graphrag.index.utils import gen_md5_hash
 from graphrag.index.verbs.overrides.aggregate import aggregate_df
 from graphrag.index.verbs.text.chunk.text_chunk import chunk_df
 
@@ -56,11 +56,9 @@ def create_base_text_units(
         },
         inplace=True,
     )
-
-    chunked = genid_df(
-        chunked, to="chunk_id", method="md5_hash", hash=[chunk_column_name]
+    chunked["chunk_id"] = chunked.apply(
+        lambda row: gen_md5_hash(row, [chunk_column_name]), axis=1
     )
-
     chunked[["document_ids", chunk_column_name, n_tokens_column_name]] = pd.DataFrame(
         chunked[chunk_column_name].tolist(), index=chunked.index
     )

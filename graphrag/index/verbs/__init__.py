@@ -5,7 +5,6 @@
 
 from .covariates import extract_covariates
 from .entities import entity_extract, summarize_descriptions
-from .genid import genid
 from .graph import (
     cluster_graph,
     create_community_reports,
@@ -33,7 +32,6 @@ __all__ = [
     "embed_graph",
     "entity_extract",
     "extract_covariates",
-    "genid",
     "layout_graph",
     "merge_graphs",
     "snapshot",
