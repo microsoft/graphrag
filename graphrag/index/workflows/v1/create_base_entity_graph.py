@@ -34,18 +34,20 @@ def build_steps(
             }
         },
     )
-
-    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
+    embedding_strategy = embed_graph_config["strategy"]
     embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
+    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
+    
     return [
         {
             "verb": "create_base_entity_graph",
             "args": {
                 "clustering_config": clustering_config,
                 "graphml_snapshot_enabled": graphml_snapshot_enabled,
-                "embed_graph_enabled": embed_graph_enabled,
-                "embedding_config": embed_graph_config,
+                "embedding_strategy": embedding_strategy
+                if embed_graph_enabled
+                else None,
             },
             "input": ({"source": "workflow:create_summarized_entities"}),
         },

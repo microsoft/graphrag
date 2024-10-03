@@ -29,9 +29,8 @@ async def create_base_entity_graph(
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
     clustering_config: dict[str, Any],
-    embedding_config: dict[str, Any],
+    embedding_strategy: dict[str, Any] | None,
     graphml_snapshot_enabled: bool = False,
-    embed_graph_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to create the base entity graph."""
@@ -42,9 +41,8 @@ async def create_base_entity_graph(
         callbacks,
         storage,
         clustering_config,
-        embedding_config,
+        embedding_strategy,
         graphml_snapshot_enabled,
-        embed_graph_enabled,
     )
 
     return create_verb_result(cast(Table, output))

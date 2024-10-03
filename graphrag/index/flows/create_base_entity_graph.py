@@ -21,9 +21,8 @@ async def create_base_entity_graph(
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
     clustering_config: dict[str, Any],
-    embedding_config: dict[str, Any],
+    embedding_strategy: dict[str, Any] | None,
     graphml_snapshot_enabled: bool = False,
-    embed_graph_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
     clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
@@ -46,8 +45,7 @@ async def create_base_entity_graph(
             formats=[{"format": "text", "extension": "graphml"}],
         )
 
-    embedding_strategy = embedding_config.get("strategy")
-    if embed_graph_enabled and embedding_strategy:
+    if embedding_strategy:
         clustered["embeddings"] = await embed_graph(
             clustered,
             callbacks,
@@ -67,7 +65,7 @@ async def create_base_entity_graph(
         )
 
     final_columns = ["level", "clustered_graph"]
-    if embed_graph_enabled:
+    if embedding_strategy:
         final_columns.append("embeddings")
 
     return cast(pd.DataFrame, clustered[final_columns])
