@@ -20,13 +20,11 @@ async def create_base_entity_graph(
     entities: pd.DataFrame,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    clustering_config: dict[str, Any],
+    clustering_strategy: dict[str, Any],
     embedding_strategy: dict[str, Any] | None,
     graphml_snapshot_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
-    clustering_strategy = clustering_config.get("strategy", {"type": "leiden"})
-
     clustered = cluster_graph_df(
         entities,
         callbacks,

@@ -28,7 +28,7 @@ async def create_base_entity_graph(
     input: VerbInput,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    clustering_config: dict[str, Any],
+    clustering_strategy: dict[str, Any],
     embedding_strategy: dict[str, Any] | None,
     graphml_snapshot_enabled: bool = False,
     **_kwargs: dict,
@@ -40,7 +40,7 @@ async def create_base_entity_graph(
         source,
         callbacks,
         storage,
-        clustering_config,
+        clustering_strategy,
         embedding_strategy,
         graphml_snapshot_enabled,
     )
