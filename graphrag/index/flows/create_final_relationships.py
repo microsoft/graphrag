@@ -11,10 +11,10 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.verbs.graph.compute_edge_combined_degree import (
     compute_edge_combined_degree_df,
 )
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
 from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 
 
@@ -26,7 +26,7 @@ async def create_final_relationships(
     text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    graph_edges = unpack_graph_df(entity_graph, callbacks, "clustered_graph", "edges")
+    graph_edges = unpack_graph(entity_graph, callbacks, "clustered_graph", "edges")
 
     graph_edges.rename(columns={"source_id": "text_unit_ids"}, inplace=True)
 

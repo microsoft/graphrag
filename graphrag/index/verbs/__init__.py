@@ -12,7 +12,6 @@ from .graph import (
     embed_graph,
     layout_graph,
     merge_graphs,
-    unpack_graph,
 )
 from .overrides import aggregate, concat
 from .text import chunk, text_embed, text_split, text_translate
@@ -33,5 +32,4 @@ __all__ = [
     "text_embed",
     "text_split",
     "text_translate",
-    "unpack_graph",
 ]

@@ -11,9 +11,9 @@ from datashaper import (
 )
 
 from graphrag.index.operations.snapshot import snapshot
+from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.verbs.graph.layout.layout_graph import layout_graph_df
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
 
 
 async def create_final_nodes(
@@ -40,7 +40,7 @@ async def create_final_nodes(
 
     nodes = cast(
         pd.DataFrame,
-        unpack_graph_df(
+        unpack_graph(
             laid_out_entity_graph, callbacks, column="positioned_graph", type="nodes"
         ),
     )

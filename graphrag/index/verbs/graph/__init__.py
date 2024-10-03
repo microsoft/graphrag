@@ -16,7 +16,6 @@ from .report import (
     prepare_community_reports_edges,
     restore_community_hierarchy,
 )
-from .unpack import unpack_graph
 
 __all__ = [
     "DEFAULT_EDGE_ATTRIBUTES",
@@ -32,5 +31,4 @@ __all__ = [
     "prepare_community_reports_claims",
     "prepare_community_reports_edges",
     "restore_community_hierarchy",
-    "unpack_graph",
 ]

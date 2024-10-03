@@ -9,7 +9,7 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
+from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 from graphrag.index.verbs.text.split import text_split_df
 
@@ -24,7 +24,7 @@ async def create_final_entities(
     """All the steps to transform final entities."""
     # Process nodes
     nodes = (
-        unpack_graph_df(entity_graph, callbacks, "clustered_graph", "nodes")
+        unpack_graph(entity_graph, callbacks, "clustered_graph", "nodes")
         .rename(columns={"label": "name"})
         .loc[
             :,
