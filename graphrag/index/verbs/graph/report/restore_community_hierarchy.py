@@ -52,7 +52,7 @@ def restore_community_hierarchy_df(
         name = row[name_column]
         community = row[community_column]
 
-        if community_levels.get(level) is None:
+        if level not in community_levels:
             community_levels[level] = {}
         community_levels[level][community] = name
 

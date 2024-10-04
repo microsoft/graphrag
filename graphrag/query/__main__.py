@@ -11,6 +11,7 @@ from graphrag.utils.cli import dir_exist, file_exist
 from .cli import run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
+DYNAMIC_SELECTION_ERROR = "Dynamic community selection only supports global search"
 
 
 class SearchType(Enum):
@@ -60,6 +61,11 @@ if __name__ == "__main__":
         default=2,
     )
     parser.add_argument(
+        "--dynamic_selection",
+        help="Dynamic community selection. Enabling this would ignore --community_level.",
+        action="store_true",
+    )
+    parser.add_argument(
         "--response_type",
         help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report. Default: Multiple Paragraphs",
         type=str,
@@ -80,6 +86,8 @@ if __name__ == "__main__":
 
     match args.method:
         case SearchType.LOCAL:
+            if args.dynamic_selection:
+                raise ValueError(DYNAMIC_SELECTION_ERROR)
             run_local_search(
                 args.config,
                 args.data,
@@ -95,6 +103,7 @@ if __name__ == "__main__":
                 args.data,
                 args.root,
                 args.community_level,
+                args.dynamic_selection,
                 args.response_type,
                 args.streaming,
                 args.query[0],

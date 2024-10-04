@@ -5,16 +5,20 @@
 
 from typing import Any
 
-import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model import Community, CommunityReport, Entity
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
+from graphrag.query.context_builder.dynamic_community_selection import (
+    DynamicCommunitySelection,
+)
+from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.structured_search.base import GlobalContextBuilder
 
 
@@ -24,17 +28,34 @@ class GlobalCommunityContext(GlobalContextBuilder):
     def __init__(
         self,
         community_reports: list[CommunityReport],
+        communities: list[Community],
+        llm: ChatOpenAI,
+        token_encoder: tiktoken.Encoding,
         entities: list[Entity] | None = None,
-        token_encoder: tiktoken.Encoding | None = None,
+        dynamic_selection: bool = False,
+        dynamic_selection_use_summary: bool = False,
         random_state: int = 86,
+        concurrent_coroutines: int = 4,
     ):
         self.community_reports = community_reports
         self.entities = entities
         self.token_encoder = token_encoder
+        self.dynamic_selection = None
+        if dynamic_selection:
+            self.dynamic_selection = DynamicCommunitySelection(
+                community_reports=community_reports,
+                communities=communities,
+                llm=llm,
+                token_encoder=token_encoder,
+                keep_parent=False,
+                use_summary=dynamic_selection_use_summary,
+                concurrent_coroutines=concurrent_coroutines,
+            )
         self.random_state = random_state
 
-    def build_context(
+    async def build_context(
         self,
+        query: str,
         conversation_history: ConversationHistory | None = None,
         use_community_summary: bool = True,
         column_delimiter: str = "|",
@@ -50,10 +71,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
         **kwargs: Any,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> ContextBuilderResult:
         """Prepare batches of community report data table as context data for global search."""
         conversation_history_context = ""
         final_context_data = {}
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         if conversation_history:
             # build conversation history context
             (
@@ -69,8 +91,15 @@ class GlobalCommunityContext(GlobalContextBuilder):
             if conversation_history_context != "":
                 final_context_data = conversation_history_context_data
 
+        community_reports = self.community_reports
+        if self.dynamic_selection is not None:
+            community_reports, llm_info = await self.dynamic_selection.select(query)
+            llm_calls += llm_info["llm_calls"]
+            prompt_tokens += llm_info["prompt_tokens"]
+            output_tokens += llm_info["output_tokens"]
+
         community_context, community_context_data = build_community_context(
-            community_reports=self.community_reports,
+            community_reports=community_reports,
             entities=self.entities,
             token_encoder=self.token_encoder,
             use_community_summary=use_community_summary,
@@ -96,4 +125,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
             final_context = f"{conversation_history_context}\n\n{community_context}"
 
         final_context_data.update(community_context_data)
-        return (final_context, final_context_data)
+
+        return ContextBuilderResult(
+            context_chunks=final_context,
+            context_records=final_context_data,
+            llm_calls=llm_calls,
+            prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
+        )

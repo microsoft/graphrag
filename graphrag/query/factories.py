@@ -11,6 +11,7 @@ from graphrag.config import (
     LLMType,
 )
 from graphrag.model import (
+    Community,
     CommunityReport,
     Covariate,
     Entity,
@@ -114,7 +115,7 @@ def get_local_search_engine(
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    token_encoder = tiktoken.encoding_for_model(config.llm.model)
 
     ls_config = config.local_search
 
@@ -160,16 +161,24 @@ def get_global_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
     entities: list[Entity],
+    communities: list[Community],
     response_type: str,
+    dynamic_selection: bool,
 ) -> BaseSearch:
     """Create a global search engine based on data + configuration."""
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    llm = get_llm(config)
+    token_encoder = tiktoken.encoding_for_model(config.llm.model)
     gs_config = config.global_search
 
     return GlobalSearch(
-        llm=get_llm(config),
+        llm=llm,
         context_builder=GlobalCommunityContext(
-            community_reports=reports, entities=entities, token_encoder=token_encoder
+            community_reports=reports,
+            communities=communities,
+            llm=llm,
+            token_encoder=token_encoder,
+            entities=entities,
+            dynamic_selection=dynamic_selection,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
