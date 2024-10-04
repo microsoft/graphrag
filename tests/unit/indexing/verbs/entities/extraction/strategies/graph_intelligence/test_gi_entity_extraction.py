@@ -4,9 +4,11 @@ import unittest
 
 import networkx as nx
 
-from graphrag.index.verbs.entities.extraction.strategies.graph_intelligence.run_graph_intelligence import (
-    Document,
+from graphrag.index.operations.extract_entities.strategies.graph_intelligence import (
     run_extract_entities,
+)
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
 )
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
 

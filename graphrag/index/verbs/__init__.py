@@ -3,13 +3,12 @@
 
 """A module containing get_default_verbs method definition."""
 
-from .entities import entity_extract, summarize_descriptions
+from .entities import summarize_descriptions
 from .graph import (
     create_community_reports,
 )
 
 __all__ = [
     "create_community_reports",
-    "entity_extract",
     "summarize_descriptions",
 ]

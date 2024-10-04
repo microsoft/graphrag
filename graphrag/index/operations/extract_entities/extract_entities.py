@@ -5,16 +5,13 @@
 
 import logging
 from enum import Enum
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from datashaper import (
     AsyncType,
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     derive_from_rows,
-    verb,
 )
 
 from graphrag.index.bootstrap import bootstrap
@@ -40,40 +37,7 @@ class ExtractEntityStrategyType(str, Enum):
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
-@verb(name="entity_extract")
-async def entity_extract(
-    input: VerbInput,
-    cache: PipelineCache,
-    callbacks: VerbCallbacks,
-    column: str,
-    id_column: str,
-    to: str,
-    strategy: dict[str, Any] | None,
-    graph_to: str | None = None,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    entity_types=DEFAULT_ENTITY_TYPES,
-    **kwargs,
-) -> TableContainer:
-    """Extract entities from a piece of text."""
-    source = cast(pd.DataFrame, input.get_input())
-    output = await entity_extract_df(
-        source,
-        cache,
-        callbacks,
-        column,
-        id_column,
-        to,
-        strategy,
-        graph_to,
-        async_mode,
-        entity_types,
-        **kwargs,
-    )
-
-    return TableContainer(table=output)
-
-
-async def entity_extract_df(
+async def extract_entities(
     input: pd.DataFrame,
     cache: PipelineCache,
     callbacks: VerbCallbacks,

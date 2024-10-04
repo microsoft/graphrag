@@ -99,7 +99,6 @@ async def summarize_descriptions_df(
     ### yaml
 
     ```yaml
-    verb: entity_extract
     args:
         column: the_document_text_column_to_extract_descriptions_from
         to: the_column_to_output_the_summarized_descriptions_to

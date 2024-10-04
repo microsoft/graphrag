@@ -9,22 +9,40 @@ from datashaper import VerbCallbacks
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
-from graphrag.index.graph.extractors.graph import GraphExtractor
+from graphrag.index.graph.extractors import GraphExtractor
 from graphrag.index.llm import load_llm
 from graphrag.index.text_splitting import (
     NoopTextSplitter,
     TextSplitter,
     TokenTextSplitter,
 )
-from graphrag.index.verbs.entities.extraction.strategies.typing import (
+from graphrag.llm import CompletionLLM
+
+from .typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,
     StrategyConfig,
 )
-from graphrag.llm import CompletionLLM
 
-from .defaults import DEFAULT_LLM_CONFIG
+MOCK_LLM_RESPONSES = [
+    """
+    ("entity"<|>COMPANY_A<|>COMPANY<|>Company_A is a test company)
+    ##
+    ("entity"<|>COMPANY_B<|>COMPANY<|>Company_B owns Company_A and also shares an address with Company_A)
+    ##
+    ("entity"<|>PERSON_C<|>PERSON<|>Person_C is director of Company_A)
+    ##
+    ("relationship"<|>COMPANY_A<|>COMPANY_B<|>Company_A and Company_B are related because Company_A is 100% owned by Company_B and the two companies also share the same address)<|>2)
+    ##
+    ("relationship"<|>COMPANY_A<|>PERSON_C<|>Company_A and Person_C are related because Person_C is director of Company_A<|>1))
+    """.strip()
+]
+
+DEFAULT_LLM_CONFIG = {
+    "type": LLMType.StaticResponse,
+    "responses": MOCK_LLM_RESPONSES,
+}
 
 
 async def run_gi(

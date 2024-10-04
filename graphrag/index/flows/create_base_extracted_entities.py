@@ -12,11 +12,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
+from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.merge_graphs import merge_graphs
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.entities.extraction.entity_extract import entity_extract_df
 
 
 async def create_base_extracted_entities(
@@ -36,7 +36,7 @@ async def create_base_extracted_entities(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to extract and format covariates."""
-    entity_graph = await entity_extract_df(
+    entity_graph = await extract_entities(
         text_units,
         cache,
         callbacks,
