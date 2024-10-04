@@ -13,11 +13,11 @@ from rich.progress import Progress, TaskID, TimeElapsedColumn
 from rich.spinner import Spinner
 from rich.tree import Tree
 
-from .types import ProgressLogger
+from .types import ProgressReporter
 
 
 # https://stackoverflow.com/a/34325723
-class RichProgressLogger(ProgressLogger):
+class RichProgressReporter(ProgressReporter):
     """A rich-based progress reporter for CLI use."""
 
     _console: Console
@@ -59,7 +59,7 @@ class RichProgressLogger(ProgressLogger):
     def __init__(
         self,
         prefix: str,
-        parent: "RichProgressLogger | None" = None,
+        parent: "RichProgressReporter | None" = None,
         transient: bool = True,
     ) -> None:
         """Create a new rich-based progress reporter."""
@@ -118,9 +118,9 @@ class RichProgressLogger(ProgressLogger):
         """Stop the progress reporter."""
         self._live.stop()
 
-    def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
+    def child(self, prefix: str, transient: bool = True) -> ProgressReporter:
         """Create a child progress bar."""
-        return RichProgressLogger(parent=self, prefix=prefix, transient=transient)
+        return RichProgressReporter(parent=self, prefix=prefix, transient=transient)
 
     def error(self, message: str) -> None:
         """Report an error."""

@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Iterator
 from typing import Any
 
-from graphrag.logging import ProgressLogger
+from graphrag.logging import ProgressReporter
 
 
 class PipelineStorage(metaclass=ABCMeta):
@@ -19,7 +19,7 @@ class PipelineStorage(metaclass=ABCMeta):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressLogger | None = None,
+        progress: ProgressReporter | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:

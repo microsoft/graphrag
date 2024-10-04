@@ -16,7 +16,7 @@ from graphrag.index.storage import (
     BlobPipelineStorage,
     FilePipelineStorage,
 )
-from graphrag.logging import NullProgressLogger, ProgressLogger
+from graphrag.logging import NullProgressReporter, ProgressReporter
 
 from .csv import input_type as csv
 from .csv import load as load_csv
@@ -32,13 +32,13 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 async def load_input(
     config: PipelineInputConfig | InputConfig,
-    progress_reporter: ProgressLogger | None = None,
+    progress_reporter: ProgressReporter | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:
     """Load the input data for a pipeline."""
     root_dir = root_dir or ""
     log.info("loading input from root_dir=%s", config.base_dir)
-    progress_reporter = progress_reporter or NullProgressLogger()
+    progress_reporter = progress_reporter or NullProgressReporter()
 
     if config is None:
         msg = "No input specified!"

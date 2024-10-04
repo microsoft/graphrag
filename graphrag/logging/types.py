@@ -10,7 +10,7 @@ from typing import Any
 from datashaper import Progress
 
 
-class LoggerType(Enum):
+class ReporterType(Enum):
     """The type of reporter to use."""
 
     RICH = "rich"
@@ -38,7 +38,7 @@ class StatusLogger(ABC):
         """Report a log."""
 
 
-class ProgressLogger(ABC):
+class ProgressReporter(ABC):
     """
     Abstract base class for progress reporters.
 
@@ -54,7 +54,7 @@ class ProgressLogger(ABC):
         """Dispose of the progress reporter."""
 
     @abstractmethod
-    def child(self, prefix: str, transient=True) -> "ProgressLogger":
+    def child(self, prefix: str, transient=True) -> "ProgressReporter":
         """Create a child progress bar."""
 
     @abstractmethod

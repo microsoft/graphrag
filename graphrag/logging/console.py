@@ -8,7 +8,7 @@ from typing import Any
 from .types import StatusLogger
 
 
-class ConsoleLogger(StatusLogger):
+class ConsoleReporter(StatusLogger):
     """A reporter that writes to a console."""
 
     def error(self, message: str, details: dict[str, Any] | None = None):

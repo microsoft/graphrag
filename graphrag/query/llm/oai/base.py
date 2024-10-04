@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
-from graphrag.logging import ConsoleLogger, StatusLogger
+from graphrag.logging import ConsoleReporter, StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 
@@ -87,7 +87,7 @@ class BaseOpenAILLM(ABC):
 class OpenAILLMImpl(BaseOpenAILLM):
     """Orchestration OpenAI LLM Implementation."""
 
-    _reporter: StatusLogger = ConsoleLogger()
+    _reporter: StatusLogger = ConsoleReporter()
 
     def __init__(
         self,
@@ -111,7 +111,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         self.organization = organization
         self.max_retries = max_retries
         self.request_timeout = request_timeout
-        self.reporter = reporter or ConsoleLogger()
+        self.reporter = reporter or ConsoleReporter()
 
         try:
             # Create OpenAI sync and async clients

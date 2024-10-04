@@ -15,7 +15,7 @@ from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.verbs import chunk
 from graphrag.llm.types.llm_types import EmbeddingLLM
-from graphrag.logging import ProgressLogger
+from graphrag.logging import ProgressReporter
 from graphrag.prompt_tune.types import DocSelectionType
 
 MIN_CHUNK_OVERLAP = 0
@@ -53,7 +53,7 @@ async def load_docs_in_chunks(
     config: GraphRagConfig,
     select_method: DocSelectionType,
     limit: int,
-    reporter: ProgressLogger,
+    reporter: ProgressReporter,
     chunk_size: int = MIN_CHUNK_SIZE,
     n_subset_max: int = N_SUBSET_MAX,
     k: int = K,

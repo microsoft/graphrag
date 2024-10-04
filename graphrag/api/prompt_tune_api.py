@@ -16,7 +16,7 @@ from pydantic import PositiveInt, validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm import load_llm
-from graphrag.logging import PrintProgressLogger
+from graphrag.logging import PrintProgressReporter
 from graphrag.prompt_tune.generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
@@ -73,7 +73,7 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
-    reporter = PrintProgressLogger("")
+    reporter = PrintProgressReporter("")
 
     # Retrieve documents
     doc_list = await load_docs_in_chunks(

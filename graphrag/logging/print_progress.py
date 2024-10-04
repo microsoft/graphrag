@@ -3,10 +3,10 @@
 
 """Print Progress Reporter."""
 
-from .types import Progress, ProgressLogger
+from .types import Progress, ProgressReporter
 
 
-class PrintProgressLogger(ProgressLogger):
+class PrintProgressReporter(ProgressReporter):
     """A progress reporter that does nothing."""
 
     prefix: str
@@ -23,9 +23,9 @@ class PrintProgressLogger(ProgressLogger):
     def dispose(self) -> None:
         """Dispose of the progress reporter."""
 
-    def child(self, prefix: str, transient: bool = True) -> "ProgressLogger":
+    def child(self, prefix: str, transient: bool = True) -> "ProgressReporter":
         """Create a child progress bar."""
-        return PrintProgressLogger(prefix)
+        return PrintProgressReporter(prefix)
 
     def stop(self) -> None:
         """Stop the progress reporter."""
