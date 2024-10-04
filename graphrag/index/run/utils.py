@@ -33,7 +33,7 @@ from graphrag.index.context import PipelineRunContext, PipelineRunStats
 from graphrag.index.input import load_input
 from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.index.storage.typing import PipelineStorage
-from graphrag.logging import ProgressLogger, load_pipeline_logger
+from graphrag.logging import ProgressLogger, create_pipeline_logger
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def _create_reporter(
     config: PipelineReportingConfigTypes | None, root_dir: str
 ) -> WorkflowCallbacks | None:
     """Create the reporter for the pipeline."""
-    return load_pipeline_logger(config, root_dir) if config else None
+    return create_pipeline_logger(config, root_dir) if config else None
 
 
 async def _create_input(

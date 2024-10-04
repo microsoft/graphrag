@@ -3,19 +3,16 @@
 
 """Logging utilities and implementations."""
 
-from .console import ConsoleLogger  # noqa: I001
-from .load_progress_logger import load_progress_logger
+from .console import ConsoleLogger
+from .factories import create_pipeline_logger, create_progress_logger
 from .null_progress import NullProgressLogger
 from .print_progress import PrintProgressLogger
 from .rich_progress import RichProgressLogger
 from .types import (
-    ProgressLogger,
     LoggerType,
+    ProgressLogger,
     StatusLogger,
 )
-
-# must import callbacks after ProgressLogger to prevent circular import
-from .load_pipeline_logger import load_pipeline_logger
 
 __all__ = [  # noqa: RUF022
     # Progress Reporters
@@ -26,6 +23,6 @@ __all__ = [  # noqa: RUF022
     "LoggerType",
     "RichProgressLogger",
     "StatusLogger",
-    "load_progress_logger",
-    "load_pipeline_logger",
+    "create_progress_logger",
+    "create_pipeline_logger",
 ]

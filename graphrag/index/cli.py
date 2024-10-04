@@ -18,7 +18,7 @@ from graphrag.config import (
     load_config,
     resolve_paths,
 )
-from graphrag.logging import LoggerType, ProgressLogger, load_progress_logger
+from graphrag.logging import LoggerType, ProgressLogger, create_progress_logger
 
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -117,7 +117,7 @@ def index_cli(
     output_dir: str | None,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_logger(reporter)
+    progress_reporter = create_progress_logger(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
