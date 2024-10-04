@@ -12,10 +12,10 @@ from datashaper import (
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.operations.snapshot_rows import snapshot_rows
-from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.entities.summarize.description_summarize import (
-    summarize_descriptions_df,
+from graphrag.index.operations.summarize_descriptions import (
+    summarize_descriptions,
 )
+from graphrag.index.storage import PipelineStorage
 
 
 async def create_summarized_entities(
@@ -28,7 +28,7 @@ async def create_summarized_entities(
     graphml_snapshot_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to summarize entities."""
-    summarized = await summarize_descriptions_df(
+    summarized = await summarize_descriptions(
         entities,
         cache,
         callbacks,

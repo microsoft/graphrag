@@ -9,16 +9,26 @@ from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
 from graphrag.index.llm import load_llm
-from graphrag.index.verbs.entities.summarize.strategies.typing import (
+from graphrag.llm import CompletionLLM
+
+from .typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
 )
-from graphrag.llm import CompletionLLM
 
-from .defaults import DEFAULT_LLM_CONFIG
+MOCK_LLM_RESPONSES = [
+    """
+    This is a MOCK response for the LLM. It is summarized!
+    """.strip()
+]
+
+DEFAULT_LLM_CONFIG = {
+    "type": LLMType.StaticResponse,
+    "responses": MOCK_LLM_RESPONSES,
+}
 
 
-async def run(
+async def run_graph_intelligence(
     described_items: str | tuple[str, str],
     descriptions: list[str],
     reporter: VerbCallbacks,

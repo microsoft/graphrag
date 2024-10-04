@@ -5,7 +5,8 @@
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Any
+from enum import Enum
+from typing import Any, NamedTuple
 
 from datashaper import VerbCallbacks
 
@@ -32,3 +33,19 @@ SummarizationStrategy = Callable[
     ],
     Awaitable[SummarizedDescriptionResult],
 ]
+
+
+class DescriptionSummarizeRow(NamedTuple):
+    """DescriptionSummarizeRow class definition."""
+
+    graph: Any
+
+
+class SummarizeStrategyType(str, Enum):
+    """SummarizeStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'

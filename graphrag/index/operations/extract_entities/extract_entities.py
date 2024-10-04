@@ -54,24 +54,7 @@ async def extract_entities(
     Extract entities from a piece of text.
 
     ## Usage
-    ### json
-    ```json
-    {
-        "verb": "entity_extract",
-        "args": {
-            "column": "the_document_text_column_to_extract_entities_from", /* In general this will be your document text column */
-            "id_column": "the_column_with_the_unique_id_for_each_row", /* In general this will be your document id */
-            "to": "the_column_to_output_the_entities_to", /* This will be a list[dict[str, Any]] a list of entities, with a name, and additional attributes */
-            "graph_to": "the_column_to_output_the_graphml_to", /* Optional: This will be a graphml graph in string form which represents the entities and their relationships */
-            "strategy": {...} <strategy_config>, see strategies section below
-            "entity_types": ["list", "of", "entity", "types", "to", "extract"] /* Optional: This will limit the entity types extracted, default: ["organization", "person", "geo", "event"] */
-            "summarize_descriptions" : true | false /* Optional: This will summarize the descriptions of the entities and relationships, default: true */
-        }
-    }
-    ```
-    ### yaml
     ```yaml
-    verb: entity_extract
     args:
         column: the_document_text_column_to_extract_entities_from
         id_column: the_column_with_the_unique_id_for_each_row

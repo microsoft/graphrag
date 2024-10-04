@@ -5,69 +5,29 @@
 
 import asyncio
 import logging
-from enum import Enum
-from typing import Any, NamedTuple, cast
+from typing import Any, cast
 
 import networkx as nx
 import pandas as pd
 from datashaper import (
     ProgressTicker,
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     progress_ticker,
-    verb,
 )
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.utils import load_graph
 
-from .strategies.typing import SummarizationStrategy
+from .typing import (
+    DescriptionSummarizeRow,
+    SummarizationStrategy,
+    SummarizeStrategyType,
+)
 
 log = logging.getLogger(__name__)
 
 
-class DescriptionSummarizeRow(NamedTuple):
-    """DescriptionSummarizeRow class definition."""
-
-    graph: Any
-
-
-class SummarizeStrategyType(str, Enum):
-    """SummarizeStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-@verb(name="summarize_descriptions")
 async def summarize_descriptions(
-    input: VerbInput,
-    cache: PipelineCache,
-    callbacks: VerbCallbacks,
-    column: str,
-    to: str,
-    strategy: dict[str, Any] | None = None,
-    **kwargs,
-) -> TableContainer:
-    """Summarize entity and relationship descriptions from an entity graph."""
-    source = cast(pd.DataFrame, input.get_input())
-    output = await summarize_descriptions_df(
-        source,
-        cache,
-        callbacks,
-        column=column,
-        to=to,
-        strategy=strategy,
-        **kwargs,
-    )
-    return TableContainer(table=output)
-
-
-async def summarize_descriptions_df(
     input: pd.DataFrame,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
@@ -220,9 +180,9 @@ def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy
     """Load strategy method definition."""
     match strategy_type:
         case SummarizeStrategyType.graph_intelligence:
-            from .strategies.graph_intelligence import run as run_gi
+            from .strategies import run_graph_intelligence
 
-            return run_gi
+            return run_graph_intelligence
         case _:
             msg = f"Unknown strategy: {strategy_type}"
             raise ValueError(msg)

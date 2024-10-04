@@ -28,7 +28,9 @@ class SummarizeDescriptionsConfig(LLMConfig):
 
     def resolved_strategy(self, root_dir: str) -> dict:
         """Get the resolved description summarization strategy."""
-        from graphrag.index.verbs.entities.summarize import SummarizeStrategyType
+        from graphrag.index.operations.summarize_descriptions import (
+            SummarizeStrategyType,
+        )
 
         return self.strategy or {
             "type": SummarizeStrategyType.graph_intelligence,
