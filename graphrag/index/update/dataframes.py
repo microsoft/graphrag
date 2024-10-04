@@ -335,7 +335,6 @@ def _merge_and_update_nodes(
     delta_nodes: pd.DataFrame,
     merged_entities_df: pd.DataFrame,
     merged_relationships_df: pd.DataFrame,
-    community_membership_threshold: float = 0.3,
 ) -> pd.DataFrame:
     """Merge and update nodes.
 
@@ -349,9 +348,6 @@ def _merge_and_update_nodes(
         The merged entities.
     merged_relationships_df : pd.DataFrame
         The merged relationships.
-    community_membership_threshold : float, optional
-        The community membership threshold as a percentage, by default 0.3.
-        If a node has a percentage of relationships to a community above this threshold, it will be assigned to that community.
 
     Returns
     -------
@@ -422,7 +418,6 @@ def _merge_and_update_nodes(
         new_delta_nodes_df,
         merged_relationships_df,
         old_nodes,
-        community_membership_threshold,
     )
 
     # Concatenate the old nodes with the new delta nodes
@@ -468,7 +463,6 @@ def _assign_communities(
     new_delta_nodes_df: pd.DataFrame,
     merged_relationships_df: pd.DataFrame,
     old_nodes: pd.DataFrame,
-    community_membership_threshold: float = 0.3,
 ) -> pd.DataFrame:
     """Assign communities to new delta nodes based on the most common community of related nodes.
 
@@ -480,9 +474,6 @@ def _assign_communities(
         The merged relationships.
     old_nodes : pd.DataFrame
         The old nodes.
-    community_membership_threshold : float, optional
-        The community membership threshold as a percentage, by default 0.5.
-        If a node has a percentage of relationships to a community above this threshold, it will be assigned to that community.
     """
     # Find all relationships for the new delta nodes
     node_relationships = merged_relationships_df[
@@ -523,12 +514,9 @@ def _assign_communities(
         community_counts["count"] / community_counts["total_count"]
     )
 
-    # Filter by percentage threshold and select the most common community for each node
-    most_common_communities = community_counts[
-        community_counts["percentage"] >= community_membership_threshold
-    ]
+    # Select the most common community for each node
     most_common_communities = (
-        most_common_communities.groupby(["level", "title"]).max().reset_index()
+        community_counts.groupby(["level", "title"]).max().reset_index()
     )
 
     # Merge the most common community information back into new_delta_nodes_df
