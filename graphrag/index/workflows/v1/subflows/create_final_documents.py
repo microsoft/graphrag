@@ -15,7 +15,9 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+from graphrag.index.flows.create_final_documents import (
+    create_final_documents as create_final_documents_flow,
+)
 
 
 @verb(
@@ -26,23 +28,17 @@ async def create_final_documents(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict,
-    skip_embedding: bool = False,
+    raw_content_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final documents."""
     source = cast(pd.DataFrame, input.get_input())
 
-    source.rename(columns={"text_units": "text_unit_ids"}, inplace=True)
+    output = await create_final_documents_flow(
+        source,
+        callbacks,
+        cache,
+        raw_content_text_embed,
+    )
 
-    if not skip_embedding:
-        source = await text_embed_df(
-            source,
-            callbacks,
-            cache,
-            column="raw_content",
-            strategy=text_embed["strategy"],
-            to="raw_content_embedding",
-        )
-
-    return create_verb_result(cast(Table, source))
+    return create_verb_result(cast(Table, output))

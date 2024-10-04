@@ -24,24 +24,23 @@ def build_steps(
     skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
     covariates_enabled = config.get("covariates_enabled", False)
 
-    others = [
-        "workflow:create_final_entities",
-        "workflow:create_final_relationships",
-    ]
+    input = {
+        "source": "workflow:create_base_text_units",
+        "entities": "workflow:create_final_entities",
+        "relationships": "workflow:create_final_relationships",
+    }
+
     if covariates_enabled:
-        others.append("workflow:create_final_covariates")
+        input["covariates"] = "workflow:create_final_covariates"
 
     return [
         {
             "verb": "create_final_text_units",
             "args": {
-                "skip_embedding": skip_text_unit_embedding,
-                "text_embed": text_unit_text_embed_config,
-                "covariates_enabled": covariates_enabled,
+                "text_text_embed": text_unit_text_embed_config
+                if not skip_text_unit_embedding
+                else None,
             },
-            "input": {
-                "source": "workflow:create_base_text_units",
-                "others": others,
-            },
+            "input": input,
         },
     ]

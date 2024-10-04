@@ -54,6 +54,38 @@ async def entity_extract(
     entity_types=DEFAULT_ENTITY_TYPES,
     **kwargs,
 ) -> TableContainer:
+    """Extract entities from a piece of text."""
+    source = cast(pd.DataFrame, input.get_input())
+    output = await entity_extract_df(
+        source,
+        cache,
+        callbacks,
+        column,
+        id_column,
+        to,
+        strategy,
+        graph_to,
+        async_mode,
+        entity_types,
+        **kwargs,
+    )
+
+    return TableContainer(table=output)
+
+
+async def entity_extract_df(
+    input: pd.DataFrame,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    column: str,
+    id_column: str,
+    to: str,
+    strategy: dict[str, Any] | None,
+    graph_to: str | None = None,
+    async_mode: AsyncType = AsyncType.AsyncIO,
+    entity_types=DEFAULT_ENTITY_TYPES,
+    num_threads: int = 4,
+) -> pd.DataFrame:
     """
     Extract entities from a piece of text.
 
@@ -135,7 +167,6 @@ async def entity_extract(
     log.debug("entity_extract strategy=%s", strategy)
     if entity_types is None:
         entity_types = DEFAULT_ENTITY_TYPES
-    output = cast(pd.DataFrame, input.get_input())
     strategy = strategy or {}
     strategy_exec = _load_strategy(
         strategy.get("type", ExtractEntityStrategyType.graph_intelligence)
@@ -159,11 +190,11 @@ async def entity_extract(
         return [result.entities, result.graphml_graph]
 
     results = await derive_from_rows(
-        output,
+        input,
         run_strategy,
         callbacks,
         scheduling_type=async_mode,
-        num_threads=kwargs.get("num_threads", 4),
+        num_threads=num_threads,
     )
 
     to_result = []
@@ -176,11 +207,11 @@ async def entity_extract(
             to_result.append(None)
             graph_to_result.append(None)
 
-    output[to] = to_result
+    input[to] = to_result
     if graph_to is not None:
-        output[graph_to] = graph_to_result
+        input[graph_to] = graph_to_result
 
-    return TableContainer(table=output.reset_index(drop=True))
+    return input.reset_index(drop=True)
 
 
 def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStrategy:

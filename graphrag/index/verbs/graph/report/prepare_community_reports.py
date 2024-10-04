@@ -37,25 +37,38 @@ def prepare_community_reports(
     max_tokens: int = 16_000,
     **_kwargs,
 ) -> TableContainer:
-    """Generate entities for each row, and optionally a graph of those entities."""
+    """Prep communities for report generation."""
     # Prepare Community Reports
-    node_df = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
-    edge_df = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
-    claim_df = get_named_input_table(input, "claims")
-    if claim_df is not None:
-        claim_df = cast(pd.DataFrame, claim_df.table)
+    nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
+    edges = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
+    claims = get_named_input_table(input, "claims")
+    if claims:
+        claims = cast(pd.DataFrame, claims.table)
 
-    levels = get_levels(node_df, schemas.NODE_LEVEL)
+    output = prepare_community_reports_df(nodes, edges, claims, callbacks, max_tokens)
+
+    return TableContainer(table=output)
+
+
+def prepare_community_reports_df(
+    nodes,
+    edges,
+    claims,
+    callbacks: VerbCallbacks,
+    max_tokens: int = 16_000,
+):
+    """Prep communities for report generation."""
+    levels = get_levels(nodes, schemas.NODE_LEVEL)
     dfs = []
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):
         communities_at_level_df = _prepare_reports_at_level(
-            node_df, edge_df, claim_df, level, max_tokens
+            nodes, edges, claims, level, max_tokens
         )
         dfs.append(communities_at_level_df)
 
     # build initial local context for all communities
-    return TableContainer(table=pd.concat(dfs))
+    return pd.concat(dfs)
 
 
 def _prepare_reports_at_level(
