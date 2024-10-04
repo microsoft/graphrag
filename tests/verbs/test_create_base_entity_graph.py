@@ -18,11 +18,9 @@ from .util import (
 
 
 async def test_create_base_entity_graph():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_summarized_entities",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_summarized_entities",
+    ])
     expected = load_expected(workflow_name)
 
     storage = MemoryPipelineStorage()
@@ -60,11 +58,9 @@ async def test_create_base_entity_graph():
 
 
 async def test_create_base_entity_graph_with_embeddings():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_summarized_entities",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_summarized_entities",
+    ])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
@@ -87,11 +83,9 @@ async def test_create_base_entity_graph_with_embeddings():
 
 
 async def test_create_base_entity_graph_with_snapshots():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_summarized_entities",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_summarized_entities",
+    ])
     expected = load_expected(workflow_name)
 
     storage = MemoryPipelineStorage()
