@@ -14,7 +14,7 @@ class QueueStorageClient:
         account_url: str | None,
         queue_name: str,
         client_id: str,
-        max_message: str | None = None
+        max_message: int = 1
     ):
         self._account_url = account_url
         self._queue_name = queue_name
@@ -22,7 +22,7 @@ class QueueStorageClient:
         self._queue_client = QueueClient(account_url=account_url, queue_name=queue_name, credential=DefaultAzureCredential(managed_identity_client_id=client_id))
     
     def  poll_messages(self):
-        messages = self._queue_client.receive_messages(max_messages=1)
+        messages = self._queue_client.receive_messages(max_messages=self._max_messages)
 
         return messages
     

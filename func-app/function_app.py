@@ -16,17 +16,16 @@ handler.setLevel(logging.DEBUG)
 logging.getLogger().addHandler(handler)
 
 def initialize_incoming_msg_queue() -> QueueStorageClient:
-    queue_url = 'https://inputdatasetsa.queue.core.windows.net' 
-    queue_name='inputdataetqu'
-
-    client_id = '500051c4-c242-4018-9ae4-fb983cfebefd'
+    # queue_url = 'https://inputdatasetsa.queue.core.windows.net' 
+    # queue_name='inputdataetqu'
+    # client_id = '500051c4-c242-4018-9ae4-fb983cfebefd'
+    
     max_messages = os.environ.get("MAX_QUEUE_MESSAGE_COUNT", default=1)
+    queue_url = os.environ.get("AZURE_QUEUE_URL")
+    queue_name = os.environ.get("AZURE_QUEUE_NAME")
+    client_id = os.environ.get("AZURE_CLIENT_ID")
 
-    # queue_url = os.environ.get("AZURE_QUEUE_URL")
-    # queue_name = os.environ.get("AZURE_QUEUE_NAME")
-    # client_id = os.environ.get("AZURE_CLIENT_ID")
-
-    queue_storage_client = QueueStorageClient(account_url=queue_url, queue_name=queue_name, client_id=client_id)
+    queue_storage_client = QueueStorageClient(account_url=queue_url, queue_name=queue_name, client_id=client_id, max_message=max_messages)
 
     return queue_storage_client
 
