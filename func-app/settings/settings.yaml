@@ -71,10 +71,10 @@ cache:
 
 storage:
   type: blob # or blob
-  base_dir: "outputs/artifacts"
+  base_dir: "artifacts"
   storage_account_blob_url: "https://indexedoutputartifacts.blob.core.windows.net"
   # connection_string: <azure_blob_storage_connection_string>
-  container_name: artifacts
+  container_name: indexing
 
 reporting:
   type: file # or console, blob
@@ -86,8 +86,8 @@ entity_extraction:
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
-  prompt: "prompts/entity_extraction.txt"
-  entity_types: [organization,person,geo,event]
+  prompt: "prompts/json_emails.txt"
+  entity_types: [organization,person,geo,event,email,date]
   max_gleanings: 1
 
 summarize_descriptions:

@@ -11,7 +11,7 @@ import sys
 import time
 import warnings
 from pathlib import Path
-
+import re
 from graphrag.config import (
     GraphRagConfig,
     create_graphrag_config,
@@ -87,7 +87,7 @@ def index_cli(
     cli: bool = False,
     use_kusto_community_reports: bool = False,
     optimized_search: bool = False,
-    files:[str]=[],
+    files:list[str]=[],
     input_base_dir:str="",
     output_base_dir:str=""
 ):
@@ -188,7 +188,11 @@ def index_cli(
 
             uvloop.install()
             asyncio.run(execute())
-
+    
+    #If there is a list of target files that has been provided as an input, then modify the file pattern to include them only.
+    if len(files) > 0:
+        pipeline_config.input.file_pattern = get_target_file_pattern(files=files)
+    
     _run_workflow_async()
     progress_reporter.stop()
     if encountered_errors:
@@ -201,6 +205,11 @@ def index_cli(
     if cli:
         #sys.exit(1 if encountered_errors else 0)
         return 0
+
+def get_target_file_pattern(files : list[str]) -> str:
+    regex = re.compile("(?=(" + "|".join(map(re.escape, files)) + "))")
+
+    return regex.pattern
 
 def _switch_context(root: str, config: str,
                     reporter: ProgressReporter, context_operation: str | None,

@@ -7,7 +7,20 @@
            "request": "attach",
            "port": 9091,
            "preLaunchTask": "func: host start",
-           "justMyCode": true
+           "justMyCode": true,
+           "environment": [
+            { 
+                "name" : "AZURE_CLIENT_ID",
+                "value" : "500051c4-c242-4018-9ae4-fb983cfebefd",
+            },
+            { 
+                "name" : "AZURE_QUEUE_URL",
+                "value" : "https://inputdatasetsa.queue.core.windows.net",
+            },
+            { 
+                "name" : "AZURE_QUEUE_NAME",
+                "value" : "inputdataetqu",
+            }]
        }
    ]
 }

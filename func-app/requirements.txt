@@ -18,6 +18,7 @@ azure-identity==1.17.1
 azure-kusto-data==4.5.1
 azure-search-documents==11.5.1
 azure-storage-blob==12.23.0
+azure-storage-queue
 beartype==0.18.5
 cachetools==5.5.0
 certifi==2024.8.30
