@@ -84,7 +84,7 @@ def build_steps(
             "args": {
                 # Generate a unique id for each chunk
                 "to": "chunk_id",
-                "method": "md5_hash",
+                "method": "sha256_hash",
                 "hash": [chunk_column_name],
             },
         },

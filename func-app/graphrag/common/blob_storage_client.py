@@ -1,3 +1,4 @@
+import os
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
@@ -31,7 +32,7 @@ class BlobStorageClient:
 
             self._blob_service_client = BlobServiceClient(
                 account_url=storage_account_blob_url,
-                credential=DefaultAzureCredential(),
+                credential=DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
             )
         self._encoding = encoding or "utf-8"
         self._container_name = container_name

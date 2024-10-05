@@ -3,6 +3,7 @@
 
 """Create OpenAI client instance."""
 
+import os
 import logging
 from functools import cache
 
@@ -37,7 +38,7 @@ def create_openai_client(
         else:
             cognitive_services_endpoint = configuration.cognitive_services_endpoint
         
-        azure_credentials = DefaultAzureCredential(managed_identity_client_id="500051c4-c242-4018-9ae4-fb983cfebefd", exclude_interactive_browser_credential = False)
+        azure_credentials = DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False)
         token_provider = get_bearer_token_provider(azure_credentials, cognitive_services_endpoint)
         
         return AsyncAzureOpenAI(

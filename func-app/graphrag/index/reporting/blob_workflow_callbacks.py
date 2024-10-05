@@ -4,6 +4,7 @@
 """A reporter that writes to a blob storage."""
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -48,7 +49,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
 
             self._blob_service_client = BlobServiceClient(
                 storage_account_blob_url,
-                credential=DefaultAzureCredential(),
+                credential=DefaultAzureCredential(managed_identity_client_id=os.getenv('AZURE_CLIENT_ID'), exclude_interactive_browser_credential = False),
             )
 
         if blob_name == "":

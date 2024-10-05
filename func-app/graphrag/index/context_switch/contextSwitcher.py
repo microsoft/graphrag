@@ -99,10 +99,10 @@ class ContextSwitcher:
         settings_yaml = (
             Path(config)
             if config and Path(config).suffix in [".yaml", ".yml"]
-            else _root / "settings.yaml"
+            else _root / "settings/settings.yaml"
         )
         if not settings_yaml.exists():
-            settings_yaml = _root / "settings.yml"
+            settings_yaml = _root / "settings/settings.yml"
 
         if settings_yaml.exists():
             reporter.info(f"Reading settings from {settings_yaml}")
@@ -117,7 +117,7 @@ class ContextSwitcher:
         settings_json = (
             Path(config)
             if config and Path(config).suffix == ".json"
-            else _root / "settings.json"
+            else _root / "settings/settings.json"
         )
         if settings_json.exists():
             reporter.info(f"Reading settings from {settings_json}")
@@ -130,7 +130,7 @@ class ContextSwitcher:
         reporter.info("Reading settings from environment variables")
         return create_graphrag_config(root_dir=root)
 
-    def activate(self):
+    def activate(self, files:[str]=[]):
         """Activate the context."""
         #1. read the context id to fileId mapping.
         #2. read the file from storage using common/blob_storage_client.py
@@ -160,7 +160,7 @@ class ContextSwitcher:
                 msg = "Either data_dir or root_dir must be provided."
                 raise ValueError(msg)
             if data_dir is None:
-                data_dir = _infer_data_dir(cast(str, root_dir))
+                data_dir = root_dir #_infer_data_dir(cast(str, root_dir))
             config = _create_graphrag_config(root_dir, config_dir)
             return data_dir, root_dir, config
 
@@ -202,7 +202,12 @@ class ContextSwitcher:
             input_storage_client: PipelineStorage = FilePipelineStorage(config.root_dir)
 
         data_paths = []
-        data_paths = get_files_by_contextid(config, context_id)
+        if(len(files) > 0):
+            logging.info("Using files passed from query")
+            data_paths=files
+        else:
+            logging.info("reading files from settings files")
+            data_paths = get_files_by_contextid(config, context_id)
         final_nodes = pd.DataFrame()
         final_community_reports = pd.DataFrame()
         final_text_units = pd.DataFrame()
@@ -228,6 +233,7 @@ class ContextSwitcher:
 
         description_embedding_store = self.setup_vector_store(config_args=config.embeddings.vector_store)
 
+        added_vertices = set()
         for data_path in data_paths:
             #check from the config for the ouptut storage type and then read the data from the storage.
 
@@ -268,7 +274,7 @@ class ContextSwitcher:
             description_embedding_store.load_text_units(text_units)
 
             if config.graphdb.enabled:
-                graph_db_client.write_vertices(final_entities)
+                graph_db_client.write_vertices(final_entities, added_vertices)
                 graph_db_client.write_edges(final_relationships)
 
         if config.graphdb.enabled:

@@ -4,12 +4,14 @@
 """The Azure Kusto vector storage implementation package."""
 import os
 import typing
+import ast
 from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
 from azure.kusto.data.helpers import dataframe_from_result_table
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 from graphrag.model import TextUnit
+import logging
 
 import pandas as pd
 from pathlib import Path
@@ -60,13 +62,15 @@ class KustoVectorStore(BaseVectorStore):
         env = os.environ.get("ENVIRONMENT")
         if(env == "AZURE"):
             kcsb = KustoConnectionStringBuilder.with_aad_managed_service_identity_authentication(
-                str(cluster), client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3"
+                str(cluster), client_id=os.environ.get("AZURE_CLIENT_ID")
             )
         elif(env == "DEVELOPMENT"):
-            kcsb = KustoConnectionStringBuilder.with_aad_device_authentication(str(cluster))
+            logging.info("KUSTO DEVELPMENT MODE")
+            kcsb = KustoConnectionStringBuilder.with_interactive_login(str(cluster))
         else:
              kcsb = KustoConnectionStringBuilder.with_aad_application_key_authentication(
             str(cluster), str(client_id), str(client_secret), str(authority_id))
+
         self.client = KustoClient(kcsb)
         self.database = database
 
@@ -188,15 +192,31 @@ class KustoVectorStore(BaseVectorStore):
             return self.similarity_search_by_vector(query_embedding, k)
         return []
 
-    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    def get_extracted_entities(self, text: str, text_embedder: TextEmbedder, k: int = 10,
+                               preselected_entities=[],
+                               **kwargs: Any
     ) -> list[Entity]:
         query_embedding = text_embedder(text)
-        query = f"""
-        let query_vector = dynamic({query_embedding});
-        {self.collection_name}
-        | extend similarity = series_cosine_similarity(query_vector, {self.vector_name})
-        | top {k} by similarity desc
-        """
+
+        if preselected_entities==[]:
+            query = f"""
+            let query_vector = dynamic({query_embedding});
+            {self.collection_name}
+            | extend similarity = series_cosine_similarity(query_vector, {self.vector_name})
+            | top {k} by similarity desc
+            """
+        else:
+
+            chosen_ids=", ".join(f"'{id}'" for id in preselected_entities )
+            query = f"""
+            let query_vector = dynamic({query_embedding});
+            {self.collection_name}
+            | where id in ({chosen_ids})
+            | extend similarity = series_cosine_similarity(query_vector, {self.vector_name})
+            | top {k} by similarity desc
+            """
+
+
         response = self.client.execute(self.database, query)
         df = dataframe_from_result_table(response.primary_results[0])
 
@@ -214,6 +234,7 @@ class KustoVectorStore(BaseVectorStore):
                 document_ids=row["document_ids"],
                 rank=row["rank"],
                 attributes=row["attributes"],
+                #score= 1 + float(row["similarity"]), #score not in Entity currently
             ) for _, row in df.iterrows()
         ]
 
@@ -269,8 +290,12 @@ class KustoVectorStore(BaseVectorStore):
     def setup_text_units(self) -> None:
         command = f".drop table {self.text_units_name} ifexists"
         self.client.execute(self.database, command)
-        command = f".create table {self.text_units_name} (id: string, text: string, n_tokens: string, document_ids: string, entity_ids: string, relationship_ids: string)"
-        self.client.execute(self.database, command)
+        command = f".create table {self.text_units_name} (id: string, short_id:string, \
+            text: string, text_embedding:string, entity_ids: string, relationship_ids: \
+                string, covariate_ids:string, n_tokens: string, document_ids: string, \
+                    attributes:string )"
+
+        self.exe(command)
 
 
     def load_text_units(self, units: list[TextUnit], overwrite: bool = False) -> None:
@@ -280,6 +305,47 @@ class KustoVectorStore(BaseVectorStore):
 
         ingestion_command = f".ingest inline into table {self.text_units_name} <| {df.to_csv(index=False, header=False)}"
         self.client.execute(self.database, ingestion_command)
+
+    def exe(self,command):
+        return self.client.execute(self.database,command)
+
+    def retrieve_text_units(self, entities: list[Entity]):
+        unit_ids=[]
+        for e in entities:
+            if e.text_unit_ids==None:
+                continue
+            id_list=ast.literal_eval(e.text_unit_ids)
+            unit_ids.extend([id for id in id_list])
+
+        return self.retrieve_text_units_by_id(unit_ids)
+
+    def retrieve_text_units_by_id(self, unit_ids: list[str]) -> list[TextUnit]:
+        unit_ids_str=", ".join(f"'{id}'" for id in unit_ids )
+
+        command=f"{self.text_units_name} | where id in ({unit_ids_str})"
+        r=self.exe(command)
+        r=dataframe_from_result_table(r.primary_results[0])
+
+        cite_index=1
+        res=[]
+
+        for _,row in  r.iterrows():
+            u=TextUnit(
+                id=row['id'],
+                short_id=str(cite_index),
+                text=row['text'],
+                text_embedding=[],
+                entity_ids=row['entity_ids'],
+                relationship_ids=row['relationship_ids'],
+                covariate_ids=[],
+                n_tokens=row['n_tokens'],
+                document_ids=row['document_ids'],
+                attributes={} #row['attributes'],
+            )
+            res.append(u)
+            cite_index+=1
+
+        return res
 
     def get_extracted_reports(
         self, community_ids: list[int], **kwargs: Any

@@ -4,7 +4,7 @@
 """Utils methods definition."""
 
 from .dicts import dict_has_keys_with_types
-from .hashing import gen_md5_hash
+from .hashing import gen_md5_hash,gen_sha256_hash
 from .is_null import is_null
 from .load_graph import load_graph
 from .string import clean_str
@@ -16,6 +16,7 @@ __all__ = [
     "clean_str",
     "dict_has_keys_with_types",
     "gen_md5_hash",
+    "gen_sha256_hash",
     "gen_uuid",
     "is_null",
     "load_graph",

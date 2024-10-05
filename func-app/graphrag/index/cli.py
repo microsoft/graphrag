@@ -87,22 +87,40 @@ def index_cli(
     cli: bool = False,
     use_kusto_community_reports: bool = False,
     optimized_search: bool = False,
+    files:[str]=[],
+    input_base_dir:str="",
+    output_base_dir:str=""
 ):
     """Run the pipeline with the given config."""
-    root = Path(__file__).parent.parent.parent.__str__()
+    root = Path(__file__).parent.parent.parent.__str__() # accept from whatever coming from function app
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
     _enable_logging(root, run_id, verbose)
     progress_reporter = _get_progress_reporter("none")
-    _initialize_project_at(root, progress_reporter)
+    if init:
+        _initialize_project_at(root, progress_reporter)
     if overlay_defaults:
         pipeline_config: str | PipelineConfig = _create_default_config(
             root, config, verbose, dryrun or False, progress_reporter
         )
+    ############# Context Switching ################
+    if context_id is not None:
+        logging.info("Switching context1")
+        _switch_context(root, config,  progress_reporter, context_operation, context_id, community_level, optimized_search, use_kusto_community_reports, files=files)
+        return 0
+    ################################################
     else:
         pipeline_config: str | PipelineConfig = config or _create_default_config(
             root, None, verbose, dryrun or False, progress_reporter
         )
-
+    if input_base_dir is not None:
+        logging.info(f"input_base_dir is {input_base_dir}, overwriting in config")
+        pipeline_config.input.base_dir = input_base_dir
+    
+    if output_base_dir is not None:
+        logging.info(f"input_base_dir is {output_base_dir}, overwriting in config")
+        pipeline_config.storage.base_dir = output_base_dir
+        pipeline_config.cache.base_dir = output_base_dir
+        pipeline_config.reporting.base_dir = output_base_dir
     cache = NoopPipelineCache() if nocache else None
     pipeline_emit = emit.split(",") if emit else None
     encountered_errors = False
@@ -123,8 +141,8 @@ def index_cli(
         #signal.signal(signal.SIGINT, handle_signal)
         
         logging.info("Step3")
-        if sys.platform != "win32":
-            signal.signal(signal.SIGHUP, handle_signal)
+        #if sys.platform != "win32":
+        #    signal.signal(signal.SIGHUP, handle_signal)
 
         logging.info("Step4")
         async def execute():
@@ -181,12 +199,13 @@ def index_cli(
         progress_reporter.success("All workflows completed successfully.")
 
     if cli:
-        sys.exit(1 if encountered_errors else 0)
+        #sys.exit(1 if encountered_errors else 0)
+        return 0
 
 def _switch_context(root: str, config: str,
                     reporter: ProgressReporter, context_operation: str | None,
                     context_id: str, community_level: int, optimized_search: bool,
-                    use_kusto_community_reports: bool) -> None:
+                    use_kusto_community_reports: bool, files:[str]) -> None:
     """Switch the context to the given context."""
     reporter.info(f"Switching context to {context_id} using operation {context_operation}")
     logging.info("Switching context to {context_id}")
@@ -201,7 +220,7 @@ def _switch_context(root: str, config: str,
         optimized_search=optimized_search,
         use_kusto_community_reports=use_kusto_community_reports)
     if context_operation == ContextSwitchType.Activate:
-        context_switcher.activate()
+        context_switcher.activate(files=files)
     elif context_operation == ContextSwitchType.Deactivate:
         context_switcher.deactivate()
     else:
@@ -218,42 +237,23 @@ def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
     settings_yaml = root / "settings/settings.yaml"
     
     dotenv = root / ".env"
-    if not dotenv.exists():
-        with settings_yaml.open("wb") as file:
-            file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
+    
 
-    with dotenv.open("wb") as file:
-        file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
+    
 
     prompts_dir = root / "prompts"
-    if not prompts_dir.exists():
-        prompts_dir.mkdir(parents=True, exist_ok=True)
+    
 
     entity_extraction = prompts_dir / "entity_extraction.txt"
-    if not entity_extraction.exists():
-        with entity_extraction.open("wb") as file:
-            file.write(
-                GRAPH_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
-            )
+    
 
     summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
-    if not summarize_descriptions.exists():
-        with summarize_descriptions.open("wb") as file:
-            file.write(SUMMARIZE_PROMPT.encode(encoding="utf-8", errors="strict"))
 
     claim_extraction = prompts_dir / "claim_extraction.txt"
-    if not claim_extraction.exists():
-        with claim_extraction.open("wb") as file:
-            file.write(
-                CLAIM_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
-            )
+    
 
     community_report = prompts_dir / "community_report.txt"
-    if not community_report.exists():
-        with community_report.open("wb") as file:
-            file.write(
-                COMMUNITY_REPORT_PROMPT.encode(encoding="utf-8", errors="strict")
-            )
+    
 
 
 def _create_default_config(
@@ -286,7 +286,7 @@ def _create_default_config(
 
     if dryrun:
         reporter.info("dry run complete, exiting...")
-        sys.exit(0)
+        return
     return result
 
 
@@ -302,7 +302,7 @@ def _read_config_parameters(root: str, config: str | None, reporter: ProgressRep
     settings_json = (
         Path(config)
         if config and Path(config).suffix == ".json"
-        else _root / "setting/settings.json"
+        else _root / "settings/settings.json"
     )
 
     if settings_yaml.exists():
@@ -341,16 +341,16 @@ def _enable_logging(root_dir: str, run_id: str, verbose: bool) -> None:
     logging_file = (
         Path(root_dir) / "output" / run_id / "reports" / "indexing-engine.log"
     )
-    logging_file.parent.mkdir(parents=True, exist_ok=True)
+    #logging_file.parent.mkdir(parents=True, exist_ok=True)
 
-    logging_file.touch(exist_ok=True)
+    #logging_file.touch(exist_ok=True)
     handler = logging.StreamHandler(stream=sys.stdout)
-    fileHandler = logging.FileHandler(logging_file, mode="a")
+    #fileHandler = logging.FileHandler(logging_file, mode="a")
     logging.basicConfig(
         #filename=str(logging_file),
         #filemode="a",
         format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%H:%M:%S",
         level=logging.DEBUG if verbose else logging.INFO,
-        handlers=[handler, fileHandler]
+        handlers=[handler]
     )
