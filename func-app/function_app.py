@@ -20,7 +20,7 @@ def initialize_incoming_msg_queue() -> QueueStorageClient:
     # queue_name='inputdataetqu'
     # client_id = '500051c4-c242-4018-9ae4-fb983cfebefd'
     
-    max_messages = os.environ.get("MAX_QUEUE_MESSAGE_COUNT", default=1)
+    max_messages = int(os.environ.get("MAX_QUEUE_MESSAGE_COUNT", default="1"))
     queue_url = os.environ.get("AZURE_QUEUE_URL")
     queue_name = os.environ.get("AZURE_QUEUE_NAME")
     client_id = os.environ.get("AZURE_CLIENT_ID")
