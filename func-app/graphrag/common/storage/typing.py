@@ -42,7 +42,7 @@ class PipelineStorage(metaclass=ABCMeta):
 
     @abstractmethod
     async def set(
-        self, key: str, value: str | bytes | None, encoding: str | None = None
+        self, key: str, value: str | bytes | None, encoding: str | None = None, tags: dict[str, str] = None
     ) -> None:
         """Set the value for the given key.
 

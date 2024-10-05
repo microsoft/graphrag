@@ -32,12 +32,12 @@ class ParquetTableEmitter(TableEmitter):
         self._storage = storage
         self._on_error = on_error
 
-    async def emit(self, docId: str, name: str, data: pd.DataFrame) -> None:
+    async def emit(self, docId: str, name: str, data: pd.DataFrame, tags: dict[str, str] = None) -> None:
         """Emit a dataframe to storage."""
         filename = f"{docId}/version=0/{name}.parquet"
         log.info("emitting parquet table %s", filename)
         try:
-            await self._storage.set(filename, data.to_parquet())
+            await self._storage.set(filename, data.to_parquet(), tags=tags)
         except ArrowTypeError as e:
             log.exception("Error while emitting parquet table")
             self._on_error(

@@ -289,10 +289,10 @@ async def run_pipeline(
             "first row of %s => %s", workflow_name, workflow.output().iloc[0].to_json()
         )
 
-    async def emit_workflow_output(docId: str, workflow: Workflow) -> pd.DataFrame:
+    async def emit_workflow_output(docId: str, workflow: Workflow, tags: dict[str, str] = None) -> pd.DataFrame:
         output = cast(pd.DataFrame, workflow.output())
         for emitter in emitters:
-            await emitter.emit(docId, workflow.name, output)
+            await emitter.emit(docId, workflow.name, output, tags=tags)
         return output
 
     dataset = await _run_post_process_steps(
@@ -305,6 +305,8 @@ async def run_pipeline(
     log.info("Final # of rows loaded: %s", len(dataset))
     stats.num_documents = len(dataset)
     docId = dataset['id'].iloc[0]
+    docTag = dataset['tag'].iloc[0]
+    tags = dict({'name' : docTag})
     last_workflow = "input"
 
     try:
@@ -334,7 +336,7 @@ async def run_pipeline(
             await write_workflow_stats(workflow, result, workflow_start_time)
 
             # Save the output from the workflow
-            output = await emit_workflow_output(docId, workflow)
+            output = await emit_workflow_output(docId, workflow, tags=tags)
             yield PipelineRunResult(workflow_name, output, None)
             output = None
             workflow.dispose()

@@ -205,7 +205,7 @@ class BlobPipelineStorage(PipelineStorage):
         except ResourceNotFoundError:
             return False
         
-    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
+    async def set(self, key: str, value: Any, encoding: str | None = None, tags: dict[str, str] = None) -> None:
         """Set a value in the cache."""
         try:
             key = self._keyname(key)
@@ -216,10 +216,10 @@ class BlobPipelineStorage(PipelineStorage):
             if blob_client.exists() and not self._overwrite:
                 ValueError("Artifacts already exists, make sure output folder is empty.")
             if isinstance(value, bytes):
-                blob_client.upload_blob(value, overwrite=True)
+                blob_client.upload_blob(value, overwrite=True, metadata=tags)
             else:
                 coding = encoding or "utf-8"
-                blob_client.upload_blob(value.encode(coding), overwrite=True)
+                blob_client.upload_blob(value.encode(coding), overwrite=True, metadata=tags)
         except Exception:
             log.exception("Error setting key %s: %s", key)
 

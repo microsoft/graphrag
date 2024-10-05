@@ -38,6 +38,7 @@ async def load(
         new_item = {**group, "text": text}
         keys = {"key" : path}   
         new_item["id"] = gen_md5_hash(keys, keys.keys())
+        new_item["tag"] = path
         new_item["title"] = str(Path(path).name)
         return new_item
     base_dir = config.base_dir
