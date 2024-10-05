@@ -11,5 +11,5 @@ import pandas as pd
 class TableEmitter(Protocol):
     """TableEmitter protocol for emitting tables to a destination."""
 
-    async def emit(self, name: str, data: pd.DataFrame) -> None:
+    async def emit(self, docId:str, name: str, data: pd.DataFrame) -> None:
         """Emit a dataframe to storage."""

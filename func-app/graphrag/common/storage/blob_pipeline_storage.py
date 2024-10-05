@@ -50,7 +50,7 @@ class BlobPipelineStorage(PipelineStorage):
 
             self._blob_service_client = BlobServiceClient(
                 account_url=storage_account_blob_url,
-                credential=DefaultAzureCredential(managed_identity_client_id="295ce65c-28c6-4763-be6f-a5eb36c3ceb3"),
+                credential=DefaultAzureCredential(managed_identity_client_id="500051c4-c242-4018-9ae4-fb983cfebefd"),
             )
         self._encoding = encoding or "utf-8"
         self._container_name = container_name

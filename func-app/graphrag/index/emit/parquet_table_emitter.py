@@ -32,9 +32,9 @@ class ParquetTableEmitter(TableEmitter):
         self._storage = storage
         self._on_error = on_error
 
-    async def emit(self, name: str, data: pd.DataFrame) -> None:
+    async def emit(self, docId: str, name: str, data: pd.DataFrame) -> None:
         """Emit a dataframe to storage."""
-        filename = f"{name}.parquet"
+        filename = f"{docId}/version=0/{name}.parquet"
         log.info("emitting parquet table %s", filename)
         try:
             await self._storage.set(filename, data.to_parquet())
