@@ -30,12 +30,12 @@ def initialize_incoming_msg_queue() -> QueueStorageClient:
     return queue_storage_client
 
 def initialize_watermark_client() -> BlobPipelineStorage:
-    blob_account_url = 'https://inputdatasetsa.blob.core.windows.net'
-    watermark_container_name='watermark'
+    # blob_account_url = 'https://inputdatasetsa.blob.core.windows.net'
+    # watermark_container_name='watermark'
 
-    # storage_account_url = os.environ.get("AZURE_WATERMARK_ACCOUNT_URL")
-    # watermark_container_name = os.environ.get("WATERMARK_CONTAINER_NAME")
-    # client_id = os.environ.get("AZURE_CLIENT_ID")
+    blob_account_url = os.environ.get("AZURE_WATERMARK_ACCOUNT_URL")
+    watermark_container_name = os.environ.get("WATERMARK_CONTAINER_NAME")
+    client_id = os.environ.get("AZURE_CLIENT_ID")
 
     watermark_storage_account = BlobPipelineStorage(connection_string=None, container_name=watermark_container_name, storage_account_blob_url=blob_account_url)
 
@@ -43,8 +43,8 @@ def initialize_watermark_client() -> BlobPipelineStorage:
     
 
 @app.function_name('csindexer')
-@app.route(route="index", auth_level=func.AuthLevel.FUNCTION)
-def indexing(req: func.HttpRequest) -> func.HttpResponse:
+@app.timer_trigger(schedule="0 */10 * * * *", arg_name="mytimer", run_on_startup=True) 
+def indexing(mytimer: func.TimerRequest) -> None:
     logging.info('Python HTTP trigger function processed a request.')
     if executing_correct_func_app(req, "csindexer"):
         return func.HttpResponse(
@@ -53,12 +53,12 @@ def indexing(req: func.HttpRequest) -> func.HttpResponse:
         )
     
     input_base_dir=None
-    if "input_base_dir" in req.params:
-        input_base_dir = req.params['input_base_dir']
+    # if "input_base_dir" in req.params:
+    #     input_base_dir = req.params['input_base_dir']
     
     output_base_dir=None
-    if "output_base_dir" in req.params:
-        output_base_dir = req.params['output_base_dir']
+    # if "output_base_dir" in req.params:
+    #     output_base_dir = req.params['output_base_dir']
     
     queue_client = initialize_incoming_msg_queue()
     watermark_client = initialize_watermark_client()
@@ -93,16 +93,10 @@ def indexing(req: func.HttpRequest) -> func.HttpResponse:
         )
 
         water_mark_target(targets=targets, queue_storage_client=queue_client, watermark_client=watermark_client)
-        return func.HttpResponse(
-            "Wow this first HTTP Function works!!!!",
-            status_code=200
-        )
-    except Exception as ex:
-        logging.error("Exception", ex)
-        return func.HttpResponse(
-            "The indexing failed with an exception",
-            status_code=500
-        )
+        
+    except:
+        logging.error("Error executing the function")
+        raise
 
 
 @app.function_name('cscontext')
