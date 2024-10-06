@@ -7,7 +7,6 @@ import asyncio
 import logging
 from enum import Enum
 from typing import Any, NamedTuple, cast
-
 import networkx as nx
 import pandas as pd
 from datashaper import (
@@ -125,26 +124,47 @@ async def summarize_descriptions(
 
         ticker = progress_ticker(callbacks.progress, ticker_length)
 
-        futures = [
-            do_summarize_descriptions(
+        results = list()
+        for node in graph.nodes():
+            temp = await do_summarize_descriptions(
                 node,
                 sorted(set(graph.nodes[node].get("description", "").split("\n"))),
                 ticker,
                 semaphore,
             )
-            for node in graph.nodes()
-        ]
-        futures += [
-            do_summarize_descriptions(
+
+            results.append(temp)
+        
+        for edge in graph.edges():
+            temp = await do_summarize_descriptions(
                 edge,
                 sorted(set(graph.edges[edge].get("description", "").split("\n"))),
                 ticker,
                 semaphore,
             )
-            for edge in graph.edges()
-        ]
 
-        results = await asyncio.gather(*futures)
+            results.append(temp)
+        
+        # futures = [
+        #     do_summarize_descriptions(
+        #         node,
+        #         sorted(set(graph.nodes[node].get("description", "").split("\n"))),
+        #         ticker,
+        #         semaphore,
+        #     )
+        #     for node in graph.nodes()
+        # ]
+        # futures += [
+        #     do_summarize_descriptions(
+        #         edge,
+        #         sorted(set(graph.edges[edge].get("description", "").split("\n"))),
+        #         ticker,
+        #         semaphore,
+        #     )
+        #     for edge in graph.edges()
+        # ]
+
+        # results = await asyncio.gather(*futures)
 
         for result in results:
             graph_item = result.items
@@ -163,25 +183,33 @@ async def summarize_descriptions(
         ticker: ProgressTicker,
         semaphore: asyncio.Semaphore,
     ):
-        async with semaphore:
-            results = await strategy_exec(
+        results = await strategy_exec(
                 graph_item,
                 descriptions,
                 callbacks,
                 cache,
-                strategy_config,
-            )
-            ticker(1)
+                strategy_config,)
         return results
+    
+        # async with semaphore:
+        #     results = await strategy_exec(
+        #         graph_item,
+        #         descriptions,
+        #         callbacks,
+        #         cache,
+        #         strategy_config,
+        #     )
+        #     ticker(1)
+        # return results
 
     # Graph is always on row 0, so here a derive from rows does not work
     # This iteration will only happen once, but avoids hardcoding a iloc[0]
     # Since parallelization is at graph level (nodes and edges), we can't use
     # the parallelization of the derive_from_rows
-    semaphore = asyncio.Semaphore(kwargs.get("num_threads", 2))
+    #semaphore = asyncio.Semaphore(kwargs.get("num_threads", 4))
 
     results = [
-        await get_resolved_entities(row, semaphore) for row in output.itertuples()
+        await get_resolved_entities(row, None) for row in output.itertuples()
     ]
 
     to_result = []
