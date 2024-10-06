@@ -349,7 +349,8 @@ async def run_pipeline(
         cast(WorkflowCallbacks, callbacks).on_error(
             "Error running pipeline!", e, traceback.format_exc()
         )
-        yield PipelineRunResult(last_workflow, None, [e])
+        raise
+        #yield PipelineRunResult(last_workflow, None, [e])
 
 
 def _create_callback_chain(
