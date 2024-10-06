@@ -46,11 +46,6 @@ def initialize_watermark_client() -> BlobPipelineStorage:
 @app.timer_trigger(schedule="0 */10 * * * *", arg_name="mytimer", run_on_startup=True) 
 def indexing(mytimer: func.TimerRequest) -> None:
     logging.info('Python HTTP trigger function processed a request.')
-    if executing_correct_func_app(req, "csindexer"):
-        return func.HttpResponse(
-        "Please trigger csindexer Azure function for indexing",
-        status_code=200
-        )
     
     input_base_dir=None
     # if "input_base_dir" in req.params:
