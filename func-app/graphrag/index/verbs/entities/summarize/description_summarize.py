@@ -178,7 +178,7 @@ async def summarize_descriptions(
     # This iteration will only happen once, but avoids hardcoding a iloc[0]
     # Since parallelization is at graph level (nodes and edges), we can't use
     # the parallelization of the derive_from_rows
-    semaphore = asyncio.Semaphore(kwargs.get("num_threads", 4))
+    semaphore = asyncio.Semaphore(kwargs.get("num_threads", 2))
 
     results = [
         await get_resolved_entities(row, semaphore) for row in output.itertuples()
