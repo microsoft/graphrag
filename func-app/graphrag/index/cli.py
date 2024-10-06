@@ -168,26 +168,26 @@ def index_cli(
                     progress_reporter.success(output.workflow)
 
                 progress_reporter.info(str(output.result))
+        asyncio.run(execute())
+        # if platform.system() == "Windows":
+        #     logging.info("All set to execute the workflows on Windows")
+        #     import nest_asyncio  # type: ignore Ignoring because out of windows this will cause an error
 
-        if platform.system() == "Windows":
-            logging.info("All set to execute the workflows on Windows")
-            import nest_asyncio  # type: ignore Ignoring because out of windows this will cause an error
+        #     nest_asyncio.apply()
+        #     loop = asyncio.get_event_loop()
+        #     loop.run_until_complete(execute())
+        # elif sys.version_info >= (3, 11):
+        #     logging.info("Step6")
+        #     import uvloop  # type: ignore Ignoring because on windows this will cause an error
 
-            nest_asyncio.apply()
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(execute())
-        elif sys.version_info >= (3, 11):
-            logging.info("Step6")
-            import uvloop  # type: ignore Ignoring because on windows this will cause an error
+        #     with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:  # type: ignore Ignoring because minor versions this will throw an error
+        #         runner.run(execute())
+        # else:
+        #     logging.info("Step 6")
+        #     import uvloop  # type: ignore Ignoring because on windows this will cause an error
 
-            with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:  # type: ignore Ignoring because minor versions this will throw an error
-                runner.run(execute())
-        else:
-            logging.info("Step 6")
-            import uvloop  # type: ignore Ignoring because on windows this will cause an error
-
-            uvloop.install()
-            asyncio.run(execute())
+        #     uvloop.install()
+        #     asyncio.run(execute())
     
     #If there is a list of target files that has been provided as an input, then modify the file pattern to include them only.
     if len(files) > 0:
