@@ -59,7 +59,10 @@ def indexing(mytimer: func.TimerRequest) -> None:
     watermark_client = initialize_watermark_client()
     
     targets = find_next_target_blob(queue_storage_client=queue_client, watermark_client=watermark_client)
-
+    if len(targets) <= 0:
+        logging.info("No target to index. Silently skipping the iteration")
+        return
+    
     file_target = []
     for target in targets:
         file_target.append(target[0])

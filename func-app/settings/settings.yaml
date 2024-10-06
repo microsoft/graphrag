@@ -77,7 +77,7 @@ storage:
   container_name: indexing
 
 reporting:
-  type: file # or console, blob
+  type: console # or console, blob
   base_dir: "output/${timestamp}/reports"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
