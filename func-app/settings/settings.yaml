@@ -64,8 +64,10 @@ input:
   file_pattern: ".*\\.json$"
 
 cache:
-  type: file # or blob
+  type: blob
   base_dir: "cache"
+  storage_account_blob_url: "https://indexedoutputartifacts.blob.core.windows.net"
+  container_name: "indexing"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
