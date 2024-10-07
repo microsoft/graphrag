@@ -43,7 +43,7 @@ def initialize_watermark_client() -> BlobPipelineStorage:
     
 
 @app.function_name('csindexer')
-@app.timer_trigger(schedule="0 */5 * * * *", arg_name="mytimer", run_on_startup=True) 
+@app.timer_trigger(schedule="0 */3 * * * *", arg_name="mytimer", run_on_startup=True) 
 def indexing(mytimer: func.TimerRequest) -> None:
     logging.info('Python HTTP trigger function processed a request.')
     
