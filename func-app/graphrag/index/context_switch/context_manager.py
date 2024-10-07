@@ -83,7 +83,7 @@ class ContextManager:
         if values['state'] == 'hot':
             values['state'] = 'cold'
         else:
-            values['state'] == 'hot'
+            values['state'] = 'hot'
             self.__push_to_queue(values['files'])
         
         value = json.dumps(values)
@@ -99,16 +99,13 @@ class ContextManager:
 
         existing_files = values['files']
 
-        new_files = []
-        for file in files:
-            if file not in existing_files:
-                files.append(file)
-                new_files.append(file)
+        new_files = list(set(files) - set(existing_files))
 
         if len(new_files) <= 0:
             log.info(f"No updates are required for the context {self._context_name}")
             return
         
+        files = list(set(existing_files + new_files))
         values['files'] = files
 
         if values['state'] == 'hot':

@@ -9,8 +9,7 @@ from azure.storage.blob import BlobClient
 from azure.storage.queue import QueueServiceClient, QueueClient, QueueMessage, BinaryBase64DecodePolicy, BinaryBase64EncodePolicy
 import asyncio
 
-
-def find_next_target_blob(queue_storage_client: QueueStorageClient, watermark_client: BlobPipelineStorage):
+def find_next_target_index_blob(queue_storage_client: QueueStorageClient, watermark_client: BlobPipelineStorage):
     # queue_url="https://inputdatasetsa.queue.core.windows.net",
     # queue_name="inputdataetqu"
     # client_id = "500051c4-c242-4018-9ae4-fb983cfebefd"
