@@ -9,7 +9,7 @@
         "start:docs": "yarn start"
     },
     "dependencies": {
-        "@11ty/eleventy": "^2.0.1",
+        "@11ty/eleventy": "^3.0.0",
         "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
         "@kevingimbel/eleventy-plugin-mermaid": "^2.2.1",
         "eleventy-plugin-code-clipboard": "^0.1.1",
