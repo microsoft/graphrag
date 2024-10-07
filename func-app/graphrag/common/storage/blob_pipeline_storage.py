@@ -192,6 +192,26 @@ class BlobPipelineStorage(PipelineStorage):
         else:
             return blob_data
     
+    def get_sync(
+        self, key: str, as_bytes: bool | None = False, encoding: str | None = None
+    ) -> Any:
+        """Get a value from the cache."""
+        try:
+            key = self._keyname(key)
+            container_client = self._blob_service_client.get_container_client(
+                self._container_name
+            )
+            blob_client = container_client.get_blob_client(key)
+            blob_data = blob_client.download_blob().readall()
+            if not as_bytes:
+                coding = encoding or "utf-8"
+                blob_data = blob_data.decode(coding)
+        except Exception:
+            log.exception("Error getting key %s", key)
+            return None
+        else:
+            return blob_data
+    
     def check_if_exists(self, key: str) -> bool:
         """Get a value from the cache."""
         try:
@@ -206,6 +226,24 @@ class BlobPipelineStorage(PipelineStorage):
             return False
         
     async def set(self, key: str, value: Any, encoding: str | None = None, tags: dict[str, str] = None) -> None:
+        """Set a value in the cache."""
+        try:
+            key = self._keyname(key)
+            container_client = self._blob_service_client.get_container_client(
+                self._container_name
+            )
+            blob_client = container_client.get_blob_client(key)
+            if blob_client.exists() and not self._overwrite:
+                ValueError("Artifacts already exists, make sure output folder is empty.")
+            if isinstance(value, bytes):
+                blob_client.upload_blob(value, overwrite=True, metadata=tags)
+            else:
+                coding = encoding or "utf-8"
+                blob_client.upload_blob(value.encode(coding), overwrite=True, metadata=tags)
+        except Exception:
+            log.exception("Error setting key %s: %s", key)
+    
+    def set_sync(self, key: str, value: Any, encoding: str | None = None, tags: dict[str, str] = None) -> None:
         """Set a value in the cache."""
         try:
             key = self._keyname(key)
