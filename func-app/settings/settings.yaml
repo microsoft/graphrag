@@ -31,6 +31,10 @@ async_mode: threaded # or asyncio
 embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: threaded # or asyncio
+  vector_store:
+    type: kusto
+    clusters: https://cstorehotindex.eastus2.kusto.windows.net
+    database: enron_prototype_hot_store
   llm:
     api_key: ${GRAPHRAG_API_KEY}
     type: azure_openai_embedding #openai_embedding # or azure_openai_embedding
@@ -48,7 +52,14 @@ embeddings:
     # batch_size: 16 # the number of documents to send in a single request
     # batch_max_tokens: 8191 # the maximum number of tokens to send in a single request
     # target: required # or optional
-  
+
+graphdb:
+  enabled: true
+  account_name: "graphdbhotstoreindex"
+  gremlin_url: "wss://graphdbhotstoreindex.gremlin.cosmos.azure.com:443/"
+  cosmos_url: "https://graphdbhotstoreindex.documents.azure.com:443/"
+  username: "/dbs/graphdbhotstoreindex/colls/graphdb"
+  account_key: ${COSMOS_ACCOUNT_KEY}
 chunks:
   size: 500
   overlap: 100

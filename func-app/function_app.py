@@ -18,9 +18,9 @@ logging.getLogger().addHandler(handler)
 
 def initialize_incoming_msg_queue() -> QueueStorageClient:
     max_messages = int(os.environ.get("MAX_QUEUE_MESSAGE_COUNT", default="1"))
-    queue_url = os.environ.get("AZURE_QUEUE_URL", "https://inputdatasetsa.queue.core.windows.net")
-    queue_name = os.environ.get("AZURE_QUEUE_NAME", "contextqueue")
-    client_id = os.environ.get("AZURE_CLIENT_ID", "500051c4-c242-4018-9ae4-fb983cfebefd")
+    queue_url = os.environ.get("AZURE_QUEUE_URL")
+    queue_name = os.environ.get("AZURE_QUEUE_NAME")
+    client_id = os.environ.get("AZURE_CLIENT_ID")
 
     queue_storage_client = QueueStorageClient(account_url=queue_url, queue_name=queue_name, client_id=client_id, max_message=max_messages)
 
@@ -30,9 +30,9 @@ def initialize_watermark_client() -> BlobPipelineStorage:
     # blob_account_url = 'https://inputdatasetsa.blob.core.windows.net'
     # watermark_container_name='watermark'
 
-    blob_account_url = os.environ.get("AZURE_WATERMARK_ACCOUNT_URL", "https://inputdatasetsa.blob.core.windows.net")
-    watermark_container_name = os.environ.get("WATERMARK_CONTAINER_NAME", "context_watermark")
-    client_id = os.environ.get("AZURE_CLIENT_ID", "500051c4-c242-4018-9ae4-fb983cfebefd")
+    blob_account_url = os.environ.get("AZURE_WATERMARK_ACCOUNT_URL")
+    watermark_container_name = os.environ.get("WATERMARK_CONTAINER_NAME")
+    client_id = os.environ.get("AZURE_CLIENT_ID")
 
     watermark_storage_account = BlobPipelineStorage(connection_string=None, container_name=watermark_container_name, storage_account_blob_url=blob_account_url)
 
@@ -110,50 +110,57 @@ def context_poll(req: func.HttpRequest) -> func.HttpResponse:
     queue_client = initialize_incoming_msg_queue()
     watermark_client = initialize_watermark_client()
     
-    targets = find_next_target_index_blob(queue_storage_client=queue_client, watermark_client=watermark_client)
+    targets = find_next_target_index_blob(queue_storage_client=queue_client, watermark_client=watermark_client, caller='context')
     if len(targets) <= 0:
         logging.info("No target to index. Silently skipping the iteration")
-        return
-    
-    file_target = []
-    for target in targets:
-        file_target.append(target[0])
-    
-    try:
-        # index_cli(
-        #     root = "settings",
-        #     verbose=False,
-        #     resume=False,
-        #     memprofile=False,
-        #     nocache=False,
-        #     config=None,
-        #     emit=None,
-        #     dryrun=False,
-        #     init=False,
-        #     overlay_defaults=False,
-        #     cli=True,
-        #     context_id=None,
-        #     context_operation=None,
-        #     community_level=2,
-        #     use_kusto_community_reports=None,
-        #     optimized_search=None,
-        #     input_base_dir=input_base_dir,
-        #     output_base_dir=output_base_dir,
-        #     files=file_target
-        # )
-        logging.info("Successfully processed the message from the queue")
-
-        water_mark_target(targets=targets, queue_storage_client=queue_client, watermark_client=watermark_client)
         return func.HttpResponse(
-            "Successfully processed the create / initialized request",
+            "No content to polled for the context",
             status_code=200
         )
-    except:
-        logging.error("Error executing the function")
-        return func.HttpResponse(
-            "The request failed to be processed",
-            status_code=500
-        )
+    
+    file_targets = []
+    for target in targets:
+        file_targets.append(target[0])
+    
+    for file_target in file_targets:
+        #input for the artifcact storage account
+        # context switching for all the target blobs.
+        context_id = file_target.split("/")[0]
+        try:
+            index_cli(
+                root = "settings",
+                verbose=False,
+                resume=False,
+                memprofile=False,
+                nocache=False,
+                config=None,
+                emit=None,
+                dryrun=False,
+                init=False,
+                overlay_defaults=False,
+                cli=True,
+                context_id=context_id,
+                context_operation='activate',
+                community_level=2,
+                use_kusto_community_reports=None,
+                optimized_search=None,
+                input_base_dir=input_base_dir,
+                output_base_dir=output_base_dir,
+                files=file_target
+            )
+            logging.info("Successfully processed the message from the queue")
+
+            water_mark_target(targets=targets, queue_storage_client=queue_client, watermark_client=watermark_client)
+            return func.HttpResponse(
+                "Successfully processed the create / initialized request",
+                status_code=200
+            )
+        except Exception as ex:
+            logging.error(ex)
+            return func.HttpResponse(
+                "The request failed to be processed",
+                status_code=500
+            )
 
 @app.function_name('contextmanager')
 @app.route(route="context", auth_level=func.AuthLevel.FUNCTION)
