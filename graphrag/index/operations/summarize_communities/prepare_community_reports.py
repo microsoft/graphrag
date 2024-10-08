@@ -8,11 +8,8 @@ from typing import cast
 
 import pandas as pd
 from datashaper import (
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     progress_iterable,
-    verb,
 )
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
@@ -25,32 +22,11 @@ from graphrag.index.graph.extractors.community_reports import (
     set_context_size,
     sort_context,
 )
-from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 log = logging.getLogger(__name__)
 
 
-@verb(name="prepare_community_reports")
 def prepare_community_reports(
-    input: VerbInput,
-    callbacks: VerbCallbacks,
-    max_tokens: int = 16_000,
-    **_kwargs,
-) -> TableContainer:
-    """Prep communities for report generation."""
-    # Prepare Community Reports
-    nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
-    edges = cast(pd.DataFrame, get_required_input_table(input, "edges").table)
-    claims = get_named_input_table(input, "claims")
-    if claims:
-        claims = cast(pd.DataFrame, claims.table)
-
-    output = prepare_community_reports_df(nodes, edges, claims, callbacks, max_tokens)
-
-    return TableContainer(table=output)
-
-
-def prepare_community_reports_df(
     nodes,
     edges,
     claims,

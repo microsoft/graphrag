@@ -4,37 +4,15 @@
 """A module containing create_graph, _get_node_attributes, _get_edge_attributes and _get_attribute_column_mapping methods definition."""
 
 import logging
-from typing import cast
 
 import pandas as pd
-from datashaper import TableContainer, VerbInput, verb
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
 
 log = logging.getLogger(__name__)
 
 
-@verb(name="restore_community_hierarchy")
 def restore_community_hierarchy(
-    input: VerbInput,
-    name_column: str = schemas.NODE_NAME,
-    community_column: str = schemas.NODE_COMMUNITY,
-    level_column: str = schemas.NODE_LEVEL,
-    **_kwargs,
-) -> TableContainer:
-    """Restore the community hierarchy from the node data."""
-    node_df: pd.DataFrame = cast(pd.DataFrame, input.get_input())
-
-    output = restore_community_hierarchy_df(
-        node_df,
-        name_column=name_column,
-        community_column=community_column,
-        level_column=level_column,
-    )
-    return TableContainer(table=output)
-
-
-def restore_community_hierarchy_df(
     input: pd.DataFrame,
     name_column: str = schemas.NODE_NAME,
     community_column: str = schemas.NODE_COMMUNITY,

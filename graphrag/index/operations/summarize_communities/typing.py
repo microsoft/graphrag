@@ -4,6 +4,7 @@
 """A module containing 'Finding' and 'CommunityReport' models."""
 
 from collections.abc import Awaitable, Callable
+from enum import Enum
 from typing import Any
 
 from datashaper import VerbCallbacks
@@ -50,3 +51,13 @@ CommunityReportsStrategy = Callable[
     ],
     Awaitable[CommunityReport | None],
 ]
+
+
+class CreateCommunityReportsStrategyType(str, Enum):
+    """CreateCommunityReportsStrategyType class definition."""
+
+    graph_intelligence = "graph_intelligence"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'

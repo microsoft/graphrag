@@ -16,18 +16,38 @@ from graphrag.index.graph.extractors.community_reports import (
 )
 from graphrag.index.llm import load_llm
 from graphrag.index.utils.rate_limiter import RateLimiter
-from graphrag.index.verbs.graph.report.strategies.typing import (
+from graphrag.llm import CompletionLLM
+
+from .typing import (
     CommunityReport,
     StrategyConfig,
 )
-from graphrag.llm import CompletionLLM
 
-from .defaults import MOCK_RESPONSES
+DEFAULT_CHUNK_SIZE = 3000
+
+MOCK_RESPONSES = [
+    json.dumps({
+        "title": "<report_title>",
+        "summary": "<executive_summary>",
+        "rating": 2,
+        "rating_explanation": "<rating_explanation>",
+        "findings": [
+            {
+                "summary": "<insight_1_summary>",
+                "explanation": "<insight_1_explanation",
+            },
+            {
+                "summary": "<insight_2_summary>",
+                "explanation": "<insight_2_explanation",
+            },
+        ],
+    })
+]
 
 log = logging.getLogger(__name__)
 
 
-async def run(
+async def run_graph_intelligence(
     community: str | int,
     input: str,
     level: int,

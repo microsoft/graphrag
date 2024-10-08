@@ -4,19 +4,14 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-from enum import Enum
-from typing import cast
 
 import pandas as pd
 from datashaper import (
     AsyncType,
     NoopVerbCallbacks,
-    TableContainer,
     VerbCallbacks,
-    VerbInput,
     derive_from_rows,
     progress_ticker,
-    verb,
 )
 
 import graphrag.config.defaults as defaults
@@ -26,54 +21,17 @@ from graphrag.index.graph.extractors.community_reports import (
     get_levels,
     prep_community_report_context,
 )
-from graphrag.index.utils.ds_util import get_required_input_table
 
-from .strategies.typing import CommunityReport, CommunityReportsStrategy
+from .typing import (
+    CommunityReport,
+    CommunityReportsStrategy,
+    CreateCommunityReportsStrategyType,
+)
 
 log = logging.getLogger(__name__)
 
 
-class CreateCommunityReportsStrategyType(str, Enum):
-    """CreateCommunityReportsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
-@verb(name="create_community_reports")
-async def create_community_reports(
-    input: VerbInput,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
-    strategy: dict,
-    async_mode: AsyncType = AsyncType.AsyncIO,
-    num_threads: int = 4,
-    **_kwargs,
-) -> TableContainer:
-    """Generate community summaries."""
-    log.debug("create_community_reports strategy=%s", strategy)
-    local_contexts = cast(pd.DataFrame, input.get_input())
-    nodes = get_required_input_table(input, "nodes").table
-    community_hierarchy = get_required_input_table(input, "community_hierarchy").table
-
-    output = await create_community_reports_df(
-        local_contexts,
-        nodes,
-        community_hierarchy,
-        callbacks,
-        cache,
-        strategy,
-        async_mode=async_mode,
-        num_threads=num_threads,
-    )
-
-    return TableContainer(table=output)
-
-
-async def create_community_reports_df(
+async def summarize_communities(
     local_contexts,
     nodes,
     community_hierarchy,
@@ -146,9 +104,9 @@ def load_strategy(
     """Load strategy method definition."""
     match strategy:
         case CreateCommunityReportsStrategyType.graph_intelligence:
-            from .strategies.graph_intelligence import run
+            from .strategies import run_graph_intelligence
 
-            return run
+            return run_graph_intelligence
         case _:
             msg = f"Unknown strategy: {strategy}"
             raise ValueError(msg)
