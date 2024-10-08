@@ -4,6 +4,7 @@
 """All the steps to transform final communities."""
 
 import time
+
 import pandas as pd
 from datashaper import (
     VerbCallbacks,

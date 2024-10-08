@@ -120,7 +120,7 @@ async def create_final_community_reports(
         )
 
     # Merge by community and it with communities to add size and period
-    community_reports = community_reports.merge(
+    return community_reports.merge(
         communities_input.loc[:, ["id", "size", "period"]],
         left_on="community",
         right_on="id",
@@ -128,8 +128,6 @@ async def create_final_community_reports(
         copy=False,
         suffixes=("", "_y"),
     ).drop(columns=["id_y"])
-
-    return community_reports
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
