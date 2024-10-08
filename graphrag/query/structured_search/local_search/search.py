@@ -58,6 +58,7 @@ class LocalSearch(BaseSearch):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
+        drift_query: str | None = None,
         **kwargs,
     ) -> SearchResult:
         """Build local search context that fits a single context window and generate answer for the user query."""
@@ -72,9 +73,15 @@ class LocalSearch(BaseSearch):
         )
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
-            search_prompt = self.system_prompt.format(
-                context_data=context_text, response_type=self.response_type
-            )
+            if drift_query:
+                search_prompt = self.system_prompt.format(
+                    context_data=context_text, response_type=self.response_type, global_query=drift_query,
+                )
+            else:
+  
+                search_prompt = self.system_prompt.format(
+                    context_data=context_text, response_type=self.response_type
+                )
             search_messages = [
                 {"role": "system", "content": search_prompt},
                 {"role": "user", "content": query},
