@@ -34,6 +34,21 @@ def merge_graphs(
     edges: dict[str, Any] = DEFAULT_EDGE_OPERATIONS,
     **_kwargs,
 ) -> TableContainer:
+    """Merge multiple graphs together. The graphs are expected to be in graphml format. The verb outputs a new column containing the merged graph."""
+    input_df = cast(pd.DataFrame, input.get_input())
+    output = merge_graphs_df(input_df, callbacks, column, to, nodes, edges)
+
+    return TableContainer(table=output)
+
+
+def merge_graphs_df(
+    input: pd.DataFrame,
+    callbacks: VerbCallbacks,
+    column: str,
+    to: str,
+    nodes: dict[str, Any] = DEFAULT_NODE_OPERATIONS,
+    edges: dict[str, Any] = DEFAULT_EDGE_OPERATIONS,
+) -> pd.DataFrame:
     """
     Merge multiple graphs together. The graphs are expected to be in graphml format. The verb outputs a new column containing the merged graph.
 
@@ -82,7 +97,6 @@ def merge_graphs(
     - __average__: This operation takes the mean of the attribute with the last value seen.
     - __multiply__: This operation multiplies the attribute with the last value seen.
     """
-    input_df = input.get_input()
     output = pd.DataFrame()
 
     node_ops = {
@@ -95,15 +109,15 @@ def merge_graphs(
     }
 
     mega_graph = nx.Graph()
-    num_total = len(input_df)
-    for graphml in progress_iterable(input_df[column], callbacks.progress, num_total):
+    num_total = len(input)
+    for graphml in progress_iterable(input[column], callbacks.progress, num_total):
         graph = load_graph(cast(str | nx.Graph, graphml))
         merge_nodes(mega_graph, graph, node_ops)
         merge_edges(mega_graph, graph, edge_ops)
 
     output[to] = ["\n".join(nx.generate_graphml(mega_graph))]
 
-    return TableContainer(table=output)
+    return output
 
 
 def merge_nodes(

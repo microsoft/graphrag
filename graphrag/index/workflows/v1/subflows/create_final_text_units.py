@@ -16,7 +16,10 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+from graphrag.index.flows.create_final_text_units import (
+    create_final_text_units as create_final_text_units_flow,
+)
+from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 
 @verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
@@ -24,104 +27,30 @@ async def create_final_text_units(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict,
-    skip_embedding: bool = False,
-    covariates_enabled: bool = False,
+    text_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform the text units."""
-    table = cast(pd.DataFrame, input.get_input())
-    others = input.get_others()
+    source = cast(pd.DataFrame, input.get_input())
+    final_entities = cast(
+        pd.DataFrame, get_required_input_table(input, "entities").table
+    )
+    final_relationships = cast(
+        pd.DataFrame, get_required_input_table(input, "relationships").table
+    )
+    final_covariates = get_named_input_table(input, "covariates")
 
-    selected = table.loc[:, ["id", "chunk", "document_ids", "n_tokens"]].rename(
-        columns={"chunk": "text"}
+    if final_covariates:
+        final_covariates = cast(pd.DataFrame, final_covariates.table)
+
+    output = await create_final_text_units_flow(
+        source,
+        final_entities,
+        final_relationships,
+        final_covariates,
+        callbacks,
+        cache,
+        text_text_embed,
     )
 
-    final_entities = cast(pd.DataFrame, others[0])
-    final_relationships = cast(pd.DataFrame, others[1])
-    entity_join = _entities(final_entities)
-    relationship_join = _relationships(final_relationships)
-
-    entity_joined = _join(selected, entity_join)
-    relationship_joined = _join(entity_joined, relationship_join)
-    final_joined = relationship_joined
-
-    if covariates_enabled:
-        final_covariates = cast(pd.DataFrame, others[2])
-        covariate_join = _covariates(final_covariates)
-        final_joined = _join(relationship_joined, covariate_join)
-
-    aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
-
-    if not skip_embedding:
-        aggregated = await text_embed_df(
-            aggregated,
-            callbacks,
-            cache,
-            column="text",
-            strategy=text_embed["strategy"],
-            to="text_embedding",
-        )
-
-    is_using_vector_store = (
-        text_embed.get("strategy", {}).get("vector_store", None) is not None
-    )
-
-    final = aggregated[
-        [
-            "id",
-            "text",
-            *([] if (skip_embedding or is_using_vector_store) else ["text_embedding"]),
-            "n_tokens",
-            "document_ids",
-            "entity_ids",
-            "relationship_ids",
-            *([] if not covariates_enabled else ["covariate_ids"]),
-        ]
-    ]
-    return create_verb_result(cast(Table, final))
-
-
-def _entities(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_ids"]]
-    unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
-
-    return (
-        unrolled.groupby("text_unit_ids", sort=False)
-        .agg(entity_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_ids": "id"})
-    )
-
-
-def _relationships(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_ids"]]
-    unrolled = selected.explode(["text_unit_ids"]).reset_index(drop=True)
-
-    return (
-        unrolled.groupby("text_unit_ids", sort=False)
-        .agg(relationship_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_ids": "id"})
-    )
-
-
-def _covariates(df: pd.DataFrame) -> pd.DataFrame:
-    selected = df.loc[:, ["id", "text_unit_id"]]
-
-    return (
-        selected.groupby("text_unit_id", sort=False)
-        .agg(covariate_ids=("id", "unique"))
-        .reset_index()
-        .rename(columns={"text_unit_id": "id"})
-    )
-
-
-def _join(left, right):
-    return left.merge(
-        right,
-        left_on="id",
-        right_on="id",
-        how="left",
-        suffixes=["_1", "_2"],
-    )
+    return create_verb_result(cast(Table, output))

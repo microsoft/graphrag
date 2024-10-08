@@ -10,10 +10,12 @@ from pandas.testing import assert_series_equal
 from graphrag.config import create_graphrag_config
 from graphrag.index import (
     PipelineWorkflowConfig,
-    PipelineWorkflowStep,
     create_pipeline_config,
 )
 from graphrag.index.run.utils import _create_run_context
+from graphrag.index.storage.typing import PipelineStorage
+
+pd.set_option("display.max_columns", None)
 
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
@@ -55,7 +57,9 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
 
 
 async def get_workflow_output(
-    input_tables: dict[str, pd.DataFrame], schema: dict
+    input_tables: dict[str, pd.DataFrame],
+    schema: dict,
+    storage: PipelineStorage | None = None,
 ) -> pd.DataFrame:
     """Pass in the input tables, the schema, and the output name"""
 
@@ -65,7 +69,7 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    context = _create_run_context(None, None, None)
+    context = _create_run_context(storage, None, None)
 
     await workflow.run(context=context)
 
@@ -82,7 +86,7 @@ def compare_outputs(
 
     assert len(actual) == len(
         expected
-    ), f"Expected: {len(expected)}, Actual: {len(actual)}"
+    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
 
     for column in cols:
         assert column in actual.columns
@@ -97,9 +101,3 @@ def compare_outputs(
             print("Actual:")
             print(actual[column])
             raise
-
-
-def remove_disabled_steps(
-    steps: list[PipelineWorkflowStep],
-) -> list[PipelineWorkflowStep]:
-    return [step for step in steps if step.get("enabled", True)]

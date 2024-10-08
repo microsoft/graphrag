@@ -74,7 +74,7 @@ async def extract_covariates_df(
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
-    **kwargs,
+    num_threads: int = 4,
 ):
     """Extract claims from a piece of text."""
     log.debug("extract_covariates strategy=%s", strategy)
@@ -104,7 +104,7 @@ async def extract_covariates_df(
         run_strategy,
         callbacks,
         scheduling_type=async_mode,
-        num_threads=kwargs.get("num_threads", 4),
+        num_threads=num_threads,
     )
     return pd.DataFrame([item for row in results for item in row or []])
 

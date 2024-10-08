@@ -3,6 +3,9 @@
 
 """A module containing snapshot method definition."""
 
+from typing import cast
+
+import pandas as pd
 from datashaper import TableContainer, VerbInput, verb
 
 from graphrag.index.storage import PipelineStorage
@@ -17,14 +20,24 @@ async def snapshot(
     **_kwargs: dict,
 ) -> TableContainer:
     """Take a entire snapshot of the tabular data."""
-    data = input.get_input()
+    source = cast(pd.DataFrame, input.get_input())
 
+    await snapshot_df(source, name, formats, storage)
+
+    return TableContainer(table=source)
+
+
+async def snapshot_df(
+    input: pd.DataFrame,
+    name: str,
+    formats: list[str],
+    storage: PipelineStorage,
+) -> None:
+    """Take a entire snapshot of the tabular data."""
     for fmt in formats:
         if fmt == "parquet":
-            await storage.set(name + ".parquet", data.to_parquet())
+            await storage.set(name + ".parquet", input.to_parquet())
         elif fmt == "json":
             await storage.set(
-                name + ".json", data.to_json(orient="records", lines=True)
+                name + ".json", input.to_json(orient="records", lines=True)
             )
-
-    return TableContainer(table=data)

@@ -15,7 +15,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 2,
+            "subworkflows": 1,
             "max_runtime": 300
         },
         "create_summarized_entities": {
@@ -31,7 +31,7 @@
                 1,
                 2000
             ],
-            "subworkflows": 2,
+            "subworkflows": 1,
             "max_runtime": 10
         },
         "create_final_entities": {
@@ -93,7 +93,7 @@
                 "rank_explanation",
                 "findings"
             ],
-            "subworkflows": 6,
+            "subworkflows": 1,
             "max_runtime": 300
         },
         "create_final_text_units": {
