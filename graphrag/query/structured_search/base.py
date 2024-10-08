@@ -14,6 +14,7 @@ import tiktoken
 from graphrag.query.context_builder.builders import (
     GlobalContextBuilder,
     LocalContextBuilder,
+    DRIFTContextBuilder,
 )
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -40,7 +41,7 @@ class BaseSearch(ABC):
     def __init__(
         self,
         llm: BaseLLM,
-        context_builder: GlobalContextBuilder | LocalContextBuilder,
+        context_builder: GlobalContextBuilder | LocalContextBuilder | DRIFTContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         llm_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
