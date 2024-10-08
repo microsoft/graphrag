@@ -24,7 +24,7 @@ def create_base_text_units(
     chunk_column_name: str,
     n_tokens_column_name: str,
     chunk_by_columns: list[str],
-    strategy: dict[str, Any] | None = None,
+    chunk_strategy: dict[str, Any] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -54,7 +54,7 @@ def create_base_text_units(
         column="texts",
         to="chunks",
         callbacks=callbacks,
-        strategy=strategy,
+        strategy=chunk_strategy,
     )
 
     chunked = cast(pd.DataFrame, chunked[[*chunk_by_columns, "chunks"]])

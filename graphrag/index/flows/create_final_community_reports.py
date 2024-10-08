@@ -45,7 +45,7 @@ async def create_final_community_reports(
     claims_input: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    strategy: dict,
+    summarization_strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
     full_content_text_embed: dict | None = None,
@@ -63,7 +63,11 @@ async def create_final_community_reports(
     community_hierarchy = restore_community_hierarchy(nodes)
 
     local_contexts = prepare_community_reports(
-        nodes, edges, claims, callbacks, strategy.get("max_input_length", 16_000)
+        nodes,
+        edges,
+        claims,
+        callbacks,
+        summarization_strategy.get("max_input_length", 16_000),
     )
 
     community_reports = await summarize_communities(
@@ -72,7 +76,7 @@ async def create_final_community_reports(
         community_hierarchy,
         callbacks,
         cache,
-        strategy,
+        summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
     )

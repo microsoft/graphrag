@@ -20,7 +20,7 @@ async def create_final_nodes(
     entity_graph: pd.DataFrame,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    strategy: dict[str, Any],
+    layout_strategy: dict[str, Any],
     level_for_node_positions: int,
     snapshot_top_level_nodes: bool = False,
 ) -> pd.DataFrame:
@@ -30,7 +30,7 @@ async def create_final_nodes(
         layout_graph(
             entity_graph,
             callbacks,
-            strategy,
+            layout_strategy,
             embeddings_column="embeddings",
             graph_column="clustered_graph",
             to="node_positions",

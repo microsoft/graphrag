@@ -30,7 +30,7 @@ async def create_summarized_entities(
     cache: PipelineCache,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    strategy: dict[str, Any] | None = None,
+    summarization_strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
     graphml_snapshot_enabled: bool = False,
     **_kwargs: dict,
@@ -43,7 +43,7 @@ async def create_summarized_entities(
         cache,
         callbacks,
         storage,
-        strategy,
+        summarization_strategy,
         num_threads,
         graphml_snapshot_enabled,
     )

@@ -23,7 +23,7 @@ async def create_summarized_entities(
     cache: PipelineCache,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    strategy: dict[str, Any] | None = None,
+    summarization_strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
     graphml_snapshot_enabled: bool = False,
 ) -> pd.DataFrame:
@@ -34,7 +34,7 @@ async def create_summarized_entities(
         callbacks,
         column="entity_graph",
         to="entity_graph",
-        strategy=strategy,
+        strategy=summarization_strategy,
         num_threads=num_threads,
     )
 

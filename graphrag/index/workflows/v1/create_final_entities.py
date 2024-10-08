@@ -22,6 +22,7 @@ def build_steps(
     entity_name_description_embed_config = config.get(
         "entity_name_description_embed", base_text_embed
     )
+
     skip_name_embedding = config.get("skip_name_embedding", False)
     skip_description_embedding = config.get("skip_description_embedding", False)
 
