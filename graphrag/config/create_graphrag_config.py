@@ -83,10 +83,7 @@ def create_graphrag_config(
             llm_type = LLMType(llm_type) if llm_type else base.type
             api_key = reader.str(Fragment.api_key) or base.api_key
             api_base = reader.str(Fragment.api_base) or base.api_base
-            audience = (
-                reader.str(Fragment.audience)
-                or base.audience
-            )
+            audience = reader.str(Fragment.audience) or base.audience
             deployment_name = (
                 reader.str(Fragment.deployment_name) or base.deployment_name
             )
@@ -158,10 +155,7 @@ def create_graphrag_config(
             )
             api_organization = reader.str("organization") or base.organization
             api_proxy = reader.str("proxy") or base.proxy
-            audience = (
-                reader.str(Fragment.audience)
-                or base.audience
-            )
+            audience = reader.str(Fragment.audience) or base.audience
             deployment_name = reader.str(Fragment.deployment_name)
 
             if api_key is None and not _is_azure(api_type):
@@ -237,9 +231,7 @@ def create_graphrag_config(
                 api_base = reader.str(Fragment.api_base) or fallback_oai_base
                 api_version = reader.str(Fragment.api_version) or fallback_oai_version
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
-                audience = reader.str(
-                    Fragment.audience
-                )
+                audience = reader.str(Fragment.audience)
                 deployment_name = reader.str(Fragment.deployment_name)
 
                 if api_key is None and not _is_azure(llm_type):

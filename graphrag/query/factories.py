@@ -52,9 +52,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     return ChatOpenAI(
         api_key=config.llm.api_key,
         azure_ad_token_provider=(
-            get_bearer_token_provider(
-                DefaultAzureCredential(), audience
-            )
+            get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client and not config.llm.api_key
             else None
         ),
@@ -85,9 +83,7 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     return OpenAIEmbedding(
         api_key=config.embeddings.llm.api_key,
         azure_ad_token_provider=(
-            get_bearer_token_provider(
-                DefaultAzureCredential(), audience
-            )
+            get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client and not config.embeddings.llm.api_key
             else None
         ),
