@@ -9,6 +9,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 from graphrag.index.storage.typing import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
@@ -129,6 +134,44 @@ async def update_dataframe_outputs(
         "create_final_text_units_new.parquet", merged_text_units.to_parquet()
     )
 
+    # Merge final nodes and update community ids
+    old_nodes = await _load_table_from_storage("create_final_nodes.parquet", storage)
+    delta_nodes = dataframe_dict["create_final_nodes"]
+
+    merged_nodes, community_id_mapping = _merge_and_resolve_nodes(
+        old_nodes, delta_nodes, merged_entities_df
+    )
+
+    await storage.set("create_final_nodes_new.parquet", merged_nodes.to_parquet())
+
+    # Merge final communities
+    old_communities = await _load_table_from_storage(
+        "create_final_communities.parquet", storage
+    )
+    delta_communities = dataframe_dict["create_final_communities"]
+    merged_communities = _update_and_merge_communities(
+        old_communities, delta_communities, community_id_mapping
+    )
+
+    await storage.set(
+        "create_final_communities_new.parquet", merged_communities.to_parquet()
+    )
+
+    # Merge community reports
+    old_community_reports = await _load_table_from_storage(
+        "create_final_community_reports.parquet", storage
+    )
+    delta_community_reports = dataframe_dict["create_final_community_reports"]
+
+    merged_community_reports = _update_and_merge_community_reports(
+        old_community_reports, delta_community_reports, community_id_mapping
+    )
+
+    await storage.set(
+        "create_final_community_reports_new.parquet",
+        merged_community_reports.to_parquet(),
+    )
+
 
 async def _concat_dataframes(name, dataframe_dict, storage):
     """Concatenate the dataframes.
@@ -193,17 +236,21 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
+        .agg(
+            {
+                "id": "first",
+                "type": "first",
+                "human_readable_id": "first",
+                "graph_embedding": "first",
+                "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
+                # Concatenate nd.array into a single list
+                "text_unit_ids": lambda x: ",".join(
+                    str(i) for j in x.tolist() for i in j
+                ),
+                # Keep only descriptions where the original value wasn't modified
+                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+            }
+        )
         .reset_index()
     )
 
@@ -309,3 +356,180 @@ def _update_and_merge_text_units(
 
     # Merge the final text units
     return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
+
+
+def _merge_and_resolve_nodes(
+    old_nodes: pd.DataFrame, delta_nodes: pd.DataFrame, merged_entities_df: pd.DataFrame
+) -> tuple[pd.DataFrame, dict]:
+    """Merge and resolve nodes.
+
+    Parameters
+    ----------
+    old_nodes : pd.DataFrame
+        The old nodes.
+    delta_nodes : pd.DataFrame
+        The delta nodes.
+
+    Returns
+    -------
+    pd.DataFrame
+        The merged nodes.
+    dict
+        The community id mapping.
+    """
+    # Increment all community ids by the max of the old nodes
+    old_max_community_id = old_nodes["community"].fillna(0).astype(int).max()
+
+    # Merge delta_nodes with merged_entities_df to get the new human_readable_id
+    delta_nodes = delta_nodes.merge(
+        merged_entities_df[["name", "human_readable_id"]],
+        left_on="title",
+        right_on="name",
+        how="left",
+        suffixes=("", "_new"),
+    )
+
+    # Replace existing human_readable_id with the new one from merged_entities_df
+    delta_nodes["human_readable_id"] = delta_nodes.loc[
+        :, "human_readable_id_new"
+    ].combine_first(delta_nodes.loc[:, "human_readable_id"])
+
+    # Drop the auxiliary column from the merge
+    delta_nodes.drop(columns=["name", "human_readable_id_new"], inplace=True)
+
+    # Increment only the non-NaN values in delta_nodes["community"]
+    community_id_mapping = {
+        v: v + old_max_community_id + 1
+        for k, v in delta_nodes["community"].dropna().astype(int).items()
+    }
+
+    delta_nodes["community"] = delta_nodes["community"].where(
+        delta_nodes["community"].isna(),
+        delta_nodes["community"].fillna(0).astype(int) + old_max_community_id + 1,
+    )
+
+    # Concat the DataFrames
+    concat_nodes = pd.concat([old_nodes, delta_nodes], ignore_index=True)
+    columns_to_agg: dict[str, str | Callable] = {
+        col: "first"
+        for col in concat_nodes.columns
+        if col not in ["description", "source_id", "level", "title"]
+    }
+
+    # Specify custom aggregation for description and source_id
+    columns_to_agg.update(
+        {
+            "description": lambda x: os.linesep.join(x.astype(str)),
+            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+        }
+    )
+
+    merged_nodes = (
+        concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
+    )
+
+    merged_nodes["community"] = old_nodes["community"].astype("Int64")
+
+    return merged_nodes, community_id_mapping
+
+
+def _update_and_merge_communities(
+    old_communities: pd.DataFrame,
+    delta_communities: pd.DataFrame,
+    community_id_mapping: dict,
+) -> pd.DataFrame:
+    """Update and merge communities.
+
+    Parameters
+    ----------
+    old_communities : pd.DataFrame
+        The old communities.
+    delta_communities : pd.DataFrame
+        The delta communities.
+    community_id_mapping : dict
+        The community id mapping.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated communities.
+    """
+    # Check if size and period columns exist in the old_communities. If not, add them
+    if "size" not in old_communities.columns:
+        old_communities["size"] = None
+    if "period" not in old_communities.columns:
+        old_communities["period"] = None
+
+    # Same for delta_communities
+    if "size" not in delta_communities.columns:
+        delta_communities["size"] = None
+    if "period" not in delta_communities.columns:
+        delta_communities["period"] = None
+
+    # Look for community ids in community and replace them with the corresponding id in the mapping
+    delta_communities["id"] = (
+        delta_communities["id"]
+        .astype("Int64")
+        .apply(lambda x: community_id_mapping.get(x, x))
+    )
+
+    old_communities["id"] = old_communities["id"].astype("Int64")
+
+    # Merge the final communities
+    merged_communities = pd.concat(
+        [old_communities, delta_communities], ignore_index=True, copy=False
+    )
+
+    # Rename title
+    merged_communities["title"] = "Community " + merged_communities["id"].astype(str)
+    return merged_communities
+
+
+def _update_and_merge_community_reports(
+    old_community_reports: pd.DataFrame,
+    delta_community_reports: pd.DataFrame,
+    community_id_mapping: dict,
+) -> pd.DataFrame:
+    """Update and merge community reports.
+
+    Parameters
+    ----------
+    old_community_reports : pd.DataFrame
+        The old community reports.
+    delta_community_reports : pd.DataFrame
+        The delta community reports.
+    community_id_mapping : dict
+        The community id mapping.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated community reports.
+    """
+    # Check if size and period columns exist in the old_community_reports. If not, add them
+    if "size" not in old_community_reports.columns:
+        old_community_reports["size"] = None
+    if "period" not in old_community_reports.columns:
+        old_community_reports["period"] = None
+
+    # Same for delta_community_reports
+    if "size" not in delta_community_reports.columns:
+        delta_community_reports["size"] = None
+    if "period" not in delta_community_reports.columns:
+        delta_community_reports["period"] = None
+
+    # Look for community ids in community and replace them with the corresponding id in the mapping
+    delta_community_reports["community"] = (
+        delta_community_reports["community"]
+        .astype("Int64")
+        .apply(lambda x: community_id_mapping.get(x, x))
+    )
+
+    old_community_reports["community"] = old_community_reports["community"].astype(
+        "Int64"
+    )
+
+    # Merge the final community reports
+    return pd.concat(
+        [old_community_reports, delta_community_reports], ignore_index=True, copy=False
+    )
