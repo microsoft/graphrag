@@ -14,7 +14,7 @@ from datashaper import (
     aggregate_operation_mapping,
 )
 
-from graphrag.index.operations.text_chunk import text_chunk
+from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.utils import gen_md5_hash
 
 
@@ -49,7 +49,7 @@ def create_base_text_units(
 
     callbacks.progress(Progress(percent=1))
 
-    chunked = text_chunk(
+    chunked = chunk_text(
         aggregated,
         column="texts",
         to="chunks",

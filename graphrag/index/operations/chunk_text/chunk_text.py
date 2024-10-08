@@ -15,7 +15,7 @@ from datashaper import (
 from .typing import ChunkInput, ChunkStrategy, ChunkStrategyType
 
 
-def text_chunk(
+def chunk_text(
     input: pd.DataFrame,
     column: str,
     to: str,

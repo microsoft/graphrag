@@ -11,7 +11,7 @@ import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
-from graphrag.index.operations.text_chunk import text_chunk
+from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.progress.types import ProgressReporter
 from graphrag.llm.types.llm_types import EmbeddingLLM
 from graphrag.prompt_tune.types import DocSelectionType
@@ -66,7 +66,7 @@ async def load_docs_in_chunks(
     chunk_strategy["chunk_size"] = chunk_size
     chunk_strategy["chunk_overlap"] = MIN_CHUNK_OVERLAP
 
-    dataset_chunks = text_chunk(
+    dataset_chunks = chunk_text(
         dataset,
         column="text",
         to="chunks",
