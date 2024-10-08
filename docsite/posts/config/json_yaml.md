@@ -58,7 +58,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `api_version` **str** - The API version
 - `organization` **str** - The client organization.
 - `proxy` **str** - The proxy URL to use.
-- `cognitive_services_endpoint` **str** - The url endpoint for cognitive services.
+- `audience` **str** - The audience endpoint for the llm connection.
 - `deployment_name` **str** - The deployment name to use (Azure).
 - `model_supports_json` **bool** - Whether the model supports JSON-mode output.
 - `tokens_per_minute` **int** - Set a leaky-bucket throttle on tokens-per-minute.

@@ -53,7 +53,7 @@ class LLMParameters(BaseModel):
         description="The proxy to use for the LLM service.", default=None
     )
     audience: str | None = Field(
-        description="The audience endpoint to connect to.", default=None
+        description="The audience endpoint for the llm connection.", default=None
     )
     deployment_name: str | None = Field(
         description="The deployment name to use for the LLM service.", default=None
