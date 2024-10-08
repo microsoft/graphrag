@@ -97,7 +97,7 @@ def _run_layout(
     graphml_or_graph: str | nx.Graph,
     embeddings: NodeEmbeddings,
     args: dict[str, Any],
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
 ) -> GraphLayout:
     graph = load_graph(graphml_or_graph)
     match strategy:
@@ -108,7 +108,7 @@ def _run_layout(
                 graph,
                 embeddings,
                 args,
-                lambda e, stack, d: reporter.error("Error in Umap", e, stack, d),
+                lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
             )
         case LayoutGraphStrategyType.zero:
             from .methods.zero import run as run_zero
@@ -116,7 +116,7 @@ def _run_layout(
             return run_zero(
                 graph,
                 args,
-                lambda e, stack, d: reporter.error("Error in Zero", e, stack, d),
+                lambda e, stack, d: callbacks.error("Error in Zero", e, stack, d),
             )
         case _:
             msg = f"Unknown strategy {strategy}"

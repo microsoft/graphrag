@@ -26,8 +26,8 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_covariates(
     input: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     covariate_type: str,
     strategy: dict[str, Any] | None,

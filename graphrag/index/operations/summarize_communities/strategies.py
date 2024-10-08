@@ -51,7 +51,7 @@ async def run_graph_intelligence(
     community: str | int,
     input: str,
     level: int,
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
     pipeline_cache: PipelineCache,
     args: StrategyConfig,
 ) -> CommunityReport | None:
@@ -61,9 +61,9 @@ async def run_graph_intelligence(
     )
     llm_type = llm_config.get("type", LLMType.StaticResponse)
     llm = load_llm(
-        "community_reporting", llm_type, reporter, pipeline_cache, llm_config
+        "community_reporting", llm_type, callbacks, pipeline_cache, llm_config
     )
-    return await _run_extractor(llm, community, input, level, args, reporter)
+    return await _run_extractor(llm, community, input, level, args, callbacks)
 
 
 async def _run_extractor(
@@ -72,7 +72,7 @@ async def _run_extractor(
     input: str,
     level: int,
     args: StrategyConfig,
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
 ) -> CommunityReport | None:
     # RateLimiter
     rate_limiter = RateLimiter(rate=1, per=60)
@@ -80,7 +80,7 @@ async def _run_extractor(
         llm,
         extraction_prompt=args.get("extraction_prompt", None),
         max_report_length=args.get("max_report_length", None),
-        on_error=lambda e, stack, _data: reporter.error(
+        on_error=lambda e, stack, _data: callbacks.error(
             "Community Report Extraction Error", e, stack
         ),
     )
@@ -106,7 +106,7 @@ async def _run_extractor(
         )
     except Exception as e:
         log.exception("Error processing community: %s", community)
-        reporter.error("Community Report Extraction Error", e, traceback.format_exc())
+        callbacks.error("Community Report Extraction Error", e, traceback.format_exc())
         return None
 
 

@@ -31,7 +31,7 @@ DEFAULT_LLM_CONFIG = {
 async def run_graph_intelligence(
     described_items: str | tuple[str, str],
     descriptions: list[str],
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
     pipeline_cache: PipelineCache,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
@@ -39,10 +39,10 @@ async def run_graph_intelligence(
     llm_config = args.get("llm", DEFAULT_LLM_CONFIG)
     llm_type = llm_config.get("type", LLMType.StaticResponse)
     llm = load_llm(
-        "summarize_descriptions", llm_type, reporter, pipeline_cache, llm_config
+        "summarize_descriptions", llm_type, callbacks, pipeline_cache, llm_config
     )
     return await run_summarize_descriptions(
-        llm, described_items, descriptions, reporter, args
+        llm, described_items, descriptions, callbacks, args
     )
 
 
@@ -50,7 +50,7 @@ async def run_summarize_descriptions(
     llm: CompletionLLM,
     items: str | tuple[str, str],
     descriptions: list[str],
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the entity extraction chain."""
@@ -66,8 +66,8 @@ async def run_summarize_descriptions(
         entity_name_key=entity_name_key,
         input_descriptions_key=input_descriptions_key,
         on_error=lambda e, stack, details: (
-            reporter.error("Entity Extraction Error", e, stack, details)
-            if reporter
+            callbacks.error("Entity Extraction Error", e, stack, details)
+            if callbacks
             else None
         ),
         max_summary_length=args.get("max_summary_length", None),

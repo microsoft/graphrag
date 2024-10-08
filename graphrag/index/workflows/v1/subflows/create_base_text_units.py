@@ -38,7 +38,7 @@ def create_base_text_units(
         chunk_column_name,
         n_tokens_column_name,
         chunk_by_columns,
-        chunk_strategy,
+        chunk_strategy=chunk_strategy,
     )
 
     return create_verb_result(

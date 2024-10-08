@@ -31,8 +31,8 @@ async def run_graph_intelligence(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    reporter: VerbCallbacks,
-    pipeline_cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
@@ -40,9 +40,9 @@ async def run_graph_intelligence(
         "llm", {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONSES}
     )
     llm_type = llm_config.get("type", LLMType.StaticResponse)
-    llm = load_llm("claim_extraction", llm_type, reporter, pipeline_cache, llm_config)
+    llm = load_llm("claim_extraction", llm_type, callbacks, cache, llm_config)
     return await _execute(
-        llm, input, entity_types, resolved_entities_map, reporter, strategy_config
+        llm, input, entity_types, resolved_entities_map, callbacks, strategy_config
     )
 
 
@@ -51,7 +51,7 @@ async def _execute(
     texts: Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    reporter: VerbCallbacks,
+    callbacks: VerbCallbacks,
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     extraction_prompt = strategy_config.get("extraction_prompt")
@@ -67,7 +67,7 @@ async def _execute(
         max_gleanings=max_gleanings,
         encoding_model=encoding_model,
         on_error=lambda e, s, d: (
-            reporter.error("Claim Extraction Error", e, s, d) if reporter else None
+            callbacks.error("Claim Extraction Error", e, s, d) if callbacks else None
         ),
     )
 

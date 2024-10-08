@@ -20,8 +20,8 @@ from graphrag.index.operations.extract_covariates import (
 
 async def create_final_covariates(
     text_units: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     covariate_type: str,
     extraction_strategy: dict[str, Any] | None,
@@ -32,8 +32,8 @@ async def create_final_covariates(
     """All the steps to extract and format covariates."""
     covariates = await extract_covariates(
         text_units,
-        cache,
         callbacks,
+        cache,
         column,
         covariate_type,
         extraction_strategy,

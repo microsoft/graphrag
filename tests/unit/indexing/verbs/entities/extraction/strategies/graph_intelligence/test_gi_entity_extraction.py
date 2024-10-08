@@ -18,7 +18,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("test_text", "1")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -53,7 +53,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -90,7 +90,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -135,7 +135,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -183,7 +183,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,

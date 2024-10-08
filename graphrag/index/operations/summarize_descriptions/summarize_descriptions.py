@@ -29,8 +29,8 @@ log = logging.getLogger(__name__)
 
 async def summarize_descriptions(
     input: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     to: str,
     strategy: dict[str, Any] | None = None,

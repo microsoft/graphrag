@@ -39,7 +39,7 @@ async def create_final_nodes(
         storage,
         layout_strategy,
         level_for_node_positions,
-        snapshot_top_level_nodes,
+        snapshot_top_level_nodes=snapshot_top_level_nodes,
     )
 
     return create_verb_result(

@@ -48,22 +48,22 @@ DEFAULT_LLM_CONFIG = {
 async def run_gi(
     docs: list[Document],
     entity_types: EntityTypes,
-    reporter: VerbCallbacks,
-    pipeline_cache: PipelineCache,
+    callbacks: VerbCallbacks,
+    cache: PipelineCache,
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = args.get("llm", DEFAULT_LLM_CONFIG)
     llm_type = llm_config.get("type", LLMType.StaticResponse)
-    llm = load_llm("entity_extraction", llm_type, reporter, pipeline_cache, llm_config)
-    return await run_extract_entities(llm, docs, entity_types, reporter, args)
+    llm = load_llm("entity_extraction", llm_type, callbacks, cache, llm_config)
+    return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 
 
 async def run_extract_entities(
     llm: CompletionLLM,
     docs: list[Document],
     entity_types: EntityTypes,
-    reporter: VerbCallbacks | None,
+    callbacks: VerbCallbacks | None,
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the entity extraction chain."""
@@ -94,7 +94,7 @@ async def run_extract_entities(
         encoding_model=encoding_model,
         max_gleanings=max_gleanings,
         on_error=lambda e, s, d: (
-            reporter.error("Entity Extraction Error", e, s, d) if reporter else None
+            callbacks.error("Entity Extraction Error", e, s, d) if callbacks else None
         ),
     )
     text_list = [doc.text.strip() for doc in docs]

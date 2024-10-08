@@ -18,8 +18,8 @@ async def create_final_entities(
     entity_graph: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    name_text_embed: dict,
-    description_text_embed: dict,
+    name_text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
     # Process nodes

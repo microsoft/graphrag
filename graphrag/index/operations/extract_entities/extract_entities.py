@@ -39,8 +39,8 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_entities(
     input: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     id_column: str,
     to: str,

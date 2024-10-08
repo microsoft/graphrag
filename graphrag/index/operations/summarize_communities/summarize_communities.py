@@ -64,8 +64,8 @@ async def summarize_communities(
                 community_id=record[schemas.NODE_COMMUNITY],
                 community_level=record[schemas.COMMUNITY_LEVEL],
                 community_context=record[schemas.CONTEXT_STRING],
-                cache=cache,
                 callbacks=callbacks,
+                cache=cache,
                 strategy=strategy,
             )
             tick()
@@ -85,8 +85,8 @@ async def summarize_communities(
 
 async def _generate_report(
     runner: CommunityReportsStrategy,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     strategy: dict,
     community_id: int | str,
     community_level: int,

@@ -21,8 +21,8 @@ from graphrag.index.storage import PipelineStorage
 
 async def create_base_extracted_entities(
     text_units: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     storage: PipelineStorage,
     column: str,
     id_column: str,
@@ -38,8 +38,8 @@ async def create_base_extracted_entities(
     """All the steps to extract and format covariates."""
     entity_graph = await extract_entities(
         text_units,
-        cache,
         callbacks,
+        cache,
         column=column,
         id_column=id_column,
         strategy=extraction_strategy,

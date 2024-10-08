@@ -20,8 +20,8 @@ from graphrag.index.storage import PipelineStorage
 
 async def create_summarized_entities(
     entities: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     storage: PipelineStorage,
     summarization_strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
@@ -30,8 +30,8 @@ async def create_summarized_entities(
     """All the steps to summarize entities."""
     summarized = await summarize_descriptions(
         entities,
-        cache,
         callbacks,
+        cache,
         column="entity_graph",
         to="entity_graph",
         strategy=summarization_strategy,

@@ -19,8 +19,8 @@ words.ensure_loaded()
 async def run(  # noqa RUF029 async is required for interface
     docs: list[Document],
     entity_types: EntityTypes,
-    reporter: VerbCallbacks,  # noqa ARG001
-    pipeline_cache: PipelineCache,  # noqa ARG001
+    callbacks: VerbCallbacks,  # noqa ARG001
+    cache: PipelineCache,  # noqa ARG001
     args: StrategyConfig,  # noqa ARG001
 ) -> EntityExtractionResult:
     """Run method definition."""
