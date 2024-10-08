@@ -25,7 +25,7 @@ async def create_final_nodes(
     input: VerbInput,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    strategy: dict[str, Any],
+    layout_strategy: dict[str, Any],
     level_for_node_positions: int,
     snapshot_top_level_nodes: bool = False,
     **_kwargs: dict,
@@ -37,7 +37,7 @@ async def create_final_nodes(
         source,
         callbacks,
         storage,
-        strategy,
+        layout_strategy,
         level_for_node_positions,
         snapshot_top_level_nodes,
     )
