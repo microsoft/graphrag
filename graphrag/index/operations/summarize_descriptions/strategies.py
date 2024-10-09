@@ -20,14 +20,14 @@ async def run_graph_intelligence(
     described_items: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
-    pipeline_cache: PipelineCache,
+    cache: PipelineCache,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = args.get("llm", {})
     llm_type = llm_config.get("type")
     llm = load_llm(
-        "summarize_descriptions", llm_type, callbacks, pipeline_cache, llm_config
+        "summarize_descriptions", llm_type, callbacks, cache, llm_config
     )
     return await run_summarize_descriptions(
         llm, described_items, descriptions, callbacks, args
