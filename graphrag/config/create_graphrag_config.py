@@ -138,7 +138,7 @@ def create_graphrag_config(
             api_type = LLMType(api_type) if api_type else defs.LLM_TYPE
             api_key = reader.str(Fragment.api_key) or base.api_key
 
-            # In a unique events where:
+            # Account for various permutations of config settings such as:
             # - same api_bases for LLM and embeddings (both Azure)
             # - different api_bases for LLM and embeddings (both Azure)
             # - LLM uses Azure OpenAI, while embeddings uses base OpenAI (this one is important)
