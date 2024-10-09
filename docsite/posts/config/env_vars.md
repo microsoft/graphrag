@@ -178,7 +178,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 | `GRAPHRAG_CACHE_STORAGE_ACCOUNT_BLOB_URL` | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity. Will have the format `https://<storage_account_name>.blob.core.windows.net` | `str` | optional             | None    |
 | `GRAPHRAG_CACHE_CONNECTION_STRING`        | The Azure Storage connection string to use when in `blob` mode.                                                                                                    | `str` | optional             | None    |
 | `GRAPHRAG_CACHE_CONTAINER_NAME`           | The Azure Storage container name to use when in `blob` mode.                                                                                                       | `str` | optional             | None    |
-| `GRAPHRAG_CACHE_BASE_DIR`                 | The base path to the reporting outputs.                                                                                                                            | `str` | optional             | None    |
+| `GRAPHRAG_CACHE_BASE_DIR`                 | The base path to the cache files.                                                                                                                                  | `str` | optional             | None    |
 
 ## Reporting
 
