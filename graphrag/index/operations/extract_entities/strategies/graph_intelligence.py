@@ -7,7 +7,6 @@ import networkx as nx
 from datashaper import VerbCallbacks
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
 from graphrag.index.llm import load_llm
@@ -25,25 +24,6 @@ from .typing import (
     StrategyConfig,
 )
 
-MOCK_LLM_RESPONSES = [
-    """
-    ("entity"<|>COMPANY_A<|>COMPANY<|>Company_A is a test company)
-    ##
-    ("entity"<|>COMPANY_B<|>COMPANY<|>Company_B owns Company_A and also shares an address with Company_A)
-    ##
-    ("entity"<|>PERSON_C<|>PERSON<|>Person_C is director of Company_A)
-    ##
-    ("relationship"<|>COMPANY_A<|>COMPANY_B<|>Company_A and Company_B are related because Company_A is 100% owned by Company_B and the two companies also share the same address)<|>2)
-    ##
-    ("relationship"<|>COMPANY_A<|>PERSON_C<|>Company_A and Person_C are related because Person_C is director of Company_A<|>1))
-    """.strip()
-]
-
-DEFAULT_LLM_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_RESPONSES,
-}
-
 
 async def run_gi(
     docs: list[Document],
@@ -53,8 +33,8 @@ async def run_gi(
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", DEFAULT_LLM_CONFIG)
-    llm_type = llm_config.get("type", LLMType.StaticResponse)
+    llm_config = args.get("llm", {})
+    llm_type = llm_config.get("type")
     llm = load_llm("entity_extraction", llm_type, callbacks, cache, llm_config)
     return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 

@@ -5,7 +5,6 @@
 
 from datashaper import VerbCallbacks
 
-from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
 from graphrag.index.llm import load_llm
@@ -16,17 +15,6 @@ from .typing import (
     SummarizedDescriptionResult,
 )
 
-MOCK_LLM_RESPONSES = [
-    """
-    This is a MOCK response for the LLM. It is summarized!
-    """.strip()
-]
-
-DEFAULT_LLM_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_RESPONSES,
-}
-
 
 async def run_graph_intelligence(
     described_items: str | tuple[str, str],
@@ -36,8 +24,8 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", DEFAULT_LLM_CONFIG)
-    llm_type = llm_config.get("type", LLMType.StaticResponse)
+    llm_config = args.get("llm", {})
+    llm_type = llm_config.get("type")
     llm = load_llm(
         "summarize_descriptions", llm_type, callbacks, pipeline_cache, llm_config
     )

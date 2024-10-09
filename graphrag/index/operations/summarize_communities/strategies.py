@@ -9,7 +9,6 @@ import traceback
 
 from datashaper import VerbCallbacks
 
-from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
     CommunityReportsExtractor,
@@ -25,25 +24,6 @@ from .typing import (
 
 DEFAULT_CHUNK_SIZE = 3000
 
-MOCK_RESPONSES = [
-    json.dumps({
-        "title": "<report_title>",
-        "summary": "<executive_summary>",
-        "rating": 2,
-        "rating_explanation": "<rating_explanation>",
-        "findings": [
-            {
-                "summary": "<insight_1_summary>",
-                "explanation": "<insight_1_explanation",
-            },
-            {
-                "summary": "<insight_2_summary>",
-                "explanation": "<insight_2_explanation",
-            },
-        ],
-    })
-]
-
 log = logging.getLogger(__name__)
 
 
@@ -56,10 +36,8 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get(
-        "llm", {"type": LLMType.StaticResponse, "responses": MOCK_RESPONSES}
-    )
-    llm_type = llm_config.get("type", LLMType.StaticResponse)
+    llm_config = args.get("llm", {})
+    llm_type = llm_config.get("type")
     llm = load_llm(
         "community_reporting", llm_type, callbacks, pipeline_cache, llm_config
     )

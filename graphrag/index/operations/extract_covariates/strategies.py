@@ -9,7 +9,6 @@ from typing import Any
 from datashaper import VerbCallbacks
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import LLMType
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
 from graphrag.index.llm import load_llm
@@ -19,12 +18,6 @@ from .typing import (
     Covariate,
     CovariateExtractionResult,
 )
-
-MOCK_LLM_RESPONSES = [
-    """
-(COMPANY A<|>GOVERNMENT AGENCY B<|>ANTI-COMPETITIVE PRACTICES<|>TRUE<|>2022-01-10T00:00:00<|>2022-01-10T00:00:00<|>Company A was found to engage in anti-competitive practices because it was fined for bid rigging in multiple public tenders published by Government Agency B according to an article published on 2022/01/10<|>According to an article published on 2022/01/10, Company A was fined for bid rigging while participating in multiple public tenders published by Government Agency B.)
-    """.strip()
-]
 
 
 async def run_graph_intelligence(
@@ -36,10 +29,8 @@ async def run_graph_intelligence(
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    llm_config = strategy_config.get(
-        "llm", {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONSES}
-    )
-    llm_type = llm_config.get("type", LLMType.StaticResponse)
+    llm_config = strategy_config.get("llm", {})
+    llm_type = llm_config.get("type")
     llm = load_llm("claim_extraction", llm_type, callbacks, cache, llm_config)
     return await _execute(
         llm, input, entity_types, resolved_entities_map, callbacks, strategy_config
