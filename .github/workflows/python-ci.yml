@@ -69,6 +69,10 @@ jobs:
       - name: Check
         run: |
           poetry run poe check
+      
+      - name: Check docs
+        run: |
+          poetry run poe build_docs
 
       - name: Build
         run: |
