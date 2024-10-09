@@ -22,6 +22,7 @@ def build_steps(
     entity_name_description_embed_config = config.get(
         "entity_name_description_embed", base_text_embed
     )
+
     skip_name_embedding = config.get("skip_name_embedding", False)
     skip_description_embedding = config.get("skip_description_embedding", False)
 
@@ -29,8 +30,6 @@ def build_steps(
         {
             "verb": "create_final_entities",
             "args": {
-                "skip_name_embedding": skip_name_embedding,
-                "skip_description_embedding": skip_description_embedding,
                 "name_text_embed": entity_name_embed_config
                 if not skip_name_embedding
                 else None,

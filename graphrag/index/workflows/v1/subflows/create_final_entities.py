@@ -28,8 +28,8 @@ async def create_final_entities(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    name_text_embed: dict,
-    description_text_embed: dict,
+    name_text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final entities."""
@@ -39,8 +39,8 @@ async def create_final_entities(
         source,
         callbacks,
         cache,
-        name_text_embed,
-        description_text_embed,
+        name_text_embed=name_text_embed,
+        description_text_embed=description_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

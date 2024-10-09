@@ -4,5 +4,6 @@
 """The Indexing Engine graph embed package root."""
 
 from .embed_graph import EmbedGraphStrategyType, embed_graph
+from .typing import NodeEmbeddings
 
-__all__ = ["EmbedGraphStrategyType", "embed_graph"]
+__all__ = ["EmbedGraphStrategyType", "NodeEmbeddings", "embed_graph"]

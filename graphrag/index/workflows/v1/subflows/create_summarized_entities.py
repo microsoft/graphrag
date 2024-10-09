@@ -27,10 +27,10 @@ from graphrag.index.storage import PipelineStorage
 )
 async def create_summarized_entities(
     input: VerbInput,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     storage: PipelineStorage,
-    strategy: dict[str, Any] | None = None,
+    summarization_strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
     graphml_snapshot_enabled: bool = False,
     **_kwargs: dict,
@@ -40,12 +40,12 @@ async def create_summarized_entities(
 
     output = await create_summarized_entities_flow(
         source,
-        cache,
         callbacks,
+        cache,
         storage,
-        strategy,
-        num_threads,
-        graphml_snapshot_enabled,
+        summarization_strategy,
+        num_threads=num_threads,
+        graphml_snapshot_enabled=graphml_snapshot_enabled,
     )
 
     return create_verb_result(cast(Table, output))
