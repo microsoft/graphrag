@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing run_gi,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
+"""A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
 from datashaper import VerbCallbacks
@@ -25,7 +25,7 @@ from .typing import (
 )
 
 
-async def run_gi(
+async def run_graph_intelligence(
     docs: list[Document],
     entity_types: EntityTypes,
     callbacks: VerbCallbacks,

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing run_gi,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
+"""A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
 from datashaper import VerbCallbacks
 

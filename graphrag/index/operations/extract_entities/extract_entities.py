@@ -165,9 +165,9 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
     """Load strategy method definition."""
     match strategy_type:
         case ExtractEntityStrategyType.graph_intelligence:
-            from .strategies.graph_intelligence import run_gi
+            from .strategies.graph_intelligence import run_graph_intelligence
 
-            return run_gi
+            return run_graph_intelligence
 
         case ExtractEntityStrategyType.nltk:
             bootstrap()
