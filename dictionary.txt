@@ -63,6 +63,7 @@ numpy
 pypi
 nbformat
 semversioner
+mkdocs
 
 # Library Methods
 iterrows
@@ -84,6 +85,13 @@ itertuples
 isin
 nocache
 nbconvert
+
+# HTML
+nbsp
+onclick
+pymdownx
+linenums
+twemoji
 
 # Verbs
 binarize
