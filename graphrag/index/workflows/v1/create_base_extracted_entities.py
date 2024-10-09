@@ -24,7 +24,7 @@ def build_steps(
     column = entity_extraction_config.get("text_column", "chunk")
     id_column = entity_extraction_config.get("id_column", "chunk_id")
     async_mode = entity_extraction_config.get("async_mode", AsyncType.AsyncIO)
-    strategy = entity_extraction_config.get("strategy")
+    extraction_strategy = entity_extraction_config.get("strategy")
     num_threads = entity_extraction_config.get("num_threads", 4)
     entity_types = entity_extraction_config.get("entity_types")
 
@@ -71,7 +71,7 @@ def build_steps(
                 "column": column,
                 "id_column": id_column,
                 "async_mode": async_mode,
-                "strategy": strategy,
+                "extraction_strategy": extraction_strategy,
                 "num_threads": num_threads,
                 "entity_types": entity_types,
                 "nodes": nodes,

@@ -29,7 +29,9 @@ def create_base_documents(
     source = cast(pd.DataFrame, input.get_input())
     text_units = cast(pd.DataFrame, get_required_input_table(input, "text_units").table)
 
-    output = create_base_documents_flow(source, text_units, document_attribute_columns)
+    output = create_base_documents_flow(
+        source, text_units, document_attribute_columns=document_attribute_columns
+    )
 
     return create_verb_result(
         cast(

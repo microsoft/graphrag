@@ -25,14 +25,14 @@ from graphrag.index.storage import PipelineStorage
 @verb(name="create_base_extracted_entities", treats_input_tables_as_immutable=True)
 async def create_base_extracted_entities(
     input: VerbInput,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     storage: PipelineStorage,
     column: str,
     id_column: str,
     nodes: dict[str, Any],
     edges: dict[str, Any],
-    strategy: dict[str, Any] | None,
+    extraction_strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
     num_threads: int = 4,
@@ -45,18 +45,18 @@ async def create_base_extracted_entities(
 
     output = await create_base_extracted_entities_flow(
         source,
-        cache,
         callbacks,
+        cache,
         storage,
         column,
         id_column,
         nodes,
         edges,
-        strategy,
-        async_mode,
-        entity_types,
-        graphml_snapshot_enabled,
-        raw_entity_snapshot_enabled,
+        extraction_strategy,
+        async_mode=async_mode,
+        entity_types=entity_types,
+        graphml_snapshot_enabled=graphml_snapshot_enabled,
+        raw_entity_snapshot_enabled=raw_entity_snapshot_enabled,
         num_threads=num_threads,
     )
 

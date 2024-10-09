@@ -50,7 +50,7 @@ async def create_final_text_units(
         final_covariates,
         callbacks,
         cache,
-        text_text_embed,
+        text_text_embed=text_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

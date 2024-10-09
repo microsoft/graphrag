@@ -13,30 +13,30 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.covariates.extract_covariates.extract_covariates import (
-    extract_covariates_df,
+from graphrag.index.operations.extract_covariates import (
+    extract_covariates,
 )
 
 
 async def create_final_covariates(
     text_units: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     covariate_type: str,
-    strategy: dict[str, Any] | None,
+    extraction_strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to extract and format covariates."""
-    covariates = await extract_covariates_df(
+    covariates = await extract_covariates(
         text_units,
-        cache,
         callbacks,
+        cache,
         column,
         covariate_type,
-        strategy,
+        extraction_strategy,
         async_mode,
         entity_types,
         num_threads,

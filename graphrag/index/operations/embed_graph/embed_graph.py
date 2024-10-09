@@ -10,6 +10,8 @@ import networkx as nx
 import pandas as pd
 from datashaper import VerbCallbacks, derive_from_rows
 
+from graphrag.index.graph.embedding import embed_nod2vec
+from graphrag.index.graph.utils import stable_largest_connected_component
 from graphrag.index.utils import load_graph
 
 from .typing import NodeEmbeddings
@@ -85,9 +87,29 @@ def run_embeddings(
     graph = load_graph(graphml_or_graph)
     match strategy:
         case EmbedGraphStrategyType.node2vec:
-            from .strategies.node_2_vec import run as run_node_2_vec
-
             return run_node_2_vec(graph, args)
         case _:
             msg = f"Unknown strategy {strategy}"
             raise ValueError(msg)
+
+
+def run_node_2_vec(graph: nx.Graph, args: dict[str, Any]) -> NodeEmbeddings:
+    """Run method definition."""
+    if args.get("use_lcc", True):
+        graph = stable_largest_connected_component(graph)
+
+    # create graph embedding using node2vec
+    embeddings = embed_nod2vec(
+        graph=graph,
+        dimensions=args.get("dimensions", 1536),
+        num_walks=args.get("num_walks", 10),
+        walk_length=args.get("walk_length", 40),
+        window_size=args.get("window_size", 2),
+        iterations=args.get("iterations", 3),
+        random_seed=args.get("random_seed", 86),
+    )
+
+    pairs = zip(embeddings.nodes, embeddings.embeddings.tolist(), strict=True)
+    sorted_pairs = sorted(pairs, key=lambda x: x[0])
+
+    return dict(sorted_pairs)

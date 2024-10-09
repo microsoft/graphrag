@@ -53,6 +53,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     pipeline_config = create_pipeline_config(config)
 
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
+
     return cast(PipelineWorkflowConfig, result.config)
 
 

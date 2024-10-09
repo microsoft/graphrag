@@ -11,11 +11,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text.embed_text import embed_text
-from graphrag.index.verbs.graph.compute_edge_combined_degree import (
-    compute_edge_combined_degree_df,
+from graphrag.index.operations.compute_edge_combined_degree import (
+    compute_edge_combined_degree,
 )
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
+from graphrag.index.operations.embed_text import embed_text
+from graphrag.index.operations.unpack_graph import unpack_graph
 
 
 async def create_final_relationships(
@@ -26,7 +26,7 @@ async def create_final_relationships(
     description_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    graph_edges = unpack_graph_df(entity_graph, callbacks, "clustered_graph", "edges")
+    graph_edges = unpack_graph(entity_graph, callbacks, "clustered_graph", "edges")
 
     graph_edges.rename(columns={"source_id": "text_unit_ids"}, inplace=True)
 
@@ -49,7 +49,7 @@ async def create_final_relationships(
     filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
     filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
-    edge_combined_degree = compute_edge_combined_degree_df(
+    edge_combined_degree = compute_edge_combined_degree(
         pruned_edges,
         filtered_nodes,
         to="rank",

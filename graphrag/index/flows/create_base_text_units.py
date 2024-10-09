@@ -3,14 +3,19 @@
 
 """All the steps to transform base text_units."""
 
+from dataclasses import dataclass
 from typing import Any, cast
 
 import pandas as pd
-from datashaper import VerbCallbacks
+from datashaper import (
+    FieldAggregateOperation,
+    Progress,
+    VerbCallbacks,
+    aggregate_operation_mapping,
+)
 
-from graphrag.index.verbs.genid import genid_df
-from graphrag.index.verbs.overrides.aggregate import aggregate_df
-from graphrag.index.verbs.text.chunk.text_chunk import chunk_df
+from graphrag.index.operations.chunk_text import chunk_text
+from graphrag.index.utils import gen_md5_hash
 
 
 def create_base_text_units(
@@ -19,7 +24,7 @@ def create_base_text_units(
     chunk_column_name: str,
     n_tokens_column_name: str,
     chunk_by_columns: list[str],
-    strategy: dict[str, Any] | None = None,
+    chunk_strategy: dict[str, Any] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -28,7 +33,9 @@ def create_base_text_units(
         zip(*[sort[col] for col in ["id", "text"]], strict=True)
     )
 
-    aggregated = aggregate_df(
+    callbacks.progress(Progress(percent=0))
+
+    aggregated = _aggregate_df(
         sort,
         groupby=[*chunk_by_columns] if len(chunk_by_columns) > 0 else None,
         aggregations=[
@@ -40,12 +47,14 @@ def create_base_text_units(
         ],
     )
 
-    chunked = chunk_df(
+    callbacks.progress(Progress(percent=1))
+
+    chunked = chunk_text(
         aggregated,
         column="texts",
         to="chunks",
         callbacks=callbacks,
-        strategy=strategy,
+        strategy=chunk_strategy,
     )
 
     chunked = cast(pd.DataFrame, chunked[[*chunk_by_columns, "chunks"]])
@@ -56,11 +65,9 @@ def create_base_text_units(
         },
         inplace=True,
     )
-
-    chunked = genid_df(
-        chunked, to="chunk_id", method="md5_hash", hash=[chunk_column_name]
+    chunked["chunk_id"] = chunked.apply(
+        lambda row: gen_md5_hash(row, [chunk_column_name]), axis=1
     )
-
     chunked[["document_ids", chunk_column_name, n_tokens_column_name]] = pd.DataFrame(
         chunked[chunk_column_name].tolist(), index=chunked.index
     )
@@ -69,3 +76,57 @@ def create_base_text_units(
     return cast(
         pd.DataFrame, chunked[chunked[chunk_column_name].notna()].reset_index(drop=True)
     )
+
+
+# TODO: would be nice to inline this completely in the main method with pandas
+def _aggregate_df(
+    input: pd.DataFrame,
+    aggregations: list[dict[str, Any]],
+    groupby: list[str] | None = None,
+) -> pd.DataFrame:
+    """Aggregate method definition."""
+    aggregations_to_apply = _load_aggregations(aggregations)
+    df_aggregations = {
+        agg.column: _get_pandas_agg_operation(agg)
+        for agg in aggregations_to_apply.values()
+    }
+    if groupby is None:
+        output_grouped = input.groupby(lambda _x: True)
+    else:
+        output_grouped = input.groupby(groupby, sort=False)
+    output = cast(pd.DataFrame, output_grouped.agg(df_aggregations))
+    output.rename(
+        columns={agg.column: agg.to for agg in aggregations_to_apply.values()},
+        inplace=True,
+    )
+    output.columns = [agg.to for agg in aggregations_to_apply.values()]
+    return output.reset_index()
+
+
+@dataclass
+class Aggregation:
+    """Aggregation class method definition."""
+
+    column: str | None
+    operation: str
+    to: str
+
+    # Only useful for the concat operation
+    separator: str | None = None
+
+
+def _get_pandas_agg_operation(agg: Aggregation) -> Any:
+    if agg.operation == "string_concat":
+        return (agg.separator or ",").join
+    return aggregate_operation_mapping[FieldAggregateOperation(agg.operation)]
+
+
+def _load_aggregations(
+    aggregations: list[dict[str, Any]],
+) -> dict[str, Aggregation]:
+    return {
+        aggregation["column"]: Aggregation(
+            aggregation["column"], aggregation["operation"], aggregation["to"]
+        )
+        for aggregation in aggregations
+    }
