@@ -11,35 +11,35 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.storage import PipelineStorage
-from graphrag.index.verbs.entities.summarize.description_summarize import (
-    summarize_descriptions_df,
+from graphrag.index.operations.snapshot_rows import snapshot_rows
+from graphrag.index.operations.summarize_descriptions import (
+    summarize_descriptions,
 )
-from graphrag.index.verbs.snapshot_rows import snapshot_rows_df
+from graphrag.index.storage import PipelineStorage
 
 
 async def create_summarized_entities(
     entities: pd.DataFrame,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     storage: PipelineStorage,
-    strategy: dict[str, Any] | None = None,
+    summarization_strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
     graphml_snapshot_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to summarize entities."""
-    summarized = await summarize_descriptions_df(
+    summarized = await summarize_descriptions(
         entities,
-        cache,
         callbacks,
+        cache,
         column="entity_graph",
         to="entity_graph",
-        strategy=strategy,
+        strategy=summarization_strategy,
         num_threads=num_threads,
     )
 
     if graphml_snapshot_enabled:
-        await snapshot_rows_df(
+        await snapshot_rows(
             summarized,
             column="entity_graph",
             base_name="summarized_graph",

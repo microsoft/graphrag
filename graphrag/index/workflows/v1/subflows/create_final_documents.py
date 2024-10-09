@@ -38,7 +38,7 @@ async def create_final_documents(
         source,
         callbacks,
         cache,
-        raw_content_text_embed,
+        raw_content_text_embed=raw_content_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

@@ -6,7 +6,7 @@ layout: page
 date: 2023-01-03
 ---
 
-The default configuration mode may be configured by using a `config.json` or `config.yml` file in the data project root. If a `.env` file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using `${ENV_VAR}` syntax.
+The default configuration mode may be configured by using a `settings.json` or `settings.yml` file in the data project root. If a `.env` file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using `${ENV_VAR}` syntax.
 
 For example:
 
@@ -14,7 +14,7 @@ For example:
 # .env
 API_KEY=some_api_key
 
-# config.json
+# settings.json
 {
     "llm": {
         "api_key": "${API_KEY}"

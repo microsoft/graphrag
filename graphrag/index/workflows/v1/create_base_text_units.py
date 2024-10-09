@@ -22,7 +22,8 @@ def build_steps(
     chunk_column_name = config.get("chunk_column", "chunk")
     chunk_by_columns = config.get("chunk_by", []) or []
     n_tokens_column_name = config.get("n_tokens_column", "n_tokens")
-    text_chunk = config.get("text_chunk", {})
+    text_chunk_config = config.get("text_chunk", {})
+    chunk_strategy = text_chunk_config.get("strategy")
     return [
         {
             "verb": "create_base_text_units",
@@ -30,7 +31,7 @@ def build_steps(
                 "chunk_column_name": chunk_column_name,
                 "n_tokens_column_name": n_tokens_column_name,
                 "chunk_by_columns": chunk_by_columns,
-                **text_chunk,
+                "chunk_strategy": chunk_strategy,
             },
             "input": {"source": DEFAULT_INPUT_NAME},
         },

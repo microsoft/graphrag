@@ -42,7 +42,7 @@ async def create_base_entity_graph(
         storage,
         clustering_strategy,
         embedding_strategy,
-        graphml_snapshot_enabled,
+        graphml_snapshot_enabled=graphml_snapshot_enabled,
     )
 
     return create_verb_result(cast(Table, output))
