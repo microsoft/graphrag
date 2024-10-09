@@ -25,7 +25,7 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 
 ## Input Data
 
-Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with `GRAPHRAG_INPUT_` below. In general, CSV-based data provides the most customizeability. Each CSV should at least contain a `text` field (which can be mapped with environment variables), but it's helpful if they also have `title`, `timestamp`, and `source` fields. Additional fields can be included as well, which will land as extra fields on the `Document` table.
+Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with `GRAPHRAG_INPUT_` below. In general, CSV-based data provides the most customizability. Each CSV should at least contain a `text` field (which can be mapped with environment variables), but it's helpful if they also have `title`, `timestamp`, and `source` fields. Additional fields can be included as well, which will land as extra fields on the `Document` table.
 
 ## Base LLM Settings
 
@@ -178,7 +178,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 | `GRAPHRAG_CACHE_STORAGE_ACCOUNT_BLOB_URL` | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity. Will have the format `https://<storage_account_name>.blob.core.windows.net` | `str` | optional             | None    |
 | `GRAPHRAG_CACHE_CONNECTION_STRING`        | The Azure Storage connection string to use when in `blob` mode.                                                                                                    | `str` | optional             | None    |
 | `GRAPHRAG_CACHE_CONTAINER_NAME`           | The Azure Storage container name to use when in `blob` mode.                                                                                                       | `str` | optional             | None    |
-| `GRAPHRAG_CACHE_BASE_DIR`                 | The base path to the reporting outputs.                                                                                                                            | `str` | optional             | None    |
+| `GRAPHRAG_CACHE_BASE_DIR`                 | The base path to the cache files.                                                                                                                                  | `str` | optional             | None    |
 
 ## Reporting
 

@@ -54,15 +54,12 @@ embeddings:
     # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
-    
-  
-
 
 chunks:
   size: {defs.CHUNK_SIZE}
   overlap: {defs.CHUNK_OVERLAP}
   group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
-    
+
 input:
   type: {defs.INPUT_TYPE.value} # or blob
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv

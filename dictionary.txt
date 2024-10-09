@@ -89,7 +89,6 @@ nbconvert
 binarize
 prechunked
 openai
-genid
 umap
 concat
 unhot
@@ -100,6 +99,7 @@ aembed
 dedupe
 dropna
 dtypes
+notna
 
 # LLM Terms
 AOAI

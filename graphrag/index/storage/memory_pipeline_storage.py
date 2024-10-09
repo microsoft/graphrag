@@ -73,6 +73,10 @@ class MemoryPipelineStorage(FilePipelineStorage):
         """Create a child storage instance."""
         return self
 
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        return list(self._storage.keys())
+
 
 def create_memory_storage() -> PipelineStorage:
     """Create memory storage."""
