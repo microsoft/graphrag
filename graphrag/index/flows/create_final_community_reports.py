@@ -31,6 +31,7 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     NODE_ID,
     NODE_NAME,
 )
+from graphrag.index.operations.embed_text.embed_text import embed_text
 from graphrag.index.verbs.graph.report.create_community_reports import (
     create_community_reports_df,
 )
@@ -40,7 +41,6 @@ from graphrag.index.verbs.graph.report.prepare_community_reports import (
 from graphrag.index.verbs.graph.report.restore_community_hierarchy import (
     restore_community_hierarchy_df,
 )
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
 
 
 async def create_final_community_reports(
@@ -87,7 +87,7 @@ async def create_final_community_reports(
 
     # Embed full content if not skipped
     if full_content_text_embed:
-        community_reports["full_content_embedding"] = await text_embed_df(
+        community_reports["full_content_embedding"] = await embed_text(
             community_reports,
             callbacks,
             cache,
@@ -98,7 +98,7 @@ async def create_final_community_reports(
 
     # Embed summary if not skipped
     if summary_text_embed:
-        community_reports["summary_embedding"] = await text_embed_df(
+        community_reports["summary_embedding"] = await embed_text(
             community_reports,
             callbacks,
             cache,
@@ -109,7 +109,7 @@ async def create_final_community_reports(
 
     # Embed title if not skipped
     if title_text_embed:
-        community_reports["title_embedding"] = await text_embed_df(
+        community_reports["title_embedding"] = await embed_text(
             community_reports,
             callbacks,
             cache,

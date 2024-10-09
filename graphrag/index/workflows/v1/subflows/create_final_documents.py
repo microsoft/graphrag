@@ -28,7 +28,7 @@ async def create_final_documents(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    raw_content_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final documents."""
@@ -38,7 +38,7 @@ async def create_final_documents(
         source,
         callbacks,
         cache,
-        text_embed,
+        raw_content_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

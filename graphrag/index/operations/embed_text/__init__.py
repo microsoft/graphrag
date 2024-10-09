@@ -3,6 +3,6 @@
 
 """The Indexing Engine text embed package root."""
 
-from .text_embed import TextEmbedStrategyType, text_embed
+from .embed_text import TextEmbedStrategyType, embed_text
 
-__all__ = ["TextEmbedStrategyType", "text_embed"]
+__all__ = ["TextEmbedStrategyType", "embed_text"]
