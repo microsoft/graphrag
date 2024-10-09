@@ -3,7 +3,9 @@
 
 """A module containing build_steps method definition."""
 
-from datashaper import AsyncType
+from datashaper import (
+    AsyncType,
+)
 
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
@@ -21,9 +23,13 @@ def build_steps(
     * `workflow:create_base_extracted_entities`
     """
     claim_extract_config = config.get("claim_extract", {})
+    extraction_strategy = claim_extract_config.get("strategy")
+    async_mode = claim_extract_config.get("async_mode", AsyncType.AsyncIO)
+    num_threads = claim_extract_config.get("num_threads")
+
     chunk_column = config.get("chunk_column", "chunk")
     chunk_id_column = config.get("chunk_id_column", "chunk_id")
-    async_mode = config.get("async_mode", AsyncType.AsyncIO)
+
     return [
         {
             "verb": "create_final_covariates",
@@ -31,8 +37,9 @@ def build_steps(
                 "column": chunk_column,
                 "id_column": chunk_id_column,
                 "covariate_type": "claim",
+                "extraction_strategy": extraction_strategy,
                 "async_mode": async_mode,
-                **claim_extract_config,
+                "num_threads": num_threads,
             },
             "input": {"source": "workflow:create_base_text_units"},
         },
