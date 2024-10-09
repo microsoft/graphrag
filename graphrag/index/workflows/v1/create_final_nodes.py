@@ -27,7 +27,7 @@ def build_steps(
             },
         },
     )
-    layout_strategy = layout_graph_config["strategy"]
+    layout_strategy = layout_graph_config.get("strategy")
     level_for_node_positions = config.get("level_for_node_positions", 0)
 
     return [

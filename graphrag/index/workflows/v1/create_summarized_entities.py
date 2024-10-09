@@ -18,7 +18,7 @@ def build_steps(
     * `workflow:create_base_text_units`
     """
     summarize_descriptions_config = config.get("summarize_descriptions", {})
-    summarization_strategy = summarize_descriptions_config.get("strategy", {})
+    summarization_strategy = summarize_descriptions_config.get("strategy")
     num_threads = summarize_descriptions_config.get("num_threads", 4)
 
     graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
