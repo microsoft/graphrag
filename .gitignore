@@ -67,3 +67,7 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+
+
+# mkdocs
+site/

@@ -24,7 +24,7 @@
     ".gitattributes": ".gitignore",
     ".yarnrc.yml": "yarn.lock, .pnp.*",
     "jest.config.js": "jest.setup.mjs",
-    "pyproject.toml": "poetry.lock, poetry.toml",
+    "pyproject.toml": "poetry.lock, poetry.toml, mkdocs.yaml",
     "cspell.config.yaml": "dictionary.txt"
   },
   "azureFunctions.postDeployTask": "npm install (functions)",

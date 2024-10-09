@@ -87,6 +87,9 @@ azure-identity = "^1.17.1"
 json-repair = "^0.28.4"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
+mkdocs-material = "^9.5.39"
+mkdocs-jupyter = "^0.25.0"
+mkdocs-exclude-search = "^0.6.6"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
@@ -134,6 +137,9 @@ query = "python -m graphrag.query"
 prompt_tune = "python -m graphrag.prompt_tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
+
+serve_docs = "mkdocs serve"
+build_docs = "mkdocs build"
 
 [[tool.poe.tasks.release]]
 sequence = [

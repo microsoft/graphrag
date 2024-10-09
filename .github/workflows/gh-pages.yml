@@ -1,65 +1,48 @@
 name: gh-pages
 on:
   push:
-    branches: [main]
-
+    branches:
+      - main
 permissions:
   contents: write
 
 env:
-  POETRY_VERSION: 1.8.3
-  PYTHON_VERSION: "3.11"
-  NODE_VERSION: 18.x
+  POETRY_VERSION: '1.8.3'
+  PYTHON_VERSION: '3.12'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      GH_PAGES: 1
-      DEBUG: 1
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+      - name: Use up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
+      
       - name: Install Poetry ${{ env.POETRY_VERSION }}
-        uses: abatilo/actions-poetry@v3.0.0
+        uses: abatilo/actions-poetry@v2.1.6
         with:
           poetry-version: ${{ env.POETRY_VERSION }}
 
-      - name: Use Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Yarn dependencies
-        run: yarn install
-        working-directory: docsite
-
-      - name: Install Poetry dependencies
+      - name: poetry intsall
+        shell: bash
         run: poetry install
+  
+      - name: mkdocs build
+        shell: bash
+        run: poetry run poe build_docs
 
-      - name: Build Jupyter Notebooks
-        run: poetry run poe convert_docsite_notebooks
-
-      - name: Build docsite
-        run: yarn build
-        working-directory: docsite
-        env:
-          DOCSITE_BASE_URL: "graphrag"
-
-      - name: List docsite files
-        run: find docsite/_site
+      - name: List Docsite Contents
+        run: find site
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.6.4
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages
-          folder: docsite/_site
+          folder: site
           clean: true
