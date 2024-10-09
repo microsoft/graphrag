@@ -9,22 +9,22 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text.embed_text import embed_text
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
-from graphrag.index.verbs.text.split import text_split_df
+from graphrag.index.operations.embed_text import embed_text
+from graphrag.index.operations.split_text import split_text
+from graphrag.index.operations.unpack_graph import unpack_graph
 
 
 async def create_final_entities(
     entity_graph: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    name_text_embed: dict,
-    description_text_embed: dict,
+    name_text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
     # Process nodes
     nodes = (
-        unpack_graph_df(entity_graph, callbacks, "clustered_graph", "nodes")
+        unpack_graph(entity_graph, callbacks, "clustered_graph", "nodes")
         .rename(columns={"label": "name"})
         .loc[
             :,
@@ -44,7 +44,7 @@ async def create_final_entities(
     nodes = nodes.loc[nodes["name"].notna()]
 
     # Split 'source_id' column into 'text_unit_ids'
-    nodes = text_split_df(
+    nodes = split_text(
         nodes, column="source_id", separator=",", to="text_unit_ids"
     ).drop(columns=["source_id"])
 

@@ -24,11 +24,11 @@ from graphrag.index.flows.create_final_covariates import (
 @verb(name="create_final_covariates", treats_input_tables_as_immutable=True)
 async def create_final_covariates(
     input: VerbInput,
-    cache: PipelineCache,
     callbacks: VerbCallbacks,
+    cache: PipelineCache,
     column: str,
     covariate_type: str,
-    strategy: dict[str, Any] | None,
+    extraction_strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
     num_threads: int = 4,
@@ -39,14 +39,14 @@ async def create_final_covariates(
 
     output = await create_final_covariates_flow(
         source,
-        cache,
         callbacks,
+        cache,
         column,
         covariate_type,
-        strategy,
-        async_mode,
-        entity_types,
-        num_threads,
+        extraction_strategy,
+        async_mode=async_mode,
+        entity_types=entity_types,
+        num_threads=num_threads,
     )
 
     return create_verb_result(cast(Table, output))

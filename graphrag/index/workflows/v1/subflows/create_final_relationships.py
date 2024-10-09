@@ -41,7 +41,7 @@ async def create_final_relationships(
         nodes,
         callbacks,
         cache,
-        description_text_embed,
+        description_text_embed=description_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

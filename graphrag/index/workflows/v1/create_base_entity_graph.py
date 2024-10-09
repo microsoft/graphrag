@@ -21,7 +21,7 @@ def build_steps(
         "cluster_graph",
         {"strategy": {"type": "leiden"}},
     )
-    clustering_strategy = clustering_config["strategy"]
+    clustering_strategy = clustering_config.get("strategy")
 
     embed_graph_config = config.get(
         "embed_graph",
@@ -36,7 +36,7 @@ def build_steps(
             }
         },
     )
-    embedding_strategy = embed_graph_config["strategy"]
+    embedding_strategy = embed_graph_config.get("strategy")
     embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
     graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False

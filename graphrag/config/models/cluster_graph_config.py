@@ -20,7 +20,7 @@ class ClusterGraphConfig(BaseModel):
 
     def resolved_strategy(self) -> dict:
         """Get the resolved cluster strategy."""
-        from graphrag.index.verbs.graph.clustering import GraphCommunityStrategyType
+        from graphrag.index.operations.cluster_graph import GraphCommunityStrategyType
 
         return self.strategy or {
             "type": GraphCommunityStrategyType.leiden,
