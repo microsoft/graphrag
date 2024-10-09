@@ -289,12 +289,12 @@ a {
         <!-- Main Content -->
         <main>
             <h1>Default Configuration Mode (using JSON/YAML)</h1>
-            <p>The default configuration mode may be configured by using a <code>config.json</code> or <code>config.yml</code> file in the data project root. If a <code>.env</code> file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using <code>${ENV_VAR}</code> syntax.</p>
+            <p>The default configuration mode may be configured by using a <code>settings.json</code> or <code>settings.yml</code> file in the data project root. If a <code>.env</code> file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using <code>${ENV_VAR}</code> syntax.</p>
 <p>For example:</p>
 <pre><code># .env
 API_KEY=some_api_key
 
-# config.json
+# settings.json
 {
     &quot;llm&quot;: {
         &quot;api_key&quot;: &quot;${API_KEY}&quot;
