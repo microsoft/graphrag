@@ -13,7 +13,10 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.verbs.overrides.aggregate import aggregate_df
+from graphrag.index.flows.create_base_documents import (
+    create_base_documents as create_base_documents_flow,
+)
+from graphrag.index.utils.ds_util import get_required_input_table
 
 
 @verb(name="create_base_documents", treats_input_tables_as_immutable=True)
@@ -24,61 +27,15 @@ def create_base_documents(
 ) -> VerbResult:
     """All the steps to transform base documents."""
     source = cast(pd.DataFrame, input.get_input())
-    text_units = cast(pd.DataFrame, input.get_others()[0])
+    text_units = cast(pd.DataFrame, get_required_input_table(input, "text_units").table)
 
-    text_units = cast(
-        pd.DataFrame, text_units.explode("document_ids")[["id", "document_ids", "text"]]
+    output = create_base_documents_flow(
+        source, text_units, document_attribute_columns=document_attribute_columns
     )
-    text_units.rename(
-        columns={
-            "document_ids": "chunk_doc_id",
-            "id": "chunk_id",
-            "text": "chunk_text",
-        },
-        inplace=True,
-    )
-
-    joined = text_units.merge(
-        source,
-        left_on="chunk_doc_id",
-        right_on="id",
-        how="inner",
-    )
-
-    docs_with_text_units = aggregate_df(
-        joined,
-        groupby=["id"],
-        aggregations=[
-            {
-                "column": "chunk_id",
-                "operation": "array_agg",
-                "to": "text_units",
-            }
-        ],
-    )
-
-    rejoined = docs_with_text_units.merge(
-        source,
-        on="id",
-        how="right",
-    )
-    rejoined.rename(columns={"text": "raw_content"}, inplace=True)
-    rejoined["id"] = rejoined["id"].astype(str)
-
-    # attribute columns are converted to strings and then collapsed into a single json object
-    if document_attribute_columns:
-        for column in document_attribute_columns:
-            rejoined[column] = rejoined[column].astype(str)
-        rejoined["attributes"] = rejoined[document_attribute_columns].apply(
-            lambda row: {**row},
-            axis=1,
-        )
-        rejoined.drop(columns=document_attribute_columns, inplace=True)
-        rejoined.reset_index()
 
     return create_verb_result(
         cast(
             Table,
-            rejoined,
+            output,
         )
     )

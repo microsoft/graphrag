@@ -10,9 +10,12 @@ from pandas.testing import assert_series_equal
 from graphrag.config import create_graphrag_config
 from graphrag.index import (
     PipelineWorkflowConfig,
-    PipelineWorkflowStep,
     create_pipeline_config,
 )
+from graphrag.index.run.utils import _create_run_context
+from graphrag.index.storage.typing import PipelineStorage
+
+pd.set_option("display.max_columns", None)
 
 
 def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
@@ -43,15 +46,21 @@ def load_expected(output: str) -> pd.DataFrame:
 def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     """Instantiates the bare minimum config to get a default workflow config for testing."""
     config = create_graphrag_config()
-    print(config)
+
+    # this flag needs to be set before creating the pipeline config, or the entire covariate workflow will be excluded
+    config.claim_extraction.enabled = True
+
     pipeline_config = create_pipeline_config(config)
-    print(pipeline_config.workflows)
+
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
+
     return cast(PipelineWorkflowConfig, result.config)
 
 
 async def get_workflow_output(
-    input_tables: dict[str, pd.DataFrame], schema: dict
+    input_tables: dict[str, pd.DataFrame],
+    schema: dict,
+    storage: PipelineStorage | None = None,
 ) -> pd.DataFrame:
     """Pass in the input tables, the schema, and the output name"""
 
@@ -61,7 +70,9 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    await workflow.run()
+    context = _create_run_context(storage, None, None)
+
+    await workflow.run(context=context)
 
     # if there's only one output, it is the default here, no name required
     return cast(pd.DataFrame, workflow.output())
@@ -76,22 +87,18 @@ def compare_outputs(
 
     assert len(actual) == len(
         expected
-    ), f"Expected: {len(expected)}, Actual: {len(actual)}"
+    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
 
     for column in cols:
         assert column in actual.columns
         try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
-            assert_series_equal(actual[column], expected[column], check_dtype=False)
+            assert_series_equal(
+                actual[column], expected[column], check_dtype=False, check_index=False
+            )
         except AssertionError:
             print("Expected:")
             print(expected[column])
             print("Actual:")
-            print(actual[columns])
+            print(actual[column])
             raise
-
-
-def remove_disabled_steps(
-    steps: list[PipelineWorkflowStep],
-) -> list[PipelineWorkflowStep]:
-    return [step for step in steps if step.get("enabled", True)]

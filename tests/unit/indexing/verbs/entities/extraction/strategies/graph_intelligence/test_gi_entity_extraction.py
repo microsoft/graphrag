@@ -4,9 +4,11 @@ import unittest
 
 import networkx as nx
 
-from graphrag.index.verbs.entities.extraction.strategies.graph_intelligence.run_graph_intelligence import (
-    Document,
+from graphrag.index.operations.extract_entities.strategies.graph_intelligence import (
     run_extract_entities,
+)
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
 )
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
 
@@ -16,7 +18,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("test_text", "1")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -51,7 +53,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -88,7 +90,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -133,7 +135,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
@@ -181,7 +183,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         results = await run_extract_entities(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
-            reporter=None,
+            callbacks=None,
             args={
                 "prechunked": True,
                 "max_gleanings": 0,
