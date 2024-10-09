@@ -1,31 +1,33 @@
 name: gh-pages
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 permissions:
   contents: write
 
 env:
   POETRY_VERSION: '1.8.3'
-  PYTHON_VERSION: '3.12'
+  PYTHON_VERSION: '3.11'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GH_PAGES: 1
+      DEBUG: 1
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Use up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v2
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       
       - name: Install Poetry ${{ env.POETRY_VERSION }}
-        uses: abatilo/actions-poetry@v2.1.6
+        uses: abatilo/actions-poetry@v3.0.0
         with:
           poetry-version: ${{ env.POETRY_VERSION }}
 
