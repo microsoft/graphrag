@@ -99,9 +99,7 @@ async def update_dataframe_outputs(
     )
     # Save the updated entities back to storage
     # TODO: Using _new in the meantime, to compare outputs without overwriting the original
-    await storage.set(
-        "create_final_entities_new.parquet", merged_entities_df.to_parquet()
-    )
+    await storage.set("create_final_entities.parquet", merged_entities_df.to_parquet())
 
     # Update relationships with the entities id mapping
     old_relationships = await _load_table_from_storage(
@@ -115,7 +113,7 @@ async def update_dataframe_outputs(
 
     # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set(
-        "create_final_relationships_new.parquet", merged_relationships_df.to_parquet()
+        "create_final_relationships.parquet", merged_relationships_df.to_parquet()
     )
 
     # Update and merge final text units
@@ -129,9 +127,7 @@ async def update_dataframe_outputs(
     )
 
     # TODO: Using _new in the meantime, to compare outputs without overwriting the original
-    await storage.set(
-        "create_final_text_units_new.parquet", merged_text_units.to_parquet()
-    )
+    await storage.set("create_final_text_units.parquet", merged_text_units.to_parquet())
 
     # Merge final nodes and update community ids
     old_nodes = await _load_table_from_storage("create_final_nodes.parquet", storage)
@@ -141,7 +137,7 @@ async def update_dataframe_outputs(
         old_nodes, delta_nodes, merged_entities_df
     )
 
-    await storage.set("create_final_nodes_new.parquet", merged_nodes.to_parquet())
+    await storage.set("create_final_nodes.parquet", merged_nodes.to_parquet())
 
     # Merge final communities
     old_communities = await _load_table_from_storage(
@@ -153,7 +149,7 @@ async def update_dataframe_outputs(
     )
 
     await storage.set(
-        "create_final_communities_new.parquet", merged_communities.to_parquet()
+        "create_final_communities.parquet", merged_communities.to_parquet()
     )
 
     # Merge community reports
@@ -167,7 +163,7 @@ async def update_dataframe_outputs(
     )
 
     await storage.set(
-        "create_final_community_reports_new.parquet",
+        "create_final_community_reports.parquet",
         merged_community_reports.to_parquet(),
     )
 
@@ -191,7 +187,7 @@ async def _concat_dataframes(name, dataframe_dict, storage):
     final_df = pd.concat([old_df, delta_df], copy=False)
 
     # TODO: Using _new in the mean time, to compare outputs without overwriting the original
-    await storage.set(f"{name}_new.parquet", final_df.to_parquet())
+    await storage.set(f"{name}.parquet", final_df.to_parquet())
 
 
 def _group_and_resolve_entities(
@@ -421,7 +417,10 @@ def _merge_and_resolve_nodes(
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
 
-    merged_nodes["community"] = old_nodes["community"].astype("Int64")
+    # Mantain type compat with query
+    merged_nodes["community"] = (
+        merged_nodes["community"].astype(pd.StringDtype()).astype("object")
+    )
 
     return merged_nodes, community_id_mapping
 
@@ -475,6 +474,8 @@ def _update_and_merge_communities(
 
     # Rename title
     merged_communities["title"] = "Community " + merged_communities["id"].astype(str)
+    # Mantain type compat with query
+    merged_communities["id"] = merged_communities["id"].astype(str)
     return merged_communities
 
 
@@ -523,6 +524,13 @@ def _update_and_merge_community_reports(
     )
 
     # Merge the final community reports
-    return pd.concat(
+    merged_community_reports = pd.concat(
         [old_community_reports, delta_community_reports], ignore_index=True, copy=False
     )
+
+    # Mantain type compat with query
+    merged_community_reports["community"] = (
+        merged_community_reports["community"].astype(pd.StringDtype()).astype("object")
+    )
+
+    return merged_community_reports

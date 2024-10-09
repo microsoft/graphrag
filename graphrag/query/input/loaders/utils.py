@@ -77,6 +77,9 @@ def to_optional_list(
         if isinstance(value, np.ndarray):
             value = value.tolist()
 
+        if isinstance(value, str):
+            value = [value]
+
         if not isinstance(value, list):
             msg = f"value is not a list: {value} ({type(value)})"
             raise ValueError(msg)
