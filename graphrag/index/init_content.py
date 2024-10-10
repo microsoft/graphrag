@@ -41,13 +41,13 @@ embeddings:
   # target: {defs.EMBEDDING_TARGET.value} # or all
   # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
   # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-  # vector_store:
+  # vector_store: # configured for lancedb by default
     # type: azure_ai_search # or lancedb
     # url: <ai_search_url>
     # api_key: <api_key>
     # audience: https://search.windows.net
     # overwrite: True # or False
-    # collection_name: <collection_name>
+    # collection_name: entity_description_embeddings
     # title_column: <title_column>
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
