@@ -1,4 +1,4 @@
-# Developing GraphRAG
+# Development Guide
 
 # Requirements
 
