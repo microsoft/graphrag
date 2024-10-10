@@ -125,14 +125,6 @@
             "subworkflows": 1,
             "max_runtime": 100
         },
-        "create_base_documents": {
-            "row_range": [
-                1,
-                2000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 10
-        },
         "create_final_documents": {
             "row_range": [
                 1,

@@ -7,12 +7,6 @@
 from .v1.subflows import *  # noqa
 
 from .typing import WorkflowDefinitions
-from .v1.create_base_documents import (
-    build_steps as build_create_base_documents_steps,
-)
-from .v1.create_base_documents import (
-    workflow_name as create_base_documents,
-)
 from .v1.create_base_entity_graph import (
     build_steps as build_create_base_entity_graph_steps,
 )
@@ -97,7 +91,6 @@ default_workflows: WorkflowDefinitions = {
     create_final_relationships: build_create_final_relationships_steps,
     create_final_documents: build_create_final_documents_steps,
     create_final_covariates: build_create_final_covariates_steps,
-    create_base_documents: build_create_base_documents_steps,
     create_final_entities: build_create_final_entities_steps,
     create_final_communities: build_create_final_communities_steps,
     create_summarized_entities: build_create_summarized_entities_steps,

@@ -17,7 +17,7 @@ def build_steps(
     Create the final documents table.
 
     ## Dependencies
-    * `workflow:create_base_documents`
+    * `workflow:create_final_text_units`
     """
     base_text_embed = config.get("text_embed", {})
     document_raw_content_embed_config = config.get(

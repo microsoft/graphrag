@@ -49,7 +49,6 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
-    create_base_documents,
     create_base_entity_graph,
     create_base_extracted_entities,
     create_base_text_units,
@@ -173,17 +172,12 @@ def _document_workflows(
     )
     return [
         PipelineWorkflowReference(
-            name=create_base_documents,
+            name=create_final_documents,
             config={
                 "document_attribute_columns": list(
                     {*(settings.input.document_attribute_columns)}
                     - builtin_document_attributes
-                )
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_final_documents,
-            config={
+                ),
                 "document_raw_content_embed": _get_embedding_settings(
                     settings.embeddings,
                     "document_raw_content",
