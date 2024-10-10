@@ -48,7 +48,7 @@ mkdir -p ./ragtest/input
 Now let's get a copy of A Christmas Carol by Charles Dickens from a trusted source
 
 ```sh
-curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt > ./ragtest/input/book.txt
+curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./ragtest/input/book.txt
 ```
 
 Next we'll inject some required config variables:

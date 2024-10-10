@@ -27,8 +27,9 @@ def build_steps(
         {
             "verb": "create_final_relationships",
             "args": {
-                "skip_embedding": skip_description_embedding,
-                "text_embed": relationship_description_embed_config,
+                "description_text_embed": relationship_description_embed_config
+                if not skip_description_embedding
+                else None,
             },
             "input": {
                 "source": "workflow:create_base_entity_graph",
