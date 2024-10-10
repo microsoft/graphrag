@@ -87,13 +87,21 @@ class GlobalCommunityContext(GlobalContextBuilder):
             context_name=context_name,
             random_state=self.random_state,
         )
-        if isinstance(community_context, list):
-            final_context = [
-                f"{conversation_history_context}\n\n{context}"
-                for context in community_context
-            ]
-        else:
-            final_context = f"{conversation_history_context}\n\n{community_context}"
 
+        # Prepare context_prefix based on whether conversation_history_context exists
+        context_prefix = (
+            f"{conversation_history_context}\n\n"
+            if conversation_history_context
+            else ""
+        )
+
+        final_context = (
+            [f"{context_prefix}{context}" for context in community_context]
+            if isinstance(community_context, list)
+            else f"{context_prefix}{community_context}"
+        )
+
+        # Update the final context data with the provided community_context_data
         final_context_data.update(community_context_data)
-        return (final_context, final_context_data)
+
+        return final_context, final_context_data

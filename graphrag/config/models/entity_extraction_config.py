@@ -35,7 +35,9 @@ class EntityExtractionConfig(LLMConfig):
 
     def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
         """Get the resolved entity extraction strategy."""
-        from graphrag.index.verbs.entities.extraction import ExtractEntityStrategyType
+        from graphrag.index.operations.extract_entities import (
+            ExtractEntityStrategyType,
+        )
 
         return self.strategy or {
             "type": ExtractEntityStrategyType.graph_intelligence,

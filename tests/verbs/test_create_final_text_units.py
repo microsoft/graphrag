@@ -12,7 +12,6 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
@@ -30,7 +29,7 @@ async def test_create_final_text_units():
     config["covariates_enabled"] = True
     config["skip_text_unit_embedding"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -56,7 +55,7 @@ async def test_create_final_text_units_no_covariates():
     config["covariates_enabled"] = False
     config["skip_text_unit_embedding"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -90,7 +89,7 @@ async def test_create_final_text_units_with_embeddings():
     # just override the strategy to mock so the rest of the required parameters are in place
     config["text_unit_text_embed"]["strategy"]["type"] = "mock"
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
