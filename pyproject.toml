@@ -115,6 +115,8 @@ _sort_imports = "ruff check --select I --fix . --preview"
 _format_code = "ruff format  . --preview"
 _ruff_check = 'ruff check . --preview'
 _pyright = "pyright"
+_convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
+_convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 _semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
@@ -145,6 +147,10 @@ sequence = [
     '_semversioner_changelog',
     '_semversioner_update_toml_version',
 ]
+ignore_fail = 'return_non_zero'
+
+[[tool.poe.tasks.convert_docsite_notebooks]]
+sequence = ['_convert_local_search_nb', '_convert_global_search_nb']
 ignore_fail = 'return_non_zero'
 
 [[tool.poe.tasks.format]]
