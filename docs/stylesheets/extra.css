@@ -1,9 +1,7 @@
 .md-tabs__item--active {
-    background-color: var(--md-accent-bg-color);
-    opacity: 0.4;
+    background-color: var(--md-primary-bg-color);
 }
 
 .md-tabs__item--active .md-tabs__link {
-    color: var(--md-accent-fg-color);
-    opacity: 1 ;
+    color: var(--md-code-hl-color);
 }
