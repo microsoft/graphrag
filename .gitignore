@@ -1,5 +1,6 @@
 # Python Artifacts
 python/*/lib/
+dist/
 # Test Output
 .coverage
 coverage/
@@ -44,3 +45,8 @@ ragtest/
 
 # mkdocs
 site/
+
+# Docs migration
+docsite/
+.yarn/
+.pnp*
