@@ -25,21 +25,20 @@ import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config import GraphRagConfig
-from graphrag.index.progress.types import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 from graphrag.model.entity import Entity
-from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
-
-from .factories import get_global_search_engine, get_local_search_engine
-from .indexer_adapters import (
+from graphrag.query.factories import get_global_search_engine, get_local_search_engine
+from graphrag.query.indexer_adapters import (
     read_indexer_covariates,
     read_indexer_entities,
     read_indexer_relationships,
     read_indexer_reports,
     read_indexer_text_units,
 )
-from .input.loaders.dfs import store_entity_semantic_embeddings
+from graphrag.query.input.loaders.dfs import store_entity_semantic_embeddings
+from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
+from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 

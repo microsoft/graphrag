@@ -1,18 +1,18 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Load a progress reporter."""
+"""Factory functions for creating loggers."""
 
-from .rich import RichProgressReporter
+from .null_progress import NullProgressReporter
+from .print_progress import PrintProgressReporter
+from .rich_progress import RichProgressReporter
 from .types import (
-    NullProgressReporter,
-    PrintProgressReporter,
     ProgressReporter,
     ReporterType,
 )
 
 
-def load_progress_reporter(
+def create_progress_reporter(
     reporter_type: ReporterType = ReporterType.NONE,
 ) -> ProgressReporter:
     """Load a progress reporter.

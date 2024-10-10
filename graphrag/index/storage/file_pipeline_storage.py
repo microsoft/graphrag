@@ -16,7 +16,7 @@ from aiofiles.os import remove
 from aiofiles.ospath import exists
 from datashaper import Progress
 
-from graphrag.index.progress import ProgressReporter
+from graphrag.logging import ProgressReporter
 
 from .typing import PipelineStorage
 

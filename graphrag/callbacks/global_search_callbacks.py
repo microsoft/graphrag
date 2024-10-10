@@ -3,8 +3,9 @@
 
 """GlobalSearch LLM Callbacks."""
 
-from graphrag.query.llm.base import BaseLLMCallback
 from graphrag.query.structured_search.base import SearchResult
+
+from .llm_callbacks import BaseLLMCallback
 
 
 class GlobalSearchLLMCallback(BaseLLMCallback):

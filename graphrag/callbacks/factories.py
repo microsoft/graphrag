@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Load pipeline reporter method."""
+"""Create a pipeline reporter."""
 
 from pathlib import Path
 from typing import cast
@@ -20,7 +20,7 @@ from .console_workflow_callbacks import ConsoleWorkflowCallbacks
 from .file_workflow_callbacks import FileWorkflowCallbacks
 
 
-def load_pipeline_reporter(
+def create_pipeline_reporter(
     config: PipelineReportingConfig | None, root_dir: str | None
 ) -> WorkflowCallbacks:
     """Create a reporter for the given pipeline config."""
