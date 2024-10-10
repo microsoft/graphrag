@@ -51,6 +51,7 @@ nav:
       - Overview: 'query/notebooks/overview.md'
       - Global Search: 'examples_notebooks/global_search.ipynb'
       - Local Search: 'examples_notebooks/local_search.ipynb'
+  - Microsoft Research Blog: 'blog_posts.md'
   - Extras:
     - Operation Dulce: 
       - About: 'data/operation_dulce/ABOUT.md'
@@ -93,6 +94,7 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
   - attr_list
+  - md_in_html
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
