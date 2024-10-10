@@ -47,7 +47,6 @@ from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
 from graphrag.index.update.dataframes import get_delta_docs, update_dataframe_outputs
-from graphrag.index.verbs import *  # noqa
 from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,

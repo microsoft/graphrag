@@ -2,7 +2,9 @@
 # Licensed under the MIT License
 
 import networkx as nx
+import pytest
 
+from graphrag.config.enums import LLMType
 from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.index.workflows.v1.create_summarized_entities import (
     build_steps,
@@ -16,6 +18,17 @@ from .util import (
     load_input_tables,
 )
 
+MOCK_LLM_RESPONSES = [
+    """
+    This is a MOCK response for the LLM. It is summarized!
+    """.strip()
+]
+
+MOCK_LLM_CONFIG = {
+    "type": LLMType.StaticResponse,
+    "responses": MOCK_LLM_RESPONSES,
+}
+
 
 async def test_create_summarized_entities():
     input_tables = load_input_tables([
@@ -27,7 +40,7 @@ async def test_create_summarized_entities():
 
     config = get_config_for_workflow(workflow_name)
 
-    del config["summarize_descriptions"]["strategy"]["llm"]
+    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_CONFIG
 
     steps = build_steps(config)
 
@@ -76,7 +89,7 @@ async def test_create_summarized_entities_with_snapshots():
 
     config = get_config_for_workflow(workflow_name)
 
-    del config["summarize_descriptions"]["strategy"]["llm"]
+    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_CONFIG
     config["graphml_snapshot"] = True
 
     steps = build_steps(config)
@@ -94,3 +107,23 @@ async def test_create_summarized_entities_with_snapshots():
     assert storage.keys() == [
         "summarized_graph.graphml",
     ], "Graph snapshot keys differ"
+
+
+async def test_create_summarized_entities_missing_llm_throws():
+    input_tables = load_input_tables([
+        "workflow:create_base_extracted_entities",
+    ])
+
+    config = get_config_for_workflow(workflow_name)
+
+    del config["summarize_descriptions"]["strategy"]["llm"]
+
+    steps = build_steps(config)
+
+    with pytest.raises(ValueError):  # noqa PT011
+        await get_workflow_output(
+            input_tables,
+            {
+                "steps": steps,
+            },
+        )
