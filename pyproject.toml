@@ -101,7 +101,7 @@ pytest-timeout = "^2.3.1"
 ruff = "^0.6.5"
 semversioner = "^2.0.3"
 update-toml = "^0.2.1"
-deptry = "^0.16.1"
+deptry = "^0.20.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
