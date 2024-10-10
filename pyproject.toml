@@ -102,6 +102,9 @@ ruff = "^0.6.5"
 semversioner = "^2.0.3"
 update-toml = "^0.2.1"
 deptry = "^0.16.1"
+mkdocs-material = "^9.5.39"
+mkdocs-jupyter = "^0.25.0"
+mkdocs-exclude-search = "^0.6.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
@@ -134,6 +137,9 @@ query = "python -m graphrag.query"
 prompt_tune = "python -m graphrag.prompt_tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
+
+serve_docs = "mkdocs serve"
+build_docs = "mkdocs build"
 
 [[tool.poe.tasks.release]]
 sequence = [

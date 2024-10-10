@@ -1,0 +1,7 @@
+.md-tabs__item--active {
+    background-color: var(--md-primary-bg-color);
+}
+
+.md-tabs__item--active .md-tabs__link {
+    color: var(--md-code-hl-color);
+}
