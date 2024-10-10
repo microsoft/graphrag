@@ -1,12 +1,39 @@
 {
+	"_comment": "Use this file to configure the graphrag project for debugging. You may create other configuration profiles based on these or select one below to use.",
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Attach to Node Functions",
-			"type": "node",
-			"request": "attach",
-			"port": 9229,
-			"preLaunchTask": "func: host start"
+			"name": "Indexer",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "poetry",
+			"args": [
+				"poe", "index",
+				"--root", "<path_to_ragtest_root_demo>"
+			],
+		},
+		{
+			"name": "Query",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "poetry",
+			"args": [
+				"poe", "query",
+				"--root", "<path_to_ragtest_root_demo>",
+				"--method", "global",
+				"What are the top themes in this story",
+			]
+		},
+		{
+			"name": "Prompt Tuning",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "poetry",
+			"args": [
+				"poe", "prompt_tune",
+				"--config",
+				"<path_to_ragtest_root_demo>/settings.yaml",
+			]
 		}
 	]
 }

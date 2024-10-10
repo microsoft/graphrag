@@ -13,6 +13,7 @@ from typing import cast
 import pandas as pd
 from datashaper import WorkflowCallbacks
 
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.index.cache import PipelineCache
 from graphrag.index.config import (
     PipelineConfig,
@@ -21,10 +22,6 @@ from graphrag.index.config import (
 )
 from graphrag.index.emit import TableEmitterType, create_table_emitters
 from graphrag.index.load_pipeline_config import load_pipeline_config
-from graphrag.index.progress import NullProgressReporter, ProgressReporter
-from graphrag.index.reporting import (
-    ConsoleWorkflowCallbacks,
-)
 from graphrag.index.run.cache import _create_cache
 from graphrag.index.run.postprocess import (
     _create_postprocess_steps,
@@ -51,6 +48,10 @@ from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,
     load_workflows,
+)
+from graphrag.logging import (
+    NullProgressReporter,
+    ProgressReporter,
 )
 from graphrag.utils.storage import _create_storage
 

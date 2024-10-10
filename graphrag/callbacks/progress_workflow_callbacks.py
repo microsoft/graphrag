@@ -1,13 +1,13 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A workflow callback manager that emits updates to a ProgressReporter."""
+"""A workflow callback manager that emits updates."""
 
 from typing import Any
 
 from datashaper import ExecutionNode, NoopWorkflowCallbacks, Progress, TableContainer
 
-from graphrag.index.progress import ProgressReporter
+from graphrag.logging import ProgressReporter
 
 
 class ProgressWorkflowCallbacks(NoopWorkflowCallbacks):

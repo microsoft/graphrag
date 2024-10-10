@@ -16,9 +16,8 @@ from pydantic import PositiveInt, validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm import load_llm
-from graphrag.index.progress import PrintProgressReporter
-
-from .generator import (
+from graphrag.logging import PrintProgressReporter
+from graphrag.prompt_tune.generator import (
     MAX_TOKEN_COUNT,
     create_community_summarization_prompt,
     create_entity_extraction_prompt,
@@ -31,11 +30,11 @@ from .generator import (
     generate_entity_types,
     generate_persona,
 )
-from .loader import (
+from graphrag.prompt_tune.loader import (
     MIN_CHUNK_SIZE,
     load_docs_in_chunks,
 )
-from .types import DocSelectionType
+from graphrag.prompt_tune.types import DocSelectionType
 
 
 @validate_call
