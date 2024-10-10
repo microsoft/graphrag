@@ -59,7 +59,8 @@ plugins:
       exclude:
         - 'data/operation_dulce/Operation Dulce v2 1 1.md'
       exclude_unreferenced: true
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      execute: true
 
 repo_url: https://github.com/microsoft/graphrag
 repo_name: graphrag

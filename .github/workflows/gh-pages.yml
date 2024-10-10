@@ -15,6 +15,8 @@ jobs:
     env:
       GH_PAGES: 1
       DEBUG: 1
+      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_NOTEBOOK_KEY }}
+      GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
 
     steps:
       - uses: actions/checkout@v4
