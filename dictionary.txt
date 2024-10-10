@@ -1,5 +1,8 @@
 # Team
 Alonso
+Truitt
+Trinh
+Fernández
 
 # Pythonisms
 PYTHONPATH
