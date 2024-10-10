@@ -12,7 +12,6 @@ from .util import (
     get_workflow_output,
     load_expected,
     load_input_tables,
-    remove_disabled_steps,
 )
 
 
@@ -27,7 +26,7 @@ async def test_create_final_relationships():
 
     config["skip_description_embedding"] = True
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -53,7 +52,7 @@ async def test_create_final_relationships_with_embeddings():
     # just override the strategy to mock so the rest of the required parameters are in place
     config["relationship_description_embed"]["strategy"]["type"] = "mock"
 
-    steps = remove_disabled_steps(build_steps(config))
+    steps = build_steps(config)
 
     actual = await get_workflow_output(
         input_tables,
@@ -65,4 +64,4 @@ async def test_create_final_relationships_with_embeddings():
     assert "description_embedding" in actual.columns
     assert len(actual.columns) == len(expected.columns) + 1
     # the mock impl returns an array of 3 floats for each embedding
-    assert len(actual["description_embedding"][0]) == 3
+    assert len(actual["description_embedding"][:1][0]) == 3
