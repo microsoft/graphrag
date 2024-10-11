@@ -11,22 +11,21 @@ import time
 import warnings
 from pathlib import Path
 
+import graphrag.api as api
 from graphrag.config import (
     CacheType,
     enable_logging_with_config,
     load_config,
     resolve_paths,
 )
+from graphrag.logging import ProgressReporter, ReporterType, create_progress_reporter
 
-from .api import build_index
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .init_content import INIT_DOTENV, INIT_YAML
-from .progress import ProgressReporter, ReporterType
-from .progress.load_progress_reporter import load_progress_reporter
 from .validate_config import validate_config_names
 
 # Ignore warnings from numba
@@ -118,7 +117,7 @@ def index_cli(
     output_dir: str | None,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_reporter(reporter)
+    progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
@@ -161,7 +160,7 @@ def index_cli(
     _register_signal_handlers(progress_reporter)
 
     outputs = asyncio.run(
-        build_index(
+        api.build_index(
             config=config,
             run_id=run_id,
             is_resume_run=bool(resume),

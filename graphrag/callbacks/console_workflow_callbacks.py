@@ -1,13 +1,13 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Console-based reporter for the workflow engine."""
+"""A logger that emits updates from the indexing engine to the console."""
 
 from datashaper import NoopWorkflowCallbacks
 
 
 class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A reporter that writes to a console."""
+    """A logger that writes to a console."""
 
     def on_error(
         self,

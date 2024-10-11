@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A reporter that writes to a blob storage."""
+"""A logger that emits updates from the indexing engine to a blob in Azure Storage."""
 
 import json
 from datetime import datetime, timezone
@@ -14,7 +14,7 @@ from datashaper import NoopWorkflowCallbacks
 
 
 class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A reporter that writes to a blob storage."""
+    """A logger that writes to a blob storage account."""
 
     _blob_service_client: BlobServiceClient
     _container_name: str

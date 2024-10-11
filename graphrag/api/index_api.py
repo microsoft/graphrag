@@ -9,15 +9,12 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from graphrag.config import CacheType, GraphRagConfig
-
-from .cache.noop_pipeline_cache import NoopPipelineCache
-from .create_pipeline_config import create_pipeline_config
-from .emit.types import TableEmitterType
-from .progress import (
-    ProgressReporter,
-)
-from .run import run_pipeline_with_config
-from .typing import PipelineRunResult
+from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.index.create_pipeline_config import create_pipeline_config
+from graphrag.index.emit.types import TableEmitterType
+from graphrag.index.run import run_pipeline_with_config
+from graphrag.index.typing import PipelineRunResult
+from graphrag.logging import ProgressReporter
 
 
 async def build_index(
