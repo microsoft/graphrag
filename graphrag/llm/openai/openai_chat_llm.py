@@ -6,7 +6,7 @@
 import logging
 
 from typing_extensions import Unpack
-
+from openai import AsyncOpenAI
 from graphrag.llm.base import BaseLLM
 from graphrag.llm.types import (
     CompletionInput,
@@ -36,7 +36,10 @@ class OpenAIChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
     _configuration: OpenAIConfiguration
 
     def __init__(self, client: OpenAIClientTypes, configuration: OpenAIConfiguration):
-        self.client = client
+        self.client = AsyncOpenAI(
+            base_url=configuration.api_base,
+            api_key=configuration.api_key
+        )
         self.configuration = configuration
 
     async def _execute_llm(

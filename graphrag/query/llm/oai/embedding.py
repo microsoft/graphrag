@@ -6,6 +6,7 @@
 import asyncio
 from collections.abc import Callable
 from typing import Any
+import ollama
 
 import numpy as np
 import tiktoken
@@ -131,14 +132,9 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             for attempt in retryer:
                 with attempt:
                     embedding = (
-                        self.sync_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            **kwargs,  # type: ignore
-                        )
-                        .data[0]
-                        .embedding
-                        or []
+                            ollama.Client(host=self.api_base).embeddings(
+                                model=self.model, prompt=str(text)
+                            ).get("embedding") or []
                     )
                     return (embedding, len(text))
         except RetryError as e:
@@ -164,12 +160,10 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             async for attempt in retryer:
                 with attempt:
                     embedding = (
-                        await self.async_client.embeddings.create(  # type: ignore
-                            input=text,
-                            model=self.model,
-                            **kwargs,  # type: ignore
-                        )
-                    ).data[0].embedding or []
+                            await ollama.AsyncClient(
+                                host=self.api_base,
+                            ).embeddings(model=self.model, prompt=text).get("embedding") or []
+                    )
                     return (embedding, len(text))
         except RetryError as e:
             self._reporter.error(
