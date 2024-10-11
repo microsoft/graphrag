@@ -279,6 +279,15 @@ def _graph_workflows(
             name=create_summarized_entities,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
+                "raw_entity_snapshot": settings.snapshots.raw_entities,
+                "entity_extract": {
+                    **settings.entity_extraction.parallelization.model_dump(),
+                    "async_mode": settings.entity_extraction.async_mode,
+                    "strategy": settings.entity_extraction.resolved_strategy(
+                        settings.root_dir, settings.encoding_model
+                    ),
+                    "entity_types": settings.entity_extraction.entity_types,
+                },
                 "summarize_descriptions": {
                     **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
@@ -292,6 +301,21 @@ def _graph_workflows(
             name=create_base_entity_graph,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
+                "entity_extract": {
+                    **settings.entity_extraction.parallelization.model_dump(),
+                    "async_mode": settings.entity_extraction.async_mode,
+                    "strategy": settings.entity_extraction.resolved_strategy(
+                        settings.root_dir, settings.encoding_model
+                    ),
+                    "entity_types": settings.entity_extraction.entity_types,
+                },
+                "summarize_descriptions": {
+                    **settings.summarize_descriptions.parallelization.model_dump(),
+                    "async_mode": settings.summarize_descriptions.async_mode,
+                    "strategy": settings.summarize_descriptions.resolved_strategy(
+                        settings.root_dir,
+                    ),
+                },
                 "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()

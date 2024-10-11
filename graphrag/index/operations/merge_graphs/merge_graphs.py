@@ -39,8 +39,8 @@ def merge_graphs(
     callbacks: VerbCallbacks,
     column: str,
     to: str,
-    nodes: dict[str, Any] = DEFAULT_NODE_OPERATIONS,
-    edges: dict[str, Any] = DEFAULT_EDGE_OPERATIONS,
+    node_operations: dict[str, Any] | None,
+    edge_operations: dict[str, Any] | None,
 ) -> pd.DataFrame:
     """
     Merge multiple graphs together. The graphs are expected to be in graphml format. The verb outputs a new column containing the merged graph.
@@ -92,6 +92,8 @@ def merge_graphs(
     """
     output = pd.DataFrame()
 
+    nodes = node_operations or DEFAULT_NODE_OPERATIONS
+    edges = edge_operations or DEFAULT_EDGE_OPERATIONS
     node_ops = {
         attrib: _get_detailed_attribute_merge_operation(value)
         for attrib, value in nodes.items()

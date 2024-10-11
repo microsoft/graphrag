@@ -63,8 +63,8 @@ async def create_base_extracted_entities(
         callbacks,
         column="entity_graph",
         to="entity_graph",
-        nodes=nodes,
-        edges=edges,
+        node_operations=nodes,
+        edge_operations=edges,
     )
 
     if graphml_snapshot_enabled:
