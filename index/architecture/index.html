@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../../../blog_posts/">
+        <link rel="prev" href="../overview/">
       
       
-        <link rel="next" href="../Operation%20Dulce%20v2%201%201/">
+        <link rel="next" href="../default_dataflow/">
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.39">
     
     
       
-        <title>About - GraphRAG</title>
+        <title>Architecture - GraphRAG</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8c3ca2c6.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -48,9 +48,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#about" class="md-skip">
+        <a href="#indexing-architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="GraphRAG" class="md-header__button md-logo" aria-label="GraphRAG" data-md-component="logo">
+    <a href="../.." title="GraphRAG" class="md-header__button md-logo" aria-label="GraphRAG" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.375 8.5a3.25 3.25 0 1 1-3.163 4h-3a3.252 3.252 0 0 1-4.443 2.509L7.214 17.76a3.25 3.25 0 1 1-1.342-.674l1.672-2.957A3.24 3.24 0 0 1 6.75 12c0-.907.371-1.727.97-2.316L6.117 6.846A3.253 3.253 0 0 1 1.875 3.75a3.25 3.25 0 1 1 5.526 2.32l1.603 2.836A3.25 3.25 0 0 1 13.093 11h3.119a3.25 3.25 0 0 1 3.163-2.5M10 10.25a1.75 1.75 0 1 0-.001 3.499A1.75 1.75 0 0 0 10 10.25M5.125 2a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5m12.5 9.75a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0m-14.25 8.5a1.75 1.75 0 1 0 3.501-.001 1.75 1.75 0 0 0-3.501.001"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              About
+              Architecture
             
           </span>
         </div>
@@ -219,7 +219,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../.." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
   Home
@@ -233,11 +233,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../index/overview/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../overview/" class="md-tabs__link">
           
   
   Indexing
@@ -255,7 +257,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../prompt_tuning/overview/" class="md-tabs__link">
+        <a href="../../prompt_tuning/overview/" class="md-tabs__link">
           
   
   Prompt Tuning
@@ -273,7 +275,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../query/overview/" class="md-tabs__link">
+        <a href="../../query/overview/" class="md-tabs__link">
           
   
   Query
@@ -289,7 +291,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../blog_posts/" class="md-tabs__link">
+      <a href="../../blog_posts/" class="md-tabs__link">
         
   
     
@@ -304,21 +306,17 @@
         
   
   
-    
-  
   
     
     
       
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../data/operation_dulce/ABOUT/" class="md-tabs__link">
           
   
   Extras
@@ -354,7 +352,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="GraphRAG" class="md-nav__button md-logo" aria-label="GraphRAG" data-md-component="logo">
+    <a href="../.." title="GraphRAG" class="md-nav__button md-logo" aria-label="GraphRAG" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.375 8.5a3.25 3.25 0 1 1-3.163 4h-3a3.252 3.252 0 0 1-4.443 2.509L7.214 17.76a3.25 3.25 0 1 1-1.342-.674l1.672-2.957A3.24 3.24 0 0 1 6.75 12c0-.907.371-1.727.97-2.316L6.117 6.846A3.253 3.253 0 0 1 1.875 3.75a3.25 3.25 0 1 1 5.526 2.32l1.603 2.836A3.25 3.25 0 0 1 13.093 11h3.119a3.25 3.25 0 0 1 3.163-2.5M10 10.25a1.75 1.75 0 1 0-.001 3.499A1.75 1.75 0 0 0 10 10.25M5.125 2a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5m12.5 9.75a1.75 1.75 0 1 0 3.5 0 1.75 1.75 0 0 0-3.5 0m-14.25 8.5a1.75 1.75 0 1 0 3.501-.001 1.75 1.75 0 0 0-3.501.001"/></svg>
@@ -422,7 +420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -443,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../get_started/" class="md-nav__link">
+      <a href="../../get_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -464,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../developing/" class="md-nav__link">
+      <a href="../../developing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -489,23 +487,28 @@
       
   
   
+    
   
   
+  
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -516,7 +519,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Indexing
@@ -530,7 +533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../index/overview/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -548,10 +551,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../index/architecture/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -560,6 +583,95 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#knowledge-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datashaper-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      DataShaper Workflows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-based-workflow-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      LLM-based Workflow Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workflow-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow Graphs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataframe-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataframe Message Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      LLM Caching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -572,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../index/default_dataflow/" class="md-nav__link">
+      <a href="../default_dataflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -593,7 +705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../index/cli/" class="md-nav__link">
+      <a href="../cli/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -652,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/overview/" class="md-nav__link">
+      <a href="../../config/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -673,7 +785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/init/" class="md-nav__link">
+      <a href="../../config/init/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -694,7 +806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/env_vars/" class="md-nav__link">
+      <a href="../../config/env_vars/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -715,7 +827,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/json_yaml/" class="md-nav__link">
+      <a href="../../config/json_yaml/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -736,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/custom/" class="md-nav__link">
+      <a href="../../config/custom/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -757,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../config/template/" class="md-nav__link">
+      <a href="../../config/template/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -831,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../prompt_tuning/overview/" class="md-nav__link">
+      <a href="../../prompt_tuning/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -852,7 +964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../prompt_tuning/auto_prompt_tuning/" class="md-nav__link">
+      <a href="../../prompt_tuning/auto_prompt_tuning/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -873,7 +985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../prompt_tuning/manual_prompt_tuning/" class="md-nav__link">
+      <a href="../../prompt_tuning/manual_prompt_tuning/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -939,7 +1051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/overview/" class="md-nav__link">
+      <a href="../../query/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +1072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/local_search/" class="md-nav__link">
+      <a href="../../query/local_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -981,7 +1093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/question_generation/" class="md-nav__link">
+      <a href="../../query/question_generation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1002,7 +1114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/global_search/" class="md-nav__link">
+      <a href="../../query/global_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1023,7 +1135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/cli/" class="md-nav__link">
+      <a href="../../query/cli/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1082,7 +1194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../query/notebooks/overview/" class="md-nav__link">
+      <a href="../../query/notebooks/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1103,7 +1215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples_notebooks/global_search/" class="md-nav__link">
+      <a href="../../examples_notebooks/global_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1124,7 +1236,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../examples_notebooks/local_search/" class="md-nav__link">
+      <a href="../../examples_notebooks/local_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1160,7 +1272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../blog_posts/" class="md-nav__link">
+      <a href="../../blog_posts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1177,28 +1289,23 @@
       
   
   
-    
   
   
-  
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1209,7 +1316,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Extras
@@ -1220,8 +1327,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1231,11 +1336,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
         
           
           <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
@@ -1249,7 +1354,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             Operation Dulce
@@ -1260,19 +1365,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../data/operation_dulce/ABOUT/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1281,7 +1377,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1294,7 +1389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Operation%20Dulce%20v2%201%201/" class="md-nav__link">
+      <a href="../../data/operation_dulce/Operation%20Dulce%20v2%201%201/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1343,6 +1438,83 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#knowledge-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge Model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datashaper-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      DataShaper Workflows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-based-workflow-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      LLM-based Workflow Steps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workflow-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workflow Graphs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataframe-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataframe Message Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      LLM Caching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1359,8 +1531,51 @@
   
 
 
-<h1 id="about">About</h1>
-<p>This document (Operation Dulce) is an AI-generated science fiction novella, included here for the purposes of integration testing.</p>
+<h1 id="indexing-architecture">Indexing Architecture</h1>
+<h2 id="key-concepts">Key Concepts</h2>
+<h3 id="knowledge-model">Knowledge Model</h3>
+<p>In order to support the GraphRAG system, the outputs of the indexing engine (in the Default Configuration Mode) are aligned to a knowledge model we call the <em>GraphRAG Knowledge Model</em>.
+This model is designed to be an abstraction over the underlying data storage technology, and to provide a common interface for the GraphRAG system to interact with.
+In normal use-cases the outputs of the GraphRAG Indexer would be loaded into a database system, and the GraphRAG's Query Engine would interact with the database using the knowledge model data-store types.</p>
+<h3 id="datashaper-workflows">DataShaper Workflows</h3>
+<p>GraphRAG's Indexing Pipeline is built on top of our open-source library, <a href="https://github.com/microsoft/datashaper">DataShaper</a>.
+DataShaper is a data processing library that allows users to declaratively express data pipelines, schemas, and related assets using well-defined schemas.
+DataShaper has implementations in JavaScript and Python, and is designed to be extensible to other languages.</p>
+<p>One of the core resource types within DataShaper is a <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/WorkflowSchema.ts">Workflow</a>.
+Workflows are expressed as sequences of steps, which we call <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/verbs.ts">verbs</a>.
+Each step has a verb name and a configuration object.
+In DataShaper, these verbs model relational concepts such as SELECT, DROP, JOIN, etc.. Each verb transforms an input data table, and that table is passed down the pipeline.</p>
+<pre class="mermaid"><code>---
+title: Sample Workflow
+---
+flowchart LR
+    input[Input Table] --&gt; select[SELECT] --&gt; join[JOIN] --&gt; binarize[BINARIZE] --&gt; output[Output Table]</code></pre>
+<h3 id="llm-based-workflow-steps">LLM-based Workflow Steps</h3>
+<p>GraphRAG's Indexing Pipeline implements a handful of custom verbs on top of the standard, relational verbs that our DataShaper library provides. These verbs give us the ability to augment text documents with rich, structured data using the power of LLMs such as GPT-4. We utilize these verbs in our standard workflow to extract entities, relationships, claims, community structures, and community reports and summaries. This behavior is customizable and can be extended to support many kinds of AI-based data enrichment and extraction tasks.</p>
+<h3 id="workflow-graphs">Workflow Graphs</h3>
+<p>Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.
+In the GraphRAG Indexing Pipeline, each workflow may define dependencies on other workflows, effectively forming a directed acyclic graph (DAG) of workflows, which is then used to schedule processing.</p>
+<pre class="mermaid"><code>---
+title: Sample Workflow DAG
+---
+stateDiagram-v2
+    [*] --&gt; Prepare
+    Prepare --&gt; Chunk
+    Chunk --&gt; ExtractGraph
+    Chunk --&gt; EmbedDocuments
+    ExtractGraph --&gt; GenerateReports
+    ExtractGraph --&gt; EmbedEntities
+    ExtractGraph --&gt; EmbedGraph</code></pre>
+<h3 id="dataframe-message-format">Dataframe Message Format</h3>
+<p>The primary unit of communication between workflows, and between workflow steps is an instance of <code>pandas.DataFrame</code>.
+Although side-effects are possible, our goal is to be <em>data-centric</em> and <em>table-centric</em> in our approach to data processing.
+This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
+Our underlying dataframe technology may change over time, but our primary goal is to support the DataShaper workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
+<h3 id="llm-caching">LLM Caching</h3>
+<p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
+Because of these potential error cases, we've added a cache layer around LLM interactions.
+When completion requests are made using the same input set (prompt and tuning parameters), we return a cached result if one exists.
+This allows our indexer to be more resilient to network issues, to act idempotently, and to provide a more efficient end-user experience.</p>
 
 
 
@@ -1390,7 +1605,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../../blog_posts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Microsoft Research Blog">
+          <a href="../overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1400,20 +1615,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Microsoft Research Blog
+                Overview
               </div>
             </div>
           </a>
         
         
           
-          <a href="../Operation%20Dulce%20v2%201%201/" class="md-footer__link md-footer__link--next" aria-label="Next: Document">
+          <a href="../default_dataflow/" class="md-footer__link md-footer__link--next" aria-label="Next: Dataflow">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Document
+                Dataflow
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1452,12 +1667,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy", "content.code.select", "navigation.footer", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "content.code.select", "navigation.footer", "navigation.tabs"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
       
-        <script src="../../../scripts/create_cookie_banner.js"></script>
+        <script src="../../scripts/create_cookie_banner.js"></script>
       
     
   </body>

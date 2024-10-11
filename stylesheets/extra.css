@@ -1,0 +1,25 @@
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #3c4cab;
+    --md-code-hl-color: #3772d9;
+    --md-code-hl-comment-color: #6b6b6b;
+    --md-code-hl-operator-color: #6b6b6b;
+}
+
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: #364499;
+    --md-code-hl-color: #246be5;
+    --md-code-hl-constant-color: #9a89ed;
+    --md-code-hl-number-color: #f16e5f;
+}
+
+.md-tabs__item--active {
+    background-color: var(--md-primary-bg-color);
+}
+
+.md-tabs__item--active .md-tabs__link {
+    color: var(--md-code-hl-color);
+}
+
+.md-typeset a {
+    text-decoration: underline;
+}
