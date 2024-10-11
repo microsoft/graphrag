@@ -7,6 +7,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
+import networkx as nx
 from datashaper import VerbCallbacks
 
 from graphrag.index.cache import PipelineCache
@@ -29,7 +30,7 @@ class EntityExtractionResult:
     """Entity extraction result class definition."""
 
     entities: list[ExtractedEntity]
-    graphml_graph: str | None
+    graph: nx.Graph | None
 
 
 EntityExtractStrategy = Callable[

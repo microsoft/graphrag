@@ -22,7 +22,7 @@ def build_steps(
     * `workflow:create_base_summarized_entities`
     """
     entity_extraction_config = config.get("entity_extract", {})
-    column = entity_extraction_config.get("text_column", "chunk")
+    text_column = entity_extraction_config.get("text_column", "chunk")
     id_column = entity_extraction_config.get("id_column", "chunk_id")
     async_mode = entity_extraction_config.get("async_mode", AsyncType.AsyncIO)
     extraction_strategy = entity_extraction_config.get("strategy")
@@ -95,7 +95,7 @@ def build_steps(
         {
             "verb": "create_base_entity_graph",
             "args": {
-                "column": column,
+                "text_column": text_column,
                 "id_column": id_column,
                 "extraction_strategy": extraction_strategy,
                 "extraction_num_threads": extraction_num_threads,

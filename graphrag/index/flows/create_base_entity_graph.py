@@ -17,6 +17,7 @@ from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.merge_graphs import merge_graphs
 from graphrag.index.operations.snapshot import snapshot
+from graphrag.index.operations.snapshot_graphml import snapshot_graphml
 from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
@@ -29,7 +30,7 @@ async def create_base_entity_graph(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    column: str,
+    text_column: str,
     id_column: str,
     clustering_strategy: dict[str, Any],  # TOOD: make this optional
     extraction_strategy: dict[str, Any] | None = None,
@@ -45,25 +46,23 @@ async def create_base_entity_graph(
     raw_entity_snapshot_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
-    entity_graph = await extract_entities(
+    # this returns a graph for each text unit, to be merged later
+    entities, entity_graphs = await extract_entities(
         text_units,
         callbacks,
         cache,
-        column=column,
+        text_column=text_column,
         id_column=id_column,
         strategy=extraction_strategy,
         async_mode=extraction_async_mode,
         entity_types=entity_types,
         to="entities",
-        graph_to="entity_graph",
         num_threads=extraction_num_threads,
     )
 
     merged_graph = merge_graphs(
-        entity_graph,
+        entity_graphs,
         callbacks,
-        column="entity_graph",
-        to="entity_graph",
         node_operations=node_merge_config,
         edge_operations=edge_merge_config,
     )
@@ -72,8 +71,6 @@ async def create_base_entity_graph(
         merged_graph,
         callbacks,
         cache,
-        column="entity_graph",
-        to="entity_graph",
         strategy=summarization_strategy,
         num_threads=summarization_num_threads,
     )
@@ -97,26 +94,22 @@ async def create_base_entity_graph(
 
     if raw_entity_snapshot_enabled:
         await snapshot(
-            entity_graph,
+            entities,
             name="raw_extracted_entities",
             storage=storage,
             formats=["json"],
         )
 
     if graphml_snapshot_enabled:
-        await snapshot_rows(
+        await snapshot_graphml(
             merged_graph,
-            base_name="merged_graph",
-            column="entity_graph",
+            name="merged_graph",
             storage=storage,
-            formats=[{"format": "text", "extension": "graphml"}],
         )
-        await snapshot_rows(
+        await snapshot_graphml(
             summarized,
-            column="entity_graph",
-            base_name="summarized_graph",
+            name="summarized_graph",
             storage=storage,
-            formats=[{"format": "text", "extension": "graphml"}],
         )
         await snapshot_rows(
             clustered,
