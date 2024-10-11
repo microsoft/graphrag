@@ -13,12 +13,6 @@ from .v1.create_base_entity_graph import (
 from .v1.create_base_entity_graph import (
     workflow_name as create_base_entity_graph,
 )
-from .v1.create_base_extracted_entities import (
-    build_steps as build_create_base_extracted_entities_steps,
-)
-from .v1.create_base_extracted_entities import (
-    workflow_name as create_base_extracted_entities,
-)
 from .v1.create_base_text_units import (
     build_steps as build_create_base_text_units_steps,
 )
@@ -73,16 +67,9 @@ from .v1.create_final_text_units import (
 from .v1.create_final_text_units import (
     workflow_name as create_final_text_units,
 )
-from .v1.create_summarized_entities import (
-    build_steps as build_create_summarized_entities_steps,
-)
-from .v1.create_summarized_entities import (
-    workflow_name as create_summarized_entities,
-)
 
 
 default_workflows: WorkflowDefinitions = {
-    create_base_extracted_entities: build_create_base_extracted_entities_steps,
     create_base_entity_graph: build_create_base_entity_graph_steps,
     create_base_text_units: build_create_base_text_units_steps,
     create_final_text_units: build_create_final_text_units,
@@ -93,5 +80,4 @@ default_workflows: WorkflowDefinitions = {
     create_final_covariates: build_create_final_covariates_steps,
     create_final_entities: build_create_final_entities_steps,
     create_final_communities: build_create_final_communities_steps,
-    create_summarized_entities: build_create_summarized_entities_steps,
 }

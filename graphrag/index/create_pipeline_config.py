@@ -50,7 +50,6 @@ from graphrag.index.config.workflow import (
 )
 from graphrag.index.workflows.default_workflows import (
     create_base_entity_graph,
-    create_base_extracted_entities,
     create_base_text_units,
     create_final_communities,
     create_final_community_reports,
@@ -60,7 +59,6 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
-    create_summarized_entities,
 )
 
 log = logging.getLogger(__name__)
@@ -260,43 +258,6 @@ def _graph_workflows(
         relationship_description_embedding not in embedded_fields
     )
     return [
-        PipelineWorkflowReference(
-            name=create_base_extracted_entities,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
-                "raw_entity_snapshot": settings.snapshots.raw_entities,
-                "entity_extract": {
-                    **settings.entity_extraction.parallelization.model_dump(),
-                    "async_mode": settings.entity_extraction.async_mode,
-                    "strategy": settings.entity_extraction.resolved_strategy(
-                        settings.root_dir, settings.encoding_model
-                    ),
-                    "entity_types": settings.entity_extraction.entity_types,
-                },
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_summarized_entities,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
-                "raw_entity_snapshot": settings.snapshots.raw_entities,
-                "entity_extract": {
-                    **settings.entity_extraction.parallelization.model_dump(),
-                    "async_mode": settings.entity_extraction.async_mode,
-                    "strategy": settings.entity_extraction.resolved_strategy(
-                        settings.root_dir, settings.encoding_model
-                    ),
-                    "entity_types": settings.entity_extraction.entity_types,
-                },
-                "summarize_descriptions": {
-                    **settings.summarize_descriptions.parallelization.model_dump(),
-                    "async_mode": settings.summarize_descriptions.async_mode,
-                    "strategy": settings.summarize_descriptions.resolved_strategy(
-                        settings.root_dir,
-                    ),
-                },
-            },
-        ),
         PipelineWorkflowReference(
             name=create_base_entity_graph,
             config={
