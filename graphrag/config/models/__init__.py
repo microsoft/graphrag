@@ -31,7 +31,7 @@ __all__ = [
     "ClaimExtractionConfig",
     "ClusterGraphConfig",
     "CommunityReportsConfig",
-	"DRIFTSearchConfig",
+    "DRIFTSearchConfig",
     "EmbedGraphConfig",
     "EntityExtractionConfig",
     "GlobalSearchConfig",

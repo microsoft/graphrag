@@ -6,15 +6,15 @@
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import pandas as pd
 import tiktoken
 
 from graphrag.query.context_builder.builders import (
+    DRIFTContextBuilder,
     GlobalContextBuilder,
     LocalContextBuilder,
-    DRIFTContextBuilder,
 )
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -35,13 +35,16 @@ class SearchResult:
     prompt_tokens: int
 
 
-class BaseSearch(ABC):
+T = TypeVar("T", GlobalContextBuilder, LocalContextBuilder, DRIFTContextBuilder)
+
+
+class BaseSearch(ABC, Generic[T]):
     """The Base Search implementation."""
 
     def __init__(
         self,
         llm: BaseLLM,
-        context_builder: GlobalContextBuilder | LocalContextBuilder | DRIFTContextBuilder,
+        context_builder: T,
         token_encoder: tiktoken.Encoding | None = None,
         llm_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
@@ -75,5 +78,5 @@ class BaseSearch(ABC):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator[str, None]:
+    ) -> AsyncGenerator[str, None] | None:
         """Stream search for the given query."""

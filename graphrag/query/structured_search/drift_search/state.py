@@ -1,70 +1,84 @@
-import networkx as nx
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Manage the state of the DRIFT query, including a graph of actions."""
+
+import logging
 import random
-from typing import List, Dict, Optional, Any
+from typing import Any
+
+import networkx as nx
+
 from graphrag.query.structured_search.drift_search.action import DriftAction
+
+log = logging.getLogger(__name__)
 
 
 class QueryState:
-    """
-    Manages the state of the query, including a graph of actions.
-    """
+    """Manage the state of the query, including a graph of actions."""
 
     def __init__(self):
         self.graph = nx.MultiDiGraph()
 
-    def add_action(self, action: DriftAction, metadata: Optional[Dict[str, Any]] = None):
-        """
-        Adds an action to the graph with optional metadata.
-        """
+    def add_action(
+        self, action: DriftAction, metadata: dict[str, Any] | None = None
+    ):
+        """Add an action to the graph with optional metadata."""
         self.graph.add_node(action, **(metadata or {}))
 
-    def relate_actions(self, parent: DriftAction, child: DriftAction, weight: float = 1.0):
-        """
-        Relates two actions in the graph.
-        """
+    def relate_actions(
+        self, parent: DriftAction, child: DriftAction, weight: float = 1.0
+    ):
+        """Relate two actions in the graph."""
         self.graph.add_edge(parent, child, weight=weight)
 
-    def add_all_follow_ups(self, action: DriftAction, follow_ups: List[DriftAction] | List[str], weight: float = 1.0):
-        """
-        Adds all follow-up actions and links them to the given action.
-        """
+    def add_all_follow_ups(
+        self,
+        action: DriftAction,
+        follow_ups: list[DriftAction] | list[str],
+        weight: float = 1.0,
+    ):
+        """Add all follow-up actions and links them to the given action."""
         if len(follow_ups) == 0:
-            raise ValueError("No follow-up actions to add. Please provide a list of follow-up actions.")
+            log.warning("No follow-up actions for action: %s", action.query)
 
         for follow_up in follow_ups:
             if isinstance(follow_up, str):
                 follow_up = DriftAction(query=follow_up)
+            else:
+                log.warning(
+                    "Follow-up action is not a string, found type: %s", type(follow_up)
+                )
 
             self.add_action(follow_up)
             self.relate_actions(action, follow_up, weight)
 
-    def find_incomplete_actions(self) -> List[DriftAction]:
-        """
-        Finds all unanswered actions in the graph.
-        """
+    def find_incomplete_actions(self) -> list[DriftAction]:
+        """Find all unanswered actions in the graph."""
         return [node for node in self.graph.nodes if not node.is_complete]
 
-    def rank_incomplete_actions(self, scorer: Any | None = None) -> List[DriftAction]:
-        """
-        Ranks all unanswered actions in the graph if scorer available.
-        """
+    def rank_incomplete_actions(self, scorer: Any | None = None) -> list[DriftAction]:
+        """Rank all unanswered actions in the graph if scorer available."""
         unanswered = self.find_incomplete_actions()
         if scorer:
             for node in unanswered:
                 node.compute_score(scorer)
-            return list(sorted(
-                unanswered,
-                key=lambda node: node.score if node.score is not None else float('-inf'),
-                reverse=True
-            ))
-        else:  # shuffle the list if no scorer
-            random.shuffle(unanswered)
-            return list(unanswered)
+            return sorted(
+                   unanswered,
+                   key=lambda node: node.score
+                   if node.score is not None
+                   else float("-inf"),
+                   reverse=True,
+                )
+            
+        # shuffle the list if no scorer
+        random.shuffle(unanswered)
+        return list(unanswered)
 
-    def serialize(self) -> Dict[str, Any]:
-        """
-        Serializes the graph to a dictionary, including nodes and edges.
-        """
+    def serialize(
+        self, include_context: bool = True
+    ) -> dict[str, Any] | tuple[dict[str, Any], dict[str, Any], str]:
+        """Serialize the graph to a dictionary, including nodes and edges."""
         # Create a mapping from nodes to unique IDs
         node_to_id = {node: idx for idx, node in enumerate(self.graph.nodes())}
 
@@ -72,7 +86,7 @@ class QueryState:
         nodes = []
         for node in self.graph.nodes():
             node_data = node.serialize(include_follow_ups=False)
-            node_data['id'] = node_to_id[node]
+            node_data["id"] = node_to_id[node]
             node_attributes = self.graph.nodes[node]
             if node_attributes:
                 node_data.update(node_attributes)
@@ -88,17 +102,25 @@ class QueryState:
             }
             edges.append(edge_info)
 
+        if include_context:
+            context_data = {}
+            for node in nodes:
+                if node["metadata"].get("context_data") and node.get("query"):
+                    context_data[node["query"]] = node["metadata"]["context_data"]
+
+            context_text = str(context_data)
+
+            return {"nodes": nodes, "edges": edges}, context_data, context_text
+
         return {"nodes": nodes, "edges": edges}
 
-    def deserialize(self, data: Dict[str, Any]):
-        """
-        Deserializes the dictionary back to a graph.
-        """
+    def deserialize(self, data: dict[str, Any]):
+        """Deserialize the dictionary back to a graph."""
         self.graph.clear()
         id_to_action = {}
 
         for node_data in data.get("nodes", []):
-            node_id = node_data.pop('id')
+            node_id = node_data.pop("id")
             action = DriftAction.deserialize(node_data)
             self.add_action(action)
             id_to_action[node_id] = action
@@ -111,3 +133,7 @@ class QueryState:
             target_action = id_to_action.get(target_id)
             if source_action and target_action:
                 self.relate_actions(source_action, target_action, weight)
+
+    def action_token_ct(self) -> int:
+        """Return the token count of the action."""
+        return sum(action.metadata.get("token_ct", 0) for action in self.graph.nodes)

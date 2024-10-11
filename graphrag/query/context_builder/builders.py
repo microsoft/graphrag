@@ -4,7 +4,7 @@
 """Base classes for global and local context builders."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+
 import pandas as pd
 
 from graphrag.query.context_builder.conversation_history import (
@@ -39,9 +39,9 @@ class DRIFTContextBuilder(ABC):
     """Base class for DRIFT-search context builders."""
 
     @abstractmethod
-    def build_primer_context(
+    def build_context(
         self,
         query: str,
         **kwargs,
     ) -> pd.DataFrame:
-        """Build the context for the primer search actions"""
+        """Build the context for the primer search actions."""

@@ -4,6 +4,7 @@
 """Parameterization settings for the default configuration."""
 
 from pydantic import BaseModel, Field
+
 import graphrag.config.defaults as defs
 
 
@@ -36,9 +37,9 @@ class DRIFTSearchConfig(BaseModel):
         default=defs.DRIFT_SEARCH_CONCURRENCY,
     )
 
-    search_primer_k: int = Field(
+    drift_k_followups: int = Field(
         description="The number of top global results to retrieve.",
-        default=defs.DRIFT_SEARCH_PRIMER_K,
+        default=defs.DRIFT_SEARCH_K_FOLLOW_UPS,
     )
 
     primer_folds: int = Field(
@@ -51,9 +52,9 @@ class DRIFTSearchConfig(BaseModel):
         default=defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS,
     )
 
-    steps: int = Field(
+    n_depth: int = Field(
         description="The number of drift search steps to take.",
-        default=defs.DRIFT_SEARCH_STEPS,
+        default=defs.DRIFT_N_DEPTH,
     )
 
     local_search_text_unit_prop: float = Field(

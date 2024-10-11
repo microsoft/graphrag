@@ -1,101 +1,206 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""DRIFT Search Query State."""
+
 import json
 import logging
-from typing import Optional, Dict, Any, List
-
+from typing import Any
 
 log = logging.getLogger(__name__)
 
 
 class DriftAction:
     """
-    Represents an action containing query, answer, score, and follow-up actions.
-    We want to be able to encapsulate the action strings being produced by the LLM in a clean way.
+    Represent an action containing a query, answer, score, and follow-up actions.
+
+    This class encapsulates action strings produced by the LLM in a structured way.
     """
 
-    def __init__(self, query: str, answer: str | None = None, follow_ups: List['DriftAction'] | List[str] = []):
+    def __init__(
+        self,
+        query: str,
+        answer: str | None = None,
+        follow_ups: list["DriftAction"] | None = None,
+    ):
+        """
+        Initialize the DriftAction with a query, optional answer, and follow-up actions.
+
+        Args:
+            query (str): The query for the action.
+            answer (Optional[str]): The answer to the query, if available.
+            follow_ups (Optional[list[DriftAction]]): A list of follow-up actions.
+        """
         self.query = query
-        self.answer: str | None = answer  # corresponds to an 'intermediate_answer'
-        self.score: Optional[float] = None
-        self.follow_ups: List['DriftAction'] | List[str] = follow_ups
-        self.metadata: Dict[str, Any] = {}
-        # Should contain metadata explaining how to execute the action. Will not always be local search in the future.
+        self.answer: str | None = answer  # Corresponds to an 'intermediate_answer'
+        self.score: float | None = None
+        self.follow_ups: list[DriftAction] = (
+            follow_ups if follow_ups is not None else []
+        )
+        self.metadata: dict[str, Any] = {}
 
     @property
     def is_complete(self) -> bool:
+        """Check if the action is complete (i.e., an answer is available)."""
         return self.answer is not None
 
-    def search(self, search_engine: Any, scorer: Any = None):
-        raise NotImplementedError("Search method not implemented for DriftAction. Use asearch instead.")
+    async def asearch(self, search_engine: Any, global_query: str, scorer: Any = None):
+        """
+        Execute an asynchronous search using the search engine, and update the action with the results.
 
-    async def asearch(self, search_engine: Any, global_query:str, scorer: Any = None):
-        # TODO: test that graph stores actions as reference... This SHOULD update the graph object.
-        search_result = await search_engine.asearch(drift_query=global_query, query=self.query)
+        If a scorer is provided, compute the score for the action.
+
+        Args:
+            search_engine (Any): The search engine to execute the query.
+            global_query (str): The global query string.
+            scorer (Any, optional): Scorer to compute scores for the action.
+
+        Returns
+        -------
+        self : DriftAction
+            Updated action with search results.
+        """
+        if self.is_complete:
+            log.warning("Action already complete. Skipping search.")
+            return self
+
+        search_result = await search_engine.asearch(
+            drift_query=global_query, query=self.query
+        )
+
         try:
             response = json.loads(search_result.response)
-        except json.JSONDecodeError:
-            raise ValueError(f"Failed to parse response: {search_result.response}. Ensure it is JSON serializable.")
-        self.answer = response.pop('response', None)
-        self.score = response.pop('score', float('-inf'))
-        self.metadata.update({'context_data':search_result.context_data})
-    
-        self.follow_ups = response.pop('follow_up_queries', [])
-        if self.follow_ups == []:
+        except json.JSONDecodeError as e:
+            error_message = "Failed to parse search response"
+            log.exception("%s: %s", error_message, search_result.response)
+            raise ValueError(error_message) from e
+
+        self.answer = response.pop("response", None)
+        self.score = response.pop("score", float("-inf"))
+        self.metadata.update({"context_data": search_result.context_data})
+        self.metadata.update({"token_ct": search_result.token_ct})
+
+        self.follow_ups = response.pop("follow_up_queries", [])
+        if not self.follow_ups:
             log.warning("No follow-up actions found for response: %s", response)
-            
+
         if scorer:
             self.compute_score(scorer)
+
         return self
 
     def compute_score(self, scorer: Any):
-        score = scorer.compute_score(self.query, self.answer)
-        self.score = score if score is not None else float('-inf')  # use -inf to help with sorting later
-
-    def serialize(self, include_follow_ups: bool = True) -> Dict[str, Any]:
         """
-        Serializes the action to a dictionary.
+        Compute the score for the action using the provided scorer.
+
+        Args:
+            scorer (Any): The scorer to compute the score.
+        """
+        score = scorer.compute_score(self.query, self.answer)
+        self.score = score if score is not None else float("-inf")  # Default to -inf for sorting
+
+    def serialize(self, include_follow_ups: bool = True) -> dict[str, Any]:
+        """
+        Serialize the action to a dictionary.
+
+        Args:
+            include_follow_ups (bool): Whether to include follow-up actions in the serialization.
+
+        Returns
+        -------
+        dict[str, Any]
+            Serialized action as a dictionary.
         """
         data = {
-            'query': self.query,
-            'answer': self.answer,
-            'score': self.score,
-            'metadata': self.metadata,
+            "query": self.query,
+            "answer": self.answer,
+            "score": self.score,
+            "metadata": self.metadata,
         }
         if include_follow_ups:
-            data['follow_ups'] = [action.serialize() for action in self.follow_ups] # TODO: handle leftover string followups
+            data["follow_ups"] = [action.serialize() for action in self.follow_ups]
         return data
 
     @classmethod
-    def deserialize(cls, data: Dict[str, Any]) -> 'DriftAction':
+    def deserialize(cls, data: dict[str, Any]) -> "DriftAction":
         """
-        Deserializes the action from a dictionary.
+        Deserialize the action from a dictionary.
+
+        Args:
+            data (dict[str, Any]): Serialized action data.
+
+        Returns
+        -------
+        DriftAction
+            A deserialized instance of DriftAction.
         """
-        action = cls(data['query'])
-        action.answer = data.get('answer')
-        action.score = data.get('score')
-        action.metadata = data.get('metadata', {})
-        if 'follow_ups' in data:
-            action.follow_ups = [cls.deserialize(fu_data) for fu_data in data.get('follow_up_queries', [])]
-        else:
-            action.follow_ups = []
+        action = cls(data["query"])
+        action.answer = data.get("answer")
+        action.score = data.get("score")
+        action.metadata = data.get("metadata", {})
+        action.follow_ups = (
+            [cls.deserialize(fu_data) for fu_data in data.get("follow_up_queries", [])]
+            if "follow_ups" in data
+            else []
+        )
         return action
 
     @classmethod
-    def from_primer_response(cls, query: str, response: str | Dict[str, Any] | List[Dict[str, Any]]) -> 'DriftAction':
+    def from_primer_response(
+        cls, query: str, response: str | dict[str, Any] | list[dict[str, Any]]
+    ) -> "DriftAction":
         """
-        Creates a DriftAction from the DRIFTPrimer response.
+        Create a DriftAction from a DRIFTPrimer response.
+
+        Args:
+            query (str): The query string.
+            response (str | dict[str, Any] | list[dict[str, Any]]): Primer response data.
+
+        Returns
+        -------
+        DriftAction
+            A new instance of DriftAction based on the response.
+
+        Raises
+        ------
+        ValueError
+            If the response is not a dictionary or expected format.
         """
         if isinstance(response, dict):
-            action = cls(query, follow_ups=response.get('follow_up_queries', []), answer=response.get('intermediate_answer'))
-            action.answer = response.get('intermediate_answer')
-            action.score = response.get('score')
+            action = cls(
+                query,
+                follow_ups=response.get("follow_up_queries", []),
+                answer=response.get("intermediate_answer"),
+            )
+            action.score = response.get("score")
             return action
-        else:
-            raise ValueError(f'Response must be a dictionary. Found: {type(response)}'
-                             f' with content: {response}')
+
+        error_message = "Response must be a dictionary"
+        raise ValueError(error_message)
 
     def __hash__(self):
-        # Necessary for storing in networkx.MultiDiGraph. Assumes unique queries.
+        """
+        Allow DriftAction objects to be hashable for use in networkx.MultiDiGraph.
+
+        Assumes queries are unique.
+
+        Returns
+        -------
+        int
+            Hash based on the query.
+        """
         return hash(self.query)
 
     def __eq__(self, other):
+        """
+        Check equality based on the query string.
+
+        Args:
+            other (Any): Another object to compare with.
+
+        Returns
+        -------
+        bool
+            True if the other object is a DriftAction with the same query, False otherwise.
+        """
         return isinstance(other, DriftAction) and self.query == other.query
