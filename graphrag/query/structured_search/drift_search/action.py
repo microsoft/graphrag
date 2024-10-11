@@ -7,6 +7,8 @@ import json
 import logging
 from typing import Any
 
+from graphrag.query.llm.text_utils import num_tokens
+
 log = logging.getLogger(__name__)
 
 
@@ -78,7 +80,13 @@ class DriftAction:
         self.answer = response.pop("response", None)
         self.score = response.pop("score", float("-inf"))
         self.metadata.update({"context_data": search_result.context_data})
-        self.metadata.update({"token_ct": search_result.token_ct})
+
+        if self.answer is None:
+            log.warning("No answer found for query: %s", self.query)
+            generated_tokens = 0
+        else:
+            generated_tokens = num_tokens(self.answer, search_engine.token_encoder)
+        self.metadata.update({"token_ct": search_result.prompt_tokens + generated_tokens})
 
         self.follow_ups = response.pop("follow_up_queries", [])
         if not self.follow_ups:

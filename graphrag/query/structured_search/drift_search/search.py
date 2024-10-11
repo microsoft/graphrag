@@ -129,11 +129,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             ])
 
             follow_ups = [
-                fu
-                for i in response
-                for fu in i["follow_up_queries"]
-                if "follow_up_queries" in i
-            ]
+				fu
+				for i in response
+				if "follow_up_queries" in i and i["follow_up_queries"]
+				for fu in i["follow_up_queries"]
+			]
             if len(follow_ups) == 0:
                 error_msg = "No follow-up queries found in primer response. Ensure that the primer response includes follow-up queries."
                 raise RuntimeError(error_msg)
