@@ -4,7 +4,7 @@
 
 import graphrag.config.defaults as defs
 
-INIT_YAML = f"""
+INIT_YAML = f"""\
 encoding_model: cl100k_base
 skip_workflows: []
 llm:
@@ -169,6 +169,6 @@ global_search:
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 """
 
-INIT_DOTENV = """
+INIT_DOTENV = """\
 GRAPHRAG_API_KEY=<API_KEY>
 """
