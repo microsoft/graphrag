@@ -5,21 +5,20 @@
 
 from pathlib import Path
 
+import graphrag.api as api
 from graphrag.config import load_config
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 
-from . import api
 from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
 from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME
 from .generator.entity_summarization_prompt import ENTITY_SUMMARIZATION_FILENAME
-from .types import DocSelectionType
 
 
 async def prompt_tune(
     config: str,
     root: str,
     domain: str,
-    selection_method: DocSelectionType,
+    selection_method: api.DocSelectionType,
     limit: int,
     max_tokens: int,
     chunk_size: int,

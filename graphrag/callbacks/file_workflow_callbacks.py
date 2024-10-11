@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A reporter that writes to a file."""
+"""A logger that emits updates from the indexing engine to a local file."""
 
 import json
 import logging
@@ -14,12 +14,12 @@ log = logging.getLogger(__name__)
 
 
 class FileWorkflowCallbacks(NoopWorkflowCallbacks):
-    """A reporter that writes to a file."""
+    """A logger that writes to a local file."""
 
     _out_stream: TextIOWrapper
 
     def __init__(self, directory: str):
-        """Create a new file-based workflow reporter."""
+        """Create a new file-based workflow logger."""
         Path(directory).mkdir(parents=True, exist_ok=True)
         self._out_stream = open(  # noqa: PTH123, SIM115
             Path(directory) / "logs.json", "a", encoding="utf-8", errors="strict"
