@@ -27,7 +27,6 @@ docsite/.pnp.*
 
 # Python Artifacts
 python/*/lib/
-.vscode/launch.json
 
 # Test Output
 .coverage
