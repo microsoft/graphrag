@@ -1,6 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-"""Content for the init CLI command."""
+
+"""Content for the init CLI command to generate a default configuration."""
 
 import graphrag.config.defaults as defs
 

@@ -18,6 +18,7 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from collections.abc import AsyncGenerator
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -187,6 +188,10 @@ async def local_search(
 
     vector_store_type = config.embeddings.vector_store["type"]
     vector_store_args = config.embeddings.vector_store
+    # TODO: update filepath of lancedb until the new config engine has been implemented
+    if vector_store_type == "lancedb":
+        lancedb_dir = Path(config.storage.base_dir) / "lancedb"
+        vector_store_args.update({"db_uri": str(lancedb_dir)})
     reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
@@ -253,6 +258,10 @@ async def local_search_streaming(
 
     vector_store_type = config.embeddings.vector_store["type"]
     vector_store_args = config.embeddings.vector_store
+    # TODO: update filepath of lancedb until the new config engine has been implemented
+    if vector_store_type == "lancedb":
+        lancedb_dir = Path(config.storage.base_dir) / "lancedb"
+        vector_store_args.update({"db_uri": str(lancedb_dir)})
     reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,

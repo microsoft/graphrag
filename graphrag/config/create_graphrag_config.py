@@ -283,16 +283,17 @@ def create_graphrag_config(
                     num_threads=reader.int("num_threads", Fragment.thread_count)
                     or defs.PARALLELIZATION_NUM_THREADS,
                 )
-        embeddings_config = values.get("embeddings") or {}
+        embeddings_config = values.get("embeddings")
         with reader.envvar_prefix(Section.embedding), reader.use(embeddings_config):
             embeddings_target = reader.str("target")
+            # TODO: remove the type ignore annotations below once the new config engine has been refactored
             embeddings_model = TextEmbeddingConfig(
-                llm=hydrate_embeddings_params(embeddings_config, llm_model),
+                llm=hydrate_embeddings_params(embeddings_config, llm_model), # type: ignore
                 parallelization=hydrate_parallelization_params(
-                    embeddings_config, llm_parallelization_model
+                    embeddings_config, llm_parallelization_model # type: ignore
                 ),
-                vector_store=embeddings_config.get("vector_store", None),
-                async_mode=hydrate_async_type(embeddings_config, async_mode),
+                vector_store=embeddings_config["vector_store"], # type: ignore
+                async_mode=hydrate_async_type(embeddings_config, async_mode), # type: ignore
                 target=(
                     TextEmbeddingTarget(embeddings_target)
                     if embeddings_target

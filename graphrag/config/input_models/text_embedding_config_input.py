@@ -3,7 +3,7 @@
 
 """Parameterization settings for the default configuration."""
 
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, Required
 
 from graphrag.config.enums import (
     TextEmbeddingTarget,
@@ -19,5 +19,5 @@ class TextEmbeddingConfigInput(LLMConfigInput):
     batch_max_tokens: NotRequired[int | str | None]
     target: NotRequired[TextEmbeddingTarget | str | None]
     skip: NotRequired[list[str] | str | None]
-    vector_store: NotRequired[dict | None]
+    vector_store: Required[dict]
     strategy: NotRequired[dict | None]
