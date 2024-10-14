@@ -41,7 +41,8 @@ embeddings:
   # target: {defs.EMBEDDING_TARGET.value} # or all
   # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
   # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-  # vector_store: # configured for lancedb by default
+  vector_store: {defs.VECTOR_STORE}
+  # vector_store: # configure for AI Search
     # type: azure_ai_search # or lancedb
     # url: <ai_search_url>
     # api_key: <api_key>

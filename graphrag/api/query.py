@@ -18,7 +18,6 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from collections.abc import AsyncGenerator
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -37,8 +36,8 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.query.input.loaders.dfs import store_entity_semantic_embeddings
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
+from graphrag.vector_stores import VectorStoreFactory
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
-from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 
@@ -184,18 +183,11 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-
-    vector_store_args.update({"db_uri": str(lancedb_dir)})
+    vector_store_type = config.embeddings.vector_store["type"]
+    vector_store_args = config.embeddings.vector_store
+    reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
@@ -257,18 +249,11 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
-    )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
-
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-
-    vector_store_args.update({"db_uri": str(lancedb_dir)})
+    vector_store_type = config.embeddings.vector_store["type"]
+    vector_store_args = config.embeddings.vector_store
+    reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
         vector_store_type=vector_store_type,
@@ -304,27 +289,18 @@ async def local_search_streaming(
 
 def _get_embedding_description_store(
     entities: list[Entity],
-    vector_store_type: str = VectorStoreType.LanceDB,
-    config_args: dict | None = None,
+    vector_store_type: str,
+    config_args: dict,
 ):
     """Get the embedding description store."""
-    if not config_args:
-        config_args = {}
-
-    collection_name = config_args.get(
-        "query_collection_name", "entity_description_embeddings"
-    )
-    config_args.update({"collection_name": collection_name})
+    collection_name = config_args["collection_name"]
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
     )
-
     description_embedding_store.connect(**config_args)
-
-    if config_args.get("overwrite", True):
+    if config_args["overwrite"]:
         # this step assumes the embeddings were originally stored in a file rather
-        # than a vector database
-
+        # than a vector database.
         # dump embeddings from the entities list to the description_embedding_store
         store_entity_semantic_embeddings(
             entities=entities, vectorstore=description_embedding_store
@@ -335,17 +311,13 @@ def _get_embedding_description_store(
         description_embedding_store = LanceDBVectorStore(
             collection_name=collection_name
         )
-        description_embedding_store.connect(
-            db_uri=config_args.get("db_uri", "./lancedb")
-        )
-
+        description_embedding_store.connect(db_uri=config_args["db_uri"])
         # load data from an existing table
         description_embedding_store.document_collection = (
             description_embedding_store.db_connection.open_table(
                 description_embedding_store.collection_name
             )
         )
-
     return description_embedding_store
 
 

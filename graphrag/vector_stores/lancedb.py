@@ -23,7 +23,7 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
-        db_uri = kwargs.get("db_uri", "./lancedb")
+        db_uri = kwargs["db_uri"]
         self.db_connection = lancedb.connect(db_uri)  # type: ignore
 
     def load_documents(
