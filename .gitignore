@@ -1,32 +1,6 @@
-# Node Artifacts
-*/node_modules/
-docsite/*/src/**/*.js
-docsite/*/lib/
-docsite/*/storybook-static/
-docsite/*/docsTemp/
-docsite/*/build/
-.swc/
-dist/
-.idea
-# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored
-docsite/.yarn/*
-!docsite/.yarn/patches
-!docsite/.yarn/releases
-!docsite/.yarn/plugins
-!docsite/.yarn/sdks
-!docsite/.yarn/versions
-docsite/.pnp.*
-
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
-
 # Python Artifacts
 python/*/lib/
+dist/
 # Test Output
 .coverage
 coverage/
@@ -67,3 +41,12 @@ ragtest/
 .ragtest/
 .pipelines
 .pipeline
+
+
+# mkdocs
+site/
+
+# Docs migration
+docsite/
+.yarn/
+.pnp*
