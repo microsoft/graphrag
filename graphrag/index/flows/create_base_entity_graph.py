@@ -32,7 +32,7 @@ async def create_base_entity_graph(
     storage: PipelineStorage,
     text_column: str,
     id_column: str,
-    clustering_strategy: dict[str, Any],  # TOOD: make this optional
+    clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,
     extraction_async_mode: AsyncType = AsyncType.AsyncIO,
