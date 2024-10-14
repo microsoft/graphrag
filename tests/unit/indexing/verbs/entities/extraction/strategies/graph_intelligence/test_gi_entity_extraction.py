@@ -171,9 +171,11 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         assert (
             graph.nodes["TEST_ENTITY_2"].get("source_id") == "1"
         )  # TEST_ENTITY_2 should be in just 1
-        assert sorted(
-            graph.nodes["TEST_ENTITY_1"].get("source_id").split(",")
-        ) == sorted(["1", "2"])  # TEST_ENTITY_1 should be 1 and 2
+        ids_str = graph.nodes["TEST_ENTITY_1"].get("source_id") or ""
+        assert sorted(ids_str.split(",")) == sorted([
+            "1",
+            "2",
+        ])  # TEST_ENTITY_1 should be 1 and 2
 
     async def test_run_extract_entities_multiple_documents_correct_edge_source_ids_mapped(
         self,
