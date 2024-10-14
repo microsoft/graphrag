@@ -17,7 +17,6 @@ from graphrag.model import (
     Relationship,
     TextUnit,
 )
-
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding

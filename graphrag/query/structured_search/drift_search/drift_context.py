@@ -76,7 +76,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
     def init_local_context_builder(self) -> LocalSearchMixedContext:
         """
         Initialize the local search mixed context builder.
-        
+
         Returns
         -------
         LocalSearchMixedContext: Initialized local context.
@@ -97,7 +97,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
     def convert_reports_to_df(reports: list[CommunityReport]) -> pd.DataFrame:
         """
         Convert a list of CommunityReport objects to a pandas DataFrame.
-        
+
         Args
         ----
         reports : list[CommunityReport]
@@ -106,7 +106,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         Returns
         -------
         pd.DataFrame: DataFrame with report data.
-        
+
         Raises
         ------
         ValueError: If some reports are missing full content or full content embeddings.
@@ -114,7 +114,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         report_df = pd.DataFrame([report.__dict__ for report in reports])
         missing_content_error = "Some reports are missing full content."
         missing_embedding_error = "Some reports are missing full content embeddings."
-        
+
         if report_df["full_content"].isna().sum() > 0:
             raise ValueError(missing_content_error)
         if (
@@ -128,14 +128,14 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
     def check_query_doc_encodings(query_embedding: Any, embedding: Any) -> bool:
         """
         Check if the embeddings are compatible.
-        
+
         Args
         ----
         query_embedding : Any
             Embedding of the query.
         embedding : Any
             Embedding to compare against.
-        
+
         Returns
         -------
         bool: True if embeddings match, otherwise False.
@@ -149,7 +149,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
     def build_context(self, query: str, **kwargs) -> pd.DataFrame:
         """
         Build DRIFT search context.
-        
+
         Args
         ----
         query : str
@@ -158,14 +158,16 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         Returns
         -------
         pd.DataFrame: Top-k most similar documents.
-        
+
         Raises
         ------
         ValueError: If no community reports are available, or embeddings
         are incompatible.
         """
         if self.reports is None:
-            missing_reports_error = "No community reports available. Please provide a list of reports."
+            missing_reports_error = (
+                "No community reports available. Please provide a list of reports."
+            )
             raise ValueError(missing_reports_error)
 
         query_processor = PrimerQueryProcessor(

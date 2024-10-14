@@ -124,16 +124,15 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 error_msg = "No intermediate answers found in primer response. Ensure that the primer response includes intermediate answers."
                 raise RuntimeError(error_msg)
 
-            intermediate_answer = "\n\n".join([
-                i["intermediate_answer"] for i in response if "intermediate_answer" in i
-            ])
+            intermediate_answer = "\n\n".join(
+                [
+                    i["intermediate_answer"]
+                    for i in response
+                    if "intermediate_answer" in i
+                ]
+            )
 
-            follow_ups = [
-				fu
-				for i in response
-				if "follow_up_queries" in i and i["follow_up_queries"]
-				for fu in i["follow_up_queries"]
-			]
+            follow_ups = [fu for i in response for fu in i.get("follow_up_queries", [])]
             if len(follow_ups) == 0:
                 error_msg = "No follow-up queries found in primer response. Ensure that the primer response includes follow-up queries."
                 raise RuntimeError(error_msg)

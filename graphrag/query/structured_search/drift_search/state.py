@@ -20,9 +20,7 @@ class QueryState:
     def __init__(self):
         self.graph = nx.MultiDiGraph()
 
-    def add_action(
-        self, action: DriftAction, metadata: dict[str, Any] | None = None
-    ):
+    def add_action(self, action: DriftAction, metadata: dict[str, Any] | None = None):
         """Add an action to the graph with optional metadata."""
         self.graph.add_node(action, **(metadata or {}))
 
@@ -64,13 +62,13 @@ class QueryState:
             for node in unanswered:
                 node.compute_score(scorer)
             return sorted(
-                   unanswered,
-                   key=lambda node: node.score
-                   if node.score is not None
-                   else float("-inf"),
-                   reverse=True,
-                )
-            
+                unanswered,
+                key=lambda node: node.score
+                if node.score is not None
+                else float("-inf"),
+                reverse=True,
+            )
+
         # shuffle the list if no scorer
         random.shuffle(unanswered)
         return list(unanswered)

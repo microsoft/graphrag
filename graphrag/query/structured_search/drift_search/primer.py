@@ -61,13 +61,12 @@ class PrimerQueryProcessor:
         tuple[str, int]: Expanded query text and the number of tokens used.
         """
         token_ct = 0
-        template = secrets.choice(self.reports).full_content # nosec S311
+        template = secrets.choice(self.reports).full_content  # nosec S311
 
         prompt = f"""Create a hypothetical answer to the following query: {query}\n\n
                   Format it to follow the structure of the template below:\n\n
                   {template}\n"
                   Ensure that the hypothetical answer does not reference new named entities that are not present in the original query."""
-     
 
         messages = [{"role": "user", "content": prompt}]
 
@@ -193,7 +192,11 @@ class DRIFTPrimer:
 
         for i in range(primer_folds):
             start_idx = i * num_reports // primer_folds
-            end_idx = num_reports if i == primer_folds - 1 else (i + 1) * num_reports // primer_folds
+            end_idx = (
+                num_reports
+                if i == primer_folds - 1
+                else (i + 1) * num_reports // primer_folds
+            )
             fold = reports.iloc[start_idx:end_idx]
             folds.append(fold)
         return folds
