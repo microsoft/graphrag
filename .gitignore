@@ -27,6 +27,8 @@ docsite/.pnp.*
 
 # Python Artifacts
 python/*/lib/
+.vscode/launch.json
+
 # Test Output
 .coverage
 coverage/
@@ -45,7 +47,6 @@ lancedb/
 venv/
 .conda
 .tmp
-
 
 .env
 build.zip
