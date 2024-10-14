@@ -1,0 +1,106 @@
+site_name: GraphRAG
+
+theme:
+  name: material
+  icon:
+    logo: octicons/ai-model-24
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.select
+    - navigation.footer
+    - navigation.tabs
+
+nav:
+  - Home:
+      - Welcome: index.md
+      - Getting Started: get_started.md
+      - Development Guide: developing.md
+  - Indexing:
+      - Overview: "index/overview.md"
+      - Architecture: "index/architecture.md"
+      - Dataflow: "index/default_dataflow.md"
+      - CLI: "index/cli.md"
+      - Configuration:
+          - Overview: "config/overview.md"
+          - Init Command: "config/init.md"
+          - Using Env Vars: "config/env_vars.md"
+          - Using JSON or YAML: "config/json_yaml.md"
+          - Fully Custom: "config/custom.md"
+          - Template: "config/template.md"
+  - Prompt Tuning:
+      - Overview: "prompt_tuning/overview.md"
+      - Auto Tuning: "prompt_tuning/auto_prompt_tuning.md"
+      - Manual Tuning: "prompt_tuning/manual_prompt_tuning.md"
+  - Query:
+      - Overview: "query/overview.md"
+      - Local Search: "query/local_search.md"
+      - Question Generation: "query/question_generation.md"
+      - Global Search: "query/global_search.md"
+      - CLI: "query/cli.md"
+      - Notebooks:
+          - Overview: "query/notebooks/overview.md"
+          - Global Search: "examples_notebooks/global_search.ipynb"
+          - Local Search: "examples_notebooks/local_search.ipynb"
+  - Microsoft Research Blog: "blog_posts.md"
+  - Extras:
+      - Operation Dulce:
+          - About: "data/operation_dulce/ABOUT.md"
+          - Document: "data/operation_dulce/Operation Dulce v2 1 1.md"
+plugins:
+  - search
+  - exclude-search:
+      exclude:
+        - "data/operation_dulce/Operation Dulce v2 1 1.md"
+      exclude_unreferenced: true
+  - mkdocs-jupyter:
+      execute: true
+
+repo_url: https://github.com/microsoft/graphrag
+repo_name: graphrag
+copyright: >
+  &copy; 2025 Microsoft&nbsp;|&nbsp;
+  <a href="https://go.microsoft.com/fwlink/?LinkId=521839">Privacy</a>&nbsp;|&nbsp;
+  <a href="https://go.microsoft.com/fwlink/?LinkId=2259814">Consumer Heath Privacy</a>&nbsp;|&nbsp;
+  <a onclick="window.manageConsent();">Cookies</a>&nbsp;|&nbsp;
+  <a href="https://go.microsoft.com/fwlink/?LinkID=206977">Terms of Use</a>&nbsp;|&nbsp;
+  <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+
+extra:
+  polyfills:
+    - "https://wcpstatic.microsoft.com/mscc/lib/v2/wcp-consent.js"
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - "scripts/create_cookie_banner.js"
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
