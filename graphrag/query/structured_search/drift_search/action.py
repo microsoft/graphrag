@@ -86,9 +86,9 @@ class DriftAction:
             generated_tokens = 0
         else:
             generated_tokens = num_tokens(self.answer, search_engine.token_encoder)
-        self.metadata.update(
-            {"token_ct": search_result.prompt_tokens + generated_tokens}
-        )
+        self.metadata.update({
+            "token_ct": search_result.prompt_tokens + generated_tokens
+        })
 
         self.follow_ups = response.pop("follow_up_queries", [])
         if not self.follow_ups:
