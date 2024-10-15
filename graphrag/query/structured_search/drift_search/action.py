@@ -146,15 +146,21 @@ class DriftAction:
         DriftAction
             A deserialized instance of DriftAction.
         """
-        action = cls(data["query"])
+        # Ensure 'query' exists in the data, raise a ValueError if missing
+        query = data.get("query")
+        if query is None:
+            error_message = "Missing 'query' key in serialized data"
+            raise ValueError(error_message)
+
+        # Initialize the DriftAction
+        action = cls(query)
         action.answer = data.get("answer")
         action.score = data.get("score")
         action.metadata = data.get("metadata", {})
-        action.follow_ups = (
-            [cls.deserialize(fu_data) for fu_data in data.get("follow_up_queries", [])]
-            if "follow_ups" in data
-            else []
-        )
+
+        action.follow_ups = [
+            cls.deserialize(fu_data) for fu_data in data.get("follow_up_queries", [])
+        ]
         return action
 
     @classmethod
@@ -187,10 +193,22 @@ class DriftAction:
             action.score = response.get("score")
             return action
 
-        error_message = "Response must be a dictionary"
+        # If response is a string, attempt to parse as JSON
+        if isinstance(response, str):
+            try:
+                parsed_response = json.loads(response)
+                if isinstance(parsed_response, dict):
+                    return cls.from_primer_response(query, parsed_response)
+                error_message = "Parsed response must be a dictionary."
+                raise ValueError(error_message)
+            except json.JSONDecodeError as e:
+                error_message = f"Failed to parse response string: {e}. Parsed response must be a dictionary."
+                raise ValueError(error_message)
+
+        error_message = f"Unsupported response type: {type(response).__name__}. Expected a dictionary or JSON string."
         raise ValueError(error_message)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Allow DriftAction objects to be hashable for use in networkx.MultiDiGraph.
 
@@ -203,7 +221,7 @@ class DriftAction:
         """
         return hash(self.query)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """
         Check equality based on the query string.
 
@@ -215,4 +233,6 @@ class DriftAction:
         bool
             True if the other object is a DriftAction with the same query, False otherwise.
         """
-        return isinstance(other, DriftAction) and self.query == other.query
+        if not isinstance(other, DriftAction):
+            return False
+        return self.query == other.query

@@ -111,12 +111,16 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         ------
         ValueError: If some reports are missing full content or full content embeddings.
         """
-        report_df = pd.DataFrame([report.__dict__ for report in reports])
+        report_df = pd.DataFrame([report.to_dict() for report in reports])
         missing_content_error = "Some reports are missing full content."
         missing_embedding_error = "Some reports are missing full content embeddings."
 
-        if report_df["full_content"].isna().sum() > 0:
+        if (
+            "full_content" not in report_df.columns
+            or report_df["full_content"].isna().sum() > 0
+        ):
             raise ValueError(missing_content_error)
+
         if (
             "full_content_embedding" not in report_df.columns
             or report_df["full_content_embedding"].isna().sum() > 0
@@ -141,7 +145,9 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         bool: True if embeddings match, otherwise False.
         """
         return (
-            isinstance(query_embedding, type(embedding))
+            query_embedding is not None
+            and embedding is not None
+            and isinstance(query_embedding, type(embedding))
             and len(query_embedding) == len(embedding)
             and isinstance(query_embedding[0], type(embedding[0]))
         )
@@ -182,21 +188,27 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
 
         report_df = self.convert_reports_to_df(self.reports)
 
-        if self.check_query_doc_encodings(
+        # Check compatibility between query embedding and document embeddings
+        if not self.check_query_doc_encodings(
             query_embedding, report_df["full_content_embedding"].iloc[0]
         ):
-            report_df["similarity"] = report_df["full_content_embedding"].apply(
-                lambda x: np.dot(x, query_embedding)
-                / (np.linalg.norm(x) * np.linalg.norm(query_embedding))
-            )
-            top_k = report_df.sort_values("similarity", ascending=False).head(
-                self.config.drift_k_followups
-            )
-        else:
-            incompatible_embeddings_error = (
+            error_message = (
                 "Query and document embeddings are not compatible. "
                 "Please ensure that the embeddings are of the same type and length."
             )
-            raise ValueError(incompatible_embeddings_error)
+            raise ValueError(error_message)
+
+        # Vectorized cosine similarity computation
+        query_norm = np.linalg.norm(query_embedding)
+        document_norms = np.linalg.norm(
+            report_df["full_content_embedding"].to_list(), axis=1
+        )
+        dot_products = np.dot(
+            np.vstack(report_df["full_content_embedding"].to_list()), query_embedding
+        )
+        report_df["similarity"] = dot_products / (document_norms * query_norm)
+
+        # Sort by similarity and select top-k
+        top_k = report_df.nlargest(self.config.drift_k_followups, "similarity")
 
         return top_k.loc[:, ["short_id", "community_id", "full_content"]]

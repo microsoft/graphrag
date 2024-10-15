@@ -8,6 +8,7 @@ import logging
 import secrets
 import time
 
+import numpy as np
 import pandas as pd
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
@@ -159,19 +160,19 @@ class DRIFTPrimer:
         -------
         SearchResult: The search result containing the response and context data.
         """
-        start_time = time.time()
+        start_time = time.perf_counter()
         report_folds = self.split_reports(top_k_reports)
         tasks = [self.decompose_query(query, fold) for fold in report_folds]
         results_with_tokens = await tqdm_asyncio.gather(*tasks)
 
-        completion_time = time.time() - start_time
+        completion_time = time.perf_counter() - start_time
 
         return SearchResult(
             response=[response for response, _ in results_with_tokens],
             context_data={"top_k_reports": top_k_reports},
-            context_text=str(top_k_reports),
+            context_text=top_k_reports.to_json(),
             completion_time=completion_time,
-            llm_calls=2,
+            llm_calls=len(results_with_tokens),
             prompt_tokens=sum(tokens for _, tokens in results_with_tokens),
         )
 
@@ -186,17 +187,7 @@ class DRIFTPrimer:
         -------
         list[pd.DataFrame]: List of report folds.
         """
-        folds = []
-        num_reports = len(reports)
         primer_folds = self.config.primer_folds or 1  # Ensure at least one fold
-
-        for i in range(primer_folds):
-            start_idx = i * num_reports // primer_folds
-            end_idx = (
-                num_reports
-                if i == primer_folds - 1
-                else (i + 1) * num_reports // primer_folds
-            )
-            fold = reports.iloc[start_idx:end_idx]
-            folds.append(fold)
-        return folds
+        if primer_folds == 1:
+            return [reports]
+        return [pd.DataFrame(fold) for fold in np.array_split(reports, primer_folds)]

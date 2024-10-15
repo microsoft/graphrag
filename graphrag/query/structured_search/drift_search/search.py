@@ -124,13 +124,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 error_msg = "No intermediate answers found in primer response. Ensure that the primer response includes intermediate answers."
                 raise RuntimeError(error_msg)
 
-            intermediate_answer = "\n\n".join(
-                [
-                    i["intermediate_answer"]
-                    for i in response
-                    if "intermediate_answer" in i
-                ]
-            )
+            intermediate_answer = "\n\n".join([
+                i["intermediate_answer"] for i in response if "intermediate_answer" in i
+            ])
 
             follow_ups = [fu for i in response for fu in i.get("follow_up_queries", [])]
             if len(follow_ups) == 0:
@@ -193,7 +189,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             error_msg = "DRIFT Search query cannot be empty."
             raise ValueError(error_msg)
 
-        start_time = time.time()
+        start_time = time.perf_counter()
         primer_token_ct = 0
         context_token_ct = 0
 
@@ -233,7 +229,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 self.query_state.add_all_follow_ups(action, action.follow_ups)
             epochs += 1
 
-        t_elapsed = time.time() - start_time
+        t_elapsed = time.perf_counter() - start_time
 
         # Calculate token usage
         total_tokens = (

@@ -5,7 +5,11 @@
 
 import logging
 import random
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from typing import Callable
+
 
 import networkx as nx
 
@@ -55,7 +59,9 @@ class QueryState:
         """Find all unanswered actions in the graph."""
         return [node for node in self.graph.nodes if not node.is_complete]
 
-    def rank_incomplete_actions(self, scorer: Any | None = None) -> list[DriftAction]:
+    def rank_incomplete_actions(
+        self, scorer: Callable[[DriftAction], float] | None = None
+    ) -> list[DriftAction]:
         """Rank all unanswered actions in the graph if scorer available."""
         unanswered = self.find_incomplete_actions()
         if scorer:
@@ -63,9 +69,9 @@ class QueryState:
                 node.compute_score(scorer)
             return sorted(
                 unanswered,
-                key=lambda node: node.score
-                if node.score is not None
-                else float("-inf"),
+                key=lambda node: (
+                    node.score if node.score is not None else float("-inf")
+                ),
                 reverse=True,
             )
 
@@ -81,30 +87,31 @@ class QueryState:
         node_to_id = {node: idx for idx, node in enumerate(self.graph.nodes())}
 
         # Serialize nodes
-        nodes = []
-        for node in self.graph.nodes():
-            node_data = node.serialize(include_follow_ups=False)
-            node_data["id"] = node_to_id[node]
-            node_attributes = self.graph.nodes[node]
-            if node_attributes:
-                node_data.update(node_attributes)
-            nodes.append(node_data)
+        nodes: list[dict[str, Any]] = [
+            {
+                **node.serialize(include_follow_ups=False),
+                "id": node_to_id[node],
+                **self.graph.nodes[node],
+            }
+            for node in self.graph.nodes()
+        ]
 
         # Serialize edges
-        edges = []
-        for u, v, edge_data in self.graph.edges(data=True):
-            edge_info = {
+        edges: list[dict[str, Any]] = [
+            {
                 "source": node_to_id[u],
                 "target": node_to_id[v],
                 "weight": edge_data.get("weight", 1.0),
             }
-            edges.append(edge_info)
+            for u, v, edge_data in self.graph.edges(data=True)
+        ]
 
         if include_context:
-            context_data = {}
-            for node in nodes:
-                if node["metadata"].get("context_data") and node.get("query"):
-                    context_data[node["query"]] = node["metadata"]["context_data"]
+            context_data = {
+                node["query"]: node["metadata"]["context_data"]
+                for node in nodes
+                if node["metadata"].get("context_data") and node.get("query")
+            }
 
             context_text = str(context_data)
 
