@@ -26,7 +26,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     # all workflows implicitly receive the `input` source, which is formatted as a dataframe after loading from storage
     # we'll simulate that by just loading one of our output parquets and converting back to equivalent dataframe
     # so we aren't dealing with storage vagaries (which would become an integration test)
-    source = pd.read_parquet("tests/verbs/data/create_base_documents.parquet")
+    source = pd.read_parquet("tests/verbs/data/create_final_documents.parquet")
     source.rename(columns={"raw_content": "text"}, inplace=True)
     input_tables["source"] = cast(pd.DataFrame, source[["id", "text", "title"]])
 
@@ -53,6 +53,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
     pipeline_config = create_pipeline_config(config)
 
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
+
     return cast(PipelineWorkflowConfig, result.config)
 
 

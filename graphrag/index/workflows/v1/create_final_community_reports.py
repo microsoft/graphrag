@@ -19,6 +19,10 @@ def build_steps(
     """
     covariates_enabled = config.get("covariates_enabled", False)
     create_community_reports_config = config.get("create_community_reports", {})
+    summarization_strategy = create_community_reports_config.get("strategy")
+    async_mode = create_community_reports_config.get("async_mode")
+    num_threads = create_community_reports_config.get("num_threads")
+
     base_text_embed = config.get("text_embed", {})
     community_report_full_content_embed_config = config.get(
         "community_report_full_content_embed", base_text_embed
@@ -44,9 +48,6 @@ def build_steps(
         {
             "verb": "create_final_community_reports",
             "args": {
-                "skip_full_content_embedding": skip_full_content_embedding,
-                "skip_summary_embedding": skip_summary_embedding,
-                "skip_title_embedding": skip_title_embedding,
                 "full_content_text_embed": (
                     community_report_full_content_embed_config
                     if not skip_full_content_embedding
@@ -62,7 +63,9 @@ def build_steps(
                     if not skip_title_embedding
                     else None
                 ),
-                **create_community_reports_config,
+                "summarization_strategy": summarization_strategy,
+                "async_mode": async_mode,
+                "num_threads": num_threads,
             },
             "input": input,
         },

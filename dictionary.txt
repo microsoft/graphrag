@@ -1,5 +1,8 @@
 # Team
 Alonso
+Truitt
+Trinh
+Fernández
 
 # Pythonisms
 PYTHONPATH
@@ -63,6 +66,7 @@ numpy
 pypi
 nbformat
 semversioner
+mkdocs
 
 # Library Methods
 iterrows
@@ -85,11 +89,17 @@ isin
 nocache
 nbconvert
 
+# HTML
+nbsp
+onclick
+pymdownx
+linenums
+twemoji
+
 # Verbs
 binarize
 prechunked
 openai
-genid
 umap
 concat
 unhot
@@ -160,10 +170,16 @@ Tiruzia's
 Verdantis
 Verdantis's
 
-
 # English
 skippable
 upvote
 
 # Misc
 Arxiv
+kwds
+
+# Dulce
+astrotechnician
+epitheg
+unspooled
+unnavigated

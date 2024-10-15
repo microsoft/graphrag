@@ -21,6 +21,7 @@ def build_steps(
     """
     base_text_embed = config.get("text_embed", {})
     text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
+
     skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
     covariates_enabled = config.get("covariates_enabled", False)
 
@@ -37,7 +38,7 @@ def build_steps(
         {
             "verb": "create_final_text_units",
             "args": {
-                "text_embed": text_unit_text_embed_config
+                "text_text_embed": text_unit_text_embed_config
                 if not skip_text_unit_embedding
                 else None,
             },

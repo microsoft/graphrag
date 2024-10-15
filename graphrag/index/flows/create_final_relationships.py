@@ -11,11 +11,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.verbs.graph.compute_edge_combined_degree import (
-    compute_edge_combined_degree_df,
+from graphrag.index.operations.compute_edge_combined_degree import (
+    compute_edge_combined_degree,
 )
-from graphrag.index.verbs.graph.unpack import unpack_graph_df
-from graphrag.index.verbs.text.embed.text_embed import text_embed_df
+from graphrag.index.operations.embed_text import embed_text
+from graphrag.index.operations.unpack_graph import unpack_graph
 
 
 async def create_final_relationships(
@@ -23,10 +23,10 @@ async def create_final_relationships(
     nodes: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    graph_edges = unpack_graph_df(entity_graph, callbacks, "clustered_graph", "edges")
+    graph_edges = unpack_graph(entity_graph, callbacks, "clustered_graph", "edges")
 
     graph_edges.rename(columns={"source_id": "text_unit_ids"}, inplace=True)
 
@@ -34,13 +34,13 @@ async def create_final_relationships(
         pd.DataFrame, graph_edges[graph_edges["level"] == 0].reset_index(drop=True)
     )
 
-    if text_embed:
-        filtered["description_embedding"] = await text_embed_df(
+    if description_text_embed:
+        filtered["description_embedding"] = await embed_text(
             filtered,
             callbacks,
             cache,
             column="description",
-            strategy=text_embed["strategy"],
+            strategy=description_text_embed["strategy"],
             embedding_name="relationship_description",
         )
 
@@ -49,7 +49,7 @@ async def create_final_relationships(
     filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
     filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
-    edge_combined_degree = compute_edge_combined_degree_df(
+    edge_combined_degree = compute_edge_combined_degree(
         pruned_edges,
         filtered_nodes,
         to="rank",

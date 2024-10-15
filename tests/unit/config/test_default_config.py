@@ -481,8 +481,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.group_by_columns == []
 
     def test_all_env_vars_is_accurate(self):
-        env_var_docs_path = Path("docsite/posts/config/env_vars.md")
-        query_docs_path = Path("docsite/posts/query/3-cli.md")
+        env_var_docs_path = Path("docs/config/env_vars.md")
+        query_docs_path = Path("docs/query/cli.md")
 
         env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
         query_docs = query_docs_path.read_text(encoding="utf-8")

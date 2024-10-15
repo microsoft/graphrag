@@ -29,7 +29,7 @@ class ChunkingConfig(BaseModel):
 
     def resolved_strategy(self, encoding_model: str) -> dict:
         """Get the resolved chunking strategy."""
-        from graphrag.index.verbs.text.chunk import ChunkStrategyType
+        from graphrag.index.operations.chunk_text import ChunkStrategyType
 
         return self.strategy or {
             "type": ChunkStrategyType.tokens,

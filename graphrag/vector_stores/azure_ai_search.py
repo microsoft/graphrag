@@ -41,9 +41,9 @@ class AzureAISearch(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the AzureAI vector store."""
-        url = kwargs.get("url", None)
-        api_key = kwargs.get("api_key", None)
-        audience = kwargs.get("audience", None)
+        url = kwargs.get("url")
+        api_key = kwargs.get("api_key")
+        audience = kwargs.get("audience")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
 
         self.vector_search_profile_name = kwargs.get(
@@ -55,16 +55,16 @@ class AzureAISearch(BaseVectorStore):
             self.db_connection = SearchClient(
                 endpoint=url,
                 index_name=self.collection_name,
-                credential=AzureKeyCredential(api_key)
-                if api_key
-                else DefaultAzureCredential(),
+                credential=(
+                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
+                ),
                 **audience_arg,
             )
             self.index_client = SearchIndexClient(
                 endpoint=url,
-                credential=AzureKeyCredential(api_key)
-                if api_key
-                else DefaultAzureCredential(),
+                credential=(
+                    AzureKeyCredential(api_key) if api_key else DefaultAzureCredential()
+                ),
                 **audience_arg,
             )
         else:
