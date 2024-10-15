@@ -231,19 +231,25 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg({
-            "id": "first",
-            "type": "first",
-            "human_readable_id": "first",
-            "graph_embedding": "first",
-            "description": lambda x: os.linesep.join(x.astype(str)),  # Ensure str
-            # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-        })
+        .agg(
+            {
+                "id": "first",
+                "type": "first",
+                "human_readable_id": "first",
+                "graph_embedding": "first",
+                "description": lambda x: list(x.astype(str)),  # Ensure str
+                # Concatenate nd.array into a single list
+                "text_unit_ids": lambda x: ",".join(
+                    str(i) for j in x.tolist() for i in j
+                ),
+                # Keep only descriptions where the original value wasn't modified
+                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+            }
+        )
         .reset_index()
     )
+
+    # Summarize descriptions
 
     # Force the result into a DataFrame
     resolved: pd.DataFrame = pd.DataFrame(aggregated)
@@ -404,18 +410,28 @@ def _merge_and_resolve_nodes(
     columns_to_agg: dict[str, str | Callable] = {
         col: "first"
         for col in concat_nodes.columns
-        if col not in ["description", "source_id", "level", "title"]
+        if col not in ["source_id", "level", "title"]
     }
 
     # Specify custom aggregation for description and source_id
-    columns_to_agg.update({
-        "description": lambda x: os.linesep.join(x.astype(str)),
-        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-    })
+    columns_to_agg.update(
+        {
+            "description": lambda x: os.linesep.join(x.astype(str)),
+            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+        }
+    )
 
     merged_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
+
+    # Use description from merged_entities_df
+    merged_nodes = merged_nodes.merge(
+        merged_entities_df[["name", "description"]],
+        left_on="title",
+        right_on="name",
+        how="left",
+    ).drop(columns=["name"])
 
     # Mantain type compat with query
     merged_nodes["community"] = (
