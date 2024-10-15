@@ -104,7 +104,6 @@ def cli_main():
     parser_index.add_argument(
         "--update-index",
         help="Update a given index run id, leveraging previous outputs and applying new indexes",
-        # Only required if config is not defined
         required=False,
         default=None,
         type=str,
@@ -116,3 +115,119 @@ def cli_main():
         default=None,
         type=str,
     )
+
+    # Prompt-tune command-line arguments
+    parser_prompt_tune = subparsers.add_parser(
+        name="prompt-tune",
+        description="The graphrag auto templating module.",
+    )
+    parser_prompt_tune.add_argument(
+        "--domain",
+        help="Domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, the domain will be inferred from the input data.",
+        type=str,
+        default="",
+    )
+    parser_prompt_tune.add_argument(
+        "--selection-method",
+        help=f"Chunk selection method. Default: {DocSelectionType.RANDOM}",
+        type=DocSelectionType,
+        choices=list(DocSelectionType),
+        default=DocSelectionType.RANDOM,
+    )
+    parser_prompt_tune.add_argument(
+        "--n_subset_max",
+        help="Number of text chunks to embed when using auto selection method. Default: 300",
+        type=int,
+        default=300,
+    )
+    parser_prompt_tune.add_argument(
+        "--k",
+        help="Maximum number of documents to select from each centroid when using auto selection method. Default: 15",
+        type=int,
+        default=15,
+    )
+    parser_prompt_tune.add_argument(
+        "--limit",
+        help="Number of documents to load when doing random or top selection. Default: 15",
+        type=int,
+        default=15,
+    )
+    parser_prompt_tune.add_argument(
+        "--max-tokens",
+        help=f"Max token count for prompt generation. Default: {MAX_TOKEN_COUNT}",
+        type=int,
+        default=MAX_TOKEN_COUNT,
+    )
+    parser_prompt_tune.add_argument(
+        "--min-examples-required",
+        help="Minimum number of examples required in the entity extraction prompt. Default: 2",
+        type=int,
+        default=2,
+    )
+    parser_prompt_tune.add_argument(
+        "--chunk-size",
+        help=f"Max token count for prompt generation. Default: {MIN_CHUNK_SIZE}",
+        type=int,
+        default=MIN_CHUNK_SIZE,
+    )
+    parser_prompt_tune.add_argument(
+        "--language",
+        help="Primary language used for inputs and outputs on GraphRAG",
+        type=str,
+        default=None,
+    )
+    parser_prompt_tune.add_argument(
+        "--no-entity-types",
+        help="Use untyped entity extraction generation",
+        action="store_true",
+    )
+    parser_prompt_tune.add_argument(
+        "--output",
+        help="Directory to save generated prompts to, relative to the root directory. Default: 'prompts'",
+        type=str,
+        default="prompts",
+    )
+
+    # Querying command-line arguments
+    parser_query = subparsers.add_parser(
+        name="query",
+        description="The graphrag querying engine.",
+    )
+    parser_query.add_argument(
+        "--data",
+        help="The path with the output data from the pipeline",
+        type=dir_exist,
+    )
+    parser_query.add_argument(
+        "--method",
+        help="The method to run",
+        required=True,
+        type=SearchType,
+        choices=list(SearchType),
+    )
+    parser_query.add_argument(
+        "--community_level",
+        help="Community level in the Leiden community hierarchy from which we will load the community reports. A higher value means we will use reports from smaller communities. Default: 2",
+        type=int,
+        default=2,
+    )
+    parser_query.add_argument(
+        "--response_type",
+        help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report. Default: Multiple Paragraphs",
+        type=str,
+        default="Multiple Paragraphs",
+    )
+    parser_query.add_argument(
+        "--streaming",
+        help="Print response in a streaming manner",
+        action="store_true",
+    )
+    parser_query.add_argument(
+        "query",
+        nargs=1,
+        help="The query to run",
+        type=str,
+    )
+
+    # Parse arguments and call cli function
+    args = parser.parse_args()
