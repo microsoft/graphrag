@@ -32,7 +32,11 @@ def create_openai_client(
             api_base,
             configuration.deployment_name,
         )
-        audience = configuration.audience if configuration.audience else "https://cognitiveservices.azure.com/.default"
+        audience = (
+            configuration.audience
+            if configuration.audience
+            else "https://cognitiveservices.azure.com/.default"
+        )
 
         return AsyncAzureOpenAI(
             api_key=configuration.api_key if configuration.api_key else None,

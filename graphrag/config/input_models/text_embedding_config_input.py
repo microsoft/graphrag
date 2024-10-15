@@ -3,7 +3,7 @@
 
 """Parameterization settings for the default configuration."""
 
-from typing_extensions import NotRequired, Required
+from typing_extensions import NotRequired
 
 from graphrag.config.enums import (
     TextEmbeddingTarget,

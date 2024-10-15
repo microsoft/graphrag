@@ -44,7 +44,11 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         **config.llm.model_dump(),
         "api_key": f"REDACTED,len={len(debug_llm_key)}",
     }
-    audience = config.llm.audience if config.llm.audience else "https://cognitiveservices.azure.com/.default"
+    audience = (
+        config.llm.audience
+        if config.llm.audience
+        else "https://cognitiveservices.azure.com/.default"
+    )
     print(f"creating llm client with {llm_debug_info}")  # noqa T201
     return ChatOpenAI(
         api_key=config.llm.api_key,
