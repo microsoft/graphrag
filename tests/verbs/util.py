@@ -13,7 +13,7 @@ from graphrag.index import (
     create_pipeline_config,
 )
 from graphrag.index.run.utils import _create_run_context
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 pd.set_option("display.max_columns", None)
 

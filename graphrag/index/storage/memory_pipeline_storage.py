@@ -6,7 +6,7 @@
 from typing import Any
 
 from .file_pipeline_storage import FilePipelineStorage
-from .typing import PipelineStorage
+from .pipeline_storage import PipelineStorage
 
 
 class MemoryPipelineStorage(FilePipelineStorage):
