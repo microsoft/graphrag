@@ -3,7 +3,6 @@
 
 """A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
 
-import networkx as nx
 from datashaper import VerbCallbacks
 
 import graphrag.config.defaults as defs
@@ -113,8 +112,7 @@ async def run_extract_entities(
         if item is not None
     ]
 
-    graph_data = "".join(nx.generate_graphml(graph))
-    return EntityExtractionResult(entities, graph_data)
+    return EntityExtractionResult(entities, graph)
 
 
 def _create_text_splitter(

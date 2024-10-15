@@ -57,5 +57,5 @@ async def run(  # noqa RUF029 async is required for interface
             {"type": entity_type, "name": name}
             for name, entity_type in entity_map.items()
         ],
-        graphml_graph="".join(nx.generate_graphml(graph)),
+        graph=graph,
     )

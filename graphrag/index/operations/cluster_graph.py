@@ -14,7 +14,7 @@ from datashaper import VerbCallbacks, progress_iterable
 from graspologic.partition import hierarchical_leiden
 
 from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.utils import gen_uuid, load_graph
+from graphrag.index.utils import gen_uuid
 
 Communities = list[tuple[int, str, list[str]]]
 
@@ -33,7 +33,7 @@ log = logging.getLogger(__name__)
 
 
 def cluster_graph(
-    input: pd.DataFrame,
+    input: nx.Graph,
     callbacks: VerbCallbacks,
     strategy: dict[str, Any],
     column: str,
@@ -41,63 +41,64 @@ def cluster_graph(
     level_to: str | None = None,
 ) -> pd.DataFrame:
     """Apply a hierarchical clustering algorithm to a graph."""
-    results = input[column].apply(lambda graph: run_layout(strategy, graph))
+    output = pd.DataFrame()
+    # TODO: for back-compat, downstream expects a graphml string
+    output[column] = ["\n".join(nx.generate_graphml(input))]
+    communities = run_layout(strategy, input)
 
     community_map_to = "communities"
-    input[community_map_to] = results
+    output[community_map_to] = [communities]
 
     level_to = level_to or f"{to}_level"
-    input[level_to] = input.apply(
+    output[level_to] = output.apply(
         lambda x: list({level for level, _, _ in x[community_map_to]}), axis=1
     )
-    input[to] = None
+    output[to] = None
 
-    num_total = len(input)
+    num_total = len(output)
 
     # Create a seed for this run (if not provided)
     seed = strategy.get("seed", Random().randint(0, 0xFFFFFFFF))  # noqa S311
 
     # Go through each of the rows
     graph_level_pairs_column: list[list[tuple[int, str]]] = []
-    for _, row in progress_iterable(input.iterrows(), callbacks.progress, num_total):
+    for _, row in progress_iterable(output.iterrows(), callbacks.progress, num_total):
         levels = row[level_to]
         graph_level_pairs: list[tuple[int, str]] = []
 
         # For each of the levels, get the graph and add it to the list
         for level in levels:
-            graph = "\n".join(
+            graphml = "\n".join(
                 nx.generate_graphml(
                     apply_clustering(
-                        cast(str, row[column]),
+                        input,
                         cast(Communities, row[community_map_to]),
                         level,
                         seed=seed,
                     )
                 )
             )
-            graph_level_pairs.append((level, graph))
+            graph_level_pairs.append((level, graphml))
         graph_level_pairs_column.append(graph_level_pairs)
-    input[to] = graph_level_pairs_column
+    output[to] = graph_level_pairs_column
 
     # explode the list of (level, graph) pairs into separate rows
-    input = input.explode(to, ignore_index=True)
+    output = output.explode(to, ignore_index=True)
 
     # split the (level, graph) pairs into separate columns
     # TODO: There is probably a better way to do this
-    input[[level_to, to]] = pd.DataFrame(input[to].tolist(), index=input.index)
+    output[[level_to, to]] = pd.DataFrame(output[to].tolist(), index=output.index)
 
     # clean up the community map
-    input.drop(columns=[community_map_to], inplace=True)
-    return input
+    output.drop(columns=[community_map_to], inplace=True)
+    return output
 
 
-# TODO: This should support str | nx.Graph as a graphml param
 def apply_clustering(
-    graphml: str, communities: Communities, level: int = 0, seed: int | None = None
+    graph: nx.Graph, communities: Communities, level: int = 0, seed: int | None = None
 ) -> nx.Graph:
-    """Apply clustering to a graphml string."""
+    """Apply clustering to a graph."""
     random = Random(seed)  # noqa S311
-    graph = nx.parse_graphml(graphml)
     for community_level, community_id, nodes in communities:
         if level == community_level:
             for node in nodes:
@@ -121,11 +122,8 @@ def apply_clustering(
     return graph
 
 
-def run_layout(
-    strategy: dict[str, Any], graphml_or_graph: str | nx.Graph
-) -> Communities:
+def run_layout(strategy: dict[str, Any], graph: nx.Graph) -> Communities:
     """Run layout method definition."""
-    graph = load_graph(graphml_or_graph)
     if len(graph.nodes) == 0:
         log.warning("Graph has no nodes")
         return []
