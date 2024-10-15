@@ -7,6 +7,7 @@ import logging
 from enum import Enum
 from typing import Any
 
+import networkx as nx
 import pandas as pd
 from datashaper import (
     AsyncType,
@@ -41,15 +42,14 @@ async def extract_entities(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    column: str,
+    text_column: str,
     id_column: str,
     to: str,
     strategy: dict[str, Any] | None,
-    graph_to: str | None = None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types=DEFAULT_ENTITY_TYPES,
     num_threads: int = 4,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, list[nx.Graph]]:
     """
     Extract entities from a piece of text.
 
@@ -59,7 +59,6 @@ async def extract_entities(
         column: the_document_text_column_to_extract_entities_from
         id_column: the_column_with_the_unique_id_for_each_row
         to: the_column_to_output_the_entities_to
-        graph_to: the_column_to_output_the_graphml_to
         strategy: <strategy_config>, see strategies section below
         summarize_descriptions: true | false /* Optional: This will summarize the descriptions of the entities and relationships, default: true */
         entity_types:
@@ -124,7 +123,7 @@ async def extract_entities(
 
     async def run_strategy(row):
         nonlocal num_started
-        text = row[column]
+        text = row[text_column]
         id = row[id_column]
         result = await strategy_exec(
             [Document(text=text, id=id)],
@@ -134,7 +133,7 @@ async def extract_entities(
             strategy_config,
         )
         num_started += 1
-        return [result.entities, result.graphml_graph]
+        return [result.entities, result.graph]
 
     results = await derive_from_rows(
         input,
@@ -145,20 +144,18 @@ async def extract_entities(
     )
 
     to_result = []
-    graph_to_result = []
+    graphs = []
     for result in results:
         if result:
             to_result.append(result[0])
-            graph_to_result.append(result[1])
+            graphs.append(result[1])
         else:
             to_result.append(None)
-            graph_to_result.append(None)
+            graphs.append(None)
 
     input[to] = to_result
-    if graph_to is not None:
-        input[graph_to] = graph_to_result
 
-    return input.reset_index(drop=True)
+    return (input.reset_index(drop=True), graphs)
 
 
 def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStrategy:
