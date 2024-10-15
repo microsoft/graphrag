@@ -86,9 +86,9 @@ class DriftAction:
             generated_tokens = 0
         else:
             generated_tokens = num_tokens(self.answer, search_engine.token_encoder)
-        self.metadata.update({
-            "token_ct": search_result.prompt_tokens + generated_tokens
-        })
+        self.metadata.update(
+            {"token_ct": search_result.prompt_tokens + generated_tokens}
+        )
 
         self.follow_ups = response.pop("follow_up_queries", [])
         if not self.follow_ups:
@@ -203,7 +203,7 @@ class DriftAction:
                 raise ValueError(error_message)
             except json.JSONDecodeError as e:
                 error_message = f"Failed to parse response string: {e}. Parsed response must be a dictionary."
-                raise ValueError(error_message)
+                raise ValueError(error_message) from e
 
         error_message = f"Unsupported response type: {type(response).__name__}. Expected a dictionary or JSON string."
         raise ValueError(error_message)

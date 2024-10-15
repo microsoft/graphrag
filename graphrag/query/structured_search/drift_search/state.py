@@ -5,11 +5,8 @@
 
 import logging
 import random
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from typing import Callable
-
+from collections.abc import Callable
+from typing import Any
 
 import networkx as nx
 

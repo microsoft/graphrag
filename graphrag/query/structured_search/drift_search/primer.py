@@ -170,7 +170,7 @@ class DRIFTPrimer:
         return SearchResult(
             response=[response for response, _ in results_with_tokens],
             context_data={"top_k_reports": top_k_reports},
-            context_text=top_k_reports.to_json(),
+            context_text=top_k_reports.to_json() or "",
             completion_time=completion_time,
             llm_calls=len(results_with_tokens),
             prompt_tokens=sum(tokens for _, tokens in results_with_tokens),
