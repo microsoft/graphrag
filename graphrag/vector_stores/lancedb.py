@@ -3,13 +3,13 @@
 
 """The LanceDB vector storage implementation package."""
 
-import lancedb as lancedb  # noqa: I001 (Ruff was breaking on this file imports, even tho they were sorted and passed local tests)
-from graphrag.model.types import TextEmbedder
-
 import json
 from typing import Any
 
+import lancedb as lancedb
 import pyarrow as pa
+
+from graphrag.model.types import TextEmbedder
 
 from .base import (
     BaseVectorStore,
