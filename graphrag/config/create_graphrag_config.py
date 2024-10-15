@@ -293,7 +293,7 @@ def create_graphrag_config(
                     embeddings_config,
                     llm_parallelization_model,  # type: ignore
                 ),
-                vector_store=embeddings_config["vector_store"],  # type: ignore
+                vector_store=embeddings_config.get("vector_store") or {},  # type: ignore
                 async_mode=hydrate_async_type(embeddings_config, async_mode),  # type: ignore
                 target=(
                     TextEmbeddingTarget(embeddings_target)

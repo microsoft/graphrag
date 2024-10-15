@@ -19,5 +19,5 @@ class TextEmbeddingConfigInput(LLMConfigInput):
     batch_max_tokens: NotRequired[int | str | None]
     target: NotRequired[TextEmbeddingTarget | str | None]
     skip: NotRequired[list[str] | str | None]
-    vector_store: Required[dict]
+    vector_store: NotRequired[dict | None]
     strategy: NotRequired[dict | None]
