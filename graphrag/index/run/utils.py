@@ -103,14 +103,17 @@ def _apply_substitutions(config: PipelineConfig, run_id: str) -> PipelineConfig:
     return config
 
 
-def _create_run_context(
+def create_run_context(
     storage: PipelineStorage | None,
     cache: PipelineCache | None,
     stats: PipelineRunStats | None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
+    base_store = storage or MemoryPipelineStorage()
+    temp_store = base_store.child("tmp")
     return PipelineRunContext(
         stats=stats or PipelineRunStats(),
         cache=cache or InMemoryCache(),
-        storage=storage or MemoryPipelineStorage(),
+        storage=base_store,
+        runtime_storage=temp_store,
     )

@@ -32,8 +32,8 @@ from graphrag.index.run.utils import (
     _apply_substitutions,
     _create_input,
     _create_reporter,
-    _create_run_context,
     _validate_dataset,
+    create_run_context,
 )
 from graphrag.index.run.workflow import (
     _create_callback_chain,
@@ -200,7 +200,7 @@ async def run_pipeline(
     """
     start_time = time.time()
 
-    context = _create_run_context(storage=storage, cache=cache, stats=None)
+    context = create_run_context(storage=storage, cache=cache, stats=None)
 
     progress_reporter = progress_reporter or NullProgressReporter()
     callbacks = callbacks or ConsoleWorkflowCallbacks()
