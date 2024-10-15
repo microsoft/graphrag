@@ -19,9 +19,10 @@ workflows:
       # Just lump everything together
       chunk_by: []
 
-  - name: create_base_extracted_entities
+  - name: create_base_entity_graph
     config:
       graphml_snapshot: True
+      embed_graph_enabled: True
       entity_extract:
         strategy:
           type: graph_intelligence
@@ -37,9 +38,6 @@ workflows:
               ("relationship"<|>COMPANY_A<|>COMPANY_B<|>Company_A and Company_B are related because Company_A is 100% owned by Company_B and the two companies also share the same address)<|>2)
               ##
               ("relationship"<|>COMPANY_A<|>PERSON_C<|>Company_A and Person_C are related because Person_C is director of Company_A<|>1))'
-
-  - name: create_summarized_entities
-    config:
       summarize_descriptions:
         strategy:
           type: graph_intelligence
@@ -47,19 +45,12 @@ workflows:
             type: static_response
             responses:
               - This is a MOCK response for the LLM. It is summarized!
-
-  - name: create_base_entity_graph
-    config:
-      graphml_snapshot: True
-      embed_graph_enabled: True
       cluster_graph:
         strategy:
           type: leiden
           verbose: True
 
   - name: create_final_nodes
-
-  - name: create_base_documents
 
   - name: create_final_communities
   - name: create_final_text_units
