@@ -26,7 +26,7 @@ def create_base_text_units(
     chunk_column_name: str,
     n_tokens_column_name: str,
     chunk_by_columns: list[str],
-    strategy: dict[str, Any] | None = None,
+    chunk_strategy: dict[str, Any] | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform base text_units."""
@@ -38,7 +38,7 @@ def create_base_text_units(
         chunk_column_name,
         n_tokens_column_name,
         chunk_by_columns,
-        strategy,
+        chunk_strategy=chunk_strategy,
     )
 
     return create_verb_result(

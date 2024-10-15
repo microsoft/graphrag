@@ -55,7 +55,7 @@ aiolimiter = "^1.1.0"
 aiofiles = "^24.1.0"
 
 # LLM
-openai = "^1.46.1"
+openai = "^1.51.2"
 nltk = "3.9.1"
 tiktoken = "^0.7.0"
 
@@ -63,7 +63,7 @@ tiktoken = "^0.7.0"
 numpy = "^1.25.2"
 graspologic = "^3.4.1"
 networkx = "^3"
-pandas = "^2.2.2"
+pandas = "^2.2.3"
 matplotlib = "^3.9.0"
 pyarrow = "^15.0.0"
 umap-learn = "^0.5.6"
@@ -84,7 +84,7 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
-json-repair = "^0.28.4"
+json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 
@@ -94,23 +94,26 @@ ipykernel = "^6.29.4"
 jupyter = "^1.1.1"
 nbconvert = "^7.16.3"
 poethepoet = "^0.28.0"
-pyright = "^1.1.371"
+pyright = "^1.1.384"
 pytest = "^8.3.2"
 pytest-asyncio = "^0.24.0"
 pytest-timeout = "^2.3.1"
-ruff = "^0.6.5"
+ruff = "^0.6.9"
 semversioner = "^2.0.3"
 update-toml = "^0.2.1"
-deptry = "^0.16.1"
+deptry = "^0.20.0"
+mkdocs-material = "^9.5.39"
+mkdocs-jupyter = "^0.25.0"
+mkdocs-exclude-search = "^0.6.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poe.tasks]
-_sort_imports = "ruff check --select I --fix . --preview"
-_format_code = "ruff format  . --preview"
-_ruff_check = 'ruff check . --preview'
+_sort_imports = "ruff check --select I --fix ."
+_format_code = "ruff format  ."
+_ruff_check = 'ruff check .'
 _pyright = "pyright"
 _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
@@ -119,9 +122,9 @@ _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
 _semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(poetry run semversioner current-version)"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
-check_format = 'ruff format . --check --preview'
-fix = "ruff  --preview check --fix ."
-fix_unsafe = "ruff check --preview --fix --unsafe-fixes ."
+check_format = 'ruff format . --check'
+fix = "ruff check --fix ."
+fix_unsafe = "ruff check --fix --unsafe-fixes ."
 
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
@@ -134,6 +137,9 @@ query = "python -m graphrag.query"
 prompt_tune = "python -m graphrag.prompt_tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
+
+serve_docs = "mkdocs serve"
+build_docs = "mkdocs build"
 
 [[tool.poe.tasks.release]]
 sequence = [
@@ -164,10 +170,12 @@ target-version = "py310"
 extend-include = ["*.ipynb"]
 
 [tool.ruff.format]
+preview = true
 docstring-code-format = true
 docstring-code-line-length = 20
 
 [tool.ruff.lint]
+preview = true
 select = [
     "E4",
     "E7",

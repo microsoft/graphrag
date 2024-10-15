@@ -49,9 +49,7 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
-    create_base_documents,
     create_base_entity_graph,
-    create_base_extracted_entities,
     create_base_text_units,
     create_final_communities,
     create_final_community_reports,
@@ -61,7 +59,6 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
-    create_summarized_entities,
 )
 
 log = logging.getLogger(__name__)
@@ -173,17 +170,12 @@ def _document_workflows(
     )
     return [
         PipelineWorkflowReference(
-            name=create_base_documents,
+            name=create_final_documents,
             config={
                 "document_attribute_columns": list(
                     {*(settings.input.document_attribute_columns)}
                     - builtin_document_attributes
-                )
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_final_documents,
-            config={
+                ),
                 "document_raw_content_embed": _get_embedding_settings(
                     settings.embeddings,
                     "document_raw_content",
@@ -267,10 +259,9 @@ def _graph_workflows(
     )
     return [
         PipelineWorkflowReference(
-            name=create_base_extracted_entities,
+            name=create_base_entity_graph,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
-                "raw_entity_snapshot": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
@@ -279,12 +270,6 @@ def _graph_workflows(
                     ),
                     "entity_types": settings.entity_extraction.entity_types,
                 },
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_summarized_entities,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
                 "summarize_descriptions": {
                     **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
@@ -292,12 +277,6 @@ def _graph_workflows(
                         settings.root_dir,
                     ),
                 },
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_base_entity_graph,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
                 "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()

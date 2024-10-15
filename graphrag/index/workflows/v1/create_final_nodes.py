@@ -27,6 +27,7 @@ def build_steps(
             },
         },
     )
+    layout_strategy = layout_graph_config.get("strategy")
     level_for_node_positions = config.get("level_for_node_positions", 0)
 
     return [
@@ -34,7 +35,7 @@ def build_steps(
             "id": "laid_out_entity_graph",
             "verb": "create_final_nodes",
             "args": {
-                **layout_graph_config,
+                "layout_strategy": layout_strategy,
                 "level_for_node_positions": level_for_node_positions,
                 "snapshot_top_level_nodes": snapshot_top_level_nodes,
             },
