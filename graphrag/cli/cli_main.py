@@ -8,12 +8,15 @@ import asyncio
 from enum import Enum
 
 from graphrag.api import DocSelectionType
-from graphrag.cli import index_cli, prompt_tune, run_global_search, run_local_search
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.logging import ReporterType
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 from graphrag.utils.cli import dir_exist, file_exist
+
+from .index_cli import index_cli
+from .prompt_tune_cli import prompt_tune
+from .query_cli import run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -26,6 +29,75 @@ class SearchType(Enum):
     def __str__(self):
         """Return the string representation of the enum value."""
         return self.value
+
+def _call_index_cli(args):
+    # Pass arguments to index cli
+    if args.resume and args.update_index:
+        msg = "Cannot resume and update a run at the same time"
+        raise ValueError(msg)
+    
+    index_cli(
+        root_dir=args.root,
+        verbose=args.verbose,
+        resume=args.resume,
+        update_index_id=args.update_index,
+        memprofile=args.memprofile,
+        nocache=args.nocache,
+        reporter=args.reporter,
+        config_filepath=args.config,
+        emit=[TableEmitterType(value) for value in args.emit.split(",")],
+        dryrun=args.dryrun,
+        init=args.init,
+        skip_validations=args.skip_validations,
+        output_dir=args.output,
+    )
+
+def _call_prompt_tune_cli(args):
+    # Pass arguments to prompt-tune cli
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(
+        prompt_tune(
+            config=args.config,
+            root=args.root,
+            domain=args.domain,
+            selection_method=args.selection_method,
+            limit=args.limit,
+            max_tokens=args.max_tokens,
+            chunk_size=args.chunk_size,
+            language=args.language,
+            skip_entity_types=args.no_entity_types,
+            output=args.output,
+            n_subset_max=args.n_subset_max,
+            k=args.k,
+            min_examples_required=args.min_examples_required,
+        )
+    )
+
+def _call_query_cli(args):
+    # Pass arguments to query cli
+    match args.method:
+        case SearchType.LOCAL:
+            run_local_search(
+                config_filepath=args.config,
+                data_dir=args.data,
+                root_dir=args.root,
+                community_level=args.community_level,
+                response_type=args.response_type,
+                streaming=args.streaming,
+                query=args.query[0],
+            )
+        case SearchType.GLOBAL:
+            run_global_search(
+                config_filepath=args.config,
+                data_dir=args.data,
+                root_dir=args.root,
+                community_level=args.community_level,
+                response_type=args.response_type,
+                streaming=args.streaming,
+                query=args.query[0],
+            )
+        case _:
+            raise ValueError(INVALID_METHOD_ERROR)
 
 def cli_main():
     """Parse graphrag cli parameters and execute corresponding cli functions."""
@@ -115,6 +187,9 @@ def cli_main():
         default=None,
         type=str,
     )
+    parser_index.set_defaults(
+        func=_call_index_cli
+    )
 
     # Prompt-tune command-line arguments
     parser_prompt_tune = subparsers.add_parser(
@@ -187,6 +262,9 @@ def cli_main():
         type=str,
         default="prompts",
     )
+    parser_prompt_tune.set_defaults(
+        func=_call_prompt_tune_cli
+    )
 
     # Querying command-line arguments
     parser_query = subparsers.add_parser(
@@ -228,6 +306,10 @@ def cli_main():
         help="The query to run",
         type=str,
     )
+    parser_query.set_defaults(
+        func=_call_query_cli
+    )
 
     # Parse arguments and call cli function
     args = parser.parse_args()
+    args.func(args)
