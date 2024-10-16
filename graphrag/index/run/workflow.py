@@ -122,10 +122,18 @@ def _find_workflow_config(
     dict
         The workflow configuration.
     """
-    for workflow in config.workflows:
-        if workflow.name == workflow_name:
-            if workflow.config and step in workflow.config:
-                return workflow.config.get(step, {})
-            return {}
-    error_message = f"Workflow {workflow_name} not found in the pipeline configuration."
-    raise ValueError(error_message)
+    try:
+        workflow = next(
+            filter(lambda workflow: workflow.name == workflow_name, config.workflows)
+        )
+    except StopIteration:
+        error_message = (
+            f"Workflow {workflow_name} not found in the pipeline configuration."
+        )
+        raise ValueError(error_message)
+
+    return (
+        workflow.config.get(step, {})
+        if workflow.config and step in workflow.config
+        else {}
+    )

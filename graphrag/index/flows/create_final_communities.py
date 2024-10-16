@@ -3,7 +3,7 @@
 
 """All the steps to transform final communities."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pandas as pd
 from datashaper import (
@@ -64,7 +64,7 @@ def create_final_communities(
     filtered["title"] = "Community " + filtered["id"].astype(str)
 
     # Add period timestamp to the community reports
-    filtered["period"] = datetime.now().date().isoformat()
+    filtered["period"] = datetime.now(timezone.utc).date().isoformat()
 
     # Add size of the community
     filtered["size"] = filtered["text_unit_ids"].apply(lambda x: len(x))
