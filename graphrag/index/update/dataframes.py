@@ -3,24 +3,28 @@
 
 """Dataframe operations and utils for Incremental Indexing."""
 
+import asyncio
 import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from datashaper import VerbCallbacks
+
+from graphrag.index.run.workflow import _find_workflow_config
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.config.pipeline import PipelineConfig
+from graphrag.index.operations.embed_text import embed_text
+from graphrag.index.operations.summarize_descriptions.strategies import (
+    run_graph_intelligence as run_entity_summarization,
+)
 from graphrag.index.storage.typing import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
-
-mergeable_outputs = [
-    "create_final_documents",
-    "create_final_entities",
-    "create_final_relationships",
-]
 
 
 @dataclass
@@ -76,6 +80,9 @@ async def get_delta_docs(
 async def update_dataframe_outputs(
     dataframe_dict: dict[str, pd.DataFrame],
     storage: PipelineStorage,
+    config: PipelineConfig,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
 ) -> None:
     """Update the mergeable outputs.
 
@@ -86,7 +93,6 @@ async def update_dataframe_outputs(
     storage : PipelineStorage
         The storage used to store the dataframes.
     """
-    await _concat_dataframes("create_base_text_units", dataframe_dict, storage)
     await _concat_dataframes("create_final_documents", dataframe_dict, storage)
 
     old_entities = await _load_table_from_storage(
@@ -97,8 +103,19 @@ async def update_dataframe_outputs(
     merged_entities_df, entity_id_mapping = _group_and_resolve_entities(
         old_entities, delta_entities
     )
+
+    # Re-run description summarization and embeddings
+    merged_entities_df = await _run_entity_summarization(
+        merged_entities_df,
+        config,
+        cache,
+        callbacks,
+    )
+    merged_entities_df = await _run_entity_description_embedding(
+        merged_entities_df, config, cache, callbacks
+    )
+
     # Save the updated entities back to storage
-    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set("create_final_entities.parquet", merged_entities_df.to_parquet())
 
     # Update relationships with the entities id mapping
@@ -126,7 +143,6 @@ async def update_dataframe_outputs(
         old_text_units, delta_text_units, entity_id_mapping
     )
 
-    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
     await storage.set("create_final_text_units.parquet", merged_text_units.to_parquet())
 
     # Merge final nodes and update community ids
@@ -231,25 +247,19 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg(
-            {
-                "id": "first",
-                "type": "first",
-                "human_readable_id": "first",
-                "graph_embedding": "first",
-                "description": lambda x: list(x.astype(str)),  # Ensure str
-                # Concatenate nd.array into a single list
-                "text_unit_ids": lambda x: ",".join(
-                    str(i) for j in x.tolist() for i in j
-                ),
-                # Keep only descriptions where the original value wasn't modified
-                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-            }
-        )
+        .agg({
+            "id": "first",
+            "type": "first",
+            "human_readable_id": "first",
+            "graph_embedding": "first",
+            "description": lambda x: list(x.astype(str)),  # Ensure str
+            # Concatenate nd.array into a single list
+            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+            # Keep only descriptions where the original value wasn't modified
+            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+        })
         .reset_index()
     )
-
-    # Summarize descriptions
 
     # Force the result into a DataFrame
     resolved: pd.DataFrame = pd.DataFrame(aggregated)
@@ -414,12 +424,10 @@ def _merge_and_resolve_nodes(
     }
 
     # Specify custom aggregation for description and source_id
-    columns_to_agg.update(
-        {
-            "description": lambda x: os.linesep.join(x.astype(str)),
-            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-        }
-    )
+    columns_to_agg.update({
+        "description": lambda x: os.linesep.join(x.astype(str)),
+        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+    })
 
     merged_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
@@ -550,3 +558,96 @@ def _update_and_merge_community_reports(
     )
 
     return merged_community_reports
+
+
+async def _run_entity_summarization(
+    entities_df: pd.DataFrame,
+    config: PipelineConfig,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+) -> pd.DataFrame:
+    """Run entity summarization.
+
+    Parameters
+    ----------
+    entities_df : pd.DataFrame
+        The entities dataframe.
+    config : PipelineConfig
+        The pipeline configuration.
+    cache : PipelineCache
+        Pipeline cache used during the summarization process.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated entities dataframe with summarized descriptions.
+    """
+    summarize_config = _find_workflow_config(
+        config, "create_base_entity_graph", "summarize_descriptions"
+    )
+    strategy = summarize_config.get("strategy", {})
+
+    # Prepare tasks for async summarization where needed
+    async def process_row(row):
+        description = row["description"]
+        if isinstance(description, list) and len(description) > 1:
+            # Run entity summarization asynchronously
+            result = await run_entity_summarization(
+                row["name"], description, callbacks, cache, strategy
+            )
+            return result.description
+        # Handle case where description is a single-item list or not a list
+        return description[0] if isinstance(description, list) else description
+
+    # Create a list of async tasks for summarization
+    tasks = [process_row(row) for _, row in entities_df.iterrows()]
+    results = await asyncio.gather(*tasks)
+
+    # Update the 'description' column in the DataFrame
+    entities_df["description"] = results
+
+    return entities_df
+
+
+async def _run_entity_description_embedding(
+    entities_df: pd.DataFrame,
+    config: PipelineConfig,
+    cache: PipelineCache,
+    callbacks: VerbCallbacks,
+) -> pd.DataFrame:
+    """Run entity description embedding.
+
+    Parameters
+    ----------
+    entities_df : pd.DataFrame
+        The entities dataframe.
+    config : PipelineConfig
+        The pipeline configuration.
+    cache : PipelineCache
+        Pipeline cache used during the embedding process.
+    callbacks : WorkflowCallbacks
+        The workflow callbacks.
+
+    Returns
+    -------
+    pd.DataFrame
+        The updated entities dataframe with description embeddings.
+    """
+    embed_config = _find_workflow_config(
+        config, "create_final_entities", "entity_name_description_embed"
+    )
+
+    # Concatenate name and description for embedding
+    entities_df["name_description"] = (
+        entities_df["name"] + ":" + entities_df["description"]
+    )
+
+    # Run embedding
+    entities_df["description_embedding"] = await embed_text(
+        entities_df,
+        callbacks,
+        cache,
+        column="name_description",
+        strategy=embed_config.get("strategy", {}),
+    )
+    return entities_df.drop(columns=["name_description"])
