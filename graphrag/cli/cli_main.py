@@ -15,6 +15,7 @@ from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 from graphrag.utils.cli import dir_exist, file_exist
 
 from .index_cli import index_cli
+from .init_cli import initialize_project_at
 from .prompt_tune_cli import prompt_tune
 from .query_cli import run_global_search, run_local_search
 
@@ -29,6 +30,14 @@ class SearchType(Enum):
     def __str__(self):
         """Return the string representation of the enum value."""
         return self.value
+    
+def _call_initializer(args):
+    # Pass arguments to initialization function
+    initialize_project_at(
+        path=args.root,
+        name=args.name,
+        reporter=args.reporter,
+    )
 
 def _call_index_cli(args):
     # Pass arguments to index cli
@@ -47,7 +56,6 @@ def _call_index_cli(args):
         config_filepath=args.config,
         emit=[TableEmitterType(value) for value in args.emit.split(",")],
         dryrun=args.dryrun,
-        init=args.init,
         skip_validations=args.skip_validations,
         output_dir=args.output,
     )
@@ -101,27 +109,55 @@ def _call_query_cli(args):
 
 def cli_main():
     """Parse graphrag cli parameters and execute corresponding cli functions."""
-    # Universal command-line arguments
+    # Set up top-level parser
     parser = argparse.ArgumentParser(
         description="The graphrag centralized cli.",
     )
-    parser.add_argument(
-        "--config",
-        help="The configuration yaml file to use.",
-        type=file_exist,
+    subparsers = parser.add_subparsers()
+
+    # Set up subparser for initialization
+    parser_init = subparsers.add_parser(
+        name="init",
+        description="Create the inital graphrag configuration in the given root"
     )
-    parser.add_argument(
+    parser_init.add_argument(
         "--root",
         help="The data project root. Default value: the current directory",
         default=".",
         type=dir_exist,
     )
-    subparsers = parser.add_subparsers()
+    parser_init.add_argument(
+        "--name",
+        help="The name of the initial config file that will be created",
+        default="settings.yaml",
+        type=str,
+    )
+    parser_init.add_argument(
+        "--reporter",
+        help="The progress reporter to use. Default: rich",
+        default=ReporterType.RICH,
+        type=ReporterType,
+        choices=list(ReporterType),
+    )
+    parser_init.set_defaults(
+        func=_call_initializer
+    )
 
     # Indexing command-line arguments
     parser_index = subparsers.add_parser(
         name="index",
         description="The graphrag indexing engine.",
+    )
+    parser_index.add_argument(
+        "--root",
+        help="The data project root. Default value: the current directory",
+        default=".",
+        type=dir_exist,
+    )
+    parser_index.add_argument(
+        "--config",
+        help="The configuration yaml file to use.",
+        type=file_exist,
     )
     parser_index.add_argument(
         "-v",
@@ -164,11 +200,6 @@ def cli_main():
         "--nocache", help="Disable LLM cache", action="store_true", default=False
     )
     parser_index.add_argument(
-        "--init",
-        help="Create an initial configuration in the given path",
-        action="store_true",
-    )
-    parser_index.add_argument(
         "--skip-validations",
         help="Skip any preflight validation. Useful when running no LLM steps",
         action="store_true",
@@ -195,6 +226,17 @@ def cli_main():
     parser_prompt_tune = subparsers.add_parser(
         name="prompt-tune",
         description="The graphrag auto templating module.",
+    )
+    parser_prompt_tune.add_argument(
+        "--root",
+        help="The data project root. Default value: the current directory",
+        default=".",
+        type=dir_exist,
+    )
+    parser_prompt_tune.add_argument(
+        "--config",
+        help="The configuration yaml file to use.",
+        type=file_exist,
     )
     parser_prompt_tune.add_argument(
         "--domain",
@@ -270,6 +312,17 @@ def cli_main():
     parser_query = subparsers.add_parser(
         name="query",
         description="The graphrag querying engine.",
+    )
+    parser_query.add_argument(
+        "--root",
+        help="The data project root. Default value: the current directory",
+        default=".",
+        type=dir_exist,
+    )
+    parser_query.add_argument(
+        "--config",
+        help="The configuration yaml file to use.",
+        type=file_exist,
     )
     parser_query.add_argument(
         "--data",
