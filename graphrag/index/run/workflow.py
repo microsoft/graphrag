@@ -126,11 +126,11 @@ def _find_workflow_config(
         workflow = next(
             filter(lambda workflow: workflow.name == workflow_name, config.workflows)
         )
-    except StopIteration:
+    except StopIteration as err:
         error_message = (
             f"Workflow {workflow_name} not found in the pipeline configuration."
         )
-        raise ValueError(error_message)
+        raise ValueError(error_message) from err
 
     return (
         workflow.config.get(step, {})
