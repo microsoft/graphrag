@@ -186,17 +186,18 @@ async def local_search(
     """
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    vector_store_type = config.embeddings.vector_store["type"]
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    # TODO: update filepath of lancedb until the new config engine has been implemented
     if vector_store_type == "lancedb":
-        lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-        vector_store_args.update({"db_uri": str(lancedb_dir)})
+        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
     reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
+        vector_store_type=vector_store_type,  # type: ignore
+        config_args=vector_store_args,  # type: ignore
     )
 
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
@@ -256,12 +257,13 @@ async def local_search_streaming(
     """
     _entities = read_indexer_entities(nodes, entities, community_level)
 
-    vector_store_type = config.embeddings.vector_store["type"]
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    # TODO: update filepath of lancedb until the new config engine has been implemented
     if vector_store_type == "lancedb":
-        lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-        vector_store_args.update({"db_uri": str(lancedb_dir)})
+        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
     reporter.info(f"Vector Store Args: {vector_store_args}")
     description_embedding_store = _get_embedding_description_store(
         entities=_entities,

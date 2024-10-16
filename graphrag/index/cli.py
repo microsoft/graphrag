@@ -130,6 +130,12 @@ def index_cli(
 
     config.storage.base_dir = output_dir or config.storage.base_dir
     config.reporting.base_dir = output_dir or config.reporting.base_dir
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
+    if vector_store_type == "lancedb":
+        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
+        lancedb_dir = str(Path(config.root_dir).resolve() / db_uri)  # type: ignore
+        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
     resolve_paths(config, run_id)
 
     if nocache:
