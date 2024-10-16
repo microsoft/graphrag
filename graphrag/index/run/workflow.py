@@ -127,6 +127,5 @@ def _find_workflow_config(
             if workflow.config and step in workflow.config:
                 return workflow.config.get(step, {})
             return {}
-    raise ValueError(
-        f"Workflow {workflow_name} not found in the pipeline configuration."
-    )
+    error_message = f"Workflow {workflow_name} not found in the pipeline configuration."
+    raise ValueError(error_message)
