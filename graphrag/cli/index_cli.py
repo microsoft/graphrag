@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Main definition."""
+"""Command line interface for index module."""
 
 import asyncio
 import json

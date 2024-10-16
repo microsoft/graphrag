@@ -310,6 +310,6 @@ def cli_main():
         func=_call_query_cli
     )
 
-    # Parse arguments and call cli function
+    # Parse arguments and call proper cli function
     args = parser.parse_args()
     args.func(args)
