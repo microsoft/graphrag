@@ -67,7 +67,7 @@ def create_final_communities(
     filtered["period"] = datetime.now(timezone.utc).date().isoformat()
 
     # Add size of the community
-    filtered["size"] = filtered["text_unit_ids"].apply(lambda x: len(x))
+    filtered["size"] = filtered.loc[:, "text_unit_ids"].apply(lambda x: len(x))
 
     return filtered.loc[
         :,
