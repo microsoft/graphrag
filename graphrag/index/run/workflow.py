@@ -48,11 +48,10 @@ async def _emit_workflow_output(
 ) -> pd.DataFrame:
     """Emit the workflow output."""
     output = cast(pd.DataFrame, workflow.output())
-    rows, cols = output.shape
     # only write the final output if it has content
     # this is expressly designed to allow us to create
     # workflows with side effects that don't produce a formal output to save
-    if rows > 0 and cols > 0:
+    if not output.empty:
         for emitter in emitters:
             await emitter.emit(workflow.name, output)
     return output
