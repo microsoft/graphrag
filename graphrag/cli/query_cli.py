@@ -17,6 +17,7 @@ from graphrag.utils.storage import _create_storage, _load_table_from_storage
 
 reporter = PrintProgressReporter("")
 
+
 def run_global_search(
     config_filepath: str | None,
     data_dir: str | None,

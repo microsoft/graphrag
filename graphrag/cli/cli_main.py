@@ -21,6 +21,7 @@ from .query_cli import run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
+
 class SearchType(Enum):
     """The type of search to run."""
 
@@ -30,7 +31,8 @@ class SearchType(Enum):
     def __str__(self):
         """Return the string representation of the enum value."""
         return self.value
-    
+
+
 def _call_initializer(args):
     # Pass arguments to initialization function
     initialize_project_at(
@@ -39,12 +41,13 @@ def _call_initializer(args):
         reporter=args.reporter,
     )
 
+
 def _call_index_cli(args):
     # Pass arguments to index cli
     if args.resume and args.update_index:
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
-    
+
     index_cli(
         root_dir=args.root,
         verbose=args.verbose,
@@ -59,6 +62,7 @@ def _call_index_cli(args):
         skip_validations=args.skip_validations,
         output_dir=args.output,
     )
+
 
 def _call_prompt_tune_cli(args):
     # Pass arguments to prompt-tune cli
@@ -80,6 +84,7 @@ def _call_prompt_tune_cli(args):
             min_examples_required=args.min_examples_required,
         )
     )
+
 
 def _call_query_cli(args):
     # Pass arguments to query cli
@@ -107,6 +112,7 @@ def _call_query_cli(args):
         case _:
             raise ValueError(INVALID_METHOD_ERROR)
 
+
 def cli_main():
     """Parse graphrag cli parameters and execute corresponding cli functions."""
     # Set up top-level parser
@@ -118,7 +124,7 @@ def cli_main():
     # Set up subparser for initialization
     parser_init = subparsers.add_parser(
         name="init",
-        description="Create the inital graphrag configuration in the given root"
+        description="Create the inital graphrag configuration in the given root",
     )
     parser_init.add_argument(
         "--root",
@@ -139,9 +145,7 @@ def cli_main():
         type=ReporterType,
         choices=list(ReporterType),
     )
-    parser_init.set_defaults(
-        func=_call_initializer
-    )
+    parser_init.set_defaults(func=_call_initializer)
 
     # Indexing command-line arguments
     parser_index = subparsers.add_parser(
@@ -218,9 +222,7 @@ def cli_main():
         default=None,
         type=str,
     )
-    parser_index.set_defaults(
-        func=_call_index_cli
-    )
+    parser_index.set_defaults(func=_call_index_cli)
 
     # Prompt-tune command-line arguments
     parser_prompt_tune = subparsers.add_parser(
@@ -304,9 +306,7 @@ def cli_main():
         type=str,
         default="prompts",
     )
-    parser_prompt_tune.set_defaults(
-        func=_call_prompt_tune_cli
-    )
+    parser_prompt_tune.set_defaults(func=_call_prompt_tune_cli)
 
     # Querying command-line arguments
     parser_query = subparsers.add_parser(
@@ -359,9 +359,7 @@ def cli_main():
         help="The query to run",
         type=str,
     )
-    parser_query.set_defaults(
-        func=_call_query_cli
-    )
+    parser_query.set_defaults(func=_call_query_cli)
 
     # Parse arguments and call proper cli function
     args = parser.parse_args()

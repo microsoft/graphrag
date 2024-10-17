@@ -13,7 +13,7 @@ from .init_cli import initialize_project_at
 from .prompt_tune_cli import prompt_tune
 from .query_cli import run_global_search, run_local_search
 
-__all__ = [   # noqa: RUF022
+__all__ = [  # noqa: RUF022
     # CLI entry point
     "cli_main",
     # init CLI
