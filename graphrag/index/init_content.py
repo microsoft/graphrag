@@ -43,14 +43,13 @@ embeddings:
   # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
   # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
   vector_store:{defs.VECTOR_STORE}
-  # vector_store: # configure for AI Search
-    # type: azure_ai_search # or lancedb
+  # vector_store: # configuration for AI Search
+    # type: azure_ai_search
     # url: <ai_search_url>
-    # api_key: <api_key>
+    # api_key: <api_key> # will assume managed identity use if not set
     # audience: https://search.windows.net
     # overwrite: True # or False
     # collection_name: entity_description_embeddings
-    # title_column: <title_column>
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
