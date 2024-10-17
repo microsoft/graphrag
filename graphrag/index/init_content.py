@@ -1,10 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-"""Content for the init CLI command."""
+
+"""Content for the init CLI command to generate a default configuration."""
 
 import graphrag.config.defaults as defs
 
-INIT_YAML = f"""
+INIT_YAML = f"""\
 encoding_model: cl100k_base
 skip_workflows: []
 llm:
@@ -12,6 +13,7 @@ llm:
   type: {defs.LLM_TYPE.value} # or azure_openai_chat
   model: {defs.LLM_MODEL}
   model_supports_json: true # recommended if this is available for your model.
+  # audience: "https://cognitiveservices.azure.com/.default"
   # max_tokens: {defs.LLM_MAX_TOKENS}
   # request_timeout: {defs.LLM_REQUEST_TIMEOUT}
   # api_base: https://<instance>.openai.azure.com
@@ -40,6 +42,14 @@ embeddings:
   # target: {defs.EMBEDDING_TARGET.value} # or all
   # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
   # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
+  vector_store:{defs.VECTOR_STORE}
+  # vector_store: # configuration for AI Search
+    # type: azure_ai_search
+    # url: <ai_search_url>
+    # api_key: <api_key> # will assume managed identity use if not set
+    # audience: https://search.windows.net
+    # overwrite: True # or False
+    # collection_name: entity_description_embeddings
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -160,6 +170,6 @@ global_search:
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 """
 
-INIT_DOTENV = """
+INIT_DOTENV = """\
 GRAPHRAG_API_KEY=<API_KEY>
 """

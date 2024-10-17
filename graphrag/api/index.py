@@ -8,6 +8,8 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+from pathlib import Path
+
 from graphrag.config import CacheType, GraphRagConfig
 from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.index.create_pipeline_config import create_pipeline_config
@@ -30,7 +32,7 @@ async def build_index(
 
     Parameters
     ----------
-    config : PipelineConfig
+    config : GraphRagConfig
         The configuration.
     run_id : str
         The run id. Creates a output directory with this name.
@@ -54,6 +56,13 @@ async def build_index(
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
+
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
+    if vector_store_type == "lancedb":
+        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
 
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
