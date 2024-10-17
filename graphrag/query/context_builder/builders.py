@@ -33,3 +33,15 @@ class LocalContextBuilder(ABC):
         **kwargs,
     ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
         """Build the context for the local search mode."""
+
+
+class DRIFTContextBuilder(ABC):
+    """Base class for DRIFT-search context builders."""
+
+    @abstractmethod
+    def build_context(
+        self,
+        query: str,
+        **kwargs,
+    ) -> pd.DataFrame:
+        """Build the context for the primer search actions."""
