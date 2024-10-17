@@ -1,0 +1,53 @@
+chat_llm:
+  model: Chat LLM Model
+  api_key: Your API Key
+  base_url: null
+  organization: null
+  timeout: null
+  max_retries: null
+  kwargs: null
+
+embedding:
+  model: Text Embedding Model
+  api_key: Your API Key
+  base_url: null
+  timeout: null
+  max_retries: null
+  max_tokens: null
+  token_encoder: null
+  kwargs: null
+
+logging:
+  enabled: true
+  level: INFO
+  format: null
+  out_file: null
+  err_file: null
+  rotation: null
+  retention: null
+  serialize: null
+  kwargs: null
+
+context:
+  directory: Your Context Directory
+  kwargs: null
+
+local_search:
+  sys_prompt: null
+  community_level: null
+  store_coll_name: null
+  store_uri: null
+  encoding_model: null
+  kwargs: null
+
+global_search:
+  map_sys_prompt: null
+  reduce_sys_prompt: null
+  community_level: null
+  allow_general_knowledge: null
+  general_knowledge_sys_prompt: null
+  no_data_answer: null
+  json_mode: null
+  max_data_tokens: null
+  encoding_model: null
+  kwargs: null

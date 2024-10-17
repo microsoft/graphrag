@@ -8,7 +8,7 @@ from typing import cast
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.query._utils._text import num_tokens
 
 
 def set_context_size(df: pd.DataFrame) -> None:

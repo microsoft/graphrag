@@ -87,6 +87,9 @@ azure-identity = "^1.17.1"
 json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
+pyqt6 = {version = "^6.7.1", optional = true}
+loguru = {version = "^0.7.2", optional = true}
+markdown = {version = "^3.7", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
