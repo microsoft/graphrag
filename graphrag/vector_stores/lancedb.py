@@ -19,12 +19,21 @@ from .base import (
 
 
 class LanceDBVectorStore(BaseVectorStore):
-    """The LanceDB vector storage implementation."""
+    """The LanceDB vector store implementation."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
-        db_uri = kwargs["db_uri"]
-        self.db_connection = lancedb.connect(db_uri)  # type: ignore
+        self.db_connection = lancedb.connect(kwargs["db_uri"])
+        if (
+            self.collection_name
+            and self.collection_name in self.db_connection.table_names()
+        ):
+            self.document_collection = self.db_connection.open_table(
+                self.collection_name
+            )
 
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
@@ -87,14 +96,18 @@ class LanceDBVectorStore(BaseVectorStore):
         """Perform a vector-based similarity search."""
         if self.query_filter:
             docs = (
-                self.document_collection.search(query=query_embedding)
+                self.document_collection.search(
+                    query=query_embedding, vector_column_name="vector"
+                )
                 .where(self.query_filter, prefilter=True)
                 .limit(k)
                 .to_list()
             )
         else:
             docs = (
-                self.document_collection.search(query=query_embedding)
+                self.document_collection.search(
+                    query=query_embedding, vector_column_name="vector"
+                )
                 .limit(k)
                 .to_list()
             )
