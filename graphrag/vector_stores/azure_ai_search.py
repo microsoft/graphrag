@@ -39,10 +39,13 @@ class AzureAISearch(BaseVectorStore):
 
     index_client: SearchIndexClient
 
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the AzureAI vector store."""
-        url = kwargs.get("url")
-        api_key = kwargs.get("api_key")
+        url = kwargs["url"]
+        api_key = kwargs["api_key"]
         audience = kwargs.get("audience")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
 
@@ -96,7 +99,7 @@ class AzureAISearch(BaseVectorStore):
                     )
                 ],
             )
-
+            # Configure the index
             index = SearchIndex(
                 name=self.collection_name,
                 fields=[
@@ -120,7 +123,6 @@ class AzureAISearch(BaseVectorStore):
                 ],
                 vector_search=vector_search,
             )
-
             self.index_client.create_or_update_index(
                 index,
             )
@@ -136,7 +138,7 @@ class AzureAISearch(BaseVectorStore):
             if doc.vector is not None
         ]
 
-        if batch and len(batch) > 0:
+        if len(batch) > 0:
             self.db_connection.upload_documents(batch)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
