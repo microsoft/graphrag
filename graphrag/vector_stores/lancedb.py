@@ -59,6 +59,9 @@ class LanceDBVectorStore(BaseVectorStore):
             pa.field("vector", pa.list_(pa.float64())),
             pa.field("attributes", pa.string()),
         ])
+        # NOTE: If modifying the next section of code, ensure that the schema remains the same.
+        #       The pyarrow format of the 'vector' field may change if the order of operations is changed
+        #       and will break vector search.
         if overwrite:
             if data:
                 self.document_collection = self.db_connection.create_table(
