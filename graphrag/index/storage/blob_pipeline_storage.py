@@ -15,7 +15,7 @@ from datashaper import Progress
 
 from graphrag.logging import ProgressReporter
 
-from .typing import PipelineStorage
+from .pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 

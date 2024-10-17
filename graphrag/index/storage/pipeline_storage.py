@@ -41,9 +41,7 @@ class PipelineStorage(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    async def set(
-        self, key: str, value: str | bytes | None, encoding: str | None = None
-    ) -> None:
+    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set the value for the given key.
 
         Args:
