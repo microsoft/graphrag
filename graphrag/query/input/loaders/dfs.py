@@ -73,6 +73,7 @@ def read_entities(
 def store_entity_semantic_embeddings(
     entities: list[Entity],
     vectorstore: BaseVectorStore,
+    overwrite: bool = True
 ) -> BaseVectorStore:
     """Store entity semantic embeddings in a vectorstore."""
     documents = [
@@ -88,7 +89,7 @@ def store_entity_semantic_embeddings(
         )
         for entity in entities
     ]
-    vectorstore.load_documents(documents=documents)
+    vectorstore.load_documents(documents=documents, overwrite=overwrite)
     return vectorstore
 
 
