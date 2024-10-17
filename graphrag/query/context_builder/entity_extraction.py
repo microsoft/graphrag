@@ -7,6 +7,7 @@ from enum import Enum
 
 from graphrag.model import Entity, Relationship
 from graphrag.query.input.retrieval.entities import (
+    get_entity_by_id,
     get_entity_by_key,
     get_entity_by_name,
 )
@@ -36,7 +37,7 @@ def map_query_to_entities(
     query: str,
     text_embedding_vectorstore: BaseVectorStore,
     text_embedder: BaseTextEmbedding,
-    all_entities: list[Entity],
+    all_entities_dict: dict[str, Entity],
     embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
     include_entity_names: list[str] | None = None,
     exclude_entity_names: list[str] | None = None,
@@ -48,6 +49,7 @@ def map_query_to_entities(
         include_entity_names = []
     if exclude_entity_names is None:
         exclude_entity_names = []
+    all_entities = list(all_entities_dict.values())
     matched_entities = []
     if query != "":
         # get entities with highest semantic similarity to query
@@ -58,11 +60,16 @@ def map_query_to_entities(
             k=k * oversample_scaler,
         )
         for result in search_results:
-            matched = get_entity_by_key(
-                entities=all_entities,
-                key=embedding_vectorstore_key,
-                value=result.document.id,
-            )
+            if embedding_vectorstore_key == EntityVectorStoreKey.ID and isinstance(
+                result.document.id, str
+            ):
+                matched = get_entity_by_id(all_entities_dict, result.document.id)
+            else:
+                matched = get_entity_by_key(
+                    entities=all_entities,
+                    key=embedding_vectorstore_key,
+                    value=result.document.id,
+                )
             if matched:
                 matched_entities.append(matched)
     else:

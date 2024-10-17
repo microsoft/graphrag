@@ -12,17 +12,26 @@ import pandas as pd
 from graphrag.model import Entity
 
 
+def get_entity_by_id(entities: dict[str, Entity], value: str) -> Entity | None:
+    """Get entity by id."""
+    entity = entities.get(value)
+    if entity is None and is_valid_uuid(value):
+        entity = entities.get(value.replace("-", ""))
+    return entity
+
+
 def get_entity_by_key(
     entities: Iterable[Entity], key: str, value: str | int
 ) -> Entity | None:
     """Get entity by key."""
-    for entity in entities:
-        if isinstance(value, str) and is_valid_uuid(value):
-            if getattr(entity, key) == value or getattr(entity, key) == value.replace(
-                "-", ""
-            ):
+    if isinstance(value, str) and is_valid_uuid(value):
+        value_no_dashes = value.replace("-", "")
+        for entity in entities:
+            entity_value = getattr(entity, key)
+            if entity_value in (value, value_no_dashes):
                 return entity
-        else:
+    else:
+        for entity in entities:
             if getattr(entity, key) == value:
                 return entity
     return None
