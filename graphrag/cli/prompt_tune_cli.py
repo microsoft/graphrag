@@ -1,17 +1,22 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Command line interface for the fine_tune module."""
+"""Command line interface for prompt-tune module."""
 
 from pathlib import Path
 
 import graphrag.api as api
 from graphrag.config import load_config
 from graphrag.logging import PrintProgressReporter
-
-from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
-from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME
-from .generator.entity_summarization_prompt import ENTITY_SUMMARIZATION_FILENAME
+from graphrag.prompt_tune.generator.community_report_summarization import (
+    COMMUNITY_SUMMARIZATION_FILENAME,
+)
+from graphrag.prompt_tune.generator.entity_extraction_prompt import (
+    ENTITY_EXTRACTION_FILENAME,
+)
+from graphrag.prompt_tune.generator.entity_summarization_prompt import (
+    ENTITY_SUMMARIZATION_FILENAME,
+)
 
 
 async def prompt_tune(
