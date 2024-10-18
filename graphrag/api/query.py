@@ -35,6 +35,7 @@ from graphrag.query.indexer_adapters import (
     read_indexer_text_units,
 )
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
+from graphrag.utils.cli import redact
 from graphrag.vector_stores import VectorStoreFactory
 
 reporter = PrintProgressReporter("")
@@ -188,7 +189,7 @@ async def local_search(
         db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
         lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-    reporter.info(f"Vector Store Args: {vector_store_args}")
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")
     description_embedding_store = _get_embedding_description_store(
         config_args=vector_store_args,  # type: ignore
     )
@@ -256,7 +257,7 @@ async def local_search_streaming(
         db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
         lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-    reporter.info(f"Vector Store Args: {vector_store_args}")
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")
     description_embedding_store = _get_embedding_description_store(
         config_args=vector_store_args,  # type: ignore
     )

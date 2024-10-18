@@ -45,17 +45,18 @@ embeddings:
   vector_store:{defs.VECTOR_STORE}
   # vector_store: # configuration for AI Search
     # type: azure_ai_search
-    # url: <ai_search_url>
-    # api_key: <api_key> # will assume managed identity use if not set
-    # audience: https://search.windows.net
-    # overwrite: True # or False
-    # collection_name: entity_description_embeddings
+    # url: <ai_search_endpoint>
+    # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
+    # audience: <optional> # if using managed identity, the audience to use for the token
+    # overwrite: true # or false. Only applicable at index creation time
+    # collection_name: <collection_name> # the name of the collection to use
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
     model: {defs.EMBEDDING_MODEL}
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-02-15-preview
+    # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
     # tokens_per_minute: 150_000 # set a leaky bucket throttle

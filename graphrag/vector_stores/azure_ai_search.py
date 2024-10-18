@@ -35,7 +35,7 @@ from .base import (
 
 
 class AzureAISearch(BaseVectorStore):
-    """The Azure AI Search vector storage implementation."""
+    """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
 
@@ -43,9 +43,9 @@ class AzureAISearch(BaseVectorStore):
         super().__init__(**kwargs)
 
     def connect(self, **kwargs: Any) -> Any:
-        """Connect to the AzureAI vector store."""
+        """Connect to an AI search vector store."""
         url = kwargs["url"]
-        api_key = kwargs["api_key"]
+        api_key = kwargs.get("api_key")
         audience = kwargs.get("audience")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
 
@@ -77,12 +77,12 @@ class AzureAISearch(BaseVectorStore):
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
-        """Load documents into the Azure AI Search index."""
+        """Load documents into an Azure AI Search index."""
         if overwrite:
             if self.collection_name in self.index_client.list_index_names():
                 self.index_client.delete_index(self.collection_name)
 
-            # Configure the vector search profile
+            # Configure vector search profile
             vector_search = VectorSearch(
                 algorithms=[
                     HnswAlgorithmConfiguration(

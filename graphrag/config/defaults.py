@@ -91,7 +91,7 @@ VECTOR_STORE = f"""
     type: {VectorStoreType.LanceDB.value}
     db_uri: "{(Path(STORAGE_BASE_DIR) / "lancedb")!s}"
     collection_name: entity_description_embeddings
-    overwrite: True\
+    overwrite: true\
 """
 
 # Local Search
