@@ -95,6 +95,13 @@ if __name__ == "__main__":
         default=None,
         type=str,
     )
+    parser.add_argument(
+        "--reports",
+        help="The reports directory to use for the pipeline.",
+        required=False,
+        default=None,
+        type=str,
+    )
     args = parser.parse_args()
 
     if args.resume and args.update_index:
@@ -115,4 +122,5 @@ if __name__ == "__main__":
         init=args.init,
         skip_validations=args.skip_validations,
         output_dir=args.output,
+        reports_dir=args.reports,
     )
