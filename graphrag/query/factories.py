@@ -44,17 +44,16 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         **config.llm.model_dump(),
         "api_key": f"REDACTED,len={len(debug_llm_key)}",
     }
-    if config.llm.cognitive_services_endpoint is None:
-        cognitive_services_endpoint = "https://cognitiveservices.azure.com/.default"
-    else:
-        cognitive_services_endpoint = config.llm.cognitive_services_endpoint
+    audience = (
+        config.llm.audience
+        if config.llm.audience
+        else "https://cognitiveservices.azure.com/.default"
+    )
     print(f"creating llm client with {llm_debug_info}")  # noqa T201
     return ChatOpenAI(
         api_key=config.llm.api_key,
         azure_ad_token_provider=(
-            get_bearer_token_provider(
-                DefaultAzureCredential(), cognitive_services_endpoint
-            )
+            get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client and not config.llm.api_key
             else None
         ),
@@ -77,17 +76,15 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
         **config.embeddings.llm.model_dump(),
         "api_key": f"REDACTED,len={len(debug_embedding_api_key)}",
     }
-    if config.embeddings.llm.cognitive_services_endpoint is None:
-        cognitive_services_endpoint = "https://cognitiveservices.azure.com/.default"
+    if config.embeddings.llm.audience is None:
+        audience = "https://cognitiveservices.azure.com/.default"
     else:
-        cognitive_services_endpoint = config.embeddings.llm.cognitive_services_endpoint
+        audience = config.embeddings.llm.audience
     print(f"creating embedding llm client with {llm_debug_info}")  # noqa T201
     return OpenAIEmbedding(
         api_key=config.embeddings.llm.api_key,
         azure_ad_token_provider=(
-            get_bearer_token_provider(
-                DefaultAzureCredential(), cognitive_services_endpoint
-            )
+            get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client and not config.embeddings.llm.api_key
             else None
         ),

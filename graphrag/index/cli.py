@@ -4,7 +4,6 @@
 """Main definition."""
 
 import asyncio
-import json
 import logging
 import sys
 import time
@@ -19,6 +18,7 @@ from graphrag.config import (
     resolve_paths,
 )
 from graphrag.logging import ProgressReporter, ReporterType, create_progress_reporter
+from graphrag.utils.cli import redact
 
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
@@ -32,36 +32,6 @@ from .validate_config import validate_config_names
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
 log = logging.getLogger(__name__)
-
-
-def _redact(input: dict) -> str:
-    """Sanitize the config json."""
-
-    # Redact any sensitive configuration
-    def redact_dict(input: dict) -> dict:
-        if not isinstance(input, dict):
-            return input
-
-        result = {}
-        for key, value in input.items():
-            if key in {
-                "api_key",
-                "connection_string",
-                "container_name",
-                "organization",
-            }:
-                if value is not None:
-                    result[key] = "==== REDACTED ===="
-            elif isinstance(value, dict):
-                result[key] = redact_dict(value)
-            elif isinstance(value, list):
-                result[key] = [redact_dict(i) for i in value]
-            else:
-                result[key] = value
-        return result
-
-    redacted_dict = redact_dict(input)
-    return json.dumps(redacted_dict, indent=4)
 
 
 def _logger(reporter: ProgressReporter):
@@ -140,7 +110,7 @@ def index_cli(
         info(f"Logging enabled at {log_path}", True)
     else:
         info(
-            f"Logging not enabled for config {_redact(config.model_dump())}",
+            f"Logging not enabled for config {redact(config.model_dump())}",
             True,
         )
 
@@ -149,7 +119,7 @@ def index_cli(
 
     info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
     info(
-        f"Using default configuration: {_redact(config.model_dump())}",
+        f"Using default configuration: {redact(config.model_dump())}",
         verbose,
     )
 

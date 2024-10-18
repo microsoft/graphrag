@@ -231,7 +231,7 @@ def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
         collection_names = vector_store_config.get("collection_names", {})
         collection_name = collection_names.get(embedding_name, embedding_name)
 
-    msg = f"using {vector_store_config.get('type')} collection_name {collection_name} for embedding {embedding_name}"
+    msg = f"using vector store {vector_store_config.get('type')} with collection_name {collection_name} for embedding {embedding_name}"
     log.info(msg)
     return collection_name
 

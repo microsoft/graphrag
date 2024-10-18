@@ -52,7 +52,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `api_version` **str** - The API version
 - `organization` **str** - The client organization.
 - `proxy` **str** - The proxy URL to use.
-- `cognitive_services_endpoint` **str** - The url endpoint for cognitive services.
+- `audience` **str** - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if `api_key` is not defined. Default=`https://cognitiveservices.azure.com/.default`
 - `deployment_name` **str** - The deployment name to use (Azure).
 - `model_supports_json` **bool** - Whether the model supports JSON-mode output.
 - `tokens_per_minute` **int** - Set a leaky-bucket throttle on tokens-per-minute.
@@ -84,9 +84,17 @@ This is the base LLM configuration section. Other steps may override this config
 - `parallelization` (see Parallelization top-level config)
 - `async_mode` (see Async Mode top-level config)
 - `batch_size` **int** - The maximum batch size to use.
-- `batch_max_tokens` **int** - The maximum batch #-tokens.
+- `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `target` **required|all** - Determines which set of embeddings to emit.
 - `skip` **list[str]** - Which embeddings to skip.
+- `vector_store` **dict** - The vector store to use. Configured for lancedb by default.
+  - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
+  - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
+  - `url` **str** (only for AI Search) - AI Search endpoint
+  - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
+  - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
+  - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
+  - `collection_name` **str** - The name of a vector collection. Default=`entity_description_embeddings`
 - `strategy` **dict** - Fully override the text-embedding strategy.
 
 ## chunks
@@ -214,7 +222,7 @@ This is the base LLM configuration section. Other steps may override this config
 
 ## encoding_model
 
-**str** - The text encoding model to use. Default is `cl100k_base`.
+**str** - The text encoding model to use. Default=`cl100k_base`.
 
 ## skip_workflows
 

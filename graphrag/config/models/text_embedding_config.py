@@ -27,7 +27,7 @@ class TextEmbeddingConfig(LLMConfig):
     )
     skip: list[str] = Field(description="The specific embeddings to skip.", default=[])
     vector_store: dict | None = Field(
-        description="The vector storage configuration", default=None
+        description="The vector storage configuration", default=defs.VECTOR_STORE
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
