@@ -63,6 +63,7 @@ def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
     community_level: int,
+    content_embedding_col: str | None = None,
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
@@ -83,7 +84,7 @@ def read_indexer_reports(
         id_col="community",
         short_id_col="community",
         summary_embedding_col=None,
-        content_embedding_col=None,
+        content_embedding_col=content_embedding_col,
     )
 
 
