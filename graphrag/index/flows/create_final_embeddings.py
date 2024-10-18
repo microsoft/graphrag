@@ -4,7 +4,6 @@
 """All the steps to transform the text units."""
 
 import logging
-from typing import cast
 
 import pandas as pd
 from datashaper import (
@@ -42,18 +41,18 @@ async def create_final_embeddings(
     base_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to generate all embeddings."""
-    documents_embeddings = final_documents[["id", "raw_content"]].copy()
-    relationships_embeddings = final_relationships[["id", "description"]].copy()
-    text_units_embeddings = final_text_units[["id", "text"]].copy()
+    documents_embeddings = final_documents.loc[:, ["id", "raw_content"]]
+    relationships_embeddings = final_relationships.loc[:, ["id", "description"]]
+    text_units_embeddings = final_text_units.loc[:, ["id", "text"]]
 
-    entities_embeddings = final_entities[["id", "name", "description"]].copy()
+    entities_embeddings = final_entities.loc[:, ["id", "name", "description"]]
     entities_embeddings["name_description"] = (
         entities_embeddings["name"] + ":" + entities_embeddings["description"]
     )
 
-    community_reports_embeddings = final_community_reports[
-        ["id", "full_content", "summary", "title"]
-    ].copy()
+    community_reports_embeddings = final_community_reports.loc[
+        :, ["id", "full_content", "summary", "title"]
+    ]
 
     if base_text_embed:
         log.info("Creating embeddings")
@@ -107,7 +106,7 @@ async def create_final_embeddings(
             entities_embeddings, pd.DataFrame
         ):
             await run_embeddings(
-                data=entities_embeddings.copy(),
+                data=entities_embeddings,
                 column_to_embed="name",
                 filename="create_final_entities_name_embeddings",
                 callbacks=callbacks,
@@ -122,7 +121,7 @@ async def create_final_embeddings(
             entities_embeddings, pd.DataFrame
         ):
             await run_embeddings(
-                data=entities_embeddings.copy(),
+                data=entities_embeddings,
                 column_to_embed="name_description",
                 filename="create_final_entities_description_embeddings",
                 callbacks=callbacks,
@@ -137,7 +136,7 @@ async def create_final_embeddings(
             community_reports_embeddings, pd.DataFrame
         ):
             await run_embeddings(
-                data=community_reports_embeddings.copy(),
+                data=community_reports_embeddings,
                 column_to_embed="title",
                 filename="create_final_community_reports_title_embeddings",
                 callbacks=callbacks,
@@ -152,7 +151,7 @@ async def create_final_embeddings(
             community_reports_embeddings, pd.DataFrame
         ):
             await run_embeddings(
-                data=community_reports_embeddings.copy(),
+                data=community_reports_embeddings,
                 column_to_embed="summary",
                 filename="create_final_community_reports_summary_embeddings",
                 callbacks=callbacks,
@@ -167,7 +166,7 @@ async def create_final_embeddings(
             community_reports_embeddings, pd.DataFrame
         ):
             await run_embeddings(
-                data=community_reports_embeddings.copy(),
+                data=community_reports_embeddings,
                 column_to_embed="full_content",
                 filename="create_final_community_reports_full_content_embeddings",
                 callbacks=callbacks,
@@ -201,7 +200,7 @@ async def run_embeddings(
             strategy=base_text_embed["strategy"],
         )
 
-        data = cast(pd.DataFrame, data[["id", "embedding"]])
+        data = data.loc[:, ["id", "embedding"]]
 
     await snapshot(
         data,
