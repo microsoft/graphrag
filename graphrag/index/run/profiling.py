@@ -69,7 +69,3 @@ async def _write_workflow_stats(
         await _save_profiler_stats(
             storage, workflow.name, workflow_result.memory_profile
         )
-
-    log.debug(
-        "first row of %s => %s", workflow.name, workflow.output().iloc[0].to_json()
-    )

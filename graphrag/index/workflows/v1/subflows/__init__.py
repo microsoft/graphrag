@@ -9,6 +9,7 @@ from .create_final_communities import create_final_communities
 from .create_final_community_reports import create_final_community_reports
 from .create_final_covariates import create_final_covariates
 from .create_final_documents import create_final_documents
+from .create_final_embeddings import create_final_embeddings
 from .create_final_entities import create_final_entities
 from .create_final_nodes import create_final_nodes
 from .create_final_relationships import (
@@ -23,6 +24,7 @@ __all__ = [
     "create_final_community_reports",
     "create_final_covariates",
     "create_final_documents",
+    "create_final_embeddings",
     "create_final_entities",
     "create_final_nodes",
     "create_final_relationships",
