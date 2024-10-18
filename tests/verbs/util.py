@@ -93,13 +93,9 @@ def compare_outputs(
     for column in cols:
         assert column in actual.columns
         try:
-            # Sort both actual and expected Series before comparison to handle different sortings
-            actual_sorted = actual[column].sort_values().reset_index(drop=True)
-            expected_sorted = expected[column].sort_values().reset_index(drop=True)
-
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             assert_series_equal(
-                actual_sorted, expected_sorted, check_dtype=False, check_index=False
+                actual[column], expected[column], check_dtype=False, check_index=False
             )
         except AssertionError:
             print("Expected:")
