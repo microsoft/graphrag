@@ -73,9 +73,6 @@ pyyaml = "^6.0.2"
 pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
-# Network
-tenacity = "^9.0.0"
-
 pydantic = "^2.9.2"
 rich = "^13.6.0"
 devtools = "^0.12.2"
@@ -88,6 +85,7 @@ json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 
+fnllm = "^0.0.4"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
