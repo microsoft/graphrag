@@ -19,7 +19,7 @@ from .base import (
 
 
 class LanceDBVectorStore(BaseVectorStore):
-    """LanceDB vector store implementation."""
+    """LanceDB vector storage implementation."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)

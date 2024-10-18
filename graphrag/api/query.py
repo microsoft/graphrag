@@ -183,13 +183,14 @@ async def local_search(
     TODO: Document any exceptions to expect.
     """
     # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
     vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
     if vector_store_type == "lancedb":
-        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
     description_embedding_store = _get_embedding_description_store(
         config_args=vector_store_args,  # type: ignore
     )
@@ -251,13 +252,14 @@ async def local_search_streaming(
     TODO: Document any exceptions to expect.
     """
     # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
     vector_store_args = config.embeddings.vector_store
     if vector_store_type == "lancedb":
-        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
     description_embedding_store = _get_embedding_description_store(
         config_args=vector_store_args,  # type: ignore
     )

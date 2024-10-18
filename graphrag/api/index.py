@@ -17,6 +17,7 @@ from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logging import ProgressReporter
+from graphrag.vector_stores.factory import VectorStoreType
 
 
 async def build_index(
@@ -58,10 +59,11 @@ async def build_index(
         raise ValueError(msg)
 
     # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
-    if vector_store_type == "lancedb":
-        db_uri = config.embeddings.vector_store.get("db_uri")  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri  # type: ignore
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
+    if vector_store_type == VectorStoreType.LanceDB:
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
         config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
 
     pipeline_config = create_pipeline_config(config)

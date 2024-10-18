@@ -43,7 +43,7 @@ class AzureAISearch(BaseVectorStore):
         super().__init__(**kwargs)
 
     def connect(self, **kwargs: Any) -> Any:
-        """Connect to an AI search vector store."""
+        """Connect to AI search vector storage."""
         url = kwargs["url"]
         api_key = kwargs.get("api_key")
         audience = kwargs.get("audience")
