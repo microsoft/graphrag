@@ -3,9 +3,13 @@
 
 """A module containing build_steps method definition."""
 
+import logging
+
 from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_final_relationships"
+
+log = logging.getLogger(__name__)
 
 
 def build_steps(
@@ -18,19 +22,11 @@ def build_steps(
     * `workflow:create_base_entity_graph`
     * `workflow:create_final_nodes`
     """
-    base_text_embed = config.get("text_embed", {})
-    relationship_description_embed_config = config.get(
-        "relationship_description_embed", base_text_embed
-    )
-    skip_description_embedding = config.get("skip_description_embedding", False)
+    log.info(config)
     return [
         {
             "verb": "create_final_relationships",
-            "args": {
-                "description_text_embed": relationship_description_embed_config
-                if not skip_description_embedding
-                else None,
-            },
+            "args": {},
             "input": {
                 "source": "workflow:create_base_entity_graph",
                 "nodes": "workflow:create_final_nodes",

@@ -6,22 +6,13 @@
 from typing import cast
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
-
-from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text import embed_text
 
 
-async def create_final_text_units(
+def create_final_text_units(
     text_units: pd.DataFrame,
     final_entities: pd.DataFrame,
     final_relationships: pd.DataFrame,
     final_covariates: pd.DataFrame | None,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
-    text_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform the text units."""
     selected = text_units.loc[:, ["id", "chunk", "document_ids", "n_tokens"]].rename(
@@ -41,30 +32,12 @@ async def create_final_text_units(
 
     aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
-    is_using_vector_store = False
-    if text_text_embed:
-        aggregated["text_embedding"] = await embed_text(
-            aggregated,
-            callbacks,
-            cache,
-            column="text",
-            strategy=text_text_embed["strategy"],
-        )
-        is_using_vector_store = (
-            text_text_embed.get("strategy", {}).get("vector_store", None) is not None
-        )
-
     return cast(
         pd.DataFrame,
         aggregated[
             [
                 "id",
                 "text",
-                *(
-                    []
-                    if (not text_text_embed or is_using_vector_store)
-                    else ["text_embedding"]
-                ),
                 "n_tokens",
                 "document_ids",
                 "entity_ids",
