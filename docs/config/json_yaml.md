@@ -87,15 +87,14 @@ This is the base LLM configuration section. Other steps may override this config
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `target` **required|all** - Determines which set of embeddings to emit.
 - `skip` **list[str]** - Which embeddings to skip.
-- `vector_store` **dict** (optional) - The vector store to use. Configured for lancedb by default.
+- `vector_store` **dict** - The vector store to use. Configured for lancedb by default.
   - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
   - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
   - `url` **str** (only for AI Search) - AI Search endpoint
   - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
-  - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used. Default=`https://search.windows.net`
-  - `overwrite` **bool** - Overwrite collection if it exist. Default=`True`
+  - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
+  - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
   - `collection_name` **str** - The name of a vector collection. Default=`entity_description_embeddings`
-  - `title_column` **str** - Default=`name`
 - `strategy` **dict** - Fully override the text-embedding strategy.
 
 ## chunks

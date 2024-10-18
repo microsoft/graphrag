@@ -290,7 +290,7 @@ def create_graphrag_config(
             embeddings_model = TextEmbeddingConfig(
                 llm=hydrate_embeddings_params(embeddings_config, llm_model),  # type: ignore
                 parallelization=hydrate_parallelization_params(
-                    embeddings_config, # type: ignore
+                    embeddings_config,  # type: ignore
                     llm_parallelization_model,  # type: ignore
                 ),
                 vector_store=embeddings_config.get("vector_store", None),
