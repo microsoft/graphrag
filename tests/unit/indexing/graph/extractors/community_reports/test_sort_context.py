@@ -4,7 +4,7 @@ import math
 import platform
 
 from graphrag.index.graph.extractors.community_reports import sort_context
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.query._utils._text import num_tokens
 
 nan = math.nan
 
