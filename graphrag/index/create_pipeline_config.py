@@ -124,6 +124,8 @@ def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
             return all_embeddings.difference(settings.embeddings.skip)
         case TextEmbeddingTarget.required:
             return required_embeddings
+        case TextEmbeddingTarget.none:
+            return set()
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
