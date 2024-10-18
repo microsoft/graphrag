@@ -20,7 +20,6 @@ def build_steps(
 
     ## Dependencies
     * `workflow:create_base_text_units`
-    * `workflow:create_base_extracted_entities`
     """
     claim_extract_config = config.get("claim_extract", {})
     extraction_strategy = claim_extract_config.get("strategy")

@@ -14,7 +14,7 @@ from graphrag.index.config.storage import (
     PipelineStorageConfigTypes,
 )
 from graphrag.index.storage import load_storage
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
