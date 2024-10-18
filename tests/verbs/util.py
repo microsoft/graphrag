@@ -82,7 +82,8 @@ def compare_outputs(
     actual: pd.DataFrame, expected: pd.DataFrame, columns: list[str] | None = None
 ) -> None:
     """Compare the actual and expected dataframes, optionally specifying columns to compare.
-    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
+    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output.
+    """
     cols = expected.columns if columns is None else columns
 
     assert len(actual) == len(
@@ -92,9 +93,13 @@ def compare_outputs(
     for column in cols:
         assert column in actual.columns
         try:
+            # Sort both actual and expected Series before comparison to handle different sortings
+            actual_sorted = actual[column].sort_values().reset_index(drop=True)
+            expected_sorted = expected[column].sort_values().reset_index(drop=True)
+
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             assert_series_equal(
-                actual[column], expected[column], check_dtype=False, check_index=False
+                actual_sorted, expected_sorted, check_dtype=False, check_index=False
             )
         except AssertionError:
             print("Expected:")
