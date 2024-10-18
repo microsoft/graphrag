@@ -57,9 +57,7 @@ async def create_final_embeddings(
     if base_text_embed:
         log.info("Creating embeddings")
         # Embed raw_content in documents table
-        if document_raw_content_embedding in embedded_fields and isinstance(
-            documents_embeddings, pd.DataFrame
-        ):
+        if document_raw_content_embedding in embedded_fields:
             await run_embeddings(
                 data=documents_embeddings,
                 column_to_embed="raw_content",
@@ -72,9 +70,7 @@ async def create_final_embeddings(
             )
 
         # Embed description in relationships table
-        if relationship_description_embedding in embedded_fields and isinstance(
-            relationships_embeddings, pd.DataFrame
-        ):
+        if relationship_description_embedding in embedded_fields:
             await run_embeddings(
                 data=relationships_embeddings,
                 column_to_embed="description",
@@ -87,9 +83,7 @@ async def create_final_embeddings(
             )
 
         # Embed text in text_units table
-        if text_unit_text_embedding in embedded_fields and isinstance(
-            text_units_embeddings, pd.DataFrame
-        ):
+        if text_unit_text_embedding in embedded_fields:
             await run_embeddings(
                 data=text_units_embeddings,
                 column_to_embed="text",
@@ -102,9 +96,7 @@ async def create_final_embeddings(
             )
 
         # Embed name in entities table
-        if entity_name_embedding in embedded_fields and isinstance(
-            entities_embeddings, pd.DataFrame
-        ):
+        if entity_name_embedding in embedded_fields:
             await run_embeddings(
                 data=entities_embeddings,
                 column_to_embed="name",
@@ -117,9 +109,7 @@ async def create_final_embeddings(
             )
 
         # Embed name+description in entities table
-        if entity_description_embedding in embedded_fields and isinstance(
-            entities_embeddings, pd.DataFrame
-        ):
+        if entity_description_embedding in embedded_fields:
             await run_embeddings(
                 data=entities_embeddings,
                 column_to_embed="name_description",
@@ -132,9 +122,7 @@ async def create_final_embeddings(
             )
 
         # Embed title in community reports table
-        if community_title_embedding in embedded_fields and isinstance(
-            community_reports_embeddings, pd.DataFrame
-        ):
+        if community_title_embedding in embedded_fields:
             await run_embeddings(
                 data=community_reports_embeddings,
                 column_to_embed="title",
@@ -147,9 +135,7 @@ async def create_final_embeddings(
             )
 
         # Embed summary in community reports table
-        if community_summary_embedding in embedded_fields and isinstance(
-            community_reports_embeddings, pd.DataFrame
-        ):
+        if community_summary_embedding in embedded_fields:
             await run_embeddings(
                 data=community_reports_embeddings,
                 column_to_embed="summary",
@@ -162,9 +148,7 @@ async def create_final_embeddings(
             )
 
         # Embed full_content in community reports table
-        if community_full_content_embedding in embedded_fields and isinstance(
-            community_reports_embeddings, pd.DataFrame
-        ):
+        if community_full_content_embedding in embedded_fields:
             await run_embeddings(
                 data=community_reports_embeddings,
                 column_to_embed="full_content",
