@@ -82,7 +82,8 @@ def compare_outputs(
     actual: pd.DataFrame, expected: pd.DataFrame, columns: list[str] | None = None
 ) -> None:
     """Compare the actual and expected dataframes, optionally specifying columns to compare.
-    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
+    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output.
+    """
     cols = expected.columns if columns is None else columns
 
     assert len(actual) == len(

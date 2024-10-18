@@ -11,7 +11,7 @@ from collections.abc import AsyncIterable
 from typing import cast
 
 import pandas as pd
-from datashaper import WorkflowCallbacks
+from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.index.cache import PipelineCache
@@ -144,7 +144,13 @@ async def run_pipeline_with_config(
         ):
             tables_dict[table.workflow] = table.result
 
-        await update_dataframe_outputs(tables_dict, storage)
+        await update_dataframe_outputs(
+            tables_dict,
+            storage,
+            config,
+            cache,
+            NoopVerbCallbacks(),
+        )
 
     else:
         async for table in run_pipeline(

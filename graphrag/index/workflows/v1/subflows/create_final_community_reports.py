@@ -39,6 +39,10 @@ async def create_final_community_reports(
     nodes = cast(pd.DataFrame, input.get_input())
     edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
 
+    communities = cast(
+        pd.DataFrame, get_required_input_table(input, "communities").table
+    )
+
     claims = get_named_input_table(input, "covariates")
     if claims:
         claims = cast(pd.DataFrame, claims.table)
@@ -46,6 +50,7 @@ async def create_final_community_reports(
     output = await create_final_community_reports_flow(
         nodes,
         edges,
+        communities,
         claims,
         callbacks,
         cache,
