@@ -5,10 +5,9 @@
 
 import asyncio
 import logging
-from typing import Any, cast
+from typing import Any
 
 import networkx as nx
-import pandas as pd
 from datashaper import (
     ProgressTicker,
     VerbCallbacks,
@@ -16,10 +15,8 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.utils import load_graph
 
 from .typing import (
-    DescriptionSummarizeRow,
     SummarizationStrategy,
     SummarizeStrategyType,
 )
@@ -28,14 +25,12 @@ log = logging.getLogger(__name__)
 
 
 async def summarize_descriptions(
-    input: pd.DataFrame,
+    input: nx.Graph,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    column: str,
-    to: str,
     strategy: dict[str, Any] | None = None,
-    **kwargs,
-) -> pd.DataFrame:
+    num_threads: int = 4,
+) -> nx.Graph:
     """
     Summarize entity and relationship descriptions from an entity graph.
 
@@ -43,25 +38,10 @@ async def summarize_descriptions(
 
     To turn this feature ON please set the environment variable `GRAPHRAG_SUMMARIZE_DESCRIPTIONS_ENABLED=True`.
 
-    ### json
-
-    ```json
-    {
-        "verb": "",
-        "args": {
-            "column": "the_document_text_column_to_extract_descriptions_from", /* Required: This will be a graphml graph in string form which represents the entities and their relationships */
-            "to": "the_column_to_output_the_summarized_descriptions_to", /* Required: This will be a graphml graph in string form which represents the entities and their relationships after being summarized */
-            "strategy": {...} <strategy_config>, see strategies section below
-        }
-    }
-    ```
-
     ### yaml
 
     ```yaml
     args:
-        column: the_document_text_column_to_extract_descriptions_from
-        to: the_column_to_output_the_summarized_descriptions_to
         strategy: <strategy_config>, see strategies section below
     ```
 
@@ -99,9 +79,7 @@ async def summarize_descriptions(
     )
     strategy_config = {**strategy}
 
-    async def get_resolved_entities(row, semaphore: asyncio.Semaphore):
-        graph: nx.Graph = load_graph(cast(str | nx.Graph, getattr(row, column)))
-
+    async def get_resolved_entities(graph: nx.Graph, semaphore: asyncio.Semaphore):
         ticker_length = len(graph.nodes) + len(graph.edges)
 
         ticker = progress_ticker(callbacks.progress, ticker_length)
@@ -134,9 +112,7 @@ async def summarize_descriptions(
             elif isinstance(graph_item, tuple) and graph_item in graph.edges():
                 graph.edges[graph_item]["description"] = result.description
 
-        return DescriptionSummarizeRow(
-            graph="\n".join(nx.generate_graphml(graph)),
-        )
+        return graph
 
     async def do_summarize_descriptions(
         graph_item: str | tuple[str, str],
@@ -155,25 +131,9 @@ async def summarize_descriptions(
             ticker(1)
         return results
 
-    # Graph is always on row 0, so here a derive from rows does not work
-    # This iteration will only happen once, but avoids hardcoding a iloc[0]
-    # Since parallelization is at graph level (nodes and edges), we can't use
-    # the parallelization of the derive_from_rows
-    semaphore = asyncio.Semaphore(kwargs.get("num_threads", 4))
+    semaphore = asyncio.Semaphore(num_threads)
 
-    results = [
-        await get_resolved_entities(row, semaphore) for row in input.itertuples()
-    ]
-
-    to_result = []
-
-    for result in results:
-        if result:
-            to_result.append(result.graph)
-        else:
-            to_result.append(None)
-    input[to] = to_result
-    return input
+    return await get_resolved_entities(input, semaphore)
 
 
 def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy:
