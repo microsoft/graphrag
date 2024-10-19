@@ -12,7 +12,7 @@ from graphrag.index import (
     PipelineWorkflowConfig,
     create_pipeline_config,
 )
-from graphrag.index.run.utils import _create_run_context
+from graphrag.index.run.utils import create_run_context
 from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 pd.set_option("display.max_columns", None)
@@ -70,7 +70,7 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    context = _create_run_context(storage, None, None)
+    context = create_run_context(storage, None, None)
 
     await workflow.run(context=context)
 
