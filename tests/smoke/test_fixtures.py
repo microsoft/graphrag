@@ -236,7 +236,7 @@ class TestIndexer:
             root.absolute().as_posix(),
             "--method",
             query_config["method"],
-            "--community_level",
+            "--community-level",
             str(query_config.get("community_level", 2)),
             query_config["query"],
         ]

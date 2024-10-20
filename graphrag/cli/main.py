@@ -37,7 +37,6 @@ def _call_initialize_cli(args):
     # pass arguments to init
     initialize_project_at(
         path=args.root,
-        reporter=args.reporter,
     )
 
 
@@ -130,13 +129,6 @@ def cli_main():
         help="The project root directory. Default value: current directory",
         default=".",
         type=dir_exist,
-    )
-    parser_init.add_argument(
-        "--reporter",
-        help="The progress reporter to use. Default: rich",
-        default=ReporterType.RICH,
-        type=ReporterType,
-        choices=list(ReporterType),
     )
     parser_init.set_defaults(func=_call_initialize_cli)
 
@@ -330,13 +322,13 @@ def cli_main():
         choices=list(SearchType),
     )
     parser_query.add_argument(
-        "--community_level",
+        "--community-level",
         help="The community level in the Leiden community hierarchy from which to load community reports. Higher values represent reports from smaller communities. Default: 2",
         type=int,
         default=2,
     )
     parser_query.add_argument(
-        "--response_type",
+        "--response-type",
         help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report. Default: Multiple Paragraphs",
         type=str,
         default="Multiple Paragraphs",
