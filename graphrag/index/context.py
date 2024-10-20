@@ -8,7 +8,7 @@ from dataclasses import dataclass as dc_dataclass
 from dataclasses import field
 
 from .cache import PipelineCache
-from .storage.typing import PipelineStorage
+from .storage.pipeline_storage import PipelineStorage
 
 
 @dc_dataclass
