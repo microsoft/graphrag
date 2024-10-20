@@ -52,11 +52,11 @@ Next we'll inject some required config variables:
 
 First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [variables documentation](config/overview.md).
 
-To initialize your workspace, let's first run the `graphrag.index --init` command.
+To initialize your workspace, let's first run the `graphrag init` command.
 Since we have already configured a directory named \.ragtest` in the previous step, we can run the following command:
 
 ```sh
-python -m graphrag.index --init --root ./ragtest
+python -m graphrag init --root ./ragtest
 ```
 
 This will create two files: `.env` and `settings.yaml` in the `./ragtest` directory.
@@ -90,7 +90,7 @@ deployment_name: <azure_model_deployment_name>
 Finally we'll run the pipeline!
 
 ```sh
-python -m graphrag.index --root ./ragtest
+python -m graphrag index --root ./ragtest
 ```
 
 ![pipeline executing from the CLI](img/pipeline-running.png)
@@ -107,7 +107,7 @@ Now let's ask some questions using this dataset.
 Here is an example using Global search to ask a high-level question:
 
 ```sh
-python -m graphrag.query \
+python -m graphrag query \
 --root ./ragtest \
 --method global \
 "What are the top themes in this story?"
@@ -116,7 +116,7 @@ python -m graphrag.query \
 Here is an example using Local search to ask a more specific question about a particular character:
 
 ```sh
-python -m graphrag.query \
+python -m graphrag query \
 --root ./ragtest \
 --method local \
 "Who is Scrooge, and what are his main relationships?"
