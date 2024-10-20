@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Command line interface for index module."""
+"""CLI implementation of index subcommand."""
 
 import asyncio
 import json
@@ -101,12 +101,12 @@ def index_cli(
     resume: str,
     update_index_id: str | None,
     memprofile: bool,
-    nocache: bool,
+    no_cache: bool,
     reporter: ReporterType,
     config_filepath: str | None,
     emit: list[TableEmitterType],
-    dryrun: bool,
-    skip_validations: bool,
+    dry_run: bool,
+    skip_validation: bool,
     output_dir: str | None,
 ):
     """Run the pipeline with the given config."""
@@ -121,7 +121,7 @@ def index_cli(
     config.reporting.base_dir = output_dir or config.reporting.base_dir
     resolve_paths(config, run_id)
 
-    if nocache:
+    if no_cache:
         config.cache.type = CacheType.none
 
     enabled_logging, log_path = enable_logging_with_config(config, verbose)
@@ -133,16 +133,16 @@ def index_cli(
             True,
         )
 
-    if skip_validations:
+    if skip_validation:
         validate_config_names(progress_reporter, config)
 
-    info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
+    info(f"Starting pipeline run for: {run_id}, {dry_run=}", verbose)
     info(
         f"Using default configuration: {_redact(config.model_dump())}",
         verbose,
     )
 
-    if dryrun:
+    if dry_run:
         info("Dry run complete, exiting...", True)
         sys.exit(0)
 

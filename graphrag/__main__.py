@@ -1,8 +1,9 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""The GraphRAG CLI Root."""
+"""GraphRAG CLI entrypoint."""
 
-from graphrag.cli import cli_main
+from graphrag.cli.main import cli_main
 
-cli_main()
+if __name__ == "__main__":
+    cli_main()

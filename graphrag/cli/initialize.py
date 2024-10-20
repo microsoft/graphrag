@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Command line interface for project initialization."""
+"""CLI implementation of initialization subcommand."""
 
 from pathlib import Path
 
@@ -15,7 +15,7 @@ from graphrag.index.init_content import INIT_DOTENV, INIT_YAML
 from graphrag.logging import ReporterType, create_progress_reporter
 
 
-def initialize_project_at(path: str, name: str, reporter: ReporterType) -> None:
+def initialize_project_at(path: str, reporter: ReporterType) -> None:
     """Initialize the project at the given path."""
     progress_reporter = create_progress_reporter(reporter)
     progress_reporter.info(f"Initializing project at {path}")
@@ -23,7 +23,7 @@ def initialize_project_at(path: str, name: str, reporter: ReporterType) -> None:
     if not root.exists():
         root.mkdir(parents=True, exist_ok=True)
 
-    settings_yaml = root / name
+    settings_yaml = root / "settings.yaml"
     if settings_yaml.exists():
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""The GraphRAG CLI Entry Point."""
+"""CLI entrypoint."""
 
 import argparse
 import asyncio
@@ -14,10 +14,10 @@ from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 from graphrag.utils.cli import dir_exist, file_exist
 
-from .index_cli import index_cli
-from .init_cli import initialize_project_at
-from .prompt_tune_cli import prompt_tune
-from .query_cli import run_global_search, run_local_search
+from .index import index_cli
+from .initialize import initialize_project_at
+from .prompt_tune import prompt_tune
+from .query import run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -33,17 +33,16 @@ class SearchType(Enum):
         return self.value
 
 
-def _call_initializer(args):
-    # Pass arguments to initialization function
+def _call_initialize_cli(args):
+    # pass arguments to init
     initialize_project_at(
         path=args.root,
-        name=args.name,
         reporter=args.reporter,
     )
 
 
 def _call_index_cli(args):
-    # Pass arguments to index cli
+    # pass arguments to index cli
     if args.resume and args.update_index:
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
@@ -54,18 +53,18 @@ def _call_index_cli(args):
         resume=args.resume,
         update_index_id=args.update_index,
         memprofile=args.memprofile,
-        nocache=args.nocache,
+        no_cache=args.no_cache,
         reporter=args.reporter,
         config_filepath=args.config,
-        emit=[TableEmitterType(value) for value in args.emit.split(",")],
-        dryrun=args.dryrun,
-        skip_validations=args.skip_validations,
+        emit=[TableEmitterType(value.strip()) for value in args.emit.split(",")],
+        dry_run=args.dry_run,
+        skip_validation=args.skip_validation,
         output_dir=args.output,
     )
 
 
 def _call_prompt_tune_cli(args):
-    # Pass arguments to prompt-tune cli
+    # pass arguments to prompt-tune cli
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         prompt_tune(
@@ -87,7 +86,7 @@ def _call_prompt_tune_cli(args):
 
 
 def _call_query_cli(args):
-    # Pass arguments to query cli
+    # pass arguments to query cli
     match args.method:
         case SearchType.LOCAL:
             run_local_search(
@@ -114,29 +113,23 @@ def _call_query_cli(args):
 
 
 def cli_main():
-    """Parse graphrag cli parameters and execute corresponding cli functions."""
-    # Set up top-level parser
+    """Parse main cli arguments."""
+    # set up top-level parser
     parser = argparse.ArgumentParser(
-        description="The graphrag centralized cli.",
+        description="GraphRAG: A graph-based retrieval-augmented generation (RAG) system.",
     )
     subparsers = parser.add_subparsers()
 
-    # Set up subparser for initialization
+    # init command-line arguments
     parser_init = subparsers.add_parser(
         name="init",
-        description="Create the inital graphrag configuration in the given root",
+        description="Generate a default configuration file.",
     )
     parser_init.add_argument(
         "--root",
-        help="The data project root. Default value: the current directory",
+        help="The project root directory. Default value: current directory",
         default=".",
         type=dir_exist,
-    )
-    parser_init.add_argument(
-        "--name",
-        help="The name of the initial config file that will be created",
-        default="settings.yaml",
-        type=str,
     )
     parser_init.add_argument(
         "--reporter",
@@ -145,38 +138,38 @@ def cli_main():
         type=ReporterType,
         choices=list(ReporterType),
     )
-    parser_init.set_defaults(func=_call_initializer)
+    parser_init.set_defaults(func=_call_initialize_cli)
 
-    # Indexing command-line arguments
+    # index command-line arguments
     parser_index = subparsers.add_parser(
         name="index",
-        description="The graphrag indexing engine.",
+        description="Build a knowledge graph index.",
     )
     parser_index.add_argument(
         "--root",
-        help="The data project root. Default value: the current directory",
+        help="The project root directory. Default value: current directory",
         default=".",
         type=dir_exist,
     )
     parser_index.add_argument(
         "--config",
-        help="The configuration yaml file to use.",
+        help="The configuration to use.",
         type=file_exist,
     )
     parser_index.add_argument(
         "-v",
         "--verbose",
-        help="Run the pipeline with verbose logging",
+        help="Run the indexing pipeline with verbose logging",
         action="store_true",
     )
     parser_index.add_argument(
         "--memprofile",
-        help="Run the pipeline with memory profiling",
+        help="Run the indexing pipeline with memory profiling",
         action="store_true",
     )
     parser_index.add_argument(
         "--resume",
-        help="Resume a given data run leveraging Parquet output files",
+        help="Resume a given indexing run",
         required=False,
         default="",
         type=str,
@@ -196,149 +189,149 @@ def cli_main():
         choices=list(TableEmitterType),
     )
     parser_index.add_argument(
-        "--dryrun",
-        help="Run the pipeline without executing any steps to inspect/validate the configuration",
+        "--dry-run",
+        help="Run the indexing pipeline without executing any steps to inspect/validate the configuration",
         action="store_true",
     )
     parser_index.add_argument(
-        "--nocache", help="Disable LLM cache", action="store_true", default=False
+        "--no-cache", help="Do not use LLM cache", action="store_true", default=False
     )
     parser_index.add_argument(
-        "--skip-validations",
+        "--skip-validation",
         help="Skip any preflight validation. Useful when running no LLM steps",
         action="store_true",
     )
     parser_index.add_argument(
         "--update-index",
-        help="Update a given index run id, leveraging previous outputs and applying new indexes",
+        help="Update an index run id, leveraging previous outputs and applying new indexes",
         required=False,
         default=None,
         type=str,
     )
     parser_index.add_argument(
         "--output",
-        help="The output directory to use for the pipeline.",
+        help="Indexing pipeline output directory.",
         required=False,
         default=None,
         type=str,
     )
     parser_index.set_defaults(func=_call_index_cli)
 
-    # Prompt-tune command-line arguments
+    # prompt-tune command-line arguments
     parser_prompt_tune = subparsers.add_parser(
         name="prompt-tune",
-        description="The graphrag auto templating module.",
+        description="Generate custom graphrag prompts with your own data (i.e. auto templating).",
     )
     parser_prompt_tune.add_argument(
         "--root",
-        help="The data project root. Default value: the current directory",
+        help="The project root directory. Default value: current directory",
         default=".",
         type=dir_exist,
     )
     parser_prompt_tune.add_argument(
         "--config",
-        help="The configuration yaml file to use.",
+        help="The configuration file to use.",
         type=file_exist,
     )
     parser_prompt_tune.add_argument(
         "--domain",
-        help="Domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, the domain will be inferred from the input data.",
+        help="The domain your input data is related to. For example 'space science', 'microbiology', 'environmental news'. If not defined, a domain will be inferred from the input data.",
         type=str,
         default="",
     )
     parser_prompt_tune.add_argument(
         "--selection-method",
-        help=f"Chunk selection method. Default: {DocSelectionType.RANDOM}",
+        help=f"The text chunk selection method. Default: {DocSelectionType.RANDOM}",
         type=DocSelectionType,
         choices=list(DocSelectionType),
         default=DocSelectionType.RANDOM,
     )
     parser_prompt_tune.add_argument(
-        "--n_subset_max",
-        help="Number of text chunks to embed when using auto selection method. Default: 300",
+        "--n-subset-max",
+        help="The number of text chunks to embed when --selection-method=auto. Default: 300",
         type=int,
         default=300,
     )
     parser_prompt_tune.add_argument(
         "--k",
-        help="Maximum number of documents to select from each centroid when using auto selection method. Default: 15",
+        help="The maximum number of documents to select from each centroid when --selection-method=auto. Default: 15",
         type=int,
         default=15,
     )
     parser_prompt_tune.add_argument(
         "--limit",
-        help="Number of documents to load when doing random or top selection. Default: 15",
+        help="The number of documents to load when --selection-method={random,top}. Default: 15",
         type=int,
         default=15,
     )
     parser_prompt_tune.add_argument(
         "--max-tokens",
-        help=f"Max token count for prompt generation. Default: {MAX_TOKEN_COUNT}",
+        help=f"The max token count for prompt generation. Default: {MAX_TOKEN_COUNT}",
         type=int,
         default=MAX_TOKEN_COUNT,
     )
     parser_prompt_tune.add_argument(
         "--min-examples-required",
-        help="Minimum number of examples required in the entity extraction prompt. Default: 2",
+        help="The minimum number of examples to generate/include in the entity extraction prompt. Default: 2",
         type=int,
         default=2,
     )
     parser_prompt_tune.add_argument(
         "--chunk-size",
-        help=f"Max token count for prompt generation. Default: {MIN_CHUNK_SIZE}",
+        help=f"The max token count for prompt generation. Default: {MIN_CHUNK_SIZE}",
         type=int,
         default=MIN_CHUNK_SIZE,
     )
     parser_prompt_tune.add_argument(
         "--language",
-        help="Primary language used for inputs and outputs on GraphRAG",
+        help="The primary language used for inputs and outputs in graphrag prompts.",
         type=str,
         default=None,
     )
     parser_prompt_tune.add_argument(
         "--no-entity-types",
-        help="Use untyped entity extraction generation",
+        help="Enable untyped entity extraction generation.",
         action="store_true",
     )
     parser_prompt_tune.add_argument(
         "--output",
-        help="Directory to save generated prompts to, relative to the root directory. Default: 'prompts'",
+        help="The directory to save prompts to, relative to the project root directory. Default: 'prompts'",
         type=str,
         default="prompts",
     )
     parser_prompt_tune.set_defaults(func=_call_prompt_tune_cli)
 
-    # Querying command-line arguments
+    # query command-line arguments
     parser_query = subparsers.add_parser(
         name="query",
-        description="The graphrag querying engine.",
+        description="Query a knowledge graph index.",
     )
     parser_query.add_argument(
         "--root",
-        help="The data project root. Default value: the current directory",
+        help="The project root directory. Default value: current directory",
         default=".",
         type=dir_exist,
     )
     parser_query.add_argument(
         "--config",
-        help="The configuration yaml file to use.",
+        help="The configuration file to use.",
         type=file_exist,
     )
     parser_query.add_argument(
         "--data",
-        help="The path with the output data from the pipeline",
+        help="Indexing pipeline output directory (i.e. contains the parquet files).",
         type=dir_exist,
     )
     parser_query.add_argument(
         "--method",
-        help="The method to run",
+        help="The method to run.",
         required=True,
         type=SearchType,
         choices=list(SearchType),
     )
     parser_query.add_argument(
         "--community_level",
-        help="Community level in the Leiden community hierarchy from which we will load the community reports. A higher value means we will use reports from smaller communities. Default: 2",
+        help="The community level in the Leiden community hierarchy from which to load community reports. Higher values represent reports from smaller communities. Default: 2",
         type=int,
         default=2,
     )
@@ -350,17 +343,17 @@ def cli_main():
     )
     parser_query.add_argument(
         "--streaming",
-        help="Print response in a streaming manner",
+        help="Print response in a streaming manner.",
         action="store_true",
     )
     parser_query.add_argument(
         "query",
         nargs=1,
-        help="The query to run",
+        help="The query to run.",
         type=str,
     )
     parser_query.set_defaults(func=_call_query_cli)
 
-    # Parse arguments and call proper cli function
+    # parse arguments and call proper cli function
     args = parser.parse_args()
     args.func(args)

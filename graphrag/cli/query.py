@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Command line interface for the query module."""
+"""CLI implementation of query subcommand."""
 
 import asyncio
 import sys
