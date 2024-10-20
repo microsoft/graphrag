@@ -115,6 +115,7 @@ def cli_main():
     """Parse main cli arguments."""
     # set up top-level parser
     parser = argparse.ArgumentParser(
+        prog="python -m graphrag",
         description="GraphRAG: A graph-based retrieval-augmented generation (RAG) system.",
     )
     subparsers = parser.add_subparsers()
@@ -122,6 +123,7 @@ def cli_main():
     # init command-line arguments
     parser_init = subparsers.add_parser(
         name="init",
+        prog="python -m graphrag init",
         description="Generate a default configuration file.",
     )
     parser_init.add_argument(
@@ -135,6 +137,7 @@ def cli_main():
     # index command-line arguments
     parser_index = subparsers.add_parser(
         name="index",
+        prog="python -m graphrag index",
         description="Build a knowledge graph index.",
     )
     parser_index.add_argument(
@@ -212,6 +215,7 @@ def cli_main():
     # prompt-tune command-line arguments
     parser_prompt_tune = subparsers.add_parser(
         name="prompt-tune",
+        prog="python -m graphrag prompt-tune",
         description="Generate custom graphrag prompts with your own data (i.e. auto templating).",
     )
     parser_prompt_tune.add_argument(
@@ -296,6 +300,7 @@ def cli_main():
     # query command-line arguments
     parser_query = subparsers.add_parser(
         name="query",
+        prog="python -m graphrag query",
         description="Query a knowledge graph index.",
     )
     parser_query.add_argument(
