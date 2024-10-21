@@ -50,11 +50,9 @@ MOCK_LLM_SUMMARIZATION_CONFIG = {
 
 
 async def test_create_base_entity_graph():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_base_text_units",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_base_text_units",
+    ])
     expected = load_expected(workflow_name)
 
     storage = MemoryPipelineStorage()
@@ -94,11 +92,9 @@ async def test_create_base_entity_graph():
 
 
 async def test_create_base_entity_graph_with_embeddings():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_base_text_units",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_base_text_units",
+    ])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
@@ -123,11 +119,9 @@ async def test_create_base_entity_graph_with_embeddings():
 
 
 async def test_create_base_entity_graph_with_snapshots():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_base_text_units",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_base_text_units",
+    ])
 
     storage = MemoryPipelineStorage()
 
@@ -159,11 +153,9 @@ async def test_create_base_entity_graph_with_snapshots():
 
 
 async def test_create_base_entity_graph_missing_llm_throws():
-    input_tables = load_input_tables(
-        [
-            "workflow:create_base_text_units",
-        ]
-    )
+    input_tables = load_input_tables([
+        "workflow:create_base_text_units",
+    ])
 
     config = get_config_for_workflow(workflow_name)
 
