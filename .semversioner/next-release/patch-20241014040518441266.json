@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Perf optimizations in map_query_to_entities()"
+}
