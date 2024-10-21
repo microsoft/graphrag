@@ -9,7 +9,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
 mergeable_outputs = [
