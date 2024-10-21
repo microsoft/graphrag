@@ -62,30 +62,3 @@ class CommunityReport(Named):
             full_content_embedding=d.get(full_content_embedding_key),
             attributes=d.get(attributes_key),
         )
-
-    def to_dict(
-        self,
-        id_key: str = "id",
-        title_key: str = "title",
-        community_id_key: str = "community_id",
-        short_id_key: str = "short_id",
-        summary_key: str = "summary",
-        full_content_key: str = "full_content",
-        rank_key: str = "rank",
-        summary_embedding_key: str = "summary_embedding",
-        full_content_embedding_key: str = "full_content_embedding",
-        attributes_key: str = "attributes",
-    ) -> dict[str, Any]:
-        """Convert the community report to a dictionary."""
-        return {
-            id_key: self.id,
-            title_key: self.title,
-            community_id_key: self.community_id,
-            short_id_key: self.short_id,
-            summary_key: self.summary,
-            full_content_key: self.full_content,
-            rank_key: self.rank,
-            summary_embedding_key: self.summary_embedding,
-            full_content_embedding_key: self.full_content_embedding,
-            attributes_key: self.attributes,
-        }

@@ -4,6 +4,7 @@
 """DRIFT Context Builder implementation."""
 
 import logging
+from dataclasses import asdict
 from typing import Any
 
 import numpy as np
@@ -111,7 +112,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         ------
         ValueError: If some reports are missing full content or full content embeddings.
         """
-        report_df = pd.DataFrame([report.to_dict() for report in reports])
+        report_df = pd.DataFrame([asdict(report) for report in reports])
         missing_content_error = "Some reports are missing full content."
         missing_embedding_error = "Some reports are missing full content embeddings."
 
