@@ -1,6 +1,7 @@
 # Python Artifacts
 python/*/lib/
 dist/
+
 # Test Output
 .coverage
 coverage/
@@ -19,7 +20,6 @@ lancedb/
 venv/
 .conda
 .tmp
-
 
 .env
 build.zip
