@@ -54,7 +54,7 @@ class GlobalSearchResult(SearchResult):
     reduce_context_text: str | list[str] | dict[str, str]
 
 
-class GlobalSearch(BaseSearch):
+class GlobalSearch(BaseSearch[GlobalContextBuilder]):
     """Search orchestration for global search mode."""
 
     def __init__(
@@ -145,6 +145,7 @@ class GlobalSearch(BaseSearch):
         - Step 2: Combine the answers from step 2 to generate the final answer
         """
         # Step 1: Generate answers for each batch of community short summaries
+
         start_time = time.time()
         context_chunks, context_records = self.context_builder.build_context(
             conversation_history=conversation_history, **self.context_builder_params
