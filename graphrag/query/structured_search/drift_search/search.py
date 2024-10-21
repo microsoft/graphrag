@@ -120,7 +120,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 i["intermediate_answer"] for i in response if "intermediate_answer" in i
             ]
 
-            if len(intermediate_answers) == 0:
+            if not intermediate_answers:
                 error_msg = "No intermediate answers found in primer response. Ensure that the primer response includes intermediate answers."
                 raise RuntimeError(error_msg)
 

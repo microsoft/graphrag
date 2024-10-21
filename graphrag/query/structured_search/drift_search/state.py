@@ -44,7 +44,7 @@ class QueryState:
         for follow_up in follow_ups:
             if isinstance(follow_up, str):
                 follow_up = DriftAction(query=follow_up)
-            else:
+            elif not isinstance(follow_up, DriftAction):
                 log.warning(
                     "Follow-up action is not a string, found type: %s", type(follow_up)
                 )
