@@ -36,7 +36,7 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
-from graphrag.vector_stores import VectorStoreFactory
+from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 
@@ -255,7 +255,7 @@ async def local_search_streaming(
     # TODO: remove the type ignore annotations below once the new config engine has been refactored
     vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    if vector_store_type == "lancedb":
+    if vector_store_type == VectorStoreType.LanceDB:
         db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
         lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
