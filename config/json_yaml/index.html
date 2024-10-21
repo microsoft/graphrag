@@ -1402,7 +1402,7 @@
 <li><code>api_version</code> <strong>str</strong> - The API version</li>
 <li><code>organization</code> <strong>str</strong> - The client organization.</li>
 <li><code>proxy</code> <strong>str</strong> - The proxy URL to use.</li>
-<li><code>cognitive_services_endpoint</code> <strong>str</strong> - The url endpoint for cognitive services.</li>
+<li><code>audience</code> <strong>str</strong> - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if <code>api_key</code> is not defined. Default=<code>https://cognitiveservices.azure.com/.default</code></li>
 <li><code>deployment_name</code> <strong>str</strong> - The deployment name to use (Azure).</li>
 <li><code>model_supports_json</code> <strong>bool</strong> - Whether the model supports JSON-mode output.</li>
 <li><code>tokens_per_minute</code> <strong>int</strong> - Set a leaky-bucket throttle on tokens-per-minute.</li>
@@ -1430,9 +1430,17 @@
 <li><code>parallelization</code> (see Parallelization top-level config)</li>
 <li><code>async_mode</code> (see Async Mode top-level config)</li>
 <li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
-<li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch #-tokens.</li>
+<li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch # of tokens.</li>
 <li><code>target</code> <strong>required|all</strong> - Determines which set of embeddings to emit.</li>
 <li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip.</li>
+<li><code>vector_store</code> <strong>dict</strong> - The vector store to use. Configured for lancedb by default.</li>
+<li><code>type</code> <strong>str</strong> - <code>lancedb</code> or <code>azure_ai_search</code>. Default=<code>lancedb</code></li>
+<li><code>db_uri</code> <strong>str</strong> (only for lancedb) - The database uri. Default=<code>storage.base_dir/lancedb</code></li>
+<li><code>url</code> <strong>str</strong> (only for AI Search) - AI Search endpoint</li>
+<li><code>api_key</code> <strong>str</strong> (optional - only for AI Search) - The AI Search api key to use.</li>
+<li><code>audience</code> <strong>str</strong> (only for AI Search) - Audience for managed identity token if managed identity authentication is used.</li>
+<li><code>overwrite</code> <strong>bool</strong> (only used at index creation time) - Overwrite collection if it exist. Default=<code>True</code></li>
+<li><code>collection_name</code> <strong>str</strong> - The name of a vector collection. Default=<code>entity_description_embeddings</code></li>
 <li><code>strategy</code> <strong>dict</strong> - Fully override the text-embedding strategy.</li>
 </ul>
 <h2 id="chunks">chunks</h2>
@@ -1547,7 +1555,7 @@
 <li><code>top_level_nodes</code> <strong>bool</strong> - Emit top-level-node snapshots.</li>
 </ul>
 <h2 id="encoding_model">encoding_model</h2>
-<p><strong>str</strong> - The text encoding model to use. Default is <code>cl100k_base</code>.</p>
+<p><strong>str</strong> - The text encoding model to use. Default=<code>cl100k_base</code>.</p>
 <h2 id="skip_workflows">skip_workflows</h2>
 <p><strong>list[str]</strong> - Which workflow names to skip.</p>
 
