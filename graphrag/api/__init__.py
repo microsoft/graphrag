@@ -7,9 +7,9 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from .index_api import build_index
-from .prompt_tune_api import DocSelectionType, generate_indexing_prompts
-from .query_api import (
+from graphrag.api.index import build_index
+from graphrag.api.prompt_tune import DocSelectionType, generate_indexing_prompts
+from graphrag.api.query import (
     global_search,
     global_search_streaming,
     local_search,
