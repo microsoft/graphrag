@@ -7,8 +7,6 @@ embeddings:
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     collection_name: "azure_ci"
-    query_collection_name: "azure_ci_query"
-
     entity_name_description:
       title_column: "name"
 

@@ -4,7 +4,8 @@ input:
 embeddings:
   vector_store:
     type: "lancedb"
-    uri_db: "./tests/fixtures/min-csv/lancedb"
+    db_uri: "./tests/fixtures/min-csv/lancedb"
+    collection_name: "lancedb_ci"
     store_in_table: True
 
     entity_name_description:

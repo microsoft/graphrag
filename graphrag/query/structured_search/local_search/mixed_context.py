@@ -141,7 +141,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             query=query,
             text_embedding_vectorstore=self.entity_text_embeddings,
             text_embedder=self.text_embedder,
-            all_entities=list(self.entities.values()),
+            all_entities_dict=self.entities,
             embedding_vectorstore_key=self.embedding_vectorstore_key,
             include_entity_names=include_entity_names,
             exclude_entity_names=exclude_entity_names,

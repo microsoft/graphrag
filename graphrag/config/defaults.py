@@ -3,7 +3,11 @@
 
 """Common default configuration values."""
 
+from pathlib import Path
+
 from datashaper import AsyncType
+
+from graphrag.vector_stores import VectorStoreType
 
 from .enums import (
     CacheType,
@@ -74,7 +78,7 @@ NODE2VEC_WINDOW_SIZE = 2
 NODE2VEC_ITERATIONS = 3
 NODE2VEC_RANDOM_SEED = 597832
 REPORTING_TYPE = ReportingType.file
-REPORTING_BASE_DIR = "output"
+REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_RAW_ENTITIES = False
 SNAPSHOTS_TOP_LEVEL_NODES = False
@@ -82,6 +86,13 @@ STORAGE_BASE_DIR = "output"
 STORAGE_TYPE = StorageType.file
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 UMAP_ENABLED = False
+
+VECTOR_STORE = f"""
+    type: {VectorStoreType.LanceDB.value}
+    db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
+    collection_name: entity_description_embeddings
+    overwrite: true\
+"""
 
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5
