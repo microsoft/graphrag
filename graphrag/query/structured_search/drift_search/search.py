@@ -129,11 +129,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             ])
 
             follow_ups = [fu for i in response for fu in i.get("follow_up_queries", [])]
-            if len(follow_ups) == 0:
+
+            if not follow_ups:
                 error_msg = "No follow-up queries found in primer response. Ensure that the primer response includes follow-up queries."
                 raise RuntimeError(error_msg)
 
-            score = sum(i["score"] for i in response) / len(response)
+            score = sum(i.get("score", float("-inf")) for i in response) / len(response)
             response_data = {
                 "intermediate_answer": intermediate_answer,
                 "follow_up_queries": follow_ups,
