@@ -8,6 +8,7 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
+from pathlib import Path
 from typing import cast
 
 import pandas as pd
@@ -103,7 +104,7 @@ async def run_pipeline_with_config(
     root_dir = config.root_dir or ""
 
     progress_reporter = progress_reporter or NullProgressReporter()
-    storage = storage or _create_storage(config.storage, root_dir=root_dir)
+    storage = storage or _create_storage(config.storage, root_dir=Path(root_dir))
     cache = cache or _create_cache(config.cache, root_dir)
     callbacks = callbacks or _create_reporter(config.reporting, root_dir)
     dataset = (

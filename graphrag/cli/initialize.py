@@ -15,7 +15,7 @@ from graphrag.index.init_content import INIT_DOTENV, INIT_YAML
 from graphrag.logging import ReporterType, create_progress_reporter
 
 
-def initialize_project_at(path: str) -> None:
+def initialize_project_at(path: Path) -> None:
     """Initialize the project at the given path."""
     progress_reporter = create_progress_reporter(ReporterType.RICH)
     progress_reporter.info(f"Initializing project at {path}")

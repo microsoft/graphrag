@@ -96,32 +96,30 @@ def _register_signal_handlers(reporter: ProgressReporter):
 
 
 def index_cli(
-    root_dir: str,
+    root_dir: Path,
     verbose: bool,
-    resume: str,
+    resume: str | None,
     update_index_id: str | None,
     memprofile: bool,
-    no_cache: bool,
+    cache: bool,
     reporter: ReporterType,
-    config_filepath: str | None,
+    config_filepath: Path | None,
     emit: list[TableEmitterType],
     dry_run: bool,
     skip_validation: bool,
-    output_dir: str | None,
+    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
-    root = Path(root_dir).resolve()
-    config = load_config(root, config_filepath)
-
-    config.storage.base_dir = output_dir or config.storage.base_dir
-    config.reporting.base_dir = output_dir or config.reporting.base_dir
+    config = load_config(root_dir, config_filepath)
+    config.storage.base_dir = str(output_dir) or config.storage.base_dir
+    config.reporting.base_dir = str(output_dir) or config.reporting.base_dir
     resolve_paths(config, run_id)
 
-    if no_cache:
+    if not cache:
         config.cache.type = CacheType.none
 
     enabled_logging, log_path = enable_logging_with_config(config, verbose)

@@ -19,9 +19,9 @@ reporter = PrintProgressReporter("")
 
 
 def run_global_search(
-    config_filepath: str | None,
-    data_dir: str | None,
-    root_dir: str,
+    config_filepath: Path | None,
+    data_dir: Path | None,
+    root_dir: Path,
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -31,10 +31,10 @@ def run_global_search(
 
     Loads index files required for global search and calls the Query API.
     """
-    root = Path(root_dir).resolve()
+    root = root_dir.resolve()
     config = load_config(root, config_filepath)
 
-    config.storage.base_dir = data_dir or config.storage.base_dir
+    config.storage.base_dir = str(data_dir) or config.storage.base_dir
     resolve_paths(config)
 
     dataframe_dict = _resolve_parquet_files(
@@ -99,9 +99,9 @@ def run_global_search(
 
 
 def run_local_search(
-    config_filepath: str | None,
-    data_dir: str | None,
-    root_dir: str,
+    config_filepath: Path | None,
+    data_dir: Path | None,
+    root_dir: Path,
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -111,10 +111,10 @@ def run_local_search(
 
     Loads index files required for local search and calls the Query API.
     """
-    root = Path(root_dir).resolve()
+    root = root_dir.resolve()
     config = load_config(root, config_filepath)
 
-    config.storage.base_dir = data_dir or config.storage.base_dir
+    config.storage.base_dir = str(data_dir) or config.storage.base_dir
     resolve_paths(config)
 
     dataframe_dict = _resolve_parquet_files(
@@ -190,7 +190,7 @@ def run_local_search(
 
 
 def _resolve_parquet_files(
-    root_dir: str,
+    root_dir: Path,
     config: GraphRagConfig,
     parquet_list: list[str],
     optional_list: list[str],
