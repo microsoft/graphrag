@@ -26,7 +26,6 @@ from pydantic import validate_call
 
 from graphrag.config import GraphRagConfig
 from graphrag.logging import PrintProgressReporter
-from graphrag.model.entity import Entity
 from graphrag.query.factories import get_global_search_engine, get_local_search_engine
 from graphrag.query.indexer_adapters import (
     read_indexer_covariates,
@@ -35,10 +34,9 @@ from graphrag.query.indexer_adapters import (
     read_indexer_reports,
     read_indexer_text_units,
 )
-from graphrag.query.input.loaders.dfs import store_entity_semantic_embeddings
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-from graphrag.vector_stores.typing import VectorStoreFactory, VectorStoreType
+from graphrag.utils.cli import redact
+from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 
@@ -184,24 +182,20 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
+    vector_store_args = config.embeddings.vector_store
+    if vector_store_type == "lancedb":
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
+        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    description_embedding_store = _get_embedding_description_store(
+        config_args=vector_store_args,  # type: ignore
     )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
-
-    lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-
-    vector_store_args.update({"db_uri": str(lancedb_dir)})
-    description_embedding_store = _get_embedding_description_store(
-        entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
 
     search_engine = get_local_search_engine(
@@ -257,24 +251,20 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = (
-        config.embeddings.vector_store if config.embeddings.vector_store else {}
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
+    vector_store_args = config.embeddings.vector_store
+    if vector_store_type == VectorStoreType.LanceDB:
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
+        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
+    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    description_embedding_store = _get_embedding_description_store(
+        config_args=vector_store_args,  # type: ignore
     )
-    reporter.info(f"Vector Store Args: {vector_store_args}")
-
-    vector_store_type = vector_store_args.get("type", VectorStoreType.LanceDB)
 
     _entities = read_indexer_entities(nodes, entities, community_level)
-
-    lancedb_dir = Path(config.storage.base_dir) / "lancedb"
-
-    vector_store_args.update({"db_uri": str(lancedb_dir)})
-    description_embedding_store = _get_embedding_description_store(
-        entities=_entities,
-        vector_store_type=vector_store_type,
-        config_args=vector_store_args,
-    )
-
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
 
     search_engine = get_local_search_engine(
@@ -303,49 +293,14 @@ async def local_search_streaming(
 
 
 def _get_embedding_description_store(
-    entities: list[Entity],
-    vector_store_type: str = VectorStoreType.LanceDB,
-    config_args: dict | None = None,
+    config_args: dict,
 ):
     """Get the embedding description store."""
-    if not config_args:
-        config_args = {}
-
-    collection_name = config_args.get(
-        "query_collection_name", "entity_description_embeddings"
-    )
-    config_args.update({"collection_name": collection_name})
+    vector_store_type = config_args["type"]
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type, kwargs=config_args
     )
-
     description_embedding_store.connect(**config_args)
-
-    if config_args.get("overwrite", True):
-        # this step assumes the embeddings were originally stored in a file rather
-        # than a vector database
-
-        # dump embeddings from the entities list to the description_embedding_store
-        store_entity_semantic_embeddings(
-            entities=entities, vectorstore=description_embedding_store
-        )
-    else:
-        # load description embeddings to an in-memory lancedb vectorstore
-        # and connect to a remote db, specify url and port values.
-        description_embedding_store = LanceDBVectorStore(
-            collection_name=collection_name
-        )
-        description_embedding_store.connect(
-            db_uri=config_args.get("db_uri", "./lancedb")
-        )
-
-        # load data from an existing table
-        description_embedding_store.document_collection = (
-            description_embedding_store.db_connection.open_table(
-                description_embedding_store.collection_name
-            )
-        )
-
     return description_embedding_store
 
 

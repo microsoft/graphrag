@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A package containing the supported vector store types."""
+"""A package containing a factory and supported vector store types."""
 
 from enum import Enum
 from typing import ClassVar
@@ -18,7 +18,7 @@ class VectorStoreType(str, Enum):
 
 
 class VectorStoreFactory:
-    """A factory class for creating vector stores."""
+    """A factory class for vector stores."""
 
     vector_store_types: ClassVar[dict[str, type]] = {}
 
