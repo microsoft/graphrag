@@ -65,7 +65,7 @@ Pay close attention specifically to the Sources tables as it contains the most r
 
 Add sections and commentary to the response as appropriate for the length and format.
 
-Additionally provide a score for how well the response addresses the overall research question: {global_query}. Based on your response, suggest a few follow-up questions that could be asked to further explore the topic. Do not include scores or follow up questions in the 'response' field of the JSON, add them to the respective 'score' and 'follow_up_queries' keys of the JSON output. Generate at least five good follow-up queries. Format your response in JSON with the following keys and values:
+Additionally provide a score between 0 and 100 representing how well the response addresses the overall research question: {global_query}. Based on your response, suggest up to five follow-up questions that could be asked to further explore the topic as it relates to the overall research question. Do not include scores or follow up questions in the 'response' field of the JSON, add them to the respective 'score' and 'follow_up_queries' keys of the JSON output. Format your response in JSON with the following keys and values:
 
 {{'response': str, Put your answer, formatted in markdown, here. Do not answer the global query in this section.
 'score': int,
