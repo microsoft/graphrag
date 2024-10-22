@@ -75,7 +75,9 @@ class DriftAction:
         except json.JSONDecodeError as e:
             error_message = "Failed to parse search response"
             log.exception("%s: %s", error_message, search_result.response)
-            raise ValueError(error_message) from e
+            # Do not launch exception as it will roll up with other steps
+            # Instead return an empty response and let score -inf handle it
+            response = {}
 
         self.answer = response.pop("response", None)
         self.score = response.pop("score", float("-inf"))
