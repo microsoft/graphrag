@@ -9,12 +9,11 @@ from pathlib import Path
 
 import pandas as pd
 
+import graphrag.api as api
 from graphrag.config import GraphRagConfig, load_config, resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
-from graphrag.index.progress import PrintProgressReporter
+from graphrag.logging import PrintProgressReporter
 from graphrag.utils.storage import _create_storage, _load_table_from_storage
-
-from . import api
 
 reporter = PrintProgressReporter("")
 

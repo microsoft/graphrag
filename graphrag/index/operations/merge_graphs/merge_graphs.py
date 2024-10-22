@@ -3,13 +3,10 @@
 
 """A module containing merge_graphs, merge_nodes, merge_edges, merge_attributes, apply_merge_operation and _get_detailed_attribute_merge_operation methods definitions."""
 
-from typing import Any, cast
+from typing import Any
 
 import networkx as nx
-import pandas as pd
 from datashaper import VerbCallbacks, progress_iterable
-
-from graphrag.index.utils import load_graph
 
 from .typing import (
     BasicMergeOperation,
@@ -35,15 +32,13 @@ DEFAULT_CONCAT_SEPARATOR = ","
 
 
 def merge_graphs(
-    input: pd.DataFrame,
+    graphs: list[nx.Graph],
     callbacks: VerbCallbacks,
-    column: str,
-    to: str,
-    nodes: dict[str, Any] = DEFAULT_NODE_OPERATIONS,
-    edges: dict[str, Any] = DEFAULT_EDGE_OPERATIONS,
-) -> pd.DataFrame:
+    node_operations: dict[str, Any] | None,
+    edge_operations: dict[str, Any] | None,
+) -> nx.Graph:
     """
-    Merge multiple graphs together. The graphs are expected to be in graphml format. The verb outputs a new column containing the merged graph.
+    Merge multiple graphs together. The graphs are expected to be in nx.Graph format. The verb outputs a new column containing the merged graph.
 
     > Note: This will merge all rows into a single graph.
 
@@ -51,8 +46,6 @@ def merge_graphs(
     ```yaml
     verb: merge_graph
     args:
-        column: clustered_graph # The name of the column containing the graph, should be a graphml graph
-        to: merged_graph # The name of the column to output the merged graph to
         nodes: <node operations> # See node operations section below
         edges: <edge operations> # See edge operations section below
     ```
@@ -90,8 +83,8 @@ def merge_graphs(
     - __average__: This operation takes the mean of the attribute with the last value seen.
     - __multiply__: This operation multiplies the attribute with the last value seen.
     """
-    output = pd.DataFrame()
-
+    nodes = node_operations or DEFAULT_NODE_OPERATIONS
+    edges = edge_operations or DEFAULT_EDGE_OPERATIONS
     node_ops = {
         attrib: _get_detailed_attribute_merge_operation(value)
         for attrib, value in nodes.items()
@@ -102,15 +95,12 @@ def merge_graphs(
     }
 
     mega_graph = nx.Graph()
-    num_total = len(input)
-    for graphml in progress_iterable(input[column], callbacks.progress, num_total):
-        graph = load_graph(cast(str | nx.Graph, graphml))
+    num_total = len(graphs)
+    for graph in progress_iterable(graphs, callbacks.progress, num_total):
         merge_nodes(mega_graph, graph, node_ops)
         merge_edges(mega_graph, graph, edge_ops)
 
-    output[to] = ["\n".join(nx.generate_graphml(mega_graph))]
-
-    return output
+    return mega_graph
 
 
 def merge_nodes(

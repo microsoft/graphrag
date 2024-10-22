@@ -2,14 +2,12 @@ name: gh-pages
 on:
   push:
     branches: [main]
-
 permissions:
   contents: write
 
 env:
-  POETRY_VERSION: 1.8.3
-  PYTHON_VERSION: "3.11"
-  NODE_VERSION: 18.x
+  POETRY_VERSION: '1.8.3'
+  PYTHON_VERSION: '3.11'
 
 jobs:
   build:
@@ -17,6 +15,9 @@ jobs:
     env:
       GH_PAGES: 1
       DEBUG: 1
+      GRAPHRAG_API_KEY: ${{ secrets.OPENAI_NOTEBOOK_KEY }}
+      GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
+      GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
 
     steps:
       - uses: actions/checkout@v4
@@ -33,33 +34,20 @@ jobs:
         with:
           poetry-version: ${{ env.POETRY_VERSION }}
 
-      - name: Use Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Yarn dependencies
-        run: yarn install
-        working-directory: docsite
-
-      - name: Install Poetry dependencies
+      - name: poetry intsall
+        shell: bash
         run: poetry install
+  
+      - name: mkdocs build
+        shell: bash
+        run: poetry run poe build_docs
 
-      - name: Build Jupyter Notebooks
-        run: poetry run poe convert_docsite_notebooks
-
-      - name: Build docsite
-        run: yarn build
-        working-directory: docsite
-        env:
-          DOCSITE_BASE_URL: "graphrag"
-
-      - name: List docsite files
-        run: find docsite/_site
+      - name: List Docsite Contents
+        run: find site
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.6.4
         with:
           branch: gh-pages
-          folder: docsite/_site
+          folder: site
           clean: true

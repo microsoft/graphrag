@@ -4,65 +4,34 @@
 """Main definition."""
 
 import asyncio
-import json
 import logging
 import sys
 import time
 import warnings
 from pathlib import Path
 
+import graphrag.api as api
 from graphrag.config import (
     CacheType,
     enable_logging_with_config,
     load_config,
     resolve_paths,
 )
+from graphrag.logging import ProgressReporter, ReporterType, create_progress_reporter
+from graphrag.utils.cli import redact
 
-from .api import build_index
 from .emit.types import TableEmitterType
 from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
 from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
 from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from .init_content import INIT_DOTENV, INIT_YAML
-from .progress import ProgressReporter, ReporterType
-from .progress.load_progress_reporter import load_progress_reporter
 from .validate_config import validate_config_names
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 
 log = logging.getLogger(__name__)
-
-
-def _redact(input: dict) -> str:
-    """Sanitize the config json."""
-
-    # Redact any sensitive configuration
-    def redact_dict(input: dict) -> dict:
-        if not isinstance(input, dict):
-            return input
-
-        result = {}
-        for key, value in input.items():
-            if key in {
-                "api_key",
-                "connection_string",
-                "container_name",
-                "organization",
-            }:
-                if value is not None:
-                    result[key] = "==== REDACTED ===="
-            elif isinstance(value, dict):
-                result[key] = redact_dict(value)
-            elif isinstance(value, list):
-                result[key] = [redact_dict(i) for i in value]
-            else:
-                result[key] = value
-        return result
-
-    redacted_dict = redact_dict(input)
-    return json.dumps(redacted_dict, indent=4)
 
 
 def _logger(reporter: ProgressReporter):
@@ -119,7 +88,7 @@ def index_cli(
     reports_dir: str | None,
 ):
     """Run the pipeline with the given config."""
-    progress_reporter = load_progress_reporter(reporter)
+    progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
@@ -142,7 +111,7 @@ def index_cli(
         info(f"Logging enabled at {log_path}", True)
     else:
         info(
-            f"Logging not enabled for config {_redact(config.model_dump())}",
+            f"Logging not enabled for config {redact(config.model_dump())}",
             True,
         )
 
@@ -151,7 +120,7 @@ def index_cli(
 
     info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
     info(
-        f"Using default configuration: {_redact(config.model_dump())}",
+        f"Using default configuration: {redact(config.model_dump())}",
         verbose,
     )
 
@@ -162,7 +131,7 @@ def index_cli(
     _register_signal_handlers(progress_reporter)
 
     outputs = asyncio.run(
-        build_index(
+        api.build_index(
             config=config,
             run_id=run_id,
             is_resume_run=bool(resume),

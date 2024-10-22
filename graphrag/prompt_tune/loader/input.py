@@ -12,8 +12,8 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.index.progress.types import ProgressReporter
 from graphrag.llm.types.llm_types import EmbeddingLLM
+from graphrag.logging import ProgressReporter
 from graphrag.prompt_tune.types import DocSelectionType
 
 MIN_CHUNK_OVERLAP = 0

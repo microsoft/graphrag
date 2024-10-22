@@ -5,11 +5,11 @@
 
 import argparse
 
+from graphrag.logging import ReporterType
 from graphrag.utils.cli import dir_exist, file_exist
 
 from .cli import index_cli
 from .emit.types import TableEmitterType
-from .progress.types import ReporterType
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
