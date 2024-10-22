@@ -1,0 +1,14 @@
+{
+  "changes": [
+    {
+      "description": "Collapse create_final_relationships.",
+      "type": "patch"
+    },
+    {
+      "description": "Dependency update and cleanup",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-09-20T00:09:13+00:00",
+  "version": "0.3.6"
+}

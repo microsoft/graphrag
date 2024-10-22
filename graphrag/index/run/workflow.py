@@ -15,15 +15,13 @@ from datashaper import (
     WorkflowCallbacksManager,
 )
 
+from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.emit.table_emitter import TableEmitter
-from graphrag.index.progress.types import ProgressReporter
-from graphrag.index.reporting.progress_workflow_callbacks import (
-    ProgressWorkflowCallbacks,
-)
 from graphrag.index.run.profiling import _write_workflow_stats
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
+from graphrag.logging import ProgressReporter
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)
@@ -50,8 +48,12 @@ async def _emit_workflow_output(
 ) -> pd.DataFrame:
     """Emit the workflow output."""
     output = cast(pd.DataFrame, workflow.output())
-    for emitter in emitters:
-        await emitter.emit(workflow.name, output)
+    # only write the final output if it has content
+    # this is expressly designed to allow us to create
+    # workflows with side effects that don't produce a formal output to save
+    if not output.empty:
+        for emitter in emitters:
+            await emitter.emit(workflow.name, output)
     return output
 
 

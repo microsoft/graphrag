@@ -77,7 +77,6 @@ def load_llm_embeddings(
             raise ValueError(msg)
         if cache is not None:
             cache = cache.child(name)
-
         return loaders[llm_type]["load"](on_error, cache, llm_config or {})
 
     msg = f"Unknown LLM type {llm_type}"
@@ -200,7 +199,7 @@ def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
         "model_supports_json": config.get("model_supports_json"),
         "concurrent_requests": config.get("concurrent_requests", 4),
         "encoding_model": config.get("encoding_model", "cl100k_base"),
-        "cognitive_services_endpoint": config.get("cognitive_services_endpoint"),
+        "audience": config.get("audience"),
     }
 
 

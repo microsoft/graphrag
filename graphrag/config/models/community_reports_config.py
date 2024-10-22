@@ -32,7 +32,9 @@ class CommunityReportsConfig(LLMConfig):
 
     def resolved_strategy(self, root_dir) -> dict:
         """Get the resolved community report extraction strategy."""
-        from graphrag.index.verbs.graph.report import CreateCommunityReportsStrategyType
+        from graphrag.index.operations.summarize_communities import (
+            CreateCommunityReportsStrategyType,
+        )
 
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,

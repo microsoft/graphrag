@@ -11,7 +11,7 @@ from dataclasses import asdict
 from datashaper import MemoryProfile, Workflow, WorkflowRunResult
 
 from graphrag.index.context import PipelineRunStats
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 

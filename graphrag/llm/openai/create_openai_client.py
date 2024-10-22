@@ -32,15 +32,16 @@ def create_openai_client(
             api_base,
             configuration.deployment_name,
         )
-        if configuration.cognitive_services_endpoint is None:
-            cognitive_services_endpoint = "https://cognitiveservices.azure.com/.default"
-        else:
-            cognitive_services_endpoint = configuration.cognitive_services_endpoint
+        audience = (
+            configuration.audience
+            if configuration.audience
+            else "https://cognitiveservices.azure.com/.default"
+        )
 
         return AsyncAzureOpenAI(
             api_key=configuration.api_key if configuration.api_key else None,
             azure_ad_token_provider=get_bearer_token_provider(
-                DefaultAzureCredential(), cognitive_services_endpoint
+                DefaultAzureCredential(), audience
             )
             if not configuration.api_key
             else None,

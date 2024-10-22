@@ -6,9 +6,9 @@
 import argparse
 import asyncio
 
+from graphrag.api import DocSelectionType
 from graphrag.utils.cli import dir_exist, file_exist
 
-from .api import DocSelectionType
 from .cli import prompt_tune
 from .generator import MAX_TOKEN_COUNT
 from .loader import MIN_CHUNK_SIZE
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--output",
-        help="Directory to save generated prompts to. Default: 'prompts'",
+        help="Directory to save generated prompts to, relative to the root directory. Default: 'prompts'",
         type=str,
         default="prompts",
     )

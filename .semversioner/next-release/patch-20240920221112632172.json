@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Remove aggregate_df from final coomunities and final text units"
+}

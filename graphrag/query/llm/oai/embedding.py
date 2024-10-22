@@ -18,6 +18,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+from graphrag.logging import StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.base import OpenAILLMImpl
 from graphrag.query.llm.oai.typing import (
@@ -25,7 +26,6 @@ from graphrag.query.llm.oai.typing import (
     OpenaiApiType,
 )
 from graphrag.query.llm.text_utils import chunk_text
-from graphrag.query.progress import StatusReporter
 
 
 class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
@@ -46,7 +46,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
-        reporter: StatusReporter | None = None,
+        reporter: StatusLogger | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,

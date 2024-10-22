@@ -3,19 +3,17 @@
 
 """Input loading module."""
 
-from typing import cast
-
 import numpy as np
 import pandas as pd
-from datashaper import NoopVerbCallbacks, TableContainer, VerbInput
+from datashaper import NoopVerbCallbacks
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
-from graphrag.index.progress.types import ProgressReporter
-from graphrag.index.verbs import chunk
+from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.llm.types.llm_types import EmbeddingLLM
+from graphrag.logging import ProgressReporter
 from graphrag.prompt_tune.types import DocSelectionType
 
 MIN_CHUNK_OVERLAP = 0
@@ -62,22 +60,19 @@ async def load_docs_in_chunks(
     dataset = await load_input(config.input, reporter, root)
 
     # covert to text units
-    input = VerbInput(input=TableContainer(table=dataset))
     chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)
 
     # Use smaller chunks, to avoid huge prompts
     chunk_strategy["chunk_size"] = chunk_size
     chunk_strategy["chunk_overlap"] = MIN_CHUNK_OVERLAP
 
-    dataset_chunks_table_container = chunk(
-        input,
+    dataset_chunks = chunk_text(
+        dataset,
         column="text",
         to="chunks",
         callbacks=NoopVerbCallbacks(),
         strategy=chunk_strategy,
     )
-
-    dataset_chunks = cast(pd.DataFrame, dataset_chunks_table_container.table)
 
     # Select chunks into a new df and explode it
     chunks_df = pd.DataFrame(dataset_chunks["chunks"].explode())  # type: ignore

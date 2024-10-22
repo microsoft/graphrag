@@ -132,7 +132,6 @@ def create_workflow(
         **(additional_workflows or {}),
     }
     steps = steps or _get_steps_for_workflow(name, config, additional_workflows)
-    steps = _remove_disabled_steps(steps)
     return Workflow(
         verbs=additional_verbs or {},
         schema={
@@ -163,9 +162,3 @@ def _get_steps_for_workflow(
         raise UnknownWorkflowError(name)
 
     return workflows[name](config or {})
-
-
-def _remove_disabled_steps(
-    steps: list[PipelineWorkflowStep],
-) -> list[PipelineWorkflowStep]:
-    return [step for step in steps if step.get("enabled", True)]

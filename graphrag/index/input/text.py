@@ -11,9 +11,9 @@ from typing import Any
 import pandas as pd
 
 from graphrag.index.config import PipelineInputConfig
-from graphrag.index.progress import ProgressReporter
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.utils import gen_md5_hash
+from graphrag.logging import ProgressReporter
 
 DEFAULT_FILE_PATTERN = re.compile(
     r".*[\\/](?P<source>[^\\/]+)[\\/](?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})_(?P<author>[^_]+)_\d+\.txt"
