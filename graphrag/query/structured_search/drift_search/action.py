@@ -72,7 +72,7 @@ class DriftAction:
 
         try:
             response = json.loads(search_result.response)
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             error_message = "Failed to parse search response"
             log.exception("%s: %s", error_message, search_result.response)
             # Do not launch exception as it will roll up with other steps
