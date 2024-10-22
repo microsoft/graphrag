@@ -109,11 +109,9 @@ def create_run_context(
     stats: PipelineRunStats | None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
-    base_store = storage or MemoryPipelineStorage()
-    temp_store = base_store.child("tmp")
     return PipelineRunContext(
         stats=stats or PipelineRunStats(),
         cache=cache or InMemoryCache(),
-        storage=base_store,
-        runtime_storage=temp_store,
+        storage=storage or MemoryPipelineStorage(),
+        runtime_storage=MemoryPipelineStorage(),
     )
