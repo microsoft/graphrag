@@ -20,7 +20,7 @@ Before running auto tuning, ensure you have already initialized your workspace w
 You can run the main script from the command line with various options:
 
 ```bash
-python -m graphrag prompt-tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] \
+graphrag prompt-tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] \
 [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--n-subset-max N_SUBSET_MAX] [--k K] \
 [--min-examples-required MIN_EXAMPLES_REQUIRED] [--no-entity-types] [--output OUTPUT]
 ```

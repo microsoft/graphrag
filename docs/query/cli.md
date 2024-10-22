@@ -3,7 +3,7 @@
 The GraphRAG query CLI allows for no-code usage of the GraphRAG Query engine.
 
 ```bash
-python -m graphrag query --config <config_file.yml> --data <path-to-data> --community-level <comunit-level> --response-type <response-type> --method <"local"|"global"> <query>
+graphrag query --config <config_file.yml> --data <path-to-data> --community-level <comunit-level> --response-type <response-type> --method <"local"|"global"> <query>
 ```
 
 ## CLI Arguments

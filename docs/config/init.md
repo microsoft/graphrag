@@ -5,7 +5,7 @@ To start using GraphRAG, you must generate a configuration file. The `init` comm
 ## Usage
 
 ```sh
-python -m graphrag init [--root PATH]
+graphrag init [--root PATH]
 ```
 
 ## Options
@@ -15,7 +15,7 @@ python -m graphrag init [--root PATH]
 ## Example
 
 ```sh
-python -m graphrag init --root ./ragtest
+graphrag init --root ./ragtest
 ```
 
 ## Output

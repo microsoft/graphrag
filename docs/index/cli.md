@@ -3,7 +3,7 @@
 The GraphRAG indexer CLI allows for no-code usage of the GraphRAG Indexer.
 
 ```bash
-python -m graphrag index --verbose --root </workspace/project/root> \
+graphrag index --verbose --root </workspace/project/root> \
 --config <custom_config.yml> --resume <timestamp> \
 --reporter <rich|print|none> --emit json,csv,parquet \
 --no-cache
