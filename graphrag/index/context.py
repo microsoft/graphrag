@@ -34,11 +34,11 @@ class PipelineRunContext:
 
     stats: PipelineRunStats
     storage: PipelineStorage
-    "Configur"
+    "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider." 
     cache: PipelineCache
     "Cache instance for reading previous LLM responses."
     runtime_storage: PipelineStorage
-    "Runtime only storage for pipeline verbs to use."
+    "Runtime only storage for pipeline verbs to use. Items written here will only live in memory during the current run."
 
 
 # TODO: For now, just has the same props available to it
