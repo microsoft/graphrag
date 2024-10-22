@@ -238,6 +238,7 @@ class TestIndexer:
             query_config["method"],
             "--community-level",
             str(query_config.get("community_level", 2)),
+            "--query",
             query_config["query"],
         ]
 
