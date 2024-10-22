@@ -1,10 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-"""Content for the init CLI command."""
+
+"""Content for the init CLI command to generate a default configuration."""
 
 import graphrag.config.defaults as defs
 
-INIT_YAML = f"""
+INIT_YAML = f"""\
 encoding_model: cl100k_base
 skip_workflows: []
 llm:
@@ -12,6 +13,7 @@ llm:
   type: {defs.LLM_TYPE.value} # or azure_openai_chat
   model: {defs.LLM_MODEL}
   model_supports_json: true # recommended if this is available for your model.
+  # audience: "https://cognitiveservices.azure.com/.default"
   # max_tokens: {defs.LLM_MAX_TOKENS}
   # request_timeout: {defs.LLM_REQUEST_TIMEOUT}
   # api_base: https://<instance>.openai.azure.com
@@ -40,12 +42,21 @@ embeddings:
   # target: {defs.EMBEDDING_TARGET.value} # or all
   # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
   # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
+  vector_store:{defs.VECTOR_STORE}
+  # vector_store: # configuration for AI Search
+    # type: azure_ai_search
+    # url: <ai_search_endpoint>
+    # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
+    # audience: <optional> # if using managed identity, the audience to use for the token
+    # overwrite: true # or false. Only applicable at index creation time
+    # collection_name: <collection_name> # the name of the collection to use
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
     model: {defs.EMBEDDING_MODEL}
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-02-15-preview
+    # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
     # tokens_per_minute: 150_000 # set a leaky bucket throttle
@@ -160,6 +171,6 @@ global_search:
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 """
 
-INIT_DOTENV = """
+INIT_DOTENV = """\
 GRAPHRAG_API_KEY=<API_KEY>
 """

@@ -35,13 +35,16 @@ from .base import (
 
 
 class AzureAISearch(BaseVectorStore):
-    """The Azure AI Search vector storage implementation."""
+    """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
 
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
     def connect(self, **kwargs: Any) -> Any:
-        """Connect to the AzureAI vector store."""
-        url = kwargs.get("url")
+        """Connect to AI search vector storage."""
+        url = kwargs["url"]
         api_key = kwargs.get("api_key")
         audience = kwargs.get("audience")
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
@@ -51,7 +54,7 @@ class AzureAISearch(BaseVectorStore):
         )
 
         if url:
-            audience_arg = {"audience": audience} if audience else {}
+            audience_arg = {"audience": audience} if audience and not api_key else {}
             self.db_connection = SearchClient(
                 endpoint=url,
                 index_name=self.collection_name,
@@ -68,18 +71,18 @@ class AzureAISearch(BaseVectorStore):
                 **audience_arg,
             )
         else:
-            not_supported_error = "AAISearchDBClient is not supported on local host."
+            not_supported_error = "Azure AI Search expects `url`."
             raise ValueError(not_supported_error)
 
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
-        """Load documents into the Azure AI Search index."""
+        """Load documents into an Azure AI Search index."""
         if overwrite:
             if self.collection_name in self.index_client.list_index_names():
                 self.index_client.delete_index(self.collection_name)
 
-            # Configure the vector search profile
+            # Configure vector search profile
             vector_search = VectorSearch(
                 algorithms=[
                     HnswAlgorithmConfiguration(
@@ -96,7 +99,7 @@ class AzureAISearch(BaseVectorStore):
                     )
                 ],
             )
-
+            # Configure the index
             index = SearchIndex(
                 name=self.collection_name,
                 fields=[
@@ -120,7 +123,6 @@ class AzureAISearch(BaseVectorStore):
                 ],
                 vector_search=vector_search,
             )
-
             self.index_client.create_or_update_index(
                 index,
             )
@@ -136,7 +138,7 @@ class AzureAISearch(BaseVectorStore):
             if doc.vector is not None
         ]
 
-        if batch and len(batch) > 0:
+        if len(batch) > 0:
             self.db_connection.upload_documents(batch)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:

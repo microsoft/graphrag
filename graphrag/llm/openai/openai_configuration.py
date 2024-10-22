@@ -26,7 +26,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
 
     _api_base: str | None
     _api_version: str | None
-    _cognitive_services_endpoint: str | None
+    _audience: str | None
     _deployment_name: str | None
     _organization: str | None
     _proxy: str | None
@@ -103,7 +103,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
         self._deployment_name = lookup_str("deployment_name")
         self._api_base = lookup_str("api_base")
         self._api_version = lookup_str("api_version")
-        self._cognitive_services_endpoint = lookup_str("cognitive_services_endpoint")
+        self._audience = lookup_str("audience")
         self._organization = lookup_str("organization")
         self._proxy = lookup_str("proxy")
         self._n = lookup_int("n")
@@ -156,9 +156,9 @@ class OpenAIConfiguration(Hashable, LLMConfig):
         return _non_blank(self._api_version)
 
     @property
-    def cognitive_services_endpoint(self) -> str | None:
+    def audience(self) -> str | None:
         """API version property definition."""
-        return _non_blank(self._cognitive_services_endpoint)
+        return _non_blank(self._audience)
 
     @property
     def organization(self) -> str | None:
