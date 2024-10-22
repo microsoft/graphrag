@@ -86,7 +86,9 @@ def index_cli(
 
     config = load_config(root_dir, config_filepath)
     config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
-    config.reporting.base_dir = str(output_dir) if output_dir else config.reporting.base_dir
+    config.reporting.base_dir = (
+        str(output_dir) if output_dir else config.reporting.base_dir
+    )
     resolve_paths(config, run_id)
 
     if not cache:
