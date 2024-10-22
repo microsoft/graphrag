@@ -111,7 +111,7 @@ def _index_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory.",
+            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -292,7 +292,7 @@ def _query_cli(
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
-                query=query[0],
+                query=query,
             )
         case SearchType.GLOBAL:
             run_global_search(
@@ -302,7 +302,7 @@ def _query_cli(
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
-                query=query[0],
+                query=query,
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)

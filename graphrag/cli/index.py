@@ -85,8 +85,8 @@ def index_cli(
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
     config = load_config(root_dir, config_filepath)
-    config.storage.base_dir = str(output_dir) or config.storage.base_dir
-    config.reporting.base_dir = str(output_dir) or config.reporting.base_dir
+    config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
+    config.reporting.base_dir = str(output_dir) if output_dir else config.reporting.base_dir
     resolve_paths(config, run_id)
 
     if not cache:
