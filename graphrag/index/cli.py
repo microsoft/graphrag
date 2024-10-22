@@ -85,6 +85,7 @@ def index_cli(
     dryrun: bool,
     skip_validations: bool,
     output_dir: str | None,
+    reports_dir: str | None,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = create_progress_reporter(reporter)
@@ -99,7 +100,7 @@ def index_cli(
     config = load_config(root, config_filepath)
 
     config.storage.base_dir = output_dir or config.storage.base_dir
-    config.reporting.base_dir = output_dir or config.reporting.base_dir
+    config.reporting.base_dir = reports_dir or config.reporting.base_dir
     resolve_paths(config, run_id)
 
     if nocache:
