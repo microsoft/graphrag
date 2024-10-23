@@ -20,7 +20,7 @@ class LLMParametersInput(TypedDict):
     api_version: NotRequired[str | None]
     organization: NotRequired[str | None]
     proxy: NotRequired[str | None]
-    cognitive_services_endpoint: NotRequired[str | None]
+    audience: NotRequired[str | None]
     deployment_name: NotRequired[str | None]
     model_supports_json: NotRequired[bool | str | None]
     tokens_per_minute: NotRequired[int | str | None]

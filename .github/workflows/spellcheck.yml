@@ -3,10 +3,17 @@ on:
   push:
     branches: [main]
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
     paths:
       - "**/*"
 jobs:
   spellcheck:
+    # skip draft PRs
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
