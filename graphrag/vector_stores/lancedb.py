@@ -3,7 +3,7 @@
 
 """The LanceDB vector storage implementation package."""
 
-import json  # noqa: I001
+import json
 from typing import Any
 
 import lancedb as lancedb
