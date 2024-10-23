@@ -3,12 +3,12 @@
 
 """The LanceDB vector storage implementation package."""
 
-import json
+import json  # noqa: I001
 from typing import Any
 
+import lancedb as lancedb
 import pyarrow as pa
 
-import lancedb as lancedb
 from graphrag.model.types import TextEmbedder
 
 from .base import (
