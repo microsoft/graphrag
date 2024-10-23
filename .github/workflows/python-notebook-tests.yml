@@ -5,6 +5,11 @@ on:
       - "**/main" # Matches branches like feature/main
       - "main" # Matches the main branch
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
     branches:
       - "**/main"
       - "main"
@@ -23,6 +28,8 @@ env:
 
 jobs:
   python-ci:
+    # skip draft PRs
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         python-version: ["3.10"]
