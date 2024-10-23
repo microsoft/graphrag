@@ -9,13 +9,13 @@ from typing import Any
 
 import numpy as np
 from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
+from fnllm.openai import OpenAIEmbeddingsLLMInstance
 
 import graphrag.config.defaults as defs
 from graphrag.index.cache import PipelineCache
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.text_splitting import TokenTextSplitter
 from graphrag.index.utils import is_null
-from graphrag.llm import EmbeddingLLM, OpenAIConfiguration
 
 from .typing import TextEmbeddingResult
 
@@ -78,7 +78,7 @@ def _get_llm(
     config: OpenAIConfiguration,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-) -> EmbeddingLLM:
+) -> OpenAIEmbeddingsLLMInstance:
     llm_type = config.lookup("type", "Unknown")
     return load_llm_embeddings(
         "text_embedding",
@@ -90,7 +90,7 @@ def _get_llm(
 
 
 async def _execute(
-    llm: EmbeddingLLM,
+    llm: OpenAIEmbeddingsLLMInstance,
     chunks: list[list[str]],
     tick: ProgressTicker,
     semaphore: asyncio.Semaphore,

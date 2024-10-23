@@ -8,9 +8,10 @@ import traceback
 from dataclasses import dataclass
 from typing import Any
 
+from fnllm import LLM
+
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils import dict_has_keys_with_types
-from graphrag.llm import CompletionLLM
 
 from .prompts import COMMUNITY_REPORT_PROMPT
 
@@ -28,7 +29,7 @@ class CommunityReportsResult:
 class CommunityReportsExtractor:
     """Community reports extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: LLM
     _input_text_key: str
     _extraction_prompt: str
     _output_formatter_prompt: str
@@ -37,7 +38,7 @@ class CommunityReportsExtractor:
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: LLM,
         input_text_key: str | None = None,
         extraction_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,

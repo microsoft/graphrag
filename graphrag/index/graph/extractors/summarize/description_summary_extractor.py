@@ -6,9 +6,10 @@
 import json
 from dataclasses import dataclass
 
+from fnllm import LLM
+
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
-from graphrag.llm import CompletionLLM
 
 from .prompts import SUMMARIZE_PROMPT
 
@@ -29,7 +30,7 @@ class SummarizationResult:
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: LLM
     _entity_name_key: str
     _input_descriptions_key: str
     _summarization_prompt: str
@@ -39,7 +40,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: LLM,
         entity_name_key: str | None = None,
         input_descriptions_key: str | None = None,
         summarization_prompt: str | None = None,
