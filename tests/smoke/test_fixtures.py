@@ -194,7 +194,6 @@ class TestIndexer:
         # (2) account for the stats.json file
         transient_workflows = [
             "workflow:create_base_text_units",
-            "workflow:create_base_entity_graph",
         ]
         assert (
             len(artifact_files)
