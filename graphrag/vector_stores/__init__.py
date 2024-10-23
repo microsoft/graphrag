@@ -12,6 +12,8 @@ from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 
 __all__ = [
     "BaseVectorStore",
+    "CouchbaseVectorStore",
+    "LanceDBVectorStore",
     "VectorStoreDocument",
     "VectorStoreFactory",
     "VectorStoreSearchResult",
