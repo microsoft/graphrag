@@ -139,4 +139,4 @@ class SummarizeExtractor:
             model_parameters={"max_tokens": self._max_summary_length},
         )
         # Calculate result
-        return str(response.output)
+        return str(response.output.content)

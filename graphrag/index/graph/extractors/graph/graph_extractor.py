@@ -12,11 +12,12 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
+from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm.openai.types import OpenAIChatParameters
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils import clean_str
-from graphrag.llm import CompletionLLM
 
 from .prompts import CONTINUE_PROMPT, GRAPH_EXTRACTION_PROMPT, LOOP_PROMPT
 
@@ -37,7 +38,7 @@ class GraphExtractionResult:
 class GraphExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: OpenAITextChatLLMInstance
     _join_descriptions: bool
     _tuple_delimiter_key: str
     _record_delimiter_key: str
@@ -48,13 +49,13 @@ class GraphExtractor:
     _input_descriptions_key: str
     _extraction_prompt: str
     _summarization_prompt: str
-    _loop_args: dict[str, Any]
+    _loop_args: OpenAIChatParameters
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: OpenAITextChatLLMInstance,
         tuple_delimiter_key: str | None = None,
         record_delimiter_key: str | None = None,
         input_text_key: str | None = None,
@@ -87,9 +88,9 @@ class GraphExtractor:
 
         # Construct the looping arguments
         encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
-        yes = encoding.encode("YES")
-        no = encoding.encode("NO")
-        self._loop_args = {"logit_bias": {yes[0]: 100, no[0]: 100}, "max_tokens": 1}
+        yes = f"{encoding.encode('YES')[0]}"
+        no = f"{encoding.encode('NO')[0]}"
+        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, texts: list[str], prompt_variables: dict[str, Any] | None = None
@@ -154,7 +155,7 @@ class GraphExtractor:
                 self._input_text_key: text,
             },
         )
-        results = response.output or ""
+        results = response.output.content or ""
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
@@ -163,7 +164,7 @@ class GraphExtractor:
                 name=f"extract-continuation-{i}",
                 history=response.history,
             )
-            results += response.output or ""
+            results += response.output.content or ""
 
             # if this is the final glean, don't bother updating the continuation flag
             if i >= self._max_gleanings - 1:

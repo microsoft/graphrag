@@ -88,9 +88,9 @@ class ClaimExtractor:
 
         # Construct the looping arguments
         encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
-        yes = encoding.encode("YES")
-        no = encoding.encode("NO")
-        self._loop_args = {"logit_bias": {yes[0]: 100, no[0]: 100}, "max_tokens": 1}
+        yes = f"{encoding.encode('YES')[0]}"
+        no = f"{encoding.encode('NO')[0]}"
+        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, inputs: dict[str, Any], prompt_variables: dict | None = None
@@ -171,7 +171,7 @@ class ClaimExtractor:
                 **prompt_args,
             },
         )
-        results = response.output or ""
+        results = response.output.content or ""
         claims = results.strip().removesuffix(completion_delimiter)
 
         # Repeat to ensure we maximize entity count
@@ -181,7 +181,7 @@ class ClaimExtractor:
                 name=f"extract-continuation-{i}",
                 history=response.history,
             )
-            extension = response.output or ""
+            extension = response.output.content or ""
             claims += record_delimiter + extension.strip().removesuffix(
                 completion_delimiter
             )
@@ -196,7 +196,7 @@ class ClaimExtractor:
                 history=response.history,
                 model_parameters=self._loop_args,
             )
-            if response.output != "YES":
+            if response.output.content != "YES":
                 break
 
         return self._parse_claim_tuples(results, prompt_args)

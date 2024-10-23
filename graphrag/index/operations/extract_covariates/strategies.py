@@ -7,12 +7,12 @@ from collections.abc import Iterable
 from typing import Any
 
 from datashaper import VerbCallbacks
+from fnllm.openai import OpenAITextChatLLMInstance
 
 import graphrag.config.defaults as defs
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
 from graphrag.index.llm import load_llm
-from graphrag.llm import CompletionLLM
 
 from .typing import (
     Covariate,
@@ -38,7 +38,7 @@ async def run_graph_intelligence(
 
 
 async def _execute(
-    llm: CompletionLLM,
+    llm: OpenAITextChatLLMInstance,
     texts: Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],

@@ -12,8 +12,8 @@ from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
 from fnllm.openai import OpenAIEmbeddingsLLMInstance
 
 import graphrag.config.defaults as defs
+from graphrag.config.openai import OpenAIConfiguration
 from graphrag.index.cache import PipelineCache
-from graphrag.index.config.openai import OpenAIConfiguration
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.text_splitting import TokenTextSplitter
 from graphrag.index.utils import is_null

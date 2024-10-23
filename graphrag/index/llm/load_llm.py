@@ -9,23 +9,20 @@ import asyncio
 import logging
 from typing import TYPE_CHECKING, Any
 
-from graphrag.config.enums import LLMType
-from graphrag.llm import (
-    CompletionLLM,
-    EmbeddingLLM,
-    LLMCache,
-    LLMLimiter,
-    MockCompletionLLM,
-    OpenAIConfiguration,
+from fnllm.openai import (
+    OpenAIEmbeddingsLLMInstance,
+    OpenAITextChatLLMInstance,
     create_openai_chat_llm,
     create_openai_client,
-    create_openai_completion_llm,
-    create_openai_embedding_llm,
-    create_tpm_rpm_limiters,
 )
+
+from graphrag.config.enums import LLMType
+from graphrag.config.openai import OpenAIConfiguration
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
+    from fnllm.caching import Cache as LLMCache
+    from fnllm.limiting import Limiter as LLMLimiter
 
     from graphrag.index.cache import PipelineCache
     from graphrag.index.typing import ErrorHandlerFn
@@ -43,7 +40,7 @@ def load_llm(
     cache: PipelineCache | None,
     llm_config: dict[str, Any] | None = None,
     chat_only=False,
-) -> CompletionLLM:
+) -> OpenAITextChatLLMInstance:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
 
@@ -68,7 +65,7 @@ def load_llm_embeddings(
     cache: PipelineCache | None,
     llm_config: dict[str, Any] | None = None,
     chat_only=False,
-) -> EmbeddingLLM:
+) -> OpenAIEmbeddingsLLMInstance:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
     if llm_type in loaders:
@@ -205,7 +202,7 @@ def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
 
 def _load_static_response(
     _on_error: ErrorHandlerFn, _cache: PipelineCache, config: dict[str, Any]
-) -> CompletionLLM:
+) -> OpenAITextChatLLMInstance:
     return MockCompletionLLM(config.get("responses", []))
 
 
@@ -246,13 +243,13 @@ def _create_openai_chat_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
     azure=False,
-) -> CompletionLLM:
+) -> OpenAITextChatLLMInstance:
     """Create an openAI chat llm."""
-    client = create_openai_client(configuration=configuration, azure=azure)
+    client = create_openai_client(config=configuration, azure=azure)
     limiter = _create_limiter(configuration)
     semaphore = _create_semaphore(configuration)
-    return create_openai_chat_llm(
-        client, configuration, cache, limiter, semaphore, on_error=on_error
+    return create_openai_chat_llm(configuration,
+        client=client, cache, limiter, semaphore, on_error=on_error
     )
 
 
@@ -261,9 +258,9 @@ def _create_openai_completion_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
     azure=False,
-) -> CompletionLLM:
+) -> OpenAITextChatLLMInstance:
     """Create an openAI completion llm."""
-    client = create_openai_client(configuration=configuration, azure=azure)
+    client = create_openai_client(config=configuration, azure=azure)
     limiter = _create_limiter(configuration)
     semaphore = _create_semaphore(configuration)
     return create_openai_completion_llm(
@@ -276,7 +273,7 @@ def _create_openai_embeddings_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
     azure=False,
-) -> EmbeddingLLM:
+) -> OpenAIEmbeddingsLLMInstance:
     """Create an openAI embeddings llm."""
     client = create_openai_client(configuration=configuration, azure=azure)
     limiter = _create_limiter(configuration)
