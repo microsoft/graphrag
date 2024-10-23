@@ -3,6 +3,7 @@
 
 """LLM Static Response method definition."""
 
+import json
 import logging
 
 from typing_extensions import Unpack
@@ -12,6 +13,7 @@ from graphrag.llm.types import (
     CompletionInput,
     CompletionOutput,
     LLMInput,
+    LLMOutput,
 )
 
 log = logging.getLogger(__name__)
@@ -35,3 +37,6 @@ class MockCompletionLLM(
         **kwargs: Unpack[LLMInput],
     ) -> CompletionOutput:
         return self.responses[0]
+
+    async def _invoke_json(self, input: CompletionInput, **kwargs: Unpack[LLMInput]):
+        return LLMOutput(output=self.responses[0], json=json.loads(self.responses[0]))

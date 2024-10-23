@@ -49,9 +49,7 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
-    create_base_documents,
     create_base_entity_graph,
-    create_base_extracted_entities,
     create_base_text_units,
     create_final_communities,
     create_final_community_reports,
@@ -61,10 +59,6 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
-    create_summarized_entities,
-    join_text_units_to_covariate_ids,
-    join_text_units_to_entity_ids,
-    join_text_units_to_relationship_ids,
 )
 
 log = logging.getLogger(__name__)
@@ -113,7 +107,7 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
     if verbose:
         _log_llm_settings(settings)
 
-    skip_workflows = _determine_skip_workflows(settings)
+    skip_workflows = settings.skip_workflows
     embedded_fields = _get_embedded_fields(settings)
     covariates_enabled = (
         settings.claim_extraction.enabled
@@ -152,16 +146,6 @@ def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
             raise ValueError(msg)
 
 
-def _determine_skip_workflows(settings: GraphRagConfig) -> list[str]:
-    skip_workflows = settings.skip_workflows
-    if (
-        create_final_covariates in skip_workflows
-        and join_text_units_to_covariate_ids not in skip_workflows
-    ):
-        skip_workflows.append(join_text_units_to_covariate_ids)
-    return skip_workflows
-
-
 def _log_llm_settings(settings: GraphRagConfig) -> None:
     log.info(
         "Using LLM Config %s",
@@ -186,17 +170,12 @@ def _document_workflows(
     )
     return [
         PipelineWorkflowReference(
-            name=create_base_documents,
+            name=create_final_documents,
             config={
                 "document_attribute_columns": list(
                     {*(settings.input.document_attribute_columns)}
                     - builtin_document_attributes
-                )
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_final_documents,
-            config={
+                ),
                 "document_raw_content_embed": _get_embedding_settings(
                     settings.embeddings,
                     "document_raw_content",
@@ -230,21 +209,6 @@ def _text_unit_workflows(
             },
         ),
         PipelineWorkflowReference(
-            name=join_text_units_to_entity_ids,
-        ),
-        PipelineWorkflowReference(
-            name=join_text_units_to_relationship_ids,
-        ),
-        *(
-            [
-                PipelineWorkflowReference(
-                    name=join_text_units_to_covariate_ids,
-                )
-            ]
-            if covariates_enabled
-            else []
-        ),
-        PipelineWorkflowReference(
             name=create_final_text_units,
             config={
                 "text_unit_text_embed": _get_embedding_settings(
@@ -274,7 +238,7 @@ def _get_embedding_settings(
     #
     strategy = settings.resolved_strategy()  # get the default strategy
     strategy.update({
-        "vector_store": {**vector_store_settings, **(vector_store_params or {})}
+        "vector_store": {**(vector_store_params or {}), **vector_store_settings}
     })  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {
@@ -295,10 +259,9 @@ def _graph_workflows(
     )
     return [
         PipelineWorkflowReference(
-            name=create_base_extracted_entities,
+            name=create_base_entity_graph,
             config={
                 "graphml_snapshot": settings.snapshots.graphml,
-                "raw_entity_snapshot": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
@@ -307,12 +270,6 @@ def _graph_workflows(
                     ),
                     "entity_types": settings.entity_extraction.entity_types,
                 },
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_summarized_entities,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
                 "summarize_descriptions": {
                     **settings.summarize_descriptions.parallelization.model_dump(),
                     "async_mode": settings.summarize_descriptions.async_mode,
@@ -320,12 +277,6 @@ def _graph_workflows(
                         settings.root_dir,
                     ),
                 },
-            },
-        ),
-        PipelineWorkflowReference(
-            name=create_base_entity_graph,
-            config={
-                "graphml_snapshot": settings.snapshots.graphml,
                 "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()

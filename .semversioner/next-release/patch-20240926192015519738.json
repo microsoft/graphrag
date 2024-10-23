@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Apply pandas optimizations to create final entities"
+}

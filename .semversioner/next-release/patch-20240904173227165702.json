@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "fix setting base_dir to full paths when not using file system."
-}

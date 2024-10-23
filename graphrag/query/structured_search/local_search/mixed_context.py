@@ -3,6 +3,7 @@
 """Algorithms to build context data for local search prompt."""
 
 import logging
+from copy import deepcopy
 from typing import Any
 
 import pandas as pd
@@ -140,7 +141,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             query=query,
             text_embedding_vectorstore=self.entity_text_embeddings,
             text_embedder=self.text_embedder,
-            all_entities=list(self.entities.values()),
+            all_entities_dict=self.entities,
             embedding_vectorstore_key=self.embedding_vectorstore_key,
             include_entity_names=include_entity_names,
             exclude_entity_names=exclude_entity_names,
@@ -319,7 +320,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             for text_id in entity.text_unit_ids or []:
                 if text_id not in text_unit_ids_set and text_id in self.text_units:
                     text_unit_ids_set.add(text_id)
-                    selected_unit = self.text_units[text_id]
+                    selected_unit = deepcopy(self.text_units[text_id])
                     num_relationships = count_relationships(
                         selected_unit, entity, self.relationships
                     )

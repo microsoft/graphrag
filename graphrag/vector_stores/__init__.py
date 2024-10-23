@@ -1,15 +1,16 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A package containing vector-storage implementations."""
+"""A module containing vector storage implementations."""
 
-from .azure_ai_search import AzureAISearch
-from .base import BaseVectorStore, VectorStoreDocument, VectorStoreSearchResult
-from .lancedb import LanceDBVectorStore
-from .typing import VectorStoreFactory, VectorStoreType
+from graphrag.vector_stores.base import (
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreSearchResult,
+)
+from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 
 __all__ = [
-    "AzureAISearch",
     "BaseVectorStore",
     "CouchbaseVectorStore",
     "LanceDBVectorStore",

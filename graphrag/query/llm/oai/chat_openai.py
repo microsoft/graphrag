@@ -15,13 +15,13 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+from graphrag.logging import StatusLogger
 from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.oai.base import OpenAILLMImpl
 from graphrag.query.llm.oai.typing import (
     OPENAI_RETRY_ERROR_TYPES,
     OpenaiApiType,
 )
-from graphrag.query.progress import StatusReporter
 
 _MODEL_REQUIRED_MSG = "model is required"
 
@@ -42,7 +42,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
-        reporter: StatusReporter | None = None,
+        reporter: StatusLogger | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,

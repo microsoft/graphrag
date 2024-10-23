@@ -10,9 +10,7 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.models import GraphRagConfig
 from graphrag.index.llm import load_llm, load_llm_embeddings
-from graphrag.index.progress import (
-    ProgressReporter,
-)
+from graphrag.logging import ProgressReporter
 
 
 def validate_config_names(

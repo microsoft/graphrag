@@ -8,9 +8,9 @@ from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
+from graphrag.logging import ConsoleReporter, StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
-from graphrag.query.progress import ConsoleStatusReporter, StatusReporter
 
 
 class BaseOpenAILLM(ABC):
@@ -87,7 +87,7 @@ class BaseOpenAILLM(ABC):
 class OpenAILLMImpl(BaseOpenAILLM):
     """Orchestration OpenAI LLM Implementation."""
 
-    _reporter: StatusReporter = ConsoleStatusReporter()
+    _reporter: StatusLogger = ConsoleReporter()
 
     def __init__(
         self,
@@ -100,7 +100,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         organization: str | None = None,
         max_retries: int = 10,
         request_timeout: float = 180.0,
-        reporter: StatusReporter | None = None,
+        reporter: StatusLogger | None = None,
     ):
         self.api_key = api_key
         self.azure_ad_token_provider = azure_ad_token_provider
@@ -111,7 +111,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         self.organization = organization
         self.max_retries = max_retries
         self.request_timeout = request_timeout
-        self.reporter = reporter or ConsoleStatusReporter()
+        self.reporter = reporter or ConsoleReporter()
 
         try:
             # Create OpenAI sync and async clients
@@ -181,7 +181,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
 class OpenAITextEmbeddingImpl(BaseTextEmbedding):
     """Orchestration OpenAI Text Embedding Implementation."""
 
-    _reporter: StatusReporter | None = None
+    _reporter: StatusLogger | None = None
 
     def _create_openai_client(self, api_type: OpenaiApiType):
         """Create a new synchronous and asynchronous OpenAI client instance."""
