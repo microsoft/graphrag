@@ -3,11 +3,11 @@
 
 """A module containing run, _run_extractor and _load_nodes_edges_for_claim_chain methods definition."""
 
-import json
 import logging
 import traceback
 
 from datashaper import VerbCallbacks
+from fnllm import LLM
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
@@ -15,10 +15,10 @@ from graphrag.index.graph.extractors.community_reports import (
 )
 from graphrag.index.llm import load_llm
 from graphrag.index.utils.rate_limiter import RateLimiter
-from graphrag.llm import CompletionLLM
 
 from .typing import (
     CommunityReport,
+    Finding,
     StrategyConfig,
 )
 
@@ -43,7 +43,7 @@ async def run_graph_intelligence(
 
 
 async def _run_extractor(
-    llm: CompletionLLM,
+    llm: LLM,
     community: str | int,
     input: str,
     level: int,
@@ -65,7 +65,7 @@ async def _run_extractor(
         await rate_limiter.acquire()
         results = await extractor({"input_text": input})
         report = results.structured_output
-        if report is None or len(report.keys()) == 0:
+        if report is None:
             log.warning("No report found for community: %s", community)
             return None
 
@@ -73,23 +73,17 @@ async def _run_extractor(
             community=community,
             full_content=results.output,
             level=level,
-            rank=_parse_rank(report),
-            title=report.get("title", f"Community Report: {community}"),
-            rank_explanation=report.get("rating_explanation", ""),
-            summary=report.get("summary", ""),
-            findings=report.get("findings", []),
-            full_content_json=json.dumps(report, indent=4, ensure_ascii=False),
+            rank=report.rating,
+            title=report.title,
+            rank_explanation=report.rating_explanation,
+            summary=report.summary,
+            findings=[
+                Finding(explanation=f.explanation, summary=f.summary)
+                for f in report.findings
+            ],
+            full_content_json=report.model_dump_json(indent=4),
         )
     except Exception as e:
         log.exception("Error processing community: %s", community)
         callbacks.error("Community Report Extraction Error", e, traceback.format_exc())
         return None
-
-
-def _parse_rank(report: dict) -> float:
-    rank = report.get("rating", -1)
-    try:
-        return float(rank)
-    except ValueError:
-        log.exception("Error parsing rank: %s defaulting to -1", rank)
-        return -1

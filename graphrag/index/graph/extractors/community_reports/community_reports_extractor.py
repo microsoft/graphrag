@@ -9,13 +9,32 @@ from dataclasses import dataclass
 from typing import Any
 
 from fnllm import LLM
+from pydantic import BaseModel, Field
 
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.utils import dict_has_keys_with_types
 
 from .prompts import COMMUNITY_REPORT_PROMPT
 
 log = logging.getLogger(__name__)
+
+
+class FindingModel(BaseModel):
+    """A model for the expected LLM response shape."""
+
+    summary: str = Field(description="The summary of the finding.")
+    explanation: str = Field(description="An explanation of the finding.")
+
+
+class CommunityReportResponse(BaseModel):
+    """A model for the expected LLM response shape."""
+
+    title: str = Field(description="The title of the report.")
+    summary: str = Field(description="A summary of the report.")
+    findings: list[FindingModel] = Field(
+        description="A list of findings in the report."
+    )
+    rating: float = Field(description="The rating of the report.")
+    rating_explanation: str = Field(description="An explanation of the rating.")
 
 
 @dataclass
@@ -23,7 +42,7 @@ class CommunityReportsResult:
     """Community reports result class definition."""
 
     output: str
-    structured_output: dict
+    structured_output: CommunityReportResponse | None
 
 
 class CommunityReportsExtractor:
@@ -55,55 +74,27 @@ class CommunityReportsExtractor:
         """Call method definition."""
         output = None
         try:
-            response = (
-                await self._llm(
-                    self._extraction_prompt,
-                    json=True,
-                    name="create_community_report",
-                    variables={self._input_text_key: inputs[self._input_text_key]},
-                    is_response_valid=lambda x: dict_has_keys_with_types(
-                        x,
-                        [
-                            ("title", str),
-                            ("summary", str),
-                            ("findings", list),
-                            ("rating", float),
-                            ("rating_explanation", str),
-                        ],
-                        inplace=True,
-                    ),
-                    model_parameters={"max_tokens": self._max_report_length},
-                )
-                or {}
+            response = await self._llm(
+                self._extraction_prompt,
+                json=True,
+                name="create_community_report",
+                variables={self._input_text_key: inputs[self._input_text_key]},
+                json_model=CommunityReportResponse,
+                model_parameters={"max_tokens": self._max_report_length},
             )
-            output = response.json or {}
+            output = response.parsed_json
         except Exception as e:
             log.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)
-            output = {}
 
-        text_output = self._get_text_output(output)
+        text_output = self._get_text_output(output) if output else ""
         return CommunityReportsResult(
             structured_output=output,
             output=text_output,
         )
 
-    def _get_text_output(self, parsed_output: dict) -> str:
-        title = parsed_output.get("title", "Report")
-        summary = parsed_output.get("summary", "")
-        findings = parsed_output.get("findings", [])
-
-        def finding_summary(finding: dict):
-            if isinstance(finding, str):
-                return finding
-            return finding.get("summary")
-
-        def finding_explanation(finding: dict):
-            if isinstance(finding, str):
-                return ""
-            return finding.get("explanation")
-
+    def _get_text_output(self, report: CommunityReportResponse) -> str:
         report_sections = "\n\n".join(
-            f"## {finding_summary(f)}\n\n{finding_explanation(f)}" for f in findings
+            f"## {f.summary}\n\n{f.explanation}" for f in report.findings
         )
-        return f"# {title}\n\n{summary}\n\n{report_sections}"
+        return f"# {report.title}\n\n{report.summary}\n\n{report_sections}"
