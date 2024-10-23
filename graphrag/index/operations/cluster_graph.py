@@ -11,7 +11,6 @@ from typing import Any, cast
 import networkx as nx
 import pandas as pd
 from datashaper import VerbCallbacks, progress_iterable
-from graspologic.partition import hierarchical_leiden
 
 from graphrag.index.graph.utils import stable_largest_connected_component
 from graphrag.index.utils import gen_uuid
@@ -187,6 +186,8 @@ def _compute_leiden_communities(
     seed=0xDEADBEEF,
 ) -> dict[int, dict[str, int]]:
     """Return Leiden root communities."""
+    from graspologic.partition import hierarchical_leiden
+
     if use_lcc:
         graph = stable_largest_connected_component(graph)
 
