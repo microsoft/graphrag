@@ -4,12 +4,12 @@
 """Context Build utility methods."""
 
 import random
-from typing import Any, List, cast
+from typing import Any, cast
 
 import pandas as pd
 import tiktoken
 
-from graphrag.model import Entity, Relationship, TextUnit
+from graphrag.model import Relationship, TextUnit
 from graphrag.query.llm.text_utils import num_tokens
 
 """
@@ -63,7 +63,7 @@ def build_text_unit_context(
 
         if current_tokens + new_tokens > max_tokens:
             break
-        
+
         current_context_text += new_context_text
         all_context_records.append(new_context)
         current_tokens += new_tokens
@@ -76,20 +76,23 @@ def build_text_unit_context(
         record_df = pd.DataFrame()
     return current_context_text, {context_name.lower(): record_df}
 
+
 def count_relationships(
-    entity_relationships: List[Relationship], text_unit: TextUnit
+    entity_relationships: list[Relationship], text_unit: TextUnit
 ) -> int:
     """Count the number of relationships of the selected entity that are associated with the text unit."""
-    matching_relationship_count = 0
-    
-    if text_unit.relationship_ids is None:
-        for rel in entity_relationships:
-            if rel.text_unit_ids:                
-                if text_unit.id in rel.text_unit_ids:
-                    matching_relationship_count += 1
-    else:
-        for rel_id in text_unit.relationship_ids:
-            if rel_id in entity_relationships:                
-                matching_relationship_count += 1
-    
-    return matching_relationship_count
+    if not text_unit.relationship_ids:
+        # Use list comprehension to count relationships where the text_unit.id is in rel.text_unit_ids
+        return sum(
+            1
+            for rel in entity_relationships
+            if rel.text_unit_ids and text_unit.id in rel.text_unit_ids
+        )
+
+    # Use a set for faster lookups if entity_relationships is large
+    entity_relationship_ids = {rel.id for rel in entity_relationships}
+
+    # Count matching relationship ids efficiently
+    return sum(
+        1 for rel_id in text_unit.relationship_ids if rel_id in entity_relationship_ids
+    )
