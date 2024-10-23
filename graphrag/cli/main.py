@@ -10,16 +10,11 @@ from typing import Annotated
 
 import typer
 
-from graphrag.api import DocSelectionType
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.logging import ReporterType
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
-
-from .index import index_cli
-from .initialize import initialize_project_at
-from .prompt_tune import prompt_tune
-from .query import run_global_search, run_local_search
+from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -53,6 +48,8 @@ def _initialize_cli(
     ],
 ):
     """Generate a default configuration file."""
+    from .initialize import initialize_project_at
+
     initialize_project_at(path=root)
 
 
@@ -122,6 +119,8 @@ def _index_cli(
     if resume and update_index:
         msg = "Cannot resume and update a run at the same time"
         raise ValueError(msg)
+
+    from .index import index_cli
 
     index_cli(
         root_dir=root,
@@ -216,6 +215,8 @@ def _prompt_tune_cli(
     ] = Path("prompts"),
 ):
     """Generate custom graphrag prompts with your own data (i.e. auto templating)."""
+    from .prompt_tune import prompt_tune
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         prompt_tune(
@@ -283,6 +284,8 @@ def _query_cli(
     ] = False,
 ):
     """Query a knowledge graph index."""
+    from .query import run_global_search, run_local_search
+
     match method:
         case SearchType.LOCAL:
             run_local_search(
