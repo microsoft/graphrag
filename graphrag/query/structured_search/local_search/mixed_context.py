@@ -413,7 +413,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                 relationship_context_data,
             ) = build_relationship_context(
                 selected_entities=added_entities,
-                relationships=list(self.relationships.values()),  # TODO - fix
+                relationships=list(self.relationships.values()),
                 token_encoder=self.token_encoder,
                 max_tokens=max_tokens,
                 column_delimiter=column_delimiter,
