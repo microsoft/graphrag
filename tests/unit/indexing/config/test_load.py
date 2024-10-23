@@ -9,10 +9,10 @@ from unittest import mock
 
 from graphrag.config import create_graphrag_config
 from graphrag.index import (
-    PipelineConfig,
     create_pipeline_config,
     load_pipeline_config,
 )
+from graphrag.index.config import PipelineConfig
 
 current_dir = os.path.dirname(__file__)
 

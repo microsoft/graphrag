@@ -11,8 +11,8 @@ from collections.abc import AsyncIterable
 from pathlib import Path
 from typing import cast
 
-import pandas as pd
 from datashaper import WorkflowCallbacks
+from pandas import DataFrame
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.index.cache import PipelineCache
@@ -21,7 +21,8 @@ from graphrag.index.config import (
     PipelineWorkflowReference,
     PipelineWorkflowStep,
 )
-from graphrag.index.emit import TableEmitterType, create_table_emitters
+from graphrag.index.emit.factories import create_table_emitters
+from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.load_pipeline_config import load_pipeline_config
 from graphrag.index.run.cache import _create_cache
 from graphrag.index.run.postprocess import (
@@ -62,7 +63,7 @@ log = logging.getLogger(__name__)
 async def run_pipeline_with_config(
     config_or_path: PipelineConfig | str,
     workflows: list[PipelineWorkflowReference] | None = None,
-    dataset: pd.DataFrame | None = None,
+    dataset: DataFrame | None = None,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
@@ -167,7 +168,7 @@ async def run_pipeline_with_config(
 
 async def run_pipeline(
     workflows: list[PipelineWorkflowReference],
-    dataset: pd.DataFrame,
+    dataset: DataFrame,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,

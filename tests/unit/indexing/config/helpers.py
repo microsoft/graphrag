@@ -5,7 +5,8 @@ import unittest
 from typing import Any
 
 from graphrag.config import create_graphrag_config
-from graphrag.index import PipelineConfig, create_pipeline_config
+from graphrag.index import create_pipeline_config
+from graphrag.index.config import PipelineConfig
 
 
 def assert_contains_default_config(

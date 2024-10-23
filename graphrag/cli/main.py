@@ -11,7 +11,7 @@ from typing import Annotated
 import typer
 
 from graphrag.index.emit.types import TableEmitterType
-from graphrag.logging import ReporterType
+from graphrag.logging.types import ReporterType
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 from graphrag.prompt_tune.types import DocSelectionType

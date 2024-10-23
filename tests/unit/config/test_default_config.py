@@ -59,7 +59,8 @@ from graphrag.config import (
     UmapConfigInput,
     create_graphrag_config,
 )
-from graphrag.index import (
+from graphrag.index import PipelineWorkflowReference, create_pipeline_config
+from graphrag.index.config import (
     PipelineConfig,
     PipelineCSVInputConfig,
     PipelineFileCacheConfig,
@@ -67,8 +68,6 @@ from graphrag.index import (
     PipelineFileStorageConfig,
     PipelineInputConfig,
     PipelineTextInputConfig,
-    PipelineWorkflowReference,
-    create_pipeline_config,
 )
 
 current_dir = os.path.dirname(__file__)
