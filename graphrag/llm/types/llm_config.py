@@ -33,3 +33,7 @@ class LLMConfig(Protocol):
     def requests_per_minute(self) -> int | None:
         """Get the number of requests per minute."""
         ...
+
+    def get_completion_cache_args(self) -> dict:
+        """Get the cache arguments for a completion LLM."""
+        ...
