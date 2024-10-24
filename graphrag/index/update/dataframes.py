@@ -80,6 +80,7 @@ async def get_delta_docs(
 async def update_dataframe_outputs(
     dataframe_dict: dict[str, pd.DataFrame],
     storage: PipelineStorage,
+    update_storage: PipelineStorage,
     config: PipelineConfig,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
@@ -93,7 +94,9 @@ async def update_dataframe_outputs(
     storage : PipelineStorage
         The storage used to store the dataframes.
     """
-    await _concat_dataframes("create_final_documents", dataframe_dict, storage)
+    await _concat_dataframes(
+        "create_final_documents", dataframe_dict, storage, update_storage
+    )
 
     old_entities = await _load_table_from_storage(
         "create_final_entities.parquet", storage
@@ -116,7 +119,9 @@ async def update_dataframe_outputs(
     )
 
     # Save the updated entities back to storage
-    await storage.set("create_final_entities.parquet", merged_entities_df.to_parquet())
+    await update_storage.set(
+        "create_final_entities.parquet", merged_entities_df.to_parquet()
+    )
 
     # Update relationships with the entities id mapping
     old_relationships = await _load_table_from_storage(
@@ -128,8 +133,7 @@ async def update_dataframe_outputs(
         delta_relationships,
     )
 
-    # TODO: Using _new in the meantime, to compare outputs without overwriting the original
-    await storage.set(
+    await update_storage.set(
         "create_final_relationships.parquet", merged_relationships_df.to_parquet()
     )
 
@@ -143,7 +147,9 @@ async def update_dataframe_outputs(
         old_text_units, delta_text_units, entity_id_mapping
     )
 
-    await storage.set("create_final_text_units.parquet", merged_text_units.to_parquet())
+    await update_storage.set(
+        "create_final_text_units.parquet", merged_text_units.to_parquet()
+    )
 
     # Merge final nodes and update community ids
     old_nodes = await _load_table_from_storage("create_final_nodes.parquet", storage)
@@ -153,7 +159,7 @@ async def update_dataframe_outputs(
         old_nodes, delta_nodes, merged_entities_df
     )
 
-    await storage.set("create_final_nodes.parquet", merged_nodes.to_parquet())
+    await update_storage.set("create_final_nodes.parquet", merged_nodes.to_parquet())
 
     # Merge final communities
     old_communities = await _load_table_from_storage(
@@ -164,7 +170,7 @@ async def update_dataframe_outputs(
         old_communities, delta_communities, community_id_mapping
     )
 
-    await storage.set(
+    await update_storage.set(
         "create_final_communities.parquet", merged_communities.to_parquet()
     )
 
@@ -178,13 +184,13 @@ async def update_dataframe_outputs(
         old_community_reports, delta_community_reports, community_id_mapping
     )
 
-    await storage.set(
+    await update_storage.set(
         "create_final_community_reports.parquet",
         merged_community_reports.to_parquet(),
     )
 
 
-async def _concat_dataframes(name, dataframe_dict, storage):
+async def _concat_dataframes(name, dataframe_dict, storage, update_storage):
     """Concatenate the dataframes.
 
     Parameters
@@ -202,8 +208,7 @@ async def _concat_dataframes(name, dataframe_dict, storage):
     # Merge the final documents
     final_df = pd.concat([old_df, delta_df], copy=False)
 
-    # TODO: Using _new in the mean time, to compare outputs without overwriting the original
-    await storage.set(f"{name}.parquet", final_df.to_parquet())
+    await update_storage.set(f"{name}.parquet", final_df.to_parquet())
 
 
 def _group_and_resolve_entities(
@@ -247,21 +252,17 @@ def _group_and_resolve_entities(
     # Group by name and resolve conflicts
     aggregated = (
         combined.groupby("name")
-        .agg(
-            {
-                "id": "first",
-                "type": "first",
-                "human_readable_id": "first",
-                "graph_embedding": "first",
-                "description": lambda x: list(x.astype(str)),  # Ensure str
-                # Concatenate nd.array into a single list
-                "text_unit_ids": lambda x: ",".join(
-                    str(i) for j in x.tolist() for i in j
-                ),
-                # Keep only descriptions where the original value wasn't modified
-                "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
-            }
-        )
+        .agg({
+            "id": "first",
+            "type": "first",
+            "human_readable_id": "first",
+            "graph_embedding": "first",
+            "description": lambda x: list(x.astype(str)),  # Ensure str
+            # Concatenate nd.array into a single list
+            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+            # Keep only descriptions where the original value wasn't modified
+            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
+        })
         .reset_index()
     )
 
@@ -361,9 +362,10 @@ def _update_and_merge_text_units(
         The updated text units.
     """
     # Look for entity ids in entity_ids and replace them with the corresponding id in the mapping
-    delta_text_units["entity_ids"] = delta_text_units["entity_ids"].apply(
-        lambda x: [entity_id_mapping.get(i, i) for i in x]
-    )
+    if entity_id_mapping:
+        delta_text_units["entity_ids"] = delta_text_units["entity_ids"].apply(
+            lambda x: [entity_id_mapping.get(i, i) for i in x] if x is not None else x
+        )
 
     # Merge the final text units
     return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
@@ -428,24 +430,26 @@ def _merge_and_resolve_nodes(
     }
 
     # Specify custom aggregation for description and source_id
-    columns_to_agg.update(
-        {
-            "description": lambda x: os.linesep.join(x.astype(str)),
-            "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-        }
-    )
+    columns_to_agg.update({
+        "description": lambda x: os.linesep.join(x.astype(str)),
+        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+    })
 
     merged_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
 
     # Use description from merged_entities_df
-    merged_nodes = merged_nodes.merge(
-        merged_entities_df[["name", "description"]],
-        left_on="title",
-        right_on="name",
-        how="left",
-    ).drop(columns=["name"])
+    merged_nodes = (
+        merged_nodes.drop(columns=["description"])
+        .merge(
+            merged_entities_df[["name", "description"]],
+            left_on="title",
+            right_on="name",
+            how="left",
+        )
+        .drop(columns=["name"])
+    )
 
     # Mantain type compat with query
     merged_nodes["community"] = (

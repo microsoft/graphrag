@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add config for incremental updates"
+}

@@ -24,7 +24,6 @@ async def build_index(
     config: GraphRagConfig,
     run_id: str = "",
     is_resume_run: bool = False,
-    is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[TableEmitterType] = [TableEmitterType.Parquet],  # noqa: B006
@@ -54,6 +53,8 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
+    is_update_run = bool(config.update_index_storage)
+
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
@@ -89,42 +90,3 @@ async def build_index(
                 progress_reporter.success(output.workflow)
             progress_reporter.info(str(output.result))
     return outputs
-
-
-async def update_index(  # noqa: RUF029
-    config: GraphRagConfig,  # noqa: ARG001
-    memory_profile: bool,  # noqa: ARG001
-    index_id: str | None = None,  # noqa: ARG001
-    progress_reporter: ProgressReporter | None = None,  # noqa: ARG001
-    emit: list[str] | None = None,  # noqa: ARG001
-) -> list[PipelineRunResult]:
-    """Run the pipeline with the given configuration.
-
-    Parameters
-    ----------
-    config : PipelineConfig
-        The configuration.
-    memory_profile : bool
-        Whether to enable memory profiling.
-    index_id : str | None default=None
-        The index id to update in incremental runs.
-    progress_reporter : ProgressReporter | None default=None
-        The progress reporter.
-    emit : list[str] | None default=None
-        The list of emitter types to emit.
-        Accepted values {"parquet", "csv"}.
-
-    Returns
-    -------
-    list[PipelineRunResult]
-        The list of pipeline run results
-    """
-    # TODO: Calculate Delta
-    # TODO: Execute pipeline over delta
-    # TODO: Update index
-    # TODO: Write drift report
-    # TODO: Return results
-
-    # TODO: After the above steps are implemented, read drift report and run full index if drift is above threshold
-    msg = "This function is not implemented yet."
-    raise NotImplementedError(msg)

@@ -63,6 +63,7 @@ async def run_pipeline_with_config(
     workflows: list[PipelineWorkflowReference] | None = None,
     dataset: pd.DataFrame | None = None,
     storage: PipelineStorage | None = None,
+    update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     progress_reporter: ProgressReporter | None = None,
@@ -104,6 +105,12 @@ async def run_pipeline_with_config(
 
     progress_reporter = progress_reporter or NullProgressReporter()
     storage = storage or _create_storage(config.storage, root_dir=root_dir)
+
+    if is_update_run:
+        update_index_storage = update_index_storage or _create_storage(
+            config.update_index_storage, root_dir=root_dir
+        )
+
     cache = cache or _create_cache(config.cache, root_dir)
     callbacks = callbacks or _create_reporter(config.reporting, root_dir)
     dataset = (
@@ -121,10 +128,10 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    if is_update_run:
+    if is_update_run and update_index_storage:
         delta_dataset = await get_delta_docs(dataset, storage)
 
-        delta_storage = storage.child("delta")
+        delta_storage = update_index_storage.child("delta")
 
         # Run the pipeline on the new documents
         tables_dict = {}
@@ -145,11 +152,12 @@ async def run_pipeline_with_config(
             tables_dict[table.workflow] = table.result
 
         await update_dataframe_outputs(
-            tables_dict,
-            storage,
-            config,
-            cache,
-            NoopVerbCallbacks(),
+            dataframe_dict=tables_dict,
+            storage=storage,
+            update_storage=update_index_storage,
+            config=config,
+            cache=cache,
+            callbacks=NoopVerbCallbacks(),
         )
 
     else:
