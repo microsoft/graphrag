@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
 
