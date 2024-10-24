@@ -7,9 +7,11 @@ import numpy as np
 import pandas as pd
 from datashaper import NoopVerbCallbacks
 from fnllm.openai import OpenAIEmbeddingsLLMInstance
+from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input import load_input
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
@@ -57,6 +59,10 @@ async def load_docs_in_chunks(
     k: int = K,
 ) -> list[str]:
     """Load docs into chunks for generating prompts."""
+    llm_config = TypeAdapter(LLMParameters).validate_python(
+        config.embeddings.resolved_strategy()["llm"]
+    )
+
     dataset = await load_input(config.input, reporter, root)
 
     # covert to text units
@@ -90,11 +96,10 @@ async def load_docs_in_chunks(
             msg = "k must be an integer > 0"
             raise ValueError(msg)
         embedding_llm = load_llm_embeddings(
-            name="prompt_tuning_embeddings",
-            llm_type=config.embeddings.resolved_strategy()["llm"]["type"],
+            "prompt_tuning_embeddings",
+            llm_config,
             callbacks=NoopVerbCallbacks(),
             cache=None,
-            llm_config=config.embeddings.resolved_strategy()["llm"],
         )
 
         chunks_df, embeddings = await _embed_chunks(

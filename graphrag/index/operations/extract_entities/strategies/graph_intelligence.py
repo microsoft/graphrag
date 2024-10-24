@@ -33,8 +33,7 @@ async def run_graph_intelligence(
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("entity_extraction", llm_type, callbacks, cache, llm_config)
+    llm = load_llm("entity_extraction", llm_config, callbacks=callbacks, cache=cache)
     return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 
 

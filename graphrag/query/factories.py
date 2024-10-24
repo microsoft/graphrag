@@ -35,10 +35,7 @@ from graphrag.vector_stores import BaseVectorStore
 
 def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     """Get the LLM client."""
-    is_azure_client = (
-        config.llm.type == LLMType.AzureOpenAIChat
-        or config.llm.type == LLMType.AzureOpenAI
-    )
+    is_azure_client = config.llm.type == LLMType.AzureOpenAIChat
     debug_llm_key = config.llm.api_key or ""
     llm_debug_info = {
         **config.llm.model_dump(),

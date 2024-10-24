@@ -10,9 +10,10 @@ from typing import Any
 import numpy as np
 from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
 from fnllm.openai import OpenAIEmbeddingsLLMInstance
+from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
-from graphrag.config.openai import OpenAIConfiguration
+from graphrag.config.models import LLMParameters
 from graphrag.index.cache import PipelineCache
 from graphrag.index.llm import load_llm_embeddings
 from graphrag.index.text_splitting import TokenTextSplitter
@@ -33,12 +34,11 @@ async def run(
     if is_null(input):
         return TextEmbeddingResult(embeddings=None)
 
-    llm_config = args.get("llm", {})
+    llm_config = TypeAdapter(LLMParameters).validate_python(args.get("llm", {}))
     batch_size = args.get("batch_size", 16)
     batch_max_tokens = args.get("batch_max_tokens", 8191)
-    oai_config = OpenAIConfiguration(llm_config)
-    splitter = _get_splitter(oai_config, batch_max_tokens)
-    llm = _get_llm(oai_config, callbacks, cache)
+    splitter = _get_splitter(llm_config, batch_max_tokens)
+    llm = _get_llm(llm_config, callbacks, cache)
     semaphore: asyncio.Semaphore = asyncio.Semaphore(args.get("num_threads", 4))
 
     # Break up the input texts. The sizes here indicate how many snippets are in each input text
@@ -66,9 +66,7 @@ async def run(
     return TextEmbeddingResult(embeddings=embeddings)
 
 
-def _get_splitter(
-    config: OpenAIConfiguration, batch_max_tokens: int
-) -> TokenTextSplitter:
+def _get_splitter(config: LLMParameters, batch_max_tokens: int) -> TokenTextSplitter:
     return TokenTextSplitter(
         encoding_name=config.encoding_model or defs.ENCODING_MODEL,
         chunk_size=batch_max_tokens,
@@ -76,17 +74,15 @@ def _get_splitter(
 
 
 def _get_llm(
-    config: OpenAIConfiguration,
+    config: LLMParameters,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
 ) -> OpenAIEmbeddingsLLMInstance:
-    llm_type = config.lookup("type", "Unknown")
     return load_llm_embeddings(
         "text_embedding",
-        llm_type,
-        callbacks,
-        cache,
-        config.raw_config,
+        config,
+        callbacks=callbacks,
+        cache=cache,
     )
 
 

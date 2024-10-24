@@ -37,8 +37,7 @@ async def run_graph_intelligence(
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("community_reporting", llm_type, callbacks, cache, llm_config)
+    llm = load_llm("community_reporting", llm_config, callbacks=callbacks, cache=cache)
     return await _run_extractor(llm, community, input, level, args, callbacks)
 
 

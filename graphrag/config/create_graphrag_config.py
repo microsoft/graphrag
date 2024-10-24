@@ -636,9 +636,7 @@ class Section(str, Enum):
 
 def _is_azure(llm_type: LLMType | None) -> bool:
     return (
-        llm_type == LLMType.AzureOpenAI
-        or llm_type == LLMType.AzureOpenAIChat
-        or llm_type == LLMType.AzureOpenAIEmbedding
+        llm_type == LLMType.AzureOpenAIChat or llm_type == LLMType.AzureOpenAIEmbedding
     )
 
 

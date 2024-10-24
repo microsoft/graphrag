@@ -20,6 +20,9 @@ class LLMParameters(BaseModel):
     type: LLMType = Field(
         description="The type of LLM model to use.", default=defs.LLM_TYPE
     )
+    encoding_model: str | None = Field(
+        description="The encoding model to use", default=defs.ENCODING_MODEL
+    )
     model: str = Field(description="The LLM model to use.", default=defs.LLM_MODEL)
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.",
