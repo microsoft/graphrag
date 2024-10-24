@@ -1,30 +1,35 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Command line interface for the fine_tune module."""
+"""CLI implementation of prompt-tune subcommand."""
 
 from pathlib import Path
 
 import graphrag.api as api
 from graphrag.config import load_config
 from graphrag.logging import PrintProgressReporter
-
-from .generator.community_report_summarization import COMMUNITY_SUMMARIZATION_FILENAME
-from .generator.entity_extraction_prompt import ENTITY_EXTRACTION_FILENAME
-from .generator.entity_summarization_prompt import ENTITY_SUMMARIZATION_FILENAME
+from graphrag.prompt_tune.generator.community_report_summarization import (
+    COMMUNITY_SUMMARIZATION_FILENAME,
+)
+from graphrag.prompt_tune.generator.entity_extraction_prompt import (
+    ENTITY_EXTRACTION_FILENAME,
+)
+from graphrag.prompt_tune.generator.entity_summarization_prompt import (
+    ENTITY_SUMMARIZATION_FILENAME,
+)
 
 
 async def prompt_tune(
-    config: str,
-    root: str,
-    domain: str,
+    root: Path,
+    config: Path | None,
+    domain: str | None,
     selection_method: api.DocSelectionType,
     limit: int,
     max_tokens: int,
     chunk_size: int,
     language: str | None,
-    skip_entity_types: bool,
-    output: str,
+    discover_entity_types: bool,
+    output: Path,
     n_subset_max: int,
     k: int,
     min_examples_required: int,
@@ -41,8 +46,8 @@ async def prompt_tune(
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
     - chunk_size: The chunk token size to use.
     - language: The language to use for the prompts.
-    - skip_entity_types: Skip generating entity types.
-    - output: The output folder to store the prompts. Relative to the root directory.
+    - discover_entity_types: Generate entity types.
+    - output: The output folder to store the prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
@@ -60,13 +65,13 @@ async def prompt_tune(
         domain=domain,
         language=language,
         max_tokens=max_tokens,
-        skip_entity_types=skip_entity_types,
+        discover_entity_types=discover_entity_types,
         min_examples_required=min_examples_required,
         n_subset_max=n_subset_max,
         k=k,
     )
 
-    output_path = (root_path / output).resolve()
+    output_path = output.resolve()
     if output_path:
         reporter.info(f"Writing prompts to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)

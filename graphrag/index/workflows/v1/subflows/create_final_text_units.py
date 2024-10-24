@@ -17,16 +17,18 @@ from datashaper import (
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units as create_final_text_units_flow,
 )
+from graphrag.index.storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 
 @verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
-def create_final_text_units(
+async def create_final_text_units(
     input: VerbInput,
+    runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform the text units."""
-    source = cast(pd.DataFrame, input.get_input())
+    text_units = await runtime_storage.get("base_text_units")
     final_entities = cast(
         pd.DataFrame, get_required_input_table(input, "entities").table
     )
@@ -39,7 +41,7 @@ def create_final_text_units(
         final_covariates = cast(pd.DataFrame, final_covariates.table)
 
     output = create_final_text_units_flow(
-        source,
+        text_units,
         final_entities,
         final_relationships,
         final_covariates,

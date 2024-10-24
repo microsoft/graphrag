@@ -276,6 +276,11 @@ class BlobPipelineStorage(PipelineStorage):
             self._storage_account_blob_url,
         )
 
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        msg = "Blob storage does yet not support listing keys."
+        raise NotImplementedError(msg)
+
     def _keyname(self, key: str) -> str:
         """Get the key name."""
         return str(Path(self._path_prefix) / key)
