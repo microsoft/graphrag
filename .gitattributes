@@ -6,7 +6,6 @@
 *.toml text eol=lf
 .gitattributes text eol=lf
 .gitignore text eol=lf
-.npmignore text eol=lf
 *.lock
 CODEOWNERS text eol=lf
 LICENSE text eol=lf
