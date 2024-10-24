@@ -6,8 +6,8 @@
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config import load_config
-from graphrag.logging import PrintProgressReporter
+from graphrag.config.load_config import load_config
+from graphrag.logging.print_progress import PrintProgressReporter
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )

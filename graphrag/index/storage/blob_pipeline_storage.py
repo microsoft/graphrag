@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
-from graphrag.logging import ProgressReporter
+from graphrag.logging.types import ProgressReporter
 
 from .pipeline_storage import PipelineStorage
 

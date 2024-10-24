@@ -6,10 +6,10 @@
 import logging
 import traceback
 
-import pandas as pd
+from pandas import DataFrame
 from pyarrow.lib import ArrowInvalid, ArrowTypeError
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
 
 from .table_emitter import TableEmitter
@@ -32,7 +32,7 @@ class ParquetTableEmitter(TableEmitter):
         self._storage = storage
         self._on_error = on_error
 
-    async def emit(self, name: str, data: pd.DataFrame) -> None:
+    async def emit(self, name: str, data: DataFrame) -> None:
         """Emit a dataframe to storage."""
         filename = f"{name}.parquet"
         log.info("emitting parquet table %s", filename)

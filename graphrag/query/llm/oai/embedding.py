@@ -18,7 +18,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
-from graphrag.logging import StatusLogger
+from graphrag.logging.types import StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.base import OpenAILLMImpl
 from graphrag.query.llm.oai.typing import (

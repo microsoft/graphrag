@@ -8,8 +8,8 @@ import pandas as pd
 from examples.custom_set_of_available_workflows.custom_workflow_definitions import (
     custom_workflows,
 )
-from graphrag.index import run_pipeline, run_pipeline_with_config
-from graphrag.index.config import PipelineWorkflowReference
+from graphrag.index.config.workflow import PipelineWorkflowReference
+from graphrag.index.run import run_pipeline, run_pipeline_with_config
 
 sample_data_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "../_sample_data/"

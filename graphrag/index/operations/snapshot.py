@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def snapshot(

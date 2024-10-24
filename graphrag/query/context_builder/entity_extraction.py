@@ -5,14 +5,15 @@
 
 from enum import Enum
 
-from graphrag.model import Entity, Relationship
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
 from graphrag.query.input.retrieval.entities import (
     get_entity_by_id,
     get_entity_by_key,
     get_entity_by_name,
 )
 from graphrag.query.llm.base import BaseTextEmbedding
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 
 class EntityVectorStoreKey(str, Enum):

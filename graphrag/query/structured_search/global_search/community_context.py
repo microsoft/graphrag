@@ -8,7 +8,8 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.entity import Entity
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )

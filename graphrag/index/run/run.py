@@ -15,12 +15,12 @@ from datashaper import WorkflowCallbacks
 from pandas import DataFrame
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.index.cache import PipelineCache
-from graphrag.index.config import (
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
-    PipelineWorkflowStep,
 )
+from graphrag.index.config.workflow import PipelineWorkflowStep
 from graphrag.index.emit.factories import create_table_emitters
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.load_pipeline_config import load_pipeline_config
@@ -41,7 +41,7 @@ from graphrag.index.run.workflow import (
     _create_callback_chain,
     _process_workflow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 
 # Register all verbs
@@ -51,10 +51,8 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.logging import (
-    NullProgressReporter,
-    ProgressReporter,
-)
+from graphrag.logging.null_progress import NullProgressReporter
+from graphrag.logging.types import ProgressReporter
 from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)

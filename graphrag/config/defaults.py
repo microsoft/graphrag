@@ -7,7 +7,7 @@ from pathlib import Path
 
 from datashaper import AsyncType
 
-from graphrag.vector_stores import VectorStoreType
+from graphrag.vector_stores.factory import VectorStoreType
 
 from .enums import (
     CacheType,

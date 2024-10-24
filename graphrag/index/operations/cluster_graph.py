@@ -13,7 +13,7 @@ import pandas as pd
 from datashaper import VerbCallbacks, progress_iterable
 
 from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.utils import gen_uuid
+from graphrag.index.utils.uuid import gen_uuid
 
 Communities = list[tuple[int, str, list[str]]]
 

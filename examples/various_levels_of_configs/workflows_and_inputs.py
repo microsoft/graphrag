@@ -3,7 +3,7 @@
 import asyncio
 import os
 
-from graphrag.index import run_pipeline_with_config
+from graphrag.index.run import run_pipeline_with_config
 
 
 async def main():

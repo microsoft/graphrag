@@ -11,10 +11,10 @@ import numpy as np
 from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
 
 import graphrag.config.defaults as defs
-from graphrag.index.cache import PipelineCache
-from graphrag.index.llm import load_llm_embeddings
-from graphrag.index.text_splitting import TokenTextSplitter
-from graphrag.index.utils import is_null
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.llm.load_llm import load_llm_embeddings
+from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
+from graphrag.index.utils.is_null import is_null
 from graphrag.llm import EmbeddingLLM, OpenAIConfiguration
 
 from .typing import TextEmbeddingResult

@@ -14,10 +14,8 @@ from graphrag.config.enums import (
     StorageType,
     TextEmbeddingTarget,
 )
-from graphrag.config.models import (
-    GraphRagConfig,
-    TextEmbeddingConfig,
-)
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineCacheConfigTypes,

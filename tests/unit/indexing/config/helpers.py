@@ -4,9 +4,8 @@ import json
 import unittest
 from typing import Any
 
-from graphrag.config import create_graphrag_config
-from graphrag.index import create_pipeline_config
-from graphrag.index.config import PipelineConfig
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.index.create_pipeline_config import PipelineConfig, create_pipeline_config
 
 
 def assert_contains_default_config(

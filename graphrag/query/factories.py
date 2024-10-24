@@ -6,17 +6,13 @@
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from graphrag.config import (
-    GraphRagConfig,
-    LLMType,
-)
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.config.enums import LLMType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
@@ -29,7 +25,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 
 def get_llm(config: GraphRagConfig) -> ChatOpenAI:

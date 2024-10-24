@@ -12,7 +12,8 @@ from graphrag.index.graph.extractors.community_reports.prompts import (
 from graphrag.index.graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
 from graphrag.index.graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from graphrag.index.init_content import INIT_DOTENV, INIT_YAML
-from graphrag.logging import ReporterType, create_progress_reporter
+from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.types import ReporterType
 
 
 def initialize_project_at(path: Path) -> None:

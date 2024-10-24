@@ -11,7 +11,7 @@ import tiktoken
 from datashaper import ProgressTicker
 
 import graphrag.config.defaults as defs
-from graphrag.index.text_splitting import Tokenizer
+from graphrag.index.text_splitting.text_splitting import Tokenizer
 
 from .typing import TextChunk
 

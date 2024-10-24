@@ -3,9 +3,9 @@
 import asyncio
 import os
 
-from graphrag.index import run_pipeline_with_config
-from graphrag.index.config import PipelineCSVInputConfig
-from graphrag.index.input import load_input
+from graphrag.index.config.input import PipelineCSVInputConfig
+from graphrag.index.input.load_input import load_input
+from graphrag.index.run import run_pipeline_with_config
 
 sample_data_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "./../_sample_data/"

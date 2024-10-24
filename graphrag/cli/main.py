@@ -3,7 +3,6 @@
 
 """CLI entrypoint."""
 
-import asyncio
 from enum import Enum
 from pathlib import Path
 from typing import Annotated
@@ -12,11 +11,13 @@ import typer
 
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.logging.types import ReporterType
-from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
-from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
+from graphrag.prompt_tune.generator.defaults import MAX_TOKEN_COUNT
+
+# from graphrag.prompt_tune.loader.input import MIN_CHUNK_SIZE
 from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
+MIN_CHUNK_SIZE = 200
 
 app = typer.Typer(
     help="GraphRAG: A graph-based retrieval-augmented generation (RAG) system.",
@@ -215,6 +216,8 @@ def _prompt_tune_cli(
     ] = Path("prompts"),
 ):
     """Generate custom graphrag prompts with your own data (i.e. auto templating)."""
+    import asyncio
+
     from .prompt_tune import prompt_tune
 
     loop = asyncio.get_event_loop()

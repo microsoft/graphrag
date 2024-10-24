@@ -3,7 +3,7 @@
 
 """Table Emitter Factories."""
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
 
 from .csv_table_emitter import CSVTableEmitter

@@ -16,7 +16,7 @@ from datashaper import (
 )
 
 from graphrag.index.bootstrap import bootstrap
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 from .strategies.typing import Document, EntityExtractStrategy
 

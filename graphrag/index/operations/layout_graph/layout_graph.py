@@ -12,7 +12,7 @@ from datashaper import VerbCallbacks, progress_callback
 
 from graphrag.index.graph.visualization import GraphLayout
 from graphrag.index.operations.embed_graph import NodeEmbeddings
-from graphrag.index.utils import load_graph
+from graphrag.index.utils.load_graph import load_graph
 
 
 class LayoutGraphStrategyType(str, Enum):

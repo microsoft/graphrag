@@ -11,12 +11,9 @@ import numpy as np
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
-from graphrag.vector_stores import (
-    BaseVectorStore,
-    VectorStoreDocument,
-    VectorStoreFactory,
-)
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
+from graphrag.vector_stores.factory import VectorStoreFactory
 
 from .strategies.typing import TextEmbeddingStrategy
 

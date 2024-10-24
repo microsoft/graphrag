@@ -9,7 +9,9 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model import Entity, Relationship, TextUnit
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.llm.text_utils import num_tokens
 
 """
