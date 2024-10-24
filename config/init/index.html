@@ -1486,17 +1486,16 @@
 
 
 <h1 id="configuring-graphrag-indexing">Configuring GraphRAG Indexing</h1>
-<p>To start using GraphRAG, you need to configure the system. The <code>init</code> command is the easiest way to get started. It will create a <code>.env</code> and <code>settings.yaml</code> files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.</p>
+<p>To start using GraphRAG, you must generate a configuration file. The <code>init</code> command is the easiest way to get started. It will create a <code>.env</code> and <code>settings.yaml</code> files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.</p>
 <h2 id="usage">Usage</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.index<span class="w"> </span><span class="o">[</span>--init<span class="o">]</span><span class="w"> </span><span class="o">[</span>--root<span class="w"> </span>PATH<span class="o">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>--root<span class="w"> </span>PATH<span class="o">]</span>
 </code></pre></div>
 <h2 id="options">Options</h2>
 <ul>
-<li><code>--init</code> - Initialize the directory with the necessary configuration files.</li>
-<li><code>--root PATH</code> - The root directory to initialize. Default is the current directory.</li>
+<li><code>--root PATH</code> - The project root directory to initialize graphrag at. Default is the current directory.</li>
 </ul>
 <h2 id="example">Example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.index<span class="w"> </span>--init<span class="w"> </span>--root<span class="w"> </span>./ragtest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span>--root<span class="w"> </span>./ragtest
 </code></pre></div>
 <h2 id="output">Output</h2>
 <p>The <code>init</code> command will create the following files in the specified directory:</p>

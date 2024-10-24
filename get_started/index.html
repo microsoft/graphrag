@@ -1460,19 +1460,19 @@ It shows how to use the system to index some text, and then use the indexed data
 <p>Next we'll inject some required config variables:</p>
 <h2 id="set-up-your-workspace-variables">Set Up Your Workspace Variables</h2>
 <p>First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the <a href="../config/overview/">variables documentation</a>.</p>
-<p>To initialize your workspace, let's first run the <code>graphrag.index --init</code> command.
-Since we have already configured a directory named .ragtest` in the previous step, we can run the following command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.index<span class="w"> </span>--init<span class="w"> </span>--root<span class="w"> </span>./ragtest
+<p>To initialize your workspace, first run the <code>graphrag init</code> command.
+Since we have already configured a directory named <code>./ragtest</code> in the previous step, run the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span>--root<span class="w"> </span>./ragtest
 </code></pre></div>
 <p>This will create two files: <code>.env</code> and <code>settings.yaml</code> in the <code>./ragtest</code> directory.</p>
 <ul>
 <li><code>.env</code> contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
-  <code>GRAPHRAG_API_KEY=&lt;API_KEY&gt;</code>. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key.</li>
+  <code>GRAPHRAG_API_KEY=&lt;API_KEY&gt;</code>. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key. If you are using another form of authentication (i.e. managed identity), please delete this file.</li>
 <li><code>settings.yaml</code> contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
   <br/></li>
 </ul>
 <h4 id="openai-and-azure-openai"><ins>OpenAI and Azure OpenAI</ins></h4>
-<p>To run in OpenAI mode, just make sure to update the value of <code>GRAPHRAG_API_KEY</code> in the <code>.env</code> file with your OpenAI API key.</p>
+<p>If running in OpenAI mode, update the value of <code>GRAPHRAG_API_KEY</code> in the <code>.env</code> file with your OpenAI API key.</p>
 <h4 id="azure-openai"><ins>Azure OpenAI</ins></h4>
 <p>In addition, Azure OpenAI users should set the following variables in the settings.yaml file. To find the appropriate sections, just search for the <code>llm:</code> configuration, you should see two sections, one for the chat endpoint and one for the embeddings endpoint. Here is an example of how to configure the chat endpoint:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azure_openai_chat</span><span class="w"> </span><span class="c1"># Or azure_openai_embedding for embeddings</span>
@@ -1487,25 +1487,25 @@ Since we have already configured a directory named .ragtest` in the previous ste
 </ul>
 <h2 id="running-the-indexing-pipeline">Running the Indexing pipeline</h2>
 <p>Finally we'll run the pipeline!</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.index<span class="w"> </span>--root<span class="w"> </span>./ragtest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>graphrag<span class="w"> </span>index<span class="w"> </span>--root<span class="w"> </span>./ragtest
 </code></pre></div>
 <p><img alt="pipeline executing from the CLI" src="../img/pipeline-running.png" /></p>
 <p>This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your <code>settings.yml</code> file).
-Once the pipeline is complete, you should see a new folder called <code>./ragtest/output/&lt;timestamp&gt;/artifacts</code> with a series of parquet files.</p>
+Once the pipeline is complete, you should see a new folder called <code>./ragtest/output</code> with a series of parquet files.</p>
 <h1 id="using-the-query-engine">Using the Query Engine</h1>
 <h2 id="running-the-query-engine">Running the Query Engine</h2>
 <p>Now let's ask some questions using this dataset.</p>
 <p>Here is an example using Global search to ask a high-level question:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.query<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>graphrag<span class="w"> </span>query<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>--root<span class="w"> </span>./ragtest<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>--method<span class="w"> </span>global<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="s2">&quot;What are the top themes in this story?&quot;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>--query<span class="w"> </span><span class="s2">&quot;What are the top themes in this story?&quot;</span>
 </code></pre></div>
 <p>Here is an example using Local search to ask a more specific question about a particular character:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.query<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>graphrag<span class="w"> </span>query<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>--root<span class="w"> </span>./ragtest<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>--method<span class="w"> </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="s2">&quot;Who is Scrooge, and what are his main relationships?&quot;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>--query<span class="w"> </span><span class="s2">&quot;Who is Scrooge and what are his main relationships?&quot;</span>
 </code></pre></div>
 <p>Please refer to <a href="../query/overview/">Query Engine</a> docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.</p>
 

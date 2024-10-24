@@ -1431,14 +1431,14 @@
 
 <h1 id="query-cli">Query CLI</h1>
 <p>The GraphRAG query CLI allows for no-code usage of the GraphRAG Query engine.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag.query<span class="w"> </span>--config<span class="w"> </span>&lt;config_file.yml&gt;<span class="w"> </span>--data<span class="w"> </span>&lt;path-to-data&gt;<span class="w"> </span>--community_level<span class="w"> </span>&lt;comunit-level&gt;<span class="w"> </span>--response_type<span class="w"> </span>&lt;response-type&gt;<span class="w"> </span>--method<span class="w"> </span>&lt;<span class="s2">&quot;local&quot;</span><span class="p">|</span><span class="s2">&quot;global&quot;</span>&gt;<span class="w"> </span>&lt;query&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>graphrag<span class="w"> </span>query<span class="w"> </span>--config<span class="w"> </span>&lt;config_file.yml&gt;<span class="w"> </span>--data<span class="w"> </span>&lt;path-to-data&gt;<span class="w"> </span>--community-level<span class="w"> </span>&lt;comunit-level&gt;<span class="w"> </span>--response-type<span class="w"> </span>&lt;response-type&gt;<span class="w"> </span>--method<span class="w"> </span>&lt;<span class="s2">&quot;local&quot;</span><span class="p">|</span><span class="s2">&quot;global&quot;</span>&gt;<span class="w"> </span>&lt;query&gt;
 </code></pre></div>
 <h2 id="cli-arguments">CLI Arguments</h2>
 <ul>
 <li><code>--config &lt;config_file.yml&gt;</code> - The configuration yaml file to use when running the query. If this is used, then none of the environment-variables below will apply.</li>
 <li><code>--data &lt;path-to-data&gt;</code> - Folder containing the <code>.parquet</code> output files from running the Indexer.</li>
-<li><code>--community_level &lt;community-level&gt;</code> - Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2</li>
-<li><code>--response_type &lt;response-type&gt;</code> - Free form text describing the response type and format, can be anything, e.g. <code>Multiple Paragraphs</code>, <code>Single Paragraph</code>, <code>Single Sentence</code>, <code>List of 3-7 Points</code>, <code>Single Page</code>, <code>Multi-Page Report</code>. Default: <code>Multiple Paragraphs</code>.</li>
+<li><code>--community-level &lt;community-level&gt;</code> - Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2</li>
+<li><code>--response-type &lt;response-type&gt;</code> - Free form text describing the response type and format, can be anything, e.g. <code>Multiple Paragraphs</code>, <code>Single Paragraph</code>, <code>Single Sentence</code>, <code>List of 3-7 Points</code>, <code>Single Page</code>, <code>Multi-Page Report</code>. Default: <code>Multiple Paragraphs</code>.</li>
 <li><code>--method &lt;"local"|"global"&gt;</code> - Method to use to answer the query, one of local or global. For more information check <a href="../overview/">Overview</a></li>
 <li><code>--streaming</code> - Stream back the LLM response</li>
 </ul>
