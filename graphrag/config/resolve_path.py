@@ -183,6 +183,18 @@ def resolve_paths(
             )
         )
 
+    if (
+        config.update_index_storage
+        and config.update_index_storage.type == StorageType.file
+    ):
+        config.update_index_storage.base_dir = str(
+            resolve_path(
+                config.update_index_storage.base_dir,
+                config.root_dir,
+                pattern_or_timestamp_value,
+            )
+        )
+
     if config.reporting.type == ReportingType.file:
         config.reporting.base_dir = str(
             resolve_path(

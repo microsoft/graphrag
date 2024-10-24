@@ -83,6 +83,17 @@ def _apply_substitutions(config: PipelineConfig, run_id: str) -> PipelineConfig:
             substitutions
         )
     if (
+        config.update_index_storage
+        and isinstance(
+            config.update_index_storage,
+            PipelineFileStorageConfig | PipelineBlobStorageConfig,
+        )
+        and config.update_index_storage.base_dir
+    ):
+        config.update_index_storage.base_dir = Template(
+            config.update_index_storage.base_dir
+        ).substitute(substitutions)
+    if (
         isinstance(config.cache, PipelineFileCacheConfig | PipelineBlobCacheConfig)
         and config.cache.base_dir
     ):

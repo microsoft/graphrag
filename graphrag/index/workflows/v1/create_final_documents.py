@@ -30,9 +30,11 @@ def build_steps(
             "verb": "create_final_documents",
             "args": {
                 "document_attribute_columns": document_attribute_columns,
-                "raw_content_text_embed": document_raw_content_embed_config
-                if not skip_raw_content_embedding
-                else None,
+                "raw_content_text_embed": (
+                    document_raw_content_embed_config
+                    if not skip_raw_content_embedding
+                    else None
+                ),
             },
             "input": {
                 "source": DEFAULT_INPUT_NAME,

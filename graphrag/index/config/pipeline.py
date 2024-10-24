@@ -47,6 +47,11 @@ class PipelineConfig(BaseModel):
     )
     """The storage configuration for the pipeline."""
 
+    update_index_storage: PipelineStorageConfigTypes | None = pydantic_Field(
+        default=None, discriminator="type"
+    )
+    """The storage configuration for the updated index."""
+
     cache: PipelineCacheConfigTypes | None = pydantic_Field(
         default=None, discriminator="type"
     )

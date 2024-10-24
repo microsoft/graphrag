@@ -47,6 +47,7 @@ async def test_create_final_community_reports():
         "workflow:create_final_nodes",
         "workflow:create_final_covariates",
         "workflow:create_final_relationships",
+        "workflow:create_final_communities",
     ])
     expected = load_expected(workflow_name)
 
@@ -78,6 +79,7 @@ async def test_create_final_community_reports_with_embeddings():
         "workflow:create_final_nodes",
         "workflow:create_final_covariates",
         "workflow:create_final_relationships",
+        "workflow:create_final_communities",
     ])
     expected = load_expected(workflow_name)
 
@@ -115,6 +117,7 @@ async def test_create_final_community_reports_missing_llm_throws():
         "workflow:create_final_nodes",
         "workflow:create_final_covariates",
         "workflow:create_final_relationships",
+        "workflow:create_final_communities",
     ])
 
     config = get_config_for_workflow(workflow_name)

@@ -375,6 +375,25 @@ def create_graphrag_config(
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
             )
+
+        with (
+            reader.envvar_prefix(Section.update_index_storage),
+            reader.use(values.get("update_index_storage")),
+        ):
+            s_type = reader.str(Fragment.type)
+            if s_type:
+                update_index_storage_model = StorageConfig(
+                    type=StorageType(s_type) if s_type else defs.STORAGE_TYPE,
+                    connection_string=reader.str(Fragment.conn_string),
+                    storage_account_blob_url=reader.str(
+                        Fragment.storage_account_blob_url
+                    ),
+                    container_name=reader.str(Fragment.container_name),
+                    base_dir=reader.str(Fragment.base_dir)
+                    or defs.UPDATE_STORAGE_BASE_DIR,
+                )
+            else:
+                update_index_storage_model = None
         with reader.envvar_prefix(Section.chunk), reader.use(values.get("chunks")):
             group_by_columns = reader.list("group_by_columns", "BY_COLUMNS")
             if group_by_columns is None:
@@ -547,6 +566,7 @@ def create_graphrag_config(
         embed_graph=embed_graph_model,
         reporting=reporting_model,
         storage=storage_model,
+        update_index_storage=update_index_storage_model,
         cache=cache_model,
         input=input_model,
         chunks=chunks_model,
@@ -624,6 +644,7 @@ class Section(str, Enum):
     storage = "STORAGE"
     summarize_descriptions = "SUMMARIZE_DESCRIPTIONS"
     umap = "UMAP"
+    update_index_storage = "UPDATE_INDEX_STORAGE"
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
 

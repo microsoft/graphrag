@@ -14,10 +14,7 @@ from graphrag.config.enums import (
     StorageType,
     TextEmbeddingTarget,
 )
-from graphrag.config.models import (
-    GraphRagConfig,
-    TextEmbeddingConfig,
-)
+from graphrag.config.models import GraphRagConfig, StorageConfig, TextEmbeddingConfig
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineCacheConfigTypes,
@@ -118,7 +115,10 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
         root_dir=settings.root_dir,
         input=_get_pipeline_input_config(settings),
         reporting=_get_reporting_config(settings),
-        storage=_get_storage_config(settings),
+        storage=_get_storage_config(settings, settings.storage),
+        update_index_storage=_get_storage_config(
+            settings, settings.update_index_storage
+        ),
         cache=_get_cache_config(settings),
         workflows=[
             *_document_workflows(settings, embedded_fields),
@@ -469,23 +469,26 @@ def _get_reporting_config(
 
 def _get_storage_config(
     settings: GraphRagConfig,
-) -> PipelineStorageConfigTypes:
+    storage_settings: StorageConfig | None,
+) -> PipelineStorageConfigTypes | None:
     """Get the storage type from the settings."""
+    if not storage_settings:
+        return None
     root_dir = settings.root_dir
-    match settings.storage.type:
+    match storage_settings.type:
         case StorageType.memory:
             return PipelineMemoryStorageConfig()
         case StorageType.file:
             # relative to the root_dir
-            base_dir = settings.storage.base_dir
+            base_dir = storage_settings.base_dir
             if base_dir is None:
                 msg = "Base directory must be provided for file storage."
                 raise ValueError(msg)
             return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
         case StorageType.blob:
-            connection_string = settings.storage.connection_string
-            storage_account_blob_url = settings.storage.storage_account_blob_url
-            container_name = settings.storage.container_name
+            connection_string = storage_settings.connection_string
+            storage_account_blob_url = storage_settings.storage_account_blob_url
+            container_name = storage_settings.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob storage."
                 raise ValueError(msg)
@@ -495,12 +498,12 @@ def _get_storage_config(
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
                 container_name=container_name,
-                base_dir=settings.storage.base_dir,
+                base_dir=storage_settings.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
             )
         case _:
             # relative to the root_dir
-            base_dir = settings.storage.base_dir
+            base_dir = storage_settings.base_dir
             if base_dir is None:
                 msg = "Base directory must be provided for file storage."
                 raise ValueError(msg)

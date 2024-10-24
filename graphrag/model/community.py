@@ -28,6 +28,12 @@ class Community(Named):
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the community (optional). To be included in the search prompt."""
 
+    size: int | None = None
+    """The size of the community (Amount of text units)."""
+
+    period: str | None = None
+    ""
+
     @classmethod
     def from_dict(
         cls,
@@ -40,6 +46,8 @@ class Community(Named):
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
         attributes_key: str = "attributes",
+        size_key: str = "size",
+        period_key: str = "period",
     ) -> "Community":
         """Create a new community from the dict data."""
         return Community(
@@ -51,4 +59,6 @@ class Community(Named):
             relationship_ids=d.get(relationships_key),
             covariate_ids=d.get(covariates_key),
             attributes=d.get(attributes_key),
+            size=d.get(size_key),
+            period=d.get(period_key),
         )

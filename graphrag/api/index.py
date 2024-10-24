@@ -24,7 +24,6 @@ async def build_index(
     config: GraphRagConfig,
     run_id: str = "",
     is_resume_run: bool = False,
-    is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[TableEmitterType] = [TableEmitterType.Parquet],  # noqa: B006
@@ -54,6 +53,8 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
+    is_update_run = bool(config.update_index_storage)
+
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
