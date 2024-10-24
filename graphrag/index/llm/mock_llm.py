@@ -2,9 +2,19 @@
 # Licensed under the MIT License
 """A mock LLM that returns the given responses."""
 
+from dataclasses import dataclass
+from typing import Any
+
 from fnllm import LLM, LLMInput, LLMOutput
 from fnllm.types.generics import THistoryEntry, TJsonModel, TModelParameters
 from typing_extensions import Unpack
+
+
+@dataclass
+class ContentResponse:
+    """A mock content-only response."""
+
+    content: str
 
 
 class MockChatLLM(LLM):
@@ -18,8 +28,8 @@ class MockChatLLM(LLM):
         self,
         prompt: str,
         **kwargs: Unpack[LLMInput[TJsonModel, THistoryEntry, TModelParameters]],
-    ) -> LLMOutput[str, TJsonModel, THistoryEntry]:
+    ) -> LLMOutput[Any, TJsonModel, THistoryEntry]:
         """Return the next response in the list."""
         response = self.responses[self.response_index]
         self.response_index += 1
-        return LLMOutput(output=response)
+        return LLMOutput(output=ContentResponse(content=response))
