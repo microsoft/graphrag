@@ -30,6 +30,6 @@ class MockChatLLM(LLM):
         **kwargs: Unpack[LLMInput[TJsonModel, THistoryEntry, TModelParameters]],
     ) -> LLMOutput[Any, TJsonModel, THistoryEntry]:
         """Return the next response in the list."""
-        response = self.responses[self.response_index]
+        response = self.responses[self.response_index % len(self.responses)]
         self.response_index += 1
         return LLMOutput(output=ContentResponse(content=response))

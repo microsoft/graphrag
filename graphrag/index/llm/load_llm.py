@@ -73,7 +73,7 @@ def load_llm(
             cache = cache.child(name)
 
         loader = loaders[llm_type]
-        return loader["load"](on_error, cache, config or {})
+        return loader["load"](on_error, cache, config)
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
@@ -116,21 +116,29 @@ def _create_error_handler(callbacks: VerbCallbacks) -> ErrorHandlerFn:
 def _load_openai_chat_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: dict[str, Any],
+    config: LLMParameters,
     azure=False,
 ):
     configuration = validator.validate_python({
-        **_get_base_config(config),
+        "api_key": config.api_key,
+        "api_base": config.api_base,
+        "api_version": config.api_version,
+        "organization": config.organization,
+        "max_retries": config.max_retries,
+        "request_timeout": config.request_timeout,
+        "concurrent_requests": config.concurrent_requests,
+        "encoding_model": config.encoding_model,
+        "audience": config.audience,
         "azure": azure,
-        "model": config.get("model", "gpt-4-turbo-preview"),
-        "deployment": config.get("deployment_name"),
+        "model": config.model,
+        "deployment": config.deployment_name,
         "chat_parameters": {
-            "frequency_penalty": config.get("frequency_penalty", 0),
-            "presence_penalty": config.get("presence_penalty", 0),
-            "top_p": config.get("top_p", 1),
-            "max_tokens": config.get("max_tokens", 4000),
-            "n": config.get("n"),
-            "temperature": config.get("temperature", 0.0),
+            "frequency_penalty": config.frequency_penalty,
+            "presence_penalty": config.presence_penalty,
+            "top_p": config.top_p,
+            "max_tokens": config.max_tokens or 4000,
+            "n": config.n,
+            "temperature": config.temperature,
         },
     })
     return _create_openai_chat_llm(
@@ -143,16 +151,22 @@ def _load_openai_chat_llm(
 def _load_openai_embeddings_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: dict[str, Any],
+    config: LLMParameters,
     azure=False,
 ):
     configuration = validator.validate_python({
-        **_get_base_config(config),
+        "api_key": config.api_key,
+        "api_base": config.api_base,
+        "api_version": config.api_version,
+        "organization": config.organization,
+        "max_retries": config.max_retries,
+        "request_timeout": config.request_timeout,
+        "concurrent_requests": config.concurrent_requests,
+        "encoding_model": config.encoding_model,
+        "audience": config.audience,
         "azure": azure,
-        "model": config.get(
-            "embeddings_model", config.get("model", "text-embedding-3-small")
-        ),
-        "deployment": config.get("deployment_name"),
+        "model": config.embeddings_model,
+        "deployment": config.deployment_name,
     })
     return _create_openai_embeddings_llm(
         configuration,
@@ -162,42 +176,24 @@ def _load_openai_embeddings_llm(
 
 
 def _load_azure_openai_chat_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: dict[str, Any]
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
 ):
     return _load_openai_chat_llm(on_error, cache, config, True)
 
 
 def _load_azure_openai_embeddings_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: dict[str, Any]
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
 ):
     return _load_openai_embeddings_llm(on_error, cache, config, True)
 
 
-def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
-    api_key = config.get("api_key")
-
-    return {
-        # Pass in all parameterized values
-        **config,
-        # Set default values
-        "api_key": api_key,
-        "api_base": config.get("api_base"),
-        "api_version": config.get("api_version"),
-        "organization": config.get("organization"),
-        "proxy": config.get("proxy"),
-        "max_retries": config.get("max_retries", 10),
-        "request_timeout": config.get("request_timeout", 60.0),
-        "model_supports_json": config.get("model_supports_json"),
-        "concurrent_requests": config.get("concurrent_requests", 4),
-        "encoding_model": config.get("encoding_model", "cl100k_base"),
-        "audience": config.get("audience"),
-    }
-
-
 def _load_static_response(
-    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: dict[str, Any]
+    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: LLMParameters
 ) -> OpenAITextChatLLMInstance:
-    return MockChatLLM(config.get("responses", []))
+    if config.responses is None:
+        msg = "Static response LLM requires responses"
+        raise ValueError(msg)
+    return MockChatLLM(config.responses or [])
 
 
 loaders = {
