@@ -11,7 +11,12 @@ import typer
 
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.logging.types import ReporterType
-from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, MIN_CHUNK_SIZE, N_SUBSET_MAX
+from graphrag.prompt_tune.defaults import (
+    MAX_TOKEN_COUNT,
+    MIN_CHUNK_SIZE,
+    N_SUBSET_MAX,
+    K,
+)
 from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
@@ -174,7 +179,7 @@ def _prompt_tune_cli(
         typer.Option(
             help="The maximum number of documents to select from each centroid when --selection-method=auto."
         ),
-    ] = 15,
+    ] = K,
     limit: Annotated[
         int,
         typer.Option(

@@ -11,6 +11,8 @@ DEFAULT_TASK = """
 Identify the relations and structure of the community of interest, specifically within the {domain} domain.
 """
 
+K = 15
 MAX_TOKEN_COUNT = 2000
 MIN_CHUNK_SIZE = 200
 N_SUBSET_MAX = 300
+MIN_CHUNK_OVERLAP = 0
