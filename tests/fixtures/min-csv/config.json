@@ -8,7 +8,7 @@
                 2500
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         },
         "create_base_entity_graph": {
             "row_range": [
@@ -34,10 +34,10 @@
         "create_final_relationships": {
             "row_range": [
                 1,
-                2500
+                6000
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         },
         "create_final_nodes": {
             "row_range": [
@@ -52,7 +52,7 @@
                 "level"
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         },
         "create_final_communities": {
             "row_range": [
@@ -60,7 +60,7 @@
                 2500
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         },
         "create_final_community_reports": {
             "row_range": [
@@ -90,7 +90,7 @@
                 "entity_ids"
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         },
         "create_final_documents": {
             "row_range": [
@@ -98,7 +98,7 @@
                 2500
             ],
             "subworkflows": 1,
-            "max_runtime": 100
+            "max_runtime": 150
         }
     },
     "query_config": [

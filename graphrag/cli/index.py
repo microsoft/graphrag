@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Main definition."""
+"""CLI implementation of index subcommand."""
 
 import asyncio
 import logging
@@ -17,16 +17,10 @@ from graphrag.config import (
     load_config,
     resolve_paths,
 )
+from graphrag.index.emit.types import TableEmitterType
+from graphrag.index.validate_config import validate_config_names
 from graphrag.logging import ProgressReporter, ReporterType, create_progress_reporter
 from graphrag.utils.cli import redact
-
-from .emit.types import TableEmitterType
-from .graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
-from .graph.extractors.community_reports.prompts import COMMUNITY_REPORT_PROMPT
-from .graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
-from .graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
-from .init_content import INIT_DOTENV, INIT_YAML
-from .validate_config import validate_config_names
 
 # Ignore warnings from numba
 warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
@@ -72,37 +66,32 @@ def _register_signal_handlers(reporter: ProgressReporter):
 
 
 def index_cli(
-    root_dir: str,
-    init: bool,
+    root_dir: Path,
     verbose: bool,
-    resume: str,
+    resume: str | None,
     update_index_id: str | None,
     memprofile: bool,
-    nocache: bool,
+    cache: bool,
     reporter: ReporterType,
-    config_filepath: str | None,
+    config_filepath: Path | None,
     emit: list[TableEmitterType],
-    dryrun: bool,
-    skip_validations: bool,
-    output_dir: str | None,
+    dry_run: bool,
+    skip_validation: bool,
+    output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
     progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
 
-    if init:
-        _initialize_project_at(root_dir, progress_reporter)
-        sys.exit(0)
-
-    root = Path(root_dir).resolve()
-    config = load_config(root, config_filepath)
-
-    config.storage.base_dir = output_dir or config.storage.base_dir
-    config.reporting.base_dir = output_dir or config.reporting.base_dir
+    config = load_config(root_dir, config_filepath)
+    config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
+    config.reporting.base_dir = (
+        str(output_dir) if output_dir else config.reporting.base_dir
+    )
     resolve_paths(config, run_id)
 
-    if nocache:
+    if not cache:
         config.cache.type = CacheType.none
 
     enabled_logging, log_path = enable_logging_with_config(config, verbose)
@@ -114,16 +103,16 @@ def index_cli(
             True,
         )
 
-    if skip_validations:
+    if skip_validation:
         validate_config_names(progress_reporter, config)
 
-    info(f"Starting pipeline run for: {run_id}, {dryrun=}", verbose)
+    info(f"Starting pipeline run for: {run_id}, {dry_run=}", verbose)
     info(
         f"Using default configuration: {redact(config.model_dump())}",
         verbose,
     )
 
-    if dryrun:
+    if dry_run:
         info("Dry run complete, exiting...", True)
         sys.exit(0)
 
@@ -153,54 +142,3 @@ def index_cli(
         success("All workflows completed successfully.", True)
 
     sys.exit(1 if encountered_errors else 0)
-
-
-def _initialize_project_at(path: str, reporter: ProgressReporter) -> None:
-    """Initialize the project at the given path."""
-    reporter.info(f"Initializing project at {path}")
-    root = Path(path)
-    if not root.exists():
-        root.mkdir(parents=True, exist_ok=True)
-
-    settings_yaml = root / "settings.yaml"
-    if settings_yaml.exists():
-        msg = f"Project already initialized at {root}"
-        raise ValueError(msg)
-
-    with settings_yaml.open("wb") as file:
-        file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
-
-    dotenv = root / ".env"
-    if not dotenv.exists():
-        with dotenv.open("wb") as file:
-            file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
-
-    prompts_dir = root / "prompts"
-    if not prompts_dir.exists():
-        prompts_dir.mkdir(parents=True, exist_ok=True)
-
-    entity_extraction = prompts_dir / "entity_extraction.txt"
-    if not entity_extraction.exists():
-        with entity_extraction.open("wb") as file:
-            file.write(
-                GRAPH_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
-            )
-
-    summarize_descriptions = prompts_dir / "summarize_descriptions.txt"
-    if not summarize_descriptions.exists():
-        with summarize_descriptions.open("wb") as file:
-            file.write(SUMMARIZE_PROMPT.encode(encoding="utf-8", errors="strict"))
-
-    claim_extraction = prompts_dir / "claim_extraction.txt"
-    if not claim_extraction.exists():
-        with claim_extraction.open("wb") as file:
-            file.write(
-                CLAIM_EXTRACTION_PROMPT.encode(encoding="utf-8", errors="strict")
-            )
-
-    community_report = prompts_dir / "community_report.txt"
-    if not community_report.exists():
-        with community_report.open("wb") as file:
-            file.write(
-                COMMUNITY_REPORT_PROMPT.encode(encoding="utf-8", errors="strict")
-            )

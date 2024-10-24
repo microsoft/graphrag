@@ -21,7 +21,7 @@
 				"poe", "query",
 				"--root", "<path_to_ragtest_root_demo>",
 				"--method", "global",
-				"What are the top themes in this story",
+				"--query", "What are the top themes in this story",
 			]
 		},
 		{
@@ -30,7 +30,7 @@
 			"request": "launch",
 			"module": "poetry",
 			"args": [
-				"poe", "prompt_tune",
+				"poe", "prompt-tune",
 				"--config",
 				"<path_to_ragtest_root_demo>/settings.yaml",
 			]

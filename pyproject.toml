@@ -2,7 +2,7 @@
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
 version = "0.3.6"
-description = ""
+description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
     "Andrés Morales Esquivel <andresmor@microsoft.com>",
@@ -27,6 +27,9 @@ packages = [{ include = "graphrag" }]
 
 [tool.poetry.urls]
 "Source" = "https://github.com/microsoft/graphrag"
+
+[tool.poetry.scripts]
+graphrag = "graphrag.cli.main:app"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -87,6 +90,7 @@ azure-identity = "^1.17.1"
 json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
+typer = "^0.12.5"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
@@ -132,9 +136,9 @@ test_integration = "pytest ./tests/integration"
 test_smoke = "pytest ./tests/smoke"
 test_notebook = "pytest ./tests/notebook"
 test_verbs = "pytest ./tests/verbs"
-index = "python -m graphrag.index"
-query = "python -m graphrag.query"
-prompt_tune = "python -m graphrag.prompt_tune"
+index = "python -m graphrag index"
+query = "python -m graphrag query"
+prompt_tune = "python -m graphrag prompt-tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
 

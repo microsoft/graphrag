@@ -52,23 +52,23 @@ Next we'll inject some required config variables:
 
 First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [variables documentation](config/overview.md).
 
-To initialize your workspace, let's first run the `graphrag.index --init` command.
-Since we have already configured a directory named \.ragtest` in the previous step, we can run the following command:
+To initialize your workspace, first run the `graphrag init` command.
+Since we have already configured a directory named `./ragtest` in the previous step, run the following command:
 
 ```sh
-python -m graphrag.index --init --root ./ragtest
+graphrag init --root ./ragtest
 ```
 
 This will create two files: `.env` and `settings.yaml` in the `./ragtest` directory.
 
 - `.env` contains the environment variables required to run the GraphRAG pipeline. If you inspect the file, you'll see a single environment variable defined,
-  `GRAPHRAG_API_KEY=<API_KEY>`. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key.
+  `GRAPHRAG_API_KEY=<API_KEY>`. This is the API key for the OpenAI API or Azure OpenAI endpoint. You can replace this with your own API key. If you are using another form of authentication (i.e. managed identity), please delete this file.
 - `settings.yaml` contains the settings for the pipeline. You can modify this file to change the settings for the pipeline.
   <br/>
 
 #### <ins>OpenAI and Azure OpenAI</ins>
 
-To run in OpenAI mode, just make sure to update the value of `GRAPHRAG_API_KEY` in the `.env` file with your OpenAI API key.
+If running in OpenAI mode, update the value of `GRAPHRAG_API_KEY` in the `.env` file with your OpenAI API key.
 
 #### <ins>Azure OpenAI</ins>
 
@@ -90,13 +90,13 @@ deployment_name: <azure_model_deployment_name>
 Finally we'll run the pipeline!
 
 ```sh
-python -m graphrag.index --root ./ragtest
+graphrag index --root ./ragtest
 ```
 
 ![pipeline executing from the CLI](img/pipeline-running.png)
 
 This process will take some time to run. This depends on the size of your input data, what model you're using, and the text chunk size being used (these can be configured in your `settings.yml` file).
-Once the pipeline is complete, you should see a new folder called `./ragtest/output/<timestamp>/artifacts` with a series of parquet files.
+Once the pipeline is complete, you should see a new folder called `./ragtest/output` with a series of parquet files.
 
 # Using the Query Engine
 
@@ -107,19 +107,19 @@ Now let's ask some questions using this dataset.
 Here is an example using Global search to ask a high-level question:
 
 ```sh
-python -m graphrag.query \
+graphrag query \
 --root ./ragtest \
 --method global \
-"What are the top themes in this story?"
+--query "What are the top themes in this story?"
 ```
 
 Here is an example using Local search to ask a more specific question about a particular character:
 
 ```sh
-python -m graphrag.query \
+graphrag query \
 --root ./ragtest \
 --method local \
-"Who is Scrooge, and what are his main relationships?"
+--query "Who is Scrooge and what are his main relationships?"
 ```
 
 Please refer to [Query Engine](query/overview.md) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.

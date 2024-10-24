@@ -11,8 +11,8 @@ from .models.graph_rag_config import GraphRagConfig
 
 
 def load_config(
-    root_dir: str | Path,
-    config_filepath: str | None = None,
+    root_dir: Path,
+    config_filepath: Path | None = None,
 ) -> GraphRagConfig:
     """Load configuration from a file or create a default configuration.
 
@@ -27,11 +27,11 @@ def load_config(
         If None, searches for config file in root and
         if not found creates a default configuration.
     """
-    root = Path(root_dir).resolve()
+    root = root_dir.resolve()
 
     # If user specified a config file path then it is required
     if config_filepath:
-        config_path = Path(config_filepath).resolve()
+        config_path = config_filepath.resolve()
         if not config_path.exists():
             msg = f"Specified Config file not found: {config_path}"
             raise FileNotFoundError(msg)

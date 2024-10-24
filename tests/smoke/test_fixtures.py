@@ -136,7 +136,7 @@ class TestIndexer:
             "index",
             "--verbose" if debug else None,
             "--root",
-            root.absolute().as_posix(),
+            root.resolve().as_posix(),
             "--reporter",
             "print",
         ]
@@ -229,11 +229,12 @@ class TestIndexer:
             "poe",
             "query",
             "--root",
-            root.absolute().as_posix(),
+            root.resolve().as_posix(),
             "--method",
             query_config["method"],
-            "--community_level",
+            "--community-level",
             str(query_config.get("community_level", 2)),
+            "--query",
             query_config["query"],
         ]
 
