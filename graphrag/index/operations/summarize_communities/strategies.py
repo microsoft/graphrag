@@ -7,7 +7,7 @@ import logging
 import traceback
 
 from datashaper import VerbCallbacks
-from fnllm import LLM
+from fnllm.openai import OpenAITextChatLLMInstance
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
@@ -42,7 +42,7 @@ async def run_graph_intelligence(
 
 
 async def _run_extractor(
-    llm: LLM,
+    llm: OpenAITextChatLLMInstance,
     community: str | int,
     input: str,
     level: int,
