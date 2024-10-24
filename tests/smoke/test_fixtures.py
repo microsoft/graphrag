@@ -137,7 +137,7 @@ class TestIndexer:
             "index",
             "--verbose" if debug else None,
             "--root",
-            str(PureWindowsPath(root.resolve())) if platform.system() == "Windows" else str(root.resolve()),
+            root.resolve().as_posix(),
             "--reporter",
             "print",
         ]
@@ -234,7 +234,7 @@ class TestIndexer:
             "poe",
             "query",
             "--root",
-            str(PureWindowsPath(root.resolve())) if platform.system() == "Windows" else str(root.resolve()),
+            root.resolve().as_posix(),
             "--method",
             query_config["method"],
             "--community-level",
