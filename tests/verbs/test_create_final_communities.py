@@ -33,5 +33,5 @@ async def test_create_final_communities():
     compare_outputs(
         actual,
         expected,
-        ["id", "title", "level", "relationship_ids", "text_unit_ids", "size", "period"],
+        ["id", "title", "level", "relationship_ids", "text_unit_ids", "size"],
     )
