@@ -202,9 +202,9 @@ def _prompt_tune_cli(
             help="The primary language used for inputs and outputs in graphrag prompts."
         ),
     ] = None,
-    no_entity_types: Annotated[
-        bool, typer.Option(help="Enable untyped entity extraction generation.")
-    ] = False,
+    discover_entity_types: Annotated[
+        bool, typer.Option(help="Discover and extract unspecified entity types.")
+    ] = True,
     output: Annotated[
         Path,
         typer.Option(
@@ -227,7 +227,7 @@ def _prompt_tune_cli(
             max_tokens=max_tokens,
             chunk_size=chunk_size,
             language=language,
-            skip_entity_types=no_entity_types,
+            discover_entity_types=discover_entity_types,
             output=output,
             n_subset_max=n_subset_max,
             k=k,

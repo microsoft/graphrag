@@ -47,7 +47,7 @@ async def generate_indexing_prompts(
     domain: str | None = None,
     language: str | None = None,
     max_tokens: int = MAX_TOKEN_COUNT,
-    skip_entity_types: bool = False,
+    discover_entity_types: bool = True,
     min_examples_required: PositiveInt = 2,
     n_subset_max: PositiveInt = 300,
     k: PositiveInt = 15,
@@ -114,7 +114,7 @@ async def generate_indexing_prompts(
     )
 
     entity_types = None
-    if not skip_entity_types:
+    if discover_entity_types:
         reporter.info("Generating entity types...")
         entity_types = await generate_entity_types(
             llm,

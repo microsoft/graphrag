@@ -28,7 +28,7 @@ async def prompt_tune(
     max_tokens: int,
     chunk_size: int,
     language: str | None,
-    skip_entity_types: bool,
+    discover_entity_types: bool,
     output: Path,
     n_subset_max: int,
     k: int,
@@ -46,7 +46,7 @@ async def prompt_tune(
     - max_tokens: The maximum number of tokens to use on entity extraction prompts.
     - chunk_size: The chunk token size to use.
     - language: The language to use for the prompts.
-    - skip_entity_types: Skip generating entity types.
+    - discover_entity_types: Generate entity types.
     - output: The output folder to store the prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
@@ -65,7 +65,7 @@ async def prompt_tune(
         domain=domain,
         language=language,
         max_tokens=max_tokens,
-        skip_entity_types=skip_entity_types,
+        discover_entity_types=discover_entity_types,
         min_examples_required=min_examples_required,
         n_subset_max=n_subset_max,
         k=k,
