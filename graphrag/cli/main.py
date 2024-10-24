@@ -113,7 +113,6 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
-
     index_cli(
         root_dir=root,
         verbose=verbose,
