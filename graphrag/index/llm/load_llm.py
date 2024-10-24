@@ -52,7 +52,6 @@ def load_llm(
 ) -> CompletionLLM:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
-    print(llm_type.value)
     if llm_type in loaders:
         if chat_only and not loaders[llm_type]["chat"]:
             msg = f"LLM type {llm_type} does not support chat"
