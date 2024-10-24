@@ -8,13 +8,14 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from graphrag.api.index import build_index
-from graphrag.api.prompt_tune import DocSelectionType, generate_indexing_prompts
+from graphrag.api.prompt_tune import generate_indexing_prompts
 from graphrag.api.query import (
     global_search,
     global_search_streaming,
     local_search,
     local_search_streaming,
 )
+from graphrag.prompt_tune.types import DocSelectionType
 
 __all__ = [  # noqa: RUF022
     # index API
@@ -25,6 +26,6 @@ __all__ = [  # noqa: RUF022
     "local_search",
     "local_search_streaming",
     # prompt tuning API
-    "generate_indexing_prompts",
     "DocSelectionType",
+    "generate_indexing_prompts",
 ]
