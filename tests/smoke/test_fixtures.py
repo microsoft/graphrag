@@ -4,11 +4,12 @@ import asyncio
 import json
 import logging
 import os
+import platform
 import shutil
 import subprocess
 from collections.abc import Callable
 from functools import wraps
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any, ClassVar
 from unittest import mock
 
@@ -136,7 +137,7 @@ class TestIndexer:
             "index",
             "--verbose" if debug else None,
             "--root",
-            f"{root.resolve()}",
+            PureWindowsPath(root) if platform.system() == "Windows" else root,
             "--reporter",
             "print",
         ]
@@ -233,7 +234,7 @@ class TestIndexer:
             "poe",
             "query",
             "--root",
-            f"{root.resolve()}",
+            PureWindowsPath(root) if platform.system() == "Windows" else root,
             "--method",
             query_config["method"],
             "--community-level",
