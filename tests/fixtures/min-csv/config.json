@@ -34,7 +34,7 @@
         "create_final_relationships": {
             "row_range": [
                 1,
-                2500
+                6000
             ],
             "subworkflows": 1,
             "max_runtime": 150
