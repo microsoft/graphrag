@@ -81,14 +81,6 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
-        "--update-index",
-        help="Update a given index run id, leveraging previous outputs and applying new indexes",
-        # Only required if config is not defined
-        required=False,
-        default=None,
-        type=str,
-    )
-    parser.add_argument(
         "--output",
         help="The output directory to use for the pipeline.",
         required=False,
@@ -97,15 +89,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.resume and args.update_index:
-        msg = "Cannot resume and update a run at the same time"
-        raise ValueError(msg)
-
     index_cli(
         root_dir=args.root,
         verbose=args.verbose,
         resume=args.resume,
-        update_index_id=args.update_index,
         memprofile=args.memprofile,
         nocache=args.nocache,
         reporter=args.reporter,
