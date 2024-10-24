@@ -59,11 +59,11 @@ from graphrag.index.workflows.default_workflows import (
     create_final_community_reports,
     create_final_covariates,
     create_final_documents,
-    create_final_embeddings,
     create_final_entities,
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
+    generate_text_embeddings,
 )
 
 log = logging.getLogger(__name__)
@@ -302,7 +302,7 @@ def _embeddings_workflows(
 ) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
-            name=create_final_embeddings,
+            name=generate_text_embeddings,
             config={
                 "text_embed": _get_embedding_settings(
                     settings.embeddings,

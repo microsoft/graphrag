@@ -9,7 +9,7 @@ from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
 
 log = logging.getLogger(__name__)
 
-workflow_name = "create_final_embeddings"
+workflow_name = "generate_text_embeddings"
 
 input = {
     "source": "workflow:create_final_documents",
@@ -38,7 +38,7 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_embeddings",
+            "verb": "generate_text_embeddings",
             "args": {
                 "base_text_embed": base_text_embed,
                 "embedded_fields": embedded_fields,

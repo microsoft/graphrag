@@ -17,8 +17,8 @@ from datashaper import (
 )
 
 from graphrag.index.cache import PipelineCache
-from graphrag.index.flows.create_final_embeddings import (
-    create_final_embeddings as create_final_embeddings_flow,
+from graphrag.index.flows.generate_text_embeddings import (
+    generate_text_embeddings as generate_text_embeddings_flow,
 )
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_required_input_table
@@ -26,8 +26,8 @@ from graphrag.index.utils.ds_util import get_required_input_table
 log = logging.getLogger(__name__)
 
 
-@verb(name="create_final_embeddings", treats_input_tables_as_immutable=True)
-async def create_final_embeddings(
+@verb(name="generate_text_embeddings", treats_input_tables_as_immutable=True)
+async def generate_text_embeddings(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -52,7 +52,7 @@ async def create_final_embeddings(
         pd.DataFrame, get_required_input_table(input, "community_reports").table
     )
 
-    output = await create_final_embeddings_flow(
+    output = await generate_text_embeddings_flow(
         final_documents=source,
         final_relationships=final_relationships,
         final_text_units=final_text_units,
