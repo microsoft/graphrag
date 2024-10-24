@@ -42,6 +42,17 @@ from .types import (
     LLMOutput,
     OnCacheActionFn,
 )
+from .ollama import (
+    OllamaChatLLM,
+    OllamaClientType,
+    OllamaCompletionLLM,
+    OllamaConfiguration,
+    OllamaEmbeddingsLLM,
+    create_ollama_chat_llm,
+    create_ollama_client,
+    create_ollama_completion_llm,
+    create_ollama_embedding_llm,
+)
 
 __all__ = [
     # LLM Types
@@ -79,6 +90,12 @@ __all__ = [
     "OpenAIConfiguration",
     "OpenAIEmbeddingsLLM",
     "RateLimitingLLM",
+    # Ollama
+    "OllamaChatLLM",
+    "OllamaClientType",
+    "OllamaCompletionLLM",
+    "OllamaConfiguration",
+    "OllamaEmbeddingsLLM",
     # Errors
     "RetriesExhaustedError",
     "TpmRpmLLMLimiter",
@@ -86,6 +103,10 @@ __all__ = [
     "create_openai_client",
     "create_openai_completion_llm",
     "create_openai_embedding_llm",
+    "create_ollama_chat_llm",
+    "create_ollama_client",
+    "create_ollama_completion_llm",
+    "create_ollama_embedding_llm",
     # Limiters
     "create_tpm_rpm_limiters",
 ]

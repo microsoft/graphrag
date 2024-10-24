@@ -91,6 +91,7 @@ json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.12.5"
+ollama = "^0.3.3"
 
 mkdocs-typer = "^0.0.3"
 [tool.poetry.group.dev.dependencies]

@@ -15,19 +15,20 @@ from graphrag.llm.types import (
 )
 from graphrag.llm.utils import get_completion_llm_args
 
-from .openai_configuration import OpenAIConfiguration
-from .types import OpenAIClientTypes
+from .ollama_configuration import OllamaConfiguration
+from .types import OllamaClientType
+
 
 log = logging.getLogger(__name__)
 
 
-class OpenAICompletionLLM(BaseLLM[CompletionInput, CompletionOutput]):
+class OllamaCompletionLLM(BaseLLM[CompletionInput, CompletionOutput]):
     """A text-completion based LLM."""
 
-    _client: OpenAIClientTypes
-    _configuration: OpenAIConfiguration
+    _client: OllamaClientType
+    _configuration: OllamaConfiguration
 
-    def __init__(self, client: OpenAIClientTypes, configuration: OpenAIConfiguration):
+    def __init__(self, client: OllamaClientType, configuration: OllamaConfiguration):
         self.client = client
         self.configuration = configuration
 
@@ -39,5 +40,5 @@ class OpenAICompletionLLM(BaseLLM[CompletionInput, CompletionOutput]):
         args = get_completion_llm_args(
             kwargs.get("model_parameters"), self.configuration
         )
-        completion = await self.client.completions.create(prompt=input, **args)
-        return completion.choices[0].text
+        completion = await self.client.generate(prompt=input, **args)
+        return completion["response"]

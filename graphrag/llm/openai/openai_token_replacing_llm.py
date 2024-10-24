@@ -14,7 +14,7 @@ from graphrag.llm.types import (
     LLMOutput,
 )
 
-from .utils import perform_variable_replacements
+from graphrag.llm.utils import perform_variable_replacements
 
 
 class OpenAITokenReplacingLLM(LLM[CompletionInput, CompletionOutput]):
