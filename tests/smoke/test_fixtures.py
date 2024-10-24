@@ -4,12 +4,11 @@ import asyncio
 import json
 import logging
 import os
-import platform
 import shutil
 import subprocess
 from collections.abc import Callable
 from functools import wraps
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 from typing import Any, ClassVar
 from unittest import mock
 
