@@ -65,7 +65,7 @@ def _index_cli(
         ),
     ] = None,
     root: Annotated[
-        str,
+        Path,
         typer.Option(
             help="The project root directory.",
             exists=True,
@@ -73,7 +73,7 @@ def _index_cli(
             writable=True,
             resolve_path=True,
         ),
-    ] = ".",  # set default to current directory
+    ] = Path(),  # set default to current directory
     verbose: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with verbose logging")
     ] = False,
@@ -124,7 +124,7 @@ def _index_cli(
         raise ValueError(msg)
 
     index_cli(
-        root_dir=Path(root),
+        root_dir=root,
         verbose=verbose,
         resume=resume,
         update_index_id=update_index,
@@ -257,7 +257,7 @@ def _query_cli(
         ),
     ] = None,
     root: Annotated[
-        str,
+        Path,
         typer.Option(
             help="The project root directory.",
             exists=True,
@@ -265,7 +265,7 @@ def _query_cli(
             writable=True,
             resolve_path=True,
         ),
-    ] = ".",  # set default to current directory
+    ] = Path(),  # set default to current directory
     community_level: Annotated[
         int,
         typer.Option(
@@ -288,7 +288,7 @@ def _query_cli(
             run_local_search(
                 config_filepath=config,
                 data_dir=data,
-                root_dir=Path(root),
+                root_dir=root,
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
@@ -298,7 +298,7 @@ def _query_cli(
             run_global_search(
                 config_filepath=config,
                 data_dir=data,
-                root_dir=Path(root),
+                root_dir=root,
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
