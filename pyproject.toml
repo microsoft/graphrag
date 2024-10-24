@@ -93,7 +93,7 @@ future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.12.5"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.6.0"
+coverage = "^7.6.4"
 ipykernel = "^6.29.4"
 jupyter = "^1.1.1"
 nbconvert = "^7.16.3"
