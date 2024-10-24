@@ -39,7 +39,18 @@ async def _inject_workflow_data_dependencies(
     log.info("dependencies for %s: %s", workflow.name, deps)
     for id in deps:
         workflow_id = f"workflow:{id}"
-        table = await _load_table_from_storage(f"{id}.parquet", storage)
+        try:
+            table = await _load_table_from_storage(f"{id}.parquet", storage)
+        except ValueError:
+            # our workflows now allow transient tables, and we avoid putting those in primary storage
+            # however, we need to keep the table in the dependency list for proper execution order
+            # this allows us to catch missing table errors but emit a warning for pipeline users who may genuinely have an error (which we expect to be very rare)
+            # todo: this issue will resolve itself if we remove DataShaper completely
+            log.warning(
+                "Dependency table %s not found in storage: it may be a runtime-only in-memory table. If you see further errors, this may be an actual problem.",
+                id,
+            )
+            table = pd.DataFrame()
         workflow.add_table(workflow_id, table)
 
 

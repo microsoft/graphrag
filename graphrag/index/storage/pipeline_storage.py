@@ -76,3 +76,7 @@ class PipelineStorage(metaclass=ABCMeta):
     @abstractmethod
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child storage instance."""
+
+    @abstractmethod
+    def keys(self) -> list[str]:
+        """List all keys in the storage."""

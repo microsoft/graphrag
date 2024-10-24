@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add runtime-only storage option."
+}
