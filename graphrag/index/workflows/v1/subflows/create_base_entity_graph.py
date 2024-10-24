@@ -5,12 +5,10 @@
 
 from typing import Any, cast
 
-import pandas as pd
 from datashaper import (
     AsyncType,
     Table,
     VerbCallbacks,
-    VerbInput,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
@@ -27,10 +25,10 @@ from graphrag.index.storage import PipelineStorage
     treats_input_tables_as_immutable=True,
 )
 async def create_base_entity_graph(
-    input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
+    runtime_storage: PipelineStorage,
     text_column: str,
     id_column: str,
     clustering_strategy: dict[str, Any],
@@ -48,10 +46,10 @@ async def create_base_entity_graph(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to create the base entity graph."""
-    source = cast(pd.DataFrame, input.get_input())
+    text_units = await runtime_storage.get("base_text_units")
 
     output = await create_base_entity_graph_flow(
-        source,
+        text_units,
         callbacks,
         cache,
         storage,

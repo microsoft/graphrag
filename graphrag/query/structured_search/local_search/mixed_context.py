@@ -141,7 +141,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             query=query,
             text_embedding_vectorstore=self.entity_text_embeddings,
             text_embedder=self.text_embedder,
-            all_entities=list(self.entities.values()),
+            all_entities_dict=self.entities,
             embedding_vectorstore_key=self.embedding_vectorstore_key,
             include_entity_names=include_entity_names,
             exclude_entity_names=exclude_entity_names,
@@ -206,13 +206,13 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context.append(str(local_context))
             final_context_data = {**final_context_data, **local_context_data}
 
-        # build text unit context
         text_unit_tokens = max(int(max_tokens * text_unit_prop), 0)
         text_unit_context, text_unit_context_data = self._build_text_unit_context(
             selected_entities=selected_entities,
             max_tokens=text_unit_tokens,
             return_candidate_context=return_candidate_context,
         )
+
         if text_unit_context.strip() != "":
             final_context.append(text_unit_context)
             final_context_data = {**final_context_data, **text_unit_context_data}
@@ -312,34 +312,32 @@ class LocalSearchMixedContext(LocalContextBuilder):
         """Rank matching text units and add them to the context window until it hits the max_tokens limit."""
         if not selected_entities or not self.text_units:
             return ("", {context_name.lower(): pd.DataFrame()})
-
         selected_text_units = []
         text_unit_ids_set = set()
 
+        unit_info_list = []
+        relationship_values = list(self.relationships.values())
+
         for index, entity in enumerate(selected_entities):
+            # get matching relationships
+            entity_relationships = [
+                rel
+                for rel in relationship_values
+                if rel.source == entity.title or rel.target == entity.title
+            ]
+
             for text_id in entity.text_unit_ids or []:
                 if text_id not in text_unit_ids_set and text_id in self.text_units:
-                    text_unit_ids_set.add(text_id)
                     selected_unit = deepcopy(self.text_units[text_id])
                     num_relationships = count_relationships(
-                        selected_unit, entity, self.relationships
+                        entity_relationships, selected_unit
                     )
-                    if selected_unit.attributes is None:
-                        selected_unit.attributes = {}
-                    selected_unit.attributes["entity_order"] = index
-                    selected_unit.attributes["num_relationships"] = num_relationships
-                    selected_text_units.append(selected_unit)
+                    unit_info_list.append((selected_unit, index, num_relationships))
 
-        selected_text_units.sort(
-            key=lambda x: (
-                x.attributes["entity_order"],
-                -x.attributes["num_relationships"],
-            )
-        )
+        # sort by entity_order and the number of relationships desc
+        unit_info_list.sort(key=lambda x: (x[1], -x[2]))
 
-        for unit in selected_text_units:
-            unit.attributes.pop("entity_order", None)
-            unit.attributes.pop("num_relationships", None)
+        selected_text_units = [unit[0] for unit in unit_info_list]
 
         context_text, context_data = build_text_unit_context(
             text_units=selected_text_units,
@@ -484,7 +482,6 @@ class LocalSearchMixedContext(LocalContextBuilder):
                         final_context_data[key] = candidate_df
                     else:
                         final_context_data[key]["in_context"] = True
-
         else:
             for key in final_context_data:
                 final_context_data[key]["in_context"] = True

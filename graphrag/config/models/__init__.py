@@ -8,6 +8,7 @@ from .chunking_config import ChunkingConfig
 from .claim_extraction_config import ClaimExtractionConfig
 from .cluster_graph_config import ClusterGraphConfig
 from .community_reports_config import CommunityReportsConfig
+from .drift_config import DRIFTSearchConfig
 from .embed_graph_config import EmbedGraphConfig
 from .entity_extraction_config import EntityExtractionConfig
 from .global_search_config import GlobalSearchConfig
@@ -30,6 +31,7 @@ __all__ = [
     "ClaimExtractionConfig",
     "ClusterGraphConfig",
     "CommunityReportsConfig",
+    "DRIFTSearchConfig",
     "EmbedGraphConfig",
     "EntityExtractionConfig",
     "GlobalSearchConfig",
