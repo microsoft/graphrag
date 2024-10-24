@@ -7,7 +7,7 @@
 from dataclasses import dataclass as dc_dataclass
 from dataclasses import field
 
-from .cache import PipelineCache
+from .cache.pipeline_cache import PipelineCache
 from .storage.pipeline_storage import PipelineStorage
 
 

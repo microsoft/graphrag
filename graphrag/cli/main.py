@@ -11,13 +11,10 @@ import typer
 
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.logging.types import ReporterType
-from graphrag.prompt_tune.generator.defaults import MAX_TOKEN_COUNT
-
-# from graphrag.prompt_tune.loader.input import MIN_CHUNK_SIZE
+from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, MIN_CHUNK_SIZE, N_SUBSET_MAX
 from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
-MIN_CHUNK_SIZE = 200
 
 app = typer.Typer(
     help="GraphRAG: A graph-based retrieval-augmented generation (RAG) system.",
@@ -171,7 +168,7 @@ def _prompt_tune_cli(
         typer.Option(
             help="The number of text chunks to embed when --selection-method=auto."
         ),
-    ] = 300,
+    ] = N_SUBSET_MAX,
     k: Annotated[
         int,
         typer.Option(

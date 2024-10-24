@@ -17,6 +17,7 @@ from pydantic import PositiveInt, validate_call
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.logging.print_progress import PrintProgressReporter
+from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
 )
@@ -26,7 +27,6 @@ from graphrag.prompt_tune.generator.community_report_summarization import (
 from graphrag.prompt_tune.generator.community_reporter_role import (
     generate_community_reporter_role,
 )
-from graphrag.prompt_tune.generator.defaults import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.generator.domain import generate_domain
 from graphrag.prompt_tune.generator.entity_extraction_prompt import (
     create_entity_extraction_prompt,

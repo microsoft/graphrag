@@ -11,8 +11,8 @@ from collections.abc import AsyncIterable
 from pathlib import Path
 from typing import cast
 
+import pandas as pd
 from datashaper import WorkflowCallbacks
-from pandas import DataFrame
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.index.cache.pipeline_cache import PipelineCache
@@ -51,8 +51,8 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
+from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
-from graphrag.logging.types import ProgressReporter
 from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ log = logging.getLogger(__name__)
 async def run_pipeline_with_config(
     config_or_path: PipelineConfig | str,
     workflows: list[PipelineWorkflowReference] | None = None,
-    dataset: DataFrame | None = None,
+    dataset: pd.DataFrame | None = None,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
@@ -166,7 +166,7 @@ async def run_pipeline_with_config(
 
 async def run_pipeline(
     workflows: list[PipelineWorkflowReference],
-    dataset: DataFrame,
+    dataset: pd.DataFrame,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,

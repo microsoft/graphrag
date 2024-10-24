@@ -17,7 +17,7 @@ from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging.types import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 from graphrag.vector_stores.factory import VectorStoreType
 
 
