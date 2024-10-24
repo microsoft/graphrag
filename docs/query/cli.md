@@ -3,15 +3,15 @@
 The GraphRAG query CLI allows for no-code usage of the GraphRAG Query engine.
 
 ```bash
-python -m graphrag.query --config <config_file.yml> --data <path-to-data> --community_level <comunit-level> --response_type <response-type> --method <"local"|"global"> <query>
+graphrag query --config <config_file.yml> --data <path-to-data> --community-level <comunit-level> --response-type <response-type> --method <"local"|"global"> <query>
 ```
 
 ## CLI Arguments
 
 - `--config <config_file.yml>` - The configuration yaml file to use when running the query. If this is used, then none of the environment-variables below will apply.
 - `--data <path-to-data>` - Folder containing the `.parquet` output files from running the Indexer.
-- `--community_level <community-level>` - Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2
-- `--response_type <response-type>` - Free form text describing the response type and format, can be anything, e.g. `Multiple Paragraphs`, `Single Paragraph`, `Single Sentence`, `List of 3-7 Points`, `Single Page`, `Multi-Page Report`. Default: `Multiple Paragraphs`.
+- `--community-level <community-level>` - Community level in the Leiden community hierarchy from which we will load the community reports higher value means we use reports on smaller communities. Default: 2
+- `--response-type <response-type>` - Free form text describing the response type and format, can be anything, e.g. `Multiple Paragraphs`, `Single Paragraph`, `Single Sentence`, `List of 3-7 Points`, `Single Page`, `Multi-Page Report`. Default: `Multiple Paragraphs`.
 - `--method <"local"|"global">` - Method to use to answer the query, one of local or global. For more information check [Overview](overview.md)
 - `--streaming` - Stream back the LLM response
 

@@ -12,8 +12,8 @@ from graphrag.index import (
     PipelineWorkflowConfig,
     create_pipeline_config,
 )
-from graphrag.index.run.utils import _create_run_context
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.index.context import PipelineRunContext
+from graphrag.index.run.utils import create_run_context
 
 pd.set_option("display.max_columns", None)
 
@@ -60,7 +60,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
 async def get_workflow_output(
     input_tables: dict[str, pd.DataFrame],
     schema: dict,
-    storage: PipelineStorage | None = None,
+    context: PipelineRunContext | None = None,
 ) -> pd.DataFrame:
     """Pass in the input tables, the schema, and the output name"""
 
@@ -70,9 +70,9 @@ async def get_workflow_output(
         input_tables=input_tables,
     )
 
-    context = _create_run_context(storage, None, None)
+    run_context = context or create_run_context(None, None, None)
 
-    await workflow.run(context=context)
+    await workflow.run(context=run_context)
 
     # if there's only one output, it is the default here, no name required
     return cast(pd.DataFrame, workflow.output())
