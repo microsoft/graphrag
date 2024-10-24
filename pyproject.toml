@@ -60,7 +60,7 @@ aiofiles = "^24.1.0"
 # LLM
 openai = "^1.51.2"
 nltk = "3.9.1"
-tiktoken = "^0.7.0"
+tiktoken = "^0.8.0"
 
 # Data-Sci
 numpy = "^1.25.2"
