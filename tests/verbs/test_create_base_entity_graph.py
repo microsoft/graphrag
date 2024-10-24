@@ -5,7 +5,7 @@ import networkx as nx
 import pytest
 
 from graphrag.config.enums import LLMType
-from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.v1.create_base_entity_graph import (
     build_steps,
     workflow_name,
@@ -55,7 +55,10 @@ async def test_create_base_entity_graph():
     ])
     expected = load_expected(workflow_name)
 
-    storage = MemoryPipelineStorage()
+    context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_text_units", input_tables["workflow:create_base_text_units"]
+    )
 
     config = get_config_for_workflow(workflow_name)
     config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
@@ -68,7 +71,7 @@ async def test_create_base_entity_graph():
         {
             "steps": steps,
         },
-        storage=storage,
+        context=context,
     )
 
     assert len(actual.columns) == len(
@@ -88,7 +91,7 @@ async def test_create_base_entity_graph():
     nodes = list(actual_graph_0.nodes(data=True))
     assert nodes[0][1]["description"] == "Company_A is a test company"
 
-    assert len(storage.keys()) == 0, "Storage should be empty"
+    assert len(context.storage.keys()) == 0, "Storage should be empty"
 
 
 async def test_create_base_entity_graph_with_embeddings():
@@ -96,6 +99,11 @@ async def test_create_base_entity_graph_with_embeddings():
         "workflow:create_base_text_units",
     ])
     expected = load_expected(workflow_name)
+
+    context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_text_units", input_tables["workflow:create_base_text_units"]
+    )
 
     config = get_config_for_workflow(workflow_name)
 
@@ -110,6 +118,7 @@ async def test_create_base_entity_graph_with_embeddings():
         {
             "steps": steps,
         },
+        context=context,
     )
 
     assert (
@@ -123,7 +132,10 @@ async def test_create_base_entity_graph_with_snapshots():
         "workflow:create_base_text_units",
     ])
 
-    storage = MemoryPipelineStorage()
+    context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_text_units", input_tables["workflow:create_base_text_units"]
+    )
 
     config = get_config_for_workflow(workflow_name)
 
@@ -140,10 +152,10 @@ async def test_create_base_entity_graph_with_snapshots():
         {
             "steps": steps,
         },
-        storage=storage,
+        context=context,
     )
 
-    assert storage.keys() == [
+    assert context.storage.keys() == [
         "raw_extracted_entities.json",
         "merged_graph.graphml",
         "summarized_graph.graphml",
@@ -156,6 +168,11 @@ async def test_create_base_entity_graph_missing_llm_throws():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])
+
+    context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_text_units", input_tables["workflow:create_base_text_units"]
+    )
 
     config = get_config_for_workflow(workflow_name)
 
@@ -170,4 +187,5 @@ async def test_create_base_entity_graph_missing_llm_throws():
             {
                 "steps": steps,
             },
+            context=context,
         )
