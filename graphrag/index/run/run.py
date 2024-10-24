@@ -42,9 +42,10 @@ from graphrag.index.run.workflow import (
 )
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
-
-# Register all verbs
-from graphrag.index.update.dataframes import get_delta_docs, update_dataframe_outputs
+from graphrag.index.update.incremental_index import (
+    get_delta_docs,
+    update_dataframe_outputs,
+)
 from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,
