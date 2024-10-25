@@ -9,6 +9,7 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from fnllm import LLMEvents
+from fnllm.caching import Cache as LLMCache
 from fnllm.openai import (
     OpenAIConfig,
     OpenAIEmbeddingsLLMInstance,
@@ -25,7 +26,6 @@ from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
-    from fnllm.caching import Cache as LLMCache
 
     from graphrag.config.models.llm_parameters import LLMParameters
     from graphrag.index.cache import PipelineCache
@@ -53,6 +53,47 @@ class GraphRagLLMEvents(LLMEvents):
         self._on_error(error, traceback, arguments)
 
 
+class GraphRagLLMCache(LLMCache):
+    """A cache for the pipeline."""
+
+    def __init__(self, cache: PipelineCache):
+        self._cache = cache
+
+    async def has(self, key: str) -> bool:
+        """Check if the cache has a value."""
+        return await self._cache.has(key)
+
+    async def get(self, key: str) -> Any | None:
+        """Retrieve a value from the cache."""
+        return await self._cache.get(key)
+
+    async def set(
+        self, key: str, value: Any, metadata: dict[str, Any] | None = None
+    ) -> None:
+        """Write a value into the cache."""
+        await self._cache.set(key, value, metadata)
+
+    async def remove(self, key: str) -> None:
+        """Remove a value from the cache."""
+        await self._cache.delete(key)
+
+    async def clear(self) -> None:
+        """Clear the cache."""
+        await self._cache.clear()
+
+    def child(self, key: str):
+        """Create a child cache."""
+        child_cache = self._cache.child(key)
+        return GraphRagLLMCache(child_cache)
+
+
+def create_cache(cache: PipelineCache | None, name: str) -> LLMCache | None:
+    """Create an LLM cache from a pipeline cache."""
+    if cache is None:
+        return None
+    return GraphRagLLMCache(cache).child(name)
+
+
 def load_llm(
     name: str,
     config: LLMParameters,
@@ -69,11 +110,9 @@ def load_llm(
         if chat_only and not loaders[llm_type]["chat"]:
             msg = f"LLM type {llm_type} does not support chat"
             raise ValueError(msg)
-        if cache is not None:
-            cache = cache.child(name)
 
         loader = loaders[llm_type]
-        return loader["load"](on_error, cache, config)
+        return loader["load"](on_error, create_cache(cache, name), config)
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
