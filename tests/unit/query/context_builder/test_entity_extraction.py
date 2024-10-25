@@ -3,14 +3,14 @@
 
 from typing import Any
 
-from graphrag.model import Entity
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
 from graphrag.query.llm.base import BaseTextEmbedding
-from graphrag.vector_stores import (
+from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,

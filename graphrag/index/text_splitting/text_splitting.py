@@ -14,7 +14,7 @@ from typing import Any, Literal, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.index.utils import num_tokens_from_string
+from graphrag.index.utils.tokens import num_tokens_from_string
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]

@@ -5,7 +5,9 @@
 
 from pathlib import Path
 
-from graphrag.prompt_tune.template import ENTITY_SUMMARIZATION_PROMPT
+from graphrag.prompt_tune.template.entity_summarization import (
+    ENTITY_SUMMARIZATION_PROMPT,
+)
 
 ENTITY_SUMMARIZATION_FILENAME = "summarize_descriptions.txt"
 

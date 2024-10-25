@@ -3,7 +3,7 @@
 
 """Cache functions for the GraphRAG update module."""
 
-from graphrag.index.cache import load_cache
+from graphrag.index.cache.load_cache import load_cache
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import (
     PipelineCacheConfigTypes,

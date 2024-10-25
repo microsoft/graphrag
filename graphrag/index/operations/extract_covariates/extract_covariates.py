@@ -14,7 +14,7 @@ from datashaper import (
     derive_from_rows,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 from .typing import Covariate, CovariateExtractStrategy, ExtractClaimsStrategyType
 

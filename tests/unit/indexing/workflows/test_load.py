@@ -4,7 +4,7 @@ import unittest
 
 import pytest
 
-from graphrag.index.config import PipelineWorkflowReference
+from graphrag.index.config.pipeline import PipelineWorkflowReference
 from graphrag.index.errors import UnknownWorkflowError
 from graphrag.index.workflows.load import create_workflow, load_workflows
 

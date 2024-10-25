@@ -8,7 +8,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.operations.split_text import split_text
 from graphrag.index.operations.unpack_graph import unpack_graph

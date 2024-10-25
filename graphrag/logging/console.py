@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from .types import StatusLogger
+from .base import StatusLogger
 
 
 class ConsoleReporter(StatusLogger):

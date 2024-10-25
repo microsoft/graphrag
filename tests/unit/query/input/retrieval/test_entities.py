@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.model import Entity
+from graphrag.model.entity import Entity
 from graphrag.query.input.retrieval.entities import (
     get_entity_by_id,
     get_entity_by_key,

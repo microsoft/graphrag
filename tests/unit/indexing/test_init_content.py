@@ -6,10 +6,8 @@ from typing import Any, cast
 
 import yaml
 
-from graphrag.config import (
-    GraphRagConfig,
-    create_graphrag_config,
-)
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.init_content import INIT_YAML
 
 

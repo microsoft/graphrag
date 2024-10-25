@@ -8,7 +8,8 @@ from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
-from graphrag.logging import ConsoleReporter, StatusLogger
+from graphrag.logging.base import StatusLogger
+from graphrag.logging.console import ConsoleReporter
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 

@@ -5,7 +5,7 @@ import os
 
 import pandas as pd
 
-from graphrag.index import run_pipeline_with_config
+from graphrag.index.run import run_pipeline_with_config
 
 pipeline_file = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "./pipeline.yml"

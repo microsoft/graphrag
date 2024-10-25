@@ -15,7 +15,7 @@ from datashaper import (
 )
 
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.index.utils import gen_md5_hash
+from graphrag.index.utils.hashing import gen_md5_hash
 
 
 def create_base_text_units(

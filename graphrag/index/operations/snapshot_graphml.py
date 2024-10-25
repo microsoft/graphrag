@@ -5,7 +5,7 @@
 
 import networkx as nx
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def snapshot_graphml(

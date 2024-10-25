@@ -6,9 +6,10 @@ from typing import Any
 
 from datashaper import NoopWorkflowCallbacks, Progress
 
-from graphrag.index import run_pipeline_with_config
-from graphrag.index.cache import InMemoryCache, PipelineCache
-from graphrag.index.storage import MemoryPipelineStorage
+from graphrag.index.cache.memory_pipeline_cache import InMemoryCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.run import run_pipeline_with_config
+from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 
 
 async def main():

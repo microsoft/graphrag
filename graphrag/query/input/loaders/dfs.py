@@ -5,15 +5,13 @@
 
 import pandas as pd
 
-from graphrag.model import (
-    Community,
-    CommunityReport,
-    Covariate,
-    Document,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.document import Document
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.input.loaders.utils import (
     to_list,
     to_optional_dict,
@@ -23,7 +21,7 @@ from graphrag.query.input.loaders.utils import (
     to_optional_str,
     to_str,
 )
-from graphrag.vector_stores import BaseVectorStore, VectorStoreDocument
+from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 
 
 def read_entities(

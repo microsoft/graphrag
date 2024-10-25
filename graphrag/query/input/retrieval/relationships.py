@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import Entity, Relationship
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
 
 
 def get_in_network_relationships(

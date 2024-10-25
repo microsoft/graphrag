@@ -6,10 +6,10 @@
 from datashaper import VerbCallbacks
 
 import graphrag.config.defaults as defs
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
-from graphrag.index.llm import load_llm
-from graphrag.index.text_splitting import (
+from graphrag.index.llm.load_llm import load_llm
+from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     TextSplitter,
     TokenTextSplitter,

@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.entity import Entity
 
 
 def get_candidate_communities(

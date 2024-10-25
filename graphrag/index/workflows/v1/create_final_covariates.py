@@ -7,7 +7,7 @@ from datashaper import (
     AsyncType,
 )
 
-from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_final_covariates"
 

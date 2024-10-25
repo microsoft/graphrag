@@ -11,15 +11,15 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config import (
-    CacheType,
-    enable_logging_with_config,
-    load_config,
-    resolve_paths,
-)
+from graphrag.config.enums import CacheType
+from graphrag.config.load_config import load_config
+from graphrag.config.logging import enable_logging_with_config
+from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logging import ProgressReporter, ReporterType, create_progress_reporter
+from graphrag.logging.base import ProgressReporter
+from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.types import ReporterType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba

@@ -14,7 +14,7 @@ import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_config import DRIFTSearchConfig
-from graphrag.model import CommunityReport
+from graphrag.model.community_report import CommunityReport
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens

@@ -3,7 +3,7 @@
 
 """Null Progress Reporter."""
 
-from .types import Progress, ProgressReporter
+from .base import Progress, ProgressReporter
 
 
 class NullProgressReporter(ProgressReporter):

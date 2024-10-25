@@ -8,7 +8,7 @@ import nltk
 from datashaper import VerbCallbacks
 from nltk.corpus import words
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 from .typing import Document, EntityExtractionResult, EntityTypes, StrategyConfig
 

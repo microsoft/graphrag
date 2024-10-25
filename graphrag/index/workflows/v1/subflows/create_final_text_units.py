@@ -15,11 +15,11 @@ from datashaper import (
     verb,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units as create_final_text_units_flow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
 

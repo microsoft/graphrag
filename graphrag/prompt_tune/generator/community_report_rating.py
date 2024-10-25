@@ -4,7 +4,7 @@
 # Licensed under the MIT License
 
 from graphrag.llm.types.llm_types import CompletionLLM
-from graphrag.prompt_tune.prompt import (
+from graphrag.prompt_tune.prompt.community_report_rating import (
     GENERATE_REPORT_RATING_PROMPT,
 )
 

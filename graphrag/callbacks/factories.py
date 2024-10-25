@@ -8,8 +8,8 @@ from typing import cast
 
 from datashaper import WorkflowCallbacks
 
-from graphrag.config import ReportingType
-from graphrag.index.config import (
+from graphrag.config.enums import ReportingType
+from graphrag.index.config.reporting import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
     PipelineReportingConfig,

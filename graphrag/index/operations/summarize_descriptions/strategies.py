@@ -5,9 +5,9 @@
 
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
-from graphrag.index.llm import load_llm
+from graphrag.index.llm.load_llm import load_llm
 from graphrag.llm import CompletionLLM
 
 from .typing import (

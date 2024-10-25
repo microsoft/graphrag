@@ -14,7 +14,7 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_documents import (
     create_final_documents as create_final_documents_flow,
 )

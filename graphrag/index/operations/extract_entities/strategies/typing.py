@@ -10,7 +10,7 @@ from typing import Any
 import networkx as nx
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 ExtractedEntity = dict[str, Any]
 StrategyConfig = dict[str, Any]

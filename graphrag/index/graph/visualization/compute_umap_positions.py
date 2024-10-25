@@ -3,11 +3,9 @@
 
 """A module containing compute_umap_positions and visualize_embedding method definition."""
 
-import graspologic as gc
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import umap
 
 from .typing import NodePosition
 
@@ -61,6 +59,9 @@ def compute_umap_positions(
     random_state: int = 86,
 ) -> list[NodePosition]:
     """Project embedding vectors down to 2D/3D using UMAP."""
+    # NOTE: This import is done here to reduce the initial import time of the module
+    import umap
+
     embedding_positions = umap.UMAP(
         min_dist=min_dist,
         n_neighbors=n_neighbors,
@@ -105,6 +106,9 @@ def visualize_embedding(
     umap_positions: list[dict],
 ):
     """Project embedding down to 2D using UMAP and visualize."""
+    # NOTE: This import is done here to reduce the initial import time of the module
+    import graspologic as gc
+
     # rendering
     plt.clf()
     figure = plt.gcf()

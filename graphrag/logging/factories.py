@@ -3,13 +3,11 @@
 
 """Factory functions for creating loggers."""
 
+from .base import ProgressReporter
 from .null_progress import NullProgressReporter
 from .print_progress import PrintProgressReporter
 from .rich_progress import RichProgressReporter
-from .types import (
-    ProgressReporter,
-    ReporterType,
-)
+from .types import ReporterType
 
 
 def create_progress_reporter(

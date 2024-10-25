@@ -13,7 +13,7 @@ from graphrag.index.config.storage import (
     PipelineFileStorageConfig,
     PipelineStorageConfigTypes,
 )
-from graphrag.index.storage import load_storage
+from graphrag.index.storage.load_storage import load_storage
 from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)

@@ -20,9 +20,9 @@ Before running auto tuning, ensure you have already initialized your workspace w
 You can run the main script from the command line with various options:
 
 ```bash
-graphrag prompt-tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit LIMIT] [--language LANGUAGE] \
+graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selection-method METHOD] [--limit LIMIT] [--language LANGUAGE] \
 [--max-tokens MAX_TOKENS] [--chunk-size CHUNK_SIZE] [--n-subset-max N_SUBSET_MAX] [--k K] \
-[--min-examples-required MIN_EXAMPLES_REQUIRED] [--no-entity-types] [--output OUTPUT]
+[--min-examples-required MIN_EXAMPLES_REQUIRED] [--discover-entity-types] [--output OUTPUT]
 ```
 
 ## Command-Line Options
@@ -49,7 +49,7 @@ graphrag prompt-tune [--root ROOT] [--domain DOMAIN]  [--method METHOD] [--limit
 
 - `--min-examples-required` (optional): The minimum number of examples required for entity extraction prompts. Default is 2.
 
-- `--no-entity-types` (optional): Use untyped entity extraction generation. We recommend using this when your data covers a lot of topics or it is highly randomized.
+- `--discover-entity-types` (optional): Allow the LLM to discover and extract entities automatically. We recommend using this when your data covers a lot of topics or it is highly randomized.
 
 - `--output` (optional): The folder to save the generated prompts. Default is "prompts".
 

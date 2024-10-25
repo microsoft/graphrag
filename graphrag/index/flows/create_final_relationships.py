@@ -10,7 +10,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.compute_edge_combined_degree import (
     compute_edge_combined_degree,
 )
