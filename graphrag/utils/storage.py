@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 
 def _create_storage(
-    config: PipelineStorageConfigTypes | None, root_dir: str
+    config: PipelineStorageConfigTypes | None, root_dir: Path
 ) -> PipelineStorage:
     """Create the storage for the pipeline.
 
@@ -37,7 +37,7 @@ def _create_storage(
         The pipeline storage.
     """
     return load_storage(
-        config or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
+        config or PipelineFileStorageConfig(base_dir=str(root_dir / "output"))
     )
 
 

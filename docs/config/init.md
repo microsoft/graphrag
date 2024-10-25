@@ -1,22 +1,21 @@
 # Configuring GraphRAG Indexing
 
-To start using GraphRAG, you need to configure the system. The `init` command is the easiest way to get started. It will create a `.env` and `settings.yaml` files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.
+To start using GraphRAG, you must generate a configuration file. The `init` command is the easiest way to get started. It will create a `.env` and `settings.yaml` files in the specified directory with the necessary configuration settings. It will also output the default LLM prompts used by GraphRAG.
 
 ## Usage
 
 ```sh
-python -m graphrag.index [--init] [--root PATH]
+graphrag init [--root PATH]
 ```
 
 ## Options
 
-- `--init` - Initialize the directory with the necessary configuration files.
-- `--root PATH` - The root directory to initialize. Default is the current directory.
+- `--root PATH` - The project root directory to initialize graphrag at. Default is the current directory.
 
 ## Example
 
 ```sh
-python -m graphrag.index --init --root ./ragtest
+graphrag init --root ./ragtest
 ```
 
 ## Output

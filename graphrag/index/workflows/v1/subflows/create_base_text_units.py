@@ -17,12 +17,14 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.index.flows.create_base_text_units import (
     create_base_text_units as create_base_text_units_flow,
 )
+from graphrag.index.storage import PipelineStorage
 
 
 @verb(name="create_base_text_units", treats_input_tables_as_immutable=True)
-def create_base_text_units(
+async def create_base_text_units(
     input: VerbInput,
     callbacks: VerbCallbacks,
+    runtime_storage: PipelineStorage,
     chunk_column_name: str,
     n_tokens_column_name: str,
     chunk_by_columns: list[str],
@@ -41,9 +43,11 @@ def create_base_text_units(
         chunk_strategy=chunk_strategy,
     )
 
+    await runtime_storage.set("base_text_units", output)
+
     return create_verb_result(
         cast(
             Table,
-            output,
+            pd.DataFrame(),
         )
     )

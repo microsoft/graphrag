@@ -10,7 +10,7 @@ from typing import Any
 from datashaper import Progress
 
 
-class ReporterType(Enum):
+class ReporterType(str, Enum):
     """The type of reporter to use."""
 
     RICH = "rich"
