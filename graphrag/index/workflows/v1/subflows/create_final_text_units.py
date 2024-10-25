@@ -8,14 +8,12 @@ from typing import cast
 import pandas as pd
 from datashaper import (
     Table,
-    VerbCallbacks,
     VerbInput,
     VerbResult,
     create_verb_result,
     verb,
 )
 
-from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units as create_final_text_units_flow,
 )
@@ -26,10 +24,7 @@ from graphrag.index.utils.ds_util import get_named_input_table, get_required_inp
 @verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
 async def create_final_text_units(
     input: VerbInput,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
     runtime_storage: PipelineStorage,
-    text_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform the text units."""
@@ -45,14 +40,11 @@ async def create_final_text_units(
     if final_covariates:
         final_covariates = cast(pd.DataFrame, final_covariates.table)
 
-    output = await create_final_text_units_flow(
+    output = create_final_text_units_flow(
         text_units,
         final_entities,
         final_relationships,
         final_covariates,
-        callbacks,
-        cache,
-        text_text_embed=text_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

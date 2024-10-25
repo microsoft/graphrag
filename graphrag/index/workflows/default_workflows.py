@@ -67,7 +67,13 @@ from .v1.create_final_text_units import (
 from .v1.create_final_text_units import (
     workflow_name as create_final_text_units,
 )
+from .v1.generate_text_embeddings import (
+    build_steps as build_generate_text_embeddings_steps,
+)
 
+from .v1.generate_text_embeddings import (
+    workflow_name as generate_text_embeddings,
+)
 
 default_workflows: WorkflowDefinitions = {
     create_base_entity_graph: build_create_base_entity_graph_steps,
@@ -80,4 +86,5 @@ default_workflows: WorkflowDefinitions = {
     create_final_covariates: build_create_final_covariates_steps,
     create_final_entities: build_create_final_entities_steps,
     create_final_communities: build_create_final_communities_steps,
+    generate_text_embeddings: build_generate_text_embeddings_steps,
 }

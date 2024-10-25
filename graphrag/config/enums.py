@@ -86,6 +86,7 @@ class TextEmbeddingTarget(str, Enum):
 
     all = "all"
     required = "required"
+    none = "none"
 
     def __repr__(self):
         """Get a string representation."""

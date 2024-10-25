@@ -19,10 +19,6 @@ def build_steps(
     * `workflow:create_final_entities`
     * `workflow:create_final_communities`
     """
-    base_text_embed = config.get("text_embed", {})
-    text_unit_text_embed_config = config.get("text_unit_text_embed", base_text_embed)
-
-    skip_text_unit_embedding = config.get("skip_text_unit_embedding", False)
     covariates_enabled = config.get("covariates_enabled", False)
 
     input = {
@@ -37,11 +33,7 @@ def build_steps(
     return [
         {
             "verb": "create_final_text_units",
-            "args": {
-                "text_text_embed": text_unit_text_embed_config
-                if not skip_text_unit_embedding
-                else None,
-            },
+            "args": {},
             "input": input,
         },
     ]
