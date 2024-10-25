@@ -1,0 +1,24 @@
+
+# Setup reporting however you'd like
+reporting:
+  type: console
+
+# Setup storage however you'd like
+storage:
+  type: memory
+
+# Setup cache however you'd like
+cache: 
+  type: memory
+
+# Just a simple workflow
+workflows:
+
+  # This is an anonymous workflow, it doesn't have a name
+  - steps:
+
+    # Unpack the nodes from the graph
+    - verb: fill
+      args:
+        to: filled_column
+        value: "Filled Value"

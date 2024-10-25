@@ -46,6 +46,10 @@
 ⚠️ 警告：GraphRAG索引可能是一项开销极大的操作！请在实践前阅读所有文档，以便了解所涉及的过程和成本；并参照实际负载能力，从小规模运行批次开始！
 
 ## 试用指南
+
+### [分支新增]实操流程指南阅读顺序（2024.10.25ver）：
+
+
 ### 快速开始
 
 要开始使用 GraphRAG 系统，我们建议您尝试[Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator)包，它提供了用户友好型 Azure 资源的端到端体验。
