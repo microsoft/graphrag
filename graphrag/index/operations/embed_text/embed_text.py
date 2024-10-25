@@ -95,7 +95,7 @@ async def embed_text(
             strategy,
             vector_store,
             vector_store_workflow_config,
-            vector_store_config.get("store_in_table", False),
+            vector_store_config.get("store_in_table", True),
         )
 
     return await _text_embed_in_memory(
@@ -132,7 +132,7 @@ async def _text_embed_with_vector_store(
     strategy: dict[str, Any],
     vector_store: BaseVectorStore,
     vector_store_config: dict,
-    store_in_table: bool = False,
+    store_in_table: bool = True,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)

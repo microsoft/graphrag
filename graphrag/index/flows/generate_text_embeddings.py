@@ -121,11 +121,11 @@ async def _run_and_snapshot_embeddings(
     base_text_embed: dict,
 ) -> None:
     """All the steps to generate single embedding."""
-    log.info(filename)
     if base_text_embed:
         new_vector_store = {
             "title_column": column_to_embed,
             "collection_name": filename,
+            "store_in_table": True,
         }
         
         base_text_embed["strategy"]["vector_store"].update(new_vector_store)
