@@ -2106,17 +2106,17 @@ files = [
 
 [[package]]
 name = "lancedb"
-version = "0.13.0"
+version = "0.14.0"
 description = "lancedb"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "lancedb-0.13.0-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:3fb1b1e5b03d287d1f6969887fe17c8fa9501ab0da57dd6788181610028d8e37"},
-    {file = "lancedb-0.13.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:0f970c46af46c3fb59979f155f9bc1e2c2d597f23286708b5880e20fa9000c2c"},
-    {file = "lancedb-0.13.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:045ce4b59bdd3df6aa538366ed8f20a5abfcf120fca7b0389e119dbdc4d08d6d"},
-    {file = "lancedb-0.13.0-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:7ae7be0f39a854e62838deae679f77ca1d39ea64a932a5e5e7f417cd5aece103"},
-    {file = "lancedb-0.13.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:4cdd18788d79f200baaa3003a69779e18fb9e661b4b9e658898e906dca0b60ab"},
-    {file = "lancedb-0.13.0-cp38-abi3-win_amd64.whl", hash = "sha256:ebba3ebdd37d6d4555de8a9366068db38971eaf7c996c5ad1dd14ff36caf9b94"},
+    {file = "lancedb-0.14.0-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:6b970e6f503464918789d76c43d70d93d85ef82dc6dbec9685483c60c36ba491"},
+    {file = "lancedb-0.14.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:e28932882a0f893a295b391b05b0af9d95918e2cd10d6d58991e3282c06c0bd3"},
+    {file = "lancedb-0.14.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:faef7fe76af9373656660e2e652e3d330735e84680649f0d74c558a0460f0d55"},
+    {file = "lancedb-0.14.0-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:777e2d483f13814a2a5624c6824936f400aeab52b961853f1352cc21564f7d6f"},
+    {file = "lancedb-0.14.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:31fec6c05edf657542d91c396b895b2ba02f0e6114188ea9bb03a3112907a71e"},
+    {file = "lancedb-0.14.0-cp38-abi3-win_amd64.whl", hash = "sha256:a4e758156554e2a2a493ad569278d8f938e209f38f215924ed1c5f368d1f402e"},
 ]
 
 [package.dependencies]
@@ -2126,7 +2126,7 @@ deprecation = "*"
 overrides = ">=0.7"
 packaging = "*"
 pydantic = ">=1.10"
-pylance = "0.17.0"
+pylance = "0.18.2"
 requests = ">=2.31.0"
 retry = ">=0.9.2"
 tqdm = ">=4.27.0"
@@ -3641,17 +3641,17 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "pylance"
-version = "0.17.0"
+version = "0.18.2"
 description = "python wrapper for Lance columnar format"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pylance-0.17.0-cp39-abi3-macosx_10_15_x86_64.whl", hash = "sha256:c4e6932da3a15a445992af53cd69eeccd8b2f9fa06a2081673b578ca99443772"},
-    {file = "pylance-0.17.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:2e848fbb480d6678ffafa0ca02d2caad00ccc35547ff6dfebd0507b44bc7e4f3"},
-    {file = "pylance-0.17.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c6da675fee3b5656c192dcf2f9acc7eb908e02561489459b0e64ef23171f2576"},
-    {file = "pylance-0.17.0-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:bb00848fe872144b45271545158cc6a918c52f76203c4f1f5906fa25bd712389"},
-    {file = "pylance-0.17.0-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:e7713bc10cc57f326e02d8f267de41ae8442c480c51cef658d20d45780a9e76a"},
-    {file = "pylance-0.17.0-cp39-abi3-win_amd64.whl", hash = "sha256:c2dbab52496356f194ff3c2b945d4186ca827e07903aad248c9204547db4a615"},
+    {file = "pylance-0.18.2-cp39-abi3-macosx_10_15_x86_64.whl", hash = "sha256:017422b058724dfbe8426c1ac42f0ede77324f3783e177cb4239dc034758b50b"},
+    {file = "pylance-0.18.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:c4c4049eb6a6075cef721a20dd28ccba6d89b66f13e8d20ef65a284ae1c02e30"},
+    {file = "pylance-0.18.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:89dcf2dadee940ea86ac0b3bf7ba81c68e9774a449d8de206bc60cdc8804b853"},
+    {file = "pylance-0.18.2-cp39-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:f37fb7ad0e53076c731014c210a45919f3b2620c967e2f62cf8b7c26fdc9aace"},
+    {file = "pylance-0.18.2-cp39-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:a913920f591d8404c46c74e3911fe0c29d47b923b9c3c7e521d3354c1663d812"},
+    {file = "pylance-0.18.2-cp39-abi3-win_amd64.whl", hash = "sha256:72796676d7647ba9f6e86531daf67880f5e69ba8f842e237ad0c1ca419c6378c"},
 ]
 
 [package.dependencies]
@@ -3660,9 +3660,11 @@ pyarrow = ">=12"
 
 [package.extras]
 benchmarks = ["pytest-benchmark"]
+cuvs-cu11 = ["cuvs-cu11", "pylibraft-cu11"]
+cuvs-cu12 = ["cuvs-cu12", "pylibraft-cu12"]
 dev = ["ruff (==0.4.1)"]
 ray = ["ray[data]"]
-tests = ["boto3", "datasets", "duckdb", "h5py (<3.11)", "ml-dtypes", "pandas", "pillow", "polars[pandas,pyarrow]", "pytest", "tensorflow", "tqdm"]
+tests = ["boto3", "datasets", "duckdb", "ml-dtypes", "pandas", "pillow", "polars[pandas,pyarrow]", "pytest", "tensorflow", "tqdm"]
 torch = ["torch"]
 
 [[package]]
@@ -4437,6 +4439,11 @@ files = [
     {file = "scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f60021ec1574e56632be2a36b946f8143bf4e5e6af4a06d85281adc22938e0dd"},
     {file = "scikit_learn-1.5.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:394397841449853c2290a32050382edaec3da89e35b3e03d6cc966aebc6a8ae6"},
     {file = "scikit_learn-1.5.2-cp312-cp312-win_amd64.whl", hash = "sha256:57cc1786cfd6bd118220a92ede80270132aa353647684efa385a74244a41e3b1"},
+    {file = "scikit_learn-1.5.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:e9a702e2de732bbb20d3bad29ebd77fc05a6b427dc49964300340e4c9328b3f5"},
+    {file = "scikit_learn-1.5.2-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:b0768ad641981f5d3a198430a1d31c3e044ed2e8a6f22166b4d546a5116d7908"},
+    {file = "scikit_learn-1.5.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:178ddd0a5cb0044464fc1bfc4cca5b1833bfc7bb022d70b05db8530da4bb3dd3"},
+    {file = "scikit_learn-1.5.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f7284ade780084d94505632241bf78c44ab3b6f1e8ccab3d2af58e0e950f9c12"},
+    {file = "scikit_learn-1.5.2-cp313-cp313-win_amd64.whl", hash = "sha256:b7b0f9a0b1040830d38c39b91b3a44e1b643f4b36e36567b80b7c6bd2202a27f"},
     {file = "scikit_learn-1.5.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:757c7d514ddb00ae249832fe87100d9c73c6ea91423802872d9e74970a0e40b9"},
     {file = "scikit_learn-1.5.2-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:52788f48b5d8bca5c0736c175fa6bdaab2ef00a8f536cda698db61bd89c551c1"},
     {file = "scikit_learn-1.5.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:643964678f4b5fbdc95cbf8aec638acc7aa70f5f79ee2cdad1eec3df4ba6ead8"},
@@ -5215,4 +5222,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "7f78e10fa0099c66763c74fd0846581bfd760fb466bc3479c166a613e4881a3a"
+content-hash = "308dee9e891bc0c73b5594ac842c4f29467764b75513cd618d9a3e50a2ab4a57"
