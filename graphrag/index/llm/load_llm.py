@@ -121,7 +121,7 @@ def _load_openai_chat_llm(
 ):
     configuration = validator.validate_python({
         "api_key": config.api_key,
-        "api_base": config.api_base,
+        "endpoint": config.api_base,
         "api_version": config.api_version,
         "organization": config.organization,
         "max_retries": config.max_retries,
@@ -156,7 +156,7 @@ def _load_openai_embeddings_llm(
 ):
     configuration = validator.validate_python({
         "api_key": config.api_key,
-        "api_base": config.api_base,
+        "endpoint": config.api_base,
         "api_version": config.api_version,
         "organization": config.organization,
         "max_retries": config.max_retries,
