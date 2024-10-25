@@ -167,11 +167,10 @@ class ClaimExtractor:
         )
 
         response = await self._llm(
-            self._extraction_prompt,
-            variables={
+            self._extraction_prompt.format(**{
                 self._input_text_key: doc,
                 **prompt_args,
-            },
+            })
         )
         results = response.output.content or ""
         claims = results.strip().removesuffix(completion_delimiter)

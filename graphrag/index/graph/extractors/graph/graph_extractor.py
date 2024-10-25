@@ -149,11 +149,10 @@ class GraphExtractor:
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
         response = await self._llm(
-            self._extraction_prompt,
-            variables={
+            self._extraction_prompt.format(**{
                 **prompt_variables,
                 self._input_text_key: text,
-            },
+            }),
         )
         results = response.output.content or ""
 

@@ -128,14 +128,13 @@ class SummarizeExtractor:
     ):
         """Summarize descriptions using the LLM."""
         response = await self._llm(
-            self._summarization_prompt,
-            name="summarize",
-            variables={
+            self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(items),
                 self._input_descriptions_key: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
-            },
+            }),
+            name="summarize",
             model_parameters={"max_tokens": self._max_summary_length},
         )
         # Calculate result

@@ -75,10 +75,11 @@ class CommunityReportsExtractor:
         output = None
         try:
             response = await self._llm(
-                self._extraction_prompt,
+                self._extraction_prompt.format(**{
+                    self._input_text_key: inputs[self._input_text_key]
+                }),
                 json=True,
                 name="create_community_report",
-                variables={self._input_text_key: inputs[self._input_text_key]},
                 json_model=CommunityReportResponse,
                 model_parameters={"max_tokens": self._max_report_length},
             )
