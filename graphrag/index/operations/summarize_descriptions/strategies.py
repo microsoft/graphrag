@@ -4,11 +4,13 @@
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
 from datashaper import VerbCallbacks
+from fnllm.openai import OpenAITextChatLLMInstance
+from pydantic import TypeAdapter
 
+from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
 from graphrag.index.llm import load_llm
-from graphrag.llm import CompletionLLM
 
 from .typing import (
     StrategyConfig,
@@ -24,16 +26,17 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("summarize_descriptions", llm_type, callbacks, cache, llm_config)
+    llm_config = TypeAdapter(LLMParameters).validate_python(args.get("llm", {}))
+    llm = load_llm(
+        "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
+    )
     return await run_summarize_descriptions(
         llm, described_items, descriptions, callbacks, args
     )
 
 
 async def run_summarize_descriptions(
-    llm: CompletionLLM,
+    llm: OpenAITextChatLLMInstance,
     items: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,

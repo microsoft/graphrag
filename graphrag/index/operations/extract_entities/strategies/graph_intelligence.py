@@ -4,8 +4,11 @@
 """A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
 
 from datashaper import VerbCallbacks
+from fnllm.openai import OpenAITextChatLLMInstance
+from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
+from graphrag.config.models import LLMParameters
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
 from graphrag.index.llm import load_llm
@@ -14,7 +17,6 @@ from graphrag.index.text_splitting import (
     TextSplitter,
     TokenTextSplitter,
 )
-from graphrag.llm import CompletionLLM
 
 from .typing import (
     Document,
@@ -32,14 +34,13 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("entity_extraction", llm_type, callbacks, cache, llm_config)
+    llm_config = TypeAdapter(LLMParameters).validate_python(args.get("llm", {}))
+    llm = load_llm("entity_extraction", llm_config, callbacks=callbacks, cache=cache)
     return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 
 
 async def run_extract_entities(
-    llm: CompletionLLM,
+    llm: OpenAITextChatLLMInstance,
     docs: list[Document],
     entity_types: EntityTypes,
     callbacks: VerbCallbacks | None,
