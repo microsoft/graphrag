@@ -11,7 +11,7 @@ from dataclasses import asdict
 from datashaper import MemoryProfile, Workflow, WorkflowRunResult
 
 from graphrag.index.context import PipelineRunStats
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
@@ -69,7 +69,3 @@ async def _write_workflow_stats(
         await _save_profiler_stats(
             storage, workflow.name, workflow_result.memory_profile
         )
-
-    log.debug(
-        "first row of %s => %s", workflow.name, workflow.output().iloc[0].to_json()
-    )

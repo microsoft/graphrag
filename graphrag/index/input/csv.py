@@ -11,9 +11,9 @@ from typing import cast
 import pandas as pd
 
 from graphrag.index.config import PipelineCSVInputConfig, PipelineInputConfig
-from graphrag.index.progress import ProgressReporter
 from graphrag.index.storage import PipelineStorage
 from graphrag.index.utils import gen_md5_hash
+from graphrag.logging import ProgressReporter
 
 log = logging.getLogger(__name__)
 

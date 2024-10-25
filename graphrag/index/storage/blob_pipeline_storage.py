@@ -13,9 +13,9 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
-from graphrag.index.progress import ProgressReporter
+from graphrag.logging import ProgressReporter
 
-from .typing import PipelineStorage
+from .pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
@@ -275,6 +275,11 @@ class BlobPipelineStorage(PipelineStorage):
             path,
             self._storage_account_blob_url,
         )
+
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        msg = "Blob storage does yet not support listing keys."
+        raise NotImplementedError(msg)
 
     def _keyname(self, key: str) -> str:
         """Get the key name."""

@@ -15,15 +15,13 @@ from datashaper import (
     WorkflowCallbacksManager,
 )
 
+from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.emit.table_emitter import TableEmitter
-from graphrag.index.progress.types import ProgressReporter
-from graphrag.index.reporting.progress_workflow_callbacks import (
-    ProgressWorkflowCallbacks,
-)
 from graphrag.index.run.profiling import _write_workflow_stats
-from graphrag.index.storage.typing import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
+from graphrag.logging import ProgressReporter
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)
@@ -41,7 +39,18 @@ async def _inject_workflow_data_dependencies(
     log.info("dependencies for %s: %s", workflow.name, deps)
     for id in deps:
         workflow_id = f"workflow:{id}"
-        table = await _load_table_from_storage(f"{id}.parquet", storage)
+        try:
+            table = await _load_table_from_storage(f"{id}.parquet", storage)
+        except ValueError:
+            # our workflows now allow transient tables, and we avoid putting those in primary storage
+            # however, we need to keep the table in the dependency list for proper execution order
+            # this allows us to catch missing table errors but emit a warning for pipeline users who may genuinely have an error (which we expect to be very rare)
+            # todo: this issue will resolve itself if we remove DataShaper completely
+            log.warning(
+                "Dependency table %s not found in storage: it may be a runtime-only in-memory table. If you see further errors, this may be an actual problem.",
+                id,
+            )
+            table = pd.DataFrame()
         workflow.add_table(workflow_id, table)
 
 
@@ -50,8 +59,12 @@ async def _emit_workflow_output(
 ) -> pd.DataFrame:
     """Emit the workflow output."""
     output = cast(pd.DataFrame, workflow.output())
-    for emitter in emitters:
-        await emitter.emit(workflow.name, output)
+    # only write the final output if it has content
+    # this is expressly designed to allow us to create
+    # workflows with side effects that don't produce a formal output to save
+    if not output.empty:
+        for emitter in emitters:
+            await emitter.emit(workflow.name, output)
     return output
 
 

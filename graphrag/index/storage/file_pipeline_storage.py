@@ -16,9 +16,9 @@ from aiofiles.os import remove
 from aiofiles.ospath import exists
 from datashaper import Progress
 
-from graphrag.index.progress import ProgressReporter
+from graphrag.logging import ProgressReporter
 
-from .typing import PipelineStorage
+from .pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
@@ -142,6 +142,10 @@ class FilePipelineStorage(PipelineStorage):
         if name is None:
             return self
         return FilePipelineStorage(str(Path(self._root_dir) / Path(name)))
+
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        return os.listdir(self._root_dir)
 
 
 def join_path(file_path: str, file_name: str) -> Path:
