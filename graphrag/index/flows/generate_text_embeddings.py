@@ -37,7 +37,7 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     embedded_fields: set[str],
-    base_text_embed: dict | None = None,
+    base_text_embed: dict,
 ) -> pd.DataFrame:
     """All the steps to generate all embeddings."""
     documents_embeddings = final_documents.loc[:, ["id", "raw_content"]]
@@ -118,10 +118,18 @@ async def _run_and_snapshot_embeddings(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    base_text_embed: dict | None = None,
+    base_text_embed: dict,
 ) -> None:
     """All the steps to generate single embedding."""
+    log.info(filename)
     if base_text_embed:
+        new_vector_store = {
+            "title_column": column_to_embed,
+            "collection_name": filename,
+        }
+        
+        base_text_embed["strategy"]["vector_store"].update(new_vector_store)
+        
         data["embedding"] = await embed_text(
             data,
             callbacks,
