@@ -95,7 +95,7 @@ async def _execute(
     async def embed(chunk: list[str]):
         async with semaphore:
             chunk_embeddings = await llm(chunk)
-            result = np.array(chunk_embeddings.output)
+            result = np.array(chunk_embeddings.output.embeddings)
             tick(1)
         return result
 
