@@ -27,6 +27,7 @@ from graphrag.index.storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
+
 async def generate_text_embeddings(
     final_documents: pd.DataFrame,
     final_relationships: pd.DataFrame,
@@ -56,45 +57,44 @@ async def generate_text_embeddings(
     embedding_param_map = {
         document_raw_content_embedding: {
             "data": documents_embeddings,
-            "column_to_embed":"raw_content",
+            "column_to_embed": "raw_content",
             "filename": "create_final_documents_raw_content_embeddings",
         },
-        relationship_description_embedding:{
+        relationship_description_embedding: {
             "data": relationships_embeddings,
-            "column_to_embed":"description",
+            "column_to_embed": "description",
             "filename": "create_final_relationships_description_embeddings",
         },
-        text_unit_text_embedding:{
+        text_unit_text_embedding: {
             "data": text_units_embeddings,
-            "column_to_embed":"text",
+            "column_to_embed": "text",
             "filename": "create_final_text_units_text_embeddings",
         },
-        entity_name_embedding:{
+        entity_name_embedding: {
             "data": entities_embeddings,
-            "column_to_embed":"name",
+            "column_to_embed": "name",
             "filename": "create_final_entities_name_embeddings",
         },
-        entity_description_embedding:{
+        entity_description_embedding: {
             "data": entities_embeddings,
-            "column_to_embed":"name_description",
+            "column_to_embed": "name_description",
             "filename": "create_final_entities_description_embeddings",
         },
-        community_title_embedding:{
+        community_title_embedding: {
             "data": community_reports_embeddings,
-            "column_to_embed":"title",
+            "column_to_embed": "title",
             "filename": "create_final_community_reports_title_embeddings",
         },
-        community_summary_embedding:{
+        community_summary_embedding: {
             "data": community_reports_embeddings,
-            "column_to_embed":"summary",
+            "column_to_embed": "summary",
             "filename": "create_final_community_reports_summary_embeddings",
         },
-        community_full_content_embedding:{
+        community_full_content_embedding: {
             "data": community_reports_embeddings,
-            "column_to_embed":"full_content",
+            "column_to_embed": "full_content",
             "filename": "create_final_community_reports_full_content_embeddings",
         },
-    
     }
 
     if base_text_embed:
@@ -105,7 +105,7 @@ async def generate_text_embeddings(
                 cache=cache,
                 storage=storage,
                 base_text_embed=base_text_embed,
-                **embedding_param_map[field]
+                **embedding_param_map[field],
             )
 
     return pd.DataFrame()
@@ -127,9 +127,9 @@ async def _run_and_snapshot_embeddings(
             "collection_name": filename,
             "store_in_table": True,
         }
-        
+
         base_text_embed["strategy"]["vector_store"].update(new_vector_store)
-        
+
         data["embedding"] = await embed_text(
             data,
             callbacks,

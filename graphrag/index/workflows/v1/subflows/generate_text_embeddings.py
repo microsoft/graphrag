@@ -33,7 +33,7 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     embedded_fields: set[str],
-    base_text_embed: dict | None = None,
+    base_text_embed: dict,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to generate embeddings."""
