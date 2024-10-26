@@ -47,6 +47,8 @@ class OllamaConfiguration(Hashable, LLMConfig):
     _keep_alive: int | None
     _stream: bool | None
 
+    # embedding
+    _truncate: bool | None
 
     # Retry Logic
     _max_retries: int | None
@@ -168,6 +170,7 @@ class OllamaConfiguration(Hashable, LLMConfig):
             "raw": self._raw,
             "keep_alive": self._keep_alive,
         }
+        self._truncate = lookup_bool("truncate")
 
     @property
     def api_key(self) -> str:
@@ -441,6 +444,15 @@ class OllamaConfiguration(Hashable, LLMConfig):
             }
         )
 
+    @property
+    def truncate(self):
+        """
+        truncates the end of each input to fit within context length.
+        Returns error if false and context length is exceeded.
+        Defaults to true
+        """
+        return self._truncate
+
     def lookup(self, name: str, default_value: Any = None) -> Any:
         """Lookup method definition."""
         return self._raw_config.get(name, default_value)
@@ -471,6 +483,17 @@ class OllamaConfiguration(Hashable, LLMConfig):
                 "options": self.options,
                 "stream": self.stream,
                 "keep_alive": self.keep_alive,
+            }
+        )
+
+    def get_embed_cache_args(self) -> dict:
+        """Get cache arguments for a embedding LLM."""
+        return non_none_value_key(
+            {
+                "model": self.model,
+                "options": self.options,
+                "keep_alive": self.keep_alive,
+                "truncate": self.truncate,
             }
         )
 

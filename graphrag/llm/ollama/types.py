@@ -3,6 +3,6 @@
 
 """A base class for OpenAI-based LLMs."""
 
-from ollama import AsyncClient
+from ollama import AsyncClient, Client
 
-OllamaClientType = AsyncClient
+OllamaClientType = AsyncClient | Client
