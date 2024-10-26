@@ -116,7 +116,7 @@ class OllamaConfiguration(Hashable, LLMConfig):
         self._mirostat = lookup_int("mirostat")
         self._mirostat_eta = lookup_float("mirostat_eta")
         self._mirostat_tau = lookup_float("mirostat_tau")
-        self._num_ctx = lookup_int("num_ctx")
+        self._num_ctx = lookup_int("max_tokens")
         self._repeat_last_n = lookup_int("repeat_last_n")
         self._repeat_penalty = lookup_float("repeat_penalty")
         self._frequency_penalty = lookup_float("frequency_penalty")

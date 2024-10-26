@@ -14,6 +14,7 @@ from graphrag.llm.types import (
     LLMInput,
     LLMOutput,
 )
+from graphrag.llm.utils import try_parse_json_object
 
 from .ollama_configuration import OllamaConfiguration
 from .types import OllamaClientType
@@ -39,7 +40,6 @@ class OllamaChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
     ) -> CompletionOutput | None:
         args = {
             **self.configuration.get_chat_cache_args(),
-            **(kwargs.get("model_parameters") or {}),
         }
         history = kwargs.get("history") or []
         messages = [
@@ -52,9 +52,39 @@ class OllamaChatLLM(BaseLLM[CompletionInput, CompletionOutput]):
         return completion["message"]["content"]
 
     async def _invoke_json(
-        self,
-        input: CompletionInput,
-        **kwargs: Unpack[LLMInput],
+            self,
+            input: CompletionInput,
+            **kwargs: Unpack[LLMInput],
     ) -> LLMOutput[CompletionOutput]:
         """Generate JSON output."""
-        pass
+        name = kwargs.get("name") or "unknown"
+        is_response_valid = kwargs.get("is_response_valid") or (lambda _x: True)
+
+        async def generate(
+                attempt: int | None = None,
+        ) -> LLMOutput[CompletionOutput]:
+            call_name = name if attempt is None else f"{name}@{attempt}"
+            result = await self._invoke(input, **{**kwargs, "name": call_name})
+            print("output:\n", result)
+            output, json_output = try_parse_json_object(result.output or "")
+
+            return LLMOutput[CompletionOutput](
+                output=output,
+                json=json_output,
+                history=result.history,
+            )
+
+        def is_valid(x: dict | None) -> bool:
+            return x is not None and is_response_valid(x)
+
+        result = await generate()
+        retry = 0
+        while not is_valid(result.json) and retry < _MAX_GENERATION_RETRIES:
+            result = await generate(retry)
+            retry += 1
+
+        if is_valid(result.json):
+            return result
+
+        error_msg = f"{FAILED_TO_CREATE_JSON_ERROR} - Faulty JSON: {result.json!s}"
+        raise RuntimeError(error_msg)
