@@ -2546,6 +2546,21 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-typer"
+version = "0.0.3"
+description = "An MkDocs extension to generate documentation for Typer command line applications"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mkdocs_typer-0.0.3-py3-none-any.whl", hash = "sha256:b2a9a44da590a7100114fde4de9123fedfea692d229379984db20ee3b3f12d7c"},
+    {file = "mkdocs_typer-0.0.3.tar.gz", hash = "sha256:4dd37f024190a82aaf0f6c984faafb15167d34eab7e29a6a85e61362423a4eb7"},
+]
+
+[package.dependencies]
+markdown = "==3.*"
+typer = "==0.*"
+
+[[package]]
 name = "msal"
 version = "1.31.0"
 description = "The Microsoft Authentication Library (MSAL) for Python library enables your app to access the Microsoft Cloud by supporting authentication of users with Microsoft Azure Active Directory accounts (AAD) and Microsoft Accounts (MSA) using industry standard OAuth2 and OpenID Connect."
@@ -5200,4 +5215,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "0bcb3b8ebe38153edddd48f8077ddf58e4628e7b714731a9fa48785288d206b9"
+content-hash = "7f78e10fa0099c66763c74fd0846581bfd760fb466bc3479c166a613e4881a3a"
