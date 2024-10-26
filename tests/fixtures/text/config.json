@@ -116,6 +116,14 @@
             ],
             "subworkflows": 1,
             "max_runtime": 150
+        },
+        "generate_text_embeddings": {
+            "row_range": [
+                1,
+                2500
+            ],
+            "subworkflows": 1,
+            "max_runtime": 150
         }
     },
     "query_config": [
