@@ -27,9 +27,9 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 ### CLI
 
 ```bash
-# Via Poetry
-poetry run poe cli --root <data_root> # default config mode
-poetry run poe cli --config your_pipeline.yml # custom config mode
+# Via uv
+uv run poe cli --root <data_root> # default config mode
+uv run poe cli --config your_pipeline.yml # custom config mode
 
 # Via Node
 yarn run:index --root <data_root> # default config mode

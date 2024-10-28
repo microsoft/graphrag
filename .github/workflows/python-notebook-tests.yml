@@ -51,7 +51,7 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
-              - 'poetry.lock'
+              - 'uv.lock'
               - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
@@ -75,4 +75,4 @@ jobs:
 
       - name: Notebook Test
         run: |
-          poetry run poe test_notebook
+          uv run poe test_notebook

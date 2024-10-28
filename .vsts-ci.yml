@@ -8,13 +8,6 @@ trigger:
     include:
       - main
 
-variables:
-  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
-  pythonVersion: "3.10"
-  poetryVersion: "1.6.1"
-  nodeVersion: "18.x"
-  artifactsFullFeedName: "Resilience/resilience_python"
-
 stages:
   - stage: Compliance
     dependsOn: []

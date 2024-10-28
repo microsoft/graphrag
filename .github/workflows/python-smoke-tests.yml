@@ -99,11 +99,11 @@ jobs:
 
       - name: Build
         run: |
-          poetry build
+          uv build
 
       - name: Verb Test
         run: |
-          poetry run poe test_verbs
+          uv run poe test_verbs
 
       - name: Install Azurite
         id: azuright
@@ -112,7 +112,7 @@ jobs:
       - name: Smoke Test
         if: steps.changes.outputs.python == 'true'
         run: |
-          poetry run poe test_smoke
+          uv run poe test_smoke
 
       - uses: actions/upload-artifact@v4
         if: always()

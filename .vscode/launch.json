@@ -6,7 +6,7 @@
 			"name": "Indexer",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "poetry",
+			"module": "uv",
 			"args": [
 				"poe", "index",
 				"--root", "<path_to_ragtest_root_demo>"
@@ -16,7 +16,7 @@
 			"name": "Query",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "poetry",
+			"module": "uv",
 			"args": [
 				"poe", "query",
 				"--root", "<path_to_ragtest_root_demo>",
@@ -28,7 +28,7 @@
 			"name": "Prompt Tuning",
 			"type": "debugpy",
 			"request": "launch",
-			"module": "poetry",
+			"module": "uv",
 			"args": [
 				"poe", "prompt-tune",
 				"--config",

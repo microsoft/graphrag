@@ -48,7 +48,7 @@ jobs:
           filters: |
             python:
               - 'graphrag/**/*'
-              - 'poetry.lock'
+              - 'uv.lock'
               - 'pyproject.toml'
               - '**/*.py'
               - '**/*.toml'
@@ -73,7 +73,7 @@ jobs:
 
       - name: Build
         run: |
-          poetry build
+          uv build
 
       - name: Install Azurite
         id: azuright
@@ -81,4 +81,4 @@ jobs:
 
       - name: Integration Test
         run: |
-          poetry run poe test_integration
+          uv run poe test_integration
