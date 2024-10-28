@@ -4,22 +4,22 @@ name = "graphrag"
 version = "0.3.6"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
-    {name ="Alonso Guevara Fernández", email="alonsog@microsoft.com"},
-    {name = "Andrés Morales Esquivel", email="andresmor@microsoft.com"},
-    {name = "Chris Trevino", email="chtrevin@microsoft.com"},
-    {name = "David Tittsworth", email="datittsw@microsoft.com"},
-    {name = "Dayenne de Souza", email="ddesouza@microsoft.com"},
-    {name = "Derek Worthen", email="deworthe@microsoft.com"},
-    {name = "Gaudy Blanco Meneses", email="gaudyb@microsoft.com"},
-    {name = "Ha Trinh", email="trinhha@microsoft.com"},
-    {name = "Jonathan Larson", email="jolarso@microsoft.com"},
-    {name = "Josh Bradley", email="joshbradley@microsoft.com"},
-    {name = "Kate Lytvynets", email="kalytv@microsoft.com"},
-    {name = "Kenny Zhang", email="zhangken@microsoft.com"},
-    { name ="Mónica Carvajal" },
-    {name = "Nathan Evans", email="naevans@microsoft.com"},
-    {name = "Rodrigo Racanicci", email="rracanicci@microsoft.com"},
-    {name = "Sarah Smith", email="smithsarah@microsoft.com"},
+    { name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com" },
+    { name = "Andrés Morales Esquivel", email = "andresmor@microsoft.com" },
+    { name = "Chris Trevino", email = "chtrevin@microsoft.com" },
+    { name = "David Tittsworth", email = "datittsw@microsoft.com" },
+    { name = "Dayenne de Souza", email = "ddesouza@microsoft.com" },
+    { name = "Derek Worthen", email = "deworthe@microsoft.com" },
+    { name = "Gaudy Blanco Meneses", email = "gaudyb@microsoft.com" },
+    { name = "Ha Trinh", email = "trinhha@microsoft.com" },
+    { name = "Jonathan Larson", email = "jolarso@microsoft.com" },
+    { name = "Josh Bradley", email = "joshbradley@microsoft.com" },
+    { name = "Kate Lytvynets", email = "kalytv@microsoft.com" },
+    { name = "Kenny Zhang", email = "zhangken@microsoft.com" },
+    { name = "Mónica Carvajal" },
+    { name = "Nathan Evans", email = "naevans@microsoft.com" },
+    { name = "Rodrigo Racanicci", email = "rracanicci@microsoft.com" },
+    { name = "Sarah Smith", email = "smithsarah@microsoft.com" },
 ]
 license = "MIT"
 readme = "README.md"
@@ -52,7 +52,7 @@ dependencies = [
     "azure-identity>=1.17.1",
     "json-repair>=0.30.0",
     "future>=1.0.0",
-    "typer>=0.12.5"
+    "typer>=0.12.5",
 ]
 requires-python = ">3.10,<3.13"
 
