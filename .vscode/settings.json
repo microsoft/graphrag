@@ -53,5 +53,5 @@
     "custom": true, // Enable the `custom` dictionary
     "internal-terms": true // Disable the `internal-terms` dictionary
   },
-	"ruff.configuration": "./ruff.toml"  
+	"ruff.configuration": "./ruff.toml"
 }

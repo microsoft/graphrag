@@ -80,6 +80,8 @@ async def create_final_community_reports(
         async_mode=async_mode,
         num_threads=num_threads,
     )
+    if len(community_reports) == 0:
+        return community_reports
 
     community_reports["id"] = community_reports["community"].apply(
         lambda _x: str(uuid4())

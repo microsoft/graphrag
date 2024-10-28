@@ -100,6 +100,6 @@ class LLMParameters(BaseModel):
         description="Whether to use concurrent requests for the LLM service.",
         default=defs.LLM_CONCURRENT_REQUESTS,
     )
-    responses: list[str] | None = Field(
+    responses: list[str | BaseModel] | None = Field(
         default=None, description="Static responses to use in mock mode."
     )

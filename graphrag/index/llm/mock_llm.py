@@ -3,10 +3,11 @@
 """A mock LLM that returns the given responses."""
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from fnllm import LLM, LLMInput, LLMOutput
 from fnllm.types.generics import THistoryEntry, TJsonModel, TModelParameters
+from pydantic import BaseModel
 from typing_extensions import Unpack
 
 
@@ -20,7 +21,7 @@ class ContentResponse:
 class MockChatLLM(LLM):
     """A mock LLM that returns the given responses."""
 
-    def __init__(self, responses: list[str]):
+    def __init__(self, responses: list[str | BaseModel], json: bool = False):
         self.responses = responses
         self.response_index = 0
 
@@ -32,4 +33,13 @@ class MockChatLLM(LLM):
         """Return the next response in the list."""
         response = self.responses[self.response_index % len(self.responses)]
         self.response_index += 1
-        return LLMOutput(output=ContentResponse(content=response))
+
+        parsed_json = response if isinstance(response, BaseModel) else None
+        response = (
+            response.model_dump_json() if isinstance(response, BaseModel) else response
+        )
+
+        return LLMOutput(
+            output=ContentResponse(content=response),
+            parsed_json=cast(TJsonModel, parsed_json),
+        )
