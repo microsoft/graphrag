@@ -74,10 +74,12 @@ class CommunityReportsExtractor:
         """Call method definition."""
         output = None
         try:
+            input_text = inputs[self._input_text_key]
+            prompt = self._extraction_prompt.replace(
+                "{" + self._input_text_key + "}", input_text
+            )
             response = await self._llm(
-                self._extraction_prompt.format(**{
-                    self._input_text_key: inputs[self._input_text_key]
-                }),
+                prompt,
                 json=True,
                 name="create_community_report",
                 json_model=CommunityReportResponse,
