@@ -1074,6 +1074,27 @@ files = [
 devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benchmark", "pytest-cache", "validictory"]
 
 [[package]]
+name = "fnllm"
+version = "0.0.5"
+description = "A function-based LLM protocol and wrapper."
+optional = false
+python-versions = "<4.0,>=3.10"
+files = [
+    {file = "fnllm-0.0.5-py3-none-any.whl", hash = "sha256:b3bad4df6a49c226f738f544bef547464630d5a1a2d7b6dbb76baae7759f553d"},
+    {file = "fnllm-0.0.5.tar.gz", hash = "sha256:b18543718642f3486e7f594f21183d9bbffb1df767aec45414104c126aa09f96"},
+]
+
+[package.dependencies]
+aiolimiter = ">=1.1.0,<2.0.0"
+httpx = ">=0.27.0,<0.28.0"
+pydantic = ">=2.8.2,<3.0.0"
+tenacity = ">=8.5.0,<9.0.0"
+
+[package.extras]
+azure = ["azure-identity (>=1.17.1,<2.0.0)", "azure-storage-blob (>=12.20.0,<13.0.0)"]
+openai = ["openai (>=1.35.12,<2.0.0)", "tiktoken (>=0.7.0,<0.8.0)"]
+
+[[package]]
 name = "fonttools"
 version = "4.54.1"
 description = "Tools to manipulate font files"
@@ -4716,6 +4737,21 @@ develop = ["colorama", "cython (>=3.0.10)", "cython (>=3.0.10,<4)", "flake8", "i
 docs = ["ipykernel", "jupyter-client", "matplotlib", "nbconvert", "nbformat", "numpydoc", "pandas-datareader", "sphinx"]
 
 [[package]]
+name = "tenacity"
+version = "8.5.0"
+description = "Retry code until it succeeds"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tenacity-8.5.0-py3-none-any.whl", hash = "sha256:b594c2a5945830c267ce6b79a166228323ed52718f30302c1359836112346687"},
+    {file = "tenacity-8.5.0.tar.gz", hash = "sha256:8bc6c0c8a09b31e6cad13c47afbed1a567518250a9a171418582ed8d9c20ca78"},
+]
+
+[package.extras]
+doc = ["reno", "sphinx"]
+test = ["pytest", "tornado (>=4.5)", "typeguard"]
+
+[[package]]
 name = "terminado"
 version = "0.18.1"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -5201,4 +5237,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "92cbe6de75e1d8b5a4f0879f6acb4a75d69f8529c93da5a96152006e1ce82d3b"
+content-hash = "3c1097c0f020c75941b1e53912a160d4a9702668728595d8298f2fab3854f7d9"
