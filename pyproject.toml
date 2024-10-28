@@ -1,35 +1,66 @@
-[tool.poetry]
+[project]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
 version = "0.3.6"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
-    "Alonso Guevara Fernández <alonsog@microsoft.com>",
-    "Andrés Morales Esquivel <andresmor@microsoft.com>",
-    "Chris Trevino <chtrevin@microsoft.com>",
-    "David Tittsworth <datittsw@microsoft.com>",
-    "Dayenne de Souza <ddesouza@microsoft.com>",
-    "Derek Worthen <deworthe@microsoft.com>",
-    "Gaudy Blanco Meneses <gaudyb@microsoft.com>",
-    "Ha Trinh <trinhha@microsoft.com>",
-    "Jonathan Larson <jolarso@microsoft.com>",
-    "Josh Bradley <joshbradley@microsoft.com>",
-    "Kate Lytvynets <kalytv@microsoft.com>",
-    "Kenny Zhang <zhangken@microsoft.com>",
-    "Mónica Carvajal",
-    "Nathan Evans <naevans@microsoft.com>",
-    "Rodrigo Racanicci <rracanicci@microsoft.com>",
-    "Sarah Smith <smithsarah@microsoft.com>",
+    {name ="Alonso Guevara Fernández", email="alonsog@microsoft.com"},
+    {name = "Andrés Morales Esquivel", email="andresmor@microsoft.com"},
+    {name = "Chris Trevino", email="chtrevin@microsoft.com"},
+    {name = "David Tittsworth", email="datittsw@microsoft.com"},
+    {name = "Dayenne de Souza", email="ddesouza@microsoft.com"},
+    {name = "Derek Worthen", email="deworthe@microsoft.com"},
+    {name = "Gaudy Blanco Meneses", email="gaudyb@microsoft.com"},
+    {name = "Ha Trinh", email="trinhha@microsoft.com"},
+    {name = "Jonathan Larson", email="jolarso@microsoft.com"},
+    {name = "Josh Bradley", email="joshbradley@microsoft.com"},
+    {name = "Kate Lytvynets", email="kalytv@microsoft.com"},
+    {name = "Kenny Zhang", email="zhangken@microsoft.com"},
+    { name ="Mónica Carvajal" },
+    {name = "Nathan Evans", email="naevans@microsoft.com"},
+    {name = "Rodrigo Racanicci", email="rracanicci@microsoft.com"},
+    {name = "Sarah Smith", email="smithsarah@microsoft.com"},
 ]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "graphrag" }]
+dependencies = [
+    "environs>=3.11.0",
+    "datashaper>=0.0.49",
+    "azure-search-documents>=11.4.0",
+    "lancedb>=0.13.0",
+    "aiolimiter>=1.1.0",
+    "aiofiles>=24.1.0",
+    "openai>=1.51.2",
+    "nltk==3.9.1",
+    "tiktoken==0.7.0",
+    "numpy>=1.25.2",
+    "graspologic>=3.4.1",
+    "networkx>=3",
+    "pandas>=2.2.3",
+    "matplotlib>=3.9.0",
+    "pyarrow>=15.0.0",
+    "umap-learn>=0.5.6",
+    "pyyaml>=6.0.2",
+    "pyaml-env>=1.2.1",
+    "python-dotenv>=1.0.0",
+    "tenacity>=9.0.0",
+    "pydantic>=1.8.2",
+    "rich>=13.6.0",
+    "devtools>=0.12.2",
+    "typing-extensions>=4.12.2",
+    "azure-storage-blob>=12.22.0",
+    "azure-identity>=1.17.1",
+    "json-repair>=0.30.0",
+    "future>=1.0.0",
+    "typer>=0.12.5"
+]
+requires-python = ">3.10,<3.13"
 
-[tool.poetry.urls]
-"Source" = "https://github.com/microsoft/graphrag"
-
-[tool.poetry.scripts]
+[project.scripts]
 graphrag = "graphrag.cli.main:app"
+
+[project.urls]
+"Source" = "https://github.com/microsoft/graphrag"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -44,76 +75,31 @@ format-jinja = """
     {%- endif -%}
 """
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.13"
-environs = "^11.0.0"
-datashaper = "^0.0.49"
-
-# Vector Stores
-azure-search-documents = "^11.4.0"
-lancedb = "^0.13.0"
-
-# Async IO
-aiolimiter = "^1.1.0"
-aiofiles = "^24.1.0"
-
-# LLM
-openai = "^1.51.2"
-nltk = "3.9.1"
-tiktoken = "^0.7.0"
-
-# Data-Sci
-numpy = "^1.25.2"
-graspologic = "^3.4.1"
-networkx = "^3"
-pandas = "^2.2.3"
-matplotlib = "^3.9.0"
-pyarrow = "^15.0.0"
-umap-learn = "^0.5.6"
-
-# Configuration
-pyyaml = "^6.0.2"
-pyaml-env = "^1.2.1"
-python-dotenv = "^1.0.0"
-
-# Network
-tenacity = "^9.0.0"
-
-pydantic = "^2.9.2"
-rich = "^13.6.0"
-devtools = "^0.12.2"
-typing-extensions = "^4.12.2"
-
-#Azure
-azure-storage-blob = "^12.22.0"
-azure-identity = "^1.17.1"
-json-repair = "^0.30.0"
-
-future = "^1.0.0" # Needed until graspologic fixes their dependency
-typer = "^0.12.5"
-
-mkdocs-typer = "^0.0.3"
-[tool.poetry.group.dev.dependencies]
-coverage = "^7.6.0"
-ipykernel = "^6.29.4"
-jupyter = "^1.1.1"
-nbconvert = "^7.16.3"
-poethepoet = "^0.28.0"
-pyright = "^1.1.384"
-pytest = "^8.3.2"
-pytest-asyncio = "^0.24.0"
-pytest-timeout = "^2.3.1"
-ruff = "^0.6.9"
-semversioner = "^2.0.3"
-update-toml = "^0.2.1"
-deptry = "^0.20.0"
-mkdocs-material = "^9.5.39"
-mkdocs-jupyter = "^0.25.0"
-mkdocs-exclude-search = "^0.6.6"
+[tool.uv]
+dev-dependencies = [
+    "mkdocs-typer>=0.0.3",
+    "coverage>=7.6.0",
+    "ipykernel>=6.29.4",
+    "jupyter>=1.1.1",
+    "nbconvert>=7.16.3",
+    "poethepoet>=0.28.0",
+    "pyright>=1.1.384",
+    "pytest>=8.3.2",
+    "pytest-asyncio>=0.24.0",
+    "pytest-timeout>=2.3.1",
+    "ruff>=0.6.9",
+    "semversioner>=2.0.3",
+    "update-toml>=0.2.1",
+    "deptry>=0.20.0",
+    "mkdocs-material>=9.5.39",
+    "mkdocs-jupyter>=0.25.0",
+    "mkdocs-exclude-search>=0.6.6",
+    "hatchling>=1.25.0",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix ."
