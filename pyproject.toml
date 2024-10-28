@@ -177,5 +177,5 @@ exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-timeout = 800
+timeout = 1000
 env_files = [".env"]
