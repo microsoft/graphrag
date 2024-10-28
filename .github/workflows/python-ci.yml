@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  UV_VERSION: 0.4.27
+  UV_VERSION: '0.4.27'
 
 jobs:
   python-ci:
