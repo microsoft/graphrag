@@ -67,6 +67,7 @@ pypi
 nbformat
 semversioner
 mkdocs
+typer
 
 # Library Methods
 iterrows

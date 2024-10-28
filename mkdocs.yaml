@@ -29,7 +29,6 @@ nav:
       - Overview: "index/overview.md"
       - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
-      - CLI: "index/cli.md"
       - Configuration:
           - Overview: "config/overview.md"
           - Init Command: "config/init.md"
@@ -46,13 +45,13 @@ nav:
       - Local Search: "query/local_search.md"
       - Question Generation: "query/question_generation.md"
       - Global Search: "query/global_search.md"
-      - CLI: "query/cli.md"
       - Notebooks:
           - Overview: "query/notebooks/overview.md"
           - Global Search: "examples_notebooks/global_search.ipynb"
           - Local Search: "examples_notebooks/local_search.ipynb"
   - Microsoft Research Blog: "blog_posts.md"
   - Extras:
+      - CLI: "cli.md"
       - Operation Dulce:
           - About: "data/operation_dulce/ABOUT.md"
           - Document: "data/operation_dulce/Operation Dulce v2 1 1.md"
@@ -104,3 +103,4 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
+  - mkdocs-typer
