@@ -5,12 +5,10 @@
 
 from datashaper import VerbCallbacks
 from fnllm.openai import OpenAITextChatLLMInstance
-from pydantic import TypeAdapter
 
-from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
-from graphrag.index.llm import load_llm
+from graphrag.index.llm import load_llm, read_llm_params
 
 from .typing import (
     StrategyConfig,
@@ -26,7 +24,7 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = TypeAdapter(LLMParameters).validate_python(args.get("llm", {}))
+    llm_config = read_llm_params(args.get("llm", {}))
     llm = load_llm(
         "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
     )

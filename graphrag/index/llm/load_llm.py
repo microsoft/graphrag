@@ -21,13 +21,13 @@ from fnllm.openai import (
 from pydantic import TypeAdapter
 
 from graphrag.config.enums import LLMType
+from graphrag.config.models import LLMParameters
 
 from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
 
-    from graphrag.config.models.llm_parameters import LLMParameters
     from graphrag.index.cache import PipelineCache
     from graphrag.index.typing import ErrorHandlerFn
 
@@ -92,6 +92,14 @@ def create_cache(cache: PipelineCache | None, name: str) -> LLMCache | None:
     if cache is None:
         return None
     return GraphRagLLMCache(cache).child(name)
+
+
+def read_llm_params(llm_args: dict[str, Any]) -> LLMParameters:
+    """Read the LLM parameters from the arguments."""
+    if llm_args == {}:
+        msg = "LLM arguments are required"
+        raise ValueError(msg)
+    return TypeAdapter(LLMParameters).validate_python(llm_args)
 
 
 def load_llm(
