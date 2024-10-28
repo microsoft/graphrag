@@ -482,10 +482,8 @@ class TestDefaultConfig(unittest.TestCase):
 
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docs/config/env_vars.md")
-        query_docs_path = Path("docs/query/cli.md")
 
         env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
-        query_docs = query_docs_path.read_text(encoding="utf-8")
 
         def find_envvar_names(text) -> set[str]:
             pattern = r"`(GRAPHRAG_[^`]+)`"
@@ -493,9 +491,7 @@ class TestDefaultConfig(unittest.TestCase):
             found = {f for f in found if not f.endswith("_")}
             return {*found}
 
-        graphrag_strings = find_envvar_names(env_var_docs) | find_envvar_names(
-            query_docs
-        )
+        graphrag_strings = find_envvar_names(env_var_docs)
 
         missing = {s for s in graphrag_strings if s not in ALL_ENV_VARS} - {
             # Remove configs covered by the base LLM connection configs
