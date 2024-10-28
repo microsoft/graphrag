@@ -118,7 +118,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix ."
 _format_code = "ruff format  ."
-_ruff_check = 'ruff check .'
+_ruff_check = 'ruff check . --ignore A005'
 _pyright = "pyright"
 _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/local_search.ipynb'
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
