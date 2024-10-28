@@ -85,9 +85,9 @@ def compare_outputs(
     This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
     cols = expected.columns if columns is None else columns
 
-    assert len(actual) == len(
-        expected
-    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    assert len(actual) == len(expected), (
+        f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    )
 
     for column in cols:
         assert column in actual.columns

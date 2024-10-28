@@ -74,9 +74,9 @@ async def test_create_base_entity_graph():
         context=context,
     )
 
-    assert len(actual.columns) == len(
-        expected.columns
-    ), "Graph dataframe columns differ"
+    assert len(actual.columns) == len(expected.columns), (
+        "Graph dataframe columns differ"
+    )
     # let's parse a sample of the raw graphml
     actual_graphml_0 = actual["clustered_graph"][:1][0]
     actual_graph_0 = nx.parse_graphml(actual_graphml_0)
@@ -121,9 +121,9 @@ async def test_create_base_entity_graph_with_embeddings():
         context=context,
     )
 
-    assert (
-        len(actual.columns) == len(expected.columns) + 1
-    ), "Graph dataframe missing embedding column"
+    assert len(actual.columns) == len(expected.columns) + 1, (
+        "Graph dataframe missing embedding column"
+    )
     assert "embeddings" in actual.columns, "Graph dataframe missing embedding column"
 
 
