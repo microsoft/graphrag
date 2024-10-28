@@ -53,6 +53,7 @@ dependencies = [
     "json-repair>=0.30.0",
     "future>=1.0.0",
     "typer>=0.12.5",
+    "gensim>=4.3.3",
 ]
 requires-python = ">3.10,<3.13"
 
