@@ -198,7 +198,7 @@ class TestIndexer:
         # check that the number of workflows matches the number of artifacts
         assert (
             len(artifact_files) == (expected_artifacts + 1)
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)} in {artifact_files}"
+        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):

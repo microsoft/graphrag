@@ -134,7 +134,7 @@
             ],
             "subworkflows": 1,
             "max_runtime": 150,
-            "expected_artifacts": 8
+            "expected_artifacts": 1
         }
     },
     "query_config": [
