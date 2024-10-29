@@ -45,7 +45,6 @@
                 2500
             ],
             "nan_allowed_columns": [
-                "entity_type",
                 "description",
                 "graph_embedding",
                 "community",
