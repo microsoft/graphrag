@@ -4,6 +4,7 @@
 """A module containing compute_edge_combined_degree methods definition."""
 
 import pandas as pd
+from typing import cast
 
 
 def compute_edge_combined_degree(
@@ -33,7 +34,7 @@ def compute_edge_combined_degree(
         output_df[_degree_colname(edge_source_column)]
         + output_df[_degree_colname(edge_target_column)]
     )
-    return output_df["combined_degree"]
+    return cast(pd.Series, output_df["combined_degree"])
 
 
 def _degree_colname(column: str) -> str:

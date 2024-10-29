@@ -25,8 +25,6 @@ async def create_base_text_units(
     input: VerbInput,
     callbacks: VerbCallbacks,
     runtime_storage: PipelineStorage,
-    chunk_column_name: str,
-    n_tokens_column_name: str,
     chunk_by_columns: list[str],
     chunk_strategy: dict[str, Any] | None = None,
     **_kwargs: dict,
@@ -37,8 +35,6 @@ async def create_base_text_units(
     output = create_base_text_units_flow(
         source,
         callbacks,
-        chunk_column_name,
-        n_tokens_column_name,
         chunk_by_columns,
         chunk_strategy=chunk_strategy,
     )
