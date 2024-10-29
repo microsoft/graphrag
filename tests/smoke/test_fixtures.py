@@ -195,11 +195,11 @@ class TestIndexer:
         transient_workflows = [
             "workflow:create_base_text_units",
             "workflow:generate_text_embeddings",
-         ]
+        ]
         assert (
             len(artifact_files)
             == (len(expected_workflows) - len(transient_workflows) + 1)
-         ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
@@ -228,7 +228,7 @@ class TestIndexer:
                         len(nan_df) == 0
                     ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
                 except KeyError:
-                    log.warning("No worflow config found %s", artifact_name)
+                    log.warning("No workflow config found %s", artifact_name)
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [

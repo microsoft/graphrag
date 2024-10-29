@@ -115,7 +115,7 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    #TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
+    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
         config=config,
@@ -126,7 +126,10 @@ def run_local_search(
             "create_final_relationships.parquet",
             "create_final_entities.parquet",
         ],
-        optional_list=["create_final_covariates.parquet", "create_final_entities_description_embeddings.parquet"],
+        optional_list=[
+            "create_final_covariates.parquet",
+            "create_final_entities_description_embeddings.parquet",
+        ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict[
@@ -214,9 +217,17 @@ def _resolve_parquet_files(
                 _load_table_from_storage(name=optional_file, storage=storage_obj)
             )
 
-            #TODO remove this if statement to delete backwards compatibility
-            if optional_file == "create_final_entities_description_embeddings.parquet" and "description_embedding" not in dataframe_dict["create_final_entities"].columns:
-                dataframe_dict["create_final_entities"] = dataframe_dict["create_final_entities"].merge(df_value, on="id", how="inner").rename(columns={"embedding": "description_embedding"})
+            # TODO remove this if statement to delete backwards compatibility
+            if (
+                optional_file == "create_final_entities_description_embeddings.parquet"
+                and "description_embedding"
+                not in dataframe_dict["create_final_entities"].columns
+            ):
+                dataframe_dict["create_final_entities"] = (
+                    dataframe_dict["create_final_entities"]
+                    .merge(df_value, on="id", how="inner")
+                    .rename(columns={"embedding": "description_embedding"})
+                )
             else:
                 dataframe_dict[df_key] = df_value
         else:
