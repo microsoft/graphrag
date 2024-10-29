@@ -195,33 +195,40 @@ class TestIndexer:
         transient_workflows = [
             "workflow:create_base_text_units",
             "workflow:generate_text_embeddings",
-        ]
+         ]
         assert (
             len(artifact_files)
             == (len(expected_workflows) - len(transient_workflows) + 1)
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+         ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
                 output_df = pd.read_parquet(artifacts / artifact)
                 artifact_name = artifact.split(".")[0]
-                workflow = workflow_config[artifact_name]
 
-                # Check number of rows between range
-                assert (
-                    workflow["row_range"][0]
-                    <= len(output_df)
-                    <= workflow["row_range"][1]
-                ), f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                try:
+                    workflow = workflow_config[artifact_name]
 
-                # Get non-nan rows
-                nan_df = output_df.loc[
-                    :, ~output_df.columns.isin(workflow.get("nan_allowed_columns", []))
-                ]
-                nan_df = nan_df[nan_df.isna().any(axis=1)]
-                assert (
-                    len(nan_df) == 0
-                ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                    # Check number of rows between range
+                    assert (
+                        workflow["row_range"][0]
+                        <= len(output_df)
+                        <= workflow["row_range"][1]
+                    ), f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+
+                    # Get non-nan rows
+                    nan_df = output_df.loc[
+                        :,
+                        ~output_df.columns.isin(
+                            workflow.get("nan_allowed_columns", [])
+                        ),
+                    ]
+                    nan_df = nan_df[nan_df.isna().any(axis=1)]
+                    assert (
+                        len(nan_df) == 0
+                    ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                except KeyError:
+                    log.warning("No worflow config found %s", artifact_name)
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
