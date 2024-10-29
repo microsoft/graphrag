@@ -6,12 +6,11 @@ embeddings:
     type: "lancedb"
     db_uri: "./tests/fixtures/min-csv/lancedb"
     collection_name: "lancedb_ci"
+    overwrite: True
     store_in_table: True
-
     entity_name_description:
       title_column: "name"
       # id_column: "id"
-      # overwrite: true
     # entity_name: ...
     # relationship_description: ...
     # community_report_full_content: ...
@@ -19,7 +18,6 @@ embeddings:
     # community_report_title: ...
     # document_raw_content: ...
     # text_unit_text: ...
-
 
 storage:
   type: file # or blob
