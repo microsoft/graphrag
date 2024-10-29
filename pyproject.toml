@@ -1,7 +1,7 @@
 [project]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "0.3.6"
+dynamic = ["version"]
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     { name = "Alonso Guevara Fernández", email = "alonsog@microsoft.com" },
@@ -63,18 +63,11 @@ graphrag = "graphrag.cli.main:app"
 [project.urls]
 "Source" = "https://github.com/microsoft/graphrag"
 
-[tool.poetry-dynamic-versioning]
-enable = true
-style = "pep440"
+[tool.uv-dynamic-versioning]
 vcs = "git"
-bump = true
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- else -%}
-        {{ serialize_pep440(base, stage, revision, dev=distance) }}
-    {%- endif -%}
-"""
+style = "pep440"
+metadata = true
+dirty = true
 
 [tool.uv]
 dev-dependencies = [
@@ -89,18 +82,21 @@ dev-dependencies = [
     "pytest-asyncio>=0.24.0",
     "pytest-timeout>=2.3.1",
     "ruff>=0.6.9",
-    "semversioner>=2.0.3",
-    "update-toml>=0.2.1",
+    "semversioner>=2.0.3",    
     "deptry>=0.20.0",
     "mkdocs-material>=9.5.39",
     "mkdocs-jupyter>=0.25.0",
     "mkdocs-exclude-search>=0.6.6",
     "hatchling>=1.25.0",
+    "uv-dynamic-versioning>=0.2.0"
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
 [tool.poe.tasks]
 _sort_imports = "ruff check --select I --fix ."
@@ -111,7 +107,6 @@ _convert_local_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/n
 _convert_global_search_nb = 'jupyter nbconvert --output-dir=docsite/posts/query/notebooks/ --output="{notebook_name}_nb" --template=docsite/nbdocsite_template --to markdown examples_notebooks/global_search.ipynb'
 _semversioner_release = "semversioner release"
 _semversioner_changelog = "semversioner changelog > CHANGELOG.md"
-_semversioner_update_toml_version = "update-toml update --path tool.poetry.version --value $(uv run semversioner current-version)"
 semversioner_add = "semversioner add-change"
 coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check'
@@ -136,8 +131,7 @@ build_docs = "mkdocs build"
 [[tool.poe.tasks.release]]
 sequence = [
     '_semversioner_release',
-    '_semversioner_changelog',
-    '_semversioner_update_toml_version',
+    '_semversioner_changelog',    
 ]
 ignore_fail = 'return_non_zero'
 

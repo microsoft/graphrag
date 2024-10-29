@@ -671,6 +671,18 @@ wheels = [
 ]
 
 [[package]]
+name = "dunamai"
+version = "1.22.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a0/fe/aee602f08765de4dd753d2e5d6cbd480857182e345f161f7a19ad1979e4d/dunamai-1.22.0.tar.gz", hash = "sha256:375a0b21309336f0d8b6bbaea3e038c36f462318c68795166e31f9873fdad676", size = 44453 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b8/01/0c3ba3dcf946e884ad8a153f6ac277e38cc8e87038059dbb751f89b9e258/dunamai-1.22.0-py3-none-any.whl", hash = "sha256:eab3894b31e145bd028a74b13491c57db01986a7510482c9b5fff3b4e53d77b7", size = 26187 },
+]
+
+[[package]]
 name = "environs"
 version = "11.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -838,7 +850,7 @@ dependencies = [
     { name = "umap-learn" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "coverage" },
     { name = "deptry" },
@@ -857,7 +869,7 @@ dev = [
     { name = "pytest-timeout" },
     { name = "ruff" },
     { name = "semversioner" },
-    { name = "update-toml" },
+    { name = "uv-dynamic-versioning" },
 ]
 
 [package.metadata]
@@ -894,7 +906,7 @@ requires-dist = [
     { name = "umap-learn", specifier = ">=0.5.6" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "coverage", specifier = ">=7.6.0" },
     { name = "deptry", specifier = ">=0.20.0" },
@@ -913,7 +925,7 @@ dev = [
     { name = "pytest-timeout", specifier = ">=2.3.1" },
     { name = "ruff", specifier = ">=0.6.9" },
     { name = "semversioner", specifier = ">=2.0.3" },
-    { name = "update-toml", specifier = ">=0.2.1" },
+    { name = "uv-dynamic-versioning", specifier = ">=0.2.0" },
 ]
 
 [[package]]
@@ -2921,6 +2933,18 @@ wheels = [
 ]
 
 [[package]]
+name = "returns"
+version = "0.23.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/52/b4/411f1e4026344f0ccabc5654aee02280ebe8a9783756e53c76437693dc9a/returns-0.23.0.tar.gz", hash = "sha256:27594c28e5fc338e052d27ddf77fe1da82db4472f6d59901e7e9165be35a5256", size = 242563 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9c/cc/ff7046c009c17136f83764f8ff225309b58d364c2ffd5626b5a338bd865a/returns-0.23.0-py3-none-any.whl", hash = "sha256:278aa6168072b24574ad14be32f7123d1b835928473dd40bc506f47c8b25859a", size = 155284 },
+]
+
+[[package]]
 name = "rfc3339-validator"
 version = "0.1.4"
 source = { registry = "https://pypi.org/simple" }
@@ -3326,11 +3350,11 @@ wheels = [
 
 [[package]]
 name = "tomlkit"
-version = "0.12.5"
+version = "0.13.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2b/ab/18f4c8f2bec75eb1a7aebcc52cdb02ab04fd39ff7025bb1b1c7846cc45b8/tomlkit-0.12.5.tar.gz", hash = "sha256:eef34fba39834d4d6b73c9ba7f3e4d1c417a4e56f89a7e96e090dd0d24b8fb3c", size = 191420 }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/09/a439bec5888f00a54b8b9f05fa94d7f901d6735ef4e55dcec9bc37b5d8fa/tomlkit-0.13.2.tar.gz", hash = "sha256:fff5fe59a87295b278abd31bec92c15d9bc4a06885ab12bcea52c71119392e79", size = 192885 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/73/6d/b5406752c4e4ba86692b22fab0afed8b48f16bdde8f92e1d852976b61dc6/tomlkit-0.12.5-py3-none-any.whl", hash = "sha256:af914f5a9c59ed9d0762c7b64d3b5d5df007448eb9cd2edc8a46b1eafead172f", size = 37685 },
+    { url = "https://files.pythonhosted.org/packages/f9/b6/a447b5e4ec71e13871be01ba81f5dfc9d0af7e473da256ff46bc0e24026f/tomlkit-0.13.2-py3-none-any.whl", hash = "sha256:7a974427f6e119197f670fbbbeae7bef749a6c14e793db934baefc1b5f03efde", size = 37955 },
 ]
 
 [[package]]
@@ -3441,18 +3465,6 @@ wheels = [
 ]
 
 [[package]]
-name = "update-toml"
-version = "0.2.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "tomlkit" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/89/fa/4238c64177886003312a61a5deda93876a1cb023c6efe1ee204573209ad1/update_toml-0.2.1.tar.gz", hash = "sha256:92870b2ef8591eeffa32df674d9b4c4fce59a428f65063e138dee253bdb5d372", size = 3095 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/73/94/d4dd5609d95c83d85b18b79121dd834a86a2e1b57d63d9b3d5388143c4cb/update_toml-0.2.1-py3-none-any.whl", hash = "sha256:90d5d9d2efbe2f273328ec78394912c33c0f741dc3b0ae744cfc4ddbe27051f7", size = 4755 },
-]
-
-[[package]]
 name = "uri-template"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3468,6 +3480,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ed/63/22ba4ebfe7430b76388e7cd448d5478814d3032121827c12a2cc287e2260/urllib3-2.2.3.tar.gz", hash = "sha256:e7d814a81dad81e6caf2ec9fdedb284ecc9c73076b62654547cc64ccdcae26e9", size = 300677 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ce/d9/5f4c13cecde62396b0d3fe530a50ccea91e7dfc1ccf0e09c228841bb5ba8/urllib3-2.2.3-py3-none-any.whl", hash = "sha256:ca899ca043dcb1bafa3e262d73aa25c465bfb49e0bd9dd5d59f1d0acba2f8fac", size = 126338 },
+]
+
+[[package]]
+name = "uv-dynamic-versioning"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dunamai" },
+    { name = "hatchling" },
+    { name = "pydantic" },
+    { name = "returns" },
+    { name = "tomlkit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/75/e2/a36162279305dfe3bc93f96d8a45f5d09f6b21563dd39fcc98e96694a8c2/uv_dynamic_versioning-0.2.0.tar.gz", hash = "sha256:d6e60be0d4b2f59f81c0e65d0ab7073f7baaebfe9adc1d8dad6df0c8f86ceccb", size = 27753 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/85/12/761d6810b2104a008c1a078ff2b5412534fcc2360614e0e6b80dc85b0239/uv_dynamic_versioning-0.2.0-py3-none-any.whl", hash = "sha256:c1e9f12988c83f9d0b53458a3a038d4e2803b734e647fec0d6cd4679f6b9430b", size = 7382 },
 ]
 
 [[package]]
