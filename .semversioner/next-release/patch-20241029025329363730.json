@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "add backwards compatibility patch to vector store."
+}
