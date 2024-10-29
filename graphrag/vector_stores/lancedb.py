@@ -6,9 +6,9 @@
 import json
 from typing import Any
 
-import lancedb
 import pyarrow as pa
 
+import lancedb
 from graphrag.model.types import TextEmbedder
 
 from .base import (
