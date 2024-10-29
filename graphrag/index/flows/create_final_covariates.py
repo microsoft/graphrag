@@ -33,7 +33,7 @@ async def create_final_covariates(
         text_units,
         callbacks,
         cache,
-        "chunk",
+        "text",
         covariate_type,
         extraction_strategy,
         async_mode,

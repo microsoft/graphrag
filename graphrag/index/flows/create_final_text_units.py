@@ -24,9 +24,7 @@ async def create_final_text_units(
     text_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform the text units."""
-    selected = text_units.loc[:, ["id", "chunk", "document_ids", "n_tokens"]].rename(
-        columns={"chunk": "text"}
-    )
+    selected = text_units.loc[:, ["id", "text", "document_ids", "n_tokens"]]
 
     entity_join = _entities(final_entities)
     relationship_join = _relationships(final_relationships)

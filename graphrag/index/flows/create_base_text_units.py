@@ -59,21 +59,21 @@ def create_base_text_units(
     chunked = chunked.explode("chunks")
     chunked.rename(
         columns={
-            "chunks": "chunk",
+            "chunks": "text",
         },
         inplace=True,
     )
     chunked["chunk_id"] = chunked.apply(
-        lambda row: gen_md5_hash(row, ["chunk"]), axis=1
+        lambda row: gen_md5_hash(row, ["text"]), axis=1
     )
-    chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
-        chunked["chunk"].tolist(), index=chunked.index
+    chunked[["document_ids", "text", "n_tokens"]] = pd.DataFrame(
+        chunked["text"].tolist(), index=chunked.index
     )
 
     chunked["id"] = chunked["chunk_id"]
 
     return cast(
-        pd.DataFrame, chunked[chunked["chunk"].notna()].reset_index(drop=True)
+        pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True)
     )
 
 
