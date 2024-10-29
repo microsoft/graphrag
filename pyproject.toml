@@ -50,10 +50,8 @@ dependencies = [
     "typing-extensions>=4.12.2",
     "azure-storage-blob>=12.22.0",
     "azure-identity>=1.17.1",
-    "json-repair>=0.30.0",
-    "future>=1.0.0",
-    "typer>=0.12.5",
-    "gensim>=4.3.3",
+    "json-repair>=0.30.0",    
+    "typer>=0.12.5",    
 ]
 requires-python = ">3.10,<3.13"
 

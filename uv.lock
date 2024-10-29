@@ -765,15 +765,6 @@ wheels = [
 ]
 
 [[package]]
-name = "future"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a7/b2/4140c69c6a66432916b26158687e821ba631a4c9273c474343badf84d3ba/future-1.0.0.tar.gz", hash = "sha256:bd2968309307861edae1458a4f8a4f3598c03be43b97521076aebf5d94c07b05", size = 1228490 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/da/71/ae30dadffc90b9006d77af76b393cb9dfbfc9629f339fc1574a1c52e6806/future-1.0.0-py3-none-any.whl", hash = "sha256:929292d34f5872e70396626ef385ec22355a1fae8ad29e1a734c3e43f9fbc216", size = 491326 },
-]
-
-[[package]]
 name = "gensim"
 version = "4.3.3"
 source = { registry = "https://pypi.org/simple" }
@@ -815,7 +806,7 @@ wheels = [
 
 [[package]]
 name = "graphrag"
-version = "0.3.6"
+version = "0.3.6.post56.dev0+9d72a0c.dirty"
 source = { editable = "." }
 dependencies = [
     { name = "aiofiles" },
@@ -826,8 +817,6 @@ dependencies = [
     { name = "datashaper" },
     { name = "devtools" },
     { name = "environs" },
-    { name = "future" },
-    { name = "gensim" },
     { name = "graspologic" },
     { name = "json-repair" },
     { name = "lancedb" },
@@ -882,8 +871,6 @@ requires-dist = [
     { name = "datashaper", specifier = ">=0.0.49" },
     { name = "devtools", specifier = ">=0.12.2" },
     { name = "environs", specifier = ">=3.11.0" },
-    { name = "future", specifier = ">=1.0.0" },
-    { name = "gensim", specifier = ">=4.3.3" },
     { name = "graspologic", specifier = ">=3.4.1" },
     { name = "json-repair", specifier = ">=0.30.0" },
     { name = "lancedb", specifier = ">=0.13.0" },
