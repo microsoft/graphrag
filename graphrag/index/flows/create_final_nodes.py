@@ -58,13 +58,9 @@ async def create_final_nodes(
             formats=["json"],
         )
 
-    nodes.rename(columns={"id": "top_level_node_id"}, inplace=True)
-    nodes["top_level_node_id"] = nodes["top_level_node_id"].astype(str)
-
     joined = nodes_without_positions.merge(
         nodes,
-        left_on="id",
-        right_on="top_level_node_id",
+        on="id",
         how="inner",
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
