@@ -9,7 +9,7 @@
             ],
             "subworkflows": 1,
             "max_runtime": 150,
-            "expected_artifacts": 1
+            "expected_artifacts": 0
         },
         "create_final_covariates": {
             "row_range": [
