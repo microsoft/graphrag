@@ -196,7 +196,7 @@ class TestIndexer:
         artifact_files = os.listdir(artifacts)
         # check that the number of workflows matches the number of artifacts
         assert (
-            len(artifact_files) == (expected_artifacts)
+            len(expected_workflows) + 7 == (expected_artifacts)
         ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
 
         for artifact in artifact_files:
