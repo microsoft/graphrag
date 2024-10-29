@@ -66,4 +66,5 @@ async def create_final_relationships(
         "text_unit_ids"
     ].str.split(",")
 
-    return edge_combined_degree
+    # TODO: Find duplication source
+    return edge_combined_degree.drop_duplicates(subset=["source", "target"])
