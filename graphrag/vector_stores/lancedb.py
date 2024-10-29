@@ -8,7 +8,7 @@ from typing import Any
 
 import pyarrow as pa
 
-import lancedb
+import lancedb as lancedb
 from graphrag.model.types import TextEmbedder
 
 from .base import (
