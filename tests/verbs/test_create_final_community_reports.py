@@ -73,7 +73,6 @@ async def test_create_final_community_reports():
     assert actual["rank"][:1][0] == 2
     assert actual["rank_explanation"][:1][0] == "<rating_explanation>"
 
-
 async def test_create_final_community_reports_missing_llm_throws():
     input_tables = load_input_tables([
         "workflow:create_final_nodes",

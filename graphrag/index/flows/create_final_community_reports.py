@@ -81,7 +81,7 @@ async def create_final_community_reports(
     community_reports["id"] = community_reports["community"].apply(
         lambda _x: str(uuid4())
     )
-
+    
     # Merge by community and it with communities to add size and period
     return community_reports.merge(
         communities_input.loc[:, ["id", "size", "period"]],
