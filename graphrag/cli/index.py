@@ -69,7 +69,6 @@ def index_cli(
     root_dir: Path,
     verbose: bool,
     resume: str | None,
-    update_index_id: str | None,
     memprofile: bool,
     cache: bool,
     reporter: ReporterType,
@@ -82,7 +81,7 @@ def index_cli(
     """Run the pipeline with the given config."""
     progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
-    run_id = resume or update_index_id or time.strftime("%Y%m%d-%H%M%S")
+    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 
     config = load_config(root_dir, config_filepath)
     config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
@@ -123,7 +122,6 @@ def index_cli(
             config=config,
             run_id=run_id,
             is_resume_run=bool(resume),
-            is_update_run=bool(update_index_id),
             memory_profile=memprofile,
             progress_reporter=progress_reporter,
             emit=emit,
