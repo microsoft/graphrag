@@ -90,6 +90,12 @@ storage:
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
+update_index_storage: # Storage to save an updated index (for incremental indexing). Enabling this performs an incremental index run
+  # type: {defs.STORAGE_TYPE.value} # or blob
+  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
 reporting:
   type: {defs.REPORTING_TYPE.value} # or console, blob
   base_dir: "{defs.REPORTING_BASE_DIR}"

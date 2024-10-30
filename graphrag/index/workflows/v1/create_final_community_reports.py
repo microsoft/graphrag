@@ -26,6 +26,7 @@ def build_steps(
     input = {
         "source": "workflow:create_final_nodes",
         "relationships": "workflow:create_final_relationships",
+        "communities": "workflow:create_final_communities",
     }
     if covariates_enabled:
         input["covariates"] = "workflow:create_final_covariates"
@@ -34,6 +35,24 @@ def build_steps(
         {
             "verb": "create_final_community_reports",
             "args": {
+<<<<<<< HEAD
+=======
+                "full_content_text_embed": (
+                    community_report_full_content_embed_config
+                    if not skip_full_content_embedding
+                    else None
+                ),
+                "summary_text_embed": (
+                    community_report_summary_embed_config
+                    if not skip_summary_embedding
+                    else None
+                ),
+                "title_text_embed": (
+                    community_report_title_embed_config
+                    if not skip_title_embedding
+                    else None
+                ),
+>>>>>>> 7235c6f (Add Incremental Indexing v1 (#1318))
                 "summarization_strategy": summarization_strategy,
                 "async_mode": async_mode,
                 "num_threads": num_threads,
