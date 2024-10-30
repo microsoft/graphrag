@@ -113,10 +113,6 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
-    if resume and update_index:
-        msg = "Cannot resume and update a run at the same time"
-        raise ValueError(msg)
-
     from .index import index_cli
 
     index_cli(
