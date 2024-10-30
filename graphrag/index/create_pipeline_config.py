@@ -335,7 +335,7 @@ def _embeddings_workflows(
                     settings.embeddings,
                     "entity_name_description",
                     {
-                        "title_column": "description",
+                        "title_column": "name_description",
                         "collection_name": "entity_description_embeddings",
                         "store_in_table": True,
                     },

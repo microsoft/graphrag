@@ -142,6 +142,7 @@ async def _text_embed_with_vector_store(
     insert_batch_size: int = (
         vector_store_config.get("batch_size") or DEFAULT_EMBEDDING_BATCH_SIZE
     )
+
     title_column: str = vector_store_config.get("title_column", "title")
     id_column: str = vector_store_config.get("id_column", "id")
     overwrite: bool = vector_store_config.get("overwrite", True)

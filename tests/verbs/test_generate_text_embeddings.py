@@ -35,12 +35,72 @@ async def test_generate_text_embeddings():
 
     config = get_config_for_workflow(workflow_name)
 
-    config["text_embed"]["strategy"]["type"] = "mock"
+    config["community_report_full_content_embed"]["strategy"]["type"] = "mock"
+    config["community_report_summary_embed"]["strategy"]["type"] = "mock"
+    config["community_report_title_embed"]["strategy"]["type"] = "mock"
+    config["document_raw_content_embed"]["strategy"]["type"] = "mock"
+    config["entity_name_embed"]["strategy"]["type"] = "mock"
+    config["entity_name_description_embed"]["strategy"]["type"] = "mock"
+    config["relationship_description_embed"]["strategy"]["type"] = "mock"
+    config["text_unit_text_embed"]["strategy"]["type"] = "mock"
+
     config["embedded_fields"] = all_embeddings
-    config["text_embed"]["strategy"]["vector_store"] = {
+
+    config["community_report_full_content_embed"]["strategy"]["vector_store"] = {
+        "title_column": "full_content",
+        "collection_name": "final_community_reports_full_content_embedding",
+        "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
+    }
+    config["community_report_summary_embed"]["strategy"]["vector_store"] = {
+        "title_column": "summary",
+        "collection_name": "final_community_reports_summary_embedding",
         "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["community_report_title_embed"]["strategy"]["vector_store"] = {
+        "title_column": "title",
+        "store_in_table": True,
+        "collection_name": "final_community_reports_title_embedding",
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["document_raw_content_embed"]["strategy"]["vector_store"] = {
+        "title_column": "raw_content",
+        "collection_name": "final_documents_raw_content_embedding",
+        "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["entity_name_embed"]["strategy"]["vector_store"] = {
+        "title_column": "name",
+        "collection_name": "entity_name_embeddings",
+        "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["entity_name_description_embed"]["strategy"]["vector_store"] = {
+        "title_column": "name_description",
+        "collection_name": "entity_description_embeddings",
+        "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["relationship_description_embed"]["strategy"]["vector_store"] = {
+        "title_column": "description",
+        "collection_name": "relationships_description_embeddings",
+        "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
+    }
+    config["text_unit_text_embed"]["strategy"]["vector_store"] = {
+        "title_column": "text",
+        "collection_name": "text_units_embedding",
+        "store_in_table": True,
+        "type": "lancedb",
+        "db_uri": "./lancedb",
     }
 
     steps = build_steps(config)
