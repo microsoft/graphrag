@@ -19,6 +19,7 @@ ignorePaths:
   - temp_azurite/
   - __pycache__
   - pyproject.toml
+  - ruff.toml
   - entity_extraction.txt
   - package.json
   - tests/fixtures/

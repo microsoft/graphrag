@@ -81,9 +81,9 @@ async def test_normal_result_emits_parquet():
     ]
 
     assert len(pipeline_result) == 1
-    assert (
-        storage.keys() == ["stats.json", "mock_write", "mock_workflow.parquet"]
-    ), "Mock workflow output should be written to storage by the emitter when there is a non-empty data frame"
+    assert storage.keys() == ["stats.json", "mock_write", "mock_workflow.parquet"], (
+        "Mock workflow output should be written to storage by the emitter when there is a non-empty data frame"
+    )
 
 
 async def test_empty_result_does_not_emit_parquet():

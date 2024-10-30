@@ -66,10 +66,10 @@ class TestRun(unittest.IsolatedAsyncioTestCase):
         entity_ids = set(entity_text_unit_map.keys())
 
         for text_unit_id, text_unit_entities in text_unit_entity_map.items():
-            assert text_unit_entities.issubset(
-                entity_ids
-            ), f"Text unit {text_unit_id} has entities {text_unit_entities} that are not in the entity set"
+            assert text_unit_entities.issubset(entity_ids), (
+                f"Text unit {text_unit_id} has entities {text_unit_entities} that are not in the entity set"
+            )
         for entity_id, entity_text_units in entity_text_unit_map.items():
-            assert entity_text_units.issubset(
-                text_unit_ids
-            ), f"Entity {entity_id} has text units {entity_text_units} that are not in the text unit set"
+            assert entity_text_units.issubset(text_unit_ids), (
+                f"Entity {entity_id} has text units {entity_text_units} that are not in the text unit set"
+            )
