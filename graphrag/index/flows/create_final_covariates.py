@@ -29,6 +29,9 @@ async def create_final_covariates(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to extract and format covariates."""
+    # reassign the id because it will be overwritten in the output by a covariate one
+    # this also results in text_unit_id being copied to the output covariate table
+    text_units["text_unit_id"] = text_units["id"]
     covariates = await extract_covariates(
         text_units,
         callbacks,
@@ -40,10 +43,9 @@ async def create_final_covariates(
         entity_types,
         num_threads,
     )
-
+    text_units.drop(columns=["text_unit_id"], inplace=True)  # don't pollute the global
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
     covariates["human_readable_id"] = (covariates.index + 1).astype(str)
-    covariates.rename(columns={"chunk_id": "text_unit_id"}, inplace=True)
 
     return cast(
         pd.DataFrame,

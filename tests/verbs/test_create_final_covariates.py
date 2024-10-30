@@ -52,14 +52,13 @@ async def test_create_final_covariates():
     )
 
     input = input_tables["workflow:create_base_text_units"]
-
+    
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
     assert len(actual) == len(input)
 
     # assert all of the columns that covariates copied from the input
     assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
-    assert_series_equal(actual["text_unit_id"], input["chunk_id"], check_names=False)
     assert_series_equal(actual["document_ids"], input["document_ids"])
     assert_series_equal(actual["n_tokens"], input["n_tokens"])
 

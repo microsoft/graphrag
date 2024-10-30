@@ -50,7 +50,7 @@ async def create_base_entity_graph(
         callbacks,
         cache,
         text_column="text",
-        id_column="chunk_id",
+        id_column="id",
         strategy=extraction_strategy,
         async_mode=extraction_async_mode,
         entity_types=entity_types,
