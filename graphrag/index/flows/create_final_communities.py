@@ -3,6 +3,8 @@
 
 """All the steps to transform final communities."""
 
+from datetime import datetime, timezone
+
 import pandas as pd
 from datashaper import (
     VerbCallbacks,
@@ -61,6 +63,12 @@ def create_final_communities(
 
     filtered["title"] = "Community " + filtered["id"].astype(str)
 
+    # Add period timestamp to the community reports
+    filtered["period"] = datetime.now(timezone.utc).date().isoformat()
+
+    # Add size of the community
+    filtered["size"] = filtered.loc[:, "text_unit_ids"].apply(lambda x: len(x))
+
     return filtered.loc[
         :,
         [
@@ -69,5 +77,7 @@ def create_final_communities(
             "level",
             "relationship_ids",
             "text_unit_ids",
+            "period",
+            "size",
         ],
     ]

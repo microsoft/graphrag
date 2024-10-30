@@ -102,12 +102,6 @@ def _index_cli(
             help="Skip any preflight validation. Useful when running no LLM steps."
         ),
     ] = False,
-    update_index: Annotated[
-        str | None,
-        typer.Option(
-            help="Update an index run id, leveraging previous outputs and applying new indexes."
-        ),
-    ] = None,
     output: Annotated[
         Path | None,
         typer.Option(
@@ -129,7 +123,6 @@ def _index_cli(
         root_dir=root,
         verbose=verbose,
         resume=resume,
-        update_index_id=update_index,
         memprofile=memprofile,
         cache=cache,
         reporter=ReporterType(reporter),
