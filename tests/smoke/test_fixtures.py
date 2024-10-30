@@ -145,9 +145,9 @@ class TestIndexer:
         completion = subprocess.run(
             command, env={**os.environ, "GRAPHRAG_INPUT_FILE_TYPE": input_file_type}
         )
-        assert (
-            completion.returncode == 0
-        ), f"Indexer failed with return code: {completion.returncode}"
+        assert completion.returncode == 0, (
+            f"Indexer failed with return code: {completion.returncode}"
+        )
 
     def __assert_indexer_outputs(
         self, root: Path, workflow_config: dict[str, dict[str, Any]]
@@ -158,9 +158,9 @@ class TestIndexer:
         output_entries.sort(key=lambda entry: entry.stat().st_ctime, reverse=True)
 
         if not debug:
-            assert (
-                len(output_entries) == 1
-            ), f"Expected one output folder, found {len(output_entries)}"
+            assert len(output_entries) == 1, (
+                f"Expected one output folder, found {len(output_entries)}"
+            )
 
         output_path = output_entries[0]
         assert output_path.exists(), "output folder does not exist"
@@ -174,18 +174,18 @@ class TestIndexer:
         # Check all workflows run
         expected_workflows = set(workflow_config.keys())
         workflows = set(stats["workflows"].keys())
-        assert (
-            workflows == expected_workflows
-        ), f"Workflows missing from stats.json: {expected_workflows - workflows}. Unexpected workflows in stats.json: {workflows - expected_workflows}"
+        assert workflows == expected_workflows, (
+            f"Workflows missing from stats.json: {expected_workflows - workflows}. Unexpected workflows in stats.json: {workflows - expected_workflows}"
+        )
 
         # [OPTIONAL] Check runtime
         for workflow in expected_workflows:
             # Check max runtime
             max_runtime = workflow_config[workflow].get("max_runtime", None)
             if max_runtime:
-                assert (
-                    stats["workflows"][workflow]["overall"] <= max_runtime
-                ), f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
+                assert stats["workflows"][workflow]["overall"] <= max_runtime, (
+                    f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
+                )
 
         # Check artifacts
         artifact_files = os.listdir(artifacts)
@@ -195,10 +195,11 @@ class TestIndexer:
         transient_workflows = [
             "workflow:create_base_text_units",
         ]
-        assert (
-            len(artifact_files)
-            == (len(expected_workflows) - len(transient_workflows) + 1)
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+        assert len(artifact_files) == (
+            len(expected_workflows) - len(transient_workflows) + 1
+        ), (
+            f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+        )
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
@@ -211,16 +212,18 @@ class TestIndexer:
                     workflow["row_range"][0]
                     <= len(output_df)
                     <= workflow["row_range"][1]
-                ), f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                ), (
+                    f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                )
 
                 # Get non-nan rows
                 nan_df = output_df.loc[
                     :, ~output_df.columns.isin(workflow.get("nan_allowed_columns", []))
                 ]
                 nan_df = nan_df[nan_df.isna().any(axis=1)]
-                assert (
-                    len(nan_df) == 0
-                ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                assert len(nan_df) == 0, (
+                    f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                )
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
@@ -296,8 +299,8 @@ class TestIndexer:
                 result.stderr if "No existing dataset at" not in result.stderr else ""
             )
 
-            assert (
-                stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS
-            ), f"Query failed with error: {stderror}"
+            assert stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS, (
+                f"Query failed with error: {stderror}"
+            )
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"

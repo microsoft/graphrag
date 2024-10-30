@@ -332,10 +332,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             for point in filtered_key_points:
                 formatted_response_data = []
                 formatted_response_data.append(
-                    f'----Analyst {point["analyst"] + 1}----'
+                    f"----Analyst {point['analyst'] + 1}----"
                 )
                 formatted_response_data.append(
-                    f'Importance Score: {point["score"]}'  # type: ignore
+                    f"Importance Score: {point['score']}"  # type: ignore
                 )
                 formatted_response_data.append(point["answer"])  # type: ignore
                 formatted_response_text = "\n".join(formatted_response_data)
@@ -431,8 +431,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         total_tokens = 0
         for point in filtered_key_points:
             formatted_response_data = [
-                f'----Analyst {point["analyst"] + 1}----',
-                f'Importance Score: {point["score"]}',
+                f"----Analyst {point['analyst'] + 1}----",
+                f"Importance Score: {point['score']}",
                 point["answer"],
             ]
             formatted_response_text = "\n".join(formatted_response_data)
