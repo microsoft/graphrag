@@ -69,4 +69,5 @@ async def create_final_nodes(
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
 
-    return joined
+    # TODO: Find duplication source
+    return joined.drop_duplicates(subset=["title", "community"])
