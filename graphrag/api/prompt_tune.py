@@ -64,7 +64,7 @@ async def generate_indexing_prompts(
     - domain: The domain to map the input documents to.
     - language: The language to use for the prompts.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts
-    - skip_entity_types: Skip generating entity types.
+    - discover_entity_types: Generate entity types.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
