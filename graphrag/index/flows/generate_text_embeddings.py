@@ -46,7 +46,7 @@ async def generate_text_embeddings(
     name_description_text_embed: dict | None = None,
     description_text_embed: dict | None = None,
     text_text_embed: dict | None = None,
-) -> pd.DataFrame:
+) -> None:
     """All the steps to generate all embeddings."""
     documents_embeddings = final_documents.loc[:, ["id", "raw_content"]]
     relationships_embeddings = final_relationships.loc[:, ["id", "description"]]
@@ -120,8 +120,6 @@ async def generate_text_embeddings(
             storage=storage,
             **embedding_param_map[field],
         )
-
-    return pd.DataFrame()
 
 
 async def _run_and_snapshot_embeddings(

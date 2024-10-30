@@ -59,7 +59,7 @@ async def generate_text_embeddings(
         pd.DataFrame, get_required_input_table(input, "community_reports").table
     )
 
-    output = await generate_text_embeddings_flow(
+    await generate_text_embeddings_flow(
         final_documents=source,
         final_relationships=final_relationships,
         final_text_units=final_text_units,
@@ -79,4 +79,4 @@ async def generate_text_embeddings(
         text_text_embed=text_text_embed,
     )
 
-    return create_verb_result(cast(Table, output))
+    return create_verb_result(cast(Table, pd.DataFrame()))
