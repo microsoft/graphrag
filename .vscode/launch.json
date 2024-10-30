@@ -19,8 +19,8 @@
 			"module": "poetry",
 			"args": [
 				"poe", "query",
-				"--root", "<path_to_ragtest_root_demo>",
-				"--method", "global",
+				"--root", "/Users/gaudy-microsoft/Desktop/christmas_carol-new-version",
+				"--method", "local",
 				"--query", "What are the top themes in this story",
 			]
 		},

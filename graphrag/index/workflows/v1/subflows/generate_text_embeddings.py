@@ -33,7 +33,14 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     embedded_fields: set[str],
-    base_text_embed: dict,
+    full_content_text_embed: dict | None = None,
+    summary_text_embed: dict | None = None,
+    title_text_embed: dict | None = None,
+    raw_content_text_embed: dict | None = None,
+    name_text_embed: dict | None = None,
+    name_description_text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
+    text_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to generate embeddings."""
@@ -62,7 +69,14 @@ async def generate_text_embeddings(
         cache=cache,
         storage=storage,
         embedded_fields=embedded_fields,
-        base_text_embed=base_text_embed,
+        full_content_text_embed=full_content_text_embed,
+        summary_text_embed=summary_text_embed,
+        title_text_embed=title_text_embed,
+        raw_content_text_embed=raw_content_text_embed,
+        name_text_embed=name_text_embed,
+        name_description_text_embed=name_description_text_embed,
+        description_text_embed=description_text_embed,
+        text_text_embed=text_text_embed
     )
 
     return create_verb_result(cast(Table, output))

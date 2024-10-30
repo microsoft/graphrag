@@ -38,7 +38,14 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     embedded_fields: set[str],
-    base_text_embed: dict,
+    full_content_text_embed: dict | None = None,
+    summary_text_embed: dict | None = None,
+    title_text_embed: dict | None = None,
+    raw_content_text_embed: dict | None = None,
+    name_text_embed: dict | None = None,
+    name_description_text_embed: dict | None = None,
+    description_text_embed: dict | None = None,
+    text_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to generate all embeddings."""
     documents_embeddings = final_documents.loc[:, ["id", "raw_content"]]
@@ -59,54 +66,60 @@ async def generate_text_embeddings(
             "data": documents_embeddings,
             "column_to_embed": "raw_content",
             "filename": "create_final_documents_raw_content_embeddings",
+            "base_text_embed": raw_content_text_embed,
         },
         relationship_description_embedding: {
             "data": relationships_embeddings,
             "column_to_embed": "description",
             "filename": "create_final_relationships_description_embeddings",
+            "base_text_embed": description_text_embed,
         },
         text_unit_text_embedding: {
             "data": text_units_embeddings,
             "column_to_embed": "text",
             "filename": "create_final_text_units_text_embeddings",
+            "base_text_embed": text_text_embed,
         },
         entity_name_embedding: {
             "data": entities_embeddings,
             "column_to_embed": "name",
             "filename": "create_final_entities_name_embeddings",
+            "base_text_embed": name_text_embed,
         },
         entity_description_embedding: {
             "data": entities_embeddings,
             "column_to_embed": "name_description",
             "filename": "create_final_entities_description_embeddings",
+            "base_text_embed": name_description_text_embed,
         },
         community_title_embedding: {
             "data": community_reports_embeddings,
             "column_to_embed": "title",
             "filename": "create_final_community_reports_title_embeddings",
+            "base_text_embed": title_text_embed,
         },
         community_summary_embedding: {
             "data": community_reports_embeddings,
             "column_to_embed": "summary",
             "filename": "create_final_community_reports_summary_embeddings",
+            "base_text_embed": summary_text_embed,
         },
         community_full_content_embedding: {
             "data": community_reports_embeddings,
             "column_to_embed": "full_content",
             "filename": "create_final_community_reports_full_content_embeddings",
+            "base_text_embed": full_content_text_embed,
         },
     }
 
-    if base_text_embed:
-        log.info("Creating embeddings")
-        for field in embedded_fields:
-            await _run_and_snapshot_embeddings(
-                callbacks=callbacks,
-                cache=cache,
-                storage=storage,
-                base_text_embed=base_text_embed,
-                **embedding_param_map[field],
-            )
+    log.info("Creating embeddings")
+    for field in embedded_fields:
+        await _run_and_snapshot_embeddings(
+            callbacks=callbacks,
+            cache=cache,
+            storage=storage,
+            **embedding_param_map[field],
+        )
 
     return pd.DataFrame()
 
@@ -118,18 +131,10 @@ async def _run_and_snapshot_embeddings(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    base_text_embed: dict,
+    base_text_embed: dict | None = None,
 ) -> None:
     """All the steps to generate single embedding."""
     if base_text_embed:
-        new_vector_store = {
-            "title_column": column_to_embed,
-            "collection_name": filename,
-            "store_in_table": True,
-        }
-
-        base_text_embed["strategy"]["vector_store"].update(new_vector_store)
-
         data["embedding"] = await embed_text(
             data,
             callbacks,
