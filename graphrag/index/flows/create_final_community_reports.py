@@ -82,42 +82,6 @@ async def create_final_community_reports(
         lambda _x: str(uuid4())
     )
 
-<<<<<<< HEAD
-    return community_reports
-=======
-    # Embed full content if not skipped
-    if full_content_text_embed:
-        community_reports["full_content_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="full_content",
-            strategy=full_content_text_embed["strategy"],
-            embedding_name="community_report_full_content",
-        )
-
-    # Embed summary if not skipped
-    if summary_text_embed:
-        community_reports["summary_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="summary",
-            strategy=summary_text_embed["strategy"],
-            embedding_name="community_report_summary",
-        )
-
-    # Embed title if not skipped
-    if title_text_embed:
-        community_reports["title_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="title",
-            strategy=title_text_embed["strategy"],
-            embedding_name="community_report_title",
-        )
-
     # Merge by community and it with communities to add size and period
     return community_reports.merge(
         communities_input.loc[:, ["id", "size", "period"]],
@@ -127,7 +91,6 @@ async def create_final_community_reports(
         copy=False,
         suffixes=("", "_y"),
     ).drop(columns=["id_y"])
->>>>>>> 7235c6f (Add Incremental Indexing v1 (#1318))
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:

@@ -15,7 +15,7 @@ from .base import (
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
-import lancedb as lancedb
+import lancedb
 
 
 class LanceDBVectorStore(BaseVectorStore):
