@@ -145,9 +145,9 @@ async def _run_and_snapshot_embeddings(
 
         data = data.loc[:, ["id", "embedding"]]
 
-    await snapshot(
-        data,
-        name=filename,
-        storage=storage,
-        formats=["parquet"],
-    )
+        await snapshot(
+            data,
+            name=filename,
+            storage=storage,
+            formats=["parquet"],
+        )
