@@ -33,10 +33,6 @@ class TextEmbeddingConfig(LLMConfig):
         description="The override strategy to use.", default=None
     )
 
-    snapshot: bool = Field(
-        description="Whether to snapshot the embeddings.", default=False
-    )
-
     def resolved_strategy(self) -> dict:
         """Get the resolved text embedding strategy."""
         from graphrag.index.operations.embed_text import (
