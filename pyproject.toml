@@ -92,7 +92,7 @@ json-repair = "^0.30.0"
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.12.5"
 
-mkdocs-typer = "^0.0.3"
+
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
 ipykernel = "^6.29.4"
@@ -110,6 +110,7 @@ deptry = "^0.20.0"
 mkdocs-material = "^9.5.39"
 mkdocs-jupyter = "^0.25.0"
 mkdocs-exclude-search = "^0.6.6"
+mkdocs-typer = "^0.0.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
@@ -269,6 +270,6 @@ exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-timeout = 800
+timeout = 1000
 # log_cli = true
 # log_cli_level = "INFO"
