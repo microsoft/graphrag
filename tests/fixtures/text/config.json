@@ -43,7 +43,6 @@
             "nan_allowed_columns": [
                 "type",
                 "description",
-                "graph_embedding"
             ],
             "subworkflows": 1,
             "max_runtime": 300
@@ -63,7 +62,6 @@
             ],
             "nan_allowed_columns": [
                 "description",
-                "graph_embedding",
                 "community",
                 "level"
             ],

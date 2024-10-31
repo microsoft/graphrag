@@ -35,7 +35,6 @@ def read_entities(
     description_col: str | None = "description",
     name_embedding_col: str | None = "name_embedding",
     description_embedding_col: str | None = "description_embedding",
-    graph_embedding_col: str | None = "graph_embedding",
     community_col: str | None = "community_ids",
     text_unit_ids_col: str | None = "text_unit_ids",
     rank_col: str | None = "degree",
@@ -54,7 +53,6 @@ def read_entities(
             description_embedding=to_optional_list(
                 row, description_embedding_col, item_type=float
             ),
-            graph_embedding=to_optional_list(row, graph_embedding_col, item_type=float),
             community_ids=to_optional_list(row, community_col, item_type=str),
             text_unit_ids=to_optional_list(row, text_unit_ids_col),
             rank=to_optional_int(row, rank_col),
@@ -78,28 +76,6 @@ def store_entity_semantic_embeddings(
             id=entity.id,
             text=entity.description,
             vector=entity.description_embedding,
-            attributes=(
-                {"title": entity.title, **entity.attributes}
-                if entity.attributes
-                else {"title": entity.title}
-            ),
-        )
-        for entity in entities
-    ]
-    vectorstore.load_documents(documents=documents)
-    return vectorstore
-
-
-def store_entity_behavior_embeddings(
-    entities: list[Entity],
-    vectorstore: BaseVectorStore,
-) -> BaseVectorStore:
-    """Store entity behavior embeddings in a vectorstore."""
-    documents = [
-        VectorStoreDocument(
-            id=entity.id,
-            text=entity.description,
-            vector=entity.graph_embedding,
             attributes=(
                 {"title": entity.title, **entity.attributes}
                 if entity.attributes

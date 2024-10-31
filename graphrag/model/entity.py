@@ -25,9 +25,6 @@ class Entity(Named):
     name_embedding: list[float] | None = None
     """The semantic (i.e. text) embedding of the entity (optional)."""
 
-    graph_embedding: list[float] | None = None
-    """The graph embedding of the entity, likely from node2vec (optional)."""
-
     community_ids: list[str] | None = None
     """The community IDs of the entity (optional)."""
 
@@ -51,7 +48,6 @@ class Entity(Named):
         description_key: str = "description",
         description_embedding_key: str = "description_embedding",
         name_embedding_key: str = "name_embedding",
-        graph_embedding_key: str = "graph_embedding",
         community_key: str = "community",
         text_unit_ids_key: str = "text_unit_ids",
         rank_key: str = "degree",
@@ -66,7 +62,6 @@ class Entity(Named):
             description=d.get(description_key),
             name_embedding=d.get(name_embedding_key),
             description_embedding=d.get(description_embedding_key),
-            graph_embedding=d.get(graph_embedding_key),
             community_ids=d.get(community_key),
             rank=d.get(rank_key, 1),
             text_unit_ids=d.get(text_unit_ids_key),

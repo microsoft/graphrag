@@ -63,7 +63,6 @@ def _group_and_resolve_entities(
             "id": "first",
             "type": "first",
             "human_readable_id": "first",
-            "graph_embedding": "first",
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
@@ -85,7 +84,6 @@ def _group_and_resolve_entities(
             "description",
             "type",
             "human_readable_id",
-            "graph_embedding",
             "text_unit_ids",
             "description_embedding",
         ],

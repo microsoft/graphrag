@@ -45,7 +45,6 @@ async def test_create_final_entities():
             "type",
             "description",
             "human_readable_id",
-            "graph_embedding",
             "text_unit_ids",
         ],
     )

@@ -129,7 +129,6 @@ def read_indexer_entities(
         rank_col="degree",
         name_embedding_col=None,
         description_embedding_col="description_embedding",
-        graph_embedding_col=None,
         text_unit_ids_col="text_unit_ids",
     )
 
