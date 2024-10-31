@@ -69,7 +69,8 @@ async def create_final_nodes(
     # Split 'source_id' column into 'text_unit_ids'
     joined = split_text(
         joined, column="source_id", separator=",", to="text_unit_ids"
-    ).drop(columns=["source_id"])
+    )
+    joined.drop(columns=["source_id", "size"], inplace=True)
 
     # TODO: Find duplication source
     return joined.drop_duplicates(subset=["title", "community"])
