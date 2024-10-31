@@ -52,7 +52,7 @@ async def test_create_final_covariates():
     )
 
     input = input_tables["workflow:create_base_text_units"]
-    
+
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
     assert len(actual) == len(input)

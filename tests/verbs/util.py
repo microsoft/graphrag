@@ -25,7 +25,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
 
     source = pd.read_parquet("tests/verbs/data/source_documents.parquet")
     input_tables["source"] = source
-    
+
     for input in inputs:
         # remove the workflow: prefix if it exists, because that is not part of the actual table filename
         name = input.replace("workflow:", "")

@@ -38,7 +38,7 @@ def build_steps(
             },
             "input": {
                 "source": DEFAULT_INPUT_NAME,
-                "text_units": "workflow:create_base_text_units"
+                "text_units": "workflow:create_base_text_units",
             },
         },
     ]

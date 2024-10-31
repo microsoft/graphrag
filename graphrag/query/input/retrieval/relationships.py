@@ -27,9 +27,7 @@ def get_in_network_relationships(
         return selected_relationships
 
     # sort by ranking attribute
-    return sort_relationships_by_rank(
-        selected_relationships, ranking_attribute
-    )
+    return sort_relationships_by_rank(selected_relationships, ranking_attribute)
 
 
 def get_out_network_relationships(
@@ -52,9 +50,7 @@ def get_out_network_relationships(
         and relationship.source not in selected_entity_names
     ]
     selected_relationships = source_relationships + target_relationships
-    return sort_relationships_by_rank(
-        selected_relationships, ranking_attribute
-    )
+    return sort_relationships_by_rank(selected_relationships, ranking_attribute)
 
 
 def get_candidate_relationships(

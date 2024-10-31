@@ -63,18 +63,14 @@ def create_base_text_units(
         },
         inplace=True,
     )
-    chunked["id"] = chunked.apply(
-        lambda row: gen_md5_hash(row, ["chunk"]), axis=1
-    )
+    chunked["id"] = chunked.apply(lambda row: gen_md5_hash(row, ["chunk"]), axis=1)
     chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
         chunked["chunk"].tolist(), index=chunked.index
     )
     # rename for downstream consumption
     chunked.rename(columns={"chunk": "text"}, inplace=True)
 
-    return cast(
-        pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True)
-    )
+    return cast(pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True))
 
 
 # TODO: would be nice to inline this completely in the main method with pandas

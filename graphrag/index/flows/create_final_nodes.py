@@ -65,9 +65,7 @@ async def create_final_nodes(
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
 
-    joined["text_unit_ids"] = joined[
-        "source_id"
-    ].str.split(",")
+    joined["text_unit_ids"] = joined["source_id"].str.split(",")
     joined.drop(columns=["source_id", "size", "graph_embedding"], inplace=True)
 
     # TODO: Find duplication source

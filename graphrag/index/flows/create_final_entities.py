@@ -41,9 +41,7 @@ async def create_final_entities(
 
     nodes = nodes.loc[nodes["name"].notna()]
 
-    nodes["text_unit_ids"] = nodes[
-        "source_id"
-    ].str.split(",")
+    nodes["text_unit_ids"] = nodes["source_id"].str.split(",")
     nodes.drop(columns=["source_id"], inplace=True)
 
     # Embed name if not skipped

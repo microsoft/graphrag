@@ -58,12 +58,8 @@ async def create_final_relationships(
         edge_target_column="target",
     )
 
-    pruned_edges["human_readable_id"] = pruned_edges[
-        "human_readable_id"
-    ].astype(str)
-    pruned_edges["text_unit_ids"] = pruned_edges[
-        "text_unit_ids"
-    ].str.split(",")
+    pruned_edges["human_readable_id"] = pruned_edges["human_readable_id"].astype(str)
+    pruned_edges["text_unit_ids"] = pruned_edges["text_unit_ids"].str.split(",")
 
     # TODO: Find duplication source
     return pruned_edges.drop_duplicates(subset=["source", "target"])

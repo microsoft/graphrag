@@ -3,8 +3,9 @@
 
 """A module containing compute_edge_combined_degree methods definition."""
 
-import pandas as pd
 from typing import cast
+
+import pandas as pd
 
 
 def compute_edge_combined_degree(
@@ -16,6 +17,7 @@ def compute_edge_combined_degree(
     edge_target_column: str,
 ) -> pd.Series:
     """Compute the combined degree for each edge in a graph."""
+
     def join_to_degree(df: pd.DataFrame, column: str) -> pd.DataFrame:
         degree_column = _degree_colname(column)
         result = df.merge(
