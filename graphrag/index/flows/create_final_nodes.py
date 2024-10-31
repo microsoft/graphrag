@@ -12,7 +12,6 @@ from datashaper import (
 
 from graphrag.index.operations.layout_graph import layout_graph
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.operations.split_text import split_text
 from graphrag.index.operations.unpack_graph import unpack_graph
 from graphrag.index.storage import PipelineStorage
 
@@ -66,10 +65,9 @@ async def create_final_nodes(
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
 
-    # Split 'source_id' column into 'text_unit_ids'
-    joined = split_text(
-        joined, column="source_id", separator=",", to="text_unit_ids"
-    )
+    joined["text_unit_ids"] = joined[
+        "source_id"
+    ].str.split(",")
     joined.drop(columns=["source_id", "size"], inplace=True)
 
     # TODO: Find duplication source
