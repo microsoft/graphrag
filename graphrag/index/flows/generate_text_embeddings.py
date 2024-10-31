@@ -48,16 +48,6 @@ async def generate_text_embeddings(
     text_text_embed: dict | None = None,
 ) -> None:
     """All the steps to generate all embeddings."""
-    entities_embeddings = (
-        final_entities.loc[:, ["id", "name", "description"]]
-        if final_entities is not None
-        else None
-    )
-    if entities_embeddings is not None:
-        entities_embeddings["name_description"] = (
-            entities_embeddings["name"] + ":" + entities_embeddings["description"]
-        )
-
     embedding_param_map = {
         document_raw_content_embedding: {
             "data": final_documents.loc[:, ["id", "raw_content"]]
@@ -84,13 +74,19 @@ async def generate_text_embeddings(
             "base_text_embed": text_text_embed,
         },
         entity_name_embedding: {
-            "data": entities_embeddings,
+            "data": final_entities.loc[:, ["id", "name", "description"]]
+            if final_entities is not None
+            else None,
             "column_to_embed": "name",
             "filename": "create_final_entities_name_embeddings",
             "base_text_embed": name_text_embed,
         },
         entity_description_embedding: {
-            "data": entities_embeddings,
+            "data": final_entities.loc[:, ["id", "name", "description"]].assign(
+                name_description=lambda df: df["name"] + ":" + df["description"]
+            )
+            if final_entities is not None
+            else None,
             "column_to_embed": "name_description",
             "filename": "create_final_entities_description_embeddings",
             "base_text_embed": name_description_text_embed,
