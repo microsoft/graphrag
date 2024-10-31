@@ -3,6 +3,9 @@
 
 """CLI entrypoint."""
 
+import os
+import re
+from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
 from typing import Annotated
@@ -27,6 +30,46 @@ app = typer.Typer(
 )
 
 
+# A workaround for typer's lack of support for proper autocompletion of file/directory paths
+# For further details, see https://github.com/fastapi/typer/discussions/682
+def path_autocomplete(
+    file_okay: bool = True,
+    dir_okay: bool = True,
+    readable: bool = True,
+    writable: bool = False,
+    allow_dash: bool = False,
+    match_wildcard: str | None = None,
+) -> Callable[[str], list[str]]:
+    """Autocomplete file and directory paths."""
+
+    def wildcard_match(string: str, pattern: str) -> bool:
+        regex = re.escape(pattern).replace(r"\?", ".").replace(r"\*", ".*")
+        return re.fullmatch(regex, string) is not None
+
+    def completer(incomplete: str) -> list[str]:
+        items = os.listdir()
+        completions = []
+        for item in items:
+            if not file_okay and Path(item).is_file():
+                continue
+            if not dir_okay and Path(item).is_dir():
+                continue
+            if readable and not os.access(item, os.R_OK):
+                continue
+            if writable and not os.access(item, os.W_OK):
+                continue
+            completions.append(item)
+        if allow_dash:
+            completions.append("-")
+        if match_wildcard:
+            completions = filter(
+                lambda i: wildcard_match(i, match_wildcard), completions
+            )  # type: ignore
+        return [i for i in completions if i.startswith(incomplete)]
+
+    return completer
+
+
 class SearchType(Enum):
     """The type of search to run."""
 
@@ -47,6 +90,9 @@ def _initialize_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ],
 ):
@@ -72,6 +118,9 @@ def _index_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     verbose: Annotated[
@@ -140,12 +189,21 @@ def _prompt_tune_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     config: Annotated[
         Path | None,
         typer.Option(
-            help="The configuration to use.", exists=True, file_okay=True, readable=True
+            help="The configuration to use.",
+            exists=True,
+            file_okay=True,
+            readable=True,
+            autocompletion=path_autocomplete(
+                file_okay=True, dir_okay=False, match_wildcard="*"
+            ),
         ),
     ] = None,
     domain: Annotated[
@@ -238,7 +296,13 @@ def _query_cli(
     config: Annotated[
         Path | None,
         typer.Option(
-            help="The configuration to use.", exists=True, file_okay=True, readable=True
+            help="The configuration to use.",
+            exists=True,
+            file_okay=True,
+            readable=True,
+            autocompletion=path_autocomplete(
+                file_okay=True, dir_okay=False, match_wildcard="*"
+            ),
         ),
     ] = None,
     data: Annotated[
@@ -249,6 +313,9 @@ def _query_cli(
             dir_okay=True,
             readable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, match_wildcard="*"
+            ),
         ),
     ] = None,
     root: Annotated[
@@ -259,6 +326,9 @@ def _query_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     community_level: Annotated[
