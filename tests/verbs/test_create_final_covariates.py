@@ -59,7 +59,6 @@ async def test_create_final_covariates():
 
     # assert all of the columns that covariates copied from the input
     assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
-    assert_series_equal(actual["n_tokens"], input["n_tokens"])
 
     # make sure the human ids are incrementing and cast to strings
     assert actual["human_readable_id"][0] == "1"

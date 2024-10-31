@@ -63,7 +63,6 @@ async def create_final_covariates(
                 "end_date",
                 "source_text",
                 "text_unit_id",
-                "n_tokens",
             ]
         ],
     )
