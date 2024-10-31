@@ -32,7 +32,7 @@ class Relationship(Identified):
     """List of text unit IDs in which the relationship appears (optional)."""
 
     rank: int | None = 1
-    """Rank of the relatinship, used for sorting (optional). Higher rank indicates more important relationship. This can be based on centrality or other metrics."""
+    """Rank of the relationship, used for sorting (optional). Higher rank indicates more important relationship. This can be based on centrality or other metrics."""
 
     attributes: dict[str, Any] | None = None
     """Additional attributes associated with the relationship (optional). To be included in the search prompt"""
