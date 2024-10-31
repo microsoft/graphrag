@@ -48,22 +48,6 @@ async def generate_text_embeddings(
     text_text_embed: dict | None = None,
 ) -> None:
     """All the steps to generate all embeddings."""
-    documents_embeddings = (
-        final_documents.loc[:, ["id", "raw_content"]]
-        if final_documents is not None
-        else None
-    )
-    relationships_embeddings = (
-        final_relationships.loc[:, ["id", "description"]]
-        if final_relationships is not None
-        else None
-    )
-    text_units_embeddings = (
-        final_text_units.loc[:, ["id", "text"]]
-        if final_text_units is not None
-        else None
-    )
-
     entities_embeddings = (
         final_entities.loc[:, ["id", "name", "description"]]
         if final_entities is not None
@@ -74,27 +58,27 @@ async def generate_text_embeddings(
             entities_embeddings["name"] + ":" + entities_embeddings["description"]
         )
 
-    community_reports_embeddings = (
-        final_community_reports.loc[:, ["id", "full_content", "summary", "title"]]
-        if final_community_reports is not None
-        else None
-    )
-
     embedding_param_map = {
         document_raw_content_embedding: {
-            "data": documents_embeddings,
+            "data": final_documents.loc[:, ["id", "raw_content"]]
+            if final_documents is not None
+            else None,
             "column_to_embed": "raw_content",
             "filename": "create_final_documents_raw_content_embeddings",
             "base_text_embed": raw_content_text_embed,
         },
         relationship_description_embedding: {
-            "data": relationships_embeddings,
+            "data": final_relationships.loc[:, ["id", "description"]]
+            if final_relationships is not None
+            else None,
             "column_to_embed": "description",
             "filename": "create_final_relationships_description_embeddings",
             "base_text_embed": description_text_embed,
         },
         text_unit_text_embedding: {
-            "data": text_units_embeddings,
+            "data": final_text_units.loc[:, ["id", "text"]]
+            if final_text_units is not None
+            else None,
             "column_to_embed": "text",
             "filename": "create_final_text_units_text_embeddings",
             "base_text_embed": text_text_embed,
@@ -112,19 +96,31 @@ async def generate_text_embeddings(
             "base_text_embed": name_description_text_embed,
         },
         community_title_embedding: {
-            "data": community_reports_embeddings,
+            "data": final_community_reports.loc[
+                :, ["id", "full_content", "summary", "title"]
+            ]
+            if final_community_reports is not None
+            else None,
             "column_to_embed": "title",
             "filename": "create_final_community_reports_title_embeddings",
             "base_text_embed": title_text_embed,
         },
         community_summary_embedding: {
-            "data": community_reports_embeddings,
+            "data": final_community_reports.loc[
+                :, ["id", "full_content", "summary", "title"]
+            ]
+            if final_community_reports is not None
+            else None,
             "column_to_embed": "summary",
             "filename": "create_final_community_reports_summary_embeddings",
             "base_text_embed": summary_text_embed,
         },
         community_full_content_embedding: {
-            "data": community_reports_embeddings,
+            "data": final_community_reports.loc[
+                :, ["id", "full_content", "summary", "title"]
+            ]
+            if final_community_reports is not None
+            else None,
             "column_to_embed": "full_content",
             "filename": "create_final_community_reports_full_content_embeddings",
             "base_text_embed": full_content_text_embed,
