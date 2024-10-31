@@ -19,7 +19,7 @@ def build_steps(
     Create the base table for the entity graph.
 
     ## Dependencies
-    * `workflow:create_base_summarized_entities`
+    * `workflow:create_base_text_units`
     """
     entity_extraction_config = config.get("entity_extract", {})
     async_mode = entity_extraction_config.get("async_mode", AsyncType.AsyncIO)

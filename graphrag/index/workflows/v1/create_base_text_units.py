@@ -17,7 +17,7 @@ def build_steps(
     Create the base table for text units.
 
     ## Dependencies
-    None
+    (input dataframe)
     """
     chunk_by_columns = config.get("chunk_by", []) or []
     text_chunk_config = config.get("text_chunk", {})
