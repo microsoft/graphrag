@@ -95,7 +95,6 @@ async def embed_text(
             strategy,
             vector_store,
             vector_store_workflow_config,
-            vector_store_config.get("store_in_table", True),
         )
 
     return await _text_embed_in_memory(
@@ -132,7 +131,6 @@ async def _text_embed_with_vector_store(
     strategy: dict[str, Any],
     vector_store: BaseVectorStore,
     vector_store_config: dict,
-    store_in_table: bool = True,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
@@ -182,7 +180,7 @@ async def _text_embed_with_vector_store(
             cache,
             strategy_args,
         )
-        if store_in_table and result.embeddings:
+        if result.embeddings:
             embeddings = [
                 embedding for embedding in result.embeddings if embedding is not None
             ]
@@ -205,10 +203,7 @@ async def _text_embed_with_vector_store(
         starting_index += len(documents)
         i += 1
 
-    if store_in_table:
-        return all_results
-
-    return None
+    return all_results
 
 
 def _create_vector_store(

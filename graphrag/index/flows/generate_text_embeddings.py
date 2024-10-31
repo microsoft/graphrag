@@ -143,9 +143,10 @@ async def _run_and_snapshot_embeddings(
 
         data = data.loc[:, ["id", "embedding"]]
 
-        await snapshot(
-            data,
-            name=filename,
-            storage=storage,
-            formats=["parquet"],
-        )
+        if base_text_embed["strategy"]["vector_store"]["snapshot"] is True:
+            await snapshot(
+                data,
+                name=filename,
+                storage=storage,
+                formats=["parquet"],
+            )
