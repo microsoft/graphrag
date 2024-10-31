@@ -52,12 +52,13 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
     """Read in the Relationships from the raw indexing outputs."""
     # rank is for back-compat with older indexes
     # TODO: remove for 1.0
-    attributes_cols = ["combined_degree"] if "combined_degree" in final_relationships.columns else ["rank"]
+    rank_col = "combined_degree" if "combined_degree" in final_relationships.columns else "rank"
     return read_relationships(
         df=final_relationships,
         short_id_col="human_readable_id",
+        rank_col=rank_col,
         description_embedding_col=None,
-        attributes_cols=attributes_cols,
+        attributes_cols=None,
     )
 
 

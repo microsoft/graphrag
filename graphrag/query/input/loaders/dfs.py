@@ -119,6 +119,7 @@ def read_relationships(
     source_col: str = "source",
     target_col: str = "target",
     description_col: str | None = "description",
+    rank_col: str | None = "combined_degree",
     description_embedding_col: str | None = "description_embedding",
     weight_col: str | None = "weight",
     text_unit_ids_col: str | None = "text_unit_ids",
@@ -138,6 +139,7 @@ def read_relationships(
             ),
             weight=to_optional_float(row, weight_col),
             text_unit_ids=to_optional_list(row, text_unit_ids_col, item_type=str),
+            rank=to_optional_int(row, rank_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
