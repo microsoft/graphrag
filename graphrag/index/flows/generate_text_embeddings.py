@@ -38,6 +38,7 @@ async def generate_text_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     embedded_fields: set[str],
+    embeddings_snapshot: bool = False,
     full_content_text_embed: dict | None = None,
     summary_text_embed: dict | None = None,
     title_text_embed: dict | None = None,
@@ -129,6 +130,7 @@ async def generate_text_embeddings(
             callbacks=callbacks,
             cache=cache,
             storage=storage,
+            embeddings_snapshot=embeddings_snapshot,
             **embedding_param_map[field],
         )
 
@@ -140,6 +142,7 @@ async def _run_and_snapshot_embeddings(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
+    embeddings_snapshot: bool,
     base_text_embed: dict | None = None,
 ) -> None:
     """All the steps to generate single embedding."""
@@ -154,7 +157,7 @@ async def _run_and_snapshot_embeddings(
 
         data = data.loc[:, ["id", "embedding"]]
 
-        if base_text_embed["strategy"]["vector_store"]["snapshot"] is True:
+        if embeddings_snapshot is True:
             await snapshot(
                 data,
                 name=filename,

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 def build_steps(
-    config: PipelineWorkflowConfig,
+    config: PipelineWorkflowConfig,  # noqa: ARG001
 ) -> list[PipelineWorkflowStep]:
     """
     Create the final relationships table.
@@ -22,7 +22,6 @@ def build_steps(
     * `workflow:create_base_entity_graph`
     * `workflow:create_final_nodes`
     """
-    log.info(config)
     return [
         {
             "verb": "create_final_relationships",

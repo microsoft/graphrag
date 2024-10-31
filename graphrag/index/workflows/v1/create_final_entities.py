@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 def build_steps(
-    config: PipelineWorkflowConfig,
+    config: PipelineWorkflowConfig,  # noqa: ARG001
 ) -> list[PipelineWorkflowStep]:
     """
     Create the final entities table.
@@ -20,8 +20,6 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_entity_graph`
     """
-    log.info(config)
-
     return [
         {
             "verb": "create_final_entities",

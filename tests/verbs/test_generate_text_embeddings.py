@@ -43,6 +43,7 @@ async def test_generate_text_embeddings():
     config["entity_name_description_embed"]["strategy"]["type"] = "mock"
     config["relationship_description_embed"]["strategy"]["type"] = "mock"
     config["text_unit_text_embed"]["strategy"]["type"] = "mock"
+    config["snapshot_embeddings"] = True
 
     config["embedded_fields"] = all_embeddings
 
@@ -52,7 +53,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["community_report_summary_embed"]["strategy"]["vector_store"] = {
         "title_column": "summary",
@@ -60,7 +60,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["community_report_title_embed"]["strategy"]["vector_store"] = {
         "title_column": "title",
@@ -68,7 +67,6 @@ async def test_generate_text_embeddings():
         "collection_name": "final_community_reports_title_embedding",
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["document_raw_content_embed"]["strategy"]["vector_store"] = {
         "title_column": "raw_content",
@@ -76,7 +74,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["entity_name_embed"]["strategy"]["vector_store"] = {
         "title_column": "name",
@@ -84,7 +81,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["entity_name_description_embed"]["strategy"]["vector_store"] = {
         "title_column": "name_description",
@@ -92,7 +88,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["relationship_description_embed"]["strategy"]["vector_store"] = {
         "title_column": "description",
@@ -100,7 +95,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
     config["text_unit_text_embed"]["strategy"]["vector_store"] = {
         "title_column": "text",
@@ -108,7 +102,6 @@ async def test_generate_text_embeddings():
         "store_in_table": True,
         "type": "lancedb",
         "db_uri": "./lancedb",
-        "snapshot": True,
     }
 
     steps = build_steps(config)

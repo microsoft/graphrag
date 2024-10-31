@@ -62,6 +62,7 @@ def build_steps(
         {
             "verb": "generate_text_embeddings",
             "args": {
+                "embeddings_snapshot": config.get("snapshot_embeddings", False),
                 "full_content_text_embed": community_report_full_content_embed_config,
                 "summary_text_embed": community_report_summary_embed_config,
                 "title_text_embed": community_report_title_embed_config,
