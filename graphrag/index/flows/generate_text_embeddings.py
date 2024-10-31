@@ -29,11 +29,11 @@ log = logging.getLogger(__name__)
 
 
 async def generate_text_embeddings(
-    final_documents: pd.DataFrame,
-    final_relationships: pd.DataFrame,
-    final_text_units: pd.DataFrame,
-    final_entities: pd.DataFrame,
-    final_community_reports: pd.DataFrame,
+    final_documents: pd.DataFrame | None,
+    final_relationships: pd.DataFrame | None,
+    final_text_units: pd.DataFrame | None,
+    final_entities: pd.DataFrame | None,
+    final_community_reports: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
@@ -48,18 +48,37 @@ async def generate_text_embeddings(
     text_text_embed: dict | None = None,
 ) -> None:
     """All the steps to generate all embeddings."""
-    documents_embeddings = final_documents.loc[:, ["id", "raw_content"]]
-    relationships_embeddings = final_relationships.loc[:, ["id", "description"]]
-    text_units_embeddings = final_text_units.loc[:, ["id", "text"]]
-
-    entities_embeddings = final_entities.loc[:, ["id", "name", "description"]]
-    entities_embeddings["name_description"] = (
-        entities_embeddings["name"] + ":" + entities_embeddings["description"]
+    documents_embeddings = (
+        final_documents.loc[:, ["id", "raw_content"]]
+        if final_documents is not None
+        else None
+    )
+    relationships_embeddings = (
+        final_relationships.loc[:, ["id", "description"]]
+        if final_relationships is not None
+        else None
+    )
+    text_units_embeddings = (
+        final_text_units.loc[:, ["id", "text"]]
+        if final_text_units is not None
+        else None
     )
 
-    community_reports_embeddings = final_community_reports.loc[
-        :, ["id", "full_content", "summary", "title"]
-    ]
+    entities_embeddings = (
+        final_entities.loc[:, ["id", "name", "description"]]
+        if final_entities is not None
+        else None
+    )
+    if entities_embeddings is not None:
+        entities_embeddings["name_description"] = (
+            entities_embeddings["name"] + ":" + entities_embeddings["description"]
+        )
+
+    community_reports_embeddings = (
+        final_community_reports.loc[:, ["id", "full_content", "summary", "title"]]
+        if final_community_reports is not None
+        else None
+    )
 
     embedding_param_map = {
         document_raw_content_embedding: {
