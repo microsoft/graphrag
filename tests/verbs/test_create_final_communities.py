@@ -31,5 +31,7 @@ async def test_create_final_communities():
 
     # we removed the raw_community column, so expect one less in the output
     compare_outputs(
-        actual, expected, ["id", "title", "level", "relationship_ids", "text_unit_ids"]
+        actual,
+        expected,
+        ["id", "title", "level", "relationship_ids", "text_unit_ids", "size"],
     )

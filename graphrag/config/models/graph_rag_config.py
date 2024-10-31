@@ -54,6 +54,12 @@ class GraphRagConfig(LLMConfig):
     )
     """The storage configuration."""
 
+    update_index_storage: StorageConfig | None = Field(
+        description="The storage configuration for the updated index.",
+        default=None,
+    )
+    """The storage configuration for the updated index."""
+
     cache: CacheConfig = Field(
         description="The cache configuration.", default=CacheConfig()
     )
