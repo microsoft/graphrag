@@ -157,7 +157,7 @@ def build_relationship_context(
     include_relationship_weight: bool = False,
     max_tokens: int = 8000,
     top_k_relationships: int = 10,
-    relationship_ranking_attribute: str = "rank",
+    relationship_ranking_attribute: str = "combined_degree",
     column_delimiter: str = "|",
     context_name: str = "Relationships",
 ) -> tuple[str, pd.DataFrame]:
@@ -227,7 +227,7 @@ def _filter_relationships(
     selected_entities: list[Entity],
     relationships: list[Relationship],
     top_k_relationships: int = 10,
-    relationship_ranking_attribute: str = "rank",
+    relationship_ranking_attribute: str = "combined_degree",
 ) -> list[Relationship]:
     """Filter and sort relationships based on a set of selected entities and a ranking attribute."""
     # First priority: in-network relationships (i.e. relationships between selected entities)

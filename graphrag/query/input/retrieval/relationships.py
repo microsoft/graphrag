@@ -13,7 +13,7 @@ from graphrag.model import Entity, Relationship
 def get_in_network_relationships(
     selected_entities: list[Entity],
     relationships: list[Relationship],
-    ranking_attribute: str = "rank",
+    ranking_attribute: str = "combined_degree",
 ) -> list[Relationship]:
     """Get all directed relationships between selected entities, sorted by ranking_attribute."""
     selected_entity_names = [entity.title for entity in selected_entities]
@@ -35,7 +35,7 @@ def get_in_network_relationships(
 def get_out_network_relationships(
     selected_entities: list[Entity],
     relationships: list[Relationship],
-    ranking_attribute: str = "rank",
+    ranking_attribute: str = "combined_degree",
 ) -> list[Relationship]:
     """Get relationships from selected entities to other entities that are not within the selected entities, sorted by ranking_attribute."""
     selected_entity_names = [entity.title for entity in selected_entities]
@@ -84,7 +84,7 @@ def get_entities_from_relationships(
 def calculate_relationship_combined_rank(
     relationships: list[Relationship],
     entities: list[Entity],
-    ranking_attribute: str = "rank",
+    ranking_attribute: str = "combined_degree",
 ) -> list[Relationship]:
     """Calculate default rank for a relationship based on the combined rank of source and target entities."""
     entity_mappings = {entity.title: entity for entity in entities}
@@ -103,7 +103,7 @@ def calculate_relationship_combined_rank(
 def sort_relationships_by_ranking_attribute(
     relationships: list[Relationship],
     entities: list[Entity],
-    ranking_attribute: str = "rank",
+    ranking_attribute: str = "combined_degree",
 ) -> list[Relationship]:
     """
     Sort relationships by a ranking_attribute.

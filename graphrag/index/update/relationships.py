@@ -52,8 +52,8 @@ def _update_and_merge_relationships(
         "source"
     ].transform("count")
 
-    # Recalculate the rank of the relationships (source degree + target degree)
-    final_relationships["rank"] = (
+    # Recalculate the combined_degree of the relationships (source degree + target degree)
+    final_relationships["combined_degree"] = (
         final_relationships["source_degree"] + final_relationships["target_degree"]
     )
 

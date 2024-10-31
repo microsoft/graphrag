@@ -16,7 +16,7 @@ EDGE_ID = "human_readable_id"
 EDGE_SOURCE = "source"
 EDGE_TARGET = "target"
 EDGE_DESCRIPTION = "description"
-EDGE_DEGREE = "rank"
+EDGE_DEGREE = "combined_degree"
 EDGE_DETAILS = "edge_details"
 EDGE_WEIGHT = "weight"
 

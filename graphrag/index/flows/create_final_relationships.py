@@ -49,7 +49,7 @@ async def create_final_relationships(
     filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
     filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
-    pruned_edges["rank"] = compute_edge_combined_degree(
+    pruned_edges["combined_degree"] = compute_edge_combined_degree(
         pruned_edges,
         filtered_nodes,
         node_name_column="title",

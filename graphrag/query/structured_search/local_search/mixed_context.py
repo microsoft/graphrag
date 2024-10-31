@@ -106,7 +106,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         include_entity_rank: bool = False,
         rank_description: str = "number of relationships",
         include_relationship_weight: bool = False,
-        relationship_ranking_attribute: str = "rank",
+        relationship_ranking_attribute: str = "combined_degree",
         return_candidate_context: bool = False,
         use_community_summary: bool = False,
         min_community_rank: int = 0,
@@ -379,7 +379,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         rank_description: str = "relationship count",
         include_relationship_weight: bool = False,
         top_k_relationships: int = 10,
-        relationship_ranking_attribute: str = "rank",
+        relationship_ranking_attribute: str = "combined_degree",
         return_candidate_context: bool = False,
         column_delimiter: str = "|",
     ) -> tuple[str, dict[str, pd.DataFrame]]:

@@ -50,11 +50,14 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
 
 def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
+    # rank is for back-compat with older indexes
+    # TODO: remove for 1.0
+    attributes_cols = ["combined_degree"] if "combined_degree" in final_relationships.columns else ["rank"]
     return read_relationships(
         df=final_relationships,
         short_id_col="human_readable_id",
         description_embedding_col=None,
-        attributes_cols=["rank"],
+        attributes_cols=attributes_cols,
     )
 
 
@@ -98,16 +101,15 @@ def read_indexer_entities(
 
     entity_df = _filter_under_community_level(entity_df, community_level)
     entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
-        columns={"title": "name", "degree": "rank"}
+        columns={"title": "name"}
     )
 
     entity_df["community"] = entity_df["community"].fillna(-1)
     entity_df["community"] = entity_df["community"].astype(int)
-    entity_df["rank"] = entity_df["rank"].astype(int)
 
     # for duplicate entities, keep the one with the highest community level
     entity_df = (
-        entity_df.groupby(["name", "rank"]).agg({"community": "max"}).reset_index()
+        entity_df.groupby(["name", "degree"]).agg({"community": "max"}).reset_index()
     )
     entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
     entity_df = entity_df.merge(
@@ -123,7 +125,7 @@ def read_indexer_entities(
         short_id_col="human_readable_id",
         description_col="description",
         community_col="community",
-        rank_col="rank",
+        rank_col="degree",
         name_embedding_col=None,
         description_embedding_col="description_embedding",
         graph_embedding_col=None,
