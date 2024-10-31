@@ -41,7 +41,7 @@ def create_final_communities(
     cluster_relationships = (
         combined_clusters.groupby(["cluster", "level_x"], sort=False)
         .agg(
-            relationship_ids=("id_y", "unique"), text_unit_ids=("source_id_x", "unique")
+            relationship_ids=("id_y", "unique"), text_unit_ids=("source_id_x", "unique"), entity_ids=("id_x", "unique")
         )
         .reset_index()
     )
@@ -77,6 +77,7 @@ def create_final_communities(
             "level",
             "relationship_ids",
             "text_unit_ids",
+            "entity_ids",
             "period",
             "size",
         ],
