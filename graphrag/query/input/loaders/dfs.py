@@ -173,7 +173,6 @@ def read_covariates(
                 to_str(row, covariate_type_col) if covariate_type_col else "claim"
             ),
             text_unit_ids=to_optional_list(row, text_unit_ids_col, item_type=str),
-            document_ids=to_optional_list(row, document_ids_col, item_type=str),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
