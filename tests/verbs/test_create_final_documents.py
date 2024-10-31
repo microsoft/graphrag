@@ -17,7 +17,7 @@ from .util import (
 
 async def test_create_final_documents():
     input_tables = load_input_tables([
-        "workflow:create_base_text_units",
+        "workflow:create_final_text_units",
     ])
     expected = load_expected(workflow_name)
 
@@ -39,7 +39,7 @@ async def test_create_final_documents():
 
 async def test_create_final_documents_with_embeddings():
     input_tables = load_input_tables([
-        "workflow:create_base_text_units",
+        "workflow:create_final_text_units",
     ])
     expected = load_expected(workflow_name)
 
@@ -66,7 +66,7 @@ async def test_create_final_documents_with_embeddings():
 
 
 async def test_create_final_documents_with_attribute_columns():
-    input_tables = load_input_tables(["workflow:create_base_text_units"])
+    input_tables = load_input_tables(["workflow:create_final_text_units"])
     expected = load_expected(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
