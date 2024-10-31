@@ -310,7 +310,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "raw_content",
                         "collection_name": "final_documents_raw_content_embedding",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "text_unit_text_embed": _get_embedding_settings(
@@ -319,7 +319,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "text",
                         "collection_name": "text_units_embedding",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "entity_name_embed": _get_embedding_settings(
@@ -328,7 +328,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "name",
                         "collection_name": "entity_name_embeddings",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "entity_name_description_embed": _get_embedding_settings(
@@ -337,7 +337,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "name_description",
                         "collection_name": "entity_description_embeddings",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "relationship_description_embed": _get_embedding_settings(
@@ -346,7 +346,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "description",
                         "collection_name": "relationships_description_embeddings",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "community_report_full_content_embed": _get_embedding_settings(
@@ -355,7 +355,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "full_content",
                         "collection_name": "final_community_reports_full_content_embedding",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "community_report_summary_embed": _get_embedding_settings(
@@ -364,7 +364,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "summary",
                         "collection_name": "final_community_reports_summary_embedding",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "community_report_title_embed": _get_embedding_settings(
@@ -373,7 +373,7 @@ def _embeddings_workflows(
                     {
                         "title_column": "title",
                         "collection_name": "final_community_reports_title_embedding",
-                        "snapshot": settings.snapshots.raw_entities,
+                        "snapshot": settings.snapshots.embeddings,
                     },
                 ),
                 "embedded_fields": embedded_fields,
