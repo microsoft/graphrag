@@ -34,9 +34,6 @@ class Entity(Named):
     text_unit_ids: list[str] | None = None
     """List of text unit IDs in which the entity appears (optional)."""
 
-    document_ids: list[str] | None = None
-    """List of document IDs in which the entity appears (optional)."""
-
     rank: int | None = 1
     """Rank of the entity, used for sorting (optional). Higher rank indicates more important entity. This can be based on centrality or other metrics."""
 
@@ -57,7 +54,6 @@ class Entity(Named):
         graph_embedding_key: str = "graph_embedding",
         community_key: str = "community",
         text_unit_ids_key: str = "text_unit_ids",
-        document_ids_key: str = "document_ids",
         rank_key: str = "degree",
         attributes_key: str = "attributes",
     ) -> "Entity":
@@ -74,6 +70,5 @@ class Entity(Named):
             community_ids=d.get(community_key),
             rank=d.get(rank_key, 1),
             text_unit_ids=d.get(text_unit_ids_key),
-            document_ids=d.get(document_ids_key),
             attributes=d.get(attributes_key),
         )

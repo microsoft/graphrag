@@ -38,7 +38,6 @@ def read_entities(
     graph_embedding_col: str | None = "graph_embedding",
     community_col: str | None = "community_ids",
     text_unit_ids_col: str | None = "text_unit_ids",
-    document_ids_col: str | None = "document_ids",
     rank_col: str | None = "degree",
     attributes_cols: list[str] | None = None,
 ) -> list[Entity]:
@@ -58,7 +57,6 @@ def read_entities(
             graph_embedding=to_optional_list(row, graph_embedding_col, item_type=float),
             community_ids=to_optional_list(row, community_col, item_type=str),
             text_unit_ids=to_optional_list(row, text_unit_ids_col),
-            document_ids=to_optional_list(row, document_ids_col),
             rank=to_optional_int(row, rank_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
@@ -124,7 +122,6 @@ def read_relationships(
     description_embedding_col: str | None = "description_embedding",
     weight_col: str | None = "weight",
     text_unit_ids_col: str | None = "text_unit_ids",
-    document_ids_col: str | None = "document_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Relationship]:
     """Read relationships from a dataframe."""
@@ -141,7 +138,6 @@ def read_relationships(
             ),
             weight=to_optional_float(row, weight_col),
             text_unit_ids=to_optional_list(row, text_unit_ids_col, item_type=str),
-            document_ids=to_optional_list(row, document_ids_col, item_type=str),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
@@ -159,7 +155,6 @@ def read_covariates(
     subject_col: str = "subject_id",
     covariate_type_col: str | None = "type",
     text_unit_ids_col: str | None = "text_unit_ids",
-    document_ids_col: str | None = "document_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Covariate]:
     """Read covariates from a dataframe."""
