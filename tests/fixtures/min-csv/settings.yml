@@ -31,5 +31,5 @@ reporting:
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
-snapshot:
+snapshots:
   embeddings: True
