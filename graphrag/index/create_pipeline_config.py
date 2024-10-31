@@ -319,7 +319,8 @@ def _embeddings_workflows(
                     {
                         "title_column": "text",
                         "collection_name": "text_units_embedding",
-                        "snapshot": settings.snapshots.raw_entities,                    },
+                        "snapshot": settings.snapshots.raw_entities,
+                    },
                 ),
                 "entity_name_embed": _get_embedding_settings(
                     settings.embeddings,
