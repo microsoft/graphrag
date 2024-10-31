@@ -25,7 +25,7 @@
             ],
             "nan_allowed_columns": [
                 "type",
-                "description",
+                "description"
             ],
             "subworkflows": 1,
             "max_runtime": 300
