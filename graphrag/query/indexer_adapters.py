@@ -54,7 +54,6 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
         df=final_relationships,
         short_id_col="human_readable_id",
         description_embedding_col=None,
-        document_ids_col=None,
         attributes_cols=["rank"],
     )
 
@@ -129,7 +128,6 @@ def read_indexer_entities(
         description_embedding_col="description_embedding",
         graph_embedding_col=None,
         text_unit_ids_col="text_unit_ids",
-        document_ids_col=None,
     )
 
 
