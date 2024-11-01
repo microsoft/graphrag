@@ -169,6 +169,98 @@ ignore_fail = 'return_non_zero'
 sequence = ['_test_all', 'coverage_report']
 ignore_fail = 'return_non_zero'
 
+[tool.ruff]
+target-version = "py310"
+extend-include = ["*.ipynb"]
+
+[tool.ruff.format]
+preview = true
+docstring-code-format = true
+docstring-code-line-length = 20
+
+[tool.ruff.lint]
+preview = true
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "W291",
+    "YTT",
+    "T10",
+    "ICN",
+    "INP",
+    "Q",
+    "RSE",
+    "SLOT",
+    "INT",
+    "FLY",
+    "LOG",
+    "C90",
+    "T20",
+    "D",
+    "RET",
+    "PD",
+    "N",
+    "PIE",
+    "SIM",
+    "S",
+    "G",
+    "ERA",
+    "ASYNC",
+    "TID",
+    "UP",
+    "SLF",
+    "BLE",
+    "C4",
+    "I",
+    "F",
+    "A",
+    "ARG",
+    "PTH",
+    "RUF",
+    "B",
+    "TCH",
+    "DTZ",
+    "PYI",
+    "PT",
+    "EM",
+    "TRY",
+    "PERF",
+    "CPY",
+    # "FBT", # use named arguments for boolean flags
+    # "TD", # todos
+    # "FIX", # fixme
+    # "FURB" # preview rules
+    # ANN # Type annotations, re-enable when we get bandwidth
+]
+ignore = [
+    # Ignore module names shadowing Python builtins
+    "A005",
+    # Deprecated Rules
+    "ANN101",
+    "ANN102",
+    # Conflicts with interface argument checking
+    "ARG002",
+    "ANN204",
+    # TODO: Inspect these pandas rules for validity
+    "PD002", # prevents inplace=True
+    # TODO RE-Enable when we get bandwidth
+    "PERF203", # Needs restructuring of errors, we should bail-out on first error
+    "C901",    # needs refactoring to remove cyclomatic complexity
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
+"examples/*" = ["S", "D", "ANN", "T201", "PTH", "TRY", "PERF"]
+"graphrag/index/config/*" = ["TCH"]
+"*.ipynb" = ["T201"]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["input", "id", "bytes"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
 # https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
 include = ["graphrag", "tests", "examples", "examples_notebooks"]
