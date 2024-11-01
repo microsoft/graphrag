@@ -186,6 +186,67 @@ def run_local_search(
     # External users should use the API directly to get the response and context data.
     return response, context_data
 
+def run_drift_search(
+    config_filepath: Path | None,
+    data_dir: Path | None,
+    root_dir: Path,
+    community_level: int,
+    streaming: bool,
+    query: str,
+):
+    """Perform a local search with a given query.
+
+    Loads index files required for local search and calls the Query API.
+    """
+    root = root_dir.resolve()
+    config = load_config(root, config_filepath)
+    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
+    resolve_paths(config)
+
+    dataframe_dict = _resolve_parquet_files(
+        root_dir=root_dir,
+        config=config,
+        parquet_list=[
+            "create_final_nodes.parquet",
+            "create_final_community_reports.parquet",
+            "create_final_text_units.parquet",
+            "create_final_relationships.parquet",
+            "create_final_entities.parquet",
+        ],
+        optional_list=["create_final_covariates.parquet"],
+    )
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_community_reports: pd.DataFrame = dataframe_dict[
+        "create_final_community_reports"
+    ]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
+
+    # call the Query API
+    if streaming:
+        error_msg = "Streaming is not supported yet for DRIFT search."
+        raise NotImplementedError(error_msg)
+    
+    # not streaming
+    response, context_data = asyncio.run(
+        api.drift_search(
+            config=config,
+            nodes=final_nodes,
+            entities=final_entities,
+            community_reports=final_community_reports,
+            text_units=final_text_units,
+            relationships=final_relationships,
+            covariates=final_covariates,
+            community_level=community_level,
+            query=query,
+        )
+    )
+    reporter.success(f"DRIFT Search Response:\n{response}")
+    # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+    # External users should use the API directly to get the response and context data.
+    return response, context_data
 
 def _resolve_parquet_files(
     root_dir: Path,

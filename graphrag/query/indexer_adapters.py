@@ -18,6 +18,7 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
+from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
@@ -131,6 +132,21 @@ def read_indexer_entities(
         text_unit_ids_col="text_unit_ids",
         document_ids_col=None,
     )
+
+
+def embed_community_reports(
+    reports_df: pd.DataFrame,
+    embedder: OpenAIEmbedding,
+) -> pd.DataFrame:
+    if "full_content" not in reports_df.columns:
+        error_msg = "Reports missing full_content column"
+        raise ValueError(error_msg)
+
+    reports_df["full_content_embeddings"] = reports_df.loc[:, "full_content"].apply(
+        lambda x: embedder.embed(x)
+    )
+
+    return reports_df
 
 
 def _filter_under_community_level(

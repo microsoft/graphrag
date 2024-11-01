@@ -14,6 +14,7 @@ from graphrag.api.query import (
     global_search_streaming,
     local_search,
     local_search_streaming,
+    drift_search,
 )
 
 __all__ = [  # noqa: RUF022
@@ -24,6 +25,7 @@ __all__ = [  # noqa: RUF022
     "global_search_streaming",
     "local_search",
     "local_search_streaming",
+    "drift_search",
     # prompt tuning API
     "DocSelectionType",
     "generate_indexing_prompts",
