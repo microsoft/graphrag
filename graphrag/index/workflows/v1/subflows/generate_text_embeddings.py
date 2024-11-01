@@ -32,16 +32,9 @@ async def generate_text_embeddings(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
+    text_embed: dict,
     embedded_fields: set[str],
-    embeddings_snapshot: bool = False,
-    full_content_text_embed: dict | None = None,
-    summary_text_embed: dict | None = None,
-    title_text_embed: dict | None = None,
-    raw_content_text_embed: dict | None = None,
-    name_text_embed: dict | None = None,
-    name_description_text_embed: dict | None = None,
-    description_text_embed: dict | None = None,
-    text_text_embed: dict | None = None,
+    embeddings_snapshot_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to generate embeddings."""
@@ -69,16 +62,9 @@ async def generate_text_embeddings(
         callbacks=callbacks,
         cache=cache,
         storage=storage,
+        text_embed_config=text_embed,
         embedded_fields=embedded_fields,
-        embeddings_snapshot=embeddings_snapshot,
-        full_content_text_embed=full_content_text_embed,
-        summary_text_embed=summary_text_embed,
-        title_text_embed=title_text_embed,
-        raw_content_text_embed=raw_content_text_embed,
-        name_text_embed=name_text_embed,
-        name_description_text_embed=name_description_text_embed,
-        description_text_embed=description_text_embed,
-        text_text_embed=text_text_embed,
+        embeddings_snapshot_enabled=embeddings_snapshot_enabled,
     )
 
     return create_verb_result(cast(Table, pd.DataFrame()))

@@ -190,7 +190,6 @@ def _text_unit_workflows(
 
 def _get_embedding_settings(
     settings: TextEmbeddingConfig,
-    embedding_name: str,
     vector_store_params: dict | None = None,
 ) -> dict:
     vector_store_settings = settings.vector_store
@@ -208,7 +207,6 @@ def _get_embedding_settings(
     # This ensures the vector store config is part of the strategy and not the global config
     return {
         "strategy": strategy,
-        "embedding_name": embedding_name,
     }
 
 
@@ -305,70 +303,7 @@ def _embeddings_workflows(
             name=generate_text_embeddings,
             config={
                 "snapshot_embeddings": settings.snapshots.embeddings,
-                "document_raw_content_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "document_raw_content",
-                    {
-                        "title_column": "raw_content",
-                        "collection_name": "final_documents_raw_content_embedding",
-                    },
-                ),
-                "text_unit_text_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "text_unit_text",
-                    {
-                        "title_column": "text",
-                        "collection_name": "text_units_embedding",
-                    },
-                ),
-                "entity_name_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "entity_name",
-                    {
-                        "title_column": "name",
-                        "collection_name": "entity_name_embeddings",
-                    },
-                ),
-                "entity_name_description_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "entity_name_description",
-                    {
-                        "title_column": "name_description",
-                        "collection_name": "entity_description_embeddings",
-                    },
-                ),
-                "relationship_description_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "relationship_description",
-                    {
-                        "title_column": "description",
-                        "collection_name": "relationships_description_embeddings",
-                    },
-                ),
-                "community_report_full_content_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_full_content",
-                    {
-                        "title_column": "full_content",
-                        "collection_name": "final_community_reports_full_content_embedding",
-                    },
-                ),
-                "community_report_summary_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_summary",
-                    {
-                        "title_column": "summary",
-                        "collection_name": "final_community_reports_summary_embedding",
-                    },
-                ),
-                "community_report_title_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_title",
-                    {
-                        "title_column": "title",
-                        "collection_name": "final_community_reports_title_embedding",
-                    },
-                ),
+                "text_embed": _get_embedding_settings(settings.embeddings),
                 "embedded_fields": embedded_fields,
             },
         ),
