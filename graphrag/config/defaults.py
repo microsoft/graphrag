@@ -21,6 +21,7 @@ from .enums import (
 
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
+AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 #
 # LLM Parameters
 #

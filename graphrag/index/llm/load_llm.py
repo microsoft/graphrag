@@ -8,16 +8,20 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from fnllm import ChatLLM, EmbeddingsLLM, LLMEvents
+from fnllm import ChatLLM, EmbeddingsLLM, JsonStrategy, LLMEvents
 from fnllm.caching import Cache as LLMCache
 from fnllm.openai import (
+    AzureOpenAIConfig,
     OpenAIConfig,
+    PublicOpenAIConfig,
     create_openai_chat_llm,
     create_openai_client,
     create_openai_embeddings_llm,
 )
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
 from pydantic import TypeAdapter
 
+import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.config.models import LLMParameters
 
@@ -30,9 +34,6 @@ if TYPE_CHECKING:
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)
-
-
-validator = TypeAdapter(OpenAIConfig)
 
 
 class GraphRagLLMEvents(LLMEvents):
@@ -164,30 +165,8 @@ def _load_openai_chat_llm(
     config: LLMParameters,
     azure=False,
 ):
-    configuration = validator.validate_python({
-        "api_key": config.api_key,
-        "endpoint": config.api_base,
-        "api_version": config.api_version,
-        "organization": config.organization,
-        "max_retries": config.max_retries,
-        "request_timeout": config.request_timeout,
-        "concurrent_requests": config.concurrent_requests,
-        "encoding_model": config.encoding_model,
-        "audience": config.audience,
-        "azure": azure,
-        "model": config.model,
-        "deployment": config.deployment_name,
-        "chat_parameters": {
-            "frequency_penalty": config.frequency_penalty,
-            "presence_penalty": config.presence_penalty,
-            "top_p": config.top_p,
-            "max_tokens": config.max_tokens or 4000,
-            "n": config.n,
-            "temperature": config.temperature,
-        },
-    })
     return _create_openai_chat_llm(
-        configuration,
+        _create_openai_config(config, azure),
         on_error,
         cache,
     )
@@ -199,24 +178,68 @@ def _load_openai_embeddings_llm(
     config: LLMParameters,
     azure=False,
 ):
-    configuration = validator.validate_python({
-        "api_key": config.api_key,
-        "endpoint": config.api_base,
-        "api_version": config.api_version,
-        "organization": config.organization,
-        "max_retries": config.max_retries,
-        "request_timeout": config.request_timeout,
-        "concurrent_requests": config.concurrent_requests,
-        "encoding_model": config.encoding_model,
-        "audience": config.audience,
-        "azure": azure,
-        "model": config.embeddings_model,
-        "deployment": config.deployment_name,
-    })
     return _create_openai_embeddings_llm(
-        configuration,
+        _create_openai_config(config, azure),
         on_error,
         cache,
+    )
+
+
+def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
+    json_strategy = (
+        JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
+    )
+    if azure:
+        if config.api_base is None:
+            msg = "Azure OpenAI Chat LLM requires an API base"
+            raise ValueError(msg)
+
+        return AzureOpenAIConfig(
+            api_key=config.api_key,
+            endpoint=config.api_base,
+            json_strategy=json_strategy,
+            api_version=config.api_version,
+            organization=config.organization,
+            max_retries=config.max_retries,
+            max_retry_wait=config.max_retry_wait,
+            requests_per_minute=config.requests_per_minute,
+            tokens_per_minute=config.tokens_per_minute,
+            cognitive_services_endpoint=config.audience or defs.AZURE_AUDIENCE,
+            timeout=config.request_timeout,
+            max_concurrency=config.concurrent_requests,
+            model=config.model,
+            encoding=config.encoding_model or defs.ENCODING_MODEL,
+            deployment=config.deployment_name,
+            chat_parameters=OpenAIChatParameters(
+                frequency_penalty=config.frequency_penalty,
+                presence_penalty=config.presence_penalty,
+                top_p=config.top_p,
+                max_tokens=config.max_tokens,
+                n=config.n,
+                temperature=config.temperature,
+            ),
+        )
+    return PublicOpenAIConfig(
+        api_key=config.api_key,
+        base_url=config.proxy,
+        json_strategy=json_strategy,
+        organization=config.organization,
+        max_retries=config.max_retries,
+        max_retry_wait=config.max_retry_wait,
+        requests_per_minute=config.requests_per_minute,
+        tokens_per_minute=config.tokens_per_minute,
+        timeout=config.request_timeout,
+        max_concurrency=config.concurrent_requests,
+        model=config.model,
+        encoding=config.encoding_model or defs.ENCODING_MODEL,
+        chat_parameters=OpenAIChatParameters(
+            frequency_penalty=config.frequency_penalty,
+            presence_penalty=config.presence_penalty,
+            top_p=config.top_p,
+            max_tokens=config.max_tokens,
+            n=config.n,
+            temperature=config.temperature,
+        ),
     )
 
 
