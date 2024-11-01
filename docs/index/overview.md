@@ -41,7 +41,7 @@ yarn run:index --config your_pipeline.yml # custom config mode
 
 ```python
 from graphrag.index import run_pipeline
-from graphrag.index.config import PipelineWorkflowReference
+from graphrag.index.config.workflow import PipelineWorkflowReference
 
 workflows: list[PipelineWorkflowReference] = [
     PipelineWorkflowReference(
