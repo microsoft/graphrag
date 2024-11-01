@@ -186,14 +186,24 @@ def _load_openai_embeddings_llm(
 
 
 def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
+    encoding_model = config.encoding_model or defs.ENCODING_MODEL
     json_strategy = (
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
+    )
+    chat_parameters = OpenAIChatParameters(
+        frequency_penalty=config.frequency_penalty,
+        presence_penalty=config.presence_penalty,
+        top_p=config.top_p,
+        max_tokens=config.max_tokens,
+        n=config.n,
+        temperature=config.temperature,
     )
     if azure:
         if config.api_base is None:
             msg = "Azure OpenAI Chat LLM requires an API base"
             raise ValueError(msg)
 
+        audience = config.audience or defs.AZURE_AUDIENCE
         return AzureOpenAIConfig(
             api_key=config.api_key,
             endpoint=config.api_base,
@@ -204,20 +214,13 @@ def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
             max_retry_wait=config.max_retry_wait,
             requests_per_minute=config.requests_per_minute,
             tokens_per_minute=config.tokens_per_minute,
-            cognitive_services_endpoint=config.audience or defs.AZURE_AUDIENCE,
+            cognitive_services_endpoint=audience,
             timeout=config.request_timeout,
             max_concurrency=config.concurrent_requests,
             model=config.model,
-            encoding=config.encoding_model or defs.ENCODING_MODEL,
+            encoding=encoding_model,
             deployment=config.deployment_name,
-            chat_parameters=OpenAIChatParameters(
-                frequency_penalty=config.frequency_penalty,
-                presence_penalty=config.presence_penalty,
-                top_p=config.top_p,
-                max_tokens=config.max_tokens,
-                n=config.n,
-                temperature=config.temperature,
-            ),
+            chat_parameters=chat_parameters,
         )
     return PublicOpenAIConfig(
         api_key=config.api_key,
@@ -231,15 +234,8 @@ def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
         timeout=config.request_timeout,
         max_concurrency=config.concurrent_requests,
         model=config.model,
-        encoding=config.encoding_model or defs.ENCODING_MODEL,
-        chat_parameters=OpenAIChatParameters(
-            frequency_penalty=config.frequency_penalty,
-            presence_penalty=config.presence_penalty,
-            top_p=config.top_p,
-            max_tokens=config.max_tokens,
-            n=config.n,
-            temperature=config.temperature,
-        ),
+        encoding=encoding_model,
+        chat_parameters=chat_parameters,
     )
 
 
