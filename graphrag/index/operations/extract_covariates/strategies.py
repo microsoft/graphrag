@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from datashaper import VerbCallbacks
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.cache import PipelineCache
@@ -37,7 +37,7 @@ async def run_graph_intelligence(
 
 
 async def _execute(
-    llm: OpenAITextChatLLMInstance,
+    llm: ChatLLM,
     texts: Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],

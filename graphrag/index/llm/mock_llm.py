@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from typing import Any, cast
 
-from fnllm import LLM, LLMInput, LLMOutput
+from fnllm import ChatLLM, LLMInput, LLMOutput
 from fnllm.types.generics import THistoryEntry, TJsonModel, TModelParameters
 from pydantic import BaseModel
 from typing_extensions import Unpack
@@ -18,7 +18,7 @@ class ContentResponse:
     content: str
 
 
-class MockChatLLM(LLM):
+class MockChatLLM(ChatLLM):
     """A mock LLM that returns the given responses."""
 
     def __init__(self, responses: list[str | BaseModel], json: bool = False):

@@ -12,8 +12,7 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
-from fnllm.openai import OpenAITextChatLLMInstance
-from fnllm.openai.types import OpenAIChatParameters
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
@@ -38,7 +37,7 @@ class GraphExtractionResult:
 class GraphExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: OpenAITextChatLLMInstance
+    _llm: ChatLLM
     _join_descriptions: bool
     _tuple_delimiter_key: str
     _record_delimiter_key: str
@@ -49,13 +48,13 @@ class GraphExtractor:
     _input_descriptions_key: str
     _extraction_prompt: str
     _summarization_prompt: str
-    _loop_args: OpenAIChatParameters
+    _loop_args: dict[str, Any]
     _max_gleanings: int
     _on_error: ErrorHandlerFn
 
     def __init__(
         self,
-        llm_invoker: OpenAITextChatLLMInstance,
+        llm_invoker: ChatLLM,
         tuple_delimiter_key: str | None = None,
         record_delimiter_key: str | None = None,
         input_text_key: str | None = None,

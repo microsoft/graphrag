@@ -8,7 +8,7 @@ import traceback
 from dataclasses import dataclass
 from typing import Any
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 from pydantic import BaseModel, Field
 
 from graphrag.index.typing import ErrorHandlerFn
@@ -48,7 +48,7 @@ class CommunityReportsResult:
 class CommunityReportsExtractor:
     """Community reports extractor class definition."""
 
-    _llm: OpenAITextChatLLMInstance
+    _llm: ChatLLM
     _input_text_key: str
     _extraction_prompt: str
     _output_formatter_prompt: str
@@ -57,7 +57,7 @@ class CommunityReportsExtractor:
 
     def __init__(
         self,
-        llm_invoker: OpenAITextChatLLMInstance,
+        llm_invoker: ChatLLM,
         input_text_key: str | None = None,
         extraction_prompt: str | None = None,
         on_error: ErrorHandlerFn | None = None,

@@ -3,7 +3,7 @@
 
 """Generate a community reporter role for community summarization."""
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.prompt import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
@@ -11,7 +11,7 @@ from graphrag.prompt_tune.prompt import (
 
 
 async def generate_community_reporter_role(
-    llm: OpenAITextChatLLMInstance, domain: str, persona: str, docs: str | list[str]
+    llm: ChatLLM, domain: str, persona: str, docs: str | list[str]
 ) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 

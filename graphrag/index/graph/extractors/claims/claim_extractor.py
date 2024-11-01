@@ -9,8 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import tiktoken
-from fnllm.openai import OpenAITextChatLLMInstance
-from fnllm.openai.types import OpenAIChatParameters
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
@@ -38,7 +37,7 @@ class ClaimExtractorResult:
 class ClaimExtractor:
     """Claim extractor class definition."""
 
-    _llm: OpenAITextChatLLMInstance
+    _llm: ChatLLM
     _extraction_prompt: str
     _summary_prompt: str
     _output_formatter_prompt: str
@@ -50,11 +49,11 @@ class ClaimExtractor:
     _completion_delimiter_key: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
-    _loop_args: OpenAIChatParameters
+    _loop_args: dict[str, Any]
 
     def __init__(
         self,
-        llm_invoker: OpenAITextChatLLMInstance,
+        llm_invoker: ChatLLM,
         extraction_prompt: str | None = None,
         input_text_key: str | None = None,
         input_entity_spec_key: str | None = None,

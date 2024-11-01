@@ -3,8 +3,7 @@
 
 """Entity type generation module for fine-tuning."""
 
-from fnllm.openai import OpenAITextChatLLMInstance
-from fnllm.openai.types import OpenAIChatCompletionSystemMessageParam
+from fnllm import ChatLLM
 from pydantic import BaseModel
 
 from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
@@ -21,7 +20,7 @@ class EntityTypesResponse(BaseModel):
 
 
 async def generate_entity_types(
-    llm: OpenAITextChatLLMInstance,
+    llm: ChatLLM,
     domain: str,
     persona: str,
     docs: str | list[str],
@@ -44,7 +43,7 @@ async def generate_entity_types(
         else ENTITY_TYPE_GENERATION_PROMPT
     ).format(task=formatted_task, input_text=docs_str)
 
-    history = [OpenAIChatCompletionSystemMessageParam(role="system", content=persona)]
+    history = [{"role": "system", "content": persona}]
 
     if json_mode:
         response = await llm(

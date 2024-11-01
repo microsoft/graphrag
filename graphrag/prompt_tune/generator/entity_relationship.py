@@ -6,8 +6,7 @@
 import asyncio
 import json
 
-from fnllm.openai import OpenAITextChatLLMInstance
-from fnllm.openai.types import OpenAIChatCompletionSystemMessageParam
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.prompt import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
@@ -19,7 +18,7 @@ MAX_EXAMPLES = 5
 
 
 async def generate_entity_relationship_examples(
-    llm: OpenAITextChatLLMInstance,
+    llm: ChatLLM,
     persona: str,
     entity_types: str | list[str] | None,
     docs: str | list[str],
@@ -32,7 +31,7 @@ async def generate_entity_relationship_examples(
     on the json_mode parameter.
     """
     docs_list = [docs] if isinstance(docs, str) else docs
-    history = [OpenAIChatCompletionSystemMessageParam(content=persona, role="system")]
+    history = [{"content": persona, "role": "system"}]
 
     if entity_types:
         entity_types_str = (

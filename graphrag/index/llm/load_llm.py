@@ -8,12 +8,10 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from fnllm import LLMEvents
+from fnllm import ChatLLM, EmbeddingsLLM, LLMEvents
 from fnllm.caching import Cache as LLMCache
 from fnllm.openai import (
     OpenAIConfig,
-    OpenAIEmbeddingsLLMInstance,
-    OpenAITextChatLLMInstance,
     create_openai_chat_llm,
     create_openai_client,
     create_openai_embeddings_llm,
@@ -109,7 +107,7 @@ def load_llm(
     callbacks: VerbCallbacks,
     cache: PipelineCache | None,
     chat_only=False,
-) -> OpenAITextChatLLMInstance:
+) -> ChatLLM:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
     llm_type = config.type
@@ -133,7 +131,7 @@ def load_llm_embeddings(
     callbacks: VerbCallbacks,
     cache: PipelineCache | None,
     chat_only=False,
-) -> OpenAIEmbeddingsLLMInstance:
+) -> EmbeddingsLLM:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
     llm_type = llm_config.type
@@ -236,7 +234,7 @@ def _load_azure_openai_embeddings_llm(
 
 def _load_static_response(
     _on_error: ErrorHandlerFn, _cache: PipelineCache, config: LLMParameters
-) -> OpenAITextChatLLMInstance:
+) -> ChatLLM:
     if config.responses is None:
         msg = "Static response LLM requires responses"
         raise ValueError(msg)
@@ -271,7 +269,7 @@ def _create_openai_chat_llm(
     configuration: OpenAIConfig,
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-) -> OpenAITextChatLLMInstance:
+) -> ChatLLM:
     """Create an openAI chat llm."""
     client = create_openai_client(configuration)
     return create_openai_chat_llm(
@@ -286,7 +284,7 @@ def _create_openai_embeddings_llm(
     configuration: OpenAIConfig,
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-) -> OpenAIEmbeddingsLLMInstance:
+) -> EmbeddingsLLM:
     """Create an openAI embeddings llm."""
     client = create_openai_client(configuration)
     return create_openai_embeddings_llm(

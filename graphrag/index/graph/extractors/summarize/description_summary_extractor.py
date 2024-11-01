@@ -6,7 +6,7 @@
 import json
 from dataclasses import dataclass
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
@@ -30,7 +30,7 @@ class SummarizationResult:
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: OpenAITextChatLLMInstance
+    _llm: ChatLLM
     _entity_name_key: str
     _input_descriptions_key: str
     _summarization_prompt: str
@@ -40,7 +40,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        llm_invoker: OpenAITextChatLLMInstance,
+        llm_invoker: ChatLLM,
         entity_name_key: str | None = None,
         input_descriptions_key: str | None = None,
         summarization_prompt: str | None = None,

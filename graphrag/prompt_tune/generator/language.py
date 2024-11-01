@@ -3,12 +3,12 @@
 
 """Language detection for GraphRAG prompts."""
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.prompt import DETECT_LANGUAGE_PROMPT
 
 
-async def detect_language(llm: OpenAITextChatLLMInstance, docs: str | list[str]) -> str:
+async def detect_language(llm: ChatLLM, docs: str | list[str]) -> str:
     """Detect input language to use for GraphRAG prompts.
 
     Parameters

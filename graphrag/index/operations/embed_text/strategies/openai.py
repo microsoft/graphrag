@@ -9,7 +9,7 @@ from typing import Any
 
 import numpy as np
 from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
-from fnllm.openai import OpenAIEmbeddingsLLMInstance
+from fnllm import EmbeddingsLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
@@ -77,7 +77,7 @@ def _get_llm(
     config: LLMParameters,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-) -> OpenAIEmbeddingsLLMInstance:
+) -> EmbeddingsLLM:
     return load_llm_embeddings(
         "text_embedding",
         config,
@@ -87,7 +87,7 @@ def _get_llm(
 
 
 async def _execute(
-    llm: OpenAIEmbeddingsLLMInstance,
+    llm: EmbeddingsLLM,
     chunks: list[list[str]],
     tick: ProgressTicker,
     semaphore: asyncio.Semaphore,

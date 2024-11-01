@@ -3,12 +3,12 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
 
-async def generate_domain(llm: OpenAITextChatLLMInstance, docs: str | list[str]) -> str:
+async def generate_domain(llm: ChatLLM, docs: str | list[str]) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters

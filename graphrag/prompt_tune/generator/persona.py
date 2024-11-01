@@ -3,15 +3,13 @@
 
 """Persona generating module for fine-tuning GraphRAG prompts."""
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt import GENERATE_PERSONA_PROMPT
 
 
-async def generate_persona(
-    llm: OpenAITextChatLLMInstance, domain: str, task: str = DEFAULT_TASK
-) -> str:
+async def generate_persona(llm: ChatLLM, domain: str, task: str = DEFAULT_TASK) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters

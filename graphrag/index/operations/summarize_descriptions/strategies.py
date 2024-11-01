@@ -4,7 +4,7 @@
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
 from datashaper import VerbCallbacks
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.index.cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
@@ -34,7 +34,7 @@ async def run_graph_intelligence(
 
 
 async def run_summarize_descriptions(
-    llm: OpenAITextChatLLMInstance,
+    llm: ChatLLM,
     items: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,

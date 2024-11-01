@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 from datashaper import NoopVerbCallbacks
-from fnllm.openai import OpenAIEmbeddingsLLMInstance
+from fnllm import ChatLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
@@ -26,7 +26,7 @@ K = 15
 
 async def _embed_chunks(
     text_chunks: pd.DataFrame,
-    embedding_llm: OpenAIEmbeddingsLLMInstance,
+    embedding_llm: ChatLLM,
     n_subset_max: int = N_SUBSET_MAX,
 ) -> tuple[pd.DataFrame, np.ndarray]:
     """Convert text chunks into dense text embeddings."""

@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from fnllm.openai import OpenAITextChatLLMInstance
+from fnllm import ChatLLM
 
 from graphrag.prompt_tune.prompt import (
     GENERATE_REPORT_RATING_PROMPT,
@@ -11,7 +11,7 @@ from graphrag.prompt_tune.prompt import (
 
 
 async def generate_community_report_rating(
-    llm: OpenAITextChatLLMInstance, domain: str, persona: str, docs: str | list[str]
+    llm: ChatLLM, domain: str, persona: str, docs: str | list[str]
 ) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
