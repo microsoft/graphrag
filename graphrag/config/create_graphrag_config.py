@@ -414,6 +414,7 @@ def create_graphrag_config(
                 raw_entities=reader.bool("raw_entities") or defs.SNAPSHOTS_RAW_ENTITIES,
                 top_level_nodes=reader.bool("top_level_nodes")
                 or defs.SNAPSHOTS_TOP_LEVEL_NODES,
+                embeddings=reader.bool("embeddings") or defs.SNAPSHOTS_EMBEDDINGS,
             )
         with reader.envvar_prefix(Section.umap), reader.use(values.get("umap")):
             umap_model = UmapConfig(

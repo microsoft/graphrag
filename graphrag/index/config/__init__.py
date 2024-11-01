@@ -11,6 +11,18 @@ from .cache import (
     PipelineMemoryCacheConfig,
     PipelineNoneCacheConfig,
 )
+from .embeddings import (
+    all_embeddings,
+    community_full_content_embedding,
+    community_summary_embedding,
+    community_title_embedding,
+    document_raw_content_embedding,
+    entity_description_embedding,
+    entity_name_embedding,
+    relationship_description_embedding,
+    required_embeddings,
+    text_unit_text_embedding,
+)
 from .input import (
     PipelineCSVInputConfig,
     PipelineInputConfig,
@@ -66,4 +78,14 @@ __all__ = [
     "PipelineWorkflowConfig",
     "PipelineWorkflowReference",
     "PipelineWorkflowStep",
+    "all_embeddings",
+    "community_full_content_embedding",
+    "community_summary_embedding",
+    "community_title_embedding",
+    "document_raw_content_embedding",
+    "entity_description_embedding",
+    "entity_name_embedding",
+    "relationship_description_embedding",
+    "required_embeddings",
+    "text_unit_text_embedding",
 ]

@@ -181,7 +181,8 @@ async def _run_entity_description_embedding(
         entities_df,
         callbacks,
         cache,
-        column="name_description",
+        embed_column="name_description",
+        embedding_name="entity.description",
         strategy=embed_config.get("strategy", {}),
     )
     return entities_df.drop(columns=["name_description"])
