@@ -86,6 +86,7 @@ STORAGE_BASE_DIR = "output"
 STORAGE_TYPE = StorageType.file
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 UMAP_ENABLED = False
+UPDATE_STORAGE_BASE_DIR = "update_output"
 
 VECTOR_STORE = f"""
     type: {VectorStoreType.LanceDB.value}
