@@ -1401,8 +1401,8 @@
 <li><code>async_mode</code> (see Async Mode top-level config)</li>
 <li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
 <li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch # of tokens.</li>
-<li><code>target</code> <strong>required|all</strong> - Determines which set of embeddings to emit.</li>
-<li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip.</li>
+<li><code>target</code> <strong>required|all|none</strong> - Determines which set of embeddings to emit.</li>
+<li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip. Only useful if target=all to customize the list.</li>
 <li><code>vector_store</code> <strong>dict</strong> - The vector store to use. Configured for lancedb by default.</li>
 <li><code>type</code> <strong>str</strong> - <code>lancedb</code> or <code>azure_ai_search</code>. Default=<code>lancedb</code></li>
 <li><code>db_uri</code> <strong>str</strong> (only for lancedb) - The database uri. Default=<code>storage.base_dir/lancedb</code></li>
@@ -1410,7 +1410,7 @@
 <li><code>api_key</code> <strong>str</strong> (optional - only for AI Search) - The AI Search api key to use.</li>
 <li><code>audience</code> <strong>str</strong> (only for AI Search) - Audience for managed identity token if managed identity authentication is used.</li>
 <li><code>overwrite</code> <strong>bool</strong> (only used at index creation time) - Overwrite collection if it exist. Default=<code>True</code></li>
-<li><code>collection_name</code> <strong>str</strong> - The name of a vector collection. Default=<code>entity_description_embeddings</code></li>
+<li><code>container_name</code> <strong>str</strong> - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=<code>default</code></li>
 <li><code>strategy</code> <strong>dict</strong> - Fully override the text-embedding strategy.</li>
 </ul>
 <h2 id="chunks">chunks</h2>
