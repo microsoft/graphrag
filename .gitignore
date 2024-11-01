@@ -12,8 +12,6 @@ tests/fixtures/cache
 tests/fixtures/*/cache
 tests/fixtures/*/output
 lancedb/
-prompts/
-settings.yaml
 
 # Random
 .DS_Store
