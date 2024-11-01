@@ -324,17 +324,16 @@ def _patch_vector_store(
             "container_name": "default",
             "overwrite": True,
         }
-        _entities = read_indexer_entities(nodes, entities, community_level)
-        container_name = config.embeddings.vector_store["container_name"]
         description_embedding_store = LanceDBVectorStore(
             db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name=f"{container_name}.entity.description",
+            collection_name="default-entity-description",
             overwrite=config.embeddings.vector_store["overwrite"],
         )
         description_embedding_store.connect(
             db_uri=config.embeddings.vector_store["db_uri"]
         )
         # dump embeddings from the entities list to the description_embedding_store
+        _entities = read_indexer_entities(nodes, entities, community_level)
         store_entity_semantic_embeddings(
             entities=_entities, vectorstore=description_embedding_store
         )
@@ -346,7 +345,7 @@ def _get_embedding_description_store(
 ):
     """Get the embedding description store."""
     vector_store_type = config_args["type"]
-    collection_name = f"{config_args['container_name']}.entity.description"
+    collection_name = f"{config_args['container_name']}-entity-description"
     description_embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type,
         kwargs={**config_args, "collection_name": collection_name},
