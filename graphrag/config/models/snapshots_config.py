@@ -23,3 +23,7 @@ class SnapshotsConfig(BaseModel):
         description="A flag indicating whether to take snapshots of top-level nodes.",
         default=defs.SNAPSHOTS_TOP_LEVEL_NODES,
     )
+    embeddings: bool = Field(
+        description="A flag indicating whether to take snapshots of embeddings.",
+        default=defs.SNAPSHOTS_EMBEDDINGS,
+    )

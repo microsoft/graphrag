@@ -42,9 +42,11 @@ async def embed_text(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    column: str,
+    embed_column: str,
     strategy: dict,
-    embedding_name: str = "default",
+    embedding_name: str,
+    id_column: str = "id",
+    title_column: str | None = None,
 ):
     """
     Embed a piece of text into a vector space. The operation outputs a new column containing a mapping between doc_id and vector.
@@ -91,18 +93,19 @@ async def embed_text(
             input,
             callbacks,
             cache,
-            column,
+            embed_column,
             strategy,
             vector_store,
             vector_store_workflow_config,
-            vector_store_config.get("store_in_table", False),
+            id_column=id_column,
+            title_column=title_column,
         )
 
     return await _text_embed_in_memory(
         input,
         callbacks,
         cache,
-        column,
+        embed_column,
         strategy,
     )
 
@@ -111,14 +114,14 @@ async def _text_embed_in_memory(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    column: str,
+    embed_column: str,
     strategy: dict,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
     strategy_args = {**strategy}
 
-    texts: list[str] = input[column].to_numpy().tolist()
+    texts: list[str] = input[embed_column].to_numpy().tolist()
     result = await strategy_exec(texts, callbacks, cache, strategy_args)
 
     return result.embeddings
@@ -128,11 +131,12 @@ async def _text_embed_with_vector_store(
     input: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
-    column: str,
+    embed_column: str,
     strategy: dict[str, Any],
     vector_store: BaseVectorStore,
     vector_store_config: dict,
-    store_in_table: bool = False,
+    id_column: str = "id",
+    title_column: str | None = None,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
@@ -142,24 +146,24 @@ async def _text_embed_with_vector_store(
     insert_batch_size: int = (
         vector_store_config.get("batch_size") or DEFAULT_EMBEDDING_BATCH_SIZE
     )
-    title_column: str = vector_store_config.get("title_column", "title")
-    id_column: str = vector_store_config.get("id_column", "id")
+
     overwrite: bool = vector_store_config.get("overwrite", True)
 
-    if column not in input.columns:
-        msg = (
-            f"Column {column} not found in input dataframe with columns {input.columns}"
-        )
+    if embed_column not in input.columns:
+        msg = f"Column {embed_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
-    if title_column not in input.columns:
-        msg = f"Column {title_column} not found in input dataframe with columns {input.columns}"
+    title = title_column or embed_column
+    if title not in input.columns:
+        msg = (
+            f"Column {title} not found in input dataframe with columns {input.columns}"
+        )
         raise ValueError(msg)
     if id_column not in input.columns:
         msg = f"Column {id_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
 
     total_rows = 0
-    for row in input[column]:
+    for row in input[embed_column]:
         if isinstance(row, list):
             total_rows += len(row)
         else:
@@ -172,8 +176,8 @@ async def _text_embed_with_vector_store(
 
     while insert_batch_size * i < input.shape[0]:
         batch = input.iloc[insert_batch_size * i : insert_batch_size * (i + 1)]
-        texts: list[str] = batch[column].to_numpy().tolist()
-        titles: list[str] = batch[title_column].to_numpy().tolist()
+        texts: list[str] = batch[embed_column].to_numpy().tolist()
+        titles: list[str] = batch[title].to_numpy().tolist()
         ids: list[str] = batch[id_column].to_numpy().tolist()
         result = await strategy_exec(
             texts,
@@ -181,7 +185,7 @@ async def _text_embed_with_vector_store(
             cache,
             strategy_args,
         )
-        if store_in_table and result.embeddings:
+        if result.embeddings:
             embeddings = [
                 embedding for embedding in result.embeddings if embedding is not None
             ]
@@ -204,10 +208,7 @@ async def _text_embed_with_vector_store(
         starting_index += len(documents)
         i += 1
 
-    if store_in_table:
-        return all_results
-
-    return None
+    return all_results
 
 
 def _create_vector_store(
@@ -226,12 +227,10 @@ def _create_vector_store(
 
 
 def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
-    collection_name = vector_store_config.get("collection_name")
-    if not collection_name:
-        collection_names = vector_store_config.get("collection_names", {})
-        collection_name = collection_names.get(embedding_name, embedding_name)
+    container_name = vector_store_config.get("container_name")
+    collection_name = f"{container_name}.{embedding_name}".replace(".", "-")
 
-    msg = f"using vector store {vector_store_config.get('type')} with collection_name {collection_name} for embedding {embedding_name}"
+    msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
     log.info(msg)
     return collection_name
 
