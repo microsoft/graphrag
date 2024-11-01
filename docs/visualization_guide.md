@@ -3,10 +3,17 @@
 The following step-by-step guide walks through the process to visualize a knowledge graph after it's been constructed by graphrag. Note that some of the settings recommended below are based on our own experience of what works well. Feel free to change and explore other settings for a better visualization experience!
 
 ## 1. Run the Pipeline
-Before building an index, please review your `settings.yaml` configuration file and ensure that graphml snapshots is enabled
+Before building an index, please review your `settings.yaml` configuration file and ensure that graphml snapshots is enabled.
 ```yaml
 snapshots:
   graphml: true
+```
+(Optional) To support other visualization tools and exploration, additional parameters can be enabled that provide access to vector embeddings.
+```yaml
+embed_graph:
+  enabled: true # will generate node2vec embeddings for nodes
+umap:
+  enabled: true # will generate UMAP embeddings for nodes
 ```
 After running the indexing pipeline over your data, there will be an output folder (defined by the `storage.base_dir` setting).
 - **Output Folder**: Contains artifacts from the LLM’s indexing pass.
