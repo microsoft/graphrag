@@ -172,7 +172,6 @@ class TestIndexer:
         stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
-        expected_artifacts = 0
         expected_workflows = set(workflow_config.keys())
         workflows = set(stats["workflows"].keys())
         assert (
@@ -182,9 +181,6 @@ class TestIndexer:
         # [OPTIONAL] Check runtime
         for workflow in expected_workflows:
             # Check expected artifacts
-            expected_artifacts = expected_artifacts + workflow_config[workflow].get(
-                "expected_artifacts", 1
-            )
             # Check max runtime
             max_runtime = workflow_config[workflow].get("max_runtime", None)
             if max_runtime:
@@ -192,17 +188,17 @@ class TestIndexer:
                     stats["workflows"][workflow]["overall"] <= max_runtime
                 ), f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
 
-        # Check artifacts
-        artifact_files = os.listdir(artifacts)
+        # Check that the output artifacts matches our expectations
+        actual_artifacts = {
+            f.replace(".parquet", "") for f in os.listdir(artifacts)
+        } - {"stats.json"}
+        transient_workflows = {"create_base_text_units"}
+        expected_artifacts = expected_workflows - transient_workflows
+        assert actual_artifacts == expected_artifacts
 
-        # check that the number of workflows matches the number of artifacts
-        assert (
-            len(artifact_files) == (expected_artifacts + 1)
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
-
-        for artifact in artifact_files:
+        for artifact in actual_artifacts:
             if artifact.endswith(".parquet"):
-                output_df = pd.read_parquet(artifacts / artifact)
+                output_df = pd.read_parquet(artifacts / f"{artifact}.parquet")
                 artifact_name = artifact.split(".")[0]
 
                 try:
