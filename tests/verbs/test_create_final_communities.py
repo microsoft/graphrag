@@ -29,7 +29,19 @@ async def test_create_final_communities():
         },
     )
 
+    # skip the "period" column for testing because it will always have today's date
+    # we'll just make sure it exists
+    assert "period" in actual.columns
     compare_outputs(
         actual,
         expected,
+        columns=[
+            "id",
+            "title",
+            "level",
+            "relationship_ids",
+            "text_unit_ids",
+            "entity_ids",
+            "size",
+        ],
     )
