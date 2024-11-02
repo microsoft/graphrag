@@ -8,13 +8,11 @@ from typing import cast
 import pandas as pd
 from datashaper import (
     Table,
-    VerbCallbacks,
     VerbInput,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_documents import (
     create_final_documents as create_final_documents_flow,
 )
@@ -27,24 +25,14 @@ from graphrag.index.storage import PipelineStorage
 )
 async def create_final_documents(
     input: VerbInput,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
     runtime_storage: PipelineStorage,
     document_attribute_columns: list[str] | None = None,
-    raw_content_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final documents."""
     source = cast(pd.DataFrame, input.get_input())
     text_units = await runtime_storage.get("base_text_units")
 
-    output = await create_final_documents_flow(
-        source,
-        text_units,
-        callbacks,
-        cache,
-        document_attribute_columns=document_attribute_columns,
-        raw_content_text_embed=raw_content_text_embed,
-    )
+    output = create_final_documents_flow(source, text_units, document_attribute_columns)
 
     return create_verb_result(cast(Table, output))
