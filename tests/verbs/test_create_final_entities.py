@@ -32,17 +32,8 @@ async def test_create_final_entities():
         },
     )
 
-    # ignore the description_embedding column, which is included in the expected output due to default config
     compare_outputs(
         actual,
-        expected,
-        columns=[
-            "id",
-            "name",
-            "type",
-            "description",
-            "human_readable_id",
-            "text_unit_ids",
-        ],
+        expected
     )
-    assert len(actual.columns) == len(expected.columns) - 1
+    assert len(actual.columns) == len(expected.columns)
