@@ -203,11 +203,15 @@ context: list[dict] = [
 
 def test_sort_context():
     ctx = sort_context(context)
-    assert num_tokens(ctx) == 827 if platform.system() == "Windows" else 826
-    assert ctx is not None
+    assert ctx is not None, "Context is none"
+    num = num_tokens(ctx)
+    assert (
+        num == 827 if platform.system() == "Windows" else 826
+    ), f"num_tokens is not matched for platform (win = 827, else 826): {num}"
 
 
 def test_sort_context_max_tokens():
     ctx = sort_context(context, max_tokens=800)
-    assert ctx is not None
-    assert num_tokens(ctx) <= 800
+    assert ctx is not None, "Context is none"
+    num = num_tokens(ctx)
+    assert num <= 800, f"num_tokens is not less than or equal to 800: {num}"
