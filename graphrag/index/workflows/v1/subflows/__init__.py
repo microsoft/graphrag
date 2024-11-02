@@ -15,6 +15,7 @@ from .create_final_relationships import (
     create_final_relationships,
 )
 from .create_final_text_units import create_final_text_units
+from .generate_text_embeddings import generate_text_embeddings
 
 __all__ = [
     "create_base_entity_graph",
@@ -27,4 +28,5 @@ __all__ = [
     "create_final_nodes",
     "create_final_relationships",
     "create_final_text_units",
+    "generate_text_embeddings",
 ]

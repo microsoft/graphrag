@@ -4,21 +4,12 @@
 """All the steps to transform final documents."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
-
-from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text import embed_text
 
 
-async def create_final_documents(
+def create_final_documents(
     documents: pd.DataFrame,
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
     document_attribute_columns: list[str] | None = None,
-    raw_content_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     exploded = (
@@ -71,14 +62,5 @@ async def create_final_documents(
 
         # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
-
-    if raw_content_text_embed:
-        rejoined["raw_content_embedding"] = await embed_text(
-            rejoined,
-            callbacks,
-            cache,
-            column="raw_content",
-            strategy=raw_content_text_embed["strategy"],
-        )
 
     return rejoined

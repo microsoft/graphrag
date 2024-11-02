@@ -115,6 +115,7 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
+    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_parquet_files(
         root_dir=root_dir,
         config=config,
@@ -125,7 +126,9 @@ def run_local_search(
             "create_final_relationships.parquet",
             "create_final_entities.parquet",
         ],
-        optional_list=["create_final_covariates.parquet"],
+        optional_list=[
+            "create_final_covariates.parquet",
+        ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict[

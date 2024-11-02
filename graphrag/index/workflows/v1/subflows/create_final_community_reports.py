@@ -30,9 +30,6 @@ async def create_final_community_reports(
     summarization_strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
-    full_content_text_embed: dict | None = None,
-    summary_text_embed: dict | None = None,
-    title_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform community reports."""
@@ -57,9 +54,6 @@ async def create_final_community_reports(
         summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
-        full_content_text_embed=full_content_text_embed,
-        summary_text_embed=summary_text_embed,
-        title_text_embed=title_text_embed,
     )
 
     return create_verb_result(
