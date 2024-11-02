@@ -32,8 +32,5 @@ async def test_create_final_entities():
         },
     )
 
-    compare_outputs(
-        actual,
-        expected
-    )
+    compare_outputs(actual, expected)
     assert len(actual.columns) == len(expected.columns)
