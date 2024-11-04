@@ -9,13 +9,11 @@ from graphrag.model import (
     Community,
     CommunityReport,
     Covariate,
-    Document,
     Entity,
     Relationship,
     TextUnit,
 )
 from graphrag.query.input.loaders.utils import (
-    to_list,
     to_optional_dict,
     to_optional_float,
     to_optional_int,
