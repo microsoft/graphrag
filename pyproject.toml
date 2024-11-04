@@ -80,7 +80,7 @@ python-dotenv = "^1.0.0"
 tenacity = "^9.0.0"
 
 pydantic = "^2.9.2"
-rich = "^13.6.0"
+rich = "^13.9.4"
 devtools = "^0.12.2"
 typing-extensions = "^4.12.2"
 
