@@ -6,12 +6,10 @@
 import logging
 import re
 from collections.abc import Iterator
-from pathlib import Path
 from typing import Any
 
 from azure.cosmos import CosmosClient
 from azure.identity import DefaultAzureCredential
-from datashaper import Progress
 
 from graphrag.logging import ProgressReporter
 
@@ -89,13 +87,40 @@ class CosmosDBPipelineStorage(PipelineStorage):
         ]
         return database_name in database_names
     
+    def find(
+        self,
+        file_pattern: re.Pattern[str],
+        base_dir: str | None = None,
+        progress: ProgressReporter | None = None,
+        file_filter: dict[str, Any] | None = None,
+        max_count=-1,
+    ) -> Iterator[tuple[str, dict[str, Any]]]:
+        """Find files in the cosmosdb storage using a file pattern, as well as a custom filter function."""
+        msg = "CosmosDB storage does yet not support finding files."
+        raise NotImplementedError(msg)
+    
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
     ) -> Any:
-        """Get the value for the given key."""
+        """Get a file in the database for the given key."""
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
-        """Set the value for the given key."""
+        """Set a file in the database for the given key."""
+
+    async def has(self, key: str) -> bool:
+        """Check if the given file exists in the cosmosdb storage."""
+        return True
+
+    async def delete(self, key: str) -> None:
+        """Delete the given file from the cosmosdb storage."""
+
+    async def clear(self) -> None:
+        """Clear the cosmosdb storage."""
+
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        msg = "CosmosDB storage does yet not support listing keys."
+        raise NotImplementedError(msg)
     
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child storage instance."""
