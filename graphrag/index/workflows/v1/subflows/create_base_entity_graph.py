@@ -5,6 +5,7 @@
 
 from typing import Any, cast
 
+import pandas as pd
 from datashaper import (
     AsyncType,
     Table,
@@ -69,4 +70,6 @@ async def create_base_entity_graph(
         raw_entity_snapshot_enabled=raw_entity_snapshot_enabled,
     )
 
-    return create_verb_result(cast(Table, output))
+    await runtime_storage.set("base_entity_graph", output)
+
+    return create_verb_result(cast(Table, pd.DataFrame()))

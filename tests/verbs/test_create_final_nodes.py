@@ -23,6 +23,9 @@ async def test_create_final_nodes():
     expected = load_expected(workflow_name)
 
     context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_entity_graph", input_tables["workflow:create_base_entity_graph"]
+    )
 
     config = get_config_for_workflow(workflow_name)
 
@@ -52,6 +55,9 @@ async def test_create_final_nodes_with_snapshot():
     expected = load_expected(workflow_name)
 
     context = create_run_context(None, None, None)
+    await context.runtime_storage.set(
+        "base_entity_graph", input_tables["workflow:create_base_entity_graph"]
+    )
 
     config = get_config_for_workflow(workflow_name)
 

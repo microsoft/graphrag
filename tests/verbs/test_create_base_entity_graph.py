@@ -66,13 +66,15 @@ async def test_create_base_entity_graph():
 
     steps = build_steps(config)
 
-    actual = await get_workflow_output(
+    await get_workflow_output(
         input_tables,
         {
             "steps": steps,
         },
         context=context,
     )
+
+    actual = await context.runtime_storage.get("base_entity_graph")
 
     assert len(actual.columns) == len(
         expected.columns
@@ -113,13 +115,15 @@ async def test_create_base_entity_graph_with_embeddings():
 
     steps = build_steps(config)
 
-    actual = await get_workflow_output(
+    await get_workflow_output(
         input_tables,
         {
             "steps": steps,
         },
         context=context,
     )
+
+    actual = await context.runtime_storage.get("base_entity_graph")
 
     assert (
         len(actual.columns) == len(expected.columns) + 1
