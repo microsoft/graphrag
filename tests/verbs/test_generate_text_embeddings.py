@@ -70,13 +70,9 @@ async def test_generate_text_embeddings():
 
     # every other embedding is optional but we've turned them all on, so check a random one
     document_text_embeddings_buffer = BytesIO(
-        await context.storage.get(
-            "embeddings.document.text.parquet", as_bytes=True
-        )
+        await context.storage.get("embeddings.document.text.parquet", as_bytes=True)
     )
-    document_text_embeddings = pd.read_parquet(
-        document_text_embeddings_buffer
-    )
+    document_text_embeddings = pd.read_parquet(document_text_embeddings_buffer)
     assert len(document_text_embeddings.columns) == 2
     assert "id" in document_text_embeddings.columns
     assert "embedding" in document_text_embeddings.columns
