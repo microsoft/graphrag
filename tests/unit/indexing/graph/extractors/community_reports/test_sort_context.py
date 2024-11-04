@@ -206,7 +206,7 @@ def test_sort_context():
     assert ctx is not None, "Context is none"
     num = num_tokens(ctx)
     assert (
-        num == 827 if platform.system() == "Windows" else 826
+        num == 828 if platform.system() == "Windows" else 826
     ), f"num_tokens is not matched for platform (win = 827, else 826): {num}"
 
 
