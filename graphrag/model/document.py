@@ -22,12 +22,6 @@ class Document(Named):
     text: str = ""
     """The raw text content of the document."""
 
-    summary: str | None = None
-    """Summary of the document (optional)."""
-
-    summary_embedding: list[float] | None = None
-    """The semantic embedding for the document summary (optional)."""
-
     text_embedding: list[float] | None = None
     """The semantic embedding for the document raw content (optional)."""
 
@@ -43,8 +37,6 @@ class Document(Named):
         title_key: str = "title",
         type_key: str = "type",
         text_key: str = "text",
-        summary_key: str = "summary",
-        summary_embedding_key: str = "summary_embedding",
         text_embedding_key: str = "text_embedding",
         text_units_key: str = "text_units",
         attributes_key: str = "attributes",
@@ -56,8 +48,6 @@ class Document(Named):
             title=d[title_key],
             type=d.get(type_key, "text"),
             text=d[text_key],
-            summary=d.get(summary_key),
-            summary_embedding=d.get(summary_embedding_key),
             text_embedding=d.get(text_embedding_key),
             text_unit_ids=d.get(text_units_key, []),
             attributes=d.get(attributes_key),
