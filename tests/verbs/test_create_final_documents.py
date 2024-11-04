@@ -68,6 +68,7 @@ async def test_create_final_documents_with_attribute_columns():
     # we should have dropped "title" and added "attributes"
     # our test dataframe does not have attributes, so we'll assert without it
     # and separately confirm it is in the output
-    compare_outputs(actual, expected, columns=["id", "text_unit_ids", "raw_content"])
+    compare_outputs(actual, expected, columns=["id", "text_unit_ids", "text"])
     assert len(actual.columns) == 4
+    assert "title" not in actual.columns
     assert "attributes" in actual.columns

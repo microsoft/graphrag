@@ -275,9 +275,9 @@ def read_documents(
     title_col: str = "title",
     type_col: str = "type",
     summary_col: str | None = "entities",
-    raw_content_col: str | None = "relationships",
+    text_col: str | None = "relationships",
     summary_embedding_col: str | None = "summary_embedding",
-    content_embedding_col: str | None = "raw_content_embedding",
+    content_embedding_col: str | None = "text_embedding",
     text_units_col: str | None = "text_units",
     attributes_cols: list[str] | None = None,
 ) -> list[Document]:
@@ -290,11 +290,11 @@ def read_documents(
             title=to_str(row, title_col),
             type=to_str(row, type_col),
             summary=to_optional_str(row, summary_col),
-            raw_content=to_str(row, raw_content_col),
+            text=to_str(row, text_col),
             summary_embedding=to_optional_list(
                 row, summary_embedding_col, item_type=float
             ),
-            raw_content_embedding=to_optional_list(
+            text_embedding=to_optional_list(
                 row, content_embedding_col, item_type=float
             ),
             text_units=to_list(row, text_units_col, item_type=str),  # type: ignore

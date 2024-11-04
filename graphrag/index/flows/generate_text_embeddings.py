@@ -15,7 +15,7 @@ from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
     community_title_embedding,
-    document_raw_content_embedding,
+    document_text_embedding,
     entity_description_embedding,
     entity_name_embedding,
     relationship_description_embedding,
@@ -43,29 +43,29 @@ async def generate_text_embeddings(
 ) -> None:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
-        document_raw_content_embedding: {
-            "data": final_documents.loc[:, ["id", "raw_content"]]
+        document_text_embedding: {
+            "data": final_documents.loc[:, ["id", "text"]]
             if final_documents is not None
             else None,
-            "column_to_embed": "raw_content",
+            "embed_column": "text",
         },
         relationship_description_embedding: {
             "data": final_relationships.loc[:, ["id", "description"]]
             if final_relationships is not None
             else None,
-            "column_to_embed": "description",
+            "embed_column": "description",
         },
         text_unit_text_embedding: {
             "data": final_text_units.loc[:, ["id", "text"]]
             if final_text_units is not None
             else None,
-            "column_to_embed": "text",
+            "embed_column": "text",
         },
         entity_name_embedding: {
             "data": final_entities.loc[:, ["id", "name", "description"]]
             if final_entities is not None
             else None,
-            "column_to_embed": "name",
+            "embed_column": "name",
         },
         entity_description_embedding: {
             "data": final_entities.loc[:, ["id", "name", "description"]].assign(
@@ -73,7 +73,7 @@ async def generate_text_embeddings(
             )
             if final_entities is not None
             else None,
-            "column_to_embed": "name_description",
+            "embed_column": "name_description",
         },
         community_title_embedding: {
             "data": final_community_reports.loc[
@@ -81,7 +81,7 @@ async def generate_text_embeddings(
             ]
             if final_community_reports is not None
             else None,
-            "column_to_embed": "title",
+            "embed_column": "title",
         },
         community_summary_embedding: {
             "data": final_community_reports.loc[
@@ -89,7 +89,7 @@ async def generate_text_embeddings(
             ]
             if final_community_reports is not None
             else None,
-            "column_to_embed": "summary",
+            "embed_column": "summary",
         },
         community_full_content_embedding: {
             "data": final_community_reports.loc[
@@ -97,7 +97,7 @@ async def generate_text_embeddings(
             ]
             if final_community_reports is not None
             else None,
-            "column_to_embed": "full_content",
+            "embed_column": "full_content",
         },
     }
 
@@ -117,7 +117,7 @@ async def generate_text_embeddings(
 async def _run_and_snapshot_embeddings(
     name: str,
     data: pd.DataFrame,
-    column_to_embed: str,
+    embed_column: str,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
@@ -130,7 +130,7 @@ async def _run_and_snapshot_embeddings(
             data,
             callbacks,
             cache,
-            embed_column=column_to_embed,
+            embed_column=embed_column,
             embedding_name=name,
             strategy=text_embed_config["strategy"],
         )

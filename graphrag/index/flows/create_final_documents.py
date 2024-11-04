@@ -33,7 +33,7 @@ def create_final_documents(
     )
 
     docs_with_text_units = joined.groupby("id", sort=False).agg(
-        text_units=("chunk_id", list)
+        text_unit_ids=("chunk_id", list)
     )
 
     rejoined = docs_with_text_units.merge(
@@ -43,9 +43,6 @@ def create_final_documents(
         copy=False,
     ).reset_index(drop=True)
 
-    rejoined.rename(
-        columns={"text": "raw_content", "text_units": "text_unit_ids"}, inplace=True
-    )
     rejoined["id"] = rejoined["id"].astype(str)
 
     # Convert attribute columns to strings and collapse them into a JSON object
