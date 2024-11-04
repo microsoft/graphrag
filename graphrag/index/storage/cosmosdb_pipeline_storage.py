@@ -9,6 +9,7 @@ from collections.abc import Iterator
 from typing import Any
 
 from azure.cosmos import CosmosClient
+from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
 from graphrag.logging import ProgressReporter
@@ -56,6 +57,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self._cosmosdb_account_url = cosmosdb_account_url
         self._current_container = _current_container or None
         self._cosmosdb_account_name = cosmosdb_account_url.split("//")[1].split(".")[0]
+        self._database_client = self._cosmos_client.get_database_client(
+            self._database_name
+        )
 
         log.info(
             "creating cosmosdb storage with account: %s and database: %s",
@@ -63,6 +67,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._database_name,
         )
         self.create_database()
+        if self._current_container is not None:
+            self.create_container()
     
     def create_database(self) -> None:
         """Create the database if it doesn't exist."""
@@ -133,3 +139,34 @@ class CosmosDBPipelineStorage(PipelineStorage):
             name,
             self._encoding,
         )
+    
+    def create_container(self) -> None:
+        """Create a container for the current container name if it doesn't exist."""
+        database_client = self._database_client
+        if not self.container_exists() and self._current_container is not None:
+            container_names = [
+                container["id"]
+                for container in database_client.list_containers()
+            ]
+            if self._current_container not in container_names:
+                partition_key = PartitionKey(path="/id", kind="Hash")
+                database_client.create_container(
+                    id=self._current_container,
+                    partition_key=partition_key,
+                )
+            
+        
+    def delete_container(self) -> None:
+        """Delete the container with the current container name if it exists."""
+        database_client = self._database_client
+        if self.container_exists() and self._current_container is not None:
+            database_client.delete_container(self._current_container)
+
+    def container_exists(self) -> bool:
+        """Check if the container with the current container name exists."""
+        database_client = self._database_client
+        container_names = [
+            container["id"]
+            for container in database_client.list_containers()
+        ]
+        return self._current_container in container_names
