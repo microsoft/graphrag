@@ -33,7 +33,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         primary_key: str | None,
         database_name: str,
         encoding: str | None = None,
-        _current_container: str | None = None,
+        current_container: str | None = None,
     ):
         """Initialize the CosmosDB-Storage."""
         if not cosmosdb_account_url:
@@ -55,7 +55,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self._database_name = database_name
         self._primary_key = primary_key
         self._cosmosdb_account_url = cosmosdb_account_url
-        self._current_container = _current_container or None
+        self._current_container = current_container or None
         self._cosmosdb_account_name = cosmosdb_account_url.split("//")[1].split(".")[0]
         self._database_client = self._cosmos_client.get_database_client(
             self._database_name
@@ -115,10 +115,26 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Check if the given file exists in the cosmosdb storage."""
-        return True
+        database_client = self._database_client
+        if self._current_container is not None:
+            container_client = database_client.get_container_client(
+                self._current_container
+            )
+            item_names = [
+                item["id"]
+                for item in container_client.read_all_items()
+            ]
+            return key in item_names
+        return False
 
     async def delete(self, key: str) -> None:
         """Delete the given file from the cosmosdb storage."""
+        database_client = self._database_client
+        if self._current_container is not None:
+            container_client = database_client.get_container_client(
+                self._current_container
+            )
+            container_client.delete_item(item=key, partition_key=key)
 
     async def clear(self) -> None:
         """Clear the cosmosdb storage."""
@@ -133,11 +149,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
         if name is None:
             return self
         return CosmosDBPipelineStorage(
-            self._cosmosdb_account_url,
-            self._primary_key,
-            self._database_name,
-            name,
-            self._encoding,
+            cosmosdb_account_url=self._cosmosdb_account_url,
+            primary_key=self._primary_key,
+            database_name=self._database_name,
+            encoding=self._encoding,
+            current_container=name,
         )
     
     def create_container(self) -> None:
