@@ -193,14 +193,16 @@ async def _text_embed_with_vector_store(
 
         vectors = result.embeddings or []
         documents: list[VectorStoreDocument] = []
-        for id, text, title, vector in zip(ids, texts, titles, vectors, strict=True):
-            if type(vector) is np.ndarray:
-                vector = vector.tolist()
+        for doc_id, doc_text, doc_title, doc_vector in zip(
+            ids, texts, titles, vectors, strict=True
+        ):
+            if type(doc_vector) is np.ndarray:
+                doc_vector = doc_vector.tolist()
             document = VectorStoreDocument(
-                id=id,
-                text=text,
-                vector=vector,
-                attributes={"title": title},
+                id=doc_id,
+                text=doc_text,
+                vector=doc_vector,
+                attributes={"title": doc_title},
             )
             documents.append(document)
 
