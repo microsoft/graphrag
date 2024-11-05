@@ -79,3 +79,7 @@ class BaseVectorStore(ABC):
     @abstractmethod
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
+
+    @abstractmethod
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        """Search for a document by id."""

@@ -161,6 +161,8 @@ ALL_ENV_VARS = {
     "GRAPHRAG_SNAPSHOT_GRAPHML": "true",
     "GRAPHRAG_SNAPSHOT_RAW_ENTITIES": "true",
     "GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES": "true",
+    "GRAPHRAG_SNAPSHOT_EMBEDDINGS": "true",
+    "GRAPHRAG_SNAPSHOT_TRANSIENT": "true",
     "GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL": "storage_account_blob_url",
     "GRAPHRAG_STORAGE_BASE_DIR": "/some/storage/dir",
     "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
@@ -620,6 +622,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
@@ -712,6 +716,8 @@ class TestDefaultConfig(unittest.TestCase):
                     graphml=True,
                     raw_entities=True,
                     top_level_nodes=True,
+                    embeddings=True,
+                    transient=True,
                 ),
                 entity_extraction=EntityExtractionConfigInput(
                     max_gleanings=112,
@@ -799,6 +805,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
@@ -890,6 +898,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml == defs.SNAPSHOTS_GRAPHML
         assert parameters.snapshots.raw_entities == defs.SNAPSHOTS_RAW_ENTITIES
         assert parameters.snapshots.top_level_nodes == defs.SNAPSHOTS_TOP_LEVEL_NODES
+        assert parameters.snapshots.embeddings == defs.SNAPSHOTS_EMBEDDINGS
+        assert parameters.snapshots.transient == defs.SNAPSHOTS_TRANSIENT
         assert parameters.storage.base_dir == defs.STORAGE_BASE_DIR
         assert parameters.storage.type == defs.STORAGE_TYPE
         assert parameters.umap.enabled == defs.UMAP_ENABLED

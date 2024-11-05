@@ -6,10 +6,7 @@ embeddings:
     type: "azure_ai_search"
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
-    collection_name: "simple_text_ci"
-    store_in_table: True
-    entity_name_description:
-      title_column: "name"
+    container_name: "simple_text_ci"
 
 community_reports:
   prompt: "prompts/community_report.txt"
@@ -28,3 +25,6 @@ reporting:
   base_dir: "output/${timestamp}/reports"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
+
+snapshots:
+  embeddings: True

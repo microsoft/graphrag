@@ -66,13 +66,15 @@ async def test_create_base_entity_graph():
 
     steps = build_steps(config)
 
-    actual = await get_workflow_output(
+    await get_workflow_output(
         input_tables,
         {
             "steps": steps,
         },
         context=context,
     )
+
+    actual = await context.runtime_storage.get("base_entity_graph")
 
     assert len(actual.columns) == len(
         expected.columns
@@ -113,13 +115,15 @@ async def test_create_base_entity_graph_with_embeddings():
 
     steps = build_steps(config)
 
-    actual = await get_workflow_output(
+    await get_workflow_output(
         input_tables,
         {
             "steps": steps,
         },
         context=context,
     )
+
+    actual = await context.runtime_storage.get("base_entity_graph")
 
     assert (
         len(actual.columns) == len(expected.columns) + 1
@@ -141,8 +145,9 @@ async def test_create_base_entity_graph_with_snapshots():
 
     config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
     config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
-    config["raw_entity_snapshot"] = True
-    config["graphml_snapshot"] = True
+    config["snapshot_raw_entities"] = True
+    config["snapshot_graphml"] = True
+    config["snapshot_transient"] = True
     config["embed_graph_enabled"] = True  # need this on in order to see the snapshot
 
     steps = build_steps(config)
@@ -161,6 +166,7 @@ async def test_create_base_entity_graph_with_snapshots():
         "summarized_graph.graphml",
         "clustered_graph.graphml",
         "embedded_graph.graphml",
+        "create_base_entity_graph.parquet",
     ], "Graph snapshot keys differ"
 
 

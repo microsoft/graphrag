@@ -54,6 +54,11 @@ class MockBaseVectorStore(BaseVectorStore):
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         return [document for document in self.documents if document.id in include_ids]
 
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        result = self.documents[0]
+        result.id = id
+        return result
+
 
 class MockBaseTextEmbedding(BaseTextEmbedding):
     def embed(self, text: str, **kwargs: Any) -> list[float]:
