@@ -197,8 +197,10 @@ class TestIndexer:
 
         # check that the number of workflows matches the number of artifacts
         assert (
-            len(artifact_files) == (expected_artifacts + 1)
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+            len(artifact_files) == (expected_artifacts + 3)
+        ), (
+            f"Expected {expected_artifacts + 3} artifacts, found: {len(artifact_files)}"
+        )  # Embeddings add to the count
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
