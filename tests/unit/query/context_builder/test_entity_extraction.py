@@ -98,12 +98,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore(
-            [
-                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-                for entity in entities
-            ]
-        ),
+        text_embedding_vectorstore=MockBaseVectorStore([
+            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+            for entity in entities
+        ]),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
@@ -120,12 +118,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore(
-            [
-                VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
-                for entity in entities
-            ]
-        ),
+        text_embedding_vectorstore=MockBaseVectorStore([
+            VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
+            for entity in entities
+        ]),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
@@ -142,12 +138,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore(
-            [
-                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-                for entity in entities
-            ]
-        ),
+        text_embedding_vectorstore=MockBaseVectorStore([
+            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+            for entity in entities
+        ]),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
@@ -169,12 +163,10 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore(
-            [
-                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-                for entity in entities
-            ]
-        ),
+        text_embedding_vectorstore=MockBaseVectorStore([
+            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+            for entity in entities
+        ]),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
