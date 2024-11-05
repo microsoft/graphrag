@@ -3,6 +3,7 @@
 
 """Azure CosmosDB Storage implementation of PipelineStorage."""
 
+import json
 import logging
 import re
 from collections.abc import Iterator
@@ -11,6 +12,7 @@ from typing import Any
 from azure.cosmos import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
+from datashaper import Progress
 
 from graphrag.logging import ProgressReporter
 
@@ -101,17 +103,110 @@ class CosmosDBPipelineStorage(PipelineStorage):
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
-        """Find files in the cosmosdb storage using a file pattern, as well as a custom filter function."""
-        msg = "CosmosDB storage does yet not support finding files."
-        raise NotImplementedError(msg)
-    
+        """Find documents in a Cosmos DB container using a file pattern and custom filter function.
+
+        Params:
+            base_dir: The name of the base directory (not used in Cosmos DB context).
+            file_pattern: The file pattern to use.
+            file_filter: A dictionary of key-value pairs to filter the documents.
+            max_count: The maximum number of documents to return. If -1, all documents are returned.
+
+        Returns
+        -------
+            An iterator of document IDs and their corresponding regex matches.
+        """
+        base_dir = base_dir or ""
+
+        log.info(
+            "search container %s for documents matching %s",
+            self._current_container,
+            file_pattern.pattern,
+        )
+
+        def item_filter(item: dict[str, Any]) -> bool:
+            if file_filter is None:
+                return True
+            return all(re.match(value, item.get(key, "")) for key, value in file_filter.items())
+
+        try:
+            database_client = self._database_client
+            container_client = database_client.get_container_client(str(self._current_container))
+            query = "SELECT * FROM c WHERE CONTAINS(c.id, @pattern)"
+            parameters: list[dict[str, Any]] = [{"name": "@pattern", "value": file_pattern.pattern}]
+            if file_filter:
+                for key, value in file_filter.items():
+                    query += f" AND c.{key} = @{key}"
+                    parameters.append({"name": f"@{key}", "value": value})
+            items = container_client.query_items(query=query, parameters=parameters, enable_cross_partition_query=True)
+            num_loaded = 0
+            num_total = len(list(items))
+            num_filtered = 0
+            for item in items:
+                match = file_pattern.match(item["id"])
+                if match:
+                    group = match.groupdict()
+                    if item_filter(group):
+                        yield (item["id"], group)
+                        num_loaded += 1
+                        if max_count > 0 and num_loaded >= max_count:
+                            break
+                    else:
+                        num_filtered += 1
+                else:
+                    num_filtered += 1
+                if progress is not None:
+                    progress(
+                        _create_progress_status(num_loaded, num_filtered, num_total)
+                    )
+        except Exception:
+            log.exception("An error occurred while searching for documents in Cosmos DB.")
+
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
     ) -> Any:
         """Get a file in the database for the given key."""
+        try:
+            database_client = self._database_client
+            if self._current_container is not None:
+                container_client = database_client.get_container_client(
+                    self._current_container
+                )
+                item = container_client.read_item(item=key, partition_key=key)
+                item_body = item.get("body")
+                if as_bytes:
+                    coding = encoding or "utf-8"
+                    return json.dumps(item_body).encode(coding)
+                return json.dumps(item_body)
+        except Exception:
+            log.exception("Error reading item %s", key)
+            return None
+        else:
+            return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set a file in the database for the given key."""
+        try:
+            database_client = self._database_client
+            if self._current_container is not None:
+                container_client = database_client.get_container_client(
+                    self._current_container
+                )
+                if isinstance(value, bytes):
+                    coding = encoding or "utf-8"
+                    value = value.decode(coding)
+                    cosmos_db_item = {
+                        "id": key,
+                        "body": value
+                    }
+                    container_client.upsert_item(body=cosmos_db_item)
+                else:
+                    cosmos_db_item = {
+                        "id": key,
+                        "body": json.loads(value)
+                    }
+                    container_client.upsert_item(body=cosmos_db_item)
+        except Exception:
+            log.exception("Error writing item %s", key)
 
     async def has(self, key: str) -> bool:
         """Check if the given file exists in the cosmosdb storage."""
@@ -186,3 +281,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
             for container in database_client.list_containers()
         ]
         return self._current_container in container_names
+    
+def _create_progress_status(
+    num_loaded: int, num_filtered: int, num_total: int
+) -> Progress:
+    return Progress(
+        total_items=num_total,
+        completed_items=num_loaded + num_filtered,
+        description=f"{num_loaded} files loaded ({num_filtered} filtered)",
+    )
