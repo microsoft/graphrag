@@ -11,6 +11,15 @@
             "max_runtime": 150,
             "expected_artifacts": 0
         },
+        "create_base_entity_graph": {
+            "row_range": [
+                1,
+                2500
+            ],
+            "subworkflows": 1,
+            "max_runtime": 300,
+            "expected_artifacts": 0
+        },
         "create_final_covariates": {
             "row_range": [
                 1,
@@ -24,15 +33,6 @@
                 "start_date",
                 "end_date",
                 "source_text"
-            ],
-            "subworkflows": 1,
-            "max_runtime": 300,
-            "expected_artifacts": 1
-        },
-        "create_base_entity_graph": {
-            "row_range": [
-                1,
-                2500
             ],
             "subworkflows": 1,
             "max_runtime": 300,

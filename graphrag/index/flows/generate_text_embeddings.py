@@ -39,7 +39,7 @@ async def generate_text_embeddings(
     storage: PipelineStorage,
     text_embed_config: dict,
     embedded_fields: set[str],
-    embeddings_snapshot_enabled: bool = False,
+    snapshot_embeddings_enabled: bool = False,
 ) -> None:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
@@ -109,7 +109,7 @@ async def generate_text_embeddings(
             cache=cache,
             storage=storage,
             text_embed_config=text_embed_config,
-            embeddings_snapshot_enabled=embeddings_snapshot_enabled,
+            snapshot_embeddings_enabled=snapshot_embeddings_enabled,
             **embedding_param_map[field],
         )
 
@@ -122,7 +122,7 @@ async def _run_and_snapshot_embeddings(
     cache: PipelineCache,
     storage: PipelineStorage,
     text_embed_config: dict,
-    embeddings_snapshot_enabled: bool,
+    snapshot_embeddings_enabled: bool,
 ) -> None:
     """All the steps to generate single embedding."""
     if text_embed_config:
@@ -137,7 +137,7 @@ async def _run_and_snapshot_embeddings(
 
         data = data.loc[:, ["id", "embedding"]]
 
-        if embeddings_snapshot_enabled is True:
+        if snapshot_embeddings_enabled is True:
             await snapshot(
                 data,
                 name=f"embeddings.{name}",

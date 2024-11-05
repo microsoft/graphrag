@@ -22,12 +22,15 @@ def build_steps(
     chunk_by_columns = config.get("chunk_by", []) or []
     text_chunk_config = config.get("text_chunk", {})
     chunk_strategy = text_chunk_config.get("strategy")
+
+    snapshot_transient = config.get("snapshot_transient", False) or False
     return [
         {
             "verb": "create_base_text_units",
             "args": {
                 "chunk_by_columns": chunk_by_columns,
                 "chunk_strategy": chunk_strategy,
+                "snapshot_transient_enabled": snapshot_transient,
             },
             "input": {"source": DEFAULT_INPUT_NAME},
         },
