@@ -35,13 +35,14 @@ from graphrag.query.indexer_adapters import (
     read_indexer_covariates,
     read_indexer_entities,
     read_indexer_relationships,
+    read_indexer_report_embeddings,
     read_indexer_reports,
     read_indexer_text_units,
 )
-from graphrag.query.input.loaders.dfs import store_reports_semantic_embeddings
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
+from graphrag.vector_stores.base import BaseVectorStore
 
 reporter = PrintProgressReporter("")
 
@@ -199,19 +200,11 @@ async def local_search(
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
     reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
-<<<<<<< HEAD
-    if (
-        not backwards_compatible
-    ):  # can remove this check and always set the description_embedding_store before v1 release
-        description_embedding_store = _get_embedding_description_store(
-            config_args=vector_store_args,  # type: ignore
-        )
-=======
 
-    description_embedding_store = _get_embedding_description_store(
+    description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
+        container_suffix="entity-description",
     )
->>>>>>> main
 
     _entities = read_indexer_entities(nodes, entities, community_level)
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
@@ -281,19 +274,11 @@ async def local_search_streaming(
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
     reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
-<<<<<<< HEAD
-    if (
-        not backwards_compatible
-    ):  # can remove this check and always set the description_embedding_store before v1 release
-        description_embedding_store = _get_embedding_description_store(
-            config_args=vector_store_args,  # type: ignore
-        )
-=======
 
-    description_embedding_store = _get_embedding_description_store(
+    description_embedding_store = _get_embedding_store(
         conf_args=vector_store_args,  # type: ignore
+        container_suffix="entity-description",
     )
->>>>>>> main
 
     _entities = read_indexer_entities(nodes, entities, community_level)
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
@@ -323,7 +308,6 @@ async def local_search_streaming(
             yield stream_chunk
 
 
-<<<<<<< HEAD
 @validate_call(config={"arbitrary_types_allowed": True})
 async def drift_search(
     config: GraphRagConfig,
@@ -332,7 +316,6 @@ async def drift_search(
     community_reports: pd.DataFrame,
     text_units: pd.DataFrame,
     relationships: pd.DataFrame,
-    covariates: pd.DataFrame | None,
     community_level: int,
     query: str,
 ) -> tuple[
@@ -361,103 +344,38 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    #################################### BEGIN PATCH ####################################
-=======
-def _patch_vector_store(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_level: int,
-) -> GraphRagConfig:
->>>>>>> main
-    # TODO: remove the following patch that checks for a vector_store prior to v1 release
-    # TODO: this is a backwards compatibility patch that injects the default vector_store settings into the config if it is not present
-    # Only applicable in situations involving a local vector_store (lancedb). The general idea:
-    # if vector_store not in config:
-    #     1. assume user is running local if vector_store is not in config
-    #     2. insert default vector_store in config
-    #     3 .create lancedb vector_store instance
-    #     4. upload vector embeddings from the input dataframes to the vector_store
-<<<<<<< HEAD
-    backwards_compatible = False
-    if not config.embeddings.vector_store:
-        backwards_compatible = True
-=======
-    if not config.embeddings.vector_store:
->>>>>>> main
-        from graphrag.query.input.loaders.dfs import store_entity_semantic_embeddings
-        from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-        config.embeddings.vector_store = {
-            "type": "lancedb",
-            "db_uri": f"{Path(config.storage.base_dir)}/lancedb",
-<<<<<<< HEAD
-            "collection_name": "entity_description_embeddings",
-            "overwrite": True,
-        }
-
-        # Store entity embeddings
-        _entities = read_indexer_entities(nodes, entities, community_level)
-        description_embedding_store = LanceDBVectorStore(
-            db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name=config.embeddings.vector_store["collection_name"],
-=======
-            "container_name": "default",
-            "overwrite": True,
-        }
-        description_embedding_store = LanceDBVectorStore(
-            db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name="default-entity-description",
->>>>>>> main
-            overwrite=config.embeddings.vector_store["overwrite"],
-        )
-        description_embedding_store.connect(
-            db_uri=config.embeddings.vector_store["db_uri"]
-        )
-        # dump embeddings from the entities list to the description_embedding_store
-<<<<<<< HEAD
-        store_entity_semantic_embeddings(
-            entities=_entities, vectorstore=description_embedding_store
-        )
-
-        # Store report embeddings
-        _reports = read_indexer_reports(community_reports, nodes, community_level)
-        full_content_embedding_store = LanceDBVectorStore(
-            db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name="full_content_embeddings",
-            overwrite=config.embeddings.vector_store["overwrite"],
-        )
-        full_content_embedding_store.connect(
-            db_uri=config.embeddings.vector_store["db_uri"]
-        )
-        # dump embeddings from the reports list to the full_content_embedding_store
-        store_reports_semantic_embeddings(
-            reports=_reports, vectorstore=full_content_embedding_store
-        )
-    #################################### END PATCH ####################################
+    config = _patch_vector_store(
+        config, nodes, entities, community_level, with_reports=community_reports
+    )
 
     # TODO: update filepath of lancedb (if used) until the new config engine has been implemented
     # TODO: remove the type ignore annotations below once the new config engine has been refactored
     vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    if vector_store_type == VectorStoreType.LanceDB and not backwards_compatible:
+    if vector_store_type == VectorStoreType.LanceDB:
         db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
         lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
     reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
-    if (
-        not backwards_compatible
-    ):  # can remove this check and always set the description_embedding_store before v1 release
-        description_embedding_store = _get_embedding_description_store(
-            config_args=vector_store_args,  # type: ignore
-        )
+
+    description_embedding_store = _get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        container_suffix="entity-description",
+    )
+
+    full_content_embedding_store = _get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        container_suffix="community-full-content",
+    )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
+    _reports = read_indexer_reports(community_reports, nodes, community_level)
+    read_indexer_report_embeddings(_reports, full_content_embedding_store)
 
     search_engine = get_drift_search_engine(
         config=config,
-        reports=read_indexer_reports(community_reports, nodes, community_level),
+        reports=_reports,
         text_units=read_indexer_text_units(text_units),
         entities=_entities,
         relationships=read_indexer_relationships(relationships),
@@ -467,42 +385,111 @@ def _patch_vector_store(
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
     context_data = _reformat_context_data(result.context_data)  # type: ignore
-    return response, context_data
-=======
+
+    # TODO: Map/reduce the response to a single string with a comprehensive answer including all follow-ups
+    # For the time being, return highest scoring response (position 0) and context data
+    match response:
+        case dict():
+            return response["nodes"][0]["answer"], context_data  # type: ignore
+        case str():
+            return response, context_data
+        case list():
+            return response, context_data
+
+
+def _patch_vector_store(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_level: int,
+    with_reports: pd.DataFrame | None = None,
+) -> GraphRagConfig:
+    # TODO: remove the following patch that checks for a vector_store prior to v1 release
+    # TODO: this is a backwards compatibility patch that injects the default vector_store settings into the config if it is not present
+    # Only applicable in situations involving a local vector_store (lancedb). The general idea:
+    # if vector_store not in config:
+    #     1. assume user is running local if vector_store is not in config
+    #     2. insert default vector_store in config
+    #     3 .create lancedb vector_store instance
+    #     4. upload vector embeddings from the input dataframes to the vector_store
+    if not config.embeddings.vector_store:
+        from graphrag.query.input.loaders.dfs import (
+            store_entity_semantic_embeddings,
+        )
+        from graphrag.vector_stores.lancedb import LanceDBVectorStore
+
+        config.embeddings.vector_store = {
+            "type": "lancedb",
+            "db_uri": f"{Path(config.storage.base_dir)}/lancedb",
+            "container_name": "default",
+            "overwrite": True,
+        }
+        description_embedding_store = LanceDBVectorStore(
+            db_uri=config.embeddings.vector_store["db_uri"],
+            collection_name="default-entity-description",
+            overwrite=config.embeddings.vector_store["overwrite"],
+        )
+        description_embedding_store.connect(
+            db_uri=config.embeddings.vector_store["db_uri"]
+        )
+        # dump embeddings from the entities list to the description_embedding_store
         _entities = read_indexer_entities(nodes, entities, community_level)
         store_entity_semantic_embeddings(
             entities=_entities, vectorstore=description_embedding_store
         )
+
+    if with_reports is not None:
+        from graphrag.query.input.loaders.dfs import (
+            store_reports_semantic_embeddings,
+        )
+        from graphrag.vector_stores.lancedb import LanceDBVectorStore
+
+        community_reports = with_reports
+        collection_name = (
+            config.embeddings.vector_store.get("container_name", "default")
+            if config.embeddings.vector_store
+            else "default"
+        )
+        # Store report embeddings
+        _reports = read_indexer_reports(
+            community_reports,
+            nodes,
+            community_level,
+            content_embedding_col="full_content_embedding",
+            config=config,
+        )
+
+        full_content_embedding_store = LanceDBVectorStore(
+            db_uri=config.embeddings.vector_store["db_uri"],
+            collection_name=f"{collection_name}-community-full-content",
+            overwrite=config.embeddings.vector_store["overwrite"],
+        )
+        full_content_embedding_store.connect(
+            db_uri=config.embeddings.vector_store["db_uri"]
+        )
+        # dump embeddings from the reports list to the full_content_embedding_store
+        store_reports_semantic_embeddings(
+            reports=_reports, vectorstore=full_content_embedding_store
+        )
+
     return config
->>>>>>> main
 
 
-def _get_embedding_description_store(
+def _get_embedding_store(
     config_args: dict,
-):
+    container_suffix: str,
+) -> BaseVectorStore:
     """Get the embedding description store."""
     vector_store_type = config_args["type"]
-    collection_name = f"{config_args['container_name']}-entity-description"
-    description_embedding_store = VectorStoreFactory.get_vector_store(
+    collection_name = (
+        f"{config_args.get('container_name', 'default')}-{container_suffix}"
+    )
+    embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type,
         kwargs={**config_args, "collection_name": collection_name},
     )
-    description_embedding_store.connect(**config_args)
-    return description_embedding_store
-
-def _get_report_full_content_store(
-    config_args: dict,
-):
-    """Get the embedding description store."""
-    vector_store_type = config_args["type"]
-    full_content_embedding_store = VectorStoreFactory.get_vector_store(
-        vector_store_type=vector_store_type, kwargs=config_args
-    )
-
-    description_embedding_store.connect(**config_args)
-    return description_embedding_store
-
-
+    embedding_store.connect(**config_args)
+    return embedding_store
 
 
 def _reformat_context_data(context_data: dict) -> dict:
@@ -525,7 +512,11 @@ def _reformat_context_data(context_data: dict) -> dict:
         "sources": [],
     }
     for key in context_data:
-        records = context_data[key].to_dict(orient="records")
+        records = (
+            context_data[key].to_dict(orient="records")
+            if context_data[key] is not None and not isinstance(context_data[key], dict)
+            else context_data[key]
+        )
         if len(records) < 1:
             continue
         final_format[key] = records

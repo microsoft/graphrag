@@ -10,7 +10,9 @@ from typing import cast
 
 import pandas as pd
 
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.model import CommunityReport, Covariate, Entity, Relationship, TextUnit
+from graphrag.query.factories import get_text_embedder
 from graphrag.query.input.loaders.dfs import (
     read_community_reports,
     read_covariates,
@@ -19,6 +21,7 @@ from graphrag.query.input.loaders.dfs import (
     read_text_units,
 )
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
+from graphrag.vector_stores.base import BaseVectorStore
 
 
 def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
@@ -64,7 +67,8 @@ def read_indexer_reports(
     final_community_reports: pd.DataFrame,
     final_nodes: pd.DataFrame,
     community_level: int,
-    content_embedding_col: str | None = None,
+    content_embedding_col: str = "full_content_embedding",
+    config: GraphRagConfig | None = None,
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
@@ -79,6 +83,14 @@ def read_indexer_reports(
 
     report_df = _filter_under_community_level(report_df, community_level)
     report_df = report_df.merge(filtered_community_df, on="community", how="inner")
+    if config and (
+        content_embedding_col not in report_df.columns
+        or report_df[content_embedding_col].isna().any()
+    ):
+        embedder = get_text_embedder(config)
+        report_df = embed_community_reports(
+            report_df, embedder, embedding_col=content_embedding_col
+        )
 
     return read_community_reports(
         df=report_df,
@@ -87,6 +99,15 @@ def read_indexer_reports(
         summary_embedding_col=None,
         content_embedding_col=content_embedding_col,
     )
+
+
+def read_indexer_report_embeddings(
+    community_reports: list[CommunityReport],
+    embeddings_store: BaseVectorStore,
+):
+    """Read in the Community Reports from the raw indexing outputs."""
+    for report in community_reports:
+        report.full_content_embedding = embeddings_store.search_by_id(report.id).vector
 
 
 def read_indexer_entities(
@@ -137,14 +158,18 @@ def read_indexer_entities(
 def embed_community_reports(
     reports_df: pd.DataFrame,
     embedder: OpenAIEmbedding,
+    source_col: str = "full_content",
+    embedding_col: str = "full_content_embedding",
 ) -> pd.DataFrame:
-    if "full_content" not in reports_df.columns:
-        error_msg = "Reports missing full_content column"
+    """Embed a source column of the reports dataframe using the given embedder."""
+    if source_col not in reports_df.columns:
+        error_msg = f"Reports missing {source_col} column"
         raise ValueError(error_msg)
 
-    reports_df["full_content_embeddings"] = reports_df.loc[:, "full_content"].apply(
-        lambda x: embedder.embed(x)
-    )
+    if embedding_col not in reports_df.columns:
+        reports_df[embedding_col] = reports_df.loc[:, source_col].apply(
+            lambda x: embedder.embed(x)
+        )
 
     return reports_df
 

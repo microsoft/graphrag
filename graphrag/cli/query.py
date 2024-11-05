@@ -189,6 +189,7 @@ def run_local_search(
     # External users should use the API directly to get the response and context data.
     return response, context_data
 
+
 def run_drift_search(
     config_filepath: Path | None,
     data_dir: Path | None,
@@ -225,13 +226,12 @@ def run_drift_search(
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
-    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
 
     # call the Query API
     if streaming:
         error_msg = "Streaming is not supported yet for DRIFT search."
         raise NotImplementedError(error_msg)
-    
+
     # not streaming
     response, context_data = asyncio.run(
         api.drift_search(
@@ -241,7 +241,6 @@ def run_drift_search(
             community_reports=final_community_reports,
             text_units=final_text_units,
             relationships=final_relationships,
-            covariates=final_covariates,
             community_level=community_level,
             query=query,
         )
@@ -249,7 +248,9 @@ def run_drift_search(
     reporter.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
+    # TODO: Map/Reduce Drift Search answer to a single response
     return response, context_data
+
 
 def _resolve_parquet_files(
     root_dir: Path,
