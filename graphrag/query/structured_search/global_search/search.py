@@ -150,7 +150,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         llm_calls, prompt_tokens, output_tokens = {}, {}, {}
 
         start_time = time.time()
-        context_result = self.context_builder.build_context(
+        context_result = await self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
@@ -257,7 +257,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
-                output_tokens=num_tokens(search_response, self.token_encoder),
+                output_tokens=0,
             )
 
     def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:

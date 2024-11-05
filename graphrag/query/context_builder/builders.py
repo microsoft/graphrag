@@ -27,7 +27,7 @@ class GlobalContextBuilder(ABC):
     """Base class for global-search context builders."""
 
     @abstractmethod
-    def build_context(
+    async def build_context(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
