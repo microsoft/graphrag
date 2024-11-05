@@ -365,7 +365,7 @@ async def drift_search(
 
     full_content_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="community-full-content",
+        container_suffix="community-full_content",
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -460,7 +460,7 @@ def _patch_vector_store(
 
         full_content_embedding_store = LanceDBVectorStore(
             db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name=f"{collection_name}-community-full-content",
+            collection_name=f"{collection_name}-community-full_content",
             overwrite=config.embeddings.vector_store["overwrite"],
         )
         full_content_embedding_store.connect(
