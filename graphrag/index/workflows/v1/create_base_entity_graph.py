@@ -88,8 +88,9 @@ def build_steps(
     embedding_strategy = embed_graph_config.get("strategy")
     embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
-    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
-    raw_entity_snapshot_enabled = config.get("raw_entity_snapshot", False) or False
+    snapshot_graphml = config.get("snapshot_graphml", False) or False
+    snapshot_raw_entities = config.get("snapshot_raw_entities", False) or False
+    snapshot_transient = config.get("snapshot_transient", False) or False
 
     return [
         {
@@ -109,8 +110,9 @@ def build_steps(
                 "embedding_strategy": embedding_strategy
                 if embed_graph_enabled
                 else None,
-                "raw_entity_snapshot_enabled": raw_entity_snapshot_enabled,
-                "graphml_snapshot_enabled": graphml_snapshot_enabled,
+                "snapshot_raw_entities_enabled": snapshot_raw_entities,
+                "snapshot_graphml_enabled": snapshot_graphml,
+                "snapshot_transient_enabled": snapshot_transient,
             },
             "input": ({"source": "workflow:create_base_text_units"}),
         },
