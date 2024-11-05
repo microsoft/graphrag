@@ -8,7 +8,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model import CommunityReport, Entity, Community
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -16,6 +16,10 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.structured_search.base import GlobalContextBuilder
+from graphrag.query.context_builder.dynamic_community_selection import (
+    DynamicCommunitySelection,
+)
+from graphrag.config import GraphRagConfig
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -23,14 +27,24 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
     def __init__(
         self,
+        config: GraphRagConfig,
         community_reports: list[CommunityReport],
+        communities: list[Community],
         entities: list[Entity] | None = None,
         token_encoder: tiktoken.Encoding | None = None,
+        dynamic_community_selection: bool = False,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
         self.entities = entities
         self.token_encoder = token_encoder
+        self.dynamic_community_selection = None
+        if dynamic_community_selection:
+            self.dynamic_community_selection = DynamicCommunitySelection(
+                config=config,
+                community_reports=community_reports,
+                communities=communities,
+            )
         self.random_state = random_state
 
     def build_context(

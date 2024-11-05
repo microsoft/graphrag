@@ -56,3 +56,5 @@ docsite/
 
 # Jupyter notebook
 .ipynb_checkpoints/
+
+dynamic_Search.py
