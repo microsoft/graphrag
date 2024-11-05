@@ -217,7 +217,6 @@ def run_drift_search(
             "create_final_relationships.parquet",
             "create_final_entities.parquet",
         ],
-        optional_list=["create_final_covariates.parquet"],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict[
@@ -256,7 +255,7 @@ def _resolve_parquet_files(
     root_dir: Path,
     config: GraphRagConfig,
     parquet_list: list[str],
-    optional_list: list[str],
+    optional_list: list[str] | None = None,
 ) -> dict[str, pd.DataFrame]:
     """Read parquet files to a dataframe dict."""
     dataframe_dict = {}
@@ -270,15 +269,16 @@ def _resolve_parquet_files(
         dataframe_dict[df_key] = df_value
 
     # for optional parquet files, set the dict entry to None instead of erroring out if it does not exist
-    for optional_file in optional_list:
-        file_exists = asyncio.run(storage_obj.has(optional_file))
-        df_key = optional_file.split(".")[0]
-        if file_exists:
-            df_value = asyncio.run(
-                _load_table_from_storage(name=optional_file, storage=storage_obj)
-            )
-            dataframe_dict[df_key] = df_value
-        else:
-            dataframe_dict[df_key] = None
+    if optional_list:
+        for optional_file in optional_list:
+            file_exists = asyncio.run(storage_obj.has(optional_file))
+            df_key = optional_file.split(".")[0]
+            if file_exists:
+                df_value = asyncio.run(
+                    _load_table_from_storage(name=optional_file, storage=storage_obj)
+                )
+                dataframe_dict[df_key] = df_value
+            else:
+                dataframe_dict[df_key] = None
 
     return dataframe_dict

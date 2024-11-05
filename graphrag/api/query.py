@@ -322,7 +322,7 @@ async def drift_search(
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
 ]:
-    """Perform a local search and return the context data and response.
+    """Perform a DRIFT search and return the context data and response.
 
     Parameters
     ----------
@@ -332,7 +332,6 @@ async def drift_search(
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
-    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
     - community_level (int): The community level to search at.
     - query (str): The user query to search for.
 
