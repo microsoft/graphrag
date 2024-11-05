@@ -200,7 +200,7 @@ def read_indexer_communities(
 
     # reconstruct the community hierarchy
     # note that restore_community_hierarchy only return communities with sub communities
-    community_hierarchy = restore_community_hierarchy(input=node_df).table
+    community_hierarchy = restore_community_hierarchy(input=node_df)
     community_hierarchy = (
         community_hierarchy.groupby(["community"])
         .agg({"sub_community": list})

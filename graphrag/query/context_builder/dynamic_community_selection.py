@@ -13,9 +13,11 @@ from typing import Any
 import tiktoken
 
 from graphrag.config import GraphRagConfig
+
 from graphrag.model import Community, CommunityReport
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 from graphrag.query.llm.base import BaseLLM
+from graphrag.query.factories import get_llm
 
 log = logging.getLogger(__name__)
 
@@ -30,13 +32,7 @@ class DynamicCommunitySelection:
         config: GraphRagConfig,
         community_reports: list[CommunityReport],
         communities: list[Community],
-        # keep_parent: bool = False,
-        # num_repeats: int = 1,
-        # use_summary: bool = False,
-        # concurrent_coroutines: int = 4,
-        # rating_threshold: int = 1,
-        # start_with_root: bool = True,
-        # max_level_when_no_relevant: int | None = None,
+        max_level: int = 2,  # maximum level to search if no reports are relevant
     ):
         self.reports = {report.community_id: report for report in community_reports}
         # mapping from community to sub communities
@@ -65,18 +61,21 @@ class DynamicCommunitySelection:
         # start from root communities (level 0)
         self.starting_communities = self.levels["0"]
 
-        self.llm = llm
+        # create LLM dedicated for dynamic community selection
+        gs_config = config.global_search
+        _config = deepcopy(config)
+        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
+        self.llm = get_llm(_config)
         self.token_encoder = tiktoken.encoding_for_model(self.llm.model)
-        self.keep_parent = keep_parent
-        self.num_repeats = num_repeats
-        self.use_summary = use_summary
+        self.keep_parent = gs_config.dynamic_search_keep_parent
+        self.num_repeats = gs_config.dynamic_search_num_repeats
+        self.use_summary = gs_config.dynamic_search_use_summary
         self.llm_kwargs = {"temperature": 0.0, "max_tokens": 2000}
-        self.semaphore = asyncio.Semaphore(concurrent_coroutines)
-        possible_ratings = list(range(6))
-        if rating_threshold not in possible_ratings:
-            raise ValueError("rating_threshold must be one of %s" % possible_ratings)
-        self.rating_threshold = rating_threshold
-        self.max_level_when_no_relevant = max_level_when_no_relevant
+        self.semaphore = asyncio.Semaphore(
+            gs_config.dynamic_search_concurrent_coroutines
+        )
+        self.threshold = gs_config.dynamic_search_rating_threshold
+        self.max_level = max_level
 
     async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, Any]]:
         """
@@ -123,7 +122,7 @@ class DynamicCommunitySelection:
                 llm_info["llm_calls"] += result["llm_calls"]
                 llm_info["prompt_tokens"] += result["prompt_tokens"]
                 llm_info["output_tokens"] += result["output_tokens"]
-                if rating >= self.rating_threshold:
+                if rating >= self.threshold:
                     relevant_communities.add(community)
                     # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
@@ -146,10 +145,7 @@ class DynamicCommunitySelection:
                 and len(relevant_communities) == 0
                 and str(level) in self.levels
             ):
-                if (
-                    self.max_level_when_no_relevant is None
-                    or level <= self.max_level_when_no_relevant
-                ):
+                if level <= self.max_level:
                     log.info(
                         "dynamic community selection: no relevant community "
                         "reports, adding all reports at level %s to rate.",

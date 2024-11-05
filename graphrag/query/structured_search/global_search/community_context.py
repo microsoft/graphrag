@@ -20,6 +20,7 @@ from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
 from graphrag.config import GraphRagConfig
+from graphrag.query.context_builder.builders import ContextBuilderResult
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -47,8 +48,9 @@ class GlobalCommunityContext(GlobalContextBuilder):
             )
         self.random_state = random_state
 
-    def build_context(
+    async def build_context(
         self,
+        query: str,
         conversation_history: ConversationHistory | None = None,
         use_community_summary: bool = True,
         column_delimiter: str = "|",
@@ -64,10 +66,11 @@ class GlobalCommunityContext(GlobalContextBuilder):
         conversation_history_user_turns_only: bool = True,
         conversation_history_max_turns: int | None = 5,
         **kwargs: Any,
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> ContextBuilderResult:
         """Prepare batches of community report data table as context data for global search."""
         conversation_history_context = ""
         final_context_data = {}
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         if conversation_history:
             # build conversation history context
             (
@@ -83,8 +86,17 @@ class GlobalCommunityContext(GlobalContextBuilder):
             if conversation_history_context != "":
                 final_context_data = conversation_history_context_data
 
+        community_reports = self.community_reports
+        if self.dynamic_community_selection is not None:
+            community_reports, dynamic_info = (
+                await self.dynamic_community_selection.select(query)
+            )
+            llm_calls += dynamic_info["llm_calls"]
+            prompt_tokens += dynamic_info["prompt_tokens"]
+            output_tokens += dynamic_info["output_tokens"]
+
         community_context, community_context_data = build_community_context(
-            community_reports=self.community_reports,
+            community_reports=community_reports,
             entities=self.entities,
             token_encoder=self.token_encoder,
             use_community_summary=use_community_summary,
@@ -118,4 +130,10 @@ class GlobalCommunityContext(GlobalContextBuilder):
         # Update the final context data with the provided community_context_data
         final_context_data.update(community_context_data)
 
-        return final_context, final_context_data
+        return ContextBuilderResult(
+            context_chunks=final_context,
+            context_records=final_context_data,
+            llm_calls=llm_calls,
+            prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
+        )

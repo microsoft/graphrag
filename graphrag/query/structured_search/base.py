@@ -33,6 +33,7 @@ class SearchResult:
     completion_time: float
     llm_calls: int
     prompt_tokens: int
+    output_tokens: int
 
 
 T = TypeVar("T", GlobalContextBuilder, LocalContextBuilder, DRIFTContextBuilder)
