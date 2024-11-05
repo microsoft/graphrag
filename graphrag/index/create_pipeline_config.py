@@ -171,6 +171,7 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=create_base_text_units,
             config={
+                "snapshot_transient": settings.snapshots.transient,
                 "chunk_by": settings.chunks.group_by_columns,
                 "text_chunk": {
                     "strategy": settings.chunks.resolved_strategy(
@@ -215,7 +216,9 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
         PipelineWorkflowReference(
             name=create_base_entity_graph,
             config={
-                "graphml_snapshot": settings.snapshots.graphml,
+                "snapshot_graphml": settings.snapshots.graphml,
+                "snapshot_transient": settings.snapshots.transient,
+                "snapshot_raw_entities": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
