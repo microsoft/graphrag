@@ -928,11 +928,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../query/global_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Global Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../query/local_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Local Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query/drift_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DRIFT Search
   </span>
   
 
@@ -969,27 +1011,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../query/global_search/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Global Search
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
     
     
@@ -1001,10 +1022,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
         
           
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1015,8 +1036,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
             <span class="md-nav__icon md-icon"></span>
             Notebooks
           </label>
@@ -1076,6 +1097,27 @@
   
   <span class="md-ellipsis">
     Local Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples_notebooks/drift_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DRIFT Search
   </span>
   
 
@@ -1420,24 +1462,24 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a> query [OPTIONS]
 </code></pre></div>
 <p>Options:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  --method [local|global]       The query algorithm to use.  [required]
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  --query TEXT                  The query to execute.  [required]
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  --config PATH                 The configuration to use.
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  --data PATH                   Indexing pipeline output directory (i.e.
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                                contains the parquet files).
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  --root PATH                   The project root directory.  [default: .]
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  --community-level INTEGER     The community level in the Leiden community
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>                                hierarchy from which to load community
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                                reports. Higher values represent reports from
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                                smaller communities.  [default: 2]
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>  --response-type TEXT          Free form text describing the response type
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>                                and format, can be anything, e.g. Multiple
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>                                Paragraphs, Single Paragraph, Single Sentence,
-<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>                                List of 3-7 Points, Single Page, Multi-Page
-<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>                                Report. Default: Multiple Paragraphs
-<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>                                [default: Multiple Paragraphs]
-<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>  --streaming / --no-streaming  Print response in a streaming manner.
-<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>                                [default: no-streaming]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  --method [local|global|drift]  The query algorithm to use.  [required]
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  --query TEXT                   The query to execute.  [required]
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  --config PATH                  The configuration to use.
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  --data PATH                    Indexing pipeline output directory (i.e.
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                                 contains the parquet files).
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  --root PATH                    The project root directory.  [default: .]
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  --community-level INTEGER      The community level in the Leiden community
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>                                 hierarchy from which to load community
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                                 reports. Higher values represent reports from
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                                 smaller communities.  [default: 2]
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>  --response-type TEXT           Free form text describing the response type
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>                                 and format, can be anything, e.g. Multiple
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>                                 Paragraphs, Single Paragraph, Single
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>                                 Sentence, List of 3-7 Points, Single Page,
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>                                 Multi-Page Report. Default: Multiple
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>                                 Paragraphs  [default: Multiple Paragraphs]
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>  --streaming / --no-streaming   Print response in a streaming manner.
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>                                 [default: no-streaming]
 </code></pre></div>
 
 

@@ -12,7 +12,7 @@
         <link rel="prev" href="../../prompt_tuning/manual_prompt_tuning/">
       
       
-        <link rel="next" href="../local_search/">
+        <link rel="next" href="../global_search/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -976,6 +976,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#drift-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      DRIFT Search
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#question-generation" class="md-nav__link">
     <span class="md-ellipsis">
       Question Generation
@@ -1000,11 +1009,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../global_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Global Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../local_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Local Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../drift_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DRIFT Search
   </span>
   
 
@@ -1041,27 +1092,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../global_search/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Global Search
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
     
     
@@ -1073,10 +1103,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
         
           
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1087,8 +1117,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
             <span class="md-nav__icon md-icon"></span>
             Notebooks
           </label>
@@ -1148,6 +1178,27 @@
   
   <span class="md-ellipsis">
     Local Search
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples_notebooks/drift_search/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DRIFT Search
   </span>
   
 
@@ -1391,6 +1442,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#drift-search" class="md-nav__link">
+    <span class="md-ellipsis">
+      DRIFT Search
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#question-generation" class="md-nav__link">
     <span class="md-ellipsis">
       Question Generation
@@ -1417,12 +1477,13 @@
   
 
 
-<h1 id="query-engine">Query Engine  🔎</h1>
+<h1 id="query-engine">Query Engine 🔎</h1>
 <p>The Query Engine is the retrieval module of the Graph RAG Library. It is one of the two main components of the Graph RAG library, the other being the Indexing Pipeline (see <a href="../../index/overview/">Indexing Pipeline</a>).
 It is responsible for the following tasks:</p>
 <ul>
 <li><a href="#local-search">Local Search</a></li>
 <li><a href="#global-search">Global Search</a></li>
+<li><a href="#drift-search">DRIFT Search</a></li>
 <li><a href="#question-generation">Question Generation</a></li>
 </ul>
 <h2 id="local-search">Local Search</h2>
@@ -1431,6 +1492,9 @@ It is responsible for the following tasks:</p>
 <h2 id="global-search">Global Search</h2>
 <p>Global search method generates answers by searching over all AI-generated community reports in a map-reduce fashion. This is a resource-intensive method, but often gives good responses for questions that require an understanding of the dataset as a whole (e.g. What are the most significant values of the herbs mentioned in this notebook?).</p>
 <p>More about this can be checked at the <a href="../global_search/">Global Search</a> documentation.</p>
+<h2 id="drift-search">DRIFT Search</h2>
+<p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
+<p>To learn more about DRIFT Search, please refer to the <a href="../drift_search/">DRIFT Search</a> documentation.</p>
 <h2 id="question-generation">Question Generation</h2>
 <p>This functionality takes a list of user queries and generates the next candidate questions. This is useful for generating follow-up questions in a conversation or for generating a list of questions for the investigator to dive deeper into the dataset.</p>
 <p>Information about how question generation works can be found at the <a href="../question_generation/">Question Generation</a> documentation page.</p>
@@ -1480,13 +1544,13 @@ It is responsible for the following tasks:</p>
         
         
           
-          <a href="../local_search/" class="md-footer__link md-footer__link--next" aria-label="Next: Local Search">
+          <a href="../global_search/" class="md-footer__link md-footer__link--next" aria-label="Next: Global Search">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Local Search
+                Global Search
               </div>
             </div>
             <div class="md-footer__button md-icon">
