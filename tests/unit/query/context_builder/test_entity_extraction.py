@@ -54,6 +54,11 @@ class MockBaseVectorStore(BaseVectorStore):
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         return [document for document in self.documents if document.id in include_ids]
 
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        result = self.documents[0]
+        result.id = id
+        return result
+
 
 class MockBaseTextEmbedding(BaseTextEmbedding):
     def embed(self, text: str, **kwargs: Any) -> list[float]:
@@ -93,10 +98,12 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
-        ]),
+        text_embedding_vectorstore=MockBaseVectorStore(
+            [
+                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+                for entity in entities
+            ]
+        ),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
@@ -113,10 +120,12 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="t22",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
-            for entity in entities
-        ]),
+        text_embedding_vectorstore=MockBaseVectorStore(
+            [
+                VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
+                for entity in entities
+            ]
+        ),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
@@ -133,10 +142,12 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
-        ]),
+        text_embedding_vectorstore=MockBaseVectorStore(
+            [
+                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+                for entity in entities
+            ]
+        ),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
@@ -158,10 +169,12 @@ def test_map_query_to_entities():
 
     assert map_query_to_entities(
         query="",
-        text_embedding_vectorstore=MockBaseVectorStore([
-            VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
-            for entity in entities
-        ]),
+        text_embedding_vectorstore=MockBaseVectorStore(
+            [
+                VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
+                for entity in entities
+            ]
+        ),
         text_embedder=MockBaseTextEmbedding(),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,

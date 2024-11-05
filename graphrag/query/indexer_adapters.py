@@ -85,7 +85,7 @@ def read_indexer_reports(
     report_df = report_df.merge(filtered_community_df, on="community", how="inner")
     if config and (
         content_embedding_col not in report_df.columns
-        or report_df[content_embedding_col].isna().any()
+        or report_df.loc[:, content_embedding_col].isna().any()
     ):
         embedder = get_text_embedder(config)
         report_df = embed_community_reports(
