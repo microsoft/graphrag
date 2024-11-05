@@ -1520,9 +1520,11 @@
 <h2 id="snapshots">snapshots</h2>
 <h3 id="fields_15">Fields</h3>
 <ul>
-<li><code>graphml</code> <strong>bool</strong> - Emit graphml snapshots.</li>
-<li><code>raw_entities</code> <strong>bool</strong> - Emit raw entity snapshots.</li>
-<li><code>top_level_nodes</code> <strong>bool</strong> - Emit top-level-node snapshots.</li>
+<li><code>embeddings</code> <strong>bool</strong> - Emit embeddings snapshots to parquet.</li>
+<li><code>graphml</code> <strong>bool</strong> - Emit graph snapshots to GraphML.</li>
+<li><code>raw_entities</code> <strong>bool</strong> - Emit raw entity snapshots to JSON.</li>
+<li><code>top_level_nodes</code> <strong>bool</strong> - Emit top-level-node snapshots to JSON.</li>
+<li><code>transient</code> <strong>bool</strong> - Emit transient workflow tables snapshots to parquet.</li>
 </ul>
 <h2 id="encoding_model">encoding_model</h2>
 <p><strong>str</strong> - The text encoding model to use. Default=<code>cl100k_base</code>.</p>
