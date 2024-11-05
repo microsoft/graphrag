@@ -114,6 +114,28 @@ def store_entity_behavior_embeddings(
     return vectorstore
 
 
+def store_reports_semantic_embeddings(
+    reports: list[CommunityReport],
+    vectorstore: BaseVectorStore,
+) -> BaseVectorStore:
+    """Store entity semantic embeddings in a vectorstore."""
+    documents = [
+        VectorStoreDocument(
+            id=report.id,
+            text=report.full_content,
+            vector=report.full_content_embedding,
+            attributes=(
+                {"title": report.title, **report.attributes}
+                if report.attributes
+                else {"title": report.title}
+            ),
+        )
+        for report in reports
+    ]
+    vectorstore.load_documents(documents=documents)
+    return vectorstore
+
+
 def read_relationships(
     df: pd.DataFrame,
     id_col: str = "id",
