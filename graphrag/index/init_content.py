@@ -49,7 +49,7 @@ embeddings:
     # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
     # audience: <optional> # if using managed identity, the audience to use for the token
     # overwrite: true # or false. Only applicable at index creation time
-    # collection_name: <collection_name> # the name of the collection to use. Default: 'default'
+    # container_name: default # A prefix for the AzureAISearch to create indexes. Default: 'default'.
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding

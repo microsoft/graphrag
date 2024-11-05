@@ -114,7 +114,9 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         """
         report_df = pd.DataFrame([asdict(report) for report in reports])
         missing_content_error = "Some reports are missing full content."
-        missing_embedding_error = "Some reports are missing full content embeddings."
+        missing_embedding_error = (
+            "Some reports are missing full content embeddings. {missing} out of {total}"
+        )
 
         if (
             "full_content" not in report_df.columns
@@ -126,7 +128,12 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
             "full_content_embedding" not in report_df.columns
             or report_df["full_content_embedding"].isna().sum() > 0
         ):
-            raise ValueError(missing_embedding_error)
+            raise ValueError(
+                missing_embedding_error.format(
+                    missing=report_df["full_content_embedding"].isna().sum(),
+                    total=len(report_df),
+                )
+            )
         return report_df
 
     @staticmethod

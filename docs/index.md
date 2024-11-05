@@ -51,6 +51,7 @@ At query time, these structures are used to provide materials for the LLM contex
 
 - [_Global Search_](query/global_search.md) for reasoning about holistic questions about the corpus by leveraging the community summaries.
 - [_Local Search_](query/local_search.md) for reasoning about specific entities by fanning-out to their neighbors and associated concepts.
+- [_DRIFT Search_](query/drift_search.md) for reasoning about specific entities by fanning-out to their neighbors and associated concepts, but with the added context of community information.
 
 ### Prompt Tuning
 

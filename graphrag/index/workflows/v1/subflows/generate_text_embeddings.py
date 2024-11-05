@@ -34,7 +34,7 @@ async def generate_text_embeddings(
     storage: PipelineStorage,
     text_embed: dict,
     embedded_fields: set[str],
-    embeddings_snapshot_enabled: bool = False,
+    snapshot_embeddings_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to generate embeddings."""
@@ -64,7 +64,7 @@ async def generate_text_embeddings(
         storage=storage,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
-        embeddings_snapshot_enabled=embeddings_snapshot_enabled,
+        snapshot_embeddings_enabled=snapshot_embeddings_enabled,
     )
 
     return create_verb_result(cast(Table, pd.DataFrame()))

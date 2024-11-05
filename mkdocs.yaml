@@ -42,13 +42,15 @@ nav:
       - Manual Tuning: "prompt_tuning/manual_prompt_tuning.md"
   - Query:
       - Overview: "query/overview.md"
-      - Local Search: "query/local_search.md"
-      - Question Generation: "query/question_generation.md"
       - Global Search: "query/global_search.md"
+      - Local Search: "query/local_search.md"
+      - DRIFT Search: "query/drift_search.md"
+      - Question Generation: "query/question_generation.md"
       - Notebooks:
           - Overview: "query/notebooks/overview.md"
           - Global Search: "examples_notebooks/global_search.ipynb"
           - Local Search: "examples_notebooks/local_search.ipynb"
+          - DRIFT Search: "examples_notebooks/drift_search.ipynb"
   - Microsoft Research Blog: "blog_posts.md"
   - Extras:
       - CLI: "cli.md"
