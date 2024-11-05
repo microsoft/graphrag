@@ -93,7 +93,7 @@ UPDATE_STORAGE_BASE_DIR = "update_output"
 VECTOR_STORE = f"""
     type: {VectorStoreType.LanceDB.value}
     db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    container_name: default
+    container_name: default # A preffix for the vector store to create embbeding containers. Default: 'default'. For example 'default-entity-description'
     overwrite: true\
 """
 
