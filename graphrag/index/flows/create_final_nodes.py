@@ -22,7 +22,7 @@ async def create_final_nodes(
     storage: PipelineStorage,
     layout_strategy: dict[str, Any],
     level_for_node_positions: int,
-    snapshot_top_level_nodes: bool = False,
+    snapshot_top_level_nodes_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final nodes."""
     laid_out_entity_graph = cast(
@@ -50,7 +50,7 @@ async def create_final_nodes(
     nodes = nodes[nodes["level"] == level_for_node_positions].reset_index(drop=True)
     nodes = cast(pd.DataFrame, nodes[["id", "x", "y"]])
 
-    if snapshot_top_level_nodes:
+    if snapshot_top_level_nodes_enabled:
         await snapshot(
             nodes,
             name="top_level_nodes",
