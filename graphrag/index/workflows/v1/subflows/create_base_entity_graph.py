@@ -42,8 +42,9 @@ async def create_base_entity_graph(
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
     embedding_strategy: dict[str, Any] | None = None,
-    graphml_snapshot_enabled: bool = False,
-    raw_entity_snapshot_enabled: bool = False,
+    snapshot_graphml_enabled: bool = False,
+    snapshot_raw_entities_enabled: bool = False,
+    snapshot_transient_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to create the base entity graph."""
@@ -66,8 +67,9 @@ async def create_base_entity_graph(
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
         embedding_strategy=embedding_strategy,
-        graphml_snapshot_enabled=graphml_snapshot_enabled,
-        raw_entity_snapshot_enabled=raw_entity_snapshot_enabled,
+        snapshot_graphml_enabled=snapshot_graphml_enabled,
+        snapshot_raw_entities_enabled=snapshot_raw_entities_enabled,
+        snapshot_transient_enabled=snapshot_transient_enabled,
     )
 
     await runtime_storage.set("base_entity_graph", output)

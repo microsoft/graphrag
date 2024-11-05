@@ -25,7 +25,7 @@ async def create_final_nodes(
     runtime_storage: PipelineStorage,
     layout_strategy: dict[str, Any],
     level_for_node_positions: int,
-    snapshot_top_level_nodes: bool = False,
+    snapshot_top_level_nodes_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final nodes."""
@@ -37,7 +37,7 @@ async def create_final_nodes(
         storage,
         layout_strategy,
         level_for_node_positions,
-        snapshot_top_level_nodes=snapshot_top_level_nodes,
+        snapshot_top_level_nodes_enabled=snapshot_top_level_nodes_enabled,
     )
 
     return create_verb_result(

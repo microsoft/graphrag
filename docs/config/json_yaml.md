@@ -216,9 +216,11 @@ This is the base LLM configuration section. Other steps may override this config
 
 ### Fields
 
-- `graphml` **bool** - Emit graphml snapshots.
-- `raw_entities` **bool** - Emit raw entity snapshots.
-- `top_level_nodes` **bool** - Emit top-level-node snapshots.
+- `embeddings` **bool** - Emit embeddings snapshots to parquet.
+- `graphml` **bool** - Emit graph snapshots to GraphML.
+- `raw_entities` **bool** - Emit raw entity snapshots to JSON.
+- `top_level_nodes` **bool** - Emit top-level-node snapshots to JSON.
+- `transient` **bool** - Emit transient workflow tables snapshots to parquet.
 
 ## encoding_model
 
