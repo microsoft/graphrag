@@ -14,14 +14,14 @@ from graphrag.llm.types import (
     LLMInput,
     LLMOutput,
 )
+from graphrag.llm.utils import (
+    get_completion_llm_args,
+    try_parse_json_object,
+)
 
 from ._prompts import JSON_CHECK_PROMPT
 from .openai_configuration import OpenAIConfiguration
 from .types import OpenAIClientTypes
-from .utils import (
-    get_completion_llm_args,
-    try_parse_json_object,
-)
 
 log = logging.getLogger(__name__)
 

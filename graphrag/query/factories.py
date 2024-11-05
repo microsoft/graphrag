@@ -10,6 +10,7 @@ from graphrag.config import (
     GraphRagConfig,
     LLMType,
 )
+from graphrag.llm import OllamaConfiguration
 from graphrag.model import (
     CommunityReport,
     Covariate,
@@ -18,9 +19,12 @@ from graphrag.model import (
     TextUnit,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
+from graphrag.query.llm.base import BaseLLM, BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.llm.ollama.chat_ollama import ChatOllama
+from graphrag.query.llm.ollama.embeding import OllamaEmbedding
 from graphrag.query.structured_search.global_search.community_context import (
     GlobalCommunityContext,
 )
@@ -32,8 +36,10 @@ from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores import BaseVectorStore
 
 
-def get_llm(config: GraphRagConfig) -> ChatOpenAI:
+def get_llm(config: GraphRagConfig) -> BaseLLM:
     """Get the LLM client."""
+    if config.llm.type in (LLMType.Ollama, LLMType.OllamaChat):
+        return ChatOllama(OllamaConfiguration(dict(config.llm)))
     is_azure_client = (
         config.llm.type == LLMType.AzureOpenAIChat
         or config.llm.type == LLMType.AzureOpenAI
@@ -67,8 +73,10 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     )
 
 
-def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
+def get_text_embedder(config: GraphRagConfig) -> BaseTextEmbedding:
     """Get the LLM client for embeddings."""
+    if config.embeddings.llm.type == LLMType.OllamaEmbedding:
+        return OllamaEmbedding(OllamaConfiguration(dict(config.embeddings.llm)))
     is_azure_client = config.embeddings.llm.type == LLMType.AzureOpenAIEmbedding
     debug_embedding_api_key = config.embeddings.llm.api_key or ""
     llm_debug_info = {

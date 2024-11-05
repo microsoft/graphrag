@@ -17,7 +17,7 @@ from openai import (
     RateLimitError,
 )
 
-from .openai_configuration import OpenAIConfiguration
+from .types import LLMConfig
 
 DEFAULT_ENCODING = "cl100k_base"
 
@@ -33,7 +33,7 @@ RATE_LIMIT_ERRORS: list[type[Exception]] = [RateLimitError]
 log = logging.getLogger(__name__)
 
 
-def get_token_counter(config: OpenAIConfiguration) -> Callable[[str], int]:
+def get_token_counter(config: LLMConfig) -> Callable[[str], int]:
     """Get a function that counts the number of tokens in a string."""
     model = config.encoding_model or "cl100k_base"
     enc = _encoders.get(model)
@@ -66,25 +66,12 @@ def perform_variable_replacements(
     return result
 
 
-def get_completion_cache_args(configuration: OpenAIConfiguration) -> dict:
-    """Get the cache arguments for a completion LLM."""
-    return {
-        "model": configuration.model,
-        "temperature": configuration.temperature,
-        "frequency_penalty": configuration.frequency_penalty,
-        "presence_penalty": configuration.presence_penalty,
-        "top_p": configuration.top_p,
-        "max_tokens": configuration.max_tokens,
-        "n": configuration.n,
-    }
-
-
 def get_completion_llm_args(
-    parameters: dict | None, configuration: OpenAIConfiguration
+    parameters: dict | None, configuration: LLMConfig
 ) -> dict:
     """Get the arguments for a completion LLM."""
     return {
-        **get_completion_cache_args(configuration),
+        **configuration.get_completion_cache_args(),
         **(parameters or {}),
     }
 
@@ -158,3 +145,17 @@ def get_sleep_time_from_error(e: Any) -> float:
 
 
 _please_retry_after = "Please retry after "
+
+
+def non_blank(value: str | None) -> str | None:
+    if value is None:
+        return None
+    stripped = value.strip()
+    return None if stripped == "" else value
+
+
+def non_none_value_key(data: dict | None) -> dict:
+    """Remove key from dict where value is None"""
+    if data is None:
+        return {}
+    return {k: v for k, v in data.items() if v is not None}

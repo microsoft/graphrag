@@ -8,13 +8,7 @@ from collections.abc import Hashable
 from typing import Any, cast
 
 from graphrag.llm.types import LLMConfig
-
-
-def _non_blank(value: str | None) -> str | None:
-    if value is None:
-        return None
-    stripped = value.strip()
-    return None if stripped == "" else value
+from graphrag.llm.utils import non_blank
 
 
 class OpenAIConfiguration(Hashable, LLMConfig):
@@ -141,34 +135,34 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     @property
     def deployment_name(self) -> str | None:
         """Deployment name property definition."""
-        return _non_blank(self._deployment_name)
+        return non_blank(self._deployment_name)
 
     @property
     def api_base(self) -> str | None:
         """API base property definition."""
-        result = _non_blank(self._api_base)
+        result = non_blank(self._api_base)
         # Remove trailing slash
         return result[:-1] if result and result.endswith("/") else result
 
     @property
     def api_version(self) -> str | None:
         """API version property definition."""
-        return _non_blank(self._api_version)
+        return non_blank(self._api_version)
 
     @property
     def audience(self) -> str | None:
         """API version property definition."""
-        return _non_blank(self._audience)
+        return non_blank(self._audience)
 
     @property
     def organization(self) -> str | None:
         """Organization property definition."""
-        return _non_blank(self._organization)
+        return non_blank(self._organization)
 
     @property
     def proxy(self) -> str | None:
         """Proxy property definition."""
-        return _non_blank(self._proxy)
+        return non_blank(self._proxy)
 
     @property
     def n(self) -> int | None:
@@ -203,7 +197,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     @property
     def response_format(self) -> str | None:
         """Response format property definition."""
-        return _non_blank(self._response_format)
+        return non_blank(self._response_format)
 
     @property
     def logit_bias(self) -> dict[str, float] | None:
@@ -253,7 +247,7 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     @property
     def encoding_model(self) -> str | None:
         """Encoding model property definition."""
-        return _non_blank(self._encoding_model)
+        return non_blank(self._encoding_model)
 
     @property
     def sleep_on_rate_limit_recommendation(self) -> bool | None:
@@ -268,6 +262,18 @@ class OpenAIConfiguration(Hashable, LLMConfig):
     def lookup(self, name: str, default_value: Any = None) -> Any:
         """Lookup method definition."""
         return self._raw_config.get(name, default_value)
+
+    def get_completion_cache_args(self) -> dict:
+        """Get the cache arguments for a completion LLM."""
+        return {
+            "model": self.model,
+            "temperature": self.temperature,
+            "frequency_penalty": self.frequency_penalty,
+            "presence_penalty": self.presence_penalty,
+            "top_p": self.top_p,
+            "max_tokens": self.max_tokens,
+            "n": self.n,
+        }
 
     def __str__(self) -> str:
         """Str method definition."""

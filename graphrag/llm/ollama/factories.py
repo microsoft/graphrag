@@ -22,20 +22,20 @@ from graphrag.llm.utils import (
     get_sleep_time_from_error,
     get_token_counter,
 )
+from graphrag.llm.openai.openai_history_tracking_llm import OpenAIHistoryTrackingLLM
+from graphrag.llm.openai.openai_token_replacing_llm import OpenAITokenReplacingLLM
 
 from .json_parsing_llm import JsonParsingLLM
-from .openai_chat_llm import OpenAIChatLLM
-from .openai_completion_llm import OpenAICompletionLLM
-from .openai_configuration import OpenAIConfiguration
-from .openai_embeddings_llm import OpenAIEmbeddingsLLM
-from .openai_history_tracking_llm import OpenAIHistoryTrackingLLM
-from .openai_token_replacing_llm import OpenAITokenReplacingLLM
-from .types import OpenAIClientTypes
+from .ollama_chat_llm import OllamaChatLLM
+from .ollama_completion_llm import OllamaCompletionLLM
+from .ollama_configuration import OllamaConfiguration
+from .ollama_embeddings_llm import OllamaEmbeddingsLLM
+from .types import OllamaClientType
 
 
-def create_openai_chat_llm(
-    client: OpenAIClientTypes,
-    config: OpenAIConfiguration,
+def create_ollama_chat_llm(
+    client: OllamaClientType,
+    config: OllamaConfiguration,
     cache: LLMCache | None = None,
     limiter: LLMLimiter | None = None,
     semaphore: asyncio.Semaphore | None = None,
@@ -46,7 +46,7 @@ def create_openai_chat_llm(
 ) -> CompletionLLM:
     """Create an OpenAI chat LLM."""
     operation = "chat"
-    result = OpenAIChatLLM(client, config)
+    result = OllamaChatLLM(client, config)
     result.on_error(on_error)
     if limiter is not None or semaphore is not None:
         result = _rate_limited(result, config, operation, limiter, semaphore, on_invoke)
@@ -57,9 +57,9 @@ def create_openai_chat_llm(
     return JsonParsingLLM(result)
 
 
-def create_openai_completion_llm(
-    client: OpenAIClientTypes,
-    config: OpenAIConfiguration,
+def create_ollama_completion_llm(
+    client: OllamaClientType,
+    config: OllamaConfiguration,
     cache: LLMCache | None = None,
     limiter: LLMLimiter | None = None,
     semaphore: asyncio.Semaphore | None = None,
@@ -70,7 +70,7 @@ def create_openai_completion_llm(
 ) -> CompletionLLM:
     """Create an OpenAI completion LLM."""
     operation = "completion"
-    result = OpenAICompletionLLM(client, config)
+    result = OllamaCompletionLLM(client, config)
     result.on_error(on_error)
     if limiter is not None or semaphore is not None:
         result = _rate_limited(result, config, operation, limiter, semaphore, on_invoke)
@@ -79,9 +79,9 @@ def create_openai_completion_llm(
     return OpenAITokenReplacingLLM(result)
 
 
-def create_openai_embedding_llm(
-    client: OpenAIClientTypes,
-    config: OpenAIConfiguration,
+def create_ollama_embedding_llm(
+    client: OllamaClientType,
+    config: OllamaConfiguration,
     cache: LLMCache | None = None,
     limiter: LLMLimiter | None = None,
     semaphore: asyncio.Semaphore | None = None,
@@ -92,7 +92,7 @@ def create_openai_embedding_llm(
 ) -> EmbeddingLLM:
     """Create an OpenAI embeddings LLM."""
     operation = "embedding"
-    result = OpenAIEmbeddingsLLM(client, config)
+    result = OllamaEmbeddingsLLM(client, config)
     result.on_error(on_error)
     if limiter is not None or semaphore is not None:
         result = _rate_limited(result, config, operation, limiter, semaphore, on_invoke)
@@ -103,7 +103,7 @@ def create_openai_embedding_llm(
 
 def _rate_limited(
     delegate: LLM,
-    config: OpenAIConfiguration,
+    config: OllamaConfiguration,
     operation: str,
     limiter: LLMLimiter | None,
     semaphore: asyncio.Semaphore | None,
@@ -126,7 +126,7 @@ def _rate_limited(
 
 def _cached(
     delegate: LLM,
-    config: OpenAIConfiguration,
+    config: OllamaConfiguration,
     operation: str,
     cache: LLMCache,
     on_cache_hit: OnCacheActionFn | None,
