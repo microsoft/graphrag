@@ -54,6 +54,7 @@ nav:
   - Microsoft Research Blog: "blog_posts.md"
   - Extras:
       - CLI: "cli.md"
+      - Visualization Guide: "visualization_guide.md"
       - Operation Dulce:
           - About: "data/operation_dulce/ABOUT.md"
           - Document: "data/operation_dulce/Operation Dulce v2 1 1.md"
