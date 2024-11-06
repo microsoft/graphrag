@@ -26,7 +26,6 @@ from pydantic import validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logging.print_progress import PrintProgressReporter
-from graphrag.query.factories import get_global_search_engine, get_local_search_engine
 from graphrag.query.factories import (
     get_drift_search_engine,
     get_global_search_engine,
@@ -42,8 +41,8 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
-from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 
