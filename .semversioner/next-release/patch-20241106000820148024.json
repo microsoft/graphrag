@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix Community ID loading for DRIFT search over existing indexes"
-}
