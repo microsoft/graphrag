@@ -1038,6 +1038,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Use
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learn-more" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learn More
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1444,6 +1471,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Use
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learn-more" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learn More
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1470,29 +1524,23 @@
 <p align="center">
 <img src="../../img/drift-search-diagram.png" alt="Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process." align="center" />
 </p>
-<p align="center"><i>
-Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process. A (Primer): DRIFT compares the user’s query with the top K most semantically relevant community reports, generating a broad initial answer and follow-up questions to steer further exploration. B (Follow-Up): DRIFT uses local search to refine queries, producing additional intermediate answers and follow-up questions that enhance specificity, guiding the engine towards context-rich information. A glyph on each node in the diagram shows the confidence the algorithm has to continue the query expansion step.  C (Output Hierarchy): The final output is a hierarchical structure of questions and answers ranked by relevance, reflecting a balanced mix of global insights and local refinements, making the results adaptable and comprehensive.</i></p>
-<p align="center">
+<p align="center"><i><small>
+Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process. A (Primer): DRIFT compares the user’s query with the top K most semantically relevant community reports, generating a broad initial answer and follow-up questions to steer further exploration. B (Follow-Up): DRIFT uses local search to refine queries, producing additional intermediate answers and follow-up questions that enhance specificity, guiding the engine towards context-rich information. A glyph on each node in the diagram shows the confidence the algorithm has to continue the query expansion step.  C (Output Hierarchy): The final output is a hierarchical structure of questions and answers ranked by relevance, reflecting a balanced mix of global insights and local refinements, making the results adaptable and comprehensive.</small></i></p>
 
-DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.
-
-## Configuration
-
-Below are the key parameters of the [DRIFTSearch class](https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/search.py):
-
-- `llm`: OpenAI model object to be used for response generation
-- `context_builder`: [context builder](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py) object to be used for preparing context data from community reports and query information
-- `config`: model to define the DRIFT Search hyperparameters. [DRIFT Config model](https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_config.py)
-- `token_encoder`: token encoder for tracking the budget for the algorithm.
-- `query_state`: a state object as defined in [Query State](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/state.py) that allows to track execution of a DRIFT Search instance, alongside follow ups and [DRIFT actions](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/action.py).
-
-## How to Use
-
-An example of a global search scenario can be found in the following [notebook](../examples_notebooks/drift_search.ipynb).
-
-## Learn More
-
-For a more in-depth look at the DRIFT search method, please refer to our [DRIFT Search blog post](https://www.microsoft.com/en-us/research/blog/introducing-drift-search-combining-global-and-local-search-methods-to-improve-quality-and-efficiency/)
+<p>DRIFT Search introduces a new approach to local search queries by including community information in the search process. This greatly expands the breadth of the query’s starting point and leads to retrieval and usage of a far higher variety of facts in the final answer. This addition expands the GraphRAG query engine by providing a more comprehensive option for local search, which uses community insights to refine a query into detailed follow-up questions.</p>
+<h2 id="configuration">Configuration</h2>
+<p>Below are the key parameters of the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/drift_search/search.py">DRIFTSearch class</a>:</p>
+<ul>
+<li><code>llm</code>: OpenAI model object to be used for response generation</li>
+<li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py">context builder</a> object to be used for preparing context data from community reports and query information</li>
+<li><code>config</code>: model to define the DRIFT Search hyperparameters. <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_config.py">DRIFT Config model</a></li>
+<li><code>token_encoder</code>: token encoder for tracking the budget for the algorithm.</li>
+<li><code>query_state</code>: a state object as defined in <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/state.py">Query State</a> that allows to track execution of a DRIFT Search instance, alongside follow ups and <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/action.py">DRIFT actions</a>.</li>
+</ul>
+<h2 id="how-to-use">How to Use</h2>
+<p>An example of a global search scenario can be found in the following <a href="../../examples_notebooks/drift_search/">notebook</a>.</p>
+<h2 id="learn-more">Learn More</h2>
+<p>For a more in-depth look at the DRIFT search method, please refer to our <a href="https://www.microsoft.com/en-us/research/blog/introducing-drift-search-combining-global-and-local-search-methods-to-improve-quality-and-efficiency/">DRIFT Search blog post</a></p>
 
 
 
