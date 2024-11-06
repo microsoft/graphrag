@@ -16,6 +16,7 @@ on:
     paths-ignore:
       - "**/*.md"
       - "**/*.yml"
+      - ".semversioner/**"
 
 permissions:
   contents: read
