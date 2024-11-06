@@ -16,6 +16,7 @@ umap:
   enabled: true # will generate UMAP embeddings for nodes
 ```
 After running the indexing pipeline over your data, there will be an output folder (defined by the `storage.base_dir` setting).
+
 - **Output Folder**: Contains artifacts from the LLM’s indexing pass.
 
 ## 2. Locate the Knowledge Graph
@@ -27,7 +28,7 @@ In the output folder, look for a file named `merged_graph.graphml`. graphml is a
 3. Import the `merged_graph.graphml` file into Gephi. This will result in a fairly plain view of the undirected graph nodes and edges.
 
 <p align="center">
-   <img src="img/viz_guide/gephi-initial-graph-example.png" alt="A basic graph visualization by Gephi" width="300"/>
+   <img src="../img/viz_guide/gephi-initial-graph-example.png" alt="A basic graph visualization by Gephi" width="300"/>
 </p>
 
 ## 4. Install the Leiden Algorithm Plugin
@@ -39,7 +40,7 @@ In the output folder, look for a file named `merged_graph.graphml`. graphml is a
 1. In the `Statistics` tab on the right, click `Run` for `Average Degree` and `Leiden Algorithm`.
 
 <p align="center">
-   <img src="img/viz_guide/gephi-network-overview-settings.png" alt="A view of Gephi's network overview settings" width="300"/>
+   <img src="../img/viz_guide/gephi-network-overview-settings.png" alt="A view of Gephi's network overview settings" width="300"/>
 </p>
 
 2. For the Leiden Algorithm, adjust the settings:
@@ -50,7 +51,7 @@ In the output folder, look for a file named `merged_graph.graphml`. graphml is a
 1. Go to the `Appearance` pane in the upper left side of Gephi.
 
 <p align="center">
-   <img src="img/viz_guide/gephi-appearance-pane.png" alt="A view of Gephi's appearance pane" width="500"/>
+   <img src="../img/viz_guide/gephi-appearance-pane.png" alt="A view of Gephi's appearance pane" width="500"/>
 </p>
 
 2. Select `Nodes`, then `Partition`, and click the color palette icon in the upper right.
@@ -71,7 +72,7 @@ In the output folder, look for a file named `merged_graph.graphml`. graphml is a
 1. In the `Layout` tab in the lower left, select `OpenORD`.
 
 <p align="center">
-   <img src="img/viz_guide/gephi-layout-pane.png" alt="A view of Gephi's layout pane" width="400"/>
+   <img src="../img/viz_guide/gephi-layout-pane.png" alt="A view of Gephi's layout pane" width="400"/>
 </p>
 
 2. Set `Liquid` and `Expansion` stages to 50, and everything else to 0.
@@ -81,7 +82,7 @@ In the output folder, look for a file named `merged_graph.graphml`. graphml is a
 1. Select `Force Atlas 2` in the layout options.
 
 <p align="center">
-   <img src="img/viz_guide/gephi-layout-forceatlas2-pane.png" alt="A view of Gephi's ForceAtlas2 layout pane" width="400"/>
+   <img src="../img/viz_guide/gephi-layout-forceatlas2-pane.png" alt="A view of Gephi's ForceAtlas2 layout pane" width="400"/>
 </p>
 
 2. Adjust the settings:
