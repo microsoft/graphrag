@@ -437,39 +437,39 @@ def _patch_vector_store(
             entities=_entities, vectorstore=description_embedding_store
         )
 
-    if with_reports is not None:
-        from graphrag.query.input.loaders.dfs import (
-            store_reports_semantic_embeddings,
-        )
-        from graphrag.vector_stores.lancedb import LanceDBVectorStore
+        if with_reports is not None:
+            from graphrag.query.input.loaders.dfs import (
+                store_reports_semantic_embeddings,
+            )
+            from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
-        community_reports = with_reports
-        collection_name = (
-            config.embeddings.vector_store.get("container_name", "default")
-            if config.embeddings.vector_store
-            else "default"
-        )
-        # Store report embeddings
-        _reports = read_indexer_reports(
-            community_reports,
-            nodes,
-            community_level,
-            content_embedding_col="full_content_embedding",
-            config=config,
-        )
+            community_reports = with_reports
+            collection_name = (
+                config.embeddings.vector_store.get("container_name", "default")
+                if config.embeddings.vector_store
+                else "default"
+            )
+            # Store report embeddings
+            _reports = read_indexer_reports(
+                community_reports,
+                nodes,
+                community_level,
+                content_embedding_col="full_content_embedding",
+                config=config,
+            )
 
-        full_content_embedding_store = LanceDBVectorStore(
-            db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name=f"{collection_name}-community-full_content",
-            overwrite=config.embeddings.vector_store["overwrite"],
-        )
-        full_content_embedding_store.connect(
-            db_uri=config.embeddings.vector_store["db_uri"]
-        )
-        # dump embeddings from the reports list to the full_content_embedding_store
-        store_reports_semantic_embeddings(
-            reports=_reports, vectorstore=full_content_embedding_store
-        )
+            full_content_embedding_store = LanceDBVectorStore(
+                db_uri=config.embeddings.vector_store["db_uri"],
+                collection_name=f"{collection_name}-community-full_content",
+                overwrite=config.embeddings.vector_store["overwrite"],
+            )
+            full_content_embedding_store.connect(
+                db_uri=config.embeddings.vector_store["db_uri"]
+            )
+            # dump embeddings from the reports list to the full_content_embedding_store
+            store_reports_semantic_embeddings(
+                reports=_reports, vectorstore=full_content_embedding_store
+            )
 
     return config
 
