@@ -73,10 +73,31 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The storage account blob url for cache"""
 
+class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb]]):
+    """Represents the cosmosdb cache configuration for the pipeline."""
+
+    type: Literal[CacheType.cosmosdb] = CacheType.cosmosdb
+    """The type of cache."""
+
+    base_dir: str | None = pydantic_Field(
+        description="The base directory for the cache.", default=None
+    )
+    """The base directory for the cache."""
+
+    primary_key: str | None = pydantic_Field(
+        description="The cosmosdb primary key for the cache.", default=None
+    )
+    """The cosmosdb primary key for the cache."""
+
+    cosmosdb_account_url: str = pydantic_Field(
+        description="The cosmosdb account url for cache", default=None
+    )
+    """The cosmosdb account url for cache"""
 
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig
     | PipelineMemoryCacheConfig
     | PipelineBlobCacheConfig
     | PipelineNoneCacheConfig
+    | PipelineCosmosDBCacheConfig
 )
