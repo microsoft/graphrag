@@ -282,6 +282,27 @@ class CosmosDBPipelineStorage(PipelineStorage):
         ]
         return self._current_container in container_names
     
+def create_cosmosdb_storage(
+    cosmosdb_account_url: str,
+    primary_key: str | None,
+    base_dir: str | None,
+    container_name: str | None,
+) -> PipelineStorage:
+    """Create a CosmosDB storage instance."""
+    log.info("Creating cosmosdb storage")
+    if cosmosdb_account_url is None:
+        msg = "No cosmosdb account url provided"
+        raise ValueError(msg)
+    if base_dir is None:
+        msg = "No base_dir provided for database name"
+        raise ValueError(msg)
+    return CosmosDBPipelineStorage(
+        cosmosdb_account_url=cosmosdb_account_url,
+        primary_key=primary_key,
+        database_name=base_dir,
+        current_container=container_name,
+    )
+
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int
 ) -> Progress:
