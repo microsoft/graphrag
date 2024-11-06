@@ -31,6 +31,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - patch: Collapse intermediate workflow outputs.
 - patch: Dependency updates
 - patch: Extract DataShaper-less flows.
+- patch: Fix Community ID loading for DRIFT search over existing indexes
 - patch: Fix embeddings faulty assignments
 - patch: Fix init defaults for vector store and drift img in docs
 - patch: Fix nested json parsing
