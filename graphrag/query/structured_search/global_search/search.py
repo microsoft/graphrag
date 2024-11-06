@@ -16,10 +16,7 @@ import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
 from graphrag.llm.openai.utils import try_parse_json_object
-from graphrag.query.context_builder.builders import (
-    ContextBuilderResult,
-    GlobalContextBuilder,
-)
+from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
@@ -48,7 +45,7 @@ DEFAULT_REDUCE_LLM_PARAMS = {
 log = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class GlobalSearchResult(SearchResult):
     """A GlobalSearch result."""
 
@@ -202,6 +199,9 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             llm_calls=sum(llm_calls.values()),
             prompt_tokens=sum(prompt_tokens.values()),
             output_tokens=sum(output_tokens.values()),
+            llm_calls_categories=llm_calls,
+            prompt_tokens_categories=prompt_tokens,
+            output_tokens_categories=output_tokens,
         )
 
     def search(
