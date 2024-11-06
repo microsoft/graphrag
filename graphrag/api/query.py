@@ -276,7 +276,7 @@ async def local_search_streaming(
     reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
 
     description_embedding_store = _get_embedding_store(
-        conf_args=vector_store_args,  # type: ignore
+        config_args=vector_store_args,  # type: ignore
         container_suffix="entity-description",
     )
 
