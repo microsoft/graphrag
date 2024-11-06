@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Allow some cicd jobs to skip PRs dedicated to doc updates only."
+}
