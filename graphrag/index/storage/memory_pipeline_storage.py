@@ -6,7 +6,7 @@
 from typing import Any
 
 from .file_pipeline_storage import FilePipelineStorage
-from .typing import PipelineStorage
+from .pipeline_storage import PipelineStorage
 
 
 class MemoryPipelineStorage(FilePipelineStorage):
@@ -32,11 +32,9 @@ class MemoryPipelineStorage(FilePipelineStorage):
         -------
             - output - The value for the given key.
         """
-        return self._storage.get(key) or await super().get(key, as_bytes, encoding)
+        return self._storage.get(key)
 
-    async def set(
-        self, key: str, value: str | bytes | None, encoding: str | None = None
-    ) -> None:
+    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set the value for the given key.
 
         Args:
@@ -55,7 +53,7 @@ class MemoryPipelineStorage(FilePipelineStorage):
         -------
             - output - True if the key exists in the storage, False otherwise.
         """
-        return key in self._storage or await super().has(key)
+        return key in self._storage
 
     async def delete(self, key: str) -> None:
         """Delete the given key from the storage.
@@ -71,7 +69,11 @@ class MemoryPipelineStorage(FilePipelineStorage):
 
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child storage instance."""
-        return self
+        return MemoryPipelineStorage()
+
+    def keys(self) -> list[str]:
+        """Return the keys in the storage."""
+        return list(self._storage.keys())
 
 
 def create_memory_storage() -> PipelineStorage:

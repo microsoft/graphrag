@@ -161,6 +161,8 @@ ALL_ENV_VARS = {
     "GRAPHRAG_SNAPSHOT_GRAPHML": "true",
     "GRAPHRAG_SNAPSHOT_RAW_ENTITIES": "true",
     "GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES": "true",
+    "GRAPHRAG_SNAPSHOT_EMBEDDINGS": "true",
+    "GRAPHRAG_SNAPSHOT_TRANSIENT": "true",
     "GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL": "storage_account_blob_url",
     "GRAPHRAG_STORAGE_BASE_DIR": "/some/storage/dir",
     "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
@@ -481,11 +483,9 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.chunks.group_by_columns == []
 
     def test_all_env_vars_is_accurate(self):
-        env_var_docs_path = Path("docsite/posts/config/env_vars.md")
-        query_docs_path = Path("docsite/posts/query/3-cli.md")
+        env_var_docs_path = Path("docs/config/env_vars.md")
 
         env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
-        query_docs = query_docs_path.read_text(encoding="utf-8")
 
         def find_envvar_names(text) -> set[str]:
             pattern = r"`(GRAPHRAG_[^`]+)`"
@@ -493,9 +493,7 @@ class TestDefaultConfig(unittest.TestCase):
             found = {f for f in found if not f.endswith("_")}
             return {*found}
 
-        graphrag_strings = find_envvar_names(env_var_docs) | find_envvar_names(
-            query_docs
-        )
+        graphrag_strings = find_envvar_names(env_var_docs)
 
         missing = {s for s in graphrag_strings if s not in ALL_ENV_VARS} - {
             # Remove configs covered by the base LLM connection configs
@@ -624,6 +622,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
@@ -716,6 +716,8 @@ class TestDefaultConfig(unittest.TestCase):
                     graphml=True,
                     raw_entities=True,
                     top_level_nodes=True,
+                    embeddings=True,
+                    transient=True,
                 ),
                 entity_extraction=EntityExtractionConfigInput(
                     max_gleanings=112,
@@ -803,6 +805,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
@@ -894,6 +898,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml == defs.SNAPSHOTS_GRAPHML
         assert parameters.snapshots.raw_entities == defs.SNAPSHOTS_RAW_ENTITIES
         assert parameters.snapshots.top_level_nodes == defs.SNAPSHOTS_TOP_LEVEL_NODES
+        assert parameters.snapshots.embeddings == defs.SNAPSHOTS_EMBEDDINGS
+        assert parameters.snapshots.transient == defs.SNAPSHOTS_TRANSIENT
         assert parameters.storage.base_dir == defs.STORAGE_BASE_DIR
         assert parameters.storage.type == defs.STORAGE_TYPE
         assert parameters.umap.enabled == defs.UMAP_ENABLED

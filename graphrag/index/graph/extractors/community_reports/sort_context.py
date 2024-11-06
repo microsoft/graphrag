@@ -144,7 +144,7 @@ def sort_context(
             new_context_string = _get_context_string(
                 sorted_nodes, sorted_edges, sorted_claims, sub_community_reports
             )
-            if num_tokens(context_string) > max_tokens:
+            if num_tokens(new_context_string) > max_tokens:
                 break
             context_string = new_context_string
 

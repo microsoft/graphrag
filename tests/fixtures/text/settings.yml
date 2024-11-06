@@ -6,9 +6,25 @@ embeddings:
     type: "azure_ai_search"
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
-    collection_name: "simple_text_ci"
-    query_collection_name: "simple_text_ci_query"
-    store_in_table: True
+    container_name: "simple_text_ci"
 
-    entity_name_description:
-      title_column: "name"
+community_reports:
+  prompt: "prompts/community_report.txt"
+  max_length: 2000
+  max_input_length: 8000
+
+
+storage:
+  type: file # or blob
+  base_dir: "output/${timestamp}/artifacts"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+reporting:
+  type: file # or console, blob
+  base_dir: "output/${timestamp}/reports"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+snapshots:
+  embeddings: True

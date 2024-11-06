@@ -104,7 +104,7 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
         return input, result
 
     _pattern = r"\{(.*)\}"
-    _match = re.search(_pattern, input)
+    _match = re.search(_pattern, input, re.DOTALL)
     input = "{" + _match.group(1) + "}" if _match else input
 
     # Clean up json string.

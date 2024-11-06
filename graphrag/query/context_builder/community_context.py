@@ -15,6 +15,10 @@ from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
 
+NO_COMMUNITY_RECORDS_WARNING: str = (
+    "Warning: No community records added when building community context."
+)
+
 
 def build_community_context(
     community_reports: list[CommunityReport],
@@ -92,6 +96,7 @@ def build_community_context(
         )
 
     selected_reports = [report for report in community_reports if _is_included(report)]
+
     if selected_reports is None or len(selected_reports) == 0:
         return ([], {})
 
@@ -127,14 +132,17 @@ def build_community_context(
         record_df = _convert_report_context_to_df(
             context_records=batch_records,
             header=header,
-            weight_column=community_weight_name
-            if entities and include_community_weight
-            else None,
+            weight_column=(
+                community_weight_name if entities and include_community_weight else None
+            ),
             rank_column=community_rank_name if include_community_rank else None,
         )
         if len(record_df) == 0:
             return
         current_context_text = record_df.to_csv(index=False, sep=column_delimiter)
+        if not all_context_text and single_batch:
+            current_context_text = f"-----{context_name}-----\n{current_context_text}"
+
         all_context_text.append(current_context_text)
         all_context_records.append(record_df)
 
@@ -157,9 +165,19 @@ def build_community_context(
         batch_tokens += new_tokens
         batch_records.append(new_context)
 
-    # add the last batch if it has not been added
-    if batch_text not in all_context_text:
+    # Extract the IDs from the current batch
+    current_batch_ids = {record[0] for record in batch_records}
+
+    # Extract the IDs from all previous batches in all_context_records
+    existing_ids_sets = [set(record["id"].to_list()) for record in all_context_records]
+
+    # Check if the current batch has been added
+    if current_batch_ids not in existing_ids_sets:
         _cut_batch()
+
+    if len(all_context_records) == 0:
+        log.warning(NO_COMMUNITY_RECORDS_WARNING)
+        return ([], {})
 
     return all_context_text, {
         context_name.lower(): pd.concat(all_context_records, ignore_index=True)

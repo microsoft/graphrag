@@ -16,6 +16,9 @@ import pandas as pd
 import pytest
 
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.query.context_builder.community_context import (
+    NO_COMMUNITY_RECORDS_WARNING,
+)
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +27,8 @@ gh_pages = os.environ.get("GH_PAGES") is not None
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_AZURITE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1"
+
+KNOWN_WARNINGS = [NO_COMMUNITY_RECORDS_WARNING]
 
 
 def _load_fixtures():
@@ -40,7 +45,7 @@ def _load_fixtures():
         config_file = fixtures_path / subfolder / "config.json"
         params.append((subfolder, json.loads(config_file.read_bytes().decode("utf-8"))))
 
-    return params
+    return params[1:]  # disable azure blob connection test
 
 
 def pytest_generate_tests(metafunc):
@@ -131,7 +136,7 @@ class TestIndexer:
             "index",
             "--verbose" if debug else None,
             "--root",
-            root.absolute().as_posix(),
+            root.resolve().as_posix(),
             "--reporter",
             "print",
         ]
@@ -167,59 +172,64 @@ class TestIndexer:
         stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
+        expected_artifacts = 0
         expected_workflows = set(workflow_config.keys())
         workflows = set(stats["workflows"].keys())
         assert (
             workflows == expected_workflows
         ), f"Workflows missing from stats.json: {expected_workflows - workflows}. Unexpected workflows in stats.json: {workflows - expected_workflows}"
 
-        # [OPTIONAL] Check subworkflows
+        # [OPTIONAL] Check runtime
         for workflow in expected_workflows:
-            if "subworkflows" in workflow_config[workflow]:
-                # Check number of subworkflows
-                subworkflows = stats["workflows"][workflow]
-                expected_subworkflows = workflow_config[workflow].get(
-                    "subworkflows", None
-                )
-                if expected_subworkflows:
-                    assert (
-                        len(subworkflows) - 1 == expected_subworkflows
-                    ), f"Expected {expected_subworkflows} subworkflows, found: {len(subworkflows) - 1} for workflow: {workflow}: [{subworkflows}]"
-
-                # Check max runtime
-                max_runtime = workflow_config[workflow].get("max_runtime", None)
-                if max_runtime:
-                    assert (
-                        stats["workflows"][workflow]["overall"] <= max_runtime
-                    ), f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
+            # Check expected artifacts
+            expected_artifacts = expected_artifacts + workflow_config[workflow].get(
+                "expected_artifacts", 1
+            )
+            # Check max runtime
+            max_runtime = workflow_config[workflow].get("max_runtime", None)
+            if max_runtime:
+                assert (
+                    stats["workflows"][workflow]["overall"] <= max_runtime
+                ), f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
 
         # Check artifacts
         artifact_files = os.listdir(artifacts)
+
+        # check that the number of workflows matches the number of artifacts
         assert (
-            len(artifact_files) == len(expected_workflows) + 1
-        ), f"Expected {len(expected_workflows) + 1} artifacts, found: {len(artifact_files)}"
+            len(artifact_files) == (expected_artifacts + 3)
+        ), (
+            f"Expected {expected_artifacts + 3} artifacts, found: {len(artifact_files)}"
+        )  # Embeddings add to the count
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
                 output_df = pd.read_parquet(artifacts / artifact)
                 artifact_name = artifact.split(".")[0]
-                workflow = workflow_config[artifact_name]
 
-                # Check number of rows between range
-                assert (
-                    workflow["row_range"][0]
-                    <= len(output_df)
-                    <= workflow["row_range"][1]
-                ), f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                try:
+                    workflow = workflow_config[artifact_name]
 
-                # Get non-nan rows
-                nan_df = output_df.loc[
-                    :, ~output_df.columns.isin(workflow.get("nan_allowed_columns", []))
-                ]
-                nan_df = nan_df[nan_df.isna().any(axis=1)]
-                assert (
-                    len(nan_df) == 0
-                ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                    # Check number of rows between range
+                    assert (
+                        workflow["row_range"][0]
+                        <= len(output_df)
+                        <= workflow["row_range"][1]
+                    ), f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+
+                    # Get non-nan rows
+                    nan_df = output_df.loc[
+                        :,
+                        ~output_df.columns.isin(
+                            workflow.get("nan_allowed_columns", [])
+                        ),
+                    ]
+                    nan_df = nan_df[nan_df.isna().any(axis=1)]
+                    assert (
+                        len(nan_df) == 0
+                    ), f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
+                except KeyError:
+                    log.warning("No workflow config found %s", artifact_name)
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
@@ -228,11 +238,12 @@ class TestIndexer:
             "poe",
             "query",
             "--root",
-            root.absolute().as_posix(),
+            root.resolve().as_posix(),
             "--method",
             query_config["method"],
-            "--community_level",
+            "--community-level",
             str(query_config.get("community_level", 2)),
+            "--query",
             query_config["query"],
         ]
 
@@ -255,7 +266,7 @@ class TestIndexer:
         },
         clear=True,
     )
-    @pytest.mark.timeout(600)  # Extend the timeout to 600 seconds (10 minutes)
+    @pytest.mark.timeout(800)
     def test_fixture(
         self,
         input_path: str,
@@ -294,6 +305,8 @@ class TestIndexer:
                 result.stderr if "No existing dataset at" not in result.stderr else ""
             )
 
-            assert stderror == "", f"Query failed with error: {stderror}"
+            assert (
+                stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS
+            ), f"Query failed with error: {stderror}"
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"

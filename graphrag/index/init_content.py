@@ -1,10 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-"""Content for the init CLI command."""
+
+"""Content for the init CLI command to generate a default configuration."""
 
 import graphrag.config.defaults as defs
 
-INIT_YAML = f"""
+INIT_YAML = f"""\
 encoding_model: cl100k_base
 skip_workflows: []
 llm:
@@ -12,6 +13,7 @@ llm:
   type: {defs.LLM_TYPE.value} # or azure_openai_chat
   model: {defs.LLM_MODEL}
   model_supports_json: true # recommended if this is available for your model.
+  # audience: "https://cognitiveservices.azure.com/.default"
   # max_tokens: {defs.LLM_MAX_TOKENS}
   # request_timeout: {defs.LLM_REQUEST_TIMEOUT}
   # api_base: https://<instance>.openai.azure.com
@@ -37,12 +39,24 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 embeddings:
   ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
+  # target: {defs.EMBEDDING_TARGET.value} # or all
+  # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
+  # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
+  vector_store:{defs.VECTOR_STORE}
+  # vector_store: # configuration for AI Search
+    # type: azure_ai_search
+    # url: <ai_search_endpoint>
+    # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
+    # audience: <optional> # if using managed identity, the audience to use for the token
+    # overwrite: true # or false. Only applicable at index creation time
+    # container_name: default # A prefix for the AzureAISearch to create indexes. Default: 'default'.
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
     model: {defs.EMBEDDING_MODEL}
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-02-15-preview
+    # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
     # tokens_per_minute: 150_000 # set a leaky bucket throttle
@@ -51,17 +65,12 @@ embeddings:
     # max_retry_wait: {defs.LLM_MAX_RETRY_WAIT}
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
-    # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
-    # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
-    # target: {defs.EMBEDDING_TARGET.value} # or optional
-  
-
 
 chunks:
   size: {defs.CHUNK_SIZE}
   overlap: {defs.CHUNK_OVERLAP}
   group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
-    
+
 input:
   type: {defs.INPUT_TYPE.value} # or blob
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv
@@ -81,6 +90,12 @@ storage:
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
+update_index_storage: # Storage to save an updated index (for incremental indexing). Enabling this performs an incremental index run
+  # type: {defs.STORAGE_TYPE.value} # or blob
+  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
 reporting:
   type: {defs.REPORTING_TYPE.value} # or console, blob
   base_dir: "{defs.REPORTING_BASE_DIR}"
@@ -88,6 +103,8 @@ reporting:
   # container_name: <azure_blob_storage_container_name>
 
 entity_extraction:
+  ## strategy: fully override the entity extraction strategy.
+  ##   type: one of graph_intelligence, graph_intelligence_json and nltk
   ## llm: override the global llm settings for this task
   ## parallelization: override the global parallelization settings for this task
   ## async_mode: override the global async_mode settings for this task
@@ -160,6 +177,6 @@ global_search:
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 """
 
-INIT_DOTENV = """
+INIT_DOTENV = """\
 GRAPHRAG_API_KEY=<API_KEY>
 """

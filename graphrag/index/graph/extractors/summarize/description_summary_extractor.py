@@ -67,7 +67,7 @@ class SummarizeExtractor:
         result = ""
         if len(descriptions) == 0:
             result = ""
-        if len(descriptions) == 1:
+        elif len(descriptions) == 1:
             result = descriptions[0]
         else:
             result = await self._summarize_descriptions(items, descriptions)
@@ -87,7 +87,11 @@ class SummarizeExtractor:
         if not isinstance(descriptions, list):
             descriptions = [descriptions]
 
-            # Iterate over descriptions, adding all until the max input tokens is reached
+        # Sort description lists
+        if len(descriptions) > 1:
+            descriptions = sorted(descriptions)
+
+        # Iterate over descriptions, adding all until the max input tokens is reached
         usable_tokens = self._max_input_tokens - num_tokens_from_string(
             self._summarization_prompt
         )
@@ -127,7 +131,9 @@ class SummarizeExtractor:
             name="summarize",
             variables={
                 self._entity_name_key: json.dumps(items),
-                self._input_descriptions_key: json.dumps(sorted(descriptions)),
+                self._input_descriptions_key: json.dumps(
+                    sorted(descriptions), ensure_ascii=False
+                ),
             },
             model_parameters={"max_tokens": self._max_summary_length},
         )

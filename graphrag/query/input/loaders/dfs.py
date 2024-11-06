@@ -114,6 +114,28 @@ def store_entity_behavior_embeddings(
     return vectorstore
 
 
+def store_reports_semantic_embeddings(
+    reports: list[CommunityReport],
+    vectorstore: BaseVectorStore,
+) -> BaseVectorStore:
+    """Store entity semantic embeddings in a vectorstore."""
+    documents = [
+        VectorStoreDocument(
+            id=report.id,
+            text=report.full_content,
+            vector=report.full_content_embedding,
+            attributes=(
+                {"title": report.title, **report.attributes}
+                if report.attributes
+                else {"title": report.title}
+            ),
+        )
+        for report in reports
+    ]
+    vectorstore.load_documents(documents=documents)
+    return vectorstore
+
+
 def read_relationships(
     df: pd.DataFrame,
     id_col: str = "id",
@@ -157,8 +179,7 @@ def read_covariates(
     id_col: str = "id",
     short_id_col: str | None = "short_id",
     subject_col: str = "subject_id",
-    subject_type_col: str | None = "subject_type",
-    covariate_type_col: str | None = "covariate_type",
+    covariate_type_col: str | None = "type",
     text_unit_ids_col: str | None = "text_unit_ids",
     document_ids_col: str | None = "document_ids",
     attributes_cols: list[str] | None = None,
@@ -170,9 +191,6 @@ def read_covariates(
             id=to_str(row, id_col),
             short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
             subject_id=to_str(row, subject_col),
-            subject_type=(
-                to_str(row, subject_type_col) if subject_type_col else "entity"
-            ),
             covariate_type=(
                 to_str(row, covariate_type_col) if covariate_type_col else "claim"
             ),

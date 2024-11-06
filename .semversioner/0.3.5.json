@@ -1,0 +1,50 @@
+{
+  "changes": [
+    {
+      "description": "Add compound verbs with tests infra.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create_final_communities.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create_final_text_units.",
+      "type": "patch"
+    },
+    {
+      "description": "Covariate verb collapse.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix duplicates in community context builder",
+      "type": "patch"
+    },
+    {
+      "description": "Fix prompt tune output path",
+      "type": "patch"
+    },
+    {
+      "description": "Fix seed hardcoded init",
+      "type": "patch"
+    },
+    {
+      "description": "Fix seeded random gen on clustering",
+      "type": "patch"
+    },
+    {
+      "description": "Improve logging.",
+      "type": "patch"
+    },
+    {
+      "description": "Set default values for cli parameters.",
+      "type": "patch"
+    },
+    {
+      "description": "Use static output directories.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-09-19T15:26:01+00:00",
+  "version": "0.3.5"
+}
