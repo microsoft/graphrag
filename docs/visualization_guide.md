@@ -16,6 +16,7 @@ umap:
   enabled: true # will generate UMAP embeddings for nodes
 ```
 After running the indexing pipeline over your data, there will be an output folder (defined by the `storage.base_dir` setting).
+
 - **Output Folder**: Contains artifacts from the LLM’s indexing pass.
 
 ## 2. Locate the Knowledge Graph
