@@ -94,7 +94,7 @@ def read_indexer_reports(
 
     return read_community_reports(
         df=report_df,
-        id_col="community",
+        id_col="id",
         short_id_col="community",
         summary_embedding_col=None,
         content_embedding_col=content_embedding_col,
