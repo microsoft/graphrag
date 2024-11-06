@@ -8,19 +8,19 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity, Community
+from graphrag.config import GraphRagConfig
+from graphrag.model import Community, CommunityReport, Entity
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.structured_search.base import GlobalContextBuilder
 from graphrag.query.context_builder.dynamic_community_selection import (
     DynamicCommunitySelection,
 )
-from graphrag.config import GraphRagConfig
-from graphrag.query.context_builder.builders import ContextBuilderResult
+from graphrag.query.structured_search.base import GlobalContextBuilder
 
 
 class GlobalCommunityContext(GlobalContextBuilder):
@@ -88,9 +88,10 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
         community_reports = self.community_reports
         if self.dynamic_community_selection is not None:
-            community_reports, dynamic_info = (
-                await self.dynamic_community_selection.select(query)
-            )
+            (
+                community_reports,
+                dynamic_info,
+            ) = await self.dynamic_community_selection.select(query)
             llm_calls += dynamic_info["llm_calls"]
             prompt_tokens += dynamic_info["prompt_tokens"]
             output_tokens += dynamic_info["output_tokens"]

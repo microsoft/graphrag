@@ -16,7 +16,7 @@ from graphrag.model import (
     TextUnit,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-
+from graphrag.query.llm.get_llm import get_llm
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -32,8 +32,6 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores import BaseVectorStore
-
-from graphrag.query.llm.get_llm import get_llm
 
 
 def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:

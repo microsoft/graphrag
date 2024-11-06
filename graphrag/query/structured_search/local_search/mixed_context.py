@@ -16,6 +16,7 @@ from graphrag.model import (
     Relationship,
     TextUnit,
 )
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -44,7 +45,6 @@ from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores import BaseVectorStore
-from graphrag.query.context_builder.builders import ContextBuilderResult
 
 log = logging.getLogger(__name__)
 

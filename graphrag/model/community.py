@@ -48,7 +48,7 @@ class Community(Named):
         entities_key: str = "entity_ids",
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
-        sub_communities_key: str = 'sub_community_ids',
+        sub_communities_key: str = "sub_community_ids",
         attributes_key: str = "attributes",
         size_key: str = "size",
         period_key: str = "period",

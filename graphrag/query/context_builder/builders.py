@@ -5,6 +5,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
 import pandas as pd
 
 from graphrag.query.context_builder.conversation_history import (

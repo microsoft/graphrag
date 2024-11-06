@@ -9,6 +9,7 @@ from collections import Counter
 from copy import deepcopy
 from time import time
 from typing import Any
+
 import tiktoken
 
 from graphrag.config import GraphRagConfig
@@ -87,24 +88,22 @@ class DynamicCommunitySelection:
         llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(
-                *[
-                    rate_relevancy(
-                        query=query,
-                        description=(
-                            self.reports[community].summary
-                            if self.use_summary
-                            else self.reports[community].full_content
-                        ),
-                        llm=self.llm,
-                        token_encoder=self.token_encoder,
-                        num_repeats=self.num_repeats,
-                        semaphore=self.semaphore,
-                        **self.llm_kwargs,
-                    )
-                    for community in queue
-                ]
-            )
+            gather_results = await asyncio.gather(*[
+                rate_relevancy(
+                    query=query,
+                    description=(
+                        self.reports[community].summary
+                        if self.use_summary
+                        else self.reports[community].full_content
+                    ),
+                    llm=self.llm,
+                    token_encoder=self.token_encoder,
+                    num_repeats=self.num_repeats,
+                    semaphore=self.semaphore,
+                    **self.llm_kwargs,
+                )
+                for community in queue
+            ])
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):

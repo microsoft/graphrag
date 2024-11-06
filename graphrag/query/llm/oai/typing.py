@@ -6,8 +6,8 @@
 from enum import Enum
 from typing import Any, cast
 
-import openai
 import httpx
+import openai
 
 OPENAI_RETRY_ERROR_TYPES = (
     # TODO: update these when we update to OpenAI 1+ library
