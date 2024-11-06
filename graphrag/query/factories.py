@@ -4,9 +4,8 @@
 """Query Factory methods to support CLI."""
 
 import tiktoken
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from graphrag.config import GraphRagConfig, LLMType
+from graphrag.config import GraphRagConfig
 from graphrag.model import (
     Community,
     CommunityReport,
@@ -16,9 +15,7 @@ from graphrag.model import (
     TextUnit,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.get_llm import get_llm
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
-from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.drift_search.drift_context import (
     DRIFTSearchContextBuilder,
 )
@@ -32,36 +29,6 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores import BaseVectorStore
-
-
-def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
-    """Get the LLM client for embeddings."""
-    is_azure_client = config.embeddings.llm.type == LLMType.AzureOpenAIEmbedding
-    debug_embedding_api_key = config.embeddings.llm.api_key or ""
-    llm_debug_info = {
-        **config.embeddings.llm.model_dump(),
-        "api_key": f"REDACTED,len={len(debug_embedding_api_key)}",
-    }
-    if config.embeddings.llm.audience is None:
-        audience = "https://cognitiveservices.azure.com/.default"
-    else:
-        audience = config.embeddings.llm.audience
-    print(f"creating embedding llm client with {llm_debug_info}")  # noqa T201
-    return OpenAIEmbedding(
-        api_key=config.embeddings.llm.api_key,
-        azure_ad_token_provider=(
-            get_bearer_token_provider(DefaultAzureCredential(), audience)
-            if is_azure_client and not config.embeddings.llm.api_key
-            else None
-        ),
-        api_base=config.embeddings.llm.api_base,
-        organization=config.llm.organization,
-        api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
-        model=config.embeddings.llm.model,
-        deployment_name=config.embeddings.llm.deployment_name,
-        api_version=config.embeddings.llm.api_version,
-        max_retries=config.embeddings.llm.max_retries,
-    )
 
 
 def get_local_search_engine(

@@ -39,7 +39,11 @@ class DriftAction:
         self.follow_ups: list[DriftAction] = (
             follow_ups if follow_ups is not None else []
         )
-        self.metadata: dict[str, Any] = {}
+        self.metadata: dict[str, Any] = {
+            "llm_calls": 0,
+            "prompt_tokens": 0,
+            "output_tokens": 0,
+        }
 
     @property
     def is_complete(self) -> bool:
@@ -85,12 +89,10 @@ class DriftAction:
 
         if self.answer is None:
             log.warning("No answer found for query: %s", self.query)
-            generated_tokens = 0
-        else:
-            generated_tokens = num_tokens(self.answer, search_engine.token_encoder)
-        self.metadata.update({
-            "token_ct": search_result.prompt_tokens + generated_tokens
-        })
+
+        self.metadata["llm_calls"] += 1
+        self.metadata["prompt_tokens"] += search_result.prompt_tokens
+        self.metadata["output_tokens"] += search_result.output_tokens
 
         self.follow_ups = response.pop("follow_up_queries", [])
         if not self.follow_ups:

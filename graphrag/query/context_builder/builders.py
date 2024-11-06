@@ -58,5 +58,5 @@ class DRIFTContextBuilder(ABC):
         self,
         query: str,
         **kwargs,
-    ) -> pd.DataFrame:
+    ) -> (pd.DataFrame, dict[str, int]):
         """Build the context for the primer search actions."""

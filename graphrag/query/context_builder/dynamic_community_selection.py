@@ -15,7 +15,7 @@ import tiktoken
 from graphrag.config import GraphRagConfig
 from graphrag.model import Community, CommunityReport
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
-from graphrag.query.llm.get_llm import get_llm
+from graphrag.query.llm.get_client import get_llm
 
 log = logging.getLogger(__name__)
 
