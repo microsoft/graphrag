@@ -11,6 +11,10 @@ import graphrag.config.defaults as defs
 class SnapshotsConfig(BaseModel):
     """Configuration section for snapshots."""
 
+    embeddings: bool = Field(
+        description="A flag indicating whether to take snapshots of embeddings.",
+        default=defs.SNAPSHOTS_EMBEDDINGS,
+    )
     graphml: bool = Field(
         description="A flag indicating whether to take snapshots of GraphML.",
         default=defs.SNAPSHOTS_GRAPHML,
@@ -23,7 +27,7 @@ class SnapshotsConfig(BaseModel):
         description="A flag indicating whether to take snapshots of top-level nodes.",
         default=defs.SNAPSHOTS_TOP_LEVEL_NODES,
     )
-    embeddings: bool = Field(
-        description="A flag indicating whether to take snapshots of embeddings.",
-        default=defs.SNAPSHOTS_EMBEDDINGS,
+    transient: bool = Field(
+        description="A flag indicating whether to take snapshots of transient tables.",
+        default=defs.SNAPSHOTS_TRANSIENT,
     )

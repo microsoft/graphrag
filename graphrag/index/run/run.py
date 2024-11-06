@@ -152,6 +152,7 @@ async def run_pipeline_with_config(
         ):
             tables_dict[table.workflow] = table.result
 
+        progress_reporter.success("Finished running workflows on new documents.")
         await update_dataframe_outputs(
             dataframe_dict=tables_dict,
             storage=storage,
@@ -159,6 +160,7 @@ async def run_pipeline_with_config(
             config=config,
             cache=cache,
             callbacks=NoopVerbCallbacks(),
+            progress_reporter=progress_reporter,
         )
 
     else:

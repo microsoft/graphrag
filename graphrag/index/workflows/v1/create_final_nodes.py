@@ -37,7 +37,7 @@ def build_steps(
             "args": {
                 "layout_strategy": layout_strategy,
                 "level_for_node_positions": level_for_node_positions,
-                "snapshot_top_level_nodes": snapshot_top_level_nodes,
+                "snapshot_top_level_nodes_enabled": snapshot_top_level_nodes,
             },
             "input": {"source": "workflow:create_base_entity_graph"},
         },

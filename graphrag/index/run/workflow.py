@@ -119,7 +119,7 @@ async def _process_workflow(
 
 
 def _find_workflow_config(
-    config: PipelineConfig, workflow_name: str, step: str
+    config: PipelineConfig, workflow_name: str, step: str | None = None
 ) -> dict:
     """Find a workflow in the pipeline configuration.
 
@@ -147,8 +147,6 @@ def _find_workflow_config(
         )
         raise ValueError(error_message) from err
 
-    return (
-        workflow.config.get(step, {})
-        if workflow.config and step in workflow.config
-        else {}
-    )
+    if not workflow.config:
+        return {}
+    return workflow.config if not step else workflow.config.get(step, {})

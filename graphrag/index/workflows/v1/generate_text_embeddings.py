@@ -35,14 +35,14 @@ def build_steps(
     """
     text_embed = config.get("text_embed", {})
     embedded_fields = config.get("embedded_fields", {})
-    embeddings_snapshot_enabled = config.get("snapshot_embeddings", False)
+    snapshot_embeddings = config.get("snapshot_embeddings", False)
     return [
         {
             "verb": "generate_text_embeddings",
             "args": {
                 "text_embed": text_embed,
                 "embedded_fields": embedded_fields,
-                "embeddings_snapshot_enabled": embeddings_snapshot_enabled,
+                "snapshot_embeddings_enabled": snapshot_embeddings,
             },
             "input": input,
         },

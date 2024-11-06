@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix some edge cases on Drift Search over small input sets"
-}

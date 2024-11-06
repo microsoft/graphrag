@@ -18,6 +18,10 @@ from graphrag.prompt_tune.defaults import (
     K,
 )
 from graphrag.prompt_tune.types import DocSelectionType
+from .index import index_cli
+from .initialize import initialize_project_at
+from .prompt_tune import prompt_tune
+from .query import run_drift_search, run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -32,6 +36,7 @@ class SearchType(Enum):
 
     LOCAL = "local"
     GLOBAL = "global"
+    DRIFT = "drift"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -299,6 +304,15 @@ def _query_cli(
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
+                query=query,
+            )
+        case SearchType.DRIFT:
+            run_drift_search(
+                config_filepath=config,
+                data_dir=data,
+                root_dir=root,
+                community_level=community_level,
+                streaming=False,  # Drift search does not support streaming (yet)
                 query=query,
             )
         case _:
