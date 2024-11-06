@@ -9,15 +9,12 @@ from collections import Counter
 from copy import deepcopy
 from time import time
 from typing import Any
-
 import tiktoken
 
 from graphrag.config import GraphRagConfig
-
 from graphrag.model import Community, CommunityReport
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
-from graphrag.query.llm.base import BaseLLM
-from graphrag.query.factories import get_llm
+from graphrag.query.llm.get_llm import get_llm
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +29,6 @@ class DynamicCommunitySelection:
         config: GraphRagConfig,
         community_reports: list[CommunityReport],
         communities: list[Community],
-        max_level: int = 2,  # maximum level to search if no reports are relevant
     ):
         self.reports = {report.community_id: report for report in community_reports}
         # mapping from community to sub communities
@@ -74,8 +70,8 @@ class DynamicCommunitySelection:
         self.semaphore = asyncio.Semaphore(
             gs_config.dynamic_search_concurrent_coroutines
         )
-        self.threshold = gs_config.dynamic_search_rating_threshold
-        self.max_level = max_level
+        self.threshold = gs_config.dynamic_search_threshold
+        self.max_level = gs_config.dynamic_search_max_level
 
     async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, Any]]:
         """

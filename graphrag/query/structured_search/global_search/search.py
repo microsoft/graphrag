@@ -16,7 +16,10 @@ import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
 from graphrag.llm.openai.utils import try_parse_json_object
-from graphrag.query.context_builder.builders import GlobalContextBuilder
+from graphrag.query.context_builder.builders import (
+    GlobalContextBuilder,
+    ContextBuilderResult,
+)
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
@@ -105,7 +108,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         conversation_history: ConversationHistory | None = None,
     ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, context_records = self.context_builder.build_context(
+        context_result = self.context_builder.build_context(
             conversation_history=conversation_history, **self.context_builder_params
         )
         if self.callbacks:
@@ -116,7 +119,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 self._map_response_single_batch(
                     context_data=data, query=query, **self.map_llm_params
                 )
-                for data in context_chunks
+                for data in context_result.context_chunks
             ]
         )
         if self.callbacks:
@@ -124,7 +127,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 callback.on_map_response_end(map_responses)  # type: ignore
 
         # send context records first before sending the reduce response
-        yield context_records
+        yield context_result.context_records
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,

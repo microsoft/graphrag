@@ -14,7 +14,7 @@ OPENAI_RETRY_ERROR_TYPES = (
     cast(Any, openai).RateLimitError,
     cast(Any, openai).APIConnectionError,
     cast(Any, openai).APIError,
-    cast(Any, httpx).RemoteProtocalError,
+    cast(Any, httpx).RemoteProtocolError,
     cast(Any, httpx).ReadTimeout,
     # TODO: replace with comparable OpenAI 1+ error
 )

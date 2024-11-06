@@ -69,3 +69,7 @@ class GlobalSearchConfig(BaseModel):
         description="Number of concurrent coroutines to rate community reports",
         default=defs.DYNAMIC_SEARCH_CONCURRENT_COROUTINES,
     )
+    dynamic_search_max_level: int = Field(
+        description="The maximum level of community hierarchy to consider if none of the processed communities are relevant",
+        default=defs.DYNAMIC_SEARCH_MAX_LEVEL,
+    )
