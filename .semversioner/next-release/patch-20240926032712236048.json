@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Reorganized api,reporter,callback code into separate components. Defined debug profiles."
-}
