@@ -11,7 +11,6 @@ from datashaper import VerbCallbacks
 
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.pipeline import PipelineConfig
-from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.operations.summarize_descriptions.strategies import (
     run_graph_intelligence as run_entity_summarization,
 )
@@ -67,8 +66,6 @@ def _group_and_resolve_entities(
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
-            # Keep only descriptions where the original value wasn't modified
-            "description_embedding": lambda x: x.iloc[0] if len(x) == 1 else np.nan,
         })
         .reset_index()
     )
@@ -87,7 +84,6 @@ def _group_and_resolve_entities(
             "human_readable_id",
             "graph_embedding",
             "text_unit_ids",
-            "description_embedding",
         ],
     ]
 
@@ -141,48 +137,3 @@ async def _run_entity_summarization(
     entities_df["description"] = results
 
     return entities_df
-
-
-async def _run_entity_description_embedding(
-    entities_df: pd.DataFrame,
-    config: PipelineConfig,
-    cache: PipelineCache,
-    callbacks: VerbCallbacks,
-) -> pd.DataFrame:
-    """Run entity description embedding.
-
-    Parameters
-    ----------
-    entities_df : pd.DataFrame
-        The entities dataframe.
-    config : PipelineConfig
-        The pipeline configuration.
-    cache : PipelineCache
-        Pipeline cache used during the embedding process.
-    callbacks : WorkflowCallbacks
-        The workflow callbacks.
-
-    Returns
-    -------
-    pd.DataFrame
-        The updated entities dataframe with description embeddings.
-    """
-    embed_config = _find_workflow_config(
-        config, "create_final_entities", "entity_name_description_embed"
-    )
-
-    # Concatenate name and description for embedding
-    entities_df["name_description"] = (
-        entities_df["name"] + ":" + entities_df["description"]
-    )
-
-    # Run embedding
-    entities_df["description_embedding"] = await embed_text(
-        entities_df,
-        callbacks,
-        cache,
-        embed_column="name_description",
-        embedding_name="entity.description",
-        strategy=embed_config.get("strategy", {}),
-    )
-    return entities_df.drop(columns=["name_description"])

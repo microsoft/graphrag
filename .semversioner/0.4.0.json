@@ -1,0 +1,222 @@
+{
+  "changes": [
+    {
+      "description": "Add Incremental Indexing",
+      "type": "minor"
+    },
+    {
+      "description": "Added DRIFT graph reasoning query module",
+      "type": "minor"
+    },
+    {
+      "description": "embeddings moved to a different workflow",
+      "type": "minor"
+    },
+    {
+      "description": "Add DRIFT search cli and example notebook",
+      "type": "patch"
+    },
+    {
+      "description": "Add config for incremental updates",
+      "type": "patch"
+    },
+    {
+      "description": "Add embeddings to subflow.",
+      "type": "patch"
+    },
+    {
+      "description": "Add naive community merge using time period",
+      "type": "patch"
+    },
+    {
+      "description": "Add relationship merge",
+      "type": "patch"
+    },
+    {
+      "description": "Add runtime-only storage option.",
+      "type": "patch"
+    },
+    {
+      "description": "Add text units update",
+      "type": "patch"
+    },
+    {
+      "description": "Allow empty workflow returns to avoid disk writing.",
+      "type": "patch"
+    },
+    {
+      "description": "Apply pandas optimizations to create final entities",
+      "type": "patch"
+    },
+    {
+      "description": "Calculate new inputs and deleted inputs on update",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse covariates flow.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create-base-entity-graph.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create-final-community-reports.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create-final-documents.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create-final-entities.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create-final-nodes.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create_base_documents.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create_base_text_units.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse create_final_relationships.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse entity extraction.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse entity summarize.",
+      "type": "patch"
+    },
+    {
+      "description": "Collapse intermediate workflow outputs.",
+      "type": "patch"
+    },
+    {
+      "description": "Dependency updates",
+      "type": "patch"
+    },
+    {
+      "description": "Extract DataShaper-less flows.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix embeddings faulty assignments",
+      "type": "patch"
+    },
+    {
+      "description": "Fix init defaults for vector store and drift img in docs",
+      "type": "patch"
+    },
+    {
+      "description": "Fix nested json parsing",
+      "type": "patch"
+    },
+    {
+      "description": "Fix some edge cases on Drift Search over small input sets",
+      "type": "patch"
+    },
+    {
+      "description": "Fix var name for embedding",
+      "type": "patch"
+    },
+    {
+      "description": "Merge existing and new entities, updating values accordingly",
+      "type": "patch"
+    },
+    {
+      "description": "Merge text_embed into create-final-relationships subflow.",
+      "type": "patch"
+    },
+    {
+      "description": "Move embedding verbs to operations.",
+      "type": "patch"
+    },
+    {
+      "description": "Moving verbs around.",
+      "type": "patch"
+    },
+    {
+      "description": "Optimize Create Base Documents subflow",
+      "type": "patch"
+    },
+    {
+      "description": "Optimize text unit relationship count",
+      "type": "patch"
+    },
+    {
+      "description": "Perf optimizations in map_query_to_entities()",
+      "type": "patch"
+    },
+    {
+      "description": "Remove aggregate_df from final coomunities and final text units",
+      "type": "patch"
+    },
+    {
+      "description": "Remove duplicated relationships and nodes",
+      "type": "patch"
+    },
+    {
+      "description": "Remove unused column from final entities",
+      "type": "patch"
+    },
+    {
+      "description": "Reorganized api,reporter,callback code into separate components. Defined debug profiles.",
+      "type": "patch"
+    },
+    {
+      "description": "Small cleanup in community context history building",
+      "type": "patch"
+    },
+    {
+      "description": "Transient entity graph and snapshotting.",
+      "type": "patch"
+    },
+    {
+      "description": "Update Incremental Indexing to new embeddings workflow",
+      "type": "patch"
+    },
+    {
+      "description": "Use mkdocs for documentation",
+      "type": "patch"
+    },
+    {
+      "description": "add backwards compatibility patch to vector store.",
+      "type": "patch"
+    },
+    {
+      "description": "add-autogenerated-cli-docs",
+      "type": "patch"
+    },
+    {
+      "description": "fix docs image path",
+      "type": "patch"
+    },
+    {
+      "description": "refactor use of vector stores and update support for managed identity",
+      "type": "patch"
+    },
+    {
+      "description": "remove redundant error-handling code from global-search",
+      "type": "patch"
+    },
+    {
+      "description": "reorganize cli layer",
+      "type": "patch"
+    },
+    {
+      "description": "Fix Community ID loading for DRIFT search over existing indexes",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-11-06T00:24:14+00:00",
+  "version": "0.4.0"
+}
