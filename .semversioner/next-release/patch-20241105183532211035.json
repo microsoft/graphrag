@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix init defaults for vector store and drift img in docs"
-}
