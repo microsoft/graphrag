@@ -18,6 +18,7 @@ from graphrag.config.models import GraphRagConfig, StorageConfig, TextEmbeddingC
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineCacheConfigTypes,
+    PipelineCosmosDBCacheConfig,
     PipelineFileCacheConfig,
     PipelineMemoryCacheConfig,
     PipelineNoneCacheConfig,
@@ -42,6 +43,7 @@ from graphrag.index.config.reporting import (
 )
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
+    PipelineCosmosDBStorageConfig,
     PipelineFileStorageConfig,
     PipelineMemoryStorageConfig,
     PipelineStorageConfigTypes,
@@ -413,6 +415,23 @@ def _get_storage_config(
                 base_dir=storage_settings.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
             )
+        case StorageType.cosmosdb:
+            cosmosdb_account_url = storage_settings.cosmosdb_account_url
+            primary_key = storage_settings.primary_key
+            container_name = storage_settings.container_name
+            base_dir = storage_settings.base_dir
+            if cosmosdb_account_url is None:
+                msg = "CosmosDB account url must be provided for cosmosdb storage."
+                raise ValueError(msg)
+            if base_dir is None:
+                msg = "Base directory must be provided for cosmosdb storage."
+                raise ValueError(msg)
+            return PipelineCosmosDBStorageConfig(
+                cosmosdb_account_url=cosmosdb_account_url,
+                primary_key=primary_key,
+                container_name=container_name,
+                base_dir=storage_settings.base_dir,
+            )
         case _:
             # relative to the root_dir
             base_dir = storage_settings.base_dir
@@ -449,6 +468,21 @@ def _get_cache_config(
                 container_name=container_name,
                 base_dir=settings.cache.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
+            )
+        case CacheType.cosmosdb:
+            cosmosdb_account_url = settings.cache.cosmosdb_account_url
+            primary_key = settings.cache.primary_key
+            base_dir = settings.cache.base_dir
+            if cosmosdb_account_url is None:
+                msg = "CosmosDB account url must be provided for cosmosdb cache."
+                raise ValueError(msg)
+            if base_dir is None:
+                msg = "Base directory must be provided for cosmosdb cache."
+                raise ValueError(msg)
+            return PipelineCosmosDBCacheConfig(
+                cosmosdb_account_url=cosmosdb_account_url,
+                primary_key=primary_key,
+                base_dir=settings.cache.base_dir,
             )
         case _:
             # relative to root dir

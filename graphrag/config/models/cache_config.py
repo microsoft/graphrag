@@ -27,3 +27,9 @@ class CacheConfig(BaseModel):
     storage_account_blob_url: str | None = Field(
         description="The storage account blob url to use.", default=None
     )
+    cosmosdb_account_url: str | None = Field(
+        description="The cosmosdb account url to use.", default=None
+    )
+    primary_key: str | None = Field(
+        description="The primary key to use.", default=None
+    )
