@@ -135,7 +135,8 @@ async def run_pipeline_with_config(
 
         # Fail on empty delta dataset
         if delta_dataset.new_inputs.empty:
-            raise ValueError("Incremental Indexing Error: No new documents to process.")
+            error_msg = "Incremental Indexing Error: No new documents to process."
+            raise ValueError(error_msg)
 
         delta_storage = update_index_storage.child("delta")
 
