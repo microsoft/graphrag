@@ -26,4 +26,5 @@ ignorePaths:
   - "*.csv"
   - "*.parquet"
   - "*.faiss"
+  - "*.ipynb"
   - "*.log"
