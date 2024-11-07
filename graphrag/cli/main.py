@@ -178,7 +178,7 @@ def _update_cli(
 ):
     """
     Update an existing knowledge graph index.
-    
+
     Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
     update_cli(
