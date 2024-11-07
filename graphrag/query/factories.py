@@ -3,8 +3,10 @@
 
 """Query Factory methods to support CLI."""
 
-import tiktoken
 from copy import deepcopy
+
+import tiktoken
+
 from graphrag.config import GraphRagConfig
 from graphrag.model import (
     Community,
@@ -103,20 +105,16 @@ def get_global_search_engine(
         gs_config = config.global_search
         _config = deepcopy(config)
         _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
-        dynamic_community_selection_kwargs.update(
-            {
-                "llm": get_llm(_config),
-                "token_encoder": tiktoken.encoding_for_model(
-                    gs_config.dynamic_search_llm
-                ),
-                "keep_parent": gs_config.dynamic_search_keep_parent,
-                "num_repeats": gs_config.dynamic_search_num_repeats,
-                "use_summary": gs_config.dynamic_search_use_summary,
-                "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
-                "threshold": gs_config.dynamic_search_threshold,
-                "max_level": gs_config.dynamic_search_max_level,
-            }
-        )
+        dynamic_community_selection_kwargs.update({
+            "llm": get_llm(_config),
+            "token_encoder": tiktoken.encoding_for_model(gs_config.dynamic_search_llm),
+            "keep_parent": gs_config.dynamic_search_keep_parent,
+            "num_repeats": gs_config.dynamic_search_num_repeats,
+            "use_summary": gs_config.dynamic_search_use_summary,
+            "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+            "threshold": gs_config.dynamic_search_threshold,
+            "max_level": gs_config.dynamic_search_max_level,
+        })
 
     return GlobalSearch(
         llm=get_llm(config),

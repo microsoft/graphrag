@@ -10,7 +10,6 @@ import logging
 from typing import cast
 
 import pandas as pd
-from datashaper import TableContainer, VerbInput
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_communities import restore_community_hierarchy
