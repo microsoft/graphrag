@@ -66,12 +66,12 @@ def _merge_and_resolve_nodes(
     columns_to_agg: dict[str, str | Callable] = {
         col: "first"
         for col in concat_nodes.columns
-        if col not in ["source_id", "level", "title"]
+        if col not in ["text_unit_ids", "level", "title"]
     }
 
-    # Specify custom aggregation for description and source_id
+    # Specify custom aggregation for description and text_unit_ids
     columns_to_agg.update({
-        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
+        "text_unit_ids": lambda x: x.tolist(),
     })
 
     merged_nodes = (
@@ -94,6 +94,8 @@ def _merge_and_resolve_nodes(
     merged_nodes["community"] = (
         merged_nodes["community"].astype(pd.StringDtype()).astype("object")
     )
+
+    merged_nodes.insert(3, "description", merged_nodes.pop("description"))
 
     return merged_nodes, community_id_mapping
 
@@ -201,7 +203,7 @@ def _update_and_merge_community_reports(
         [old_community_reports, delta_community_reports], ignore_index=True, copy=False
     )
 
-    # Mantain type compat with query
+    # Maintain type compat with query
     merged_community_reports["community"] = (
         merged_community_reports["community"].astype(pd.StringDtype()).astype("object")
     )

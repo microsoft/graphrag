@@ -4,6 +4,7 @@
 """Entity related operations and utils for Incremental Indexing."""
 
 import asyncio
+import itertools
 
 import numpy as np
 import pandas as pd
@@ -64,7 +65,7 @@ def _group_and_resolve_entities(
             "human_readable_id": "first",
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+            "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
         })
         .reset_index()
     )
@@ -78,8 +79,8 @@ def _group_and_resolve_entities(
         [
             "id",
             "name",
-            "description",
             "type",
+            "description",
             "human_readable_id",
             "text_unit_ids",
         ],
