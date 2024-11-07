@@ -1502,6 +1502,32 @@
 <a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>  --streaming / --no-streaming   Print response in a streaming manner.
 <a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>                                 [default: no-streaming]
 </code></pre></div>
+<h2 id="update">update</h2>
+<p>Update an existing knowledge graph index.</p>
+<p>Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the <code>update_output</code> folder.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a> update [OPTIONS]
+</code></pre></div>
+<p>Options:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  --config PATH                   The configuration to use.
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  --root PATH                     The project root directory.  [default: .]
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  --verbose / --no-verbose        Run the indexing pipeline with verbose
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>                                  logging  [default: no-verbose]
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  --memprofile / --no-memprofile  Run the indexing pipeline with memory
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>                                  profiling  [default: no-memprofile]
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>  --reporter [rich|print|none]    The progress reporter to use.  [default:
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>                                  rich]
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>  --emit TEXT                     The data formats to emit, comma-separated.
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>                                  [default: parquet]
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>  --cache / --no-cache            Use LLM cache.  [default: cache]
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>  --skip-validation / --no-skip-validation
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>                                  Skip any preflight validation. Useful when
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>                                  running no LLM steps.  [default: no-skip-
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>                                  validation]
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>  --output PATH                   Indexing pipeline output directory.
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>                                  Overrides storage.base_dir in the
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>                                  configuration file.
+</code></pre></div>
 
 
 
