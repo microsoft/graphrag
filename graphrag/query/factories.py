@@ -21,6 +21,10 @@ from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKe
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.structured_search.drift_search.drift_context import (
+    DRIFTSearchContextBuilder,
+)
+from graphrag.query.structured_search.drift_search.search import DRIFTSearch
 from graphrag.query.structured_search.global_search.community_context import (
     GlobalCommunityContext,
 )
@@ -197,4 +201,32 @@ def get_global_search_engine(
         },
         concurrent_coroutines=gs_config.concurrency,
         response_type=response_type,
+    )
+
+
+def get_drift_search_engine(
+    config: GraphRagConfig,
+    reports: list[CommunityReport],
+    text_units: list[TextUnit],
+    entities: list[Entity],
+    relationships: list[Relationship],
+    description_embedding_store: BaseVectorStore,
+) -> DRIFTSearch:
+    """Create a local search engine based on data + configuration."""
+    llm = get_llm(config)
+    text_embedder = get_text_embedder(config)
+    token_encoder = tiktoken.get_encoding(config.encoding_model)
+
+    return DRIFTSearch(
+        llm=llm,
+        context_builder=DRIFTSearchContextBuilder(
+            chat_llm=llm,
+            text_embedder=text_embedder,
+            entities=entities,
+            relationships=relationships,
+            reports=reports,
+            entity_text_embeddings=description_embedding_store,
+            text_units=text_units,
+        ),
+        token_encoder=token_encoder,
     )

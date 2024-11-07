@@ -49,7 +49,7 @@ embeddings:
     # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
     # audience: <optional> # if using managed identity, the audience to use for the token
     # overwrite: true # or false. Only applicable at index creation time
-    # collection_name: <collection_name> # the name of the collection to use
+    # container_name: default # A prefix for the AzureAISearch to create indexes. Default: 'default'.
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -87,6 +87,12 @@ cache:
 storage:
   type: {defs.STORAGE_TYPE.value} # or blob
   base_dir: "{defs.STORAGE_BASE_DIR}"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+update_index_storage: # Storage to save an updated index (for incremental indexing). Enabling this performs an incremental index run
+  # type: {defs.STORAGE_TYPE.value} # or blob
+  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 

@@ -1,15 +1,36 @@
 # Config Breaking Changes
 
+## New required Embeddings
+
+### Change
+
+- Added new required embeddings for `DRIFTSearch` and base RAG capabilities.
+
+### Migration
+
+- Run a new index, leveraging existing cache.
+
+## Vector Store required by default
+
+### Change
+
+- Vector store is now required by default for all search methods.
+
+### Migration
+
+- Run graphrag init command to generate a new settings.yaml file with the vector store configuration.
+- Run a new index, leveraging existing cache.
+
 ## Deprecate timestamp paths
 
 ### Change
 
-- Remove support for timestamp paths, those using `${timestamp}` directory nesting. 
+- Remove support for timestamp paths, those using `${timestamp}` directory nesting.
 - Use the same directory for storage output and reporting output.
 
 ### Migration
 
-- Ensure output directories no longer use `${timestamp}` directory nesting. 
+- Ensure output directories no longer use `${timestamp}` directory nesting.
 
 **Using Environment Variables**
 

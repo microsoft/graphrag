@@ -5,11 +5,9 @@
 
 from typing import Any, cast
 
-import pandas as pd
 from datashaper import (
     Table,
     VerbCallbacks,
-    VerbInput,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
@@ -22,24 +20,24 @@ from graphrag.index.storage import PipelineStorage
 
 @verb(name="create_final_nodes", treats_input_tables_as_immutable=True)
 async def create_final_nodes(
-    input: VerbInput,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
+    runtime_storage: PipelineStorage,
     layout_strategy: dict[str, Any],
     level_for_node_positions: int,
-    snapshot_top_level_nodes: bool = False,
+    snapshot_top_level_nodes_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final nodes."""
-    source = cast(pd.DataFrame, input.get_input())
+    entity_graph = await runtime_storage.get("base_entity_graph")
 
     output = await create_final_nodes_flow(
-        source,
+        entity_graph,
         callbacks,
         storage,
         layout_strategy,
         level_for_node_positions,
-        snapshot_top_level_nodes=snapshot_top_level_nodes,
+        snapshot_top_level_nodes_enabled=snapshot_top_level_nodes_enabled,
     )
 
     return create_verb_result(

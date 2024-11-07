@@ -30,6 +30,8 @@ It shows how to use the system to index some text, and then use the indexed data
 pip install graphrag
 ```
 
+The graphrag library includes a CLI for a no-code approach to getting started. Please review the full [CLI documentation](cli.md) for further detail.
+
 # Running the Indexer
 
 Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](config/overview.md), which you can customize as needed using a [config file](config/json_yaml.md), which we recommend, or [environment variables](config/env_vars.md).
@@ -123,3 +125,6 @@ graphrag query \
 ```
 
 Please refer to [Query Engine](query/overview.md) docs for detailed information about how to leverage our Local and Global search mechanisms for extracting meaningful insights from data after the Indexer has wrapped up execution.
+
+# Visualizing the Graph
+Check out our [visualization guide](visualization_guide.md) for a more interactive experience in debugging and exploring the knowledge graph.

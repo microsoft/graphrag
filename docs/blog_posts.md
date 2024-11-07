@@ -22,6 +22,13 @@
     ---
     <h6>Published September 9, 2024
 
-    By [Alonso Guevara Fernández](https://www.microsoft.com/en-us/research/people/alonsog/), Sr. Software Engineer; Katy Smith, Data Scientist II; [Joshua Bradley](https://www.microsoft.com/en-us/research/people/joshbradley/), Senior Data Scientist; [Darren Edge](https://www.microsoft.com/en-us/research/people/daedge/), Senior Director; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist; [Sarah Smith](https://www.microsoft.com/en-us/research/people/smithsarah/), Senior Program Manager; [Ben Cutler](https://www.microsoft.com/en-us/research/people/bcutler/), Senior Director; [Steven Truitt](https://www.microsoft.com/en-us/research/people/steventruitt/), Principal Program Manager; [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect
+    By [Alonso Guevara Fernández](https://www.microsoft.com/en-us/research/people/alonsog/), Sr. Software Engineer; Katy Smith, Data Scientist II; [Joshua Bradley](https://www.microsoft.com/en-us/research/people/joshbradley/), Senior Data Scientist; [Darren Edge](https://www.microsoft.com/en-us/research/people/daedge/), Senior Director; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist; [Sarah Smith](https://www.microsoft.com/en-us/research/people/smithsarah/), Senior Program Manager; [Ben Cutler](https://www.microsoft.com/en-us/research/people/bcutler/), Senior Director; [Steven Truitt](https://www.microsoft.com/en-us/research/people/steventruitt/), Principal Program Manager; [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
+
+- [:octicons-arrow-right-24: __Introducing DRIFT Search: Combining global and local search methods to improve quality and efficiency__](https://www.microsoft.com/en-us/research/blog/introducing-drift-search-combining-global-and-local-search-methods-to-improve-quality-and-efficiency/)
+
+    ---
+    <h6>Published October 31, 2024
+
+    By Julian Whiting, Senior Machine Learning Engineer; Zachary Hills , Senior Software Engineer; [Alonso Guevara Fernández](https://www.microsoft.com/en-us/research/people/alonsog/), Sr. Software Engineer; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist; Adam Bradley , Managing Partner, Strategic Research; [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
 
 </div>

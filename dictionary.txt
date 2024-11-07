@@ -67,6 +67,7 @@ pypi
 nbformat
 semversioner
 mkdocs
+typer
 
 # Library Methods
 iterrows
@@ -95,6 +96,9 @@ onclick
 pymdownx
 linenums
 twemoji
+Gephi
+gephi
+Gephi's
 
 # Verbs
 binarize

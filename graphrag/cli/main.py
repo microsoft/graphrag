@@ -19,7 +19,7 @@ from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 from .index import index_cli
 from .initialize import initialize_project_at
 from .prompt_tune import prompt_tune
-from .query import run_global_search, run_local_search
+from .query import run_drift_search, run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -34,6 +34,7 @@ class SearchType(Enum):
 
     LOCAL = "local"
     GLOBAL = "global"
+    DRIFT = "drift"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -102,12 +103,6 @@ def _index_cli(
             help="Skip any preflight validation. Useful when running no LLM steps."
         ),
     ] = False,
-    update_index: Annotated[
-        str | None,
-        typer.Option(
-            help="Update an index run id, leveraging previous outputs and applying new indexes."
-        ),
-    ] = None,
     output: Annotated[
         Path | None,
         typer.Option(
@@ -119,15 +114,10 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
-    if resume and update_index:
-        msg = "Cannot resume and update a run at the same time"
-        raise ValueError(msg)
-
     index_cli(
         root_dir=root,
         verbose=verbose,
         resume=resume,
-        update_index_id=update_index,
         memprofile=memprofile,
         cache=cache,
         reporter=ReporterType(reporter),
@@ -302,6 +292,15 @@ def _query_cli(
                 community_level=community_level,
                 response_type=response_type,
                 streaming=streaming,
+                query=query,
+            )
+        case SearchType.DRIFT:
+            run_drift_search(
+                config_filepath=config,
+                data_dir=data,
+                root_dir=root,
+                community_level=community_level,
+                streaming=False,  # Drift search does not support streaming (yet)
                 query=query,
             )
         case _:
