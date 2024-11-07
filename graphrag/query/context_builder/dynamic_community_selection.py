@@ -11,11 +11,9 @@ from time import time
 from typing import Any
 
 import tiktoken
-
-from graphrag.config import GraphRagConfig
+from graphrag.query.llm.base import BaseLLM
 from graphrag.model import Community, CommunityReport
-from graphrag.query.context_builder.rate_relevancy import rate_relevancy
-from graphrag.query.llm.get_client import get_llm
+from graphrag.query.context_builder.rate_relevancy import rate_relevancy, RATE_QUERY
 
 log = logging.getLogger(__name__)
 
@@ -27,10 +25,29 @@ class DynamicCommunitySelection:
 
     def __init__(
         self,
-        config: GraphRagConfig,
         community_reports: list[CommunityReport],
         communities: list[Community],
+        llm: BaseLLM,
+        token_encoder: tiktoken.Encoding,
+        rate_query: str = RATE_QUERY,
+        use_summary: bool = False,
+        threshold: int = 1,
+        keep_parent: bool = False,
+        num_repeats: int = 1,
+        max_level: int = 2,
+        concurrent_coroutines: int = 8,
     ):
+        self.llm = llm
+        self.token_encoder = token_encoder
+        self.rate_query = rate_query
+        self.num_repeats = num_repeats
+        self.use_summary = use_summary
+        self.threshold = threshold
+        self.keep_parent = keep_parent
+        self.max_level = max_level
+        self.semaphore = asyncio.Semaphore(concurrent_coroutines)
+        self.llm_kwargs = {"temperature": 0.0, "max_tokens": 2000}
+
         self.reports = {report.community_id: report for report in community_reports}
         # mapping from community to sub communities
         self.node2children = {
@@ -58,22 +75,6 @@ class DynamicCommunitySelection:
         # start from root communities (level 0)
         self.starting_communities = self.levels["0"]
 
-        # create LLM dedicated for dynamic community selection
-        gs_config = config.global_search
-        _config = deepcopy(config)
-        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
-        self.llm = get_llm(_config)
-        self.token_encoder = tiktoken.encoding_for_model(self.llm.model)
-        self.keep_parent = gs_config.dynamic_search_keep_parent
-        self.num_repeats = gs_config.dynamic_search_num_repeats
-        self.use_summary = gs_config.dynamic_search_use_summary
-        self.llm_kwargs = {"temperature": 0.0, "max_tokens": 2000}
-        self.semaphore = asyncio.Semaphore(
-            gs_config.dynamic_search_concurrent_coroutines
-        )
-        self.threshold = gs_config.dynamic_search_threshold
-        self.max_level = gs_config.dynamic_search_max_level
-
     async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, Any]]:
         """
         Select relevant communities with respect to the query.
@@ -88,22 +89,25 @@ class DynamicCommunitySelection:
         llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(*[
-                rate_relevancy(
-                    query=query,
-                    description=(
-                        self.reports[community].summary
-                        if self.use_summary
-                        else self.reports[community].full_content
-                    ),
-                    llm=self.llm,
-                    token_encoder=self.token_encoder,
-                    num_repeats=self.num_repeats,
-                    semaphore=self.semaphore,
-                    **self.llm_kwargs,
-                )
-                for community in queue
-            ])
+            gather_results = await asyncio.gather(
+                *[
+                    rate_relevancy(
+                        query=query,
+                        description=(
+                            self.reports[community].summary
+                            if self.use_summary
+                            else self.reports[community].full_content
+                        ),
+                        llm=self.llm,
+                        token_encoder=self.token_encoder,
+                        rate_query=self.rate_query,
+                        num_repeats=self.num_repeats,
+                        semaphore=self.semaphore,
+                        **self.llm_kwargs,
+                    )
+                    for community in queue
+                ]
+            )
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):

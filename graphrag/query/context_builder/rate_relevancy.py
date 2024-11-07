@@ -42,8 +42,8 @@ async def rate_relevancy(
     description: str,
     llm: BaseLLM,
     token_encoder: tiktoken.Encoding,
-    num_repeats: int = 1,
     rate_query: str = RATE_QUERY,
+    num_repeats: int = 1,
     semaphore: asyncio.Semaphore | None = None,
     **llm_kwargs: Any,
 ) -> dict[str, Any]:

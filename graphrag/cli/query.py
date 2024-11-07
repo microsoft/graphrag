@@ -66,8 +66,10 @@ def run_global_search(
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
                 query=query,
             ):

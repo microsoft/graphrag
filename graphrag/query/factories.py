@@ -4,7 +4,7 @@
 """Query Factory methods to support CLI."""
 
 import tiktoken
-
+from copy import deepcopy
 from graphrag.config import GraphRagConfig
 from graphrag.model import (
     Community,
@@ -98,17 +98,35 @@ def get_global_search_engine(
     token_encoder = tiktoken.get_encoding(config.encoding_model)
     gs_config = config.global_search
 
-    llm = get_llm(config)
+    dynamic_community_selection_kwargs = {}
+    if dynamic_community_selection:
+        gs_config = config.global_search
+        _config = deepcopy(config)
+        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
+        dynamic_community_selection_kwargs.update(
+            {
+                "llm": get_llm(_config),
+                "token_encoder": tiktoken.encoding_for_model(
+                    gs_config.dynamic_search_llm
+                ),
+                "keep_parent": gs_config.dynamic_search_keep_parent,
+                "num_repeats": gs_config.dynamic_search_num_repeats,
+                "use_summary": gs_config.dynamic_search_use_summary,
+                "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+                "threshold": gs_config.dynamic_search_threshold,
+                "max_level": gs_config.dynamic_search_max_level,
+            }
+        )
 
     return GlobalSearch(
-        llm=llm,
+        llm=get_llm(config),
         context_builder=GlobalCommunityContext(
-            config=config,
             community_reports=reports,
             communities=communities,
             entities=entities,
             token_encoder=token_encoder,
             dynamic_community_selection=dynamic_community_selection,
+            dynamic_community_selection_kwargs=dynamic_community_selection_kwargs,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,

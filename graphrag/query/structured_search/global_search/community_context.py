@@ -28,12 +28,12 @@ class GlobalCommunityContext(GlobalContextBuilder):
 
     def __init__(
         self,
-        config: GraphRagConfig,
         community_reports: list[CommunityReport],
         communities: list[Community],
         entities: list[Entity] | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         dynamic_community_selection: bool = False,
+        dynamic_community_selection_kwargs: dict[str, Any] | None = None,
         random_state: int = 86,
     ):
         self.community_reports = community_reports
@@ -42,9 +42,9 @@ class GlobalCommunityContext(GlobalContextBuilder):
         self.dynamic_community_selection = None
         if dynamic_community_selection:
             self.dynamic_community_selection = DynamicCommunitySelection(
-                config=config,
                 community_reports=community_reports,
                 communities=communities,
+                **dynamic_community_selection_kwargs,
             )
         self.random_state = random_state
 
