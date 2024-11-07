@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Raise error on empty deltas for inc indexing"
+}
