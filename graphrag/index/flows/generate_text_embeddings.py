@@ -62,7 +62,7 @@ async def generate_text_embeddings(
             "embed_column": "text",
         },
         entity_name_embedding: {
-            "data": final_entities.loc[:, ["id", "name", "description"]]
+            "data": final_entities.loc[:, ["id", "name"]]
             if final_entities is not None
             else None,
             "embed_column": "name",
@@ -77,7 +77,7 @@ async def generate_text_embeddings(
         },
         community_title_embedding: {
             "data": final_community_reports.loc[
-                :, ["id", "full_content", "summary", "title"]
+                :, ["id", "title"]
             ]
             if final_community_reports is not None
             else None,
@@ -85,7 +85,7 @@ async def generate_text_embeddings(
         },
         community_summary_embedding: {
             "data": final_community_reports.loc[
-                :, ["id", "full_content", "summary", "title"]
+                :, ["id", "summary"]
             ]
             if final_community_reports is not None
             else None,
@@ -93,7 +93,7 @@ async def generate_text_embeddings(
         },
         community_full_content_embedding: {
             "data": final_community_reports.loc[
-                :, ["id", "full_content", "summary", "title"]
+                :, ["id", "full_content"]
             ]
             if final_community_reports is not None
             else None,
