@@ -14,6 +14,7 @@ import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_config import DRIFTSearchConfig
+from graphrag.llm.openai.utils import try_parse_json_object
 from graphrag.model import CommunityReport
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
@@ -139,7 +140,7 @@ class DRIFTPrimer:
             messages, response_format={"type": "json_object"}
         )
 
-        parsed_response = json.loads(response)
+        _, parsed_response = try_parse_json_object(response)
         token_ct = num_tokens(prompt + response, self.token_encoder)
 
         return parsed_response, token_ct

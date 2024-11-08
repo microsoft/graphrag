@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Community Report Information</title>
+    <style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Community Report Information</h1>
+    <table>
+        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr><td>Name</td><td>{{ data.title }}</td></tr>
+        <tr><td>Community ID</td><td>{{ data.community_id }}</td></tr>
+        <tr><td>Summary</td><td>{{ data.summary }}</td></tr>
+        <tr><td>Full Content</td><td>{{ data.full_content }}</td></tr>
+        <tr><td>Rank</td><td>{{ data.rank }}</td></tr>
+        <tr><td>Summary Embedding</td><td>{{ data.summary_embedding }}</td></tr>
+        <tr><td>Full Content Embedding</td><td>{{ data.full_content_embedding }}</td></tr>
+        <tr><td>Attributes</td><td>{{ data.attributes }}</td></tr>
+    </table>
+</body>
+</html>

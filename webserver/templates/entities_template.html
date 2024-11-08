@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entity Information</title>
+    <style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Entity Information</h1>
+    <table>
+        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr><td>Name</td><td>{{ data.title }}</td></tr>
+        <tr><td>Type</td><td>{{ data.type }}</td></tr>
+        <tr><td>Description</td><td>{{ data.description }}</td></tr>
+        <tr><td>Description Embedding</td><td>Length: {{ data.description_embedding | length }}</td></tr>
+        <tr><td>Name Embedding</td><td>{{ data.name_embedding }}</td></tr>
+        <tr><td>Graph Embedding</td><td>{{ data.graph_embedding }}</td></tr>
+        <tr><td>Community IDs</td><td>{{ data.community_ids }}</td></tr>
+        <tr><td>Text Unit IDs</td><td>{{ data.text_unit_ids }}</td></tr>
+        <tr><td>Document IDs</td><td>{{ data.document_ids }}</td></tr>
+        <tr><td>Rank</td><td>{{ data.rank }}</td></tr>
+        <tr><td>Attributes</td><td>{{ data.attributes }}</td></tr>
+    </table>
+</body>
+</html>

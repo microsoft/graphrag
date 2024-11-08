@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GraphRAG Web Server Homepage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f8fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #24292e;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(27, 31, 35, 0.12), 0 8px 24px rgba(27, 31, 35, 0.12);
+            border-radius: 6px;
+        }
+        h2 {
+            color: #0366d6;
+            font-size: 1.75em;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 0.3em;
+        }
+        h3 {
+            color: #0366d6;
+            font-size: 1.5em;
+        }
+        p {
+            line-height: 1.5;
+            font-size: 1em;
+        }
+        .wechat-img {
+            display: block;
+            margin: 20px auto;
+            width: 400px;
+            height: 105px;
+            border: 1px solid #d1d5da;
+            border-radius: 6px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        .contact, .project {
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #586069;
+            font-size: 0.9em;
+        }
+        a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>GraphRAG Web Server</h2>
+        <div class="contact">
+            <p>邮箱: <a href="mailto:kose2livs@gmail.com">kose2livs@gmail.com</a></p>
+            <p>公众号: 深入LLM Agent应用开发</p>
+            <img src="/static/wechat_qr_code.png" alt="微信公众号二维码" class="wechat-img">
+        </div>
+        <div class="project">
+            <h3>项目介绍:</h3>
+            <ul>
+                <li>1. 输入输出兼容OpenAI SDK</li>
+                <li>2. 支持真流式输出，响应快速方便接入各种UI支持</li>
+                <li>3. 支持自动获取GraphRAG索引文件</li>
+                <li>4. 支持一键可视化到Neo4j</li>
+                <li>5. [TODO] 集成huggingface embedding</li>
+                <li>6. [TODO] 支持PDF输入</li>
+            </ul>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 KylinMountain@github.com. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

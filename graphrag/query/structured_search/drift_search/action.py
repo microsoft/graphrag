@@ -7,6 +7,7 @@ import json
 import logging
 from typing import Any
 
+from graphrag.llm.openai.utils import try_parse_json_object
 from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ class DriftAction:
         )
 
         try:
-            response = json.loads(search_result.response)
+            _, response = try_parse_json_object(search_result.response)
         except json.JSONDecodeError:
             error_message = "Failed to parse search response"
             log.exception("%s: %s", error_message, search_result.response)
@@ -198,7 +199,7 @@ class DriftAction:
         # If response is a string, attempt to parse as JSON
         if isinstance(response, str):
             try:
-                parsed_response = json.loads(response)
+                _, parsed_response = try_parse_json_object(response)
                 if isinstance(parsed_response, dict):
                     return cls.from_primer_response(query, parsed_response)
                 error_message = "Parsed response must be a dictionary."

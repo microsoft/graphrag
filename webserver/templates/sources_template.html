@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Source Information</title>
+    <style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Text Unit Information</h1>
+    <table>
+        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr><td>Text</td><td>{{ data.text }}</td></tr>
+        <tr><td>Text Embedding</td><td>{{ data.text_embedding }}</td></tr>
+        <tr><td>Entity IDs</td><td>{{ data.entity_ids }}</td></tr>
+        <tr><td>Relationship IDs</td><td>{{ data.relationship_ids }}</td></tr>
+        <tr><td>Covariate IDs</td><td>{{ data.covariate_ids }}</td></tr>
+        <tr><td>Number of Tokens</td><td>{{ data.n_tokens }}</td></tr>
+        <tr><td>Document IDs</td><td>{{ data.document_ids }}</td></tr>
+        <tr><td>Attributes</td><td>{{ data.attributes }}</td></tr>
+    </table>
+</body>
+</html>

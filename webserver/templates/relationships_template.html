@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relationship Information</title>
+    <style>
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Relationship Information</h1>
+    <table>
+        <tr><th>Attribute</th><th>Value</th></tr>
+        <tr><td>Source</td><td>{{ data.source }}</td></tr>
+        <tr><td>Target</td><td>{{ data.target }}</td></tr>
+        <tr><td>Weight</td><td>{{ data.weight }}</td></tr>
+        <tr><td>Description</td><td>{{ data.description }}</td></tr>
+        <tr><td>Description Embedding</td><td>{{ data.description_embedding }}</td></tr>
+        <tr><td>Text Unit IDs</td><td>{{ data.text_unit_ids }}</td></tr>
+        <tr><td>Document IDs</td><td>{{ data.document_ids }}</td></tr>
+        <tr><td>Attributes</td><td>{{ data.attributes }}</td></tr>
+    </table>
+</body>
+</html>
