@@ -79,11 +79,76 @@ def index_cli(
     output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
+    config = load_config(root_dir, config_filepath)
+
+    _run_index(
+        config=config,
+        verbose=verbose,
+        resume=resume,
+        memprofile=memprofile,
+        cache=cache,
+        reporter=reporter,
+        emit=emit,
+        dry_run=dry_run,
+        skip_validation=skip_validation,
+        output_dir=output_dir,
+    )
+
+
+def update_cli(
+    root_dir: Path,
+    verbose: bool,
+    memprofile: bool,
+    cache: bool,
+    reporter: ReporterType,
+    config_filepath: Path | None,
+    emit: list[TableEmitterType],
+    skip_validation: bool,
+    output_dir: Path | None,
+):
+    """Run the pipeline with the given config."""
+    config = load_config(root_dir, config_filepath)
+
+    # Check if update storage exist, if not configure it with default values
+    if not config.update_index_storage:
+        from graphrag.config.defaults import STORAGE_TYPE, UPDATE_STORAGE_BASE_DIR
+        from graphrag.config.models.storage_config import StorageConfig
+
+        config.update_index_storage = StorageConfig(
+            type=STORAGE_TYPE,
+            base_dir=UPDATE_STORAGE_BASE_DIR,
+        )
+
+    _run_index(
+        config=config,
+        verbose=verbose,
+        resume=False,
+        memprofile=memprofile,
+        cache=cache,
+        reporter=reporter,
+        emit=emit,
+        dry_run=False,
+        skip_validation=skip_validation,
+        output_dir=output_dir,
+    )
+
+
+def _run_index(
+    config,
+    verbose,
+    resume,
+    memprofile,
+    cache,
+    reporter,
+    emit,
+    dry_run,
+    skip_validation,
+    output_dir,
+):
     progress_reporter = create_progress_reporter(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 
-    config = load_config(root_dir, config_filepath)
     config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
     config.reporting.base_dir = (
         str(output_dir) if output_dir else config.reporting.base_dir

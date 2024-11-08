@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add update cli entrypoint for incremental indexing"
+}
