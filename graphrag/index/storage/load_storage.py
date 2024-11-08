@@ -38,7 +38,7 @@ def load_storage(config: PipelineStorageConfig):
             config = cast(PipelineCosmosDBStorageConfig, config)
             return create_cosmosdb_storage(
                 config.cosmosdb_account_url,
-                config.primary_key,
+                config.connection_string,
                 config.base_dir,
                 config.container_name,
             )

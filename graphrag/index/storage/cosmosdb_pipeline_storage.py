@@ -23,31 +23,30 @@ log = logging.getLogger(__name__)
 class CosmosDBPipelineStorage(PipelineStorage):
     """The CosmosDB-Storage Implementation."""
 
-    _cosmosdb_account_url: str
-    _primary_key: str | None
+    _cosmosdb_account_url: str | None
+    _connection_string: str | None
     _database_name: str
     _current_container: str | None
     _encoding: str
 
     def __init__(
         self,
-        cosmosdb_account_url: str,
-        primary_key: str | None,
+        cosmosdb_account_url: str | None,
+        connection_string: str | None,
         database_name: str,
         encoding: str | None = None,
         current_container: str | None = None,
     ):
         """Initialize the CosmosDB-Storage."""
-        if not cosmosdb_account_url:
-            msg = "cosmosdb_account_url is required"
-            raise ValueError(msg)
-        
-        if primary_key:
-            self._cosmos_client = CosmosClient(
-                url=cosmosdb_account_url,
-                credential=primary_key,
+        if connection_string:
+            self._cosmos_client = CosmosClient.from_connection_string(
+                connection_string
             )
         else:
+            if cosmosdb_account_url is None:
+                msg = "Either connection_string or cosmosdb_accoun_url must be provided."
+                raise ValueError(msg)
+
             self._cosmos_client = CosmosClient(
                 url=cosmosdb_account_url,
                 credential=DefaultAzureCredential(),
@@ -55,10 +54,14 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
         self._encoding = encoding or "utf-8"
         self._database_name = database_name
-        self._primary_key = primary_key
+        self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url
         self._current_container = current_container or None
-        self._cosmosdb_account_name = cosmosdb_account_url.split("//")[1].split(".")[0]
+        self._cosmosdb_account_name = (
+            cosmosdb_account_url.split("//")[1].split(".")[0]
+            if cosmosdb_account_url
+            else None
+        )
         self._database_client = self._cosmos_client.get_database_client(
             self._database_name
         )
@@ -245,7 +248,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             return self
         return CosmosDBPipelineStorage(
             cosmosdb_account_url=self._cosmosdb_account_url,
-            primary_key=self._primary_key,
+            connection_string=self._connection_string,
             database_name=self._database_name,
             encoding=self._encoding,
             current_container=name,
@@ -283,22 +286,22 @@ class CosmosDBPipelineStorage(PipelineStorage):
         return self._current_container in container_names
     
 def create_cosmosdb_storage(
-    cosmosdb_account_url: str,
-    primary_key: str | None,
+    cosmosdb_account_url: str | None,
+    connection_string: str | None,
     base_dir: str | None,
     container_name: str | None,
 ) -> PipelineStorage:
     """Create a CosmosDB storage instance."""
     log.info("Creating cosmosdb storage")
-    if cosmosdb_account_url is None:
-        msg = "No cosmosdb account url provided"
-        raise ValueError(msg)
     if base_dir is None:
         msg = "No base_dir provided for database name"
         raise ValueError(msg)
+    if connection_string is None and cosmosdb_account_url is None:
+        msg = "No cosmosdb account url provided"
+        raise ValueError(msg)
     return CosmosDBPipelineStorage(
         cosmosdb_account_url=cosmosdb_account_url,
-        primary_key=primary_key,
+        connection_string=connection_string,
         database_name=base_dir,
         current_container=container_name,
     )

@@ -84,12 +84,12 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     )
     """The base directory for the cache."""
 
-    primary_key: str | None = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The cosmosdb primary key for the cache.", default=None
     )
     """The cosmosdb primary key for the cache."""
 
-    cosmosdb_account_url: str = pydantic_Field(
+    cosmosdb_account_url: str | None = pydantic_Field(
         description="The cosmosdb account url for cache", default=None
     )
     """The cosmosdb account url for cache"""

@@ -72,7 +72,7 @@ class PipelineCosmosDBStorageConfig(PipelineStorageConfig[Literal[StorageType.co
     type: Literal[StorageType.cosmosdb] = StorageType.cosmosdb
     """The type of storage."""
 
-    primary_key: str | None = pydantic_Field(
+    connection_string: str | None = pydantic_Field(
         description="The cosmosdb storage primary key for the storage.", default=None
     )
     """The cosmosdb storage primary key for the storage."""
@@ -87,7 +87,7 @@ class PipelineCosmosDBStorageConfig(PipelineStorageConfig[Literal[StorageType.co
     )
     """The base directory for the storage."""
 
-    cosmosdb_account_url: str = pydantic_Field(
+    cosmosdb_account_url: str | None = pydantic_Field(
         description="The cosmosdb account url.", default=None
     )
     """The cosmosdb account url."""

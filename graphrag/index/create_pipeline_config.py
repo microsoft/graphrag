@@ -417,7 +417,7 @@ def _get_storage_config(
             )
         case StorageType.cosmosdb:
             cosmosdb_account_url = storage_settings.cosmosdb_account_url
-            primary_key = storage_settings.primary_key
+            connection_string = storage_settings.connection_string
             container_name = storage_settings.container_name
             base_dir = storage_settings.base_dir
             if cosmosdb_account_url is None:
@@ -428,7 +428,7 @@ def _get_storage_config(
                 raise ValueError(msg)
             return PipelineCosmosDBStorageConfig(
                 cosmosdb_account_url=cosmosdb_account_url,
-                primary_key=primary_key,
+                connection_string=connection_string,
                 container_name=container_name,
                 base_dir=storage_settings.base_dir,
             )
@@ -471,17 +471,17 @@ def _get_cache_config(
             )
         case CacheType.cosmosdb:
             cosmosdb_account_url = settings.cache.cosmosdb_account_url
-            primary_key = settings.cache.primary_key
+            connection_string = settings.cache.connection_string
             base_dir = settings.cache.base_dir
-            if cosmosdb_account_url is None:
-                msg = "CosmosDB account url must be provided for cosmosdb cache."
-                raise ValueError(msg)
             if base_dir is None:
                 msg = "Base directory must be provided for cosmosdb cache."
                 raise ValueError(msg)
+            if connection_string is None and cosmosdb_account_url is None:
+                msg = "Connection string or cosmosDB account url must be provided for cosmosdb cache."
+                raise ValueError(msg)
             return PipelineCosmosDBCacheConfig(
                 cosmosdb_account_url=cosmosdb_account_url,
-                primary_key=primary_key,
+                connection_string=connection_string,
                 base_dir=settings.cache.base_dir,
             )
         case _:

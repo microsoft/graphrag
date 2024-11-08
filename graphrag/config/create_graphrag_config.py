@@ -354,7 +354,6 @@ def create_graphrag_config(
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.CACHE_BASE_DIR,
                 cosmosdb_account_url=reader.str(Fragment.cosmosdb_account_url),
-                primary_key=reader.str(Fragment.primary_key),
             )
         with (
             reader.envvar_prefix(Section.reporting),
@@ -377,7 +376,6 @@ def create_graphrag_config(
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
                 cosmosdb_account_url=reader.str(Fragment.cosmosdb_account_url),
-                primary_key=reader.str(Fragment.primary_key),
             )
 
         with (
@@ -621,7 +619,6 @@ class Fragment(str, Enum):
     n = "N"
     model = "MODEL"
     model_supports_json = "MODEL_SUPPORTS_JSON"
-    primary_key = "PRIMARY_KEY"
     prompt_file = "PROMPT_FILE"
     request_timeout = "REQUEST_TIMEOUT"
     rpm = "REQUESTS_PER_MINUTE"

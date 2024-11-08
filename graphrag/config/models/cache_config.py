@@ -30,6 +30,3 @@ class CacheConfig(BaseModel):
     cosmosdb_account_url: str | None = Field(
         description="The cosmosdb account url to use.", default=None
     )
-    primary_key: str | None = Field(
-        description="The primary key to use.", default=None
-    )
