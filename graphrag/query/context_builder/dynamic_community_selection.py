@@ -13,10 +13,13 @@ from typing import Any
 import tiktoken
 
 from graphrag.model import Community, CommunityReport
-from graphrag.query.context_builder.rate_relevancy import RATE_QUERY, rate_relevancy
+from graphrag.query.context_builder.rate_prompt import RATE_QUERY
+from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 from graphrag.query.llm.base import BaseLLM
 
 log = logging.getLogger(__name__)
+
+DEFAULT_RATE_LLM_PARAMS = ({"temperature": 0.0, "max_tokens": 2000},)
 
 
 class DynamicCommunitySelection:
@@ -37,6 +40,7 @@ class DynamicCommunitySelection:
         num_repeats: int = 1,
         max_level: int = 2,
         concurrent_coroutines: int = 8,
+        llm_kwargs: Any = DEFAULT_RATE_LLM_PARAMS,
     ):
         self.llm = llm
         self.token_encoder = token_encoder
@@ -47,7 +51,7 @@ class DynamicCommunitySelection:
         self.keep_parent = keep_parent
         self.max_level = max_level
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
-        self.llm_kwargs = {"temperature": 0.0, "max_tokens": 2000}
+        self.llm_kwargs = llm_kwargs
 
         self.reports = {report.community_id: report for report in community_reports}
         # mapping from community to sub communities
