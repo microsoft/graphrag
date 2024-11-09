@@ -131,6 +131,73 @@ def _index_cli(
     )
 
 
+@app.command("update")
+def _update_cli(
+    config: Annotated[
+        Path | None,
+        typer.Option(
+            help="The configuration to use.", exists=True, file_okay=True, readable=True
+        ),
+    ] = None,
+    root: Annotated[
+        Path,
+        typer.Option(
+            help="The project root directory.",
+            exists=True,
+            dir_okay=True,
+            writable=True,
+            resolve_path=True,
+        ),
+    ] = Path(),  # set default to current directory
+    verbose: Annotated[
+        bool, typer.Option(help="Run the indexing pipeline with verbose logging")
+    ] = False,
+    memprofile: Annotated[
+        bool, typer.Option(help="Run the indexing pipeline with memory profiling")
+    ] = False,
+    reporter: Annotated[
+        ReporterType, typer.Option(help="The progress reporter to use.")
+    ] = ReporterType.RICH,
+    emit: Annotated[
+        str, typer.Option(help="The data formats to emit, comma-separated.")
+    ] = TableEmitterType.Parquet.value,
+    cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
+    skip_validation: Annotated[
+        bool,
+        typer.Option(
+            help="Skip any preflight validation. Useful when running no LLM steps."
+        ),
+    ] = False,
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            dir_okay=True,
+            writable=True,
+            resolve_path=True,
+        ),
+    ] = None,
+):
+    """
+    Update an existing knowledge graph index.
+
+    Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
+    """
+    from .index import update_cli
+
+    update_cli(
+        root_dir=root,
+        verbose=verbose,
+        memprofile=memprofile,
+        cache=cache,
+        reporter=ReporterType(reporter),
+        config_filepath=config,
+        emit=[TableEmitterType(value.strip()) for value in emit.split(",")],
+        skip_validation=skip_validation,
+        output_dir=output,
+    )
+
+
 @app.command("prompt-tune")
 def _prompt_tune_cli(
     root: Annotated[

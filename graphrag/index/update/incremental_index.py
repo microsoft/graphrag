@@ -120,8 +120,12 @@ async def update_dataframe_outputs(
     )
 
     # Merge final covariates
-    progress_reporter.info("Updating Final Covariates")
-    await _update_covariates(dataframe_dict, storage, update_storage)
+    if (
+        await storage.has("create_final_covariates.parquet")
+        and "create_final_covariates" in dataframe_dict
+    ):
+        progress_reporter.info("Updating Final Covariates")
+        await _update_covariates(dataframe_dict, storage, update_storage)
 
     # Merge final nodes and update community ids
     progress_reporter.info("Updating Final Nodes")
