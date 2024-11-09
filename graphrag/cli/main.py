@@ -60,8 +60,10 @@ def path_autocomplete(
             completions.append(item)
         if match_wildcard:
             completions = filter(
-                lambda i: wildcard_match(i, match_wildcard),
-                completions,  # type: ignore
+                lambda i: wildcard_match(i, match_wildcard)
+                if match_wildcard
+                else False,
+                completions,
             )
         return [i for i in completions if i.startswith(incomplete)]
 
