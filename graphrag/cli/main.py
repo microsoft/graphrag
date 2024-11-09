@@ -31,13 +31,12 @@ app = typer.Typer(
 
 
 # A workaround for typer's lack of support for proper autocompletion of file/directory paths
-# For further details, see https://github.com/fastapi/typer/discussions/682
+# For more detail, see https://github.com/fastapi/typer/discussions/682
 def path_autocomplete(
     file_okay: bool = True,
     dir_okay: bool = True,
     readable: bool = True,
     writable: bool = False,
-    allow_dash: bool = False,
     match_wildcard: str | None = None,
 ) -> Callable[[str], list[str]]:
     """Autocomplete file and directory paths."""
@@ -59,12 +58,11 @@ def path_autocomplete(
             if writable and not os.access(item, os.W_OK):
                 continue
             completions.append(item)
-        if allow_dash:
-            completions.append("-")
         if match_wildcard:
             completions = filter(
-                lambda i: wildcard_match(i, match_wildcard), completions
-            )  # type: ignore
+                lambda i: wildcard_match(i, match_wildcard),
+                completions,  # type: ignore
+            )
         return [i for i in completions if i.startswith(incomplete)]
 
     return completer
