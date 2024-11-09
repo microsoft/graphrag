@@ -3,7 +3,6 @@
 
 """Global search with dynamic community selection prompt."""
 
-
 RATE_QUERY = """
 ---Role---
 You are a helpful assistant responsible for deciding whether the provided information is useful in answering a given question, even if it is only partially relevant.

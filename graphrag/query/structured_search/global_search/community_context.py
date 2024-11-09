@@ -5,10 +5,8 @@
 
 from typing import Any
 
-import pandas as pd
 import tiktoken
 
-from graphrag.config import GraphRagConfig
 from graphrag.model import Community, CommunityReport, Entity
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
