@@ -73,7 +73,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             text_units = []
         self.entities = {entity.id: entity for entity in entities}
         self.community_reports = {
-            community.id: community for community in community_reports
+            community.community_id: community for community in community_reports
         }
         self.text_units = {unit.id: unit for unit in text_units}
         self.relationships = {
