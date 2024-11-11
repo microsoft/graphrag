@@ -78,13 +78,10 @@ def _merge_and_resolve_nodes(
     )
 
     # Use description from merged_entities_df
-    merged_nodes = (
-        merged_nodes.drop(columns=["description"])
-        .merge(
-            merged_entities_df[["id", "description"]],
-            on="id",
-            how="left",
-        )
+    merged_nodes = merged_nodes.drop(columns=["description"]).merge(
+        merged_entities_df[["id", "description"]],
+        on="id",
+        how="left",
     )
 
     # Mantain type compat with query
@@ -92,7 +89,7 @@ def _merge_and_resolve_nodes(
         merged_nodes["community"].astype(pd.StringDtype()).astype("object")
     )
     merged_nodes["human_readable_id"] = merged_nodes["human_readable_id"].astype(int)
-    
+
     merged_nodes.insert(3, "description", merged_nodes.pop("description"))
 
     return merged_nodes, community_id_mapping

@@ -28,7 +28,6 @@ def read_indexer_text_units(final_text_units: pd.DataFrame) -> list[TextUnit]:
     """Read in the Text Units from the raw indexing outputs."""
     return read_text_units(
         df=final_text_units,
-        short_id_col=None,
         # expects a covariate map of type -> ids
         covariates_col=None,
     )
@@ -128,7 +127,7 @@ def read_indexer_entities(
 
     # the first section here uses community + level to filter the entity set
     nodes_df = _filter_under_community_level(nodes_df, community_level)
-    
+
     nodes_df = cast(pd.DataFrame, nodes_df[["id", "degree", "community"]])
 
     nodes_df["community"] = nodes_df["community"].fillna(-1)
@@ -141,9 +140,9 @@ def read_indexer_entities(
     nodes_df["community"] = nodes_df["community"].apply(lambda x: [str(x)])
 
     # now join with the nodes to get all of the core data from the canonical entities
-    final_df = nodes_df.merge(
-        entities_df, on="id", how="inner"
-    ).drop_duplicates(subset=["id"])
+    final_df = nodes_df.merge(entities_df, on="id", how="inner").drop_duplicates(
+        subset=["id"]
+    )
 
     # read entity dataframe to knowledge model objects
     return read_entities(
