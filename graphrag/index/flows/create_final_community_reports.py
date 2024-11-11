@@ -78,19 +78,18 @@ async def create_final_community_reports(
         num_threads=num_threads,
     )
 
+    community_reports["community"] = community_reports["community"].astype(int)
     community_reports["id"] = community_reports["community"].apply(
         lambda _x: str(uuid4())
     )
 
-    # Merge by community and it with communities to add size and period
+    # Merge with communities to add size and period
     return community_reports.merge(
-        communities_input.loc[:, ["id", "size", "period"]],
-        left_on="community",
-        right_on="id",
+        communities_input.loc[:, ["community", "size", "period"]],
+        on="community",
         how="left",
         copy=False,
-        suffixes=("", "_y"),
-    ).drop(columns=["id_y"])
+    )
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:

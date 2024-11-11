@@ -4,6 +4,8 @@
 """All the steps to transform final communities."""
 
 from datetime import datetime, timezone
+from typing import cast
+from uuid import uuid4
 
 import pandas as pd
 from datashaper import (
@@ -50,20 +52,25 @@ def create_final_communities(
 
     all_clusters = (
         graph_nodes.groupby(["cluster", "level"], sort=False)
-        .agg(id=("cluster", "first"))
+        .agg(community=("cluster", "first"))
         .reset_index()
     )
 
     joined = all_clusters.merge(
         cluster_relationships,
-        left_on="id",
+        left_on="community",
         right_on="cluster",
         how="inner",
     )
 
-    filtered = joined[joined["level"] == joined["level_x"]].reset_index(drop=True)
+    filtered = cast(
+        pd.DataFrame,
+        joined[joined["level"] == joined["level_x"]].reset_index(drop=True),
+    )
 
-    filtered["title"] = "Community " + filtered["id"].astype(str)
+    filtered["id"] = filtered["community"].apply(lambda _x: str(uuid4()))
+    filtered["community"] = filtered["community"].astype(int)
+    filtered["title"] = "Community " + filtered["community"].astype(str)
 
     # Add period timestamp to the community reports
     filtered["period"] = datetime.now(timezone.utc).date().isoformat()
@@ -76,6 +83,7 @@ def create_final_communities(
         [
             "id",
             "title",
+            "community",
             "level",
             "relationship_ids",
             "text_unit_ids",

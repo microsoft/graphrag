@@ -129,13 +129,13 @@ def _update_and_merge_communities(
         delta_communities["period"] = None
 
     # Look for community ids in community and replace them with the corresponding id in the mapping
-    delta_communities["id"] = (
-        delta_communities["id"]
-        .astype("Int64")
+    delta_communities["community"] = (
+        delta_communities["community"]
+        .astype(int)
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
-    old_communities["id"] = old_communities["id"].astype("Int64")
+    old_communities["community"] = old_communities["community"].astype(int)
 
     # Merge the final communities
     merged_communities = pd.concat(
@@ -143,9 +143,9 @@ def _update_and_merge_communities(
     )
 
     # Rename title
-    merged_communities["title"] = "Community " + merged_communities["id"].astype(str)
-    # Mantain type compat with query
-    merged_communities["id"] = merged_communities["id"].astype(str)
+    merged_communities["title"] = "Community " + merged_communities["community"].astype(
+        str
+    )
     return merged_communities
 
 
@@ -185,13 +185,11 @@ def _update_and_merge_community_reports(
     # Look for community ids in community and replace them with the corresponding id in the mapping
     delta_community_reports["community"] = (
         delta_community_reports["community"]
-        .astype("Int64")
+        .astype(int)
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
-    old_community_reports["community"] = old_community_reports["community"].astype(
-        "Int64"
-    )
+    old_community_reports["community"] = old_community_reports["community"].astype(int)
 
     # Merge the final community reports
     merged_community_reports = pd.concat(
