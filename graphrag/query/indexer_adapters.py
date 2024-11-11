@@ -84,7 +84,7 @@ def read_indexer_reports(
     entity_df.loc[:, "community"] = entity_df["community"].astype(int)
 
     entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-    entity_df["community"] = entity_df["community"].astype(str)
+    
     filtered_community_df = entity_df["community"].drop_duplicates()
 
     report_df = _filter_under_community_level(report_df, community_level)
