@@ -17,7 +17,7 @@ from graphrag.index.config.embeddings import (
     community_title_embedding,
     document_text_embedding,
     entity_description_embedding,
-    entity_name_embedding,
+    entity_title_embedding,
     relationship_description_embedding,
     text_unit_text_embedding,
 )
@@ -61,19 +61,19 @@ async def generate_text_embeddings(
             else None,
             "embed_column": "text",
         },
-        entity_name_embedding: {
-            "data": final_entities.loc[:, ["id", "name"]]
+        entity_title_embedding: {
+            "data": final_entities.loc[:, ["id", "title"]]
             if final_entities is not None
             else None,
-            "embed_column": "name",
+            "embed_column": "title",
         },
         entity_description_embedding: {
-            "data": final_entities.loc[:, ["id", "name", "description"]].assign(
-                name_description=lambda df: df["name"] + ":" + df["description"]
+            "data": final_entities.loc[:, ["id", "title", "description"]].assign(
+                title_description=lambda df: df["title"] + ":" + df["description"]
             )
             if final_entities is not None
             else None,
-            "embed_column": "name_description",
+            "embed_column": "title_description",
         },
         community_title_embedding: {
             "data": final_community_reports.loc[

@@ -35,9 +35,8 @@ def _merge_and_resolve_nodes(
 
     # Merge delta_nodes with merged_entities_df to get the new human_readable_id
     delta_nodes = delta_nodes.merge(
-        merged_entities_df[["name", "human_readable_id"]],
-        left_on="title",
-        right_on="name",
+        merged_entities_df[["id", "human_readable_id"]],
+        on="id",
         how="left",
         suffixes=("", "_new"),
     )
@@ -48,7 +47,7 @@ def _merge_and_resolve_nodes(
     ].combine_first(delta_nodes.loc[:, "human_readable_id"])
 
     # Drop the auxiliary column from the merge
-    delta_nodes.drop(columns=["name", "human_readable_id_new"], inplace=True)
+    delta_nodes.drop(columns=["human_readable_id_new"], inplace=True)
 
     # Increment only the non-NaN values in delta_nodes["community"]
     community_id_mapping = {
@@ -82,19 +81,18 @@ def _merge_and_resolve_nodes(
     merged_nodes = (
         merged_nodes.drop(columns=["description"])
         .merge(
-            merged_entities_df[["name", "description"]],
-            left_on="title",
-            right_on="name",
+            merged_entities_df[["id", "description"]],
+            on="id",
             how="left",
         )
-        .drop(columns=["name"])
     )
 
     # Mantain type compat with query
     merged_nodes["community"] = (
         merged_nodes["community"].astype(pd.StringDtype()).astype("object")
     )
-
+    merged_nodes["human_readable_id"] = merged_nodes["human_readable_id"].astype(int)
+    
     merged_nodes.insert(3, "description", merged_nodes.pop("description"))
 
     return merged_nodes, community_id_mapping

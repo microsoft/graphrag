@@ -19,12 +19,12 @@ def create_final_entities(
     # Process nodes
     nodes = (
         unpack_graph(entity_graph, callbacks, "clustered_graph", "nodes")
-        .rename(columns={"label": "name"})
+        .rename(columns={"label": "title"})
         .loc[
             :,
             [
                 "id",
-                "name",
+                "title",
                 "type",
                 "description",
                 "human_readable_id",
@@ -34,7 +34,7 @@ def create_final_entities(
         .drop_duplicates(subset="id")
     )
 
-    nodes = nodes.loc[nodes["name"].notna()]
+    nodes = nodes.loc[nodes["title"].notna()]
 
     nodes["text_unit_ids"] = nodes["source_id"].str.split(",")
     nodes.drop(columns=["source_id"], inplace=True)

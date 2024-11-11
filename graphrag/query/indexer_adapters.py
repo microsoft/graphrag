@@ -123,31 +123,33 @@ def read_indexer_entities(
     community_level: int,
 ) -> list[Entity]:
     """Read in the Entities from the raw indexing outputs."""
-    entity_df = final_nodes
-    entity_embedding_df = final_entities
+    nodes_df = final_nodes
+    entities_df = final_entities
 
-    entity_df = _filter_under_community_level(entity_df, community_level)
-    entity_df = cast(pd.DataFrame, entity_df[["title", "degree", "community"]]).rename(
-        columns={"title": "name"}
+    # the first section here uses community + level to filter the entity set
+    nodes_df = _filter_under_community_level(nodes_df, community_level)
+    
+    nodes_df = cast(pd.DataFrame, nodes_df[["id", "degree", "community"]])
+
+    nodes_df["community"] = nodes_df["community"].fillna(-1)
+    nodes_df["community"] = nodes_df["community"].astype(int)
+
+    # for duplicate entities (nodes), keep the one with the highest community level
+    nodes_df = (
+        nodes_df.groupby(["id", "degree"]).agg({"community": "max"}).reset_index()
     )
+    nodes_df["community"] = nodes_df["community"].apply(lambda x: [str(x)])
 
-    entity_df["community"] = entity_df["community"].fillna(-1)
-    entity_df["community"] = entity_df["community"].astype(int)
-
-    # for duplicate entities, keep the one with the highest community level
-    entity_df = (
-        entity_df.groupby(["name", "degree"]).agg({"community": "max"}).reset_index()
-    )
-    entity_df["community"] = entity_df["community"].apply(lambda x: [str(x)])
-    entity_df = entity_df.merge(
-        entity_embedding_df, on="name", how="inner"
-    ).drop_duplicates(subset=["name"])
+    # now join with the nodes to get all of the core data from the canonical entities
+    final_df = nodes_df.merge(
+        entities_df, on="id", how="inner"
+    ).drop_duplicates(subset=["id"])
 
     # read entity dataframe to knowledge model objects
     return read_entities(
-        df=entity_df,
+        df=final_df,
         id_col="id",
-        title_col="name",
+        title_col="title",
         type_col="type",
         short_id_col="human_readable_id",
         description_col="description",
