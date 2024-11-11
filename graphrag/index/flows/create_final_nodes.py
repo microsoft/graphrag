@@ -65,8 +65,12 @@ async def create_final_nodes(
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
 
-    joined["text_unit_ids"] = joined["source_id"].str.split(",")
-    joined.drop(columns=["source_id", "size", "graph_embedding"], inplace=True)
+    # drop anything that isn't graph-related or needing to be preserved
+    # the rest can be looked up on the canonical entities table
+    joined.drop(
+        columns=["source_id", "type", "description", "size", "graph_embedding"],
+        inplace=True,
+    )
 
     # TODO: Find duplication source
     return joined.drop_duplicates(subset=["title", "community"])

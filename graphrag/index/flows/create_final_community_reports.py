@@ -41,7 +41,8 @@ from graphrag.index.operations.summarize_communities import (
 async def create_final_community_reports(
     nodes_input: pd.DataFrame,
     edges_input: pd.DataFrame,
-    communities_input: pd.DataFrame,
+    entities: pd.DataFrame,
+    communities: pd.DataFrame,
     claims_input: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -50,7 +51,9 @@ async def create_final_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    nodes = _prep_nodes(nodes_input)
+    entities_df = entities.loc[:, ["id", "description"]]
+    nodes_df = nodes_input.merge(entities_df, on="id")
+    nodes = _prep_nodes(nodes_df)
     edges = _prep_edges(edges_input)
 
     claims = None
@@ -85,7 +88,7 @@ async def create_final_community_reports(
 
     # Merge with communities to add size and period
     return community_reports.merge(
-        communities_input.loc[:, ["community", "size", "period"]],
+        communities.loc[:, ["community", "size", "period"]],
         on="community",
         how="left",
         copy=False,

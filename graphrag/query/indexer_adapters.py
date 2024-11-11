@@ -78,14 +78,14 @@ def read_indexer_reports(
 ) -> list[CommunityReport]:
     """Read in the Community Reports from the raw indexing outputs."""
     report_df = final_community_reports
-    entity_df = final_nodes
-    entity_df = _filter_under_community_level(entity_df, community_level)
-    entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
-    entity_df.loc[:, "community"] = entity_df["community"].astype(int)
+    nodes_df = final_nodes
+    nodes_df = _filter_under_community_level(nodes_df, community_level)
+    nodes_df.loc[:, "community"] = nodes_df["community"].fillna(-1)
+    nodes_df.loc[:, "community"] = nodes_df["community"].astype(int)
 
-    entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-    
-    filtered_community_df = entity_df["community"].drop_duplicates()
+    nodes_df = nodes_df.groupby(["id"]).agg({"community": "max"}).reset_index()
+
+    filtered_community_df = nodes_df["community"].drop_duplicates()
 
     report_df = _filter_under_community_level(report_df, community_level)
     report_df = report_df.merge(filtered_community_df, on="community", how="inner")
