@@ -42,7 +42,7 @@ class Entity(Named):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         title_key: str = "title",
         type_key: str = "type",
         description_key: str = "description",

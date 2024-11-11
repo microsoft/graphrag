@@ -42,7 +42,6 @@ class TextUnit(Identified):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
         text_key: str = "text",
         text_embedding_key: str = "text_embedding",
         entities_key: str = "entity_ids",
@@ -55,7 +54,7 @@ class TextUnit(Identified):
         """Create a new text unit from the dict data."""
         return TextUnit(
             id=d[id_key],
-            short_id=d.get(short_id_key),
+            short_id=None,
             text=d[text_key],
             text_embedding=d.get(text_embedding_key),
             entity_ids=d.get(entities_key),

@@ -27,7 +27,7 @@ from graphrag.vector_stores import BaseVectorStore, VectorStoreDocument
 def read_entities(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
+    short_id_col: str | None = "human_readable_id",
     title_col: str = "title",
     type_col: str | None = "type",
     description_col: str | None = "description",
@@ -111,7 +111,7 @@ def store_reports_semantic_embeddings(
 def read_relationships(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
+    short_id_col: str | None = "human_readable_id",
     source_col: str = "source",
     target_col: str = "target",
     description_col: str | None = "description",
@@ -149,7 +149,7 @@ def read_relationships(
 def read_covariates(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
+    short_id_col: str | None = "human_readable_id",
     subject_col: str = "subject_id",
     covariate_type_col: str | None = "type",
     text_unit_ids_col: str | None = "text_unit_ids",
@@ -179,7 +179,7 @@ def read_covariates(
 def read_communities(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
+    short_id_col: str | None = "community",
     title_col: str = "title",
     level_col: str = "level",
     entities_col: str | None = "entity_ids",
@@ -213,7 +213,7 @@ def read_communities(
 def read_community_reports(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
+    short_id_col: str | None = "community",
     title_col: str = "title",
     community_col: str = "community",
     summary_col: str = "summary",
@@ -253,7 +253,6 @@ def read_community_reports(
 def read_text_units(
     df: pd.DataFrame,
     id_col: str = "id",
-    short_id_col: str | None = "short_id",
     text_col: str = "text",
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
@@ -268,7 +267,7 @@ def read_text_units(
     for idx, row in df.iterrows():
         chunk = TextUnit(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=str(idx),
             text=to_str(row, text_col),
             entity_ids=to_optional_list(row, entities_col, item_type=str),
             relationship_ids=to_optional_list(row, relationships_col, item_type=str),

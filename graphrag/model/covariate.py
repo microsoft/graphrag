@@ -39,7 +39,7 @@ class Covariate(Identified):
         id_key: str = "id",
         subject_id_key: str = "subject_id",
         covariate_type_key: str = "covariate_type",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         text_unit_ids_key: str = "text_unit_ids",
         attributes_key: str = "attributes",
     ) -> "Covariate":

@@ -40,7 +40,7 @@ class Community(Named):
         d: dict[str, Any],
         id_key: str = "id",
         title_key: str = "title",
-        short_id_key: str = "short_id",
+        short_id_key: str = "community",
         level_key: str = "level",
         entities_key: str = "entity_ids",
         relationships_key: str = "relationship_ids",

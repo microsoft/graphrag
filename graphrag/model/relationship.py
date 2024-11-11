@@ -42,7 +42,7 @@ class Relationship(Identified):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         source_key: str = "source",
         target_key: str = "target",
         description_key: str = "description",
