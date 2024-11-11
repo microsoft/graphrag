@@ -7,7 +7,7 @@ from graphrag.utils.embeddings import create_collection_name
 
 
 def test_create_collection_name():
-    collection = create_collection_name("default", "entity.name")
+    collection = create_collection_name("default", "entity.title")
     assert collection == "default-entity-name"
 
 

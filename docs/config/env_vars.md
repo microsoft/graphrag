@@ -10,7 +10,7 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 
 - `text_unit.text`
 - `document.text`
-- `entity.name`
+- `entity.title`
 - `entity.description`
 - `relationship.description`
 - `community.title`
