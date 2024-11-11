@@ -38,10 +38,14 @@ class GlobalCommunityContext(GlobalContextBuilder):
         self.entities = entities
         self.token_encoder = token_encoder
         self.dynamic_community_selection = None
-        if dynamic_community_selection:
+        if dynamic_community_selection and isinstance(
+            dynamic_community_selection_kwargs, dict
+        ):
             self.dynamic_community_selection = DynamicCommunitySelection(
                 community_reports=community_reports,
                 communities=communities,
+                llm=dynamic_community_selection_kwargs.pop("llm"),
+                token_encoder=dynamic_community_selection_kwargs.pop("token_encoder"),
                 **dynamic_community_selection_kwargs,
             )
         self.random_state = random_state

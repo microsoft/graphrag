@@ -93,28 +93,30 @@ class DynamicCommunitySelection:
         level = 0
 
         ratings = {}  # store the ratings for each community
-        llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
+        llm_info: dict[str, Any] = {
+            "llm_calls": 0,
+            "prompt_tokens": 0,
+            "output_tokens": 0,
+        }
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(
-                *[
-                    rate_relevancy(
-                        query=query,
-                        description=(
-                            self.reports[community].summary
-                            if self.use_summary
-                            else self.reports[community].full_content
-                        ),
-                        llm=self.llm,
-                        token_encoder=self.token_encoder,
-                        rate_query=self.rate_query,
-                        num_repeats=self.num_repeats,
-                        semaphore=self.semaphore,
-                        **self.llm_kwargs,
-                    )
-                    for community in queue
-                ]
-            )
+            gather_results = await asyncio.gather(*[
+                rate_relevancy(
+                    query=query,
+                    description=(
+                        self.reports[community].summary
+                        if self.use_summary
+                        else self.reports[community].full_content
+                    ),
+                    llm=self.llm,
+                    token_encoder=self.token_encoder,
+                    rate_query=self.rate_query,
+                    num_repeats=self.num_repeats,
+                    semaphore=self.semaphore,
+                    **self.llm_kwargs,
+                )
+                for community in queue
+            ])
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):

@@ -159,7 +159,9 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
             and isinstance(query_embedding[0], type(embedding[0]))
         )
 
-    def build_context(self, query: str, **kwargs) -> (pd.DataFrame, dict[str, int]):
+    def build_context(
+        self, query: str, **kwargs
+    ) -> tuple[pd.DataFrame, dict[str, int]]:
         """
         Build DRIFT search context.
 
