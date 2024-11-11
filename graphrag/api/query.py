@@ -114,7 +114,7 @@ async def global_search_streaming(
     entities: pd.DataFrame,
     communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
     dynamic_community_selection: bool,
     response_type: str,
     query: str,

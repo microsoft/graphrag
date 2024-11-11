@@ -184,6 +184,7 @@ def read_indexer_communities(
     final_community_reports: pd.DataFrame,
 ) -> list[Community]:
     """Read in the Communities from the raw indexing outputs.
+
     Reconstruct the community hierarchy information and add to the sub-community field.
     """
     community_df = final_communities
@@ -197,7 +198,9 @@ def read_indexer_communities(
     if len(missing_reports):
         log.warning("Missing reports for communities: %s", missing_reports)
         community_df = community_df[community_df.id.isin(report_df.community.unique())]
-        node_df = node_df[node_df.community.isin(report_df.community.unique())]
+        node_df: pd.DataFrame = node_df[
+            node_df.community.isin(report_df.community.unique())
+        ]
 
     # reconstruct the community hierarchy
     # note that restore_community_hierarchy only return communities with sub communities

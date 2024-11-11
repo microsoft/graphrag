@@ -7,8 +7,6 @@ import json
 import logging
 from typing import Any
 
-from graphrag.query.llm.text_utils import num_tokens
-
 log = logging.getLogger(__name__)
 
 

@@ -1,3 +1,8 @@
+# Copyright (c) 2024 Microsoft Corporation.
+# Licensed under the MIT License
+
+"""Initialize LLM and Embedding clients."""
+
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from graphrag.config import GraphRagConfig, LLMType

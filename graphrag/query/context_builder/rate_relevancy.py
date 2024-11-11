@@ -31,6 +31,7 @@ async def rate_relevancy(
 ) -> dict[str, Any]:
     """
     Rate the relevancy between the query and description on a scale of 0 to 10.
+
     Args:
         query: the query (or question) to rate against
         description: the community description to rate, it can be the community

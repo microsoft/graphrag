@@ -15,7 +15,6 @@ from graphrag.config.models.drift_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -125,9 +124,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 error_msg = "No intermediate answers found in primer response. Ensure that the primer response includes intermediate answers."
                 raise RuntimeError(error_msg)
 
-            intermediate_answer = "\n\n".join([
-                i["intermediate_answer"] for i in response if "intermediate_answer" in i
-            ])
+            intermediate_answer = "\n\n".join(
+                [
+                    i["intermediate_answer"]
+                    for i in response
+                    if "intermediate_answer" in i
+                ]
+            )
 
             follow_ups = [fu for i in response for fu in i.get("follow_up_queries", [])]
 
@@ -254,9 +257,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             context_data=context_data,
             context_text=context_text,
             completion_time=t_elapsed,
-            # llm_calls=1
-            # + self.config.primer_folds
-            # + (self.config.drift_k_followups - llm_call_offset) * self.config.n_depth,
             llm_calls=sum(llm_calls.values()),
             prompt_tokens=sum(prompt_tokens.values()),
             output_tokens=sum(output_tokens.values()),

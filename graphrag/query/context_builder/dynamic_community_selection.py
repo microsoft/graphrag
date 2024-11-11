@@ -24,6 +24,7 @@ DEFAULT_RATE_LLM_PARAMS = ({"temperature": 0.0, "max_tokens": 2000},)
 
 class DynamicCommunitySelection:
     """Dynamic community selection to select community reports that are relevant to the query.
+
     Any community report with a rating EQUAL or ABOVE the rating_threshold is considered relevant.
     """
 
@@ -83,6 +84,7 @@ class DynamicCommunitySelection:
     async def select(self, query: str) -> tuple[list[CommunityReport], dict[str, Any]]:
         """
         Select relevant communities with respect to the query.
+
         Args:
             query: the query to rate against
         """
@@ -94,23 +96,25 @@ class DynamicCommunitySelection:
         llm_info = {"llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0}
         relevant_communities = set()
         while queue:
-            gather_results = await asyncio.gather(*[
-                rate_relevancy(
-                    query=query,
-                    description=(
-                        self.reports[community].summary
-                        if self.use_summary
-                        else self.reports[community].full_content
-                    ),
-                    llm=self.llm,
-                    token_encoder=self.token_encoder,
-                    rate_query=self.rate_query,
-                    num_repeats=self.num_repeats,
-                    semaphore=self.semaphore,
-                    **self.llm_kwargs,
-                )
-                for community in queue
-            ])
+            gather_results = await asyncio.gather(
+                *[
+                    rate_relevancy(
+                        query=query,
+                        description=(
+                            self.reports[community].summary
+                            if self.use_summary
+                            else self.reports[community].full_content
+                        ),
+                        llm=self.llm,
+                        token_encoder=self.token_encoder,
+                        rate_query=self.rate_query,
+                        num_repeats=self.num_repeats,
+                        semaphore=self.semaphore,
+                        **self.llm_kwargs,
+                    )
+                    for community in queue
+                ]
+            )
 
             communities_to_rate = []
             for community, result in zip(queue, gather_results, strict=True):
@@ -143,18 +147,18 @@ class DynamicCommunitySelection:
             queue = communities_to_rate
             level += 1
             if (
-                len(queue) == 0
-                and len(relevant_communities) == 0
-                and str(level) in self.levels
+                (len(queue) == 0)
+                and (len(relevant_communities) == 0)
+                and (str(level) in self.levels)
+                and (level <= self.max_level)
             ):
-                if level <= self.max_level:
-                    log.info(
-                        "dynamic community selection: no relevant community "
-                        "reports, adding all reports at level %s to rate.",
-                        level,
-                    )
-                    # append all communities at the next level to queue
-                    queue = self.levels[str(level)]
+                log.info(
+                    "dynamic community selection: no relevant community "
+                    "reports, adding all reports at level %s to rate.",
+                    level,
+                )
+                # append all communities at the next level to queue
+                queue = self.levels[str(level)]
 
         community_reports = [
             self.reports[community] for community in relevant_communities

@@ -138,7 +138,6 @@ class QueryState:
 
     def action_token_ct(self) -> dict[str, int]:
         """Return the token count of the action."""
-        # return sum(action.metadata.get("token_ct", 0) for action in self.graph.nodes)
         llm_calls, prompt_tokens, output_tokens = 0, 0, 0
         for action in self.graph.nodes:
             llm_calls += action.metadata["llm_calls"]
