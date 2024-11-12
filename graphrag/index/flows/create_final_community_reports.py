@@ -108,8 +108,8 @@ async def create_final_community_reports(
             "rank_explanation",
             "findings",
             "full_content_json",
-            "size",
             "period",
+            "size",
         ],
     ]
 

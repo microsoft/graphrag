@@ -231,7 +231,7 @@ def _update_and_merge_community_reports(
             "rank_explanation",
             "findings",
             "full_content_json",
-            "size",
             "period",
+            "size",
         ],
     ]
