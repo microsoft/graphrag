@@ -214,7 +214,9 @@ def read_indexer_communities(
         .rename(columns={"sub_community": "sub_community_ids"})
     )
     # add sub community IDs to community DataFrame
-    communities_df = communities_df.merge(community_hierarchy, on="community", how="left")
+    communities_df = communities_df.merge(
+        community_hierarchy, on="community", how="left"
+    )
     # replace NaN sub community IDs with empty list
     communities_df.sub_community_ids = communities_df.sub_community_ids.apply(
         lambda x: x if isinstance(x, list) else []
