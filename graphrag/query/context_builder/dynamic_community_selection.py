@@ -19,7 +19,7 @@ from graphrag.query.llm.base import BaseLLM
 
 log = logging.getLogger(__name__)
 
-DEFAULT_RATE_LLM_PARAMS = ({"temperature": 0.0, "max_tokens": 2000},)
+DEFAULT_RATE_LLM_PARAMS = {"temperature": 0.0, "max_tokens": 2000}
 
 
 class DynamicCommunitySelection:
