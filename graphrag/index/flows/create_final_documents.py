@@ -74,7 +74,7 @@ def create_final_documents(
         final_columns = [
             column
             for column in core_columns
-            if column not in document_attribute_columns
+            if column in rejoined.columns and column not in document_attribute_columns
         ]
         final_columns.append("attributes")
 
