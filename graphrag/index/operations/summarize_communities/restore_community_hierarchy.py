@@ -36,20 +36,13 @@ def restore_community_hierarchy(
 
     # get unique levels, sorted in ascending order
     levels = sorted(community_levels.keys())
-
     community_hierarchy = []
 
     for idx in range(len(levels) - 1):
         level = levels[idx]
-        log.debug("Level: %s", level)
         next_level = levels[idx + 1]
         current_level_communities = community_levels[level]
         next_level_communities = community_levels[next_level]
-        log.debug(
-            "Number of communities at level %s: %s",
-            level,
-            len(current_level_communities),
-        )
 
         for current_community in current_level_communities:
             current_entities = current_level_communities[current_community]
@@ -71,12 +64,10 @@ def restore_community_hierarchy(
                         break
 
     output = pd.DataFrame(community_hierarchy)
-    log.info("Community hierarchy restored.")
-    log.info("Number of communities: %s", len(output))
-    log.info(output.columns)
-    log.info(output.head())
-    output[community_column] = output[community_column].fillna(-1)
-    output[community_column] = output[community_column].astype(int)
-    output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].fillna(-1)
-    output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].astype(int)
+    if community_column in output.columns:
+        output[community_column] = output[community_column].fillna(-1)
+        output[community_column] = output[community_column].astype(int)
+    if schemas.SUB_COMMUNITY in output.columns:
+        output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].fillna(-1)
+        output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].astype(int)
     return output
