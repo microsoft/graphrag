@@ -93,34 +93,34 @@ def read_indexer_reports(
 
     If not dynamic_community_selection, then select reports with the max community level that an entity belongs to.
     """
-    report_df = final_community_reports
-    entity_df = final_nodes
+    reports_df = final_community_reports
+    nodes_df = final_nodes
     if community_level is not None:
-        entity_df = _filter_under_community_level(entity_df, community_level)
-        report_df = _filter_under_community_level(report_df, community_level)
+        nodes_df = _filter_under_community_level(nodes_df, community_level)
+        reports_df = _filter_under_community_level(reports_df, community_level)
 
     if not dynamic_community_selection:
         # perform community level roll up
-        entity_df.loc[:, "community"] = entity_df["community"].fillna(-1)
-        entity_df.loc[:, "community"] = entity_df["community"].astype(int)
+        nodes_df.loc[:, "community"] = nodes_df["community"].fillna(-1)
+        nodes_df.loc[:, "community"] = nodes_df["community"].astype(int)
 
-        entity_df = entity_df.groupby(["title"]).agg({"community": "max"}).reset_index()
-        entity_df["community"] = entity_df["community"].astype(str)
-        filtered_community_df = entity_df["community"].drop_duplicates()
+        nodes_df = nodes_df.groupby(["title"]).agg({"community": "max"}).reset_index()
+        nodes_df["community"] = nodes_df["community"].astype(str)
+        filtered_community_df = nodes_df["community"].drop_duplicates()
 
-        report_df = report_df.merge(filtered_community_df, on="community", how="inner")
+        reports_df = reports_df.merge(filtered_community_df, on="community", how="inner")
 
     if config and (
-        content_embedding_col not in report_df.columns
-        or report_df.loc[:, content_embedding_col].isna().any()
+        content_embedding_col not in reports_df.columns
+        or reports_df.loc[:, content_embedding_col].isna().any()
     ):
         embedder = get_text_embedder(config)
-        report_df = embed_community_reports(
-            report_df, embedder, embedding_col=content_embedding_col
+        reports_df = embed_community_reports(
+            reports_df, embedder, embedding_col=content_embedding_col
         )
 
     return read_community_reports(
-        df=report_df,
+        df=reports_df,
         id_col="id",
         short_id_col="community",
         summary_embedding_col=None,
@@ -192,24 +192,24 @@ def read_indexer_communities(
 
     Reconstruct the community hierarchy information and add to the sub-community field.
     """
-    community_df = final_communities
-    node_df = final_nodes
-    report_df = final_community_reports
+    communities_df = final_communities
+    nodes_df = final_nodes
+    reports_df = final_community_reports
 
     # ensure communities matches community reports
-    missing_reports = community_df[
-        ~community_df.id.isin(report_df.community.unique())
+    missing_reports = communities_df[
+        ~communities_df.id.isin(reports_df.community.unique())
     ].id.to_list()
     if len(missing_reports):
         log.warning("Missing reports for communities: %s", missing_reports)
-        community_df = community_df.loc[
-            community_df.id.isin(report_df.community.unique())
+        communities_df = communities_df.loc[
+            communities_df.id.isin(reports_df.community.unique())
         ]
-        node_df = node_df.loc[node_df.community.isin(report_df.community.unique())]
+        nodes_df = nodes_df.loc[nodes_df.community.isin(reports_df.community.unique())]
 
     # reconstruct the community hierarchy
     # note that restore_community_hierarchy only return communities with sub communities
-    community_hierarchy = restore_community_hierarchy(input=node_df)
+    community_hierarchy = restore_community_hierarchy(input=nodes_df)
     community_hierarchy = (
         community_hierarchy.groupby(["community"])
         .agg({"sub_community": list})
@@ -217,14 +217,14 @@ def read_indexer_communities(
         .rename(columns={"community": "id", "sub_community": "sub_community_ids"})
     )
     # add sub community IDs to community DataFrame
-    community_df = community_df.merge(community_hierarchy, on="id", how="left")
+    communities_df = communities_df.merge(community_hierarchy, on="id", how="left")
     # replace NaN sub community IDs with empty list
-    community_df.sub_community_ids = community_df.sub_community_ids.apply(
+    communities_df.sub_community_ids = communities_df.sub_community_ids.apply(
         lambda x: x if isinstance(x, list) else []
     )
 
     return read_communities(
-        community_df,
+        communities_df,
         id_col="id",
         short_id_col="id",
         title_col="title",
