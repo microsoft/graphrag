@@ -76,8 +76,10 @@ async def test_create_final_text_units_no_covariates():
     )
 
     # we're short a covariate_ids column
+    columns = list(expected.columns.values)
+    columns.remove("covariate_ids")
     compare_outputs(
         actual,
         expected,
-        ["id", "text", "n_tokens", "document_ids", "entity_ids", "relationship_ids"],
+        columns=columns,
     )

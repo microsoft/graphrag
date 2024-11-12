@@ -61,14 +61,21 @@ def create_final_documents(
         # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
 
-    return rejoined.loc[
-        :,
-        [
-            "id",
-            "human_readable_id",
-            "title",
-            "text",
-            "text_unit_ids",
-            *([] if not document_attribute_columns else ["attributes"]),
-        ],
+    # set the final column order, but adjust for attributes
+    core_columns = [
+        "id",
+        "human_readable_id",
+        "title",
+        "text",
+        "text_unit_ids",
     ]
+    final_columns = core_columns
+    if document_attribute_columns:
+        final_columns = [
+            column
+            for column in core_columns
+            if column not in document_attribute_columns
+        ]
+        final_columns.append("attributes")
+
+    return rejoined.loc[:, final_columns]
