@@ -70,4 +70,6 @@ def restore_community_hierarchy(
                     if entities_found == len(current_entities):
                         break
 
-    return pd.DataFrame(community_hierarchy)
+    output = pd.DataFrame(community_hierarchy)
+    output[community_column] = output[community_column].astype(int)
+    return output
