@@ -72,4 +72,5 @@ def restore_community_hierarchy(
 
     output = pd.DataFrame(community_hierarchy)
     output[community_column] = output[community_column].astype(int)
+    output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].astype(int)
     return output

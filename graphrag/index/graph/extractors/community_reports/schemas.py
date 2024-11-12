@@ -41,7 +41,7 @@ CONTEXT_EXCEED_FLAG = "context_exceed_limit"
 
 # COMMUNITY REPORT TABLE SCHEMA
 REPORT_ID = "id"
-COMMUNITY_ID = "id"
+COMMUNITY_ID = "community"
 COMMUNITY_LEVEL = "level"
 TITLE = "title"
 SUMMARY = "summary"

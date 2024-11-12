@@ -64,6 +64,7 @@ async def create_final_nodes(
         how="inner",
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
+    joined["community"] = joined["community"].fillna(-1).astype(int)
 
     # drop anything that isn't graph-related or needing to be preserved
     # the rest can be looked up on the canonical entities table
