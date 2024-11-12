@@ -69,13 +69,8 @@ def create_final_documents(
         "text",
         "text_unit_ids",
     ]
-    final_columns = core_columns
+    final_columns = [column for column in core_columns if column in rejoined.columns]
     if document_attribute_columns:
-        final_columns = [
-            column
-            for column in core_columns
-            if column in rejoined.columns and column not in document_attribute_columns
-        ]
         final_columns.append("attributes")
 
     return rejoined.loc[:, final_columns]
