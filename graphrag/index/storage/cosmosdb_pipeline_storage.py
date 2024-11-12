@@ -195,19 +195,18 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     self._current_container
                 )
                 if isinstance(value, bytes):
-                    coding = encoding or "utf-8"
-                    value = value.decode(coding)
-                    cosmos_db_item = {
-                        "id": key,
-                        "body": value
-                    }
-                    container_client.upsert_item(body=cosmos_db_item)
+                    msg = "Parquet table emitter not supported for CosmosDB storage."
+                    log.exception(msg)
                 else:
-                    cosmos_db_item = {
-                        "id": key,
-                        "body": json.loads(value)
-                    }
-                    container_client.upsert_item(body=cosmos_db_item)
+                    try:
+                        cosmos_db_item = {
+                            "id": key,
+                            "body": json.loads(value)
+                        }
+                        container_client.upsert_item(body=cosmos_db_item)
+                    except Exception:
+                        msg = "CSV table emitter not supported for CosmosDB storage."
+                        log.exception(msg)
         except Exception:
             log.exception("Error writing item %s", key)
 

@@ -30,5 +30,5 @@ class JsonTableEmitter(TableEmitter):
         log.info("emitting JSON table %s", filename)
         await self._storage.set(
             filename,
-            data.to_json(orient="records", lines=True, force_ascii=False),
+            data.to_json(orient="records", lines=False, force_ascii=False),
         )
