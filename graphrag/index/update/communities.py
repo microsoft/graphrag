@@ -63,31 +63,14 @@ def _merge_and_resolve_nodes(
     # Concat the DataFrames
     concat_nodes = pd.concat([old_nodes, delta_nodes], ignore_index=True)
     columns_to_agg: dict[str, str | Callable] = {
-        col: "first"
-        for col in concat_nodes.columns
-        if col not in ["text_unit_ids", "level", "title"]
+        col: "first" for col in concat_nodes.columns if col not in ["level", "title"]
     }
-
-    # Specify custom aggregation for description and text_unit_ids
-    columns_to_agg.update({
-        "text_unit_ids": lambda x: x.tolist(),
-    })
 
     merged_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
 
-    # Use description from merged_entities_df
-    merged_nodes = merged_nodes.drop(columns=["description"]).merge(
-        merged_entities_df[["id", "description"]],
-        on="id",
-        how="left",
-    )
-
-    # Mantain type compat with query
-    merged_nodes["community"] = (
-        merged_nodes["community"].astype(pd.StringDtype()).astype("object")
-    )
+    merged_nodes["community"] = merged_nodes["community"].astype(int)
     merged_nodes["human_readable_id"] = merged_nodes["human_readable_id"].astype(int)
 
     merged_nodes = merged_nodes.loc[
