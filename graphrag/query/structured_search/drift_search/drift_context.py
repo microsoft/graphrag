@@ -69,7 +69,6 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.covariates = covariates
         self.embedding_vectorstore_key = embedding_vectorstore_key
 
-        self.llm_tokens = 0
         self.local_mixed_context = (
             local_mixed_context or self.init_local_context_builder()
         )
@@ -160,7 +159,9 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
             and isinstance(query_embedding[0], type(embedding[0]))
         )
 
-    def build_context(self, query: str, **kwargs) -> pd.DataFrame:
+    def build_context(
+        self, query: str, **kwargs
+    ) -> tuple[pd.DataFrame, dict[str, int]]:
         """
         Build DRIFT search context.
 
@@ -172,6 +173,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         Returns
         -------
         pd.DataFrame: Top-k most similar documents.
+        dict[str, int]: Number of LLM calls, and prompts and output tokens.
 
         Raises
         ------
@@ -192,7 +194,6 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         )
 
         query_embedding, token_ct = query_processor(query)
-        self.llm_tokens += token_ct
 
         report_df = self.convert_reports_to_df(self.reports)
 
@@ -219,4 +220,4 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         # Sort by similarity and select top-k
         top_k = report_df.nlargest(self.config.drift_k_followups, "similarity")
 
-        return top_k.loc[:, ["short_id", "community_id", "full_content"]]
+        return top_k.loc[:, ["short_id", "community_id", "full_content"]], token_ct

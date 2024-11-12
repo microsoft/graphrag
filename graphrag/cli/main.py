@@ -327,6 +327,10 @@ def _query_cli(
             help="The community level in the Leiden community hierarchy from which to load community reports. Higher values represent reports from smaller communities."
         ),
     ] = 2,
+    dynamic_community_selection: Annotated[
+        bool,
+        typer.Option(help="Use global search with dynamic community selection."),
+    ] = False,
     response_type: Annotated[
         str,
         typer.Option(
@@ -355,6 +359,7 @@ def _query_cli(
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
                 streaming=streaming,
                 query=query,
