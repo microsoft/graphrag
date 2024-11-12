@@ -201,7 +201,7 @@ def read_communities(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            sub_community_ids=to_optional_list(row, sub_communities_col, item_type=str),
+            sub_community_ids=to_optional_list(row, sub_communities_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
