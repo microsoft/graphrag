@@ -215,6 +215,7 @@ def read_communities(
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
     covariates_col: str | None = "covariate_ids",
+    sub_communities_col: str | None = "sub_community_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Community]:
     """Read communities from a dataframe."""
@@ -230,6 +231,7 @@ def read_communities(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
+            sub_community_ids=to_optional_list(row, sub_communities_col, item_type=str),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
