@@ -47,7 +47,7 @@ class CommunityReport(Named):
         id_key: str = "id",
         title_key: str = "title",
         community_id_key: str = "community",
-        short_id_key: str = "community",
+        short_id_key: str = "human_readable_id",
         summary_key: str = "summary",
         full_content_key: str = "full_content",
         rank_key: str = "rank",

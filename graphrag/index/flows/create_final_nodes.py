@@ -73,5 +73,17 @@ async def create_final_nodes(
         inplace=True,
     )
 
-    # TODO: Find duplication source
-    return joined.drop_duplicates(subset=["title", "community"])
+    deduped = joined.drop_duplicates(subset=["title", "community"])
+    return deduped.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]

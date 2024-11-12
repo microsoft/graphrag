@@ -3,7 +3,7 @@
 
 """All the steps to extract and format covariates."""
 
-from typing import Any, cast
+from typing import Any
 from uuid import uuid4
 
 import pandas as pd
@@ -47,22 +47,20 @@ async def create_final_covariates(
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
     covariates["human_readable_id"] = covariates.index + 1
 
-    return cast(
-        pd.DataFrame,
-        covariates[
-            [
-                "id",
-                "human_readable_id",
-                "covariate_type",
-                "type",
-                "description",
-                "subject_id",
-                "object_id",
-                "status",
-                "start_date",
-                "end_date",
-                "source_text",
-                "text_unit_id",
-            ]
+    return covariates.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "covariate_type",
+            "type",
+            "description",
+            "subject_id",
+            "object_id",
+            "status",
+            "start_date",
+            "end_date",
+            "source_text",
+            "text_unit_id",
         ],
-    )
+    ]

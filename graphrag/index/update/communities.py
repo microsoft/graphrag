@@ -90,7 +90,19 @@ def _merge_and_resolve_nodes(
     )
     merged_nodes["human_readable_id"] = merged_nodes["human_readable_id"].astype(int)
 
-    merged_nodes.insert(3, "description", merged_nodes.pop("description"))
+    merged_nodes = merged_nodes.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]
 
     return merged_nodes, community_id_mapping
 
@@ -146,7 +158,24 @@ def _update_and_merge_communities(
     merged_communities["title"] = "Community " + merged_communities["community"].astype(
         str
     )
-    return merged_communities
+    # Re-assign the human_readable_id
+    merged_communities["human_readable_id"] = merged_communities["community"]
+
+    return merged_communities.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "title",
+            "level",
+            "entity_ids",
+            "relationship_ids",
+            "text_unit_ids",
+            "period",
+            "size",
+        ],
+    ]
 
 
 def _update_and_merge_community_reports(
@@ -197,8 +226,29 @@ def _update_and_merge_community_reports(
     )
 
     # Maintain type compat with query
-    merged_community_reports["community"] = (
-        merged_community_reports["community"].astype(pd.StringDtype()).astype("object")
-    )
+    merged_community_reports["community"] = merged_community_reports[
+        "community"
+    ].astype(int)
+    # Re-assign the human_readable_id
+    merged_community_reports["human_readable_id"] = merged_community_reports[
+        "community"
+    ]
 
-    return merged_community_reports
+    return merged_community_reports.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "title",
+            "level",
+            "summary",
+            "full_content",
+            "rank",
+            "rank_explanation",
+            "findings",
+            "full_content_json",
+            "size",
+            "period",
+        ],
+    ]

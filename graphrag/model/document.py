@@ -33,6 +33,7 @@ class Document(Named):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
+        short_id_key: str = "human_readable_id",
         title_key: str = "title",
         type_key: str = "type",
         text_key: str = "text",
@@ -43,7 +44,7 @@ class Document(Named):
         """Create a new document from the dict data."""
         return Document(
             id=d[id_key],
-            short_id=None,
+            short_id=d.get(short_id_key),
             title=d[title_key],
             type=d.get(type_key, "text"),
             text=d[text_key],

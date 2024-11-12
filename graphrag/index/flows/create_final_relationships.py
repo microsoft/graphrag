@@ -47,4 +47,17 @@ def create_final_relationships(
     pruned_edges["text_unit_ids"] = pruned_edges["text_unit_ids"].str.split(",")
 
     # TODO: Find duplication source
-    return pruned_edges.drop_duplicates(subset=["source", "target"])
+    deduped = pruned_edges.drop_duplicates(subset=["source", "target"])
+    return deduped.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "source",
+            "target",
+            "description",
+            "weight",
+            "combined_degree",
+            "text_unit_ids",
+        ],
+    ]

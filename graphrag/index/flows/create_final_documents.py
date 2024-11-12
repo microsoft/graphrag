@@ -44,6 +44,7 @@ def create_final_documents(
     ).reset_index(drop=True)
 
     rejoined["id"] = rejoined["id"].astype(str)
+    rejoined["human_readable_id"] = rejoined.index + 1
 
     # Convert attribute columns to strings and collapse them into a JSON object
     if document_attribute_columns:
@@ -60,4 +61,14 @@ def create_final_documents(
         # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
 
-    return rejoined
+    return rejoined.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "text",
+            "text_unit_ids",
+            *([] if not document_attribute_columns else ["attributes"]),
+        ],
+    ]

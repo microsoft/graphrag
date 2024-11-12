@@ -70,6 +70,7 @@ def create_final_communities(
 
     filtered["id"] = filtered["community"].apply(lambda _x: str(uuid4()))
     filtered["community"] = filtered["community"].astype(int)
+    filtered["human_readable_id"] = filtered["community"]
     filtered["title"] = "Community " + filtered["community"].astype(str)
 
     # Add period timestamp to the community reports
@@ -82,12 +83,13 @@ def create_final_communities(
         :,
         [
             "id",
-            "title",
+            "human_readable_id",
             "community",
+            "title",
             "level",
+            "entity_ids",
             "relationship_ids",
             "text_unit_ids",
-            "entity_ids",
             "period",
             "size",
         ],

@@ -37,6 +37,15 @@ def create_final_entities(
     nodes = nodes.loc[nodes["title"].notna()]
 
     nodes["text_unit_ids"] = nodes["source_id"].str.split(",")
-    nodes.drop(columns=["source_id"], inplace=True)
 
-    return nodes
+    return nodes.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "type",
+            "description",
+            "text_unit_ids",
+        ],
+    ]

@@ -57,4 +57,16 @@ def _update_and_merge_relationships(
         final_relationships["source_degree"] + final_relationships["target_degree"]
     )
 
-    return final_relationships
+    return final_relationships.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "source",
+            "target",
+            "description",
+            "weight",
+            "combined_degree",
+            "text_unit_ids",
+        ],
+    ]

@@ -19,7 +19,7 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_text_units`
     """
-    document_attribute_columns = config.get("document_attribute_columns", [])
+    document_attribute_columns = config.get("document_attribute_columns", None)
     return [
         {
             "verb": "create_final_documents",

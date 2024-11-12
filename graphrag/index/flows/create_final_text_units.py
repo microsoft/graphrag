@@ -3,8 +3,6 @@
 
 """All the steps to transform the text units."""
 
-from typing import cast
-
 import pandas as pd
 
 
@@ -16,6 +14,7 @@ def create_final_text_units(
 ) -> pd.DataFrame:
     """All the steps to transform the text units."""
     selected = text_units.loc[:, ["id", "text", "document_ids", "n_tokens"]]
+    selected["human_readable_id"] = selected.index + 1
 
     entity_join = _entities(final_entities)
     relationship_join = _relationships(final_relationships)
@@ -30,20 +29,19 @@ def create_final_text_units(
 
     aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
-    return cast(
-        pd.DataFrame,
-        aggregated[
-            [
-                "id",
-                "text",
-                "n_tokens",
-                "document_ids",
-                "entity_ids",
-                "relationship_ids",
-                *([] if final_covariates is None else ["covariate_ids"]),
-            ]
+    return aggregated.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "text",
+            "n_tokens",
+            "document_ids",
+            "entity_ids",
+            "relationship_ids",
+            *([] if final_covariates is None else ["covariate_ids"]),
         ],
-    )
+    ]
 
 
 def _entities(df: pd.DataFrame) -> pd.DataFrame:

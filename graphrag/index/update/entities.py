@@ -78,10 +78,10 @@ def _group_and_resolve_entities(
         :,
         [
             "id",
+            "human_readable_id",
             "title",
             "type",
             "description",
-            "human_readable_id",
             "text_unit_ids",
         ],
     ]
