@@ -71,6 +71,10 @@ def restore_community_hierarchy(
                         break
 
     output = pd.DataFrame(community_hierarchy)
+    log.info("Community hierarchy restored.")
+    log.info("Number of communities: %s", len(output))
+    log.info(output.columns)
+    log.info(output.head())
     output[community_column] = output[community_column].fillna(-1)
     output[community_column] = output[community_column].astype(int)
     output[schemas.SUB_COMMUNITY] = output[schemas.SUB_COMMUNITY].fillna(-1)
