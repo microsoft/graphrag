@@ -2026,7 +2026,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tiktoken</span>
 
-<span class="kn">from</span> <span class="nn">graphrag.query.indexer_adapters</span> <span class="kn">import</span> <span class="n">read_indexer_entities</span><span class="p">,</span> <span class="n">read_indexer_reports</span>
+<span class="kn">from</span> <span class="nn">graphrag.query.indexer_adapters</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">read_indexer_communities</span><span class="p">,</span>
+    <span class="n">read_indexer_entities</span><span class="p">,</span>
+    <span class="n">read_indexer_reports</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.chat_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.typing</span> <span class="kn">import</span> <span class="n">OpenaiApiType</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.structured_search.global_search.community_context</span> <span class="kn">import</span> <span class="p">(</span>
@@ -2039,7 +2043,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 import pandas as pd
 import tiktoken
 
-from graphrag.query.indexer_adapters import read_indexer_entities, read_indexer_reports
+from graphrag.query.indexer_adapters import (
+    read_indexer_communities,
+    read_indexer_entities,
+    read_indexer_reports,
+)
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.typing import OpenaiApiType
 from graphrag.query.structured_search.global_search.community_context import (
@@ -2102,7 +2110,7 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
     <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">get_encoding</span><span class="p">(</span><span class="s2">"cl100k_base"</span><span class="p">)</span>
+<span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">llm_model</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">api_key = os.environ["GRAPHRAG_API_KEY"]
 llm_model = os.environ["GRAPHRAG_LLM_MODEL"]
@@ -2114,7 +2122,7 @@ llm = ChatOpenAI(
     max_retries=20,
 )
 
-token_encoder = tiktoken.get_encoding("cl100k_base")</div>
+token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 </div>
 </div>
 </div>
@@ -2129,7 +2137,8 @@ token_encoder = tiktoken.get_encoding("cl100k_base")</div>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="load-community-reports-as-context-for-global-search">Load community reports as context for global search<a class="anchor-link" href="#load-community-reports-as-context-for-global-search">¶</a></h3><ul>
 <li>Load all community reports in the <code>create_final_community_reports</code> table from the ire-indexing engine, to be used as context data for global search.</li>
-<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the ire-indexing engine, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the <code>rank</code> attribute in the community reports table for context ranking)</li>
+<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the ire-indexing engine, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
+<li>Load all communities in the <code>create_final_communites</code> table from the ire-indexing engine, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
 </ul>
 </div>
 </div>
@@ -2155,6 +2164,7 @@ token_encoder = tiktoken.get_encoding("cl100k_base")</div>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parquet files generated from indexing pipeline</span>
 <span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
+<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_communities"</span>
 <span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_community_reports"</span>
 <span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_nodes"</span>
 <span class="n">ENTITY_EMBEDDING_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_entities"</span>
@@ -2165,6 +2175,7 @@ token_encoder = tiktoken.get_encoding("cl100k_base")</div>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4"># parquet files generated from indexing pipeline
 INPUT_DIR = "./inputs/operation dulce"
+COMMUNITY_TABLE = "create_final_communities"
 COMMUNITY_REPORT_TABLE = "create_final_community_reports"
 ENTITY_TABLE = "create_final_nodes"
 ENTITY_EMBEDDING_TABLE = "create_final_entities"
@@ -2196,28 +2207,36 @@ COMMUNITY_LEVEL = 2</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">community_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 <span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_REPORT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 <span class="n">entity_embedding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_EMBEDDING_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 
+<span class="n">communities</span> <span class="o">=</span> <span class="n">read_indexer_communities</span><span class="p">(</span><span class="n">community_df</span><span class="p">,</span> <span class="n">entity_df</span><span class="p">,</span> <span class="n">report_df</span><span class="p">)</span>
 <span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span><span class="n">report_df</span><span class="p">,</span> <span class="n">entity_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
 <span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">entity_embedding_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total report count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
     <span class="sa">f</span><span class="s2">"Report count after filtering by community level </span><span class="si">{</span><span class="n">COMMUNITY_LEVEL</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reports</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 <span class="p">)</span>
+
 <span class="n">report_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
+<div class="clipboard-copy-txt" id="cell-5">community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
+entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
 report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
 entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
 
+communities = read_indexer_communities(community_df, entity_df, report_df)
 reports = read_indexer_reports(report_df, entity_df, COMMUNITY_LEVEL)
 entities = read_indexer_entities(entity_df, entity_embedding_df, COMMUNITY_LEVEL)
+
 print(f"Total report count: {len(report_df)}")
 print(
     f"Report count after filtering by community level {COMMUNITY_LEVEL}: {len(reports)}"
 )
+
 report_df.head()</div>
 </div>
 </div>
@@ -2230,8 +2249,8 @@ report_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Total report count: 6
-Report count after filtering by community level 2: 5
+<pre>Total report count: 20
+Report count after filtering by community level 2: 17
 </pre>
 </div>
 </div>
@@ -2271,68 +2290,68 @@ Report count after filtering by community level 2: 5
 <tbody>
 <tr>
 <th>0</th>
-<td>4</td>
-<td># Dulce Base and the Paranormal Military Squad...</td>
+<td>10</td>
+<td># Paranormal Military Squad at Dulce Base: Dec...</td>
 <td>1</td>
 <td>8.5</td>
-<td>Dulce Base and the Paranormal Military Squad: ...</td>
+<td>Paranormal Military Squad at Dulce Base: Decod...</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>The community is centered around Dulce Base, a...</td>
-<td>[{'explanation': 'Dulce Base is the primary lo...</td>
-<td>{\n    "title": "Dulce Base and the Paranormal...</td>
-<td>6f8ba6b6-506e-46c1-83ce-982d59622554</td>
+<td>The Paranormal Military Squad, stationed at Du...</td>
+<td>[{'explanation': 'Jordan is a central figure i...</td>
+<td>{\n    "title": "Paranormal Military Squad at ...</td>
+<td>1ba2d200-dd26-4693-affe-a5539d0a0e0d</td>
 </tr>
 <tr>
 <th>1</th>
-<td>5</td>
-<td># Sam Rivera and the Paranormal Military Squad...</td>
+<td>11</td>
+<td># Dulce and Paranormal Military Squad Operatio...</td>
 <td>1</td>
-<td>7.5</td>
-<td>Sam Rivera and the Paranormal Military Squad a...</td>
+<td>8.5</td>
+<td>Dulce and Paranormal Military Squad Operations</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>The community is centered around Sam Rivera, a...</td>
-<td>[{'explanation': 'Sam Rivera is recognized for...</td>
-<td>{\n    "title": "Sam Rivera and the Paranormal...</td>
-<td>418f4536-d673-4212-8a7c-ca1aac547d0f</td>
+<td>The community centers around Dulce, a secretiv...</td>
+<td>[{'explanation': 'Dulce is described as a top-...</td>
+<td>{\n    "title": "Dulce and Paranormal Military...</td>
+<td>a8a530b0-ae6b-44ea-b11c-9f70d138298d</td>
 </tr>
 <tr>
 <th>2</th>
-<td>0</td>
-<td># Dulce Base and the Paranormal Military Squad...</td>
-<td>0</td>
-<td>8.5</td>
-<td>Dulce Base and the Paranormal Military Squad Team</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>Dulce Base serves as the operational hub for t...</td>
-<td>[{'explanation': 'The Paranormal Military Squa...</td>
-<td>{\n    "title": "Dulce Base and the Paranormal...</td>
-<td>251df57e-fd49-49a7-b262-ccaff95d7a51</td>
+<td>12</td>
+<td># Paranormal Military Squad and Dulce Base Ope...</td>
+<td>1</td>
+<td>7.5</td>
+<td>Paranormal Military Squad and Dulce Base Opera...</td>
+<td>The impact severity rating is relatively high ...</td>
+<td>The community centers around the Paranormal Mi...</td>
+<td>[{'explanation': 'Taylor is a central figure w...</td>
+<td>{\n    "title": "Paranormal Military Squad and...</td>
+<td>0478975b-c805-4cc1-b746-82f3e689e2f3</td>
 </tr>
 <tr>
 <th>3</th>
+<td>13</td>
+<td># Mission Dynamics and Leadership: Cruz and Wa...</td>
 <td>1</td>
-<td># Dulce Base and the Paranormal Military Squad...</td>
-<td>0</td>
-<td>8.5</td>
-<td>Dulce Base and the Paranormal Military Squad: ...</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>The community is centered around Dulce Base, a...</td>
-<td>[{'explanation': 'Sam Rivera is recognized for...</td>
-<td>{\n    "title": "Dulce Base and the Paranormal...</td>
-<td>6e536385-8056-4a82-8670-c0ccaf007fb4</td>
+<td>7.5</td>
+<td>Mission Dynamics and Leadership: Cruz and Wash...</td>
+<td>The impact severity rating is relatively high ...</td>
+<td>This report explores the intricate dynamics of...</td>
+<td>[{'explanation': 'Cruz is a central figure in ...</td>
+<td>{\n    "title": "Mission Dynamics and Leadersh...</td>
+<td>b56f6e68-3951-4f07-8760-63700944a375</td>
 </tr>
 <tr>
 <th>4</th>
-<td>2</td>
-<td># Dulce Base: Extraterrestrial Research and Co...</td>
-<td>0</td>
+<td>14</td>
+<td># Dulce Base and Paranormal Military Squad: Br...</td>
+<td>1</td>
 <td>8.5</td>
-<td>Dulce Base: Extraterrestrial Research and Comm...</td>
+<td>Dulce Base and Paranormal Military Squad: Brid...</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>Dulce Base is a highly classified facility in ...</td>
-<td>[{'explanation': 'Dulce Base is the epicenter ...</td>
-<td>{\n    "title": "Dulce Base: Extraterrestrial ...</td>
-<td>660c8fba-b65f-4fcd-9c98-203600cf1981</td>
+<td>The community centers around the Dulce Base, a...</td>
+<td>[{'explanation': 'Sam Rivera, a member of the ...</td>
+<td>{\n    "title": "Dulce Base and Paranormal Mil...</td>
+<td>736e7006-d050-4abb-a122-00febf3f540f</td>
 </tr>
 </tbody>
 </table>
@@ -2374,12 +2393,14 @@ Report count after filtering by community level 2: 5
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">context_builder</span> <span class="o">=</span> <span class="n">GlobalCommunityContext</span><span class="p">(</span>
     <span class="n">community_reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span>
+    <span class="n">communities</span><span class="o">=</span><span class="n">communities</span><span class="p">,</span>
     <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>  <span class="c1"># default to None if you don't want to use community weights for ranking</span>
     <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6">context_builder = GlobalCommunityContext(
     community_reports=reports,
+    communities=communities,
     entities=entities,  # default to None if you don't want to use community weights for ranking
     token_encoder=token_encoder,
 )</div>
@@ -2541,13 +2562,13 @@ reduce_llm_params = {
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span>
-    <span class="s2">"What is the major conflict in this story and who are the protagonist and antagonist?"</span>
+    <span class="s2">"What is Cosmic Vocalization and who are involved in it?"</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-9">result = await search_engine.asearch(
-    "What is the major conflict in this story and who are the protagonist and antagonist?"
+    "What is Cosmic Vocalization and who are involved in it?"
 )
 
 print(result.response)</div>
@@ -2562,17 +2583,23 @@ print(result.response)</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>### Major Conflict
+<pre>### Overview of Cosmic Vocalization
 
-The central conflict in the story revolves around the Paranormal Military Squad's mission to establish contact with extraterrestrial intelligence. This mission involves deciphering alien signals and managing the potential implications of first contact. The conflict is marked by the secrecy and high stakes associated with the mission, as well as the challenges posed by the unknown nature of the extraterrestrial entities [Data: Reports (4, 5, 2, 3, 0)].
+Cosmic Vocalization is a significant phenomenon that has captured the attention of various individuals and groups within the community. It is perceived as an interstellar event, with some interpreting it as a form of communication or interaction with cosmic entities. This has led to diverse interpretations and responses from those involved.
 
-### Protagonists
+### Key Individuals and Groups
 
-The protagonists are the key members of the Paranormal Military Squad, including Taylor Cruz, Dr. Jordan Hayes, Alex Mercer, and Sam Rivera. Each of these individuals plays a crucial role in the mission, bringing their expertise in leadership, signal decryption, diplomatic engagement, and technical innovation to the forefront [Data: Reports (4, 5, 2, 3, 0)].
+1. **Alex Mercer**: Alex views Cosmic Vocalization as part of an interstellar duet, suggesting a responsive and possibly harmonious interaction with cosmic events. This perspective highlights the potential for Cosmic Vocalization to be a form of communication or exchange with the universe [Data: Reports (6)].
 
-### Antagonist
+2. **Taylor Cruz**: Taylor expresses concerns about the nature of Cosmic Vocalization, fearing it might be a homing tune. This interpretation adds a layer of urgency and potential threat, suggesting that the phenomenon could have implications for security or safety [Data: Reports (6)].
 
-The antagonist in the story is not a single entity or character. Instead, it may be considered the unknown and potentially hostile nature of the extraterrestrial entities and the challenges they present to the Paranormal Military Squad's mission [Data: Reports (4, 5, 2, 3, 0)].
+3. **Paranormal Military Squad**: This group is actively engaged with Cosmic Vocalization, indicating its strategic importance in their operations. Their involvement underscores the significance of Cosmic Vocalization in security measures and suggests that it is being monitored and analyzed for potential threats or opportunities [Data: Reports (6)].
+
+### Interpretations and Implications
+
+The Paranormal Military Squad metaphorically treats the universe as a concert hall, which suggests a broader perspective on how cosmic events like Cosmic Vocalization are interpreted and responded to by human entities. This metaphor implies that the phenomenon is not only a subject of scientific interest but also of cultural and philosophical significance [Data: Reports (6)].
+
+In summary, Cosmic Vocalization is a complex and multifaceted phenomenon that has drawn interest from various sectors, each interpreting it through their unique lenses. The involvement of individuals like Alex Mercer and Taylor Cruz, along with the strategic engagement of the Paranormal Military Squad, highlights the diverse implications and potential impacts of this cosmic event.
 </pre>
 </div>
 </div>
@@ -2642,43 +2669,139 @@ result.context_data["reports"]</div>
 <tbody>
 <tr>
 <th>0</th>
-<td>4</td>
+<td>15</td>
 <td>Dulce Base and the Paranormal Military Squad: ...</td>
-<td>1.000000</td>
+<td>1.00</td>
 <td># Dulce Base and the Paranormal Military Squad...</td>
-<td>8.5</td>
+<td>9.5</td>
 </tr>
 <tr>
 <th>1</th>
-<td>5</td>
-<td>Sam Rivera and the Paranormal Military Squad a...</td>
-<td>1.000000</td>
-<td># Sam Rivera and the Paranormal Military Squad...</td>
-<td>7.5</td>
+<td>11</td>
+<td>Dulce and Paranormal Military Squad Operations</td>
+<td>0.30</td>
+<td># Dulce and Paranormal Military Squad Operatio...</td>
+<td>8.5</td>
 </tr>
 <tr>
 <th>2</th>
-<td>2</td>
-<td>Dulce Base: Extraterrestrial Research and Comm...</td>
-<td>0.750000</td>
-<td># Dulce Base: Extraterrestrial Research and Co...</td>
+<td>10</td>
+<td>Paranormal Military Squad at Dulce Base: Decod...</td>
+<td>0.30</td>
+<td># Paranormal Military Squad at Dulce Base: Dec...</td>
 <td>8.5</td>
 </tr>
 <tr>
 <th>3</th>
-<td>3</td>
+<td>7</td>
 <td>Operation: Dulce and the Paranormal Military S...</td>
-<td>0.583333</td>
+<td>0.20</td>
 <td># Operation: Dulce and the Paranormal Military...</td>
 <td>8.5</td>
 </tr>
 <tr>
 <th>4</th>
-<td>0</td>
-<td>Dulce Base and the Paranormal Military Squad Team</td>
-<td>0.416667</td>
-<td># Dulce Base and the Paranormal Military Squad...</td>
+<td>8</td>
+<td>Dr. Jordan Hayes and the Paranormal Military S...</td>
+<td>0.18</td>
+<td># Dr. Jordan Hayes and the Paranormal Military...</td>
 <td>8.5</td>
+</tr>
+<tr>
+<th>5</th>
+<td>1</td>
+<td>Earth's Interstellar Communication Initiative</td>
+<td>0.16</td>
+<td># Earth's Interstellar Communication Initiativ...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>6</th>
+<td>12</td>
+<td>Paranormal Military Squad and Dulce Base Opera...</td>
+<td>0.16</td>
+<td># Paranormal Military Squad and Dulce Base Ope...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>7</th>
+<td>13</td>
+<td>Mission Dynamics and Leadership: Cruz and Wash...</td>
+<td>0.16</td>
+<td># Mission Dynamics and Leadership: Cruz and Wa...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>8</th>
+<td>14</td>
+<td>Dulce Base and Paranormal Military Squad: Brid...</td>
+<td>0.12</td>
+<td># Dulce Base and Paranormal Military Squad: Br...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>9</th>
+<td>16</td>
+<td>Dulce Military Base and Alien Intelligence Com...</td>
+<td>0.08</td>
+<td># Dulce Military Base and Alien Intelligence C...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>10</th>
+<td>18</td>
+<td>Paranormal Military Squad Team and Dulce Base'...</td>
+<td>0.04</td>
+<td># Paranormal Military Squad Team and Dulce Bas...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>11</th>
+<td>5</td>
+<td>Alien Script and First Contact Operations</td>
+<td>0.02</td>
+<td># Alien Script and First Contact Operations\n\...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>12</th>
+<td>4</td>
+<td>Dulce Facility and Control Room of Dulce: Extr...</td>
+<td>0.02</td>
+<td># Dulce Facility and Control Room of Dulce: Ex...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>13</th>
+<td>17</td>
+<td>Dulce Team and Underground Command Center: Int...</td>
+<td>0.02</td>
+<td># Dulce Team and Underground Command Center: I...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>14</th>
+<td>19</td>
+<td>Central Terminal and Viewing Monitors at Dulce...</td>
+<td>0.02</td>
+<td># Central Terminal and Viewing Monitors at Dul...</td>
+<td>8.5</td>
+</tr>
+<tr>
+<th>15</th>
+<td>6</td>
+<td>Cosmic Vocalization and Universe Interactions</td>
+<td>0.02</td>
+<td># Cosmic Vocalization and Universe Interaction...</td>
+<td>7.5</td>
+</tr>
+<tr>
+<th>16</th>
+<td>9</td>
+<td>Dulce Base Exploration by TEAM and MAINFRAME ROOM</td>
+<td>0.02</td>
+<td># Dulce Base Exploration by TEAM and MAINFRAME...</td>
+<td>7.5</td>
 </tr>
 </tbody>
 </table>
@@ -2708,10 +2831,14 @@ result.context_data["reports"]</div>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># inspect number of LLM calls and tokens</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LLM calls: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">llm_calls</span><span class="si">}</span><span class="s2">. LLM tokens: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">prompt_tokens</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"LLM calls: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">llm_calls</span><span class="si">}</span><span class="s2">. Prompt tokens: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">prompt_tokens</span><span class="si">}</span><span class="s2">. Output tokens: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">output_tokens</span><span class="si">}</span><span class="s2">."</span>
+<span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-11"># inspect number of LLM calls and tokens
-print(f"LLM calls: {result.llm_calls}. LLM tokens: {result.prompt_tokens}")</div>
+print(
+    f"LLM calls: {result.llm_calls}. Prompt tokens: {result.prompt_tokens}. Output tokens: {result.output_tokens}."
+)</div>
 </div>
 </div>
 </div>
@@ -2723,7 +2850,7 @@ print(f"LLM calls: {result.llm_calls}. LLM tokens: {result.prompt_tokens}")</div
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 2. LLM tokens: 5270
+<pre>LLM calls: 2. Prompt tokens: 11291. Output tokens: 606.
 </pre>
 </div>
 </div>
