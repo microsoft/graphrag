@@ -32,6 +32,7 @@ from graphrag.query.factories import (
     get_local_search_engine,
 )
 from graphrag.query.indexer_adapters import (
+    read_indexer_communities,
     read_indexer_covariates,
     read_indexer_entities,
     read_indexer_relationships,
@@ -52,8 +53,10 @@ async def global_search(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
+    dynamic_community_selection: bool,
     response_type: str,
     query: str,
 ) -> tuple[
@@ -67,8 +70,10 @@ async def global_search(
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -80,13 +85,21 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
+    _communities = read_indexer_communities(communities, nodes, community_reports)
+    reports = read_indexer_reports(
+        community_reports,
+        nodes,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+    )
+    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
         entities=_entities,
+        communities=_communities,
         response_type=response_type,
+        dynamic_community_selection=dynamic_community_selection,
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
@@ -99,8 +112,10 @@ async def global_search_streaming(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
+    dynamic_community_selection: bool,
     response_type: str,
     query: str,
 ) -> AsyncGenerator:
@@ -113,8 +128,10 @@ async def global_search_streaming(
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -126,13 +143,21 @@ async def global_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
+    _communities = read_indexer_communities(communities, nodes, community_reports)
+    reports = read_indexer_reports(
+        community_reports,
+        nodes,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+    )
+    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
         entities=_entities,
+        communities=_communities,
         response_type=response_type,
+        dynamic_community_selection=dynamic_community_selection,
     )
     search_result = search_engine.astream_search(query=query)
 

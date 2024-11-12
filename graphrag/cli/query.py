@@ -22,7 +22,8 @@ def run_global_search(
     config_filepath: Path | None,
     data_dir: Path | None,
     root_dir: Path,
-    community_level: int,
+    community_level: int | None,
+    dynamic_community_selection: bool,
     response_type: str,
     streaming: bool,
     query: str,
@@ -42,12 +43,14 @@ def run_global_search(
         parquet_list=[
             "create_final_nodes.parquet",
             "create_final_entities.parquet",
+            "create_final_communities.parquet",
             "create_final_community_reports.parquet",
         ],
         optional_list=[],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -63,8 +66,10 @@ def run_global_search(
                 config=config,
                 nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
                 query=query,
             ):
@@ -85,8 +90,10 @@ def run_global_search(
             config=config,
             nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             community_level=community_level,
+            dynamic_community_selection=dynamic_community_selection,
             response_type=response_type,
             query=query,
         )
