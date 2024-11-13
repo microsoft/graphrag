@@ -1,0 +1,93 @@
+name: Python Publish (internal)
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+variables:
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  pythonVersion: "3.10"
+  poetryVersion: "1.6.1"
+
+stages:
+  - stage: Compliance
+    dependsOn: []
+    jobs:
+      - job: compliance
+        displayName: Compliance
+        pool:
+          vmImage: windows-latest
+        steps:
+          - task: CredScan@3
+            inputs:
+              outputFormat: sarif
+              debugMode: false
+
+          - task: ComponentGovernanceComponentDetection@0
+            inputs:
+              scanType: "Register"
+              verbosity: "Verbose"
+              alertWarningLevel: "High"
+
+          - task: PublishSecurityAnalysisLogs@3
+            inputs:
+              ArtifactName: "CodeAnalysisLogs"
+              ArtifactType: "Container"
+
+  - stage: Publish
+    dependsOn: []
+    condition: eq(variables.isMain, 'true')
+    jobs:
+      - job: publish
+        displayName: Publish
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          # fetch tags when checking out the repo, so we can use them with versioning
+          - checkout: self
+            fetchTags: true
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python ${{variables.pythonVersion}}"
+            inputs:
+              versionSpec: ${{variables.pythonVersion}}
+
+          - script: curl -sSL https://install.python-poetry.org | python -
+            displayName: "Install Poetry ${{variables.poetryVersion}}"
+            env:
+              POETRY_VERSION: ${{variables.poetryVersion}}
+
+          - script: echo "##vso[task.prependpath]$HOME/.poetry/bin"
+            displayName: "Add Poetry to path"
+
+          - script: |
+              pip install wheel
+              pip install twine
+            displayName: "install publication tooling"
+
+          - task: Bash@3
+            displayName: Install Dependencies
+            inputs:
+              targetType: "inline"
+              script: |
+                echo "poetry build..."
+                poetry build
+            env:
+              ARTIFACTS_USERNAME: $(artifactsUsername)
+              ARTIFACTS_PASSWORD: $(artifactsPassword)
+
+          - task: TwineAuthenticate@1
+            displayName: Twine Authenticate
+            inputs:
+              artifactFeed: ${ARTIFACTS_FEED}
+
+          # These tasks will publish the distribution files as pipeline artifacts, not Azure Artifacts artifacts.
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "dist"
+              artifact: graphrag
+              publishLocation: "pipeline"
