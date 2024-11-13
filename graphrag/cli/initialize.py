@@ -14,6 +14,9 @@ from graphrag.prompts.index.community_report import (
 from graphrag.prompts.index.entity_extraction import GRAPH_EXTRACTION_PROMPT
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 from graphrag.prompts.query.drift_search_system_prompt import DRIFT_LOCAL_SYSTEM_PROMPT
+from graphrag.prompts.query.global_search_knowledge_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+)
 from graphrag.prompts.query.global_search_map_system_prompt import MAP_SYSTEM_PROMPT
 from graphrag.prompts.query.global_search_reduce_system_prompt import (
     REDUCE_SYSTEM_PROMPT,
@@ -55,6 +58,7 @@ def initialize_project_at(path: Path) -> None:
         "drift_search_system_prompt": DRIFT_LOCAL_SYSTEM_PROMPT,
         "global_search_map_system_prompt": MAP_SYSTEM_PROMPT,
         "global_search_reduce_system_prompt": REDUCE_SYSTEM_PROMPT,
+        "global_search_knowledge_system_prompt": GENERAL_KNOWLEDGE_INSTRUCTION,
         "local_search_system_prompt": LOCAL_SEARCH_SYSTEM_PROMPT,
         "question_gen_system_prompt": QUESTION_SYSTEM_PROMPT,
     }

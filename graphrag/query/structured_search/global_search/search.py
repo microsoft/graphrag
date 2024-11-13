@@ -16,11 +16,13 @@ import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
 from graphrag.llm.openai.utils import try_parse_json_object
+from graphrag.prompts.query.global_search_knowledge_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+)
 from graphrag.prompts.query.global_search_map_system_prompt import (
     MAP_SYSTEM_PROMPT,
 )
 from graphrag.prompts.query.global_search_reduce_system_prompt import (
-    GENERAL_KNOWLEDGE_INSTRUCTION,
     NO_DATA_ANSWER,
     REDUCE_SYSTEM_PROMPT,
 )
