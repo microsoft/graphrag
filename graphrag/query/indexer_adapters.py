@@ -95,6 +95,7 @@ def read_indexer_reports(
     """
     reports_df = final_community_reports
     nodes_df = final_nodes
+
     if community_level is not None:
         nodes_df = _filter_under_community_level(nodes_df, community_level)
         reports_df = _filter_under_community_level(reports_df, community_level)
@@ -107,6 +108,8 @@ def read_indexer_reports(
         nodes_df = nodes_df.groupby(["title"]).agg({"community": "max"}).reset_index()
         filtered_community_df = nodes_df["community"].drop_duplicates()
 
+        # todo: pre 1.0 back-compat where community was a string
+        reports_df["community"] = reports_df["community"].astype(int)
         reports_df = reports_df.merge(
             filtered_community_df, on="community", how="inner"
         )
@@ -163,6 +166,10 @@ def read_indexer_entities(
         subset=["id"]
     )
 
+    # todo: pre 1.0 back-compat where title was name
+    if "title" not in final_df.columns:
+        final_df["title"] = final_df["name"]
+
     # read entity dataframe to knowledge model objects
     return read_entities(
         df=final_df,
@@ -191,6 +198,10 @@ def read_indexer_communities(
     communities_df = final_communities
     nodes_df = final_nodes
     reports_df = final_community_reports
+
+    # todo: pre 1.0 back-compat!
+    if "community" not in communities_df.columns:
+        communities_df["community"] = communities_df["id"]
 
     # ensure communities matches community reports
     missing_reports = communities_df[
