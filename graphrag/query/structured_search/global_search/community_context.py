@@ -7,7 +7,8 @@ from typing import Any
 
 import tiktoken
 
-from graphrag.model.community_report import Community, CommunityReport
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
 from graphrag.model.entity import Entity
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (

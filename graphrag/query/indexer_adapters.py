@@ -12,6 +12,8 @@ from typing import cast
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.operations.summarize_communities import restore_community_hierarchy
+from graphrag.model.community import Community
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.covariate import Covariate
 from graphrag.model.entity import Entity
