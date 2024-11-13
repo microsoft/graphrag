@@ -252,7 +252,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         for community in selected_communities:
             if community.attributes is None:
                 community.attributes = {}
-            community.attributes["matches"] = community_matches[community.id]
+            community.attributes["matches"] = community_matches[community.community_id]
         selected_communities.sort(
             key=lambda x: (x.attributes["matches"], x.rank),  # type: ignore
             reverse=True,  # type: ignore
