@@ -25,6 +25,10 @@ import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config import GraphRagConfig
+from graphrag.index.config.embeddings import (
+    community_full_content_embedding,
+    entity_description_embedding,
+)
 from graphrag.logging import PrintProgressReporter
 from graphrag.query.factories import (
     get_drift_search_engine,
@@ -42,6 +46,7 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
+from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.base import BaseVectorStore
 
@@ -228,7 +233,7 @@ async def local_search(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -302,7 +307,7 @@ async def local_search_streaming(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -385,12 +390,12 @@ async def drift_search(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="community-full_content",
+        embedding_name=community_full_content_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -450,7 +455,10 @@ def _patch_vector_store(
         }
         description_embedding_store = LanceDBVectorStore(
             db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name="default-entity-description",
+            collection_name=create_collection_name(
+                config.embeddings.vector_store["container_name"],
+                entity_description_embedding,
+            ),
             overwrite=config.embeddings.vector_store["overwrite"],
         )
         description_embedding_store.connect(
@@ -469,11 +477,7 @@ def _patch_vector_store(
             from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
             community_reports = with_reports
-            collection_name = (
-                config.embeddings.vector_store.get("container_name", "default")
-                if config.embeddings.vector_store
-                else "default"
-            )
+            container_name = config.embeddings.vector_store["container_name"]
             # Store report embeddings
             _reports = read_indexer_reports(
                 community_reports,
@@ -485,7 +489,9 @@ def _patch_vector_store(
 
             full_content_embedding_store = LanceDBVectorStore(
                 db_uri=config.embeddings.vector_store["db_uri"],
-                collection_name=f"{collection_name}-community-full_content",
+                collection_name=create_collection_name(
+                    container_name, community_full_content_embedding
+                ),
                 overwrite=config.embeddings.vector_store["overwrite"],
             )
             full_content_embedding_store.connect(
@@ -501,12 +507,12 @@ def _patch_vector_store(
 
 def _get_embedding_store(
     config_args: dict,
-    container_suffix: str,
+    embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
     vector_store_type = config_args["type"]
-    collection_name = (
-        f"{config_args.get('container_name', 'default')}-{container_suffix}"
+    collection_name = create_collection_name(
+        config_args.get("container_name", "default"), embedding_name
     )
     embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type,

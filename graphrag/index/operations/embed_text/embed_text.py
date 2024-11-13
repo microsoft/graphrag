@@ -12,6 +12,7 @@ import pandas as pd
 from datashaper import VerbCallbacks
 
 from graphrag.index.cache import PipelineCache
+from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores import (
     BaseVectorStore,
     VectorStoreDocument,
@@ -229,8 +230,8 @@ def _create_vector_store(
 
 
 def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
-    container_name = vector_store_config.get("container_name")
-    collection_name = f"{container_name}.{embedding_name}".replace(".", "-")
+    container_name = vector_store_config.get("container_name", "default")
+    collection_name = create_collection_name(container_name, embedding_name)
 
     msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
     log.info(msg)

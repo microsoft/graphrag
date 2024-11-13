@@ -154,6 +154,8 @@ snapshots:
   graphml: false
   raw_entities: false
   top_level_nodes: false
+  embeddings: false
+  transient: false
 
 local_search:
   # text_unit_prop: {defs.LOCAL_SEARCH_TEXT_UNIT_PROP}

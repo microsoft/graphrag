@@ -88,7 +88,7 @@ async def _generate_report(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     strategy: dict,
-    community_id: int | str,
+    community_id: int,
     community_level: int,
     community_context: str,
 ) -> CommunityReport | None:
