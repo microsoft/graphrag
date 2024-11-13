@@ -476,11 +476,7 @@ def _patch_vector_store(
             from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
             community_reports = with_reports
-            container_name = (
-                config.embeddings.vector_store.get("container_name", "default")
-                if config.embeddings.vector_store
-                else "default"
-            )
+            container_name = config.embeddings.vector_store["container_name"]
             # Store report embeddings
             _reports = read_indexer_reports(
                 community_reports,
