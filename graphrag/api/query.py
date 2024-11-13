@@ -456,7 +456,8 @@ def _patch_vector_store(
         description_embedding_store = LanceDBVectorStore(
             db_uri=config.embeddings.vector_store["db_uri"],
             collection_name=create_collection_name(
-                "default", entity_description_embedding
+                config.embeddings.vector_store["container_name"],
+                entity_description_embedding,
             ),
             overwrite=config.embeddings.vector_store["overwrite"],
         )
