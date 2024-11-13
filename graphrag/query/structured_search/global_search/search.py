@@ -16,6 +16,14 @@ import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
 from graphrag.llm.openai.utils import try_parse_json_object
+from graphrag.prompts.query.global_search_map_system_prompt import (
+    MAP_SYSTEM_PROMPT,
+)
+from graphrag.prompts.query.global_search_reduce_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+    NO_DATA_ANSWER,
+    REDUCE_SYSTEM_PROMPT,
+)
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -23,14 +31,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.query.structured_search.global_search.map_system_prompt import (
-    MAP_SYSTEM_PROMPT,
-)
-from graphrag.query.structured_search.global_search.reduce_system_prompt import (
-    GENERAL_KNOWLEDGE_INSTRUCTION,
-    NO_DATA_ANSWER,
-    REDUCE_SYSTEM_PROMPT,
-)
 
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,

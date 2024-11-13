@@ -19,14 +19,14 @@ from graphrag.model import (
     Relationship,
     TextUnit,
 )
+from graphrag.prompts.query.drift_search_system_prompt import (
+    DRIFT_LOCAL_SYSTEM_PROMPT,
+)
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.structured_search.base import DRIFTContextBuilder
 from graphrag.query.structured_search.drift_search.primer import PrimerQueryProcessor
-from graphrag.query.structured_search.drift_search.system_prompt import (
-    DRIFT_LOCAL_SYSTEM_PROMPT,
-)
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )

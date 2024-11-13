@@ -10,6 +10,9 @@ from typing import Any
 
 import tiktoken
 
+from graphrag.prompts.query.local_search_system_prompt import (
+    LOCAL_SEARCH_SYSTEM_PROMPT,
+)
 from graphrag.query.context_builder.builders import LocalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -17,9 +20,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.query.structured_search.local_search.system_prompt import (
-    LOCAL_SEARCH_SYSTEM_PROMPT,
-)
 
 DEFAULT_LLM_PARAMS = {
     "max_tokens": 1500,
