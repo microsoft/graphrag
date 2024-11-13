@@ -5,14 +5,14 @@
 
 from pathlib import Path
 
-from graphrag.index.graph.extractors.claims.prompts import CLAIM_EXTRACTION_PROMPT
-from graphrag.index.graph.extractors.community_reports.prompts import (
-    COMMUNITY_REPORT_PROMPT,
-)
-from graphrag.index.graph.extractors.graph.prompts import GRAPH_EXTRACTION_PROMPT
-from graphrag.index.graph.extractors.summarize.prompts import SUMMARIZE_PROMPT
 from graphrag.index.init_content import INIT_DOTENV, INIT_YAML
 from graphrag.logging import ReporterType, create_progress_reporter
+from graphrag.prompts.index.claim_extraction import CLAIM_EXTRACTION_PROMPT
+from graphrag.prompts.index.community_report import (
+    COMMUNITY_REPORT_PROMPT,
+)
+from graphrag.prompts.index.entity_extraction import GRAPH_EXTRACTION_PROMPT
+from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 
 def initialize_project_at(path: Path) -> None:
