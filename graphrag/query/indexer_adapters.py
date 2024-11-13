@@ -109,7 +109,9 @@ def read_indexer_reports(
         filtered_community_df = nodes_df["community"].drop_duplicates()
 
         # todo: pre 1.0 back-compat where community was a string
-        reports_df["community"] = reports_df["community"].astype(int)
+        reports_df.loc[:, "community"] = reports_df["community"].fillna(-1)
+        reports_df.loc[:, "community"] = reports_df["community"].astype(int)
+        
         reports_df = reports_df.merge(
             filtered_community_df, on="community", how="inner"
         )
