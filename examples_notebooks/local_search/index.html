@@ -581,6 +581,27 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../index/outputs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Outputs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -592,10 +613,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
         
           
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -606,8 +627,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             Configuration
           </label>
@@ -2334,7 +2355,7 @@ COMMUNITY_LEVEL = 2</div>
 <span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="c1"># to connect to a remote db, specify url and port values.</span>
 <span class="n">description_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">collection_name</span><span class="o">=</span><span class="s2">"entity.description"</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
 <span class="n">entity_description_embeddings</span> <span class="o">=</span> <span class="n">store_entity_semantic_embeddings</span><span class="p">(</span>
@@ -2353,7 +2374,7 @@ entities = read_indexer_entities(entity_df, entity_embedding_df, COMMUNITY_LEVEL
 # load description embeddings to an in-memory lancedb vectorstore
 # to connect to a remote db, specify url and port values.
 description_embedding_store = LanceDBVectorStore(
-    collection_name="entity.description",
+    collection_name="default-entity-description",
 )
 description_embedding_store.connect(db_uri=LANCEDB_URI)
 entity_description_embeddings = store_entity_semantic_embeddings(
@@ -2374,13 +2395,6 @@ entity_df.head()</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Entity count: 178
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>[2024-11-12T00:48:35Z WARN  lance::dataset] No existing dataset at /home/runner/work/graphrag/graphrag/docs/examples_notebooks/inputs/operation dulce/lancedb/entity.description.lance, it will be created
 </pre>
 </div>
 </div>
@@ -3366,17 +3380,19 @@ Agent Alex Mercer is a prominent figure within the Paranormal Military Squad, pl
 
 ### Role and Responsibilities
 
-Alex Mercer is deeply involved in the philosophical and strategic aspects of interstellar communication, viewing these interactions as a form of cosmic dialogue. His leadership style is characterized by a blend of determination, compliance with mission protocols, and a protective approach towards his team. He emphasizes the importance of intuition and trust beyond protocol, particularly in his mentorship of team members like Sam Rivera [Data: Entities (0); Relationships (167)].
+Mercer is deeply involved in the philosophical and strategic aspects of interstellar communication, viewing these interactions as a form of cosmic dialogue. His leadership style is characterized by a blend of determination, compliance with mission protocols, and a protective approach towards his team. He collaborates with team members like Jordan Hayes, exploring secured areas and engaging in high-stakes, secretive operations. Mercer is also known for his intellectual curiosity and deep involvement in the philosophical and strategic aspects of interstellar communication [Data: Entities (0)].
+
+### Relationships and Influence
+
+Agent Mercer is depicted as a thoughtful mentor, particularly to Sam Rivera, emphasizing the importance of intuition and trust beyond protocol. His experiences during encounters with alien signals have led to profound changes, reinforcing his role as a key decision-maker and guardian in missions that transcend traditional boundaries. He is also involved in practical field activities, such as examining suspicious panels and preparing for missions with a rifle, showcasing his assertive response capabilities [Data: Entities (0, 8); Relationships (167)].
 
 ### Involvement in Operation: Dulce
 
-During Operation: Dulce, Alex Mercer collaborates with team members such as Jordan Hayes, exploring secured areas and engaging in high-stakes, secretive operations. His role extends to analyzing cosmic signals, strategizing contact efforts, and maintaining clarity in human-alien communication. His experiences during encounters with alien signals have led to profound changes, reinforcing his role as a key decision-maker and guardian in missions that transcend traditional boundaries [Data: Entities (0); Relationships (336, 245)].
+Operation: Dulce was a significant mission undertaken by the Paranormal Military Squad, with Mercer being a key participant. The operation involved exploring paranormal anomalies and assessing potential threats, marking the beginning of an interstellar odyssey and leading to the first contact with an alien race. Mercer's role in this operation was pivotal, as it involved a shift from mere observation to active interaction and preparation [Data: Entities (5); Relationships (245)].
 
-### Leadership and Mentorship
+### Conclusion
 
-Mercer is also recognized as a mentor to the team, providing belief and guidance, which highlights his influential role in both leadership and operational contexts. His intellectual curiosity and deep involvement in the mission's philosophical aspects make him a thoughtful leader, particularly in high-stakes situations such as the first contact with alien communications [Data: Entities (30, 0); Relationships (167)].
-
-In summary, Agent Alex Mercer is a pivotal figure in the Paranormal Military Squad, known for his strategic leadership and deep involvement in extraterrestrial communication efforts. His role in Operation: Dulce and his mentorship of team members underscore his importance in navigating the complexities of interstellar dialogue.
+Agent Alex Mercer is a multifaceted leader within the Paranormal Military Squad, known for his strategic acumen, mentorship, and deep involvement in extraterrestrial communications. His role in Operation: Dulce highlights his importance in bridging human and alien interactions, making him a central figure in the squad's mission to uncover cosmic revelations.
 </pre>
 </div>
 </div>
@@ -3422,21 +3438,21 @@ print(result.response)</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>### Overview of Dr. Jordan Hayes
 
-Dr. Jordan Hayes is a prominent scientist at Dulce Base, playing a crucial role in the Paranormal Military Squad. Their work is primarily focused on the analysis and decryption of alien communications, which is vital for interstellar communication and potential interspecies interaction. Dr. Hayes is known for their expertise in deciphering alien codes and understanding extraterrestrial thought patterns, which are essential for leading communications with extraterrestrial entities [Data: Entities (17, 2); Relationships (201, 322, 283)].
+Dr. Jordan Hayes is a prominent scientist at Dulce Base, playing a crucial role in the Paranormal Military Squad. Their work is primarily focused on the analysis and decryption of alien communications, which is vital for interstellar communication and potential interspecies interaction. Dr. Hayes is known for their expertise in deciphering alien codes and understanding extraterrestrial thought patterns, which are essential for leading communications with extraterrestrial entities [Data: Entities (17, 2); Relationships (201, 322)].
 
 ### Role and Contributions
 
-Dr. Hayes's contributions are significant in the context of Operation: Dulce, where they are deeply involved in scientific exploration and the decryption of alien communications. Their work involves decrypting algorithms, interpreting cosmic signals, and analyzing the implications of alien society. This includes isolating and understanding complex alien signals that resemble human cognition, suggesting a tandem evolution with humanity [Data: Entities (2); Claims (60, 83, 91, 134)].
+Dr. Hayes's contributions are pivotal in the context of Operation: Dulce, where they are deeply involved in scientific exploration and the decryption of alien communications. Their work involves decrypting algorithms, interpreting cosmic signals, and analyzing the implications of alien society. This includes isolating and understanding complex alien signals that resemble human cognition, suggesting a tandem evolution with humanity [Data: Entities (2); Claims (60, 83, 91, 134)].
 
 ### Collaboration and Leadership
 
-Dr. Hayes collaborates closely with other key members of the Paranormal Military Squad, such as Alex Mercer and Taylor Cruz. Despite some tension with Cruz due to differing leadership styles, Dr. Hayes's analytical skills and adaptability are highly valued by their colleagues. They are involved in setting up lab stations, operating the mainframe, and playing a crucial role in the command center at Dulce Base. Their leadership style emphasizes adaptability and skepticism, which are crucial given the uncertainties and unknown challenges of their mission [Data: Entities (2); Relationships (26, 82, 175, 270)].
+Dr. Hayes collaborates closely with other key members of the Paranormal Military Squad, such as Alex Mercer and Taylor Cruz. Despite some tension with Cruz due to differing leadership styles, Dr. Hayes's analytical skills and adaptability are highly valued by their colleagues. They are involved in setting up lab stations, operating the mainframe, and playing a crucial role in the command center at Dulce Base. Their leadership style emphasizes adaptability and skepticism, which are crucial given the uncertainties and unknown challenges of their mission [Data: Entities (2); Relationships (26, 82, 175)].
 
-### Scientific Breakthroughs and Challenges
+### Scientific Breakthroughs
 
-Dr. Hayes is on the verge of significant scientific breakthroughs, as they lead efforts in isolating and understanding alien signals. Their work suggests that these signals are artificial and patterned, indicating a tandem evolution with humanity. This involves crafting humanity's responses to cosmic alignments with stars and responsive galactic signals, navigating the dark corridors of Dulce with a focus on the unknown variables and challenges beyond established protocols [Data: Entities (2); Claims (60, 83, 91, 134)].
+Dr. Hayes is on the verge of significant scientific breakthroughs, as they lead efforts in isolating and understanding alien signals. Their work suggests that these signals are artificial and patterned, indicating a tandem evolution with humanity. This potential breakthrough could fundamentally change our understanding of physics and the universe, as Dr. Hayes contemplates the profound implications of their findings [Data: Claims (60, 83, 91, 134); Sources (40, 18)].
 
-In summary, Dr. Jordan Hayes is a central figure in the efforts to understand and communicate with extraterrestrial entities, contributing significantly to the scientific and strategic objectives of the Paranormal Military Squad at Dulce Base. Their work is characterized by a blend of scientific rigor, adaptability, and a commitment to discovery, making them a vital asset to their team and mission.
+In summary, Dr. Jordan Hayes is a central figure in the efforts to understand and communicate with extraterrestrial entities. Their work at Dulce Base is characterized by a blend of scientific rigor, adaptability, and a commitment to discovery, making them an invaluable asset to the Paranormal Military Squad's mission.
 </pre>
 </div>
 </div>
@@ -3617,7 +3633,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <th>target</th>
 <th>description</th>
 <th>weight</th>
-<th>rank</th>
 <th>links</th>
 <th>in_context</th>
 </tr>
@@ -3630,7 +3645,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <td>DR. JORDAN HAYES</td>
 <td>Dr. Jordan Hayes and Jordan refer to the same ...</td>
 <td>1.0</td>
-<td>40</td>
 <td>1</td>
 <td>True</td>
 </tr>
@@ -3641,7 +3655,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <td>JORDAN</td>
 <td>Alex Mercer values Jordan's analytical approac...</td>
 <td>1.0</td>
-<td>79</td>
 <td>2</td>
 <td>True</td>
 </tr>
@@ -3652,7 +3665,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <td>DR. JORDAN HAYES</td>
 <td>Alex Mercer and Dr. Jordan Hayes are collabora...</td>
 <td>5.0</td>
-<td>75</td>
 <td>2</td>
 <td>True</td>
 </tr>
@@ -3663,7 +3675,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <td>JORDAN</td>
 <td>Jordan and Taylor Cruz are team members workin...</td>
 <td>4.0</td>
-<td>74</td>
 <td>2</td>
 <td>True</td>
 </tr>
@@ -3674,7 +3685,6 @@ In summary, Dr. Jordan Hayes is a central figure in the efforts to understand an
 <td>DR. JORDAN HAYES</td>
 <td>Dr. Jordan Hayes and Taylor Cruz are colleague...</td>
 <td>4.0</td>
-<td>70</td>
 <td>2</td>
 <td>True</td>
 </tr>

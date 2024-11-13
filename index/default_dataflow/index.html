@@ -12,7 +12,7 @@
         <link rel="prev" href="../architecture/">
       
       
-        <link rel="next" href="../../config/overview/">
+        <link rel="next" href="../outputs/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -848,6 +848,27 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../outputs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Outputs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -859,10 +880,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
         
           
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -873,8 +894,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             Configuration
           </label>
@@ -1879,7 +1900,8 @@
 <li><code>Entity</code> - An entity extracted from a TextUnit. These represent people, places, events, or some other entity-model that you provide.</li>
 <li><code>Relationship</code> - A relationship between two entities. These are generated from the covariates.</li>
 <li><code>Covariate</code> - Extracted claim information, which contains statements about entities which may be time-bound.</li>
-<li><code>Community Report</code> - Once entities are generated, we perform hierarchical community detection on them and generate reports for each community in this hierarchy.</li>
+<li><code>Community</code> - Once the graph of entities and relationships is built, we perform hierarchical community detection on them to create a clustering structure.</li>
+<li><code>Community Report</code> - The contents of each community are summarized into a generated report, useful for human reading and downstream search.</li>
 <li><code>Node</code> - This table contains layout information for rendered graph-views of the Entities and Documents which have been embedded and clustered.</li>
 </ul>
 <h2 id="the-default-configuration-workflow">The Default Configuration Workflow</h2>
@@ -2050,13 +2072,13 @@ flowchart LR
         
         
           
-          <a href="../../config/overview/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
+          <a href="../outputs/" class="md-footer__link md-footer__link--next" aria-label="Next: Outputs">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Overview
+                Outputs
               </div>
             </div>
             <div class="md-footer__button md-icon">
