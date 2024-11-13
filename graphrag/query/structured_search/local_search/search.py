@@ -63,25 +63,30 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
         search_prompt = ""
-
-        context_text, context_records = self.context_builder.build_context(
+        llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+        context_result = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **kwargs,
             **self.context_builder_params,
         )
+        llm_calls["build_context"] = context_result.llm_calls
+        prompt_tokens["build_context"] = context_result.prompt_tokens
+        output_tokens["build_context"] = context_result.output_tokens
+
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
             if "drift_query" in kwargs:
                 drift_query = kwargs["drift_query"]
                 search_prompt = self.system_prompt.format(
-                    context_data=context_text,
+                    context_data=context_result.context_chunks,
                     response_type=self.response_type,
                     global_query=drift_query,
                 )
             else:
                 search_prompt = self.system_prompt.format(
-                    context_data=context_text, response_type=self.response_type
+                    context_data=context_result.context_chunks,
+                    response_type=self.response_type,
                 )
             search_messages = [
                 {"role": "system", "content": search_prompt},
@@ -94,25 +99,33 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                 callbacks=self.callbacks,
                 **self.llm_params,
             )
+            llm_calls["response"] = 1
+            prompt_tokens["response"] = num_tokens(search_prompt, self.token_encoder)
+            output_tokens["response"] = num_tokens(response, self.token_encoder)
 
             return SearchResult(
                 response=response,
-                context_data=context_records,
-                context_text=context_text,
+                context_data=context_result.context_records,
+                context_text=context_result.context_chunks,
                 completion_time=time.time() - start_time,
-                llm_calls=1,
-                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                llm_calls=sum(llm_calls.values()),
+                prompt_tokens=sum(prompt_tokens.values()),
+                output_tokens=sum(output_tokens.values()),
+                llm_calls_categories=llm_calls,
+                prompt_tokens_categories=prompt_tokens,
+                output_tokens_categories=output_tokens,
             )
 
         except Exception:
             log.exception("Exception in _asearch")
             return SearchResult(
                 response="",
-                context_data=context_records,
-                context_text=context_text,
+                context_data=context_result.context_records,
+                context_text=context_result.context_chunks,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=0,
             )
 
     async def astream_search(
@@ -123,14 +136,14 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         """Build local search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
 
-        context_text, context_records = self.context_builder.build_context(
+        context_result = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         search_prompt = self.system_prompt.format(
-            context_data=context_text, response_type=self.response_type
+            context_data=context_result.context_chunks, response_type=self.response_type
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
@@ -138,7 +151,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         ]
 
         # send context records first before sending the reduce response
-        yield context_records
+        yield context_result.context_records
         async for response in self.llm.astream_generate(  # type: ignore
             messages=search_messages,
             callbacks=self.callbacks,
@@ -155,16 +168,22 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         """Build local search context that fits a single context window and generate answer for the user question."""
         start_time = time.time()
         search_prompt = ""
-        context_text, context_records = self.context_builder.build_context(
+        llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+        context_result = self.context_builder.build_context(
             query=query,
             conversation_history=conversation_history,
             **kwargs,
             **self.context_builder_params,
         )
+        llm_calls["build_context"] = context_result.llm_calls
+        prompt_tokens["build_context"] = context_result.prompt_tokens
+        output_tokens["build_context"] = context_result.output_tokens
+
         log.info("GENERATE ANSWER: %d. QUERY: %s", start_time, query)
         try:
             search_prompt = self.system_prompt.format(
-                context_data=context_text, response_type=self.response_type
+                context_data=context_result.context_chunks,
+                response_type=self.response_type,
             )
             search_messages = [
                 {"role": "system", "content": search_prompt},
@@ -177,23 +196,31 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                 callbacks=self.callbacks,
                 **self.llm_params,
             )
+            llm_calls["response"] = 1
+            prompt_tokens["response"] = num_tokens(search_prompt, self.token_encoder)
+            output_tokens["response"] = num_tokens(response, self.token_encoder)
 
             return SearchResult(
                 response=response,
-                context_data=context_records,
-                context_text=context_text,
+                context_data=context_result.context_records,
+                context_text=context_result.context_chunks,
                 completion_time=time.time() - start_time,
-                llm_calls=1,
-                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                llm_calls=sum(llm_calls.values()),
+                prompt_tokens=sum(prompt_tokens.values()),
+                output_tokens=sum(output_tokens.values()),
+                llm_calls_categories=llm_calls,
+                prompt_tokens_categories=prompt_tokens,
+                output_tokens_categories=output_tokens,
             )
 
         except Exception:
             log.exception("Exception in _map_response_single_batch")
             return SearchResult(
                 response="",
-                context_data=context_records,
-                context_text=context_text,
+                context_data=context_result.context_records,
+                context_text=context_result.context_chunks,
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=0,
             )

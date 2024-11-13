@@ -3,6 +3,8 @@
 
 """Query Factory methods to support CLI."""
 
+from copy import deepcopy
+
 import tiktoken
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
@@ -14,9 +16,7 @@ from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
-from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.drift_search.drift_context import (
     DRIFTSearchContextBuilder,
 )
@@ -156,16 +156,39 @@ def get_global_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
     entities: list[Entity],
+    communities: list[Community],
     response_type: str,
+    dynamic_community_selection: bool = False,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     token_encoder = tiktoken.get_encoding(config.encoding_model)
     gs_config = config.global_search
 
+    dynamic_community_selection_kwargs = {}
+    if dynamic_community_selection:
+        gs_config = config.global_search
+        _config = deepcopy(config)
+        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
+        dynamic_community_selection_kwargs.update({
+            "llm": get_llm(_config),
+            "token_encoder": tiktoken.encoding_for_model(gs_config.dynamic_search_llm),
+            "keep_parent": gs_config.dynamic_search_keep_parent,
+            "num_repeats": gs_config.dynamic_search_num_repeats,
+            "use_summary": gs_config.dynamic_search_use_summary,
+            "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+            "threshold": gs_config.dynamic_search_threshold,
+            "max_level": gs_config.dynamic_search_max_level,
+        })
+
     return GlobalSearch(
         llm=get_llm(config),
         context_builder=GlobalCommunityContext(
-            community_reports=reports, entities=entities, token_encoder=token_encoder
+            community_reports=reports,
+            communities=communities,
+            entities=entities,
+            token_encoder=token_encoder,
+            dynamic_community_selection=dynamic_community_selection,
+            dynamic_community_selection_kwargs=dynamic_community_selection_kwargs,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
