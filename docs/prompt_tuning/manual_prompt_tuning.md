@@ -8,7 +8,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ## Entity/Relationship Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/graph/prompts.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/entity_extraction.py)
 
 ### Tokens (values provided by extractor)
 
@@ -20,7 +20,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ## Summarize Entity/Relationship Descriptions
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/summarize/prompts.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/summarize_descriptions.py)
 
 ### Tokens (values provided by extractor)
 
@@ -29,7 +29,7 @@ Each of these prompts may be overridden by writing a custom prompt file in plain
 
 ## Claim Extraction
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/claims/prompts.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/claim_extraction.py)
 
 ### Tokens (values provided by extractor)
 
@@ -47,7 +47,7 @@ See the [configuration documentation](../config/overview.md) for details on how 
 
 ## Generate Community Reports
 
-[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/index/graph/extractors/community_reports/prompts.py)
+[Prompt Source](http://github.com/microsoft/graphrag/blob/main/graphrag/prompts/community_report.py)
 
 ### Tokens (values provided by extractor)
 

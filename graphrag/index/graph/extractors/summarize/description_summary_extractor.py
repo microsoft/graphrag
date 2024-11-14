@@ -10,8 +10,7 @@ from fnllm import ChatLLM
 
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
-
-from .prompts import SUMMARIZE_PROMPT
+from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
 DEFAULT_MAX_INPUT_TOKENS = 4_000

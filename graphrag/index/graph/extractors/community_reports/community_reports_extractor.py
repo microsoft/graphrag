@@ -12,8 +12,7 @@ from fnllm import ChatLLM
 from pydantic import BaseModel, Field
 
 from graphrag.index.typing import ErrorHandlerFn
-
-from .prompts import COMMUNITY_REPORT_PROMPT
+from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 
 log = logging.getLogger(__name__)
 

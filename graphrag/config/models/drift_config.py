@@ -11,6 +11,9 @@ import graphrag.config.defaults as defs
 class DRIFTSearchConfig(BaseModel):
     """The default configuration section for Cache."""
 
+    prompt: str | None = Field(
+        description="The drift search prompt to use.", default=None
+    )
     temperature: float = Field(
         description="The temperature to use for token generation.",
         default=defs.DRIFT_SEARCH_LLM_TEMPERATURE,

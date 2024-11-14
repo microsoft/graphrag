@@ -15,6 +15,16 @@ import pandas as pd
 import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
+from graphrag.prompts.query.global_search_knowledge_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+)
+from graphrag.prompts.query.global_search_map_system_prompt import (
+    MAP_SYSTEM_PROMPT,
+)
+from graphrag.prompts.query.global_search_reduce_system_prompt import (
+    NO_DATA_ANSWER,
+    REDUCE_SYSTEM_PROMPT,
+)
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -22,14 +32,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.query.structured_search.global_search.map_system_prompt import (
-    MAP_SYSTEM_PROMPT,
-)
-from graphrag.query.structured_search.global_search.reduce_system_prompt import (
-    GENERAL_KNOWLEDGE_INSTRUCTION,
-    NO_DATA_ANSWER,
-    REDUCE_SYSTEM_PROMPT,
-)
 
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,
@@ -61,11 +63,11 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         llm: BaseLLM,
         context_builder: GlobalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
-        map_system_prompt: str = MAP_SYSTEM_PROMPT,
-        reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
+        map_system_prompt: str | None = None,
+        reduce_system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         allow_general_knowledge: bool = False,
-        general_knowledge_inclusion_prompt: str = GENERAL_KNOWLEDGE_INSTRUCTION,
+        general_knowledge_inclusion_prompt: str | None = None,
         json_mode: bool = True,
         callbacks: list[GlobalSearchLLMCallback] | None = None,
         max_data_tokens: int = 8000,
@@ -80,11 +82,13 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             token_encoder=token_encoder,
             context_builder_params=context_builder_params,
         )
-        self.map_system_prompt = map_system_prompt
-        self.reduce_system_prompt = reduce_system_prompt
+        self.map_system_prompt = map_system_prompt or MAP_SYSTEM_PROMPT
+        self.reduce_system_prompt = reduce_system_prompt or REDUCE_SYSTEM_PROMPT
         self.response_type = response_type
         self.allow_general_knowledge = allow_general_knowledge
-        self.general_knowledge_inclusion_prompt = general_knowledge_inclusion_prompt
+        self.general_knowledge_inclusion_prompt = (
+            general_knowledge_inclusion_prompt or GENERAL_KNOWLEDGE_INSTRUCTION
+        )
         self.callbacks = callbacks
         self.max_data_tokens = max_data_tokens
 
@@ -349,10 +353,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             for point in filtered_key_points:
                 formatted_response_data = []
                 formatted_response_data.append(
-                    f'----Analyst {point["analyst"] + 1}----'
+                    f"----Analyst {point['analyst'] + 1}----"
                 )
                 formatted_response_data.append(
-                    f'Importance Score: {point["score"]}'  # type: ignore
+                    f"Importance Score: {point['score']}"  # type: ignore
                 )
                 formatted_response_data.append(point["answer"])  # type: ignore
                 formatted_response_text = "\n".join(formatted_response_data)
@@ -450,8 +454,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         total_tokens = 0
         for point in filtered_key_points:
             formatted_response_data = [
-                f'----Analyst {point["analyst"] + 1}----',
-                f'Importance Score: {point["score"]}',
+                f"----Analyst {point['analyst'] + 1}----",
+                f"Importance Score: {point['score']}",
                 point["answer"],
             ]
             formatted_response_text = "\n".join(formatted_response_data)
