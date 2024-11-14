@@ -64,11 +64,11 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         llm: BaseLLM,
         context_builder: GlobalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
-        map_system_prompt: str = MAP_SYSTEM_PROMPT,
-        reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
+        map_system_prompt: str | None = None,
+        reduce_system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         allow_general_knowledge: bool = False,
-        general_knowledge_inclusion_prompt: str = GENERAL_KNOWLEDGE_INSTRUCTION,
+        general_knowledge_inclusion_prompt: str | None = None,
         json_mode: bool = True,
         callbacks: list[GlobalSearchLLMCallback] | None = None,
         max_data_tokens: int = 8000,
@@ -83,11 +83,13 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             token_encoder=token_encoder,
             context_builder_params=context_builder_params,
         )
-        self.map_system_prompt = map_system_prompt
-        self.reduce_system_prompt = reduce_system_prompt
+        self.map_system_prompt = map_system_prompt or MAP_SYSTEM_PROMPT
+        self.reduce_system_prompt = reduce_system_prompt or REDUCE_SYSTEM_PROMPT
         self.response_type = response_type
         self.allow_general_knowledge = allow_general_knowledge
-        self.general_knowledge_inclusion_prompt = general_knowledge_inclusion_prompt
+        self.general_knowledge_inclusion_prompt = (
+            general_knowledge_inclusion_prompt or GENERAL_KNOWLEDGE_INSTRUCTION
+        )
         self.callbacks = callbacks
         self.max_data_tokens = max_data_tokens
 

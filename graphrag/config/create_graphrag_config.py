@@ -39,6 +39,7 @@ from .models import (
     ClaimExtractionConfig,
     ClusterGraphConfig,
     CommunityReportsConfig,
+    DRIFTSearchConfig,
     EmbedGraphConfig,
     EntityExtractionConfig,
     GlobalSearchConfig,
@@ -514,6 +515,7 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.local_search),
         ):
             local_search_model = LocalSearchConfig(
+                prompt=reader.str("prompt") or None,
                 text_unit_prop=reader.float("text_unit_prop")
                 or defs.LOCAL_SEARCH_TEXT_UNIT_PROP,
                 community_prop=reader.float("community_prop")
@@ -541,6 +543,9 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.global_search),
         ):
             global_search_model = GlobalSearchConfig(
+                map_prompt=reader.str("map_prompt") or None,
+                reduce_prompt=reader.str("reduce_prompt") or None,
+                knowledge_prompt=reader.str("knowledge_prompt") or None,
                 temperature=reader.float("llm_temperature")
                 or defs.GLOBAL_SEARCH_LLM_TEMPERATURE,
                 top_p=reader.float("llm_top_p") or defs.GLOBAL_SEARCH_LLM_TOP_P,
@@ -554,6 +559,54 @@ def create_graphrag_config(
                 reduce_max_tokens=reader.int("reduce_max_tokens")
                 or defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS,
                 concurrency=reader.int("concurrency") or defs.GLOBAL_SEARCH_CONCURRENCY,
+            )
+
+        with (
+            reader.use(values.get("drift_search")),
+            reader.envvar_prefix(Section.drift_search),
+        ):
+            drift_search_model = DRIFTSearchConfig(
+                prompt=reader.str("prompt") or None,
+                temperature=reader.float("llm_temperature")
+                or defs.DRIFT_SEARCH_LLM_TEMPERATURE,
+                top_p=reader.float("llm_top_p") or defs.DRIFT_SEARCH_LLM_TOP_P,
+                n=reader.int("llm_n") or defs.DRIFT_SEARCH_LLM_N,
+                max_tokens=reader.int(Fragment.max_tokens)
+                or defs.DRIFT_SEARCH_MAX_TOKENS,
+                data_max_tokens=reader.int("data_max_tokens")
+                or defs.DRIFT_SEARCH_DATA_MAX_TOKENS,
+                concurrency=reader.int("concurrency") or defs.DRIFT_SEARCH_CONCURRENCY,
+                drift_k_followups=reader.int("drift_k_followups")
+                or defs.DRIFT_SEARCH_K_FOLLOW_UPS,
+                primer_folds=reader.int("primer_folds")
+                or defs.DRIFT_SEARCH_PRIMER_FOLDS,
+                primer_llm_max_tokens=reader.int("primer_llm_max_tokens")
+                or defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS,
+                n_depth=reader.int("n_depth") or defs.DRIFT_N_DEPTH,
+                local_search_text_unit_prop=reader.float("local_search_text_unit_prop")
+                or defs.DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP,
+                local_search_community_prop=reader.float("local_search_community_prop")
+                or defs.DRIFT_LOCAL_SEARCH_COMMUNITY_PROP,
+                local_search_top_k_mapped_entities=reader.int(
+                    "local_search_top_k_mapped_entities"
+                )
+                or defs.DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
+                local_search_top_k_relationships=reader.int(
+                    "local_search_top_k_relationships"
+                )
+                or defs.DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
+                local_search_max_data_tokens=reader.int("local_search_max_data_tokens")
+                or defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS,
+                local_search_temperature=reader.float("local_search_temperature")
+                or defs.DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE,
+                local_search_top_p=reader.float("local_search_top_p")
+                or defs.DRIFT_LOCAL_SEARCH_LLM_TOP_P,
+                local_search_n=reader.int("local_search_n")
+                or defs.DRIFT_LOCAL_SEARCH_LLM_N,
+                local_search_llm_max_gen_tokens=reader.int(
+                    "local_search_llm_max_gen_tokens"
+                )
+                or defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS,
             )
 
         encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
@@ -583,6 +636,7 @@ def create_graphrag_config(
         skip_workflows=skip_workflows,
         local_search=local_search_model,
         global_search=global_search_model,
+        drift_search=drift_search_model,
     )
 
 
@@ -649,6 +703,7 @@ class Section(str, Enum):
     update_index_storage = "UPDATE_INDEX_STORAGE"
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
+    drift_search = "DRIFT_SEARCH"
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:

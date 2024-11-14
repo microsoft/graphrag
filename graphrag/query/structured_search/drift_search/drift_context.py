@@ -51,7 +51,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         token_encoder: tiktoken.Encoding | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         config: DRIFTSearchConfig | None = None,
-        local_system_prompt: str = DRIFT_LOCAL_SYSTEM_PROMPT,
+        local_system_prompt: str | None = None,
         local_mixed_context: LocalSearchMixedContext | None = None,
     ):
         """Initialize the DRIFT search context builder with necessary components."""
@@ -59,7 +59,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.chat_llm = chat_llm
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
-        self.local_system_prompt = local_system_prompt
+        self.local_system_prompt = local_system_prompt or DRIFT_LOCAL_SYSTEM_PROMPT
 
         self.entities = entities
         self.entity_text_embeddings = entity_text_embeddings

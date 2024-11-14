@@ -37,7 +37,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         llm: BaseLLM,
         context_builder: LocalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
-        system_prompt: str = LOCAL_SEARCH_SYSTEM_PROMPT,
+        system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         callbacks: list[BaseLLMCallback] | None = None,
         llm_params: dict[str, Any] = DEFAULT_LLM_PARAMS,
@@ -50,7 +50,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             llm_params=llm_params,
             context_builder_params=context_builder_params or {},
         )
-        self.system_prompt = system_prompt
+        self.system_prompt = system_prompt or LOCAL_SEARCH_SYSTEM_PROMPT
         self.callbacks = callbacks
         self.response_type = response_type
 
