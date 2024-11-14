@@ -8,7 +8,6 @@ import pandas as pd
 from graphrag.model.community import Community
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.covariate import Covariate
-from graphrag.model.document import Document
 from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
