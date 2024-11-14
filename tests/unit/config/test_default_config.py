@@ -36,6 +36,7 @@ from graphrag.config.input_models.cluster_graph_config_input import (
 )
 from graphrag.config.input_models.community_reports_config_input import (
     CommunityReportsConfigInput,
+    DRIFTSearchConfig,
 )
 from graphrag.config.input_models.embed_graph_config_input import EmbedGraphConfigInput
 from graphrag.config.input_models.entity_extraction_config_input import (
@@ -220,6 +221,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert ClaimExtractionConfig is not None
         assert ClusterGraphConfig is not None
         assert CommunityReportsConfig is not None
+        assert DRIFTSearchConfig is not None
         assert EmbedGraphConfig is not None
         assert EntityExtractionConfig is not None
         assert GlobalSearchConfig is not None

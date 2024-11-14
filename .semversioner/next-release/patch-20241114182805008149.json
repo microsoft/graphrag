@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add Parquet as part of the default emitters when not pressent"
+}
