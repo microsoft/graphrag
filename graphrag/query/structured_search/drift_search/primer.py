@@ -15,13 +15,13 @@ from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_config import DRIFTSearchConfig
 from graphrag.model import CommunityReport
+from graphrag.prompts.query.drift_search_system_prompt import (
+    DRIFT_PRIMER_PROMPT,
+)
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import SearchResult
-from graphrag.query.structured_search.drift_search.system_prompt import (
-    DRIFT_PRIMER_PROMPT,
-)
 
 log = logging.getLogger(__name__)
 

@@ -13,8 +13,7 @@ import tiktoken
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.llm import CompletionLLM
-
-from .prompts import (
+from graphrag.prompts.index.claim_extraction import (
     CLAIM_EXTRACTION_PROMPT,
     CONTINUE_PROMPT,
     LOOP_PROMPT,
