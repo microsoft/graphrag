@@ -13,6 +13,7 @@ from .chunking_config import ChunkingConfig
 from .claim_extraction_config import ClaimExtractionConfig
 from .cluster_graph_config import ClusterGraphConfig
 from .community_reports_config import CommunityReportsConfig
+from .drift_config import DRIFTSearchConfig
 from .embed_graph_config import EmbedGraphConfig
 from .entity_extraction_config import EntityExtractionConfig
 from .global_search_config import GlobalSearchConfig
@@ -53,6 +54,12 @@ class GraphRagConfig(LLMConfig):
         description="The storage configuration.", default=StorageConfig()
     )
     """The storage configuration."""
+
+    update_index_storage: StorageConfig | None = Field(
+        description="The storage configuration for the updated index.",
+        default=None,
+    )
+    """The storage configuration for the updated index."""
 
     cache: CacheConfig = Field(
         description="The cache configuration.", default=CacheConfig()
@@ -134,6 +141,11 @@ class GraphRagConfig(LLMConfig):
         description="The global search configuration.", default=GlobalSearchConfig()
     )
     """The global search configuration."""
+
+    drift_search: DRIFTSearchConfig = Field(
+        description="The drift search configuration.", default=DRIFTSearchConfig()
+    )
+    """The drift search configuration."""
 
     encoding_model: str = Field(
         description="The encoding model to use.", default=defs.ENCODING_MODEL

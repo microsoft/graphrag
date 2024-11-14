@@ -36,20 +36,13 @@ def restore_community_hierarchy(
 
     # get unique levels, sorted in ascending order
     levels = sorted(community_levels.keys())
-
     community_hierarchy = []
 
     for idx in range(len(levels) - 1):
         level = levels[idx]
-        log.debug("Level: %s", level)
         next_level = levels[idx + 1]
         current_level_communities = community_levels[level]
         next_level_communities = community_levels[next_level]
-        log.debug(
-            "Number of communities at level %s: %s",
-            level,
-            len(current_level_communities),
-        )
 
         for current_community in current_level_communities:
             current_entities = current_level_communities[current_community]
@@ -70,4 +63,6 @@ def restore_community_hierarchy(
                     if entities_found == len(current_entities):
                         break
 
-    return pd.DataFrame(community_hierarchy)
+    return pd.DataFrame(
+        community_hierarchy,
+    )

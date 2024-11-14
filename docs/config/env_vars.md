@@ -9,8 +9,8 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 ### Embedded Fields
 
 - `text_unit.text`
-- `document.raw_content`
-- `entity.name`
+- `document.text`
+- `entity.title`
 - `entity.description`
 - `relationship.description`
 - `community.title`
@@ -199,11 +199,13 @@ This section controls the reporting mechanism used by the pipeline, for common e
 
 ## Data Snapshotting
 
-| Parameter                           | Description                                 | Type   | Required or Optional | Default |
-| ----------------------------------- | ------------------------------------------- | ------ | -------------------- | ------- |
-| `GRAPHRAG_SNAPSHOT_GRAPHML`         | Whether to enable GraphML snapshots.        | `bool` | optional             | False   |
-| `GRAPHRAG_SNAPSHOT_RAW_ENTITIES`    | Whether to enable raw entity snapshots.     | `bool` | optional             | False   |
-| `GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES` | Whether to enable top-level node snapshots. | `bool` | optional             | False   |
+| Parameter                              | Description                                     | Type   | Required or Optional | Default |
+| -------------------------------------- | ----------------------------------------------- | ------ | -------------------- | ------- |
+| `GRAPHRAG_SNAPSHOT_EMBEDDINGS`         | Whether to enable embeddings snapshots.         | `bool` | optional             | False   |
+| `GRAPHRAG_SNAPSHOT_GRAPHML`            | Whether to enable GraphML snapshots.            | `bool` | optional             | False   |
+| `GRAPHRAG_SNAPSHOT_RAW_ENTITIES`       | Whether to enable raw entity snapshots.         | `bool` | optional             | False   |
+| `GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES`    | Whether to enable top-level node snapshots.     | `bool` | optional             | False   |
+| `GRAPHRAG_SNAPSHOT_TRANSIENT`          | Whether to enable transient table snapshots.    | `bool` | optional             | False   |
 
 # Miscellaneous Settings
 

@@ -16,10 +16,10 @@ from graphrag.logging import ReporterType
 from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
 from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
 
-from .index import index_cli
+from .index import index_cli, update_cli
 from .initialize import initialize_project_at
 from .prompt_tune import prompt_tune
-from .query import run_global_search, run_local_search
+from .query import run_drift_search, run_global_search, run_local_search
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -34,6 +34,7 @@ class SearchType(Enum):
 
     LOCAL = "local"
     GLOBAL = "global"
+    DRIFT = "drift"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -102,12 +103,6 @@ def _index_cli(
             help="Skip any preflight validation. Useful when running no LLM steps."
         ),
     ] = False,
-    update_index: Annotated[
-        str | None,
-        typer.Option(
-            help="Update an index run id, leveraging previous outputs and applying new indexes."
-        ),
-    ] = None,
     output: Annotated[
         Path | None,
         typer.Option(
@@ -119,21 +114,81 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
-    if resume and update_index:
-        msg = "Cannot resume and update a run at the same time"
-        raise ValueError(msg)
-
     index_cli(
         root_dir=root,
         verbose=verbose,
         resume=resume,
-        update_index_id=update_index,
         memprofile=memprofile,
         cache=cache,
         reporter=ReporterType(reporter),
         config_filepath=config,
         emit=[TableEmitterType(value.strip()) for value in emit.split(",")],
         dry_run=dry_run,
+        skip_validation=skip_validation,
+        output_dir=output,
+    )
+
+
+@app.command("update")
+def _update_cli(
+    config: Annotated[
+        Path | None,
+        typer.Option(
+            help="The configuration to use.", exists=True, file_okay=True, readable=True
+        ),
+    ] = None,
+    root: Annotated[
+        Path,
+        typer.Option(
+            help="The project root directory.",
+            exists=True,
+            dir_okay=True,
+            writable=True,
+            resolve_path=True,
+        ),
+    ] = Path(),  # set default to current directory
+    verbose: Annotated[
+        bool, typer.Option(help="Run the indexing pipeline with verbose logging")
+    ] = False,
+    memprofile: Annotated[
+        bool, typer.Option(help="Run the indexing pipeline with memory profiling")
+    ] = False,
+    reporter: Annotated[
+        ReporterType, typer.Option(help="The progress reporter to use.")
+    ] = ReporterType.RICH,
+    emit: Annotated[
+        str, typer.Option(help="The data formats to emit, comma-separated.")
+    ] = TableEmitterType.Parquet.value,
+    cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
+    skip_validation: Annotated[
+        bool,
+        typer.Option(
+            help="Skip any preflight validation. Useful when running no LLM steps."
+        ),
+    ] = False,
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            dir_okay=True,
+            writable=True,
+            resolve_path=True,
+        ),
+    ] = None,
+):
+    """
+    Update an existing knowledge graph index.
+
+    Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
+    """
+    update_cli(
+        root_dir=root,
+        verbose=verbose,
+        memprofile=memprofile,
+        cache=cache,
+        reporter=ReporterType(reporter),
+        config_filepath=config,
+        emit=[TableEmitterType(value.strip()) for value in emit.split(",")],
         skip_validation=skip_validation,
         output_dir=output,
     )
@@ -272,6 +327,10 @@ def _query_cli(
             help="The community level in the Leiden community hierarchy from which to load community reports. Higher values represent reports from smaller communities."
         ),
     ] = 2,
+    dynamic_community_selection: Annotated[
+        bool,
+        typer.Option(help="Use global search with dynamic community selection."),
+    ] = False,
     response_type: Annotated[
         str,
         typer.Option(
@@ -300,8 +359,18 @@ def _query_cli(
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
                 streaming=streaming,
+                query=query,
+            )
+        case SearchType.DRIFT:
+            run_drift_search(
+                config_filepath=config,
+                data_dir=data,
+                root_dir=root,
+                community_level=community_level,
+                streaming=False,  # Drift search does not support streaming (yet)
                 query=query,
             )
         case _:

@@ -49,7 +49,7 @@ embeddings:
     # api_key: <api_key> # if not set, will attempt to use managed identity. Expects the `Search Index Data Contributor` RBAC role in this case.
     # audience: <optional> # if using managed identity, the audience to use for the token
     # overwrite: true # or false. Only applicable at index creation time
-    # collection_name: <collection_name> # the name of the collection to use
+    # container_name: default # A prefix for the AzureAISearch to create indexes. Default: 'default'.
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -87,6 +87,12 @@ cache:
 storage:
   type: {defs.STORAGE_TYPE.value} # or blob
   base_dir: "{defs.STORAGE_BASE_DIR}"
+  # connection_string: <azure_blob_storage_connection_string>
+  # container_name: <azure_blob_storage_container_name>
+
+update_index_storage: # Storage to save an updated index (for incremental indexing). Enabling this performs an incremental index run
+  # type: {defs.STORAGE_TYPE.value} # or blob
+  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
   # connection_string: <azure_blob_storage_connection_string>
   # container_name: <azure_blob_storage_container_name>
 
@@ -148,8 +154,11 @@ snapshots:
   graphml: false
   raw_entities: false
   top_level_nodes: false
+  embeddings: false
+  transient: false
 
 local_search:
+  prompt: "prompts/local_search_system_prompt.txt"
   # text_unit_prop: {defs.LOCAL_SEARCH_TEXT_UNIT_PROP}
   # community_prop: {defs.LOCAL_SEARCH_COMMUNITY_PROP}
   # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
@@ -161,6 +170,9 @@ local_search:
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
+  map_prompt: "prompts/global_search_map_system_prompt.txt"
+  reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
+  knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
   # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
   # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
   # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
@@ -169,6 +181,28 @@ global_search:
   # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}
   # reduce_max_tokens: {defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS}
   # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
+
+drift_search:
+  prompt: "prompts/drift_search_system_prompt.txt"
+  # temperature: {defs.DRIFT_SEARCH_LLM_TEMPERATURE}
+  # top_p: {defs.DRIFT_SEARCH_LLM_TOP_P}
+  # n: {defs.DRIFT_SEARCH_LLM_N}
+  # max_tokens: {defs.DRIFT_SEARCH_MAX_TOKENS}
+  # data_max_tokens: {defs.DRIFT_SEARCH_DATA_MAX_TOKENS}
+  # concurrency: {defs.DRIFT_SEARCH_CONCURRENCY}
+  # drift_k_followups: {defs.DRIFT_SEARCH_K_FOLLOW_UPS}
+  # primer_folds: {defs.DRIFT_SEARCH_PRIMER_FOLDS}
+  # primer_llm_max_tokens: {defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS}
+  # n_depth: {defs.DRIFT_N_DEPTH}
+  # local_search_text_unit_prop: {defs.DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP}
+  # local_search_community_prop: {defs.DRIFT_LOCAL_SEARCH_COMMUNITY_PROP}
+  # local_search_top_k_mapped_entities: {defs.DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
+  # local_search_top_k_relationships: {defs.DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
+  # local_search_max_data_tokens: {defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS}
+  # local_search_temperature: {defs.DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE}
+  # local_search_top_p: {defs.DRIFT_LOCAL_SEARCH_LLM_TOP_P}
+  # local_search_n: {defs.DRIFT_LOCAL_SEARCH_LLM_N}
+  # local_search_llm_max_gen_tokens: {defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS}
 """
 
 INIT_DOTENV = """\

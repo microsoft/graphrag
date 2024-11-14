@@ -23,12 +23,8 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     # stick all the inputs in a map - Workflow looks them up by name
     input_tables: dict[str, pd.DataFrame] = {}
 
-    # all workflows implicitly receive the `input` source, which is formatted as a dataframe after loading from storage
-    # we'll simulate that by just loading one of our output parquets and converting back to equivalent dataframe
-    # so we aren't dealing with storage vagaries (which would become an integration test)
-    source = pd.read_parquet("tests/verbs/data/create_final_documents.parquet")
-    source.rename(columns={"raw_content": "text"}, inplace=True)
-    input_tables["source"] = cast(pd.DataFrame, source[["id", "text", "title"]])
+    source = pd.read_parquet("tests/verbs/data/source_documents.parquet")
+    input_tables["source"] = source
 
     for input in inputs:
         # remove the workflow: prefix if it exists, because that is not part of the actual table filename
@@ -82,7 +78,8 @@ def compare_outputs(
     actual: pd.DataFrame, expected: pd.DataFrame, columns: list[str] | None = None
 ) -> None:
     """Compare the actual and expected dataframes, optionally specifying columns to compare.
-    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output."""
+    This uses assert_series_equal since we are sometimes intentionally omitting columns from the actual output.
+    """
     cols = expected.columns if columns is None else columns
 
     assert len(actual) == len(

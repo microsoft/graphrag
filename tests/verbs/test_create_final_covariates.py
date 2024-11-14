@@ -52,20 +52,17 @@ async def test_create_final_covariates():
     )
 
     input = input_tables["workflow:create_base_text_units"]
-    # we removed the subject_type and object_type columns so expect two less columns than the pre-refactor outputs
-    assert len(actual.columns) == (len(expected.columns) - 2)
+
+    assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
     assert len(actual) == len(input)
 
     # assert all of the columns that covariates copied from the input
     assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
-    assert_series_equal(actual["text_unit_id"], input["chunk_id"], check_names=False)
-    assert_series_equal(actual["document_ids"], input["document_ids"])
-    assert_series_equal(actual["n_tokens"], input["n_tokens"])
 
-    # make sure the human ids are incrementing and cast to strings
-    assert actual["human_readable_id"][0] == "1"
-    assert actual["human_readable_id"][1] == "2"
+    # make sure the human ids are incrementing
+    assert actual["human_readable_id"][0] == 1
+    assert actual["human_readable_id"][1] == 2
 
     # check that the mock data is parsed and inserted into the correct columns
     assert actual["covariate_type"][0] == "claim"

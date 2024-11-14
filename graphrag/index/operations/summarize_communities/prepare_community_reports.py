@@ -173,4 +173,7 @@ def _prepare_reports_at_level(
     set_context_exceeds_flag(community_df, max_tokens)
 
     community_df[schemas.COMMUNITY_LEVEL] = level
+    community_df[node_community_column] = community_df[node_community_column].astype(
+        int
+    )
     return community_df

@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "remove redundant error-handling code from global-search"
-}
