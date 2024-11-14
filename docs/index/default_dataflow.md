@@ -9,7 +9,8 @@ The knowledge model is a specification for data outputs that conform to our data
 - `Entity` - An entity extracted from a TextUnit. These represent people, places, events, or some other entity-model that you provide.
 - `Relationship` - A relationship between two entities. These are generated from the covariates.
 - `Covariate` - Extracted claim information, which contains statements about entities which may be time-bound.
-- `Community Report` - Once entities are generated, we perform hierarchical community detection on them and generate reports for each community in this hierarchy.
+- `Community` - Once the graph of entities and relationships is built, we perform hierarchical community detection on them to create a clustering structure.
+- `Community Report` - The contents of each community are summarized into a generated report, useful for human reading and downstream search.
 - `Node` - This table contains layout information for rendered graph-views of the Entities and Documents which have been embedded and clustered.
 
 ## The Default Configuration Workflow

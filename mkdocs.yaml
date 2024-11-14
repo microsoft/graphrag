@@ -29,6 +29,7 @@ nav:
       - Overview: "index/overview.md"
       - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
+      - Outputs: "index/outputs.md"
       - Configuration:
           - Overview: "config/overview.md"
           - Init Command: "config/init.md"

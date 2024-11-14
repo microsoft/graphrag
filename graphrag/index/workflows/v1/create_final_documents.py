@@ -17,16 +17,16 @@ def build_steps(
     Create the final documents table.
 
     ## Dependencies
-    * `workflow:create_final_text_units`
+    * `workflow:create_base_text_units`
     """
-    document_attribute_columns = config.get("document_attribute_columns", [])
+    document_attribute_columns = config.get("document_attribute_columns", None)
     return [
         {
             "verb": "create_final_documents",
             "args": {"document_attribute_columns": document_attribute_columns},
             "input": {
                 "source": DEFAULT_INPUT_NAME,
-                "text_units": "workflow:create_final_text_units",
+                "text_units": "workflow:create_base_text_units",
             },
         },
     ]

@@ -35,7 +35,7 @@ async def create_final_community_reports(
     """All the steps to transform community reports."""
     nodes = cast(pd.DataFrame, input.get_input())
     edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
-
+    entities = cast(pd.DataFrame, get_required_input_table(input, "entities").table)
     communities = cast(
         pd.DataFrame, get_required_input_table(input, "communities").table
     )
@@ -47,6 +47,7 @@ async def create_final_community_reports(
     output = await create_final_community_reports_flow(
         nodes,
         edges,
+        entities,
         communities,
         claims,
         callbacks,

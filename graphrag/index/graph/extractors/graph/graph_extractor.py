@@ -227,8 +227,8 @@ class GraphExtractor:
                                 str(source_doc_id),
                             })
                         )
-                        node["entity_type"] = (
-                            entity_type if entity_type != "" else node["entity_type"]
+                        node["type"] = (
+                            entity_type if entity_type != "" else node["type"]
                         )
                     else:
                         graph.add_node(
