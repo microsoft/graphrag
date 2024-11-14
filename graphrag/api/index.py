@@ -59,6 +59,10 @@ async def build_index(
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
 
+    # Ensure Parquet is part of the emitters
+    if TableEmitterType.Parquet not in emit:
+        emit.append(TableEmitterType.Parquet)
+
     config = _patch_vector_config(config)
 
     pipeline_config = create_pipeline_config(config)
