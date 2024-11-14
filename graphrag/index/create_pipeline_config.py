@@ -418,7 +418,6 @@ def _get_storage_config(
         case StorageType.cosmosdb:
             cosmosdb_account_url = storage_settings.cosmosdb_account_url
             connection_string = storage_settings.connection_string
-            container_name = storage_settings.container_name
             base_dir = storage_settings.base_dir
             if cosmosdb_account_url is None:
                 msg = "CosmosDB account url must be provided for cosmosdb storage."
@@ -429,7 +428,6 @@ def _get_storage_config(
             return PipelineCosmosDBStorageConfig(
                 cosmosdb_account_url=cosmosdb_account_url,
                 connection_string=connection_string,
-                container_name=container_name,
                 base_dir=storage_settings.base_dir,
             )
         case _:
