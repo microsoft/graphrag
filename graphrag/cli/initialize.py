@@ -7,6 +7,7 @@ from pathlib import Path
 
 from graphrag.index.init_content import INIT_DOTENV, INIT_YAML
 from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.types import ReporterType
 from graphrag.prompts.index.claim_extraction import CLAIM_EXTRACTION_PROMPT
 from graphrag.prompts.index.community_report import (
     COMMUNITY_REPORT_PROMPT,
@@ -23,7 +24,6 @@ from graphrag.prompts.query.global_search_reduce_system_prompt import (
 )
 from graphrag.prompts.query.local_search_system_prompt import LOCAL_SEARCH_SYSTEM_PROMPT
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
-from graphrag.logging.types import ReporterType
 
 
 def initialize_project_at(path: Path) -> None:
