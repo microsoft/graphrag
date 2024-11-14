@@ -53,7 +53,7 @@ async def _load_table_from_storage(name: str, storage: PipelineStorage) -> pd.Da
             case "json":
                 return pd.read_json(
                     BytesIO(await storage.get(name, as_bytes=True)),
-                    lines=True,
+                    lines=False,
                     orient="records",
                 )
             case "csv":
