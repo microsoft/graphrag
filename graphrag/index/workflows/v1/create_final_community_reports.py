@@ -26,6 +26,7 @@ def build_steps(
     input = {
         "source": "workflow:create_final_nodes",
         "relationships": "workflow:create_final_relationships",
+        "entities": "workflow:create_final_entities",
         "communities": "workflow:create_final_communities",
     }
     if covariates_enabled:

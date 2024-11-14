@@ -81,8 +81,3 @@ Add sections and commentary to the response as appropriate for the length and fo
 NO_DATA_ANSWER = (
     "I am sorry but I am unable to answer this question given the provided data."
 )
-
-GENERAL_KNOWLEDGE_INSTRUCTION = """
-The response may also include relevant real-world knowledge outside the dataset, but it must be explicitly annotated with a verification tag [LLM: verify]. For example:
-"This is an example sentence supported by real-world knowledge [LLM: verify]."
-"""

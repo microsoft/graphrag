@@ -9,6 +9,7 @@ from typing import Any
 
 import tiktoken
 
+from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
 from graphrag.query.context_builder.builders import LocalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -16,7 +17,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
-from graphrag.query.question_gen.system_prompt import QUESTION_SYSTEM_PROMPT
 
 log = logging.getLogger(__name__)
 
