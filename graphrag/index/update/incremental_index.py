@@ -282,7 +282,7 @@ async def _update_entities(
         old_entities, delta_entities
     )
 
-    # Re-run description summarization and embeddings
+    # Re-run description summarization
     merged_entities_df = await _run_entity_summarization(
         merged_entities_df,
         config,

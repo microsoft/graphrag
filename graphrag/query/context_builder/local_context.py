@@ -288,7 +288,12 @@ def _filter_relationships(
         )
 
     # sort by attributes[links] first, then by ranking_attribute
-    if relationship_ranking_attribute == "weight":
+    if relationship_ranking_attribute == "rank":
+        out_network_relationships.sort(
+            key=lambda x: (x.attributes["links"], x.rank),  # type: ignore
+            reverse=True,  # type: ignore
+        )
+    elif relationship_ranking_attribute == "weight":
         out_network_relationships.sort(
             key=lambda x: (x.attributes["links"], x.weight),  # type: ignore
             reverse=True,  # type: ignore

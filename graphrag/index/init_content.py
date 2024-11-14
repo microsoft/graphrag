@@ -154,6 +154,8 @@ snapshots:
   graphml: false
   raw_entities: false
   top_level_nodes: false
+  embeddings: false
+  transient: false
 
 local_search:
   prompt: "prompts/local_search_system_prompt.txt"

@@ -58,16 +58,32 @@ async def create_final_nodes(
             formats=["json"],
         )
 
-    nodes.rename(columns={"id": "top_level_node_id"}, inplace=True)
-    nodes["top_level_node_id"] = nodes["top_level_node_id"].astype(str)
-
     joined = nodes_without_positions.merge(
         nodes,
-        left_on="id",
-        right_on="top_level_node_id",
+        on="id",
         how="inner",
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
+    joined["community"] = joined["community"].fillna(-1).astype(int)
 
-    # TODO: Find duplication source
-    return joined.drop_duplicates(subset=["title", "community"])
+    # drop anything that isn't graph-related or needing to be preserved
+    # the rest can be looked up on the canonical entities table
+    joined.drop(
+        columns=["source_id", "type", "description", "size", "graph_embedding"],
+        inplace=True,
+    )
+
+    deduped = joined.drop_duplicates(subset=["title", "community"])
+    return deduped.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]
