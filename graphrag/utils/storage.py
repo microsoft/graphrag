@@ -47,7 +47,21 @@ async def _load_table_from_storage(name: str, storage: PipelineStorage) -> pd.Da
         raise ValueError(msg)
     try:
         log.info("read table from storage: %s", name)
-        return pd.read_parquet(BytesIO(await storage.get(name, as_bytes=True)))
+        match name.split(".")[-1]:
+            case "parquet":
+                return pd.read_parquet(BytesIO(await storage.get(name, as_bytes=True)))
+            case "json":
+                return pd.read_json(
+                    BytesIO(await storage.get(name, as_bytes=True)),
+                    lines=True,
+                    orient="records",
+                )
+            case "csv":
+                return pd.read_csv(BytesIO(await storage.get(name, as_bytes=True)))
+            case _:
+                msg = f"Unknown file extension for {name}"
+                log.exception(msg)
+                raise
     except Exception:
         log.exception("error loading table from storage: %s", name)
         raise

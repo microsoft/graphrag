@@ -35,9 +35,8 @@ def _merge_and_resolve_nodes(
 
     # Merge delta_nodes with merged_entities_df to get the new human_readable_id
     delta_nodes = delta_nodes.merge(
-        merged_entities_df[["name", "human_readable_id"]],
-        left_on="title",
-        right_on="name",
+        merged_entities_df[["id", "human_readable_id"]],
+        on="id",
         how="left",
         suffixes=("", "_new"),
     )
@@ -48,7 +47,7 @@ def _merge_and_resolve_nodes(
     ].combine_first(delta_nodes.loc[:, "human_readable_id"])
 
     # Drop the auxiliary column from the merge
-    delta_nodes.drop(columns=["name", "human_readable_id_new"], inplace=True)
+    delta_nodes.drop(columns=["human_readable_id_new"], inplace=True)
 
     # Increment only the non-NaN values in delta_nodes["community"]
     community_id_mapping = {
@@ -64,36 +63,29 @@ def _merge_and_resolve_nodes(
     # Concat the DataFrames
     concat_nodes = pd.concat([old_nodes, delta_nodes], ignore_index=True)
     columns_to_agg: dict[str, str | Callable] = {
-        col: "first"
-        for col in concat_nodes.columns
-        if col not in ["source_id", "level", "title"]
+        col: "first" for col in concat_nodes.columns if col not in ["level", "title"]
     }
-
-    # Specify custom aggregation for description and source_id
-    columns_to_agg.update({
-        "source_id": lambda x: ",".join(str(i) for i in x.tolist()),
-    })
 
     merged_nodes = (
         concat_nodes.groupby(["level", "title"]).agg(columns_to_agg).reset_index()
     )
 
-    # Use description from merged_entities_df
-    merged_nodes = (
-        merged_nodes.drop(columns=["description"])
-        .merge(
-            merged_entities_df[["name", "description"]],
-            left_on="title",
-            right_on="name",
-            how="left",
-        )
-        .drop(columns=["name"])
-    )
+    merged_nodes["community"] = merged_nodes["community"].astype(int)
+    merged_nodes["human_readable_id"] = merged_nodes["human_readable_id"].astype(int)
 
-    # Mantain type compat with query
-    merged_nodes["community"] = (
-        merged_nodes["community"].astype(pd.StringDtype()).astype("object")
-    )
+    merged_nodes = merged_nodes.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]
 
     return merged_nodes, community_id_mapping
 
@@ -132,13 +124,13 @@ def _update_and_merge_communities(
         delta_communities["period"] = None
 
     # Look for community ids in community and replace them with the corresponding id in the mapping
-    delta_communities["id"] = (
-        delta_communities["id"]
-        .astype("Int64")
+    delta_communities["community"] = (
+        delta_communities["community"]
+        .astype(int)
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
-    old_communities["id"] = old_communities["id"].astype("Int64")
+    old_communities["community"] = old_communities["community"].astype(int)
 
     # Merge the final communities
     merged_communities = pd.concat(
@@ -146,10 +138,27 @@ def _update_and_merge_communities(
     )
 
     # Rename title
-    merged_communities["title"] = "Community " + merged_communities["id"].astype(str)
-    # Mantain type compat with query
-    merged_communities["id"] = merged_communities["id"].astype(str)
-    return merged_communities
+    merged_communities["title"] = "Community " + merged_communities["community"].astype(
+        str
+    )
+    # Re-assign the human_readable_id
+    merged_communities["human_readable_id"] = merged_communities["community"]
+
+    return merged_communities.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "level",
+            "title",
+            "entity_ids",
+            "relationship_ids",
+            "text_unit_ids",
+            "period",
+            "size",
+        ],
+    ]
 
 
 def _update_and_merge_community_reports(
@@ -188,22 +197,41 @@ def _update_and_merge_community_reports(
     # Look for community ids in community and replace them with the corresponding id in the mapping
     delta_community_reports["community"] = (
         delta_community_reports["community"]
-        .astype("Int64")
+        .astype(int)
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
-    old_community_reports["community"] = old_community_reports["community"].astype(
-        "Int64"
-    )
+    old_community_reports["community"] = old_community_reports["community"].astype(int)
 
     # Merge the final community reports
     merged_community_reports = pd.concat(
         [old_community_reports, delta_community_reports], ignore_index=True, copy=False
     )
 
-    # Mantain type compat with query
-    merged_community_reports["community"] = (
-        merged_community_reports["community"].astype(pd.StringDtype()).astype("object")
-    )
+    # Maintain type compat with query
+    merged_community_reports["community"] = merged_community_reports[
+        "community"
+    ].astype(int)
+    # Re-assign the human_readable_id
+    merged_community_reports["human_readable_id"] = merged_community_reports[
+        "community"
+    ]
 
-    return merged_community_reports
+    return merged_community_reports.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "level",
+            "title",
+            "summary",
+            "full_content",
+            "rank",
+            "rank_explanation",
+            "findings",
+            "full_content_json",
+            "period",
+            "size",
+        ],
+    ]

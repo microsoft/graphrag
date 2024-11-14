@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix issue when using emitters that are not the default parque output"
+}
