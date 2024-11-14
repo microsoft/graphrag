@@ -31,7 +31,9 @@ app = typer.Typer(
 
 
 # A workaround for typer's lack of support for proper autocompletion of file/directory paths
-# For more detail, see https://github.com/fastapi/typer/discussions/682
+# For more detail, watch
+#   https://github.com/fastapi/typer/discussions/682
+#   https://github.com/fastapi/typer/issues/951
 def path_autocomplete(
     file_okay: bool = True,
     dir_okay: bool = True,
