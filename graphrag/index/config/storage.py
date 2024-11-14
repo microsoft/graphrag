@@ -77,7 +77,7 @@ class PipelineCosmosDBStorageConfig(PipelineStorageConfig[Literal[StorageType.co
     )
     """The cosmosdb storage primary key for the storage."""
 
-    base_dir: str | None = pydantic_Field(
+    base_dir: str = pydantic_Field(
         description="The base directory for the storage.", default=None
     )
     """The base directory for the storage."""

@@ -79,7 +79,7 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     type: Literal[CacheType.cosmosdb] = CacheType.cosmosdb
     """The type of cache."""
 
-    base_dir: str | None = pydantic_Field(
+    base_dir: str = pydantic_Field(
         description="The base directory for the cache.", default=None
     )
     """The base directory for the cache."""

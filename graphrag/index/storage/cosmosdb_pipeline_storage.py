@@ -287,7 +287,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 def create_cosmosdb_storage(
     cosmosdb_account_url: str | None,
     connection_string: str | None,
-    base_dir: str | None,
+    base_dir: str,
     container_name: str | None,
 ) -> PipelineStorage:
     """Create a CosmosDB storage instance."""
