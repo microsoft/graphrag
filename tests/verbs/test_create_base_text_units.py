@@ -60,6 +60,6 @@ async def test_create_base_text_units_with_snapshot():
         context,
     )
 
-    assert context.storage.keys() == [
-        "create_base_text_units.parquet"
-    ], "Text unit snapshot keys differ"
+    assert context.storage.keys() == ["create_base_text_units.parquet"], (
+        "Text unit snapshot keys differ"
+    )
