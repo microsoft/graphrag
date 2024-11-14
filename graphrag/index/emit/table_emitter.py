@@ -10,6 +10,7 @@ import pandas as pd
 
 class TableEmitter(Protocol):
     """TableEmitter protocol for emitting tables to a destination."""
+
     extension: str
 
     async def emit(self, name: str, data: pd.DataFrame) -> None:
