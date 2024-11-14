@@ -1562,7 +1562,7 @@ flowchart LR
 <ul>
 <li><code>llm</code>: OpenAI model object to be used for response generation</li>
 <li><code>context_builder</code>: <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py">context builder</a> object to be used for preparing context data from collections of knowledge model objects</li>
-<li><code>system_prompt</code>: prompt template used to generate the search response. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/system_prompt.py">system_prompt</a></li>
+<li><code>system_prompt</code>: prompt template used to generate the search response. Default template can be found at <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/prompts/query/local_search_system_prompt.py">system_prompt</a></li>
 <li><code>response_type</code>: free-form text describing the desired response type and format (e.g., <code>Multiple Paragraphs</code>, <code>Multi-Page Report</code>)</li>
 <li><code>llm_params</code>: a dictionary of additional parameters (e.g., temperature, max_tokens) to be passed to the LLM call</li>
 <li><code>context_builder_params</code>: a dictionary of additional parameters to be passed to the <a href="https://github.com/microsoft/graphrag/blob/main//graphrag/query/structured_search/local_search/mixed_context.py"><code>context_builder</code></a> object when building context for the search prompt</li>
