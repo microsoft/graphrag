@@ -18,6 +18,7 @@ class JsonTableEmitter(TableEmitter):
     """JsonTableEmitter class."""
 
     _storage: PipelineStorage
+    extension = "json"
 
     def __init__(self, storage: PipelineStorage):
         """Create a new Json Table Emitter."""
@@ -25,7 +26,7 @@ class JsonTableEmitter(TableEmitter):
 
     async def emit(self, name: str, data: pd.DataFrame) -> None:
         """Emit a dataframe to storage."""
-        filename = f"{name}.json"
+        filename = f"{name}.{self.extension}"
 
         log.info("emitting JSON table %s", filename)
         await self._storage.set(
