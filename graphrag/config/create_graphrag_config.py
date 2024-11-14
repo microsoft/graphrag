@@ -36,6 +36,7 @@ from .models.chunking_config import ChunkingConfig
 from .models.claim_extraction_config import ClaimExtractionConfig
 from .models.cluster_graph_config import ClusterGraphConfig
 from .models.community_reports_config import CommunityReportsConfig
+from .models.drift_config import DRIFTSearchConfig
 from .models.embed_graph_config import EmbedGraphConfig
 from .models.entity_extraction_config import EntityExtractionConfig
 from .models.global_search_config import GlobalSearchConfig

@@ -36,7 +36,6 @@ from graphrag.config.input_models.cluster_graph_config_input import (
 )
 from graphrag.config.input_models.community_reports_config_input import (
     CommunityReportsConfigInput,
-    DRIFTSearchConfig,
 )
 from graphrag.config.input_models.embed_graph_config_input import EmbedGraphConfigInput
 from graphrag.config.input_models.entity_extraction_config_input import (
@@ -60,6 +59,7 @@ from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
+from graphrag.config.models.drift_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
