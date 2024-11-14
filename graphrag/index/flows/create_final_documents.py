@@ -33,7 +33,7 @@ def create_final_documents(
     )
 
     docs_with_text_units = joined.groupby("id", sort=False).agg(
-        text_units=("chunk_id", list)
+        text_unit_ids=("chunk_id", list)
     )
 
     rejoined = docs_with_text_units.merge(
@@ -43,10 +43,8 @@ def create_final_documents(
         copy=False,
     ).reset_index(drop=True)
 
-    rejoined.rename(
-        columns={"text": "raw_content", "text_units": "text_unit_ids"}, inplace=True
-    )
     rejoined["id"] = rejoined["id"].astype(str)
+    rejoined["human_readable_id"] = rejoined.index + 1
 
     # Convert attribute columns to strings and collapse them into a JSON object
     if document_attribute_columns:
@@ -63,4 +61,16 @@ def create_final_documents(
         # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
 
-    return rejoined
+    # set the final column order, but adjust for attributes
+    core_columns = [
+        "id",
+        "human_readable_id",
+        "title",
+        "text",
+        "text_unit_ids",
+    ]
+    final_columns = [column for column in core_columns if column in rejoined.columns]
+    if document_attribute_columns:
+        final_columns.append("attributes")
+
+    return rejoined.loc[:, final_columns]

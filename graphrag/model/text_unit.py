@@ -42,7 +42,7 @@ class TextUnit(Identified):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         text_key: str = "text",
         text_embedding_key: str = "text_embedding",
         entities_key: str = "entity_ids",

@@ -136,6 +136,15 @@ class QueryState:
             if source_action and target_action:
                 self.relate_actions(source_action, target_action, weight)
 
-    def action_token_ct(self) -> int:
+    def action_token_ct(self) -> dict[str, int]:
         """Return the token count of the action."""
-        return sum(action.metadata.get("token_ct", 0) for action in self.graph.nodes)
+        llm_calls, prompt_tokens, output_tokens = 0, 0, 0
+        for action in self.graph.nodes:
+            llm_calls += action.metadata["llm_calls"]
+            prompt_tokens += action.metadata["prompt_tokens"]
+            output_tokens += action.metadata["output_tokens"]
+        return {
+            "llm_calls": llm_calls,
+            "prompt_tokens": prompt_tokens,
+            "output_tokens": output_tokens,
+        }

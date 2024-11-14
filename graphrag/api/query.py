@@ -25,6 +25,10 @@ import pandas as pd
 from pydantic import validate_call
 
 from graphrag.config import GraphRagConfig
+from graphrag.index.config.embeddings import (
+    community_full_content_embedding,
+    entity_description_embedding,
+)
 from graphrag.logging import PrintProgressReporter
 from graphrag.query.factories import (
     get_drift_search_engine,
@@ -32,6 +36,7 @@ from graphrag.query.factories import (
     get_local_search_engine,
 )
 from graphrag.query.indexer_adapters import (
+    read_indexer_communities,
     read_indexer_covariates,
     read_indexer_entities,
     read_indexer_relationships,
@@ -41,6 +46,7 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
+from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.base import BaseVectorStore
 
@@ -52,8 +58,10 @@ async def global_search(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
+    dynamic_community_selection: bool,
     response_type: str,
     query: str,
 ) -> tuple[
@@ -67,8 +75,10 @@ async def global_search(
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -80,13 +90,21 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
+    _communities = read_indexer_communities(communities, nodes, community_reports)
+    reports = read_indexer_reports(
+        community_reports,
+        nodes,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+    )
+    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
         entities=_entities,
+        communities=_communities,
         response_type=response_type,
+        dynamic_community_selection=dynamic_community_selection,
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
@@ -99,8 +117,10 @@ async def global_search_streaming(
     config: GraphRagConfig,
     nodes: pd.DataFrame,
     entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_reports: pd.DataFrame,
-    community_level: int,
+    community_level: int | None,
+    dynamic_community_selection: bool,
     response_type: str,
     query: str,
 ) -> AsyncGenerator:
@@ -113,8 +133,10 @@ async def global_search_streaming(
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
     - response_type (str): The type of response to return.
     - query (str): The user query to search for.
 
@@ -126,13 +148,21 @@ async def global_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    _entities = read_indexer_entities(nodes, entities, community_level)
+    _communities = read_indexer_communities(communities, nodes, community_reports)
+    reports = read_indexer_reports(
+        community_reports,
+        nodes,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+    )
+    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
     search_engine = get_global_search_engine(
         config,
         reports=reports,
         entities=_entities,
+        communities=_communities,
         response_type=response_type,
+        dynamic_community_selection=dynamic_community_selection,
     )
     search_result = search_engine.astream_search(query=query)
 
@@ -203,7 +233,7 @@ async def local_search(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -277,7 +307,7 @@ async def local_search_streaming(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -360,12 +390,12 @@ async def drift_search(
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="community-full_content",
+        embedding_name=community_full_content_embedding,
     )
 
     _entities = read_indexer_entities(nodes, entities, community_level)
@@ -425,7 +455,10 @@ def _patch_vector_store(
         }
         description_embedding_store = LanceDBVectorStore(
             db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name="default-entity-description",
+            collection_name=create_collection_name(
+                config.embeddings.vector_store["container_name"],
+                entity_description_embedding,
+            ),
             overwrite=config.embeddings.vector_store["overwrite"],
         )
         description_embedding_store.connect(
@@ -444,11 +477,7 @@ def _patch_vector_store(
             from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
             community_reports = with_reports
-            collection_name = (
-                config.embeddings.vector_store.get("container_name", "default")
-                if config.embeddings.vector_store
-                else "default"
-            )
+            container_name = config.embeddings.vector_store["container_name"]
             # Store report embeddings
             _reports = read_indexer_reports(
                 community_reports,
@@ -460,7 +489,9 @@ def _patch_vector_store(
 
             full_content_embedding_store = LanceDBVectorStore(
                 db_uri=config.embeddings.vector_store["db_uri"],
-                collection_name=f"{collection_name}-community-full_content",
+                collection_name=create_collection_name(
+                    container_name, community_full_content_embedding
+                ),
                 overwrite=config.embeddings.vector_store["overwrite"],
             )
             full_content_embedding_store.connect(
@@ -476,12 +507,12 @@ def _patch_vector_store(
 
 def _get_embedding_store(
     config_args: dict,
-    container_suffix: str,
+    embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
     vector_store_type = config_args["type"]
-    collection_name = (
-        f"{config_args.get('container_name', 'default')}-{container_suffix}"
+    collection_name = create_collection_name(
+        config_args.get("container_name", "default"), embedding_name
     )
     embedding_store = VectorStoreFactory.get_vector_store(
         vector_store_type=vector_store_type,

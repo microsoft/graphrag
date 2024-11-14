@@ -91,52 +91,6 @@ def map_query_to_entities(
     return included_entities + matched_entities
 
 
-def find_nearest_neighbors_by_graph_embeddings(
-    entity_id: str,
-    graph_embedding_vectorstore: BaseVectorStore,
-    all_entities: list[Entity],
-    exclude_entity_names: list[str] | None = None,
-    embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
-    k: int = 10,
-    oversample_scaler: int = 2,
-) -> list[Entity]:
-    """Retrieve related entities by graph embeddings."""
-    if exclude_entity_names is None:
-        exclude_entity_names = []
-    # find nearest neighbors of this entity using graph embedding
-    query_entity = get_entity_by_key(
-        entities=all_entities, key=embedding_vectorstore_key, value=entity_id
-    )
-    query_embedding = query_entity.graph_embedding if query_entity else None
-
-    # oversample to account for excluded entities
-    if query_embedding:
-        matched_entities = []
-        search_results = graph_embedding_vectorstore.similarity_search_by_vector(
-            query_embedding=query_embedding, k=k * oversample_scaler
-        )
-        for result in search_results:
-            matched = get_entity_by_key(
-                entities=all_entities,
-                key=embedding_vectorstore_key,
-                value=result.document.id,
-            )
-            if matched:
-                matched_entities.append(matched)
-
-        # filter out excluded entities
-        if exclude_entity_names:
-            matched_entities = [
-                entity
-                for entity in matched_entities
-                if entity.title not in exclude_entity_names
-            ]
-        matched_entities.sort(key=lambda x: x.rank, reverse=True)
-        return matched_entities[:k]
-
-    return []
-
-
 def find_nearest_neighbors_by_entity_rank(
     entity_name: str,
     all_entities: list[Entity],

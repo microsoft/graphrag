@@ -35,22 +35,29 @@ def create_final_relationships(
     filtered_nodes = nodes[nodes["level"] == 0].reset_index(drop=True)
     filtered_nodes = cast(pd.DataFrame, filtered_nodes[["title", "degree"]])
 
-    edge_combined_degree = compute_edge_combined_degree(
+    pruned_edges["combined_degree"] = compute_edge_combined_degree(
         pruned_edges,
         filtered_nodes,
-        to="rank",
         node_name_column="title",
         node_degree_column="degree",
         edge_source_column="source",
         edge_target_column="target",
     )
 
-    edge_combined_degree["human_readable_id"] = edge_combined_degree[
-        "human_readable_id"
-    ].astype(str)
-    edge_combined_degree["text_unit_ids"] = edge_combined_degree[
-        "text_unit_ids"
-    ].str.split(",")
+    pruned_edges["text_unit_ids"] = pruned_edges["text_unit_ids"].str.split(",")
 
     # TODO: Find duplication source
-    return edge_combined_degree.drop_duplicates(subset=["source", "target"])
+    deduped = pruned_edges.drop_duplicates(subset=["source", "target"])
+    return deduped.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "source",
+            "target",
+            "description",
+            "weight",
+            "combined_degree",
+            "text_unit_ids",
+        ],
+    ]
