@@ -42,6 +42,7 @@ def get_local_search_engine(
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
+    system_prompt: str | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -52,6 +53,7 @@ def get_local_search_engine(
 
     return LocalSearch(
         llm=llm,
+        system_prompt=system_prompt,
         context_builder=LocalSearchMixedContext(
             community_reports=reports,
             text_units=text_units,
@@ -95,6 +97,9 @@ def get_global_search_engine(
     communities: list[Community],
     response_type: str,
     dynamic_community_selection: bool = False,
+    map_system_prompt: str | None = None,
+    reduce_system_prompt: str | None = None,
+    general_knowledge_inclusion_prompt: str | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     token_encoder = tiktoken.get_encoding(config.encoding_model)
@@ -118,6 +123,9 @@ def get_global_search_engine(
 
     return GlobalSearch(
         llm=get_llm(config),
+        map_system_prompt=map_system_prompt,
+        reduce_system_prompt=reduce_system_prompt,
+        general_knowledge_inclusion_prompt=general_knowledge_inclusion_prompt,
         context_builder=GlobalCommunityContext(
             community_reports=reports,
             communities=communities,
@@ -166,6 +174,7 @@ def get_drift_search_engine(
     entities: list[Entity],
     relationships: list[Relationship],
     description_embedding_store: BaseVectorStore,
+    local_system_prompt: str | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -182,6 +191,8 @@ def get_drift_search_engine(
             reports=reports,
             entity_text_embeddings=description_embedding_store,
             text_units=text_units,
+            local_system_prompt=local_system_prompt,
+            config=config.drift_search,
         ),
         token_encoder=token_encoder,
     )

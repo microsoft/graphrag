@@ -98,6 +98,14 @@ async def global_search(
         dynamic_community_selection=dynamic_community_selection,
     )
     _entities = read_indexer_entities(nodes, entities, community_level=community_level)
+    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.reduce_prompt
+    )
+    knowledge_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.knowledge_prompt
+    )
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,
@@ -105,6 +113,9 @@ async def global_search(
         communities=_communities,
         response_type=response_type,
         dynamic_community_selection=dynamic_community_selection,
+        map_system_prompt=map_prompt,
+        reduce_system_prompt=reduce_prompt,
+        general_knowledge_inclusion_prompt=knowledge_prompt,
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
@@ -156,6 +167,14 @@ async def global_search_streaming(
         dynamic_community_selection=dynamic_community_selection,
     )
     _entities = read_indexer_entities(nodes, entities, community_level=community_level)
+    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.reduce_prompt
+    )
+    knowledge_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.knowledge_prompt
+    )
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,
@@ -163,6 +182,9 @@ async def global_search_streaming(
         communities=_communities,
         response_type=response_type,
         dynamic_community_selection=dynamic_community_selection,
+        map_system_prompt=map_prompt,
+        reduce_system_prompt=reduce_prompt,
+        general_knowledge_inclusion_prompt=knowledge_prompt,
     )
     search_result = search_engine.astream_search(query=query)
 
@@ -238,6 +260,7 @@ async def local_search(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
@@ -248,6 +271,7 @@ async def local_search(
         covariates={"claims": _covariates},
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
+        system_prompt=prompt,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
@@ -312,6 +336,7 @@ async def local_search_streaming(
 
     _entities = read_indexer_entities(nodes, entities, community_level)
     _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
@@ -322,6 +347,7 @@ async def local_search_streaming(
         covariates={"claims": _covariates},
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
+        system_prompt=prompt,
     )
     search_result = search_engine.astream_search(query=query)
 
@@ -401,7 +427,7 @@ async def drift_search(
     _entities = read_indexer_entities(nodes, entities, community_level)
     _reports = read_indexer_reports(community_reports, nodes, community_level)
     read_indexer_report_embeddings(_reports, full_content_embedding_store)
-
+    prompt = _load_search_prompt(config.root_dir, config.drift_search.prompt)
     search_engine = get_drift_search_engine(
         config=config,
         reports=_reports,
@@ -409,6 +435,7 @@ async def drift_search(
         entities=_entities,
         relationships=read_indexer_relationships(relationships),
         description_embedding_store=description_embedding_store,  # type: ignore
+        local_system_prompt=prompt,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
@@ -551,3 +578,17 @@ def _reformat_context_data(context_data: dict) -> dict:
             continue
         final_format[key] = records
     return final_format
+
+
+def _load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
+    """
+    Load the search prompt from disk if configured.
+
+    If not, leave it empty - the search functions will load their defaults.
+
+    """
+    if prompt_config:
+        prompt_file = Path(root_dir) / prompt_config
+        if prompt_file.exists():
+            return prompt_file.read_bytes().decode(encoding="utf-8")
+    return None
