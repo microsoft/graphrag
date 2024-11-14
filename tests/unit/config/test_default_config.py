@@ -28,6 +28,7 @@ from graphrag.config import (
     ClusterGraphConfigInput,
     CommunityReportsConfig,
     CommunityReportsConfigInput,
+    DRIFTSearchConfig,
     EmbedGraphConfig,
     EmbedGraphConfigInput,
     EntityExtractionConfig,
@@ -202,6 +203,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert ClaimExtractionConfig is not None
         assert ClusterGraphConfig is not None
         assert CommunityReportsConfig is not None
+        assert DRIFTSearchConfig is not None
         assert EmbedGraphConfig is not None
         assert EntityExtractionConfig is not None
         assert GlobalSearchConfig is not None
