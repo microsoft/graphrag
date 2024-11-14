@@ -18,7 +18,6 @@ class CSVTableEmitter(TableEmitter):
     """CSVTableEmitter class."""
 
     _storage: PipelineStorage
-    extension = "csv"
 
     def __init__(self, storage: PipelineStorage):
         """Create a new CSV Table Emitter."""
@@ -26,7 +25,7 @@ class CSVTableEmitter(TableEmitter):
 
     async def emit(self, name: str, data: pd.DataFrame) -> None:
         """Emit a dataframe to storage."""
-        filename = f"{name}.{self.extension}"
+        filename = f"{name}.csv"
         log.info("emitting CSV table %s", filename)
         await self._storage.set(
             filename,
