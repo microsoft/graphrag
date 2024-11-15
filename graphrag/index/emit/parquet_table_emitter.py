@@ -37,6 +37,8 @@ class ParquetTableEmitter(TableEmitter):
         """Emit a dataframe to storage."""
         filename = f"{name}.{self.extension}"
         log.info("emitting parquet table %s", filename)
+        # TODO: refactor to emit the dataframe directly instead of the parquet bytestring
+        # TODO: refactor all PipelineStorage implementations to align with this change
         try:
             await self._storage.set(filename, data.to_parquet())
         except ArrowTypeError as e:

@@ -7,8 +7,10 @@ import json
 import logging
 import re
 from collections.abc import Iterator
+from io import BytesIO, StringIO
 from typing import Any
 
+import pandas as pd
 from azure.cosmos import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
@@ -176,10 +178,15 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 )
                 item = container_client.read_item(item=key, partition_key=key)
                 item_body = item.get("body")
+                item_json_str = json.dumps(item_body)
                 if as_bytes:
-                    coding = encoding or "utf-8"
-                    return json.dumps(item_body).encode(coding)
-                return json.dumps(item_body)
+                    item_df = pd.read_json(
+                        StringIO(item_json_str),
+                        orient="records",
+                        lines=False
+                    )
+                    return item_df.to_parquet()
+                return item_json_str
         except Exception:
             log.exception("Error reading item %s", key)
             return None
@@ -195,14 +202,22 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     self._current_container
                 )
                 if isinstance(value, bytes):
-                    msg = "Parquet table emitter not supported for CosmosDB storage."
-                    log.exception(msg)
+                    value_df = pd.read_parquet(BytesIO(value))
+                    value_json = value_df.to_json(
+                        orient="records",
+                        lines=False,
+                        force_ascii=False
+                    )
+                    cosmos_db_item = {
+                        "id": key,
+                        "body": json.loads(value_json)
+                    }
                 else:
                     cosmos_db_item = {
                         "id": key,
                         "body": json.loads(value)
                     }
-                    container_client.upsert_item(body=cosmos_db_item)
+                container_client.upsert_item(body=cosmos_db_item)
         except Exception:
             log.exception("Error writing item %s", key)
 

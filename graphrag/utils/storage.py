@@ -4,7 +4,7 @@
 """Storage functions for the GraphRAG run module."""
 
 import logging
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -52,7 +52,7 @@ async def _load_table_from_storage(name: str, storage: PipelineStorage) -> pd.Da
                 return pd.read_parquet(BytesIO(await storage.get(name, as_bytes=True)))
             case "json":
                 return pd.read_json(
-                    BytesIO(await storage.get(name, as_bytes=True)),
+                    StringIO(await storage.get(name, as_bytes=True)),
                     lines=False,
                     orient="records",
                 )
