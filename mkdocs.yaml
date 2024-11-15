@@ -43,7 +43,6 @@ nav:
       - Notebooks:
           - Overview: "query/notebooks/overview.md"
           - Global Search: "examples_notebooks/global_search.ipynb"
-          - Global Search (dynamic community selection): "examples_notebooks/global_search_with_dynamic_community_selection.ipynb"
           - Local Search: "examples_notebooks/local_search.ipynb"
           - DRIFT Search: "examples_notebooks/drift_search.ipynb"
   - Configuration:
