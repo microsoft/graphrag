@@ -3,7 +3,7 @@
 
 """The Indexing Engine text extract claims package root."""
 
-from graphrag.index.operations.extract_covariates import (
+from graphrag.index.operations.extract_covariates.extract_covariates import (
     ExtractClaimsStrategyType,
     extract_covariates,
 )

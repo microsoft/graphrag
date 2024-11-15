@@ -3,7 +3,7 @@
 
 """The Indexing Engine entities extraction package root."""
 
-from graphrag.index.operations.extract_entities import (
+from graphrag.index.operations.extract_entities.extract_entities import (
     ExtractEntityStrategyType,
     extract_entities,
 )
