@@ -8,7 +8,7 @@ The default configuration mode is the simplest way to get started with the Graph
 
 - [Init command](init.md) (recommended)
 - [Purely using environment variables](env_vars.md)
-- [Using JSON or YAML for deeper control](json_yaml.md)
+- [Using YAML for deeper control](yaml.md)
 
 ## Custom Configuration Mode
 

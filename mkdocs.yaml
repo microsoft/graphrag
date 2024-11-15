@@ -48,8 +48,8 @@ nav:
   - Configuration:
       - Overview: "config/overview.md"
       - Init Command: "config/init.md"
+      - Using YAML: "config/yaml.md"
       - Using Env Vars: "config/env_vars.md"
-      - Using JSON or YAML: "config/json_yaml.md"
       - Fully Custom: "config/custom.md"
   - CLI: "cli.md"
   - Extras:
