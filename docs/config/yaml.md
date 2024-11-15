@@ -2,6 +2,8 @@
 
 The default configuration mode may be configured by using a `settings.yml` or `settings.json` file in the data project root. If a `.env` file is present along with this config file, then it will be loaded, and the environment variables defined therein will be available for token replacements in your configuration document using `${ENV_VAR}` syntax. We initialize with YML by default in `graphrag init` but you may use the equivalent JSON form if preferred.
 
+Many of these config values have defaults. Rather than replicate them here, please refer to the [constants in the code](https://github.com/microsoft/graphrag/blob/main/graphrag/config/defaults.py) directly.
+
 For example:
 
 ```
@@ -16,26 +18,6 @@ llm:
 # Config Sections
 
 ## Indexing
-
-### input
-
-#### Fields
-
-- `type` **file|blob** - The input type to use. Default=`file`
-- `file_type` **text|csv** - The type of input data to load. Either `text` or `csv`. Default is `text`
-- `base_dir` **str** - The base directory to read input from, relative to the root.
-- `connection_string` **str** - (blob only) The Azure Storage connection string.
-- `storage_account_blob_url` **str** - The storage account blob URL to use.
-- `container_name` **str** - (blob only) The Azure Storage container name.
-- `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
-- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
-- `file_filter` **dict** - Key/value pairs to filter. Default is None.
-- `source_column` **str** - (CSV Mode Only) The source column name.
-- `timestamp_column` **str** - (CSV Mode Only) The timestamp column name.
-- `timestamp_format` **str** - (CSV Mode Only) The source format.
-- `text_column` **str** - (CSV Mode Only) The text column name.
-- `title_column` **str** - (CSV Mode Only) The title column name.
-- `document_attribute_columns` **list[str]** - (CSV Mode Only) The additional document attributes to include.
 
 ### llm
 
@@ -96,6 +78,26 @@ This is the base LLM configuration section. Other steps may override this config
   - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
   - `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
 - `strategy` **dict** - Fully override the text-embedding strategy.
+
+### input
+
+#### Fields
+
+- `type` **file|blob** - The input type to use. Default=`file`
+- `file_type` **text|csv** - The type of input data to load. Either `text` or `csv`. Default is `text`
+- `base_dir` **str** - The base directory to read input from, relative to the root.
+- `connection_string` **str** - (blob only) The Azure Storage connection string.
+- `storage_account_blob_url` **str** - The storage account blob URL to use.
+- `container_name` **str** - (blob only) The Azure Storage container name.
+- `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
+- `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
+- `file_filter` **dict** - Key/value pairs to filter. Default is None.
+- `source_column` **str** - (CSV Mode Only) The source column name.
+- `timestamp_column` **str** - (CSV Mode Only) The timestamp column name.
+- `timestamp_format` **str** - (CSV Mode Only) The source format.
+- `text_column` **str** - (CSV Mode Only) The text column name.
+- `title_column` **str** - (CSV Mode Only) The title column name.
+- `document_attribute_columns` **list[str]** - (CSV Mode Only) The additional document attributes to include.
 
 ### chunks
 
@@ -175,7 +177,7 @@ This is the base LLM configuration section. Other steps may override this config
 
 #### Fields
 
-- `enabled` **bool** - Whether to enable claim extraction. default=False
+- `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
 - `llm` (see LLM top-level config)
 - `parallelization` (see Parallelization top-level config)
 - `async_mode` (see Async Mode top-level config)

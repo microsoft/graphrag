@@ -9,7 +9,3 @@ The default configuration mode is the simplest way to get started with the Graph
 - [Init command](init.md) (recommended)
 - [Purely using environment variables](env_vars.md)
 - [Using YAML for deeper control](yaml.md)
-
-## Custom Configuration Mode
-
-Custom configuration mode is an advanced use-case. Most users will want to use the Default Configuration instead. The primary configuration sections for Indexing Engine pipelines are described below. Details about how to use custom configuration are available in the [Custom Configuration Mode](custom.md) documentation.

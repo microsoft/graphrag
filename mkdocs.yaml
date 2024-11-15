@@ -50,7 +50,6 @@ nav:
       - Init Command: "config/init.md"
       - Using YAML: "config/yaml.md"
       - Using Env Vars: "config/env_vars.md"
-      - Fully Custom: "config/custom.md"
   - CLI: "cli.md"
   - Extras:
       - Microsoft Research Blog: "blog_posts.md"
