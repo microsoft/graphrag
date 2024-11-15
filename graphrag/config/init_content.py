@@ -6,10 +6,15 @@
 import graphrag.config.defaults as defs
 
 INIT_YAML = f"""\
-encoding_model: cl100k_base
-skip_workflows: []
+### This config file contains required core defaults that must be set, along with a handful of common optional settings.
+### For a full list of available settings, see https://github.com/microsoft/graphrag/blob/main/graphrag/config/defaults.py
+
+### LLM settings ###
+
+encoding_model: cl100k_base # this needs to be matched to your model!
+
 llm:
-  api_key: ${{GRAPHRAG_API_KEY}}
+  api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
   type: {defs.LLM_TYPE.value} # or azure_openai_chat
   model: {defs.LLM_MODEL}
   model_supports_json: true # recommended if this is available for your model.
@@ -37,11 +42,7 @@ parallelization:
 async_mode: {defs.ASYNC_MODE.value} # or asyncio
 
 embeddings:
-  ## parallelization: override the global parallelization settings for embeddings
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  # target: {defs.EMBEDDING_TARGET.value} # or all
-  # batch_size: {defs.EMBEDDING_BATCH_SIZE} # the number of documents to send in a single request
-  # batch_max_tokens: {defs.EMBEDDING_BATCH_MAX_TOKENS} # the maximum number of tokens to send in a single request
   vector_store:{defs.VECTOR_STORE}
   # vector_store: # configuration for AI Search
     # type: azure_ai_search
@@ -66,10 +67,7 @@ embeddings:
     # sleep_on_rate_limit_recommendation: true # whether to sleep when azure suggests wait-times
     # concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # the number of parallel inflight requests that may be made
 
-chunks:
-  size: {defs.CHUNK_SIZE}
-  overlap: {defs.CHUNK_OVERLAP}
-  group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
+### Input settings ###
 
 input:
   type: {defs.INPUT_TYPE.value} # or blob
@@ -78,60 +76,54 @@ input:
   file_encoding: {defs.INPUT_FILE_ENCODING}
   file_pattern: ".*\\\\.txt$"
 
+chunks:
+  size: {defs.CHUNK_SIZE}
+  overlap: {defs.CHUNK_OVERLAP}
+  group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}] # by default, we don't allow chunks to cross documents
+
+### Storage settings ###
+## If blob storage is specified in the  following four sections,
+## connection_string and container_name must be provided
+
 cache:
   type: {defs.CACHE_TYPE.value} # or blob
   base_dir: "{defs.CACHE_BASE_DIR}"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
-
-storage:
-  type: {defs.STORAGE_TYPE.value} # or blob
-  base_dir: "{defs.STORAGE_BASE_DIR}"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
-
-update_index_storage: # Storage to save an updated index (for incremental indexing). Enabling this performs an incremental index run
-  # type: {defs.STORAGE_TYPE.value} # or blob
-  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
 
 reporting:
   type: {defs.REPORTING_TYPE.value} # or console, blob
   base_dir: "{defs.REPORTING_BASE_DIR}"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
+
+storage:
+  type: {defs.STORAGE_TYPE.value} # or blob
+  base_dir: "{defs.STORAGE_BASE_DIR}"
+
+## Storage to save an updated index (for incremental indexing).
+## Enabling this automatically performs an incremental index run with `graphrag index`,
+## however, we recommend using `graphrag update`, which will automatically set these at runtime.
+update_index_storage:
+  # type: {defs.STORAGE_TYPE.value} # or blob
+  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
+
+### Workflow settings ###
+
+skip_workflows: []
 
 entity_extraction:
-  ## strategy: fully override the entity extraction strategy.
-  ##   type: one of graph_intelligence, graph_intelligence_json and nltk
-  ## llm: override the global llm settings for this task
-  ## parallelization: override the global parallelization settings for this task
-  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/entity_extraction.txt"
   entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
   max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
 
 summarize_descriptions:
-  ## llm: override the global llm settings for this task
-  ## parallelization: override the global parallelization settings for this task
-  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/summarize_descriptions.txt"
   max_length: {defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH}
 
 claim_extraction:
-  ## llm: override the global llm settings for this task
-  ## parallelization: override the global parallelization settings for this task
-  ## async_mode: override the global async_mode settings for this task
   # enabled: true
   prompt: "prompts/claim_extraction.txt"
   description: "{defs.CLAIM_DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
 
 community_reports:
-  ## llm: override the global llm settings for this task
-  ## parallelization: override the global parallelization settings for this task
-  ## async_mode: override the global async_mode settings for this task
   prompt: "prompts/community_report.txt"
   max_length: {defs.COMMUNITY_REPORT_MAX_LENGTH}
   max_input_length: {defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH}
@@ -141,11 +133,6 @@ cluster_graph:
 
 embed_graph:
   enabled: false # if true, will generate node2vec embeddings for nodes
-  # num_walks: {defs.NODE2VEC_NUM_WALKS}
-  # walk_length: {defs.NODE2VEC_WALK_LENGTH}
-  # window_size: {defs.NODE2VEC_WINDOW_SIZE}
-  # iterations: {defs.NODE2VEC_ITERATIONS}
-  # random_seed: {defs.NODE2VEC_RANDOM_SEED}
 
 umap:
   enabled: false # if true, will generate UMAP embeddings for nodes
@@ -157,52 +144,20 @@ snapshots:
   embeddings: false
   transient: false
 
+### Query settings ###
+## The prompt locations for each are required, but each search method has a number of knobs that can be tuned.
+## See the defaults file: https://github.com/microsoft/graphrag/blob/main/graphrag/config/defaults.py
+
 local_search:
   prompt: "prompts/local_search_system_prompt.txt"
-  # text_unit_prop: {defs.LOCAL_SEARCH_TEXT_UNIT_PROP}
-  # community_prop: {defs.LOCAL_SEARCH_COMMUNITY_PROP}
-  # conversation_history_max_turns: {defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS}
-  # top_k_mapped_entities: {defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
-  # top_k_relationships: {defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
-  # llm_temperature: {defs.LOCAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
-  # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
-  # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
-  # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
 
 global_search:
   map_prompt: "prompts/global_search_map_system_prompt.txt"
   reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
   knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
-  # llm_temperature: {defs.GLOBAL_SEARCH_LLM_TEMPERATURE} # temperature for sampling
-  # llm_top_p: {defs.GLOBAL_SEARCH_LLM_TOP_P} # top-p sampling
-  # llm_n: {defs.GLOBAL_SEARCH_LLM_N} # Number of completions to generate
-  # max_tokens: {defs.GLOBAL_SEARCH_MAX_TOKENS}
-  # data_max_tokens: {defs.GLOBAL_SEARCH_DATA_MAX_TOKENS}
-  # map_max_tokens: {defs.GLOBAL_SEARCH_MAP_MAX_TOKENS}
-  # reduce_max_tokens: {defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS}
-  # concurrency: {defs.GLOBAL_SEARCH_CONCURRENCY}
 
 drift_search:
   prompt: "prompts/drift_search_system_prompt.txt"
-  # temperature: {defs.DRIFT_SEARCH_LLM_TEMPERATURE}
-  # top_p: {defs.DRIFT_SEARCH_LLM_TOP_P}
-  # n: {defs.DRIFT_SEARCH_LLM_N}
-  # max_tokens: {defs.DRIFT_SEARCH_MAX_TOKENS}
-  # data_max_tokens: {defs.DRIFT_SEARCH_DATA_MAX_TOKENS}
-  # concurrency: {defs.DRIFT_SEARCH_CONCURRENCY}
-  # drift_k_followups: {defs.DRIFT_SEARCH_K_FOLLOW_UPS}
-  # primer_folds: {defs.DRIFT_SEARCH_PRIMER_FOLDS}
-  # primer_llm_max_tokens: {defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS}
-  # n_depth: {defs.DRIFT_N_DEPTH}
-  # local_search_text_unit_prop: {defs.DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP}
-  # local_search_community_prop: {defs.DRIFT_LOCAL_SEARCH_COMMUNITY_PROP}
-  # local_search_top_k_mapped_entities: {defs.DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES}
-  # local_search_top_k_relationships: {defs.DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS}
-  # local_search_max_data_tokens: {defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS}
-  # local_search_temperature: {defs.DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE}
-  # local_search_top_p: {defs.DRIFT_LOCAL_SEARCH_LLM_TOP_P}
-  # local_search_n: {defs.DRIFT_LOCAL_SEARCH_LLM_N}
-  # local_search_llm_max_gen_tokens: {defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS}
 """
 
 INIT_DOTENV = """\
