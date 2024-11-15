@@ -7,8 +7,7 @@ from pydantic import Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import TextEmbeddingTarget
-
-from .llm_config import LLMConfig
+from graphrag.config.models.llm_config import LLMConfig
 
 
 class TextEmbeddingConfig(LLMConfig):

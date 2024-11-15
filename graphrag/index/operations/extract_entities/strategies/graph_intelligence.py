@@ -9,19 +9,18 @@ import graphrag.config.defaults as defs
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
 from graphrag.index.llm.load_llm import load_llm
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
+    EntityExtractionResult,
+    EntityTypes,
+    StrategyConfig,
+)
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     TextSplitter,
     TokenTextSplitter,
 )
 from graphrag.llm import CompletionLLM
-
-from .typing import (
-    Document,
-    EntityExtractionResult,
-    EntityTypes,
-    StrategyConfig,
-)
 
 
 async def run_graph_intelligence(

@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from .base import StatusLogger
+from graphrag.logging.base import StatusLogger
 
 
 class ConsoleReporter(StatusLogger):

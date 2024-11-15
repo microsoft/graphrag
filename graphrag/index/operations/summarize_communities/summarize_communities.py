@@ -21,8 +21,7 @@ from graphrag.index.graph.extractors.community_reports import (
     get_levels,
     prep_community_report_context,
 )
-
-from .typing import (
+from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     CommunityReportsStrategy,
     CreateCommunityReportsStrategyType,

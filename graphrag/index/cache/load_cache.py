@@ -20,9 +20,9 @@ if TYPE_CHECKING:
         PipelineCacheConfig,
     )
 
-from .json_pipeline_cache import JsonPipelineCache
-from .memory_pipeline_cache import create_memory_cache
-from .noop_pipeline_cache import NoopPipelineCache
+from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
+from graphrag.index.cache.memory_pipeline_cache import create_memory_cache
+from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 
 
 def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):

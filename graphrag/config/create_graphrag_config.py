@@ -13,8 +13,7 @@ from environs import Env
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
-
-from .enums import (
+from graphrag.config.enums import (
     CacheType,
     InputFileType,
     InputType,
@@ -23,35 +22,37 @@ from .enums import (
     StorageType,
     TextEmbeddingTarget,
 )
-from .environment_reader import EnvironmentReader
-from .errors import (
+from graphrag.config.environment_reader import EnvironmentReader
+from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
 )
-from .input_models.graphrag_config_input import GraphRagConfigInput
-from .input_models.llm_config_input import LLMConfigInput
-from .models.cache_config import CacheConfig
-from .models.chunking_config import ChunkingConfig
-from .models.claim_extraction_config import ClaimExtractionConfig
-from .models.cluster_graph_config import ClusterGraphConfig
-from .models.community_reports_config import CommunityReportsConfig
-from .models.drift_config import DRIFTSearchConfig
-from .models.embed_graph_config import EmbedGraphConfig
-from .models.entity_extraction_config import EntityExtractionConfig
-from .models.global_search_config import GlobalSearchConfig
-from .models.graph_rag_config import GraphRagConfig
-from .models.input_config import InputConfig
-from .models.llm_parameters import LLMParameters
-from .models.local_search_config import LocalSearchConfig
-from .models.parallelization_parameters import ParallelizationParameters
-from .models.reporting_config import ReportingConfig
-from .models.snapshots_config import SnapshotsConfig
-from .models.storage_config import StorageConfig
-from .models.summarize_descriptions_config import SummarizeDescriptionsConfig
-from .models.text_embedding_config import TextEmbeddingConfig
-from .models.umap_config import UmapConfig
-from .read_dotenv import read_dotenv
+from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
+from graphrag.config.input_models.llm_config_input import LLMConfigInput
+from graphrag.config.models.cache_config import CacheConfig
+from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
+from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
+from graphrag.config.models.community_reports_config import CommunityReportsConfig
+from graphrag.config.models.drift_config import DRIFTSearchConfig
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.global_search_config import GlobalSearchConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.parallelization_parameters import ParallelizationParameters
+from graphrag.config.models.reporting_config import ReportingConfig
+from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.summarize_descriptions_config import (
+    SummarizeDescriptionsConfig,
+)
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
+from graphrag.config.models.umap_config import UmapConfig
+from graphrag.config.read_dotenv import read_dotenv
 
 InputModelValidator = TypeAdapter(GraphRagConfigInput)
 

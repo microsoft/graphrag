@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import networkx as nx
 
-from .normalize_node_names import normalize_node_names
+from graphrag.index.graph.utils.normalize_node_names import normalize_node_names
 
 
 def stable_largest_connected_component(graph: nx.Graph) -> nx.Graph:

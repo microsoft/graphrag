@@ -9,8 +9,12 @@ from datashaper import VerbCallbacks
 from nltk.corpus import words
 
 from graphrag.index.cache.pipeline_cache import PipelineCache
-
-from .typing import Document, EntityExtractionResult, EntityTypes, StrategyConfig
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
+    EntityExtractionResult,
+    EntityTypes,
+    StrategyConfig,
+)
 
 # Need to do this cause we're potentially multithreading, and nltk doesn't like that
 words.ensure_loaded()

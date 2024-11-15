@@ -7,9 +7,8 @@ import logging
 
 import pandas as pd
 
+from graphrag.index.emit.table_emitter import TableEmitter
 from graphrag.index.storage.pipeline_storage import PipelineStorage
-
-from .table_emitter import TableEmitter
 
 log = logging.getLogger(__name__)
 

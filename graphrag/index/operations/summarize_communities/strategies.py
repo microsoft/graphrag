@@ -14,13 +14,12 @@ from graphrag.index.graph.extractors.community_reports import (
     CommunityReportsExtractor,
 )
 from graphrag.index.llm.load_llm import load_llm
-from graphrag.index.utils.rate_limiter import RateLimiter
-from graphrag.llm import CompletionLLM
-
-from .typing import (
+from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     StrategyConfig,
 )
+from graphrag.index.utils.rate_limiter import RateLimiter
+from graphrag.llm import CompletionLLM
 
 DEFAULT_CHUNK_SIZE = 3000
 

@@ -6,9 +6,8 @@
 import json
 from typing import Any
 
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.storage.pipeline_storage import PipelineStorage
-
-from .pipeline_cache import PipelineCache
 
 
 class JsonPipelineCache(PipelineCache):

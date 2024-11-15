@@ -12,7 +12,11 @@ from datashaper import (
     progress_ticker,
 )
 
-from .typing import ChunkInput, ChunkStrategy, ChunkStrategyType
+from graphrag.index.operations.chunk_text.typing import (
+    ChunkInput,
+    ChunkStrategy,
+    ChunkStrategyType,
+)
 
 
 def chunk_text(

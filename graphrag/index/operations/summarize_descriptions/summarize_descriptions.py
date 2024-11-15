@@ -15,8 +15,7 @@ from datashaper import (
 )
 
 from graphrag.index.cache.pipeline_cache import PipelineCache
-
-from .typing import (
+from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,
 )

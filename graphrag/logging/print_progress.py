@@ -3,7 +3,7 @@
 
 """Print Progress Reporter."""
 
-from .base import Progress, ProgressReporter
+from graphrag.logging.base import Progress, ProgressReporter
 
 
 class PrintProgressReporter(ProgressReporter):

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-from .typing import NodePosition
+from graphrag.index.graph.visualization.typing import NodePosition
 
 
 def get_zero_positions(

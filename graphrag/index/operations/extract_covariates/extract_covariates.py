@@ -15,8 +15,11 @@ from datashaper import (
 )
 
 from graphrag.index.cache.pipeline_cache import PipelineCache
-
-from .typing import Covariate, CovariateExtractStrategy, ExtractClaimsStrategyType
+from graphrag.index.operations.extract_covariates.typing import (
+    Covariate,
+    CovariateExtractStrategy,
+    ExtractClaimsStrategyType,
+)
 
 log = logging.getLogger(__name__)
 

@@ -17,9 +17,14 @@ from graphrag.index.errors import (
     UnknownWorkflowError,
 )
 from graphrag.index.utils.topological_sort import topological_sort
-
-from .default_workflows import default_workflows as _default_workflows
-from .typing import VerbDefinitions, WorkflowDefinitions, WorkflowToRun
+from graphrag.index.workflows.default_workflows import (
+    default_workflows as _default_workflows,
+)
+from graphrag.index.workflows.typing import (
+    VerbDefinitions,
+    WorkflowDefinitions,
+    WorkflowToRun,
+)
 
 if TYPE_CHECKING:
     from graphrag.index.config.workflow import (

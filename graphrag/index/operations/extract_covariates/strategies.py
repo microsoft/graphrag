@@ -12,12 +12,11 @@ import graphrag.config.defaults as defs
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
 from graphrag.index.llm.load_llm import load_llm
-from graphrag.llm import CompletionLLM
-
-from .typing import (
+from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
+from graphrag.llm import CompletionLLM
 
 
 async def run_graph_intelligence(

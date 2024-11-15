@@ -3,8 +3,8 @@
 
 """The Indexing Engine workflows package root."""
 
-from .load import create_workflow, load_workflows
-from .typing import (
+from graphrag.index.workflows.load import create_workflow, load_workflows
+from graphrag.index.workflows.typing import (
     StepDefinition,
     VerbDefinitions,
     VerbTiming,

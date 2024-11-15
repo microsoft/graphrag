@@ -3,11 +3,11 @@
 
 """The Indexing Engine graph extractors package root."""
 
-from .claims import ClaimExtractor
-from .community_reports import (
+from graphrag.index.graph.extractors.claims import ClaimExtractor
+from graphrag.index.graph.extractors.community_reports import (
     CommunityReportsExtractor,
 )
-from .graph import GraphExtractionResult, GraphExtractor
+from graphrag.index.graph.extractors.graph import GraphExtractionResult, GraphExtractor
 
 __all__ = [
     "ClaimExtractor",

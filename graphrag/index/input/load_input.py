@@ -13,15 +13,14 @@ import pandas as pd
 from graphrag.config.enums import InputType
 from graphrag.config.models.input_config import InputConfig
 from graphrag.index.config.input import PipelineInputConfig
+from graphrag.index.input.csv import input_type as csv
+from graphrag.index.input.csv import load as load_csv
+from graphrag.index.input.text import input_type as text
+from graphrag.index.input.text import load as load_text
 from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
-
-from .csv import input_type as csv
-from .csv import load as load_csv
-from .text import input_type as text
-from .text import load as load_text
 
 log = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {

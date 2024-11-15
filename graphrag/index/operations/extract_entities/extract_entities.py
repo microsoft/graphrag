@@ -17,8 +17,10 @@ from datashaper import (
 
 from graphrag.index.bootstrap import bootstrap
 from graphrag.index.cache.pipeline_cache import PipelineCache
-
-from .strategies.typing import Document, EntityExtractStrategy
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
+    EntityExtractStrategy,
+)
 
 log = logging.getLogger(__name__)
 
