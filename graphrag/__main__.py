@@ -3,6 +3,6 @@
 
 """The GraphRAG package."""
 
-from .cli.main import app
+from graphrag.cli.main import app
 
 app(prog_name="graphrag")

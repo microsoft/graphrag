@@ -103,7 +103,9 @@ def load_strategy(
     """Load strategy method definition."""
     match strategy:
         case CreateCommunityReportsStrategyType.graph_intelligence:
-            from .strategies import run_graph_intelligence
+            from graphrag.index.operations.summarize_communities.strategies import (
+                run_graph_intelligence,
+            )
 
             return run_graph_intelligence
         case _:

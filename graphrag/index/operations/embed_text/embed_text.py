@@ -238,11 +238,15 @@ def load_strategy(strategy: TextEmbedStrategyType) -> TextEmbeddingStrategy:
     """Load strategy method definition."""
     match strategy:
         case TextEmbedStrategyType.openai:
-            from .strategies.openai import run as run_openai
+            from graphrag.index.operations.embed_text.strategies.openai import (
+                run as run_openai,
+            )
 
             return run_openai
         case TextEmbedStrategyType.mock:
-            from .strategies.mock import run as run_mock
+            from graphrag.index.operations.embed_text.strategies.mock import (
+                run as run_mock,
+            )
 
             return run_mock
         case _:

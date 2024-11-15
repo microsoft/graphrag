@@ -100,7 +100,7 @@ def _initialize_cli(
     ],
 ):
     """Generate a default configuration file."""
-    from .initialize import initialize_project_at
+    from graphrag.cli.initialize import initialize_project_at
 
     initialize_project_at(path=root)
 
@@ -165,7 +165,7 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
-    from .index import index_cli
+    from graphrag.cli.index import index_cli
 
     index_cli(
         root_dir=root,
@@ -234,7 +234,7 @@ def _update_cli(
 
     Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
-    from .index import update_cli
+    from graphrag.cli.index import update_cli
 
     update_cli(
         root_dir=root,
@@ -337,7 +337,7 @@ def _prompt_tune_cli(
     """Generate custom graphrag prompts with your own data (i.e. auto templating)."""
     import asyncio
 
-    from .prompt_tune import prompt_tune
+    from graphrag.cli.prompt_tune import prompt_tune
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
@@ -422,7 +422,7 @@ def _query_cli(
     ] = False,
 ):
     """Query a knowledge graph index."""
-    from .query import run_drift_search, run_global_search, run_local_search
+    from graphrag.cli.query import run_drift_search, run_global_search, run_local_search
 
     match method:
         case SearchType.LOCAL:

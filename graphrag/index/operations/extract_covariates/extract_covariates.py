@@ -75,7 +75,9 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
     """Load strategy method definition."""
     match strategy_type:
         case ExtractClaimsStrategyType.graph_intelligence:
-            from .strategies import run_graph_intelligence
+            from graphrag.index.operations.extract_covariates.strategies import (
+                run_graph_intelligence,
+            )
 
             return run_graph_intelligence
         case _:

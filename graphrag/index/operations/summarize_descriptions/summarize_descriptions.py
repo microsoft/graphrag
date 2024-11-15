@@ -139,7 +139,9 @@ def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy
     """Load strategy method definition."""
     match strategy_type:
         case SummarizeStrategyType.graph_intelligence:
-            from .strategies import run_graph_intelligence
+            from graphrag.index.operations.summarize_descriptions.strategies import (
+                run_graph_intelligence,
+            )
 
             return run_graph_intelligence
         case _:
