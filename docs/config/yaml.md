@@ -70,13 +70,13 @@ This is the base LLM configuration section. Other steps may override this config
 - `target` **required|all|none** - Determines which set of embeddings to emit.
 - `skip` **list[str]** - Which embeddings to skip. Only useful if target=all to customize the list.
 - `vector_store` **dict** - The vector store to use. Configured for lancedb by default.
-  - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
-  - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
-  - `url` **str** (only for AI Search) - AI Search endpoint
-  - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
-  - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
-  - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
-  - `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
+    - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
+    - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
+    - `url` **str** (only for AI Search) - AI Search endpoint
+    - `api_key` **str** (optional - only for AI Search) - The AI Search api key to use.
+    - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
+    - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
+    - `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
 - `strategy` **dict** - Fully override the text-embedding strategy.
 
 ### input
