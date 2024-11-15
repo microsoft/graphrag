@@ -85,7 +85,7 @@ deployment_name: <azure_model_deployment_name>
 
 - For more details about configuring GraphRAG, see the [configuration documentation](config/overview.md).
 - To learn more about Initialization, refer to the [Initialization documentation](config/init.md).
-- For more details about using the CLI, refer to the [CLI documentation](query/cli.md).
+- For more details about using the CLI, refer to the [CLI documentation](cli.md).
 
 ## Running the Indexing pipeline
 
