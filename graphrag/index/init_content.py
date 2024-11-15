@@ -168,6 +168,7 @@ local_search:
   # llm_top_p: {defs.LOCAL_SEARCH_LLM_TOP_P} # top-p sampling
   # llm_n: {defs.LOCAL_SEARCH_LLM_N} # Number of completions to generate
   # max_tokens: {defs.LOCAL_SEARCH_MAX_TOKENS}
+  # llm_max_tokens: {defs.LOCAL_SEARCH_LLM_MAX_TOKENS}
 
 global_search:
   map_prompt: "prompts/global_search_map_system_prompt.txt"
