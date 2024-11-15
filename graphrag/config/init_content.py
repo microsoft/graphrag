@@ -74,8 +74,8 @@ storage:
   type: {defs.STORAGE_TYPE.value} # or blob
   base_dir: "{defs.STORAGE_BASE_DIR}"
 
-# only turn this on if running `graphrag index` with custom settings
-# we normally use `graphrag update` with the defaults
+## only turn this on if running `graphrag index` with custom settings
+## we normally use `graphrag update` with the defaults
 update_index_storage:
   # type: {defs.STORAGE_TYPE.value} # or blob
   # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
