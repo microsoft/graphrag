@@ -126,7 +126,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `type` **file|memory|blob** - The storage type to use. Default=`file`
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.
-- `base_dir` **str** - The base directory to write reports to, relative to the root.
+- `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ### update_index_storage
@@ -136,7 +136,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `type` **file|memory|blob** - The storage type to use. Default=`file`
 - `connection_string` **str** - (blob only) The Azure Storage connection string.
 - `container_name` **str** - (blob only) The Azure Storage container name.
-- `base_dir` **str** - The base directory to write reports to, relative to the root.
+- `base_dir` **str** - The base directory to write output artifacts to, relative to the root.
 - `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ### reporting
