@@ -29,7 +29,7 @@ Below are the key parameters of the [DRIFTSearch class](https://github.com/micro
 
 ## How to Use
 
-An example of a global search scenario can be found in the following [notebook](../examples_notebooks/drift_search.ipynb).
+An example of a drift search scenario can be found in the following [notebook](../examples_notebooks/drift_search.ipynb).
 
 ## Learn More
 
