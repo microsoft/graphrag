@@ -10,7 +10,7 @@ from graphrag.config import (
     GraphRagConfig,
     create_graphrag_config,
 )
-from graphrag.index.init_content import INIT_YAML
+from graphrag.config.init_content import INIT_YAML
 
 
 def test_init_yaml():
