@@ -27,6 +27,7 @@ class ParquetTableEmitter(TableEmitter):
         self,
         storage: PipelineStorage,
         on_error: ErrorHandlerFn,
+        extension = "parquet",
     ):
         """Create a new Parquet Table Emitter."""
         self._storage = storage
@@ -34,7 +35,7 @@ class ParquetTableEmitter(TableEmitter):
 
     async def emit(self, name: str, data: pd.DataFrame) -> None:
         """Emit a dataframe to storage."""
-        filename = f"{name}.parquet"
+        filename = f"{name}.{self.extension}"
         log.info("emitting parquet table %s", filename)
         try:
             await self._storage.set(filename, data.to_parquet())

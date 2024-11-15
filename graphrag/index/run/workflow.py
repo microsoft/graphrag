@@ -33,6 +33,7 @@ async def _inject_workflow_data_dependencies(
     workflow_dependencies: dict[str, list[str]],
     dataset: pd.DataFrame,
     storage: PipelineStorage,
+    extension: str,
 ) -> None:
     """Inject the data dependencies into the workflow."""
     workflow.add_table(DEFAULT_INPUT_NAME, dataset)
@@ -41,7 +42,7 @@ async def _inject_workflow_data_dependencies(
     for id in deps:
         workflow_id = f"workflow:{id}"
         try:
-            table = await _load_table_from_storage(f"{id}.parquet", storage)
+            table = await _load_table_from_storage(f"{id}.{extension}", storage)
         except ValueError:
             # our workflows now allow transient tables, and we avoid putting those in primary storage
             # however, we need to keep the table in the dependency list for proper execution order
@@ -99,7 +100,7 @@ async def _process_workflow(
     context.stats.workflows[workflow_name] = {"overall": 0.0}
 
     await _inject_workflow_data_dependencies(
-        workflow, workflow_dependencies, dataset, context.storage
+        workflow, workflow_dependencies, dataset, context.storage, emitters[0].extension
     )
 
     workflow_start_time = time.time()
