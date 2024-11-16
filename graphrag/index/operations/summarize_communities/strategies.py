@@ -9,18 +9,17 @@ import traceback
 from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
     CommunityReportsExtractor,
 )
-from graphrag.index.llm import load_llm, read_llm_params
-from graphrag.index.utils.rate_limiter import RateLimiter
-
-from .typing import (
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     Finding,
     StrategyConfig,
 )
+from graphrag.index.utils.rate_limiter import RateLimiter
 
 DEFAULT_CHUNK_SIZE = 3000
 

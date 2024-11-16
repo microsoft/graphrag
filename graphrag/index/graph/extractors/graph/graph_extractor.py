@@ -16,7 +16,7 @@ from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.utils import clean_str
+from graphrag.index.utils.string import clean_str
 from graphrag.prompts.index.entity_extraction import (
     CONTINUE_PROMPT,
     GRAPH_EXTRACTION_PROMPT,

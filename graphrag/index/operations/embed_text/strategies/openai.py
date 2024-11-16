@@ -13,13 +13,12 @@ from fnllm import EmbeddingsLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
-from graphrag.config.models import LLMParameters
-from graphrag.index.cache import PipelineCache
-from graphrag.index.llm import load_llm_embeddings
-from graphrag.index.text_splitting import TokenTextSplitter
-from graphrag.index.utils import is_null
-
-from .typing import TextEmbeddingResult
+from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.llm.load_llm import load_llm_embeddings
+from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
+from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
+from graphrag.index.utils.is_null import is_null
 
 log = logging.getLogger(__name__)
 

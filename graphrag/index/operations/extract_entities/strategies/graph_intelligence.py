@@ -7,20 +7,19 @@ from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
-from graphrag.index.llm import load_llm, read_llm_params
-from graphrag.index.text_splitting import (
-    NoopTextSplitter,
-    TextSplitter,
-    TokenTextSplitter,
-)
-
-from .typing import (
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.index.operations.extract_entities.strategies.typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,
     StrategyConfig,
+)
+from graphrag.index.text_splitting.text_splitting import (
+    NoopTextSplitter,
+    TextSplitter,
+    TokenTextSplitter,
 )
 
 

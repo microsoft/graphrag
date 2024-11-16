@@ -6,7 +6,7 @@
 from fnllm import ChatLLM
 from pydantic import BaseModel
 
-from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
+from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.entity_types import (
     ENTITY_TYPE_GENERATION_JSON_PROMPT,
     ENTITY_TYPE_GENERATION_PROMPT,

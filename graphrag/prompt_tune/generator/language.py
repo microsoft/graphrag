@@ -5,7 +5,7 @@
 
 from fnllm import ChatLLM
 
-from graphrag.prompt_tune.prompt import DETECT_LANGUAGE_PROMPT
+from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
 
 
 async def detect_language(llm: ChatLLM, docs: str | list[str]) -> str:

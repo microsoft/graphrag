@@ -3,7 +3,7 @@
 
 """The Indexing Engine unipartite graph package root."""
 
-from .description_summary_extractor import (
+from graphrag.index.graph.extractors.summarize.description_summary_extractor import (
     SummarizationResult,
     SummarizeExtractor,
 )

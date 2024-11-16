@@ -31,10 +31,10 @@ from graphrag.index.config.storage import (
     PipelineFileStorageConfig,
 )
 from graphrag.index.context import PipelineRunContext, PipelineRunStats
-from graphrag.index.input import load_input
+from graphrag.index.input.load_input import load_input
 from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.index.storage.pipeline_storage import PipelineStorage
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 
 log = logging.getLogger(__name__)
 

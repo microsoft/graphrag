@@ -6,8 +6,8 @@
 import logging
 from pathlib import Path
 
-from .enums import ReportingType
-from .models.graph_rag_config import GraphRagConfig
+from graphrag.config.enums import ReportingType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:

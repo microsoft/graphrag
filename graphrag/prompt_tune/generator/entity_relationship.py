@@ -8,7 +8,7 @@ import json
 
 from fnllm import ChatLLM
 
-from graphrag.prompt_tune.prompt import (
+from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
     UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT,

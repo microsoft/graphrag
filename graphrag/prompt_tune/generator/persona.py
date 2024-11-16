@@ -5,8 +5,8 @@
 
 from fnllm import ChatLLM
 
-from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
-from graphrag.prompt_tune.prompt import GENERATE_PERSONA_PROMPT
+from graphrag.prompt_tune.defaults import DEFAULT_TASK
+from graphrag.prompt_tune.prompt.persona import GENERATE_PERSONA_PROMPT
 
 
 async def generate_persona(llm: ChatLLM, domain: str, task: str = DEFAULT_TASK) -> str:

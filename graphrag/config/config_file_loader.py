@@ -9,8 +9,8 @@ from pathlib import Path
 
 import yaml
 
-from .create_graphrag_config import create_graphrag_config
-from .models.graph_rag_config import GraphRagConfig
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 _default_config_files = ["settings.yaml", "settings.yml", "settings.json"]
 

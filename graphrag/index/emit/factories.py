@@ -3,14 +3,13 @@
 
 """Table Emitter Factories."""
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.emit.csv_table_emitter import CSVTableEmitter
+from graphrag.index.emit.json_table_emitter import JsonTableEmitter
+from graphrag.index.emit.parquet_table_emitter import ParquetTableEmitter
+from graphrag.index.emit.table_emitter import TableEmitter
+from graphrag.index.emit.types import TableEmitterType
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
-
-from .csv_table_emitter import CSVTableEmitter
-from .json_table_emitter import JsonTableEmitter
-from .parquet_table_emitter import ParquetTableEmitter
-from .table_emitter import TableEmitter
-from .types import TableEmitterType
 
 
 def create_table_emitter(

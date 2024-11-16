@@ -23,14 +23,14 @@ from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
-from graphrag.config.models import LLMParameters
+from graphrag.config.models.llm_parameters import LLMParameters
 
 from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
 
-    from graphrag.index.cache import PipelineCache
+    from graphrag.index.cache.pipeline_cache import PipelineCache
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)

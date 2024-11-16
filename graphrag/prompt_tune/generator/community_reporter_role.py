@@ -5,7 +5,7 @@
 
 from fnllm import ChatLLM
 
-from graphrag.prompt_tune.prompt import (
+from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
 )
 

@@ -9,9 +9,8 @@ from typing import Any
 
 from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
 
-from graphrag.index.cache import PipelineCache
-
-from .typing import TextEmbeddingResult
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 
 
 async def run(  # noqa RUF029 async is required for interface

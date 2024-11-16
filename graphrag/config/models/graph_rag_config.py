@@ -7,27 +7,26 @@ from devtools import pformat
 from pydantic import Field
 
 import graphrag.config.defaults as defs
-
-from .cache_config import CacheConfig
-from .chunking_config import ChunkingConfig
-from .claim_extraction_config import ClaimExtractionConfig
-from .cluster_graph_config import ClusterGraphConfig
-from .community_reports_config import CommunityReportsConfig
-from .drift_search_config import DRIFTSearchConfig
-from .embed_graph_config import EmbedGraphConfig
-from .entity_extraction_config import EntityExtractionConfig
-from .global_search_config import GlobalSearchConfig
-from .input_config import InputConfig
-from .llm_config import LLMConfig
-from .local_search_config import LocalSearchConfig
-from .reporting_config import ReportingConfig
-from .snapshots_config import SnapshotsConfig
-from .storage_config import StorageConfig
-from .summarize_descriptions_config import (
+from graphrag.config.models.cache_config import CacheConfig
+from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
+from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
+from graphrag.config.models.community_reports_config import CommunityReportsConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.global_search_config import GlobalSearchConfig
+from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.llm_config import LLMConfig
+from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.reporting_config import ReportingConfig
+from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
-from .text_embedding_config import TextEmbeddingConfig
-from .umap_config import UmapConfig
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
+from graphrag.config.models.umap_config import UmapConfig
 
 
 class GraphRagConfig(LLMConfig):

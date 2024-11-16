@@ -10,11 +10,10 @@ from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
-from graphrag.index.llm import load_llm, read_llm_params
-
-from .typing import (
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )

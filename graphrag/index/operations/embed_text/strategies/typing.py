@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 
 @dataclass

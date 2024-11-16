@@ -11,8 +11,7 @@ from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
 from graphrag.config.enums import InputFileType, InputType
-
-from .workflow import PipelineWorkflowStep
+from graphrag.index.config.workflow import PipelineWorkflowStep
 
 T = TypeVar("T")
 

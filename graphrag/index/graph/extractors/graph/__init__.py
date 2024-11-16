@@ -3,7 +3,7 @@
 
 """The Indexing Engine unipartite graph package root."""
 
-from .graph_extractor import (
+from graphrag.index.graph.extractors.graph.graph_extractor import (
     DEFAULT_ENTITY_TYPES,
     GraphExtractionResult,
     GraphExtractor,

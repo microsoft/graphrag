@@ -12,16 +12,17 @@ from pydantic import TypeAdapter
 import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.llm_parameters import LLMParameters
-from graphrag.index.input import load_input
-from graphrag.index.llm import load_llm_embeddings
+from graphrag.index.input.load_input import load_input
+from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
+from graphrag.prompt_tune.defaults import (
+    MIN_CHUNK_OVERLAP,
+    MIN_CHUNK_SIZE,
+    N_SUBSET_MAX,
+    K,
+)
 from graphrag.prompt_tune.types import DocSelectionType
-
-MIN_CHUNK_OVERLAP = 0
-MIN_CHUNK_SIZE = 200
-N_SUBSET_MAX = 300
-K = 15
 
 
 async def _embed_chunks(
