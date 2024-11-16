@@ -1,0 +1,30 @@
+{
+  "changes": [
+    {
+      "description": "Data model changes.",
+      "type": "minor"
+    },
+    {
+      "description": "Add Parquet as part of the default emitters when not pressent",
+      "type": "patch"
+    },
+    {
+      "description": "Centralized prompts and export all for easier injection.",
+      "type": "patch"
+    },
+    {
+      "description": "Cleanup of artifact outputs/schemas.",
+      "type": "patch"
+    },
+    {
+      "description": "Config and docs updates.",
+      "type": "patch"
+    },
+    {
+      "description": "Implement dynamic community selection to global search",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-11-16T00:14:07+00:00",
+  "version": "0.5.0"
+}
