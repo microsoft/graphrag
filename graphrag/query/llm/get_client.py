@@ -5,7 +5,8 @@
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from graphrag.config import GraphRagConfig, LLMType
+from graphrag.config.enums import LLMType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType

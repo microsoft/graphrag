@@ -12,13 +12,11 @@ import pandas as pd
 import tiktoken
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_LOCAL_SYSTEM_PROMPT,
 )
@@ -30,7 +28,7 @@ from graphrag.query.structured_search.drift_search.primer import PrimerQueryProc
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
 

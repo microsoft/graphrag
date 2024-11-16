@@ -9,10 +9,9 @@ from pathlib import Path
 import yaml
 from pyaml_env import parse_config as parse_config_with_env
 
-from graphrag.config import create_graphrag_config, read_dotenv
-from graphrag.index.config import PipelineConfig
-
-from .create_pipeline_config import create_pipeline_config
+from graphrag.config.create_graphrag_config import create_graphrag_config, read_dotenv
+from graphrag.index.config.pipeline import PipelineConfig
+from graphrag.index.create_pipeline_config import create_pipeline_config
 
 
 def load_pipeline_config(config_or_path: str | PipelineConfig) -> PipelineConfig:

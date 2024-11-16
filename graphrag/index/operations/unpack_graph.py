@@ -9,7 +9,7 @@ import networkx as nx
 import pandas as pd
 from datashaper import VerbCallbacks, progress_iterable
 
-from graphrag.index.utils import load_graph
+from graphrag.index.utils.load_graph import load_graph
 
 default_copy = ["level"]
 

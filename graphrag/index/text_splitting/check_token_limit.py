@@ -3,7 +3,7 @@
 
 """Token limit method definition."""
 
-from .text_splitting import TokenTextSplitter
+from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
 
 
 def check_token_limit(text, max_token):

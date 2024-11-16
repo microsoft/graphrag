@@ -24,12 +24,12 @@ from typing import Any
 import pandas as pd
 from pydantic import validate_call
 
-from graphrag.config import GraphRagConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
 )
-from graphrag.logging import PrintProgressReporter
+from graphrag.logging.print_progress import PrintProgressReporter
 from graphrag.query.factories import (
     get_drift_search_engine,
     get_global_search_engine,
@@ -47,8 +47,8 @@ from graphrag.query.indexer_adapters import (
 from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
 from graphrag.utils.embeddings import create_collection_name
-from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 
 reporter = PrintProgressReporter("")
 

@@ -11,15 +11,11 @@ import numpy as np
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
 from graphrag.utils.embeddings import create_collection_name
-from graphrag.vector_stores import (
-    BaseVectorStore,
-    VectorStoreDocument,
-    VectorStoreFactory,
-)
-
-from .strategies.typing import TextEmbeddingStrategy
+from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
+from graphrag.vector_stores.factory import VectorStoreFactory
 
 log = logging.getLogger(__name__)
 
@@ -242,11 +238,15 @@ def load_strategy(strategy: TextEmbedStrategyType) -> TextEmbeddingStrategy:
     """Load strategy method definition."""
     match strategy:
         case TextEmbedStrategyType.openai:
-            from .strategies.openai import run as run_openai
+            from graphrag.index.operations.embed_text.strategies.openai import (
+                run as run_openai,
+            )
 
             return run_openai
         case TextEmbedStrategyType.mock:
-            from .strategies.mock import run as run_mock
+            from graphrag.index.operations.embed_text.strategies.mock import (
+                run as run_mock,
+            )
 
             return run_mock
         case _:

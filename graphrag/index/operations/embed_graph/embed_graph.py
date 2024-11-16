@@ -12,9 +12,8 @@ from datashaper import VerbCallbacks, derive_from_rows
 
 from graphrag.index.graph.embedding import embed_nod2vec
 from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.utils import load_graph
-
-from .typing import NodeEmbeddings
+from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
+from graphrag.index.utils.load_graph import load_graph
 
 
 class EmbedGraphStrategyType(str, Enum):

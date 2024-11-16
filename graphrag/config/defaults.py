@@ -7,9 +7,7 @@ from pathlib import Path
 
 from datashaper import AsyncType
 
-from graphrag.vector_stores import VectorStoreType
-
-from .enums import (
+from graphrag.config.enums import (
     CacheType,
     InputFileType,
     InputType,
@@ -18,6 +16,7 @@ from .enums import (
     StorageType,
     TextEmbeddingTarget,
 )
+from graphrag.vector_stores.factory import VectorStoreType
 
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
