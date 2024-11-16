@@ -145,15 +145,12 @@ def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
 
 
 def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    input[CLAIM_DETAILS] = input.apply(
-        lambda x: {
-            CLAIM_ID: x[CLAIM_ID],
-            CLAIM_SUBJECT: x[CLAIM_SUBJECT],
-            CLAIM_TYPE: x[CLAIM_TYPE],
-            CLAIM_STATUS: x[CLAIM_STATUS],
-            CLAIM_DESCRIPTION: x[CLAIM_DESCRIPTION],
-        },
-        axis=1,
-    )
+    # Fill NaN values in place to reduce memory usage
+    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+
+    # Create CLAIM_DETAILS column 
+    input[CLAIM_DETAILS] = input[
+        [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
+    ].to_dict(orient="records")
+
     return input
