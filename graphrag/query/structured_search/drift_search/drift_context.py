@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import tiktoken
 
-from graphrag.config.models.drift_config import DRIFTSearchConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.covariate import Covariate
 from graphrag.model.entity import Entity

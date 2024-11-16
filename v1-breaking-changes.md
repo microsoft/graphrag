@@ -54,4 +54,4 @@ reporting:
   base_dir: "output" # changed from "output/${timestamp}/reports"
 ```
 
-[Full docs on using JSON or YAML files for configuration](https://microsoft.github.io/graphrag/config/json_yaml/).
+[Full docs on using YAML files for configuration](https://microsoft.github.io/graphrag/config/yaml/).
