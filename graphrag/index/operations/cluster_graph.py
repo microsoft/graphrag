@@ -186,7 +186,7 @@ def _compute_leiden_communities(
     seed=0xDEADBEEF,
 ) -> dict[int, dict[str, int]]:
     """Return Leiden root communities."""
-    # NOTE: This import is done here to reduce the initial import time of the module
+    # NOTE: This import is done here to reduce the initial import time of the graphrag package
     from graspologic.partition import hierarchical_leiden
 
     if use_lcc:
