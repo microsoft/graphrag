@@ -7,8 +7,8 @@ from typing import Any, cast
 import yaml
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.init_content import INIT_YAML
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def test_init_yaml():
