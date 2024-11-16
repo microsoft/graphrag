@@ -45,11 +45,11 @@ class LLMParameters(BaseModel):
     )
     frequency_penalty: float | None = Field(
         description="The frequency penalty to use for token generation.",
-        default=None,
+        default=defs.LLM_FREQUENCY_PENALTY,
     )
     presence_penalty: float | None = Field(
         description="The presence penalty to use for token generation.",
-        default=None,
+        default=defs.LLM_PRESENCE_PENALTY,
     )
     request_timeout: float = Field(
         description="The request timeout to use.", default=defs.LLM_REQUEST_TIMEOUT
