@@ -23,6 +23,7 @@ METDATA_PAYLOAD_KEY = "_metadata"
 class QdrantError(Exception):
     """An exception class for Qdrant errors."""
 
+
 class QdrantVectorStore(BaseVectorStore):
     """The Qdrant vector storage implementation."""
 
@@ -111,22 +112,26 @@ class QdrantVectorStore(BaseVectorStore):
             msg = "db_connection not set. Call connect() first."
             raise QdrantError(msg)
 
-        results = self.db_connection.search(
+        results = self.db_connection.query_points(
             self.collection_name,
-            query_vector=query_embedding,
+            query=query_embedding,
             limit=k,
             query_filter=self.query_filter,
             with_payload=True,
-            with_vectors=False,
+            with_vectors=True,
             **kwargs,
-        )
+        ).points
         return [
             VectorStoreSearchResult(
                 document=VectorStoreDocument(
                     id=result.id,
-                    text=result.payload.get(self._text_payload_key, "") if result.payload else "",
-                    vector=result.vector, # type: ignore
-                    attributes=result.payload.get(self._metadata_payload_key, {}) if result.payload else {},
+                    text=result.payload.get(self._text_payload_key, "")
+                    if result.payload
+                    else "",
+                    vector=result.vector,  # type: ignore
+                    attributes=result.payload.get(self._metadata_payload_key, {})
+                    if result.payload
+                    else {},
                 ),
                 score=result.score,
             )
@@ -141,3 +146,26 @@ class QdrantVectorStore(BaseVectorStore):
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
         return []
+
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        """Search for a document by id."""
+        points = self.db_connection.retrieve(
+            self.collection_name,
+            ids=[id],
+            with_payload=True,
+            with_vectors=True,
+        )
+
+        if not len(points) > 0:
+            msg = f"Document with id {id} not found."
+            raise ValueError(msg)
+
+        point = points[0]
+        return VectorStoreDocument(
+            id=point.id,
+            text=point.payload.get(self._text_payload_key, "") if point.payload else "",
+            vector=point.vector,  # type: ignore
+            attributes=point.payload.get(self._metadata_payload_key, {})
+            if point.payload
+            else {},
+        )
