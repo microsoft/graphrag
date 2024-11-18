@@ -15,7 +15,7 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports as create_final_community_reports_flow,
 )
@@ -30,14 +30,15 @@ async def create_final_community_reports(
     summarization_strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
-    full_content_text_embed: dict | None = None,
-    summary_text_embed: dict | None = None,
-    title_text_embed: dict | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform community reports."""
     nodes = cast(pd.DataFrame, input.get_input())
     edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
+    entities = cast(pd.DataFrame, get_required_input_table(input, "entities").table)
+    communities = cast(
+        pd.DataFrame, get_required_input_table(input, "communities").table
+    )
 
     claims = get_named_input_table(input, "covariates")
     if claims:
@@ -46,15 +47,14 @@ async def create_final_community_reports(
     output = await create_final_community_reports_flow(
         nodes,
         edges,
+        entities,
+        communities,
         claims,
         callbacks,
         cache,
         summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
-        full_content_text_embed=full_content_text_embed,
-        summary_text_embed=summary_text_embed,
-        title_text_embed=title_text_embed,
     )
 
     return create_verb_result(

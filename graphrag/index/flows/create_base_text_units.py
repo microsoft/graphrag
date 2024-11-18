@@ -15,16 +15,18 @@ from datashaper import (
 )
 
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.index.utils import gen_md5_hash
+from graphrag.index.operations.snapshot import snapshot
+from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.index.utils.hashing import gen_md5_hash
 
 
-def create_base_text_units(
+async def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: VerbCallbacks,
-    chunk_column_name: str,
-    n_tokens_column_name: str,
+    storage: PipelineStorage,
     chunk_by_columns: list[str],
     chunk_strategy: dict[str, Any] | None = None,
+    snapshot_transient_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -61,21 +63,28 @@ def create_base_text_units(
     chunked = chunked.explode("chunks")
     chunked.rename(
         columns={
-            "chunks": chunk_column_name,
+            "chunks": "chunk",
         },
         inplace=True,
     )
-    chunked["chunk_id"] = chunked.apply(
-        lambda row: gen_md5_hash(row, [chunk_column_name]), axis=1
+    chunked["id"] = chunked.apply(lambda row: gen_md5_hash(row, ["chunk"]), axis=1)
+    chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
+        chunked["chunk"].tolist(), index=chunked.index
     )
-    chunked[["document_ids", chunk_column_name, n_tokens_column_name]] = pd.DataFrame(
-        chunked[chunk_column_name].tolist(), index=chunked.index
-    )
-    chunked["id"] = chunked["chunk_id"]
+    # rename for downstream consumption
+    chunked.rename(columns={"chunk": "text"}, inplace=True)
 
-    return cast(
-        pd.DataFrame, chunked[chunked[chunk_column_name].notna()].reset_index(drop=True)
-    )
+    output = cast(pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True))
+
+    if snapshot_transient_enabled:
+        await snapshot(
+            output,
+            name="create_base_text_units",
+            storage=storage,
+            formats=["parquet"],
+        )
+
+    return output
 
 
 # TODO: would be nice to inline this completely in the main method with pandas

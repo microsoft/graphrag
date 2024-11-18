@@ -2,8 +2,8 @@ name: Python Integration Tests
 on:
   push:
     branches:
-      - "**/main" # Matches branches like feature/main
-      - "main" # Matches the main branch
+      - "**/main" # match branches like feature/main
+      - "main"    # match the main branch
   pull_request:
     types:
       - opened
@@ -13,6 +13,9 @@ on:
     branches:
       - "**/main"
       - "main"
+    paths-ignore:
+      - "**/*.md"
+      - ".semversioner/**"
 
 permissions:
   contents: read

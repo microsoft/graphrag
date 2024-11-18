@@ -10,13 +10,14 @@ Backwards compatibility is not guaranteed at this time.
 
 from pathlib import Path
 
-from graphrag.config import CacheType, GraphRagConfig
+from graphrag.config.enums import CacheType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 from graphrag.vector_stores.factory import VectorStoreType
 
 
@@ -24,7 +25,6 @@ async def build_index(
     config: GraphRagConfig,
     run_id: str = "",
     is_resume_run: bool = False,
-    is_update_run: bool = False,
     memory_profile: bool = False,
     progress_reporter: ProgressReporter | None = None,
     emit: list[TableEmitterType] = [TableEmitterType.Parquet],  # noqa: B006
@@ -54,17 +54,17 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
+    is_update_run = bool(config.update_index_storage)
+
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
 
-    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
+    # Ensure Parquet is part of the emitters
+    if TableEmitterType.Parquet not in emit:
+        emit.append(TableEmitterType.Parquet)
+
+    config = _patch_vector_config(config)
 
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
@@ -89,3 +89,22 @@ async def build_index(
                 progress_reporter.success(output.workflow)
             progress_reporter.info(str(output.result))
     return outputs
+
+
+def _patch_vector_config(config: GraphRagConfig):
+    """Back-compat patch to ensure a default vector store configuration."""
+    if not config.embeddings.vector_store:
+        config.embeddings.vector_store = {
+            "type": "lancedb",
+            "db_uri": "output/lancedb",
+            "container_name": "default",
+            "overwrite": True,
+        }
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
+    if vector_store_type == VectorStoreType.LanceDB:
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
+        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
+    return config

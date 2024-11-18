@@ -3,19 +3,19 @@
 
 """The LanceDB vector storage implementation package."""
 
-import json
+import json  # noqa: I001
 from typing import Any
 
-import lancedb as lancedb
 import pyarrow as pa
 
 from graphrag.model.types import TextEmbedder
 
-from .base import (
+from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
 )
+import lancedb
 
 
 class LanceDBVectorStore(BaseVectorStore):
@@ -135,3 +135,19 @@ class LanceDBVectorStore(BaseVectorStore):
         if query_embedding:
             return self.similarity_search_by_vector(query_embedding, k)
         return []
+
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        """Search for a document by id."""
+        doc = (
+            self.document_collection.search()
+            .where(f"id == '{id}'", prefilter=True)
+            .to_list()
+        )
+        if doc:
+            return VectorStoreDocument(
+                id=doc[0]["id"],
+                text=doc[0]["text"],
+                vector=doc[0]["vector"],
+                attributes=json.loads(doc[0]["attributes"]),
+            )
+        return VectorStoreDocument(id=id, text=None, vector=None)

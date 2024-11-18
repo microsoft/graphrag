@@ -7,9 +7,7 @@ from pathlib import Path
 
 from datashaper import AsyncType
 
-from graphrag.vector_stores import VectorStoreType
-
-from .enums import (
+from graphrag.config.enums import (
     CacheType,
     InputFileType,
     InputType,
@@ -18,6 +16,7 @@ from .enums import (
     StorageType,
     TextEmbeddingTarget,
 )
+from graphrag.vector_stores.factory import VectorStoreType
 
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
@@ -82,15 +81,18 @@ REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_RAW_ENTITIES = False
 SNAPSHOTS_TOP_LEVEL_NODES = False
+SNAPSHOTS_EMBEDDINGS = False
+SNAPSHOTS_TRANSIENT = False
 STORAGE_BASE_DIR = "output"
 STORAGE_TYPE = StorageType.file
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 UMAP_ENABLED = False
+UPDATE_STORAGE_BASE_DIR = "update_output"
 
 VECTOR_STORE = f"""
     type: {VectorStoreType.LanceDB.value}
     db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    collection_name: entity_description_embeddings
+    container_name: default
     overwrite: true\
 """
 
@@ -116,8 +118,16 @@ GLOBAL_SEARCH_MAP_MAX_TOKENS = 1000
 GLOBAL_SEARCH_REDUCE_MAX_TOKENS = 2_000
 GLOBAL_SEARCH_CONCURRENCY = 32
 
-# DRIFT Search
+# Global Search with dynamic community selection
+DYNAMIC_SEARCH_LLM_MODEL = "gpt-4o-mini"
+DYNAMIC_SEARCH_RATE_THRESHOLD = 1
+DYNAMIC_SEARCH_KEEP_PARENT = False
+DYNAMIC_SEARCH_NUM_REPEATS = 1
+DYNAMIC_SEARCH_USE_SUMMARY = False
+DYNAMIC_SEARCH_CONCURRENT_COROUTINES = 16
+DYNAMIC_SEARCH_MAX_LEVEL = 2
 
+# DRIFT Search
 DRIFT_SEARCH_LLM_TEMPERATURE = 0
 DRIFT_SEARCH_LLM_TOP_P = 1
 DRIFT_SEARCH_LLM_N = 3

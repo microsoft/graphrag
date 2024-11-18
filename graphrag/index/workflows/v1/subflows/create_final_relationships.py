@@ -14,10 +14,10 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_relationships import (
     create_final_relationships as create_final_relationships_flow,
 )
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_required_input_table
 
 
@@ -28,20 +28,17 @@ from graphrag.index.utils.ds_util import get_required_input_table
 async def create_final_relationships(
     input: VerbInput,
     callbacks: VerbCallbacks,
-    cache: PipelineCache,
-    description_text_embed: dict | None = None,
+    runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final relationships."""
-    source = cast(pd.DataFrame, input.get_input())
+    entity_graph = await runtime_storage.get("base_entity_graph")
     nodes = cast(pd.DataFrame, get_required_input_table(input, "nodes").table)
 
-    output = await create_final_relationships_flow(
-        source,
+    output = create_final_relationships_flow(
+        entity_graph,
         nodes,
         callbacks,
-        cache,
-        description_text_embed=description_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

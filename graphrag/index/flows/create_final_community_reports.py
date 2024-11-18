@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -31,7 +31,6 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     NODE_ID,
     NODE_NAME,
 )
-from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
     restore_community_hierarchy,
@@ -42,18 +41,19 @@ from graphrag.index.operations.summarize_communities import (
 async def create_final_community_reports(
     nodes_input: pd.DataFrame,
     edges_input: pd.DataFrame,
+    entities: pd.DataFrame,
+    communities: pd.DataFrame,
     claims_input: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     summarization_strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
-    full_content_text_embed: dict | None = None,
-    summary_text_embed: dict | None = None,
-    title_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    nodes = _prep_nodes(nodes_input)
+    entities_df = entities.loc[:, ["id", "description"]]
+    nodes_df = nodes_input.merge(entities_df, on="id")
+    nodes = _prep_nodes(nodes_df)
     edges = _prep_edges(edges_input)
 
     claims = None
@@ -81,44 +81,37 @@ async def create_final_community_reports(
         num_threads=num_threads,
     )
 
+    community_reports["community"] = community_reports["community"].astype(int)
+    community_reports["human_readable_id"] = community_reports["community"]
     community_reports["id"] = community_reports["community"].apply(
         lambda _x: str(uuid4())
     )
 
-    # Embed full content if not skipped
-    if full_content_text_embed:
-        community_reports["full_content_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="full_content",
-            strategy=full_content_text_embed["strategy"],
-            embedding_name="community_report_full_content",
-        )
-
-    # Embed summary if not skipped
-    if summary_text_embed:
-        community_reports["summary_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="summary",
-            strategy=summary_text_embed["strategy"],
-            embedding_name="community_report_summary",
-        )
-
-    # Embed title if not skipped
-    if title_text_embed:
-        community_reports["title_embedding"] = await embed_text(
-            community_reports,
-            callbacks,
-            cache,
-            column="title",
-            strategy=title_text_embed["strategy"],
-            embedding_name="community_report_title",
-        )
-
-    return community_reports
+    # Merge with communities to add size and period
+    merged = community_reports.merge(
+        communities.loc[:, ["community", "size", "period"]],
+        on="community",
+        how="left",
+        copy=False,
+    )
+    return merged.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "level",
+            "title",
+            "summary",
+            "full_content",
+            "rank",
+            "rank_explanation",
+            "findings",
+            "full_content_json",
+            "period",
+            "size",
+        ],
+    ]
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:

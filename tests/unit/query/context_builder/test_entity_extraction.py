@@ -3,14 +3,14 @@
 
 from typing import Any
 
-from graphrag.model import Entity
+from graphrag.model.entity import Entity
 from graphrag.model.types import TextEmbedder
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
 from graphrag.query.llm.base import BaseTextEmbedding
-from graphrag.vector_stores import (
+from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,
@@ -53,6 +53,11 @@ class MockBaseVectorStore(BaseVectorStore):
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         return [document for document in self.documents if document.id in include_ids]
+
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        result = self.documents[0]
+        result.id = id
+        return result
 
 
 class MockBaseTextEmbedding(BaseTextEmbedding):

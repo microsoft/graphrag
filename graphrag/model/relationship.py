@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from .identified import Identified
+from graphrag.model.identified import Identified
 
 
 @dataclass
@@ -31,8 +31,8 @@ class Relationship(Identified):
     text_unit_ids: list[str] | None = None
     """List of text unit IDs in which the relationship appears (optional)."""
 
-    document_ids: list[str] | None = None
-    """List of document IDs in which the relationship appears (optional)."""
+    rank: int | None = 1
+    """Rank of the relationship, used for sorting (optional). Higher rank indicates more important relationship. This can be based on centrality or other metrics."""
 
     attributes: dict[str, Any] | None = None
     """Additional attributes associated with the relationship (optional). To be included in the search prompt"""
@@ -42,13 +42,13 @@ class Relationship(Identified):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         source_key: str = "source",
         target_key: str = "target",
         description_key: str = "description",
+        rank_key: str = "rank",
         weight_key: str = "weight",
         text_unit_ids_key: str = "text_unit_ids",
-        document_ids_key: str = "document_ids",
         attributes_key: str = "attributes",
     ) -> "Relationship":
         """Create a new relationship from the dict data."""
@@ -57,9 +57,9 @@ class Relationship(Identified):
             short_id=d.get(short_id_key),
             source=d[source_key],
             target=d[target_key],
+            rank=d.get(rank_key, 1),
             description=d.get(description_key),
             weight=d.get(weight_key, 1.0),
             text_unit_ids=d.get(text_unit_ids_key),
-            document_ids=d.get(document_ids_key),
             attributes=d.get(attributes_key),
         )

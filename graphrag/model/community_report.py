@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from .named import Named
+from graphrag.model.named import Named
 
 
 @dataclass
@@ -34,20 +34,28 @@ class CommunityReport(Named):
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the report (optional)."""
 
+    size: int | None = None
+    """The size of the report (Amount of text units)."""
+
+    period: str | None = None
+    """The period of the report (optional)."""
+
     @classmethod
     def from_dict(
         cls,
         d: dict[str, Any],
         id_key: str = "id",
         title_key: str = "title",
-        community_id_key: str = "community_id",
-        short_id_key: str = "short_id",
+        community_id_key: str = "community",
+        short_id_key: str = "human_readable_id",
         summary_key: str = "summary",
         full_content_key: str = "full_content",
         rank_key: str = "rank",
         summary_embedding_key: str = "summary_embedding",
         full_content_embedding_key: str = "full_content_embedding",
         attributes_key: str = "attributes",
+        size_key: str = "size",
+        period_key: str = "period",
     ) -> "CommunityReport":
         """Create a new community report from the dict data."""
         return CommunityReport(
@@ -61,4 +69,6 @@ class CommunityReport(Named):
             summary_embedding=d.get(summary_embedding_key),
             full_content_embedding=d.get(full_content_embedding_key),
             attributes=d.get(attributes_key),
+            size=d.get(size_key),
+            period=d.get(period_key),
         )

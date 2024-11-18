@@ -7,7 +7,7 @@ from datashaper import (
     AsyncType,
 )
 
-from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_base_entity_graph"
 
@@ -19,11 +19,9 @@ def build_steps(
     Create the base table for the entity graph.
 
     ## Dependencies
-    * `workflow:create_base_summarized_entities`
+    * `workflow:create_base_text_units`
     """
     entity_extraction_config = config.get("entity_extract", {})
-    text_column = entity_extraction_config.get("text_column", "chunk")
-    id_column = entity_extraction_config.get("id_column", "chunk_id")
     async_mode = entity_extraction_config.get("async_mode", AsyncType.AsyncIO)
     extraction_strategy = entity_extraction_config.get("strategy")
     extraction_num_threads = entity_extraction_config.get("num_threads", 4)
@@ -88,15 +86,14 @@ def build_steps(
     embedding_strategy = embed_graph_config.get("strategy")
     embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
-    graphml_snapshot_enabled = config.get("graphml_snapshot", False) or False
-    raw_entity_snapshot_enabled = config.get("raw_entity_snapshot", False) or False
+    snapshot_graphml = config.get("snapshot_graphml", False) or False
+    snapshot_raw_entities = config.get("snapshot_raw_entities", False) or False
+    snapshot_transient = config.get("snapshot_transient", False) or False
 
     return [
         {
             "verb": "create_base_entity_graph",
             "args": {
-                "text_column": text_column,
-                "id_column": id_column,
                 "extraction_strategy": extraction_strategy,
                 "extraction_num_threads": extraction_num_threads,
                 "extraction_async_mode": async_mode,
@@ -109,8 +106,9 @@ def build_steps(
                 "embedding_strategy": embedding_strategy
                 if embed_graph_enabled
                 else None,
-                "raw_entity_snapshot_enabled": raw_entity_snapshot_enabled,
-                "graphml_snapshot_enabled": graphml_snapshot_enabled,
+                "snapshot_raw_entities_enabled": snapshot_raw_entities,
+                "snapshot_graphml_enabled": snapshot_graphml,
+                "snapshot_transient_enabled": snapshot_transient,
             },
             "input": ({"source": "workflow:create_base_text_units"}),
         },

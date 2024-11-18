@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from .pipeline_cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 
 
 class NoopPipelineCache(PipelineCache):

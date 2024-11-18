@@ -16,13 +16,12 @@ from datashaper import (
 
 import graphrag.config.defaults as defaults
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
     get_levels,
     prep_community_report_context,
 )
-
-from .typing import (
+from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     CommunityReportsStrategy,
     CreateCommunityReportsStrategyType,
@@ -88,7 +87,7 @@ async def _generate_report(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     strategy: dict,
-    community_id: int | str,
+    community_id: int,
     community_level: int,
     community_context: str,
 ) -> CommunityReport | None:
@@ -104,7 +103,9 @@ def load_strategy(
     """Load strategy method definition."""
     match strategy:
         case CreateCommunityReportsStrategyType.graph_intelligence:
-            from .strategies import run_graph_intelligence
+            from graphrag.index.operations.summarize_communities.strategies import (
+                run_graph_intelligence,
+            )
 
             return run_graph_intelligence
         case _:

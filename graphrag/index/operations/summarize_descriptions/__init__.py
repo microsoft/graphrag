@@ -3,8 +3,13 @@
 
 """Root package for description summarization."""
 
-from .summarize_descriptions import summarize_descriptions
-from .typing import SummarizationStrategy, SummarizeStrategyType
+from graphrag.index.operations.summarize_descriptions.summarize_descriptions import (
+    summarize_descriptions,
+)
+from graphrag.index.operations.summarize_descriptions.typing import (
+    SummarizationStrategy,
+    SummarizeStrategyType,
+)
 
 __all__ = [
     "SummarizationStrategy",

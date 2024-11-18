@@ -5,19 +5,17 @@
 
 from typing import cast
 
-import pandas as pd
 from datashaper import (
     Table,
     VerbCallbacks,
-    VerbInput,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
 from graphrag.index.flows.create_final_entities import (
     create_final_entities as create_final_entities_flow,
 )
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 @verb(
@@ -25,22 +23,16 @@ from graphrag.index.flows.create_final_entities import (
     treats_input_tables_as_immutable=True,
 )
 async def create_final_entities(
-    input: VerbInput,
     callbacks: VerbCallbacks,
-    cache: PipelineCache,
-    name_text_embed: dict | None = None,
-    description_text_embed: dict | None = None,
+    runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final entities."""
-    source = cast(pd.DataFrame, input.get_input())
+    entity_graph = await runtime_storage.get("base_entity_graph")
 
-    output = await create_final_entities_flow(
-        source,
+    output = create_final_entities_flow(
+        entity_graph,
         callbacks,
-        cache,
-        name_text_embed=name_text_embed,
-        description_text_embed=description_text_embed,
     )
 
     return create_verb_result(cast(Table, output))

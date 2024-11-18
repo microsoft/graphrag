@@ -13,7 +13,7 @@ from rich.progress import Progress, TaskID, TimeElapsedColumn
 from rich.spinner import Spinner
 from rich.tree import Tree
 
-from .types import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 
 
 # https://stackoverflow.com/a/34325723

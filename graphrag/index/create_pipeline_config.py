@@ -14,16 +14,19 @@ from graphrag.config.enums import (
     StorageType,
     TextEmbeddingTarget,
 )
-from graphrag.config.models import (
-    GraphRagConfig,
-    TextEmbeddingConfig,
-)
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineCacheConfigTypes,
     PipelineFileCacheConfig,
     PipelineMemoryCacheConfig,
     PipelineNoneCacheConfig,
+)
+from graphrag.index.config.embeddings import (
+    all_embeddings,
+    required_embeddings,
 )
 from graphrag.index.config.input import (
     PipelineCSVInputConfig,
@@ -59,32 +62,10 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
+    generate_text_embeddings,
 )
 
 log = logging.getLogger(__name__)
-
-
-entity_name_embedding = "entity.name"
-entity_description_embedding = "entity.description"
-relationship_description_embedding = "relationship.description"
-document_raw_content_embedding = "document.raw_content"
-community_title_embedding = "community.title"
-community_summary_embedding = "community.summary"
-community_full_content_embedding = "community.full_content"
-text_unit_text_embedding = "text_unit.text"
-
-all_embeddings: set[str] = {
-    entity_name_embedding,
-    entity_description_embedding,
-    relationship_description_embedding,
-    document_raw_content_embedding,
-    community_title_embedding,
-    community_summary_embedding,
-    community_full_content_embedding,
-    text_unit_text_embedding,
-}
-required_embeddings: set[str] = {entity_description_embedding}
-
 
 builtin_document_attributes: set[str] = {
     "id",
@@ -118,14 +99,18 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
         root_dir=settings.root_dir,
         input=_get_pipeline_input_config(settings),
         reporting=_get_reporting_config(settings),
-        storage=_get_storage_config(settings),
+        storage=_get_storage_config(settings, settings.storage),
+        update_index_storage=_get_storage_config(
+            settings, settings.update_index_storage
+        ),
         cache=_get_cache_config(settings),
         workflows=[
-            *_document_workflows(settings, embedded_fields),
-            *_text_unit_workflows(settings, covariates_enabled, embedded_fields),
-            *_graph_workflows(settings, embedded_fields),
-            *_community_workflows(settings, covariates_enabled, embedded_fields),
+            *_document_workflows(settings),
+            *_text_unit_workflows(settings, covariates_enabled),
+            *_graph_workflows(settings),
+            *_community_workflows(settings, covariates_enabled),
             *(_covariate_workflows(settings) if covariates_enabled else []),
+            *(_embeddings_workflows(settings, embedded_fields)),
         ],
     )
 
@@ -138,9 +123,11 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
 def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return all_embeddings - {*settings.embeddings.skip}
+            return all_embeddings.difference(settings.embeddings.skip)
         case TextEmbeddingTarget.required:
             return required_embeddings
+        case TextEmbeddingTarget.none:
+            return set()
         case _:
             msg = f"Unknown embeddings target: {settings.embeddings.target}"
             raise ValueError(msg)
@@ -163,11 +150,8 @@ def _log_llm_settings(settings: GraphRagConfig) -> None:
 
 
 def _document_workflows(
-    settings: GraphRagConfig, embedded_fields: set[str]
+    settings: GraphRagConfig,
 ) -> list[PipelineWorkflowReference]:
-    skip_document_raw_content_embedding = (
-        document_raw_content_embedding not in embedded_fields
-    )
     return [
         PipelineWorkflowReference(
             name=create_final_documents,
@@ -176,15 +160,6 @@ def _document_workflows(
                     {*(settings.input.document_attribute_columns)}
                     - builtin_document_attributes
                 ),
-                "document_raw_content_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "document_raw_content",
-                    {
-                        "title_column": "raw_content",
-                        "collection_name": "final_documents_raw_content_embedding",
-                    },
-                ),
-                "skip_raw_content_embedding": skip_document_raw_content_embedding,
             },
         ),
     ]
@@ -193,13 +168,12 @@ def _document_workflows(
 def _text_unit_workflows(
     settings: GraphRagConfig,
     covariates_enabled: bool,
-    embedded_fields: set[str],
 ) -> list[PipelineWorkflowReference]:
-    skip_text_unit_embedding = text_unit_text_embedding not in embedded_fields
     return [
         PipelineWorkflowReference(
             name=create_base_text_units,
             config={
+                "snapshot_transient": settings.snapshots.transient,
                 "chunk_by": settings.chunks.group_by_columns,
                 "text_chunk": {
                     "strategy": settings.chunks.resolved_strategy(
@@ -211,13 +185,7 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=create_final_text_units,
             config={
-                "text_unit_text_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "text_unit_text",
-                    {"title_column": "text", "collection_name": "text_units_embedding"},
-                ),
                 "covariates_enabled": covariates_enabled,
-                "skip_text_unit_embedding": skip_text_unit_embedding,
             },
         ),
     ]
@@ -225,7 +193,6 @@ def _text_unit_workflows(
 
 def _get_embedding_settings(
     settings: TextEmbeddingConfig,
-    embedding_name: str,
     vector_store_params: dict | None = None,
 ) -> dict:
     vector_store_settings = settings.vector_store
@@ -243,25 +210,17 @@ def _get_embedding_settings(
     # This ensures the vector store config is part of the strategy and not the global config
     return {
         "strategy": strategy,
-        "embedding_name": embedding_name,
     }
 
 
-def _graph_workflows(
-    settings: GraphRagConfig, embedded_fields: set[str]
-) -> list[PipelineWorkflowReference]:
-    skip_entity_name_embedding = entity_name_embedding not in embedded_fields
-    skip_entity_description_embedding = (
-        entity_description_embedding not in embedded_fields
-    )
-    skip_relationship_description_embedding = (
-        relationship_description_embedding not in embedded_fields
-    )
+def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
             name=create_base_entity_graph,
             config={
-                "graphml_snapshot": settings.snapshots.graphml,
+                "snapshot_graphml": settings.snapshots.graphml,
+                "snapshot_transient": settings.snapshots.transient,
+                "snapshot_raw_entities": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
@@ -286,40 +245,11 @@ def _graph_workflows(
         ),
         PipelineWorkflowReference(
             name=create_final_entities,
-            config={
-                "entity_name_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "entity_name",
-                    {
-                        "title_column": "name",
-                        "collection_name": "entity_name_embeddings",
-                    },
-                ),
-                "entity_name_description_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "entity_name_description",
-                    {
-                        "title_column": "description",
-                        "collection_name": "entity_description_embeddings",
-                    },
-                ),
-                "skip_name_embedding": skip_entity_name_embedding,
-                "skip_description_embedding": skip_entity_description_embedding,
-            },
+            config={},
         ),
         PipelineWorkflowReference(
             name=create_final_relationships,
-            config={
-                "relationship_description_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "relationship_description",
-                    {
-                        "title_column": "description",
-                        "collection_name": "relationships_description_embeddings",
-                    },
-                ),
-                "skip_description_embedding": skip_relationship_description_embedding,
-            },
+            config={},
         ),
         PipelineWorkflowReference(
             name=create_final_nodes,
@@ -332,24 +262,14 @@ def _graph_workflows(
 
 
 def _community_workflows(
-    settings: GraphRagConfig, covariates_enabled: bool, embedded_fields: set[str]
+    settings: GraphRagConfig, covariates_enabled: bool
 ) -> list[PipelineWorkflowReference]:
-    skip_community_title_embedding = community_title_embedding not in embedded_fields
-    skip_community_summary_embedding = (
-        community_summary_embedding not in embedded_fields
-    )
-    skip_community_full_content_embedding = (
-        community_full_content_embedding not in embedded_fields
-    )
     return [
         PipelineWorkflowReference(name=create_final_communities),
         PipelineWorkflowReference(
             name=create_final_community_reports,
             config={
                 "covariates_enabled": covariates_enabled,
-                "skip_title_embedding": skip_community_title_embedding,
-                "skip_summary_embedding": skip_community_summary_embedding,
-                "skip_full_content_embedding": skip_community_full_content_embedding,
                 "create_community_reports": {
                     **settings.community_reports.parallelization.model_dump(),
                     "async_mode": settings.community_reports.async_mode,
@@ -357,27 +277,6 @@ def _community_workflows(
                         settings.root_dir
                     ),
                 },
-                "community_report_full_content_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_full_content",
-                    {
-                        "title_column": "full_content",
-                        "collection_name": "final_community_reports_full_content_embedding",
-                    },
-                ),
-                "community_report_summary_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_summary",
-                    {
-                        "title_column": "summary",
-                        "collection_name": "final_community_reports_summary_embedding",
-                    },
-                ),
-                "community_report_title_embed": _get_embedding_settings(
-                    settings.embeddings,
-                    "community_report_title",
-                    {"title_column": "title"},
-                ),
             },
         ),
     ]
@@ -398,6 +297,21 @@ def _covariate_workflows(
                 },
             },
         )
+    ]
+
+
+def _embeddings_workflows(
+    settings: GraphRagConfig, embedded_fields: set[str]
+) -> list[PipelineWorkflowReference]:
+    return [
+        PipelineWorkflowReference(
+            name=generate_text_embeddings,
+            config={
+                "snapshot_embeddings": settings.snapshots.embeddings,
+                "text_embed": _get_embedding_settings(settings.embeddings),
+                "embedded_fields": embedded_fields,
+            },
+        ),
     ]
 
 
@@ -469,23 +383,26 @@ def _get_reporting_config(
 
 def _get_storage_config(
     settings: GraphRagConfig,
-) -> PipelineStorageConfigTypes:
+    storage_settings: StorageConfig | None,
+) -> PipelineStorageConfigTypes | None:
     """Get the storage type from the settings."""
+    if not storage_settings:
+        return None
     root_dir = settings.root_dir
-    match settings.storage.type:
+    match storage_settings.type:
         case StorageType.memory:
             return PipelineMemoryStorageConfig()
         case StorageType.file:
             # relative to the root_dir
-            base_dir = settings.storage.base_dir
+            base_dir = storage_settings.base_dir
             if base_dir is None:
                 msg = "Base directory must be provided for file storage."
                 raise ValueError(msg)
             return PipelineFileStorageConfig(base_dir=str(Path(root_dir) / base_dir))
         case StorageType.blob:
-            connection_string = settings.storage.connection_string
-            storage_account_blob_url = settings.storage.storage_account_blob_url
-            container_name = settings.storage.container_name
+            connection_string = storage_settings.connection_string
+            storage_account_blob_url = storage_settings.storage_account_blob_url
+            container_name = storage_settings.container_name
             if container_name is None:
                 msg = "Container name must be provided for blob storage."
                 raise ValueError(msg)
@@ -495,12 +412,12 @@ def _get_storage_config(
             return PipelineBlobStorageConfig(
                 connection_string=connection_string,
                 container_name=container_name,
-                base_dir=settings.storage.base_dir,
+                base_dir=storage_settings.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
             )
         case _:
             # relative to the root_dir
-            base_dir = settings.storage.base_dir
+            base_dir = storage_settings.base_dir
             if base_dir is None:
                 msg = "Base directory must be provided for file storage."
                 raise ValueError(msg)

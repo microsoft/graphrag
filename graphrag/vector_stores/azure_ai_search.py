@@ -25,8 +25,7 @@ from azure.search.documents.indexes.models import (
 from azure.search.documents.models import VectorizedQuery
 
 from graphrag.model.types import TextEmbedder
-
-from .base import (
+from graphrag.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
     VectorStoreDocument,
@@ -194,3 +193,13 @@ class AzureAISearch(BaseVectorStore):
                 query_embedding=query_embedding, k=k
             )
         return []
+
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        """Search for a document by id."""
+        response = self.db_connection.get_document(id)
+        return VectorStoreDocument(
+            id=response.get("id", ""),
+            text=response.get("text", ""),
+            vector=response.get("vector", []),
+            attributes=(json.loads(response.get("attributes", "{}"))),
+        )

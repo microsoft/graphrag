@@ -16,12 +16,13 @@ from datashaper import (
 )
 
 from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
+from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.emit.table_emitter import TableEmitter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)
@@ -115,3 +116,37 @@ async def _process_workflow(
     output = await _emit_workflow_output(workflow, emitters)
     workflow.dispose()
     return PipelineRunResult(workflow_name, output, None)
+
+
+def _find_workflow_config(
+    config: PipelineConfig, workflow_name: str, step: str | None = None
+) -> dict:
+    """Find a workflow in the pipeline configuration.
+
+    Parameters
+    ----------
+    config : PipelineConfig
+        The pipeline configuration.
+    workflow_name : str
+        The name of the workflow.
+    step : str
+        The step in the workflow.
+
+    Returns
+    -------
+    dict
+        The workflow configuration.
+    """
+    try:
+        workflow = next(
+            filter(lambda workflow: workflow.name == workflow_name, config.workflows)
+        )
+    except StopIteration as err:
+        error_message = (
+            f"Workflow {workflow_name} not found in the pipeline configuration."
+        )
+        raise ValueError(error_message) from err
+
+    if not workflow.config:
+        return {}
+    return workflow.config if not step else workflow.config.get(step, {})

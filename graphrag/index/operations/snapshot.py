@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def snapshot(
@@ -17,8 +17,8 @@ async def snapshot(
     """Take a entire snapshot of the tabular data."""
     for fmt in formats:
         if fmt == "parquet":
-            await storage.set(name + ".parquet", input.to_parquet())
+            await storage.set(f"{name}.parquet", input.to_parquet())
         elif fmt == "json":
             await storage.set(
-                name + ".json", input.to_json(orient="records", lines=True)
+                f"{name}.json", input.to_json(orient="records", lines=True)
             )

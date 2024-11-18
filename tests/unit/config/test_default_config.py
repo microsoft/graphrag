@@ -13,63 +13,82 @@ import yaml
 from pydantic import ValidationError
 
 import graphrag.config.defaults as defs
-from graphrag.config import (
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.enums import (
+    CacheType,
+    InputFileType,
+    InputType,
+    ReportingType,
+    StorageType,
+)
+from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-    CacheConfig,
-    CacheConfigInput,
-    CacheType,
-    ChunkingConfig,
-    ChunkingConfigInput,
-    ClaimExtractionConfig,
-    ClaimExtractionConfigInput,
-    ClusterGraphConfig,
-    ClusterGraphConfigInput,
-    CommunityReportsConfig,
-    CommunityReportsConfigInput,
-    EmbedGraphConfig,
-    EmbedGraphConfigInput,
-    EntityExtractionConfig,
-    EntityExtractionConfigInput,
-    GlobalSearchConfig,
-    GraphRagConfig,
-    GraphRagConfigInput,
-    InputConfig,
-    InputConfigInput,
-    InputFileType,
-    InputType,
-    LLMParameters,
-    LLMParametersInput,
-    LocalSearchConfig,
-    ParallelizationParameters,
-    ReportingConfig,
-    ReportingConfigInput,
-    ReportingType,
-    SnapshotsConfig,
-    SnapshotsConfigInput,
-    StorageConfig,
-    StorageConfigInput,
-    StorageType,
-    SummarizeDescriptionsConfig,
-    SummarizeDescriptionsConfigInput,
-    TextEmbeddingConfig,
-    TextEmbeddingConfigInput,
-    UmapConfig,
-    UmapConfigInput,
-    create_graphrag_config,
 )
-from graphrag.index import (
-    PipelineConfig,
+from graphrag.config.input_models.cache_config_input import CacheConfigInput
+from graphrag.config.input_models.chunking_config_input import ChunkingConfigInput
+from graphrag.config.input_models.claim_extraction_config_input import (
+    ClaimExtractionConfigInput,
+)
+from graphrag.config.input_models.cluster_graph_config_input import (
+    ClusterGraphConfigInput,
+)
+from graphrag.config.input_models.community_reports_config_input import (
+    CommunityReportsConfigInput,
+)
+from graphrag.config.input_models.embed_graph_config_input import EmbedGraphConfigInput
+from graphrag.config.input_models.entity_extraction_config_input import (
+    EntityExtractionConfigInput,
+)
+from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
+from graphrag.config.input_models.input_config_input import InputConfigInput
+from graphrag.config.input_models.llm_parameters_input import LLMParametersInput
+from graphrag.config.input_models.reporting_config_input import ReportingConfigInput
+from graphrag.config.input_models.snapshots_config_input import SnapshotsConfigInput
+from graphrag.config.input_models.storage_config_input import StorageConfigInput
+from graphrag.config.input_models.summarize_descriptions_config_input import (
+    SummarizeDescriptionsConfigInput,
+)
+from graphrag.config.input_models.text_embedding_config_input import (
+    TextEmbeddingConfigInput,
+)
+from graphrag.config.input_models.umap_config_input import UmapConfigInput
+from graphrag.config.models.cache_config import CacheConfig
+from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
+from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
+from graphrag.config.models.community_reports_config import CommunityReportsConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.global_search_config import GlobalSearchConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.parallelization_parameters import ParallelizationParameters
+from graphrag.config.models.reporting_config import ReportingConfig
+from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.summarize_descriptions_config import (
+    SummarizeDescriptionsConfig,
+)
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
+from graphrag.config.models.umap_config import UmapConfig
+from graphrag.index.config.cache import PipelineFileCacheConfig
+from graphrag.index.config.input import (
     PipelineCSVInputConfig,
-    PipelineFileCacheConfig,
-    PipelineFileReportingConfig,
-    PipelineFileStorageConfig,
     PipelineInputConfig,
     PipelineTextInputConfig,
-    PipelineWorkflowReference,
-    create_pipeline_config,
 )
+from graphrag.index.config.pipeline import (
+    PipelineConfig,
+    PipelineWorkflowReference,
+)
+from graphrag.index.config.reporting import PipelineFileReportingConfig
+from graphrag.index.config.storage import PipelineFileStorageConfig
+from graphrag.index.create_pipeline_config import create_pipeline_config
 
 current_dir = os.path.dirname(__file__)
 
@@ -161,6 +180,8 @@ ALL_ENV_VARS = {
     "GRAPHRAG_SNAPSHOT_GRAPHML": "true",
     "GRAPHRAG_SNAPSHOT_RAW_ENTITIES": "true",
     "GRAPHRAG_SNAPSHOT_TOP_LEVEL_NODES": "true",
+    "GRAPHRAG_SNAPSHOT_EMBEDDINGS": "true",
+    "GRAPHRAG_SNAPSHOT_TRANSIENT": "true",
     "GRAPHRAG_STORAGE_STORAGE_ACCOUNT_BLOB_URL": "storage_account_blob_url",
     "GRAPHRAG_STORAGE_BASE_DIR": "/some/storage/dir",
     "GRAPHRAG_STORAGE_CONNECTION_STRING": "test_cs",
@@ -200,6 +221,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert ClaimExtractionConfig is not None
         assert ClusterGraphConfig is not None
         assert CommunityReportsConfig is not None
+        assert DRIFTSearchConfig is not None
         assert EmbedGraphConfig is not None
         assert EntityExtractionConfig is not None
         assert GlobalSearchConfig is not None
@@ -482,10 +504,8 @@ class TestDefaultConfig(unittest.TestCase):
 
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docs/config/env_vars.md")
-        query_docs_path = Path("docs/query/cli.md")
 
         env_var_docs = env_var_docs_path.read_text(encoding="utf-8")
-        query_docs = query_docs_path.read_text(encoding="utf-8")
 
         def find_envvar_names(text) -> set[str]:
             pattern = r"`(GRAPHRAG_[^`]+)`"
@@ -493,9 +513,7 @@ class TestDefaultConfig(unittest.TestCase):
             found = {f for f in found if not f.endswith("_")}
             return {*found}
 
-        graphrag_strings = find_envvar_names(env_var_docs) | find_envvar_names(
-            query_docs
-        )
+        graphrag_strings = find_envvar_names(env_var_docs)
 
         missing = {s for s in graphrag_strings if s not in ALL_ENV_VARS} - {
             # Remove configs covered by the base LLM connection configs
@@ -624,6 +642,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
@@ -716,6 +736,8 @@ class TestDefaultConfig(unittest.TestCase):
                     graphml=True,
                     raw_entities=True,
                     top_level_nodes=True,
+                    embeddings=True,
+                    transient=True,
                 ),
                 entity_extraction=EntityExtractionConfigInput(
                     max_gleanings=112,
@@ -803,6 +825,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml
         assert parameters.snapshots.raw_entities
         assert parameters.snapshots.top_level_nodes
+        assert parameters.snapshots.embeddings
+        assert parameters.snapshots.transient
         assert parameters.storage.base_dir == "/some/storage/dir"
         assert parameters.storage.connection_string == "test_cs"
         assert parameters.storage.container_name == "test_cn"
@@ -894,6 +918,8 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.snapshots.graphml == defs.SNAPSHOTS_GRAPHML
         assert parameters.snapshots.raw_entities == defs.SNAPSHOTS_RAW_ENTITIES
         assert parameters.snapshots.top_level_nodes == defs.SNAPSHOTS_TOP_LEVEL_NODES
+        assert parameters.snapshots.embeddings == defs.SNAPSHOTS_EMBEDDINGS
+        assert parameters.snapshots.transient == defs.SNAPSHOTS_TRANSIENT
         assert parameters.storage.base_dir == defs.STORAGE_BASE_DIR
         assert parameters.storage.type == defs.STORAGE_TYPE
         assert parameters.umap.enabled == defs.UMAP_ENABLED

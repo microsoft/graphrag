@@ -12,16 +12,17 @@ from pathlib import Path
 from typing import cast
 
 import pandas as pd
-from datashaper import WorkflowCallbacks
+from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.index.cache import PipelineCache
-from graphrag.index.config import (
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
-    PipelineWorkflowStep,
 )
-from graphrag.index.emit import TableEmitterType, create_table_emitters
+from graphrag.index.config.workflow import PipelineWorkflowStep
+from graphrag.index.emit.factories import create_table_emitters
+from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.load_pipeline_config import load_pipeline_config
 from graphrag.index.run.cache import _create_cache
 from graphrag.index.run.postprocess import (
@@ -40,20 +41,19 @@ from graphrag.index.run.workflow import (
     _create_callback_chain,
     _process_workflow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
-
-# Register all verbs
-from graphrag.index.update.dataframes import get_delta_docs, update_dataframe_outputs
+from graphrag.index.update.incremental_index import (
+    get_delta_docs,
+    update_dataframe_outputs,
+)
 from graphrag.index.workflows import (
     VerbDefinitions,
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.logging import (
-    NullProgressReporter,
-    ProgressReporter,
-)
+from graphrag.logging.base import ProgressReporter
+from graphrag.logging.null_progress import NullProgressReporter
 from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)
@@ -64,6 +64,7 @@ async def run_pipeline_with_config(
     workflows: list[PipelineWorkflowReference] | None = None,
     dataset: pd.DataFrame | None = None,
     storage: PipelineStorage | None = None,
+    update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: WorkflowCallbacks | None = None,
     progress_reporter: ProgressReporter | None = None,
@@ -105,6 +106,12 @@ async def run_pipeline_with_config(
 
     progress_reporter = progress_reporter or NullProgressReporter()
     storage = storage or _create_storage(config.storage, root_dir=Path(root_dir))
+
+    if is_update_run:
+        update_index_storage = update_index_storage or _create_storage(
+            config.update_index_storage, root_dir=Path(root_dir)
+        )
+
     cache = cache or _create_cache(config.cache, root_dir)
     callbacks = callbacks or _create_reporter(config.reporting, root_dir)
     dataset = (
@@ -122,10 +129,15 @@ async def run_pipeline_with_config(
         msg = "No dataset provided!"
         raise ValueError(msg)
 
-    if is_update_run:
+    if is_update_run and update_index_storage:
         delta_dataset = await get_delta_docs(dataset, storage)
 
-        delta_storage = storage.child("delta")
+        # Fail on empty delta dataset
+        if delta_dataset.new_inputs.empty:
+            error_msg = "Incremental Indexing Error: No new documents to process."
+            raise ValueError(error_msg)
+
+        delta_storage = update_index_storage.child("delta")
 
         # Run the pipeline on the new documents
         tables_dict = {}
@@ -145,7 +157,16 @@ async def run_pipeline_with_config(
         ):
             tables_dict[table.workflow] = table.result
 
-        await update_dataframe_outputs(tables_dict, storage)
+        progress_reporter.success("Finished running workflows on new documents.")
+        await update_dataframe_outputs(
+            dataframe_dict=tables_dict,
+            storage=storage,
+            update_storage=update_index_storage,
+            config=config,
+            cache=cache,
+            callbacks=NoopVerbCallbacks(),
+            progress_reporter=progress_reporter,
+        )
 
     else:
         async for table in run_pipeline(

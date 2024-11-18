@@ -6,9 +6,7 @@ embeddings:
     type: "azure_ai_search"
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
-    collection_name: "azure_ci"
-    entity_name_description:
-      title_column: "name"
+    container_name: "azure_ci"
 
 input:
   type: blob

@@ -9,13 +9,12 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
+from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
 )
@@ -43,7 +42,7 @@ from graphrag.query.input.retrieval.text_units import get_candidate_text_units
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
 
@@ -113,7 +112,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         community_context_name: str = "Reports",
         column_delimiter: str = "|",
         **kwargs: dict[str, Any],
-    ) -> tuple[str | list[str], dict[str, pd.DataFrame]]:
+    ) -> ContextBuilderResult:
         """
         Build data context for local search prompt.
 
@@ -217,7 +216,10 @@ class LocalSearchMixedContext(LocalContextBuilder):
             final_context.append(text_unit_context)
             final_context_data = {**final_context_data, **text_unit_context_data}
 
-        return ("\n\n".join(final_context), final_context_data)
+        return ContextBuilderResult(
+            context_chunks="\n\n".join(final_context),
+            context_records=final_context_data,
+        )
 
     def _build_community_context(
         self,

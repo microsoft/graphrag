@@ -13,7 +13,7 @@ from datashaper import (
 from graphrag.index.operations.layout_graph import layout_graph
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.unpack_graph import unpack_graph
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def create_final_nodes(
@@ -22,7 +22,7 @@ async def create_final_nodes(
     storage: PipelineStorage,
     layout_strategy: dict[str, Any],
     level_for_node_positions: int,
-    snapshot_top_level_nodes: bool = False,
+    snapshot_top_level_nodes_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final nodes."""
     laid_out_entity_graph = cast(
@@ -50,7 +50,7 @@ async def create_final_nodes(
     nodes = nodes[nodes["level"] == level_for_node_positions].reset_index(drop=True)
     nodes = cast(pd.DataFrame, nodes[["id", "x", "y"]])
 
-    if snapshot_top_level_nodes:
+    if snapshot_top_level_nodes_enabled:
         await snapshot(
             nodes,
             name="top_level_nodes",
@@ -58,15 +58,32 @@ async def create_final_nodes(
             formats=["json"],
         )
 
-    nodes.rename(columns={"id": "top_level_node_id"}, inplace=True)
-    nodes["top_level_node_id"] = nodes["top_level_node_id"].astype(str)
-
     joined = nodes_without_positions.merge(
         nodes,
-        left_on="id",
-        right_on="top_level_node_id",
+        on="id",
         how="inner",
     )
     joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
+    joined["community"] = joined["community"].fillna(-1).astype(int)
 
-    return joined
+    # drop anything that isn't graph-related or needing to be preserved
+    # the rest can be looked up on the canonical entities table
+    joined.drop(
+        columns=["source_id", "type", "description", "size", "graph_embedding"],
+        inplace=True,
+    )
+
+    deduped = joined.drop_duplicates(subset=["title", "community"])
+    return deduped.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]

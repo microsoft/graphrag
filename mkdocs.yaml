@@ -29,30 +29,31 @@ nav:
       - Overview: "index/overview.md"
       - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
-      - CLI: "index/cli.md"
-      - Configuration:
-          - Overview: "config/overview.md"
-          - Init Command: "config/init.md"
-          - Using Env Vars: "config/env_vars.md"
-          - Using JSON or YAML: "config/json_yaml.md"
-          - Fully Custom: "config/custom.md"
-          - Template: "config/template.md"
+      - Outputs: "index/outputs.md"
   - Prompt Tuning:
       - Overview: "prompt_tuning/overview.md"
       - Auto Tuning: "prompt_tuning/auto_prompt_tuning.md"
       - Manual Tuning: "prompt_tuning/manual_prompt_tuning.md"
   - Query:
       - Overview: "query/overview.md"
-      - Local Search: "query/local_search.md"
-      - Question Generation: "query/question_generation.md"
       - Global Search: "query/global_search.md"
-      - CLI: "query/cli.md"
+      - Local Search: "query/local_search.md"
+      - DRIFT Search: "query/drift_search.md"
+      - Question Generation: "query/question_generation.md"
       - Notebooks:
           - Overview: "query/notebooks/overview.md"
           - Global Search: "examples_notebooks/global_search.ipynb"
           - Local Search: "examples_notebooks/local_search.ipynb"
-  - Microsoft Research Blog: "blog_posts.md"
+          - DRIFT Search: "examples_notebooks/drift_search.ipynb"
+  - Configuration:
+      - Overview: "config/overview.md"
+      - Init Command: "config/init.md"
+      - Using YAML: "config/yaml.md"
+      - Using Env Vars: "config/env_vars.md"
+  - CLI: "cli.md"
   - Extras:
+      - Microsoft Research Blog: "blog_posts.md"
+      - Visualization Guide: "visualization_guide.md"
       - Operation Dulce:
           - About: "data/operation_dulce/ABOUT.md"
           - Document: "data/operation_dulce/Operation Dulce v2 1 1.md"
@@ -104,3 +105,4 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
+  - mkdocs-typer

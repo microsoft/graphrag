@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.extract_entities import extract_entities
@@ -22,7 +22,7 @@ from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_entity_graph(
@@ -30,8 +30,6 @@ async def create_base_entity_graph(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    text_column: str,
-    id_column: str,
     clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,
@@ -42,8 +40,9 @@ async def create_base_entity_graph(
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
     embedding_strategy: dict[str, Any] | None = None,
-    graphml_snapshot_enabled: bool = False,
-    raw_entity_snapshot_enabled: bool = False,
+    snapshot_graphml_enabled: bool = False,
+    snapshot_raw_entities_enabled: bool = False,
+    snapshot_transient_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
@@ -51,8 +50,8 @@ async def create_base_entity_graph(
         text_units,
         callbacks,
         cache,
-        text_column=text_column,
-        id_column=id_column,
+        text_column="text",
+        id_column="id",
         strategy=extraction_strategy,
         async_mode=extraction_async_mode,
         entity_types=entity_types,
@@ -92,7 +91,7 @@ async def create_base_entity_graph(
             strategy=embedding_strategy,
         )
 
-    if raw_entity_snapshot_enabled:
+    if snapshot_raw_entities_enabled:
         await snapshot(
             entities,
             name="raw_extracted_entities",
@@ -100,7 +99,7 @@ async def create_base_entity_graph(
             formats=["json"],
         )
 
-    if graphml_snapshot_enabled:
+    if snapshot_graphml_enabled:
         await snapshot_graphml(
             merged_graph,
             name="merged_graph",
@@ -131,4 +130,14 @@ async def create_base_entity_graph(
     if embedding_strategy:
         final_columns.append("embeddings")
 
-    return cast(pd.DataFrame, clustered[final_columns])
+    output = cast(pd.DataFrame, clustered[final_columns])
+
+    if snapshot_transient_enabled:
+        await snapshot(
+            output,
+            name="create_base_entity_graph",
+            storage=storage,
+            formats=["parquet"],
+        )
+
+    return output

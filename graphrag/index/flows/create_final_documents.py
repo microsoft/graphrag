@@ -4,21 +4,12 @@
 """All the steps to transform final documents."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
-
-from graphrag.index.cache import PipelineCache
-from graphrag.index.operations.embed_text import embed_text
 
 
-async def create_final_documents(
+def create_final_documents(
     documents: pd.DataFrame,
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
-    cache: PipelineCache,
     document_attribute_columns: list[str] | None = None,
-    raw_content_text_embed: dict | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     exploded = (
@@ -42,7 +33,7 @@ async def create_final_documents(
     )
 
     docs_with_text_units = joined.groupby("id", sort=False).agg(
-        text_units=("chunk_id", list)
+        text_unit_ids=("chunk_id", list)
     )
 
     rejoined = docs_with_text_units.merge(
@@ -52,10 +43,8 @@ async def create_final_documents(
         copy=False,
     ).reset_index(drop=True)
 
-    rejoined.rename(
-        columns={"text": "raw_content", "text_units": "text_unit_ids"}, inplace=True
-    )
     rejoined["id"] = rejoined["id"].astype(str)
+    rejoined["human_readable_id"] = rejoined.index + 1
 
     # Convert attribute columns to strings and collapse them into a JSON object
     if document_attribute_columns:
@@ -72,13 +61,16 @@ async def create_final_documents(
         # Drop the original attribute columns after collapsing them
         rejoined.drop(columns=document_attribute_columns, inplace=True)
 
-    if raw_content_text_embed:
-        rejoined["raw_content_embedding"] = await embed_text(
-            rejoined,
-            callbacks,
-            cache,
-            column="raw_content",
-            strategy=raw_content_text_embed["strategy"],
-        )
+    # set the final column order, but adjust for attributes
+    core_columns = [
+        "id",
+        "human_readable_id",
+        "title",
+        "text",
+        "text_unit_ids",
+    ]
+    final_columns = [column for column in core_columns if column in rejoined.columns]
+    if document_attribute_columns:
+        final_columns.append("attributes")
 
-    return rejoined
+    return rejoined.loc[:, final_columns]

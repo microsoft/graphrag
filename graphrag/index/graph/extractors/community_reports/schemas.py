@@ -16,7 +16,7 @@ EDGE_ID = "human_readable_id"
 EDGE_SOURCE = "source"
 EDGE_TARGET = "target"
 EDGE_DESCRIPTION = "description"
-EDGE_DEGREE = "rank"
+EDGE_DEGREE = "combined_degree"
 EDGE_DETAILS = "edge_details"
 EDGE_WEIGHT = "weight"
 
@@ -29,7 +29,7 @@ CLAIM_DESCRIPTION = "description"
 CLAIM_DETAILS = "claim_details"
 
 # COMMUNITY HIERARCHY TABLE SCHEMA
-SUB_COMMUNITY = "sub_communitty"
+SUB_COMMUNITY = "sub_community"
 SUB_COMMUNITY_SIZE = "sub_community_size"
 COMMUNITY_LEVEL = "level"
 
@@ -41,7 +41,7 @@ CONTEXT_EXCEED_FLAG = "context_exceed_limit"
 
 # COMMUNITY REPORT TABLE SCHEMA
 REPORT_ID = "id"
-COMMUNITY_ID = "id"
+COMMUNITY_ID = "community"
 COMMUNITY_LEVEL = "level"
 TITLE = "title"
 SUMMARY = "summary"
