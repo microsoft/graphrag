@@ -19,13 +19,9 @@ from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
     from graphrag.index.config.cache import (
-    from graphrag.index.config.cache import (
         PipelineCacheConfig,
     )
 
-from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
-from graphrag.index.cache.memory_pipeline_cache import create_memory_cache
-from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.index.cache.memory_pipeline_cache import create_memory_cache
 from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
