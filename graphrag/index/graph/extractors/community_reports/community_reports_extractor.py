@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.utils import dict_has_keys_with_types
+from graphrag.index.utils.dicts import dict_has_keys_with_types
 from graphrag.llm import CompletionLLM
 from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 

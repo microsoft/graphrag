@@ -15,7 +15,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.index.flows.create_final_entities import (
     create_final_entities as create_final_entities_flow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 @verb(

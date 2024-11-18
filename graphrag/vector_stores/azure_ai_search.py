@@ -25,8 +25,7 @@ from azure.search.documents.indexes.models import (
 from azure.search.documents.models import VectorizedQuery
 
 from graphrag.model.types import TextEmbedder
-
-from .base import (
+from graphrag.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
     VectorStoreDocument,

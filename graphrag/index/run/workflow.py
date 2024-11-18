@@ -22,7 +22,7 @@ from graphrag.index.emit.table_emitter import TableEmitter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)

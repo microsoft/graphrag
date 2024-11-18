@@ -5,9 +5,12 @@
 
 from pathlib import Path
 
-from .config_file_loader import load_config_from_file, search_for_config_in_root_dir
-from .create_graphrag_config import create_graphrag_config
-from .models.graph_rag_config import GraphRagConfig
+from graphrag.config.config_file_loader import (
+    load_config_from_file,
+    search_for_config_in_root_dir,
+)
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def load_config(

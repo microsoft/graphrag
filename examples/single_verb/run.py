@@ -5,8 +5,8 @@ import os
 
 import pandas as pd
 
-from graphrag.index import run_pipeline, run_pipeline_with_config
-from graphrag.index.config import PipelineWorkflowReference
+from graphrag.index.config.workflow import PipelineWorkflowReference
+from graphrag.index.run import run_pipeline, run_pipeline_with_config
 
 # our fake dataset
 dataset = pd.DataFrame([{"col1": 2, "col2": 4}, {"col1": 5, "col2": 10}])

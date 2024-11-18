@@ -4,74 +4,74 @@
 """A package containing default workflows definitions."""
 
 # load and register all subflows
-from .v1.subflows import *  # noqa
+from graphrag.index.workflows.v1.subflows import *  # noqa
 
-from .typing import WorkflowDefinitions
-from .v1.create_base_entity_graph import (
+from graphrag.index.workflows.typing import WorkflowDefinitions
+from graphrag.index.workflows.v1.create_base_entity_graph import (
     build_steps as build_create_base_entity_graph_steps,
 )
-from .v1.create_base_entity_graph import (
+from graphrag.index.workflows.v1.create_base_entity_graph import (
     workflow_name as create_base_entity_graph,
 )
-from .v1.create_base_text_units import (
+from graphrag.index.workflows.v1.create_base_text_units import (
     build_steps as build_create_base_text_units_steps,
 )
-from .v1.create_base_text_units import (
+from graphrag.index.workflows.v1.create_base_text_units import (
     workflow_name as create_base_text_units,
 )
-from .v1.create_final_communities import (
+from graphrag.index.workflows.v1.create_final_communities import (
     build_steps as build_create_final_communities_steps,
 )
-from .v1.create_final_communities import (
+from graphrag.index.workflows.v1.create_final_communities import (
     workflow_name as create_final_communities,
 )
-from .v1.create_final_community_reports import (
+from graphrag.index.workflows.v1.create_final_community_reports import (
     build_steps as build_create_final_community_reports_steps,
 )
-from .v1.create_final_community_reports import (
+from graphrag.index.workflows.v1.create_final_community_reports import (
     workflow_name as create_final_community_reports,
 )
-from .v1.create_final_covariates import (
+from graphrag.index.workflows.v1.create_final_covariates import (
     build_steps as build_create_final_covariates_steps,
 )
-from .v1.create_final_covariates import (
+from graphrag.index.workflows.v1.create_final_covariates import (
     workflow_name as create_final_covariates,
 )
-from .v1.create_final_documents import (
+from graphrag.index.workflows.v1.create_final_documents import (
     build_steps as build_create_final_documents_steps,
 )
-from .v1.create_final_documents import (
+from graphrag.index.workflows.v1.create_final_documents import (
     workflow_name as create_final_documents,
 )
-from .v1.create_final_entities import (
+from graphrag.index.workflows.v1.create_final_entities import (
     build_steps as build_create_final_entities_steps,
 )
-from .v1.create_final_entities import (
+from graphrag.index.workflows.v1.create_final_entities import (
     workflow_name as create_final_entities,
 )
-from .v1.create_final_nodes import (
+from graphrag.index.workflows.v1.create_final_nodes import (
     build_steps as build_create_final_nodes_steps,
 )
-from .v1.create_final_nodes import (
+from graphrag.index.workflows.v1.create_final_nodes import (
     workflow_name as create_final_nodes,
 )
-from .v1.create_final_relationships import (
+from graphrag.index.workflows.v1.create_final_relationships import (
     build_steps as build_create_final_relationships_steps,
 )
-from .v1.create_final_relationships import (
+from graphrag.index.workflows.v1.create_final_relationships import (
     workflow_name as create_final_relationships,
 )
-from .v1.create_final_text_units import (
+from graphrag.index.workflows.v1.create_final_text_units import (
     build_steps as build_create_final_text_units,
 )
-from .v1.create_final_text_units import (
+from graphrag.index.workflows.v1.create_final_text_units import (
     workflow_name as create_final_text_units,
 )
-from .v1.generate_text_embeddings import (
+from graphrag.index.workflows.v1.generate_text_embeddings import (
     build_steps as build_generate_text_embeddings_steps,
 )
 
-from .v1.generate_text_embeddings import (
+from graphrag.index.workflows.v1.generate_text_embeddings import (
     workflow_name as generate_text_embeddings,
 )
 

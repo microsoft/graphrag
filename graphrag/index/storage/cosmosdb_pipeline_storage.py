@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 from datashaper import Progress
 
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 
 from .pipeline_storage import PipelineStorage
 

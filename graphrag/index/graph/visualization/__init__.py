@@ -3,8 +3,11 @@
 
 """The Indexing Engine graph visualization package root."""
 
-from .compute_umap_positions import compute_umap_positions, get_zero_positions
-from .typing import GraphLayout, NodePosition
+from graphrag.index.graph.visualization.compute_umap_positions import (
+    compute_umap_positions,
+    get_zero_positions,
+)
+from graphrag.index.graph.visualization.typing import GraphLayout, NodePosition
 
 __all__ = [
     "GraphLayout",

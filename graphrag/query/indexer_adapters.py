@@ -13,14 +13,12 @@ import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_communities import restore_community_hierarchy
-from graphrag.model import (
-    Community,
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.factories import get_text_embedder
 from graphrag.query.input.loaders.dfs import (
     read_communities,

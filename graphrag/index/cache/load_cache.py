@@ -13,20 +13,18 @@ from graphrag.index.config.cache import (
     PipelineCosmosDBCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.storage import (
-    BlobPipelineStorage,
-    FilePipelineStorage,
-    create_cosmosdb_storage,
-)
+from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.index.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
+from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
-    from graphrag.index.config import (
+    from graphrag.index.config.cache import (
         PipelineCacheConfig,
     )
 
-from .json_pipeline_cache import JsonPipelineCache
-from .memory_pipeline_cache import create_memory_cache
-from .noop_pipeline_cache import NoopPipelineCache
+from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
+from graphrag.index.cache.memory_pipeline_cache import create_memory_cache
+from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 
 
 def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):

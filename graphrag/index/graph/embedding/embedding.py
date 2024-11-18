@@ -5,7 +5,6 @@
 
 from dataclasses import dataclass
 
-import graspologic as gc
 import networkx as nx
 import numpy as np
 
@@ -28,6 +27,9 @@ def embed_nod2vec(
     random_seed: int = 86,
 ) -> NodeEmbeddings:
     """Generate node embeddings using Node2Vec."""
+    # NOTE: This import is done here to reduce the initial import time of the graphrag package
+    import graspologic as gc
+
     # generate embedding
     lcc_tensors = gc.embed.node2vec_embed(  # type: ignore
         graph=graph,
