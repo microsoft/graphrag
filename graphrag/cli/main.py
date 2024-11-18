@@ -417,6 +417,12 @@ def _query_cli(
             help="Free form text describing the response type and format, can be anything, e.g. Multiple Paragraphs, Single Paragraph, Single Sentence, List of 3-7 Points, Single Page, Multi-Page Report. Default: Multiple Paragraphs"
         ),
     ] = "Multiple Paragraphs",
+    output_filetype: Annotated[
+        str,
+        typer.Option(
+            help="The file type of the indexing outputs, e.g. parquet, json, csv. Default: parquet",
+        ),
+    ] = "parquet",
     streaming: Annotated[
         bool, typer.Option(help="Print response in a streaming manner.")
     ] = False,
@@ -432,6 +438,7 @@ def _query_cli(
                 root_dir=root,
                 community_level=community_level,
                 response_type=response_type,
+                output_filetype=output_filetype,
                 streaming=streaming,
                 query=query,
             )
@@ -443,6 +450,7 @@ def _query_cli(
                 community_level=community_level,
                 dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
+                output_filetype=output_filetype,
                 streaming=streaming,
                 query=query,
             )
@@ -452,6 +460,7 @@ def _query_cli(
                 data_dir=data,
                 root_dir=root,
                 community_level=community_level,
+                output_filetype=output_filetype,
                 streaming=False,  # Drift search does not support streaming (yet)
                 query=query,
             )

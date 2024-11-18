@@ -27,6 +27,7 @@ def run_global_search(
     community_level: int | None,
     dynamic_community_selection: bool,
     response_type: str,
+    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -39,14 +40,14 @@ def run_global_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         root_dir=root_dir,
         config=config,
-        parquet_list=[
-            "create_final_nodes.parquet",
-            "create_final_entities.parquet",
-            "create_final_communities.parquet",
-            "create_final_community_reports.parquet",
+        output_list=[
+            f"create_final_nodes.{output_filetype}",
+            f"create_final_entities.{output_filetype}",
+            f"create_final_communities.{output_filetype}",
+            f"create_final_community_reports.{output_filetype}",
         ],
         optional_list=[],
     )
@@ -112,6 +113,7 @@ def run_local_search(
     root_dir: Path,
     community_level: int,
     response_type: str,
+    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -125,18 +127,18 @@ def run_local_search(
     resolve_paths(config)
 
     # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         root_dir=root_dir,
         config=config,
-        parquet_list=[
-            "create_final_nodes.parquet",
-            "create_final_community_reports.parquet",
-            "create_final_text_units.parquet",
-            "create_final_relationships.parquet",
-            "create_final_entities.parquet",
+        output_list=[
+            f"create_final_nodes.{output_filetype}",
+            f"create_final_community_reports.{output_filetype}",
+            f"create_final_text_units.{output_filetype}",
+            f"create_final_relationships.{output_filetype}",
+            f"create_final_entities.{output_filetype}",
         ],
         optional_list=[
-            "create_final_covariates.parquet",
+            f"create_final_covariates.{output_filetype}",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
@@ -204,6 +206,7 @@ def run_drift_search(
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
+    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -216,15 +219,15 @@ def run_drift_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         root_dir=root_dir,
         config=config,
-        parquet_list=[
-            "create_final_nodes.parquet",
-            "create_final_community_reports.parquet",
-            "create_final_text_units.parquet",
-            "create_final_relationships.parquet",
-            "create_final_entities.parquet",
+        output_list=[
+            f"create_final_nodes.{output_filetype}",
+            f"create_final_community_reports.{output_filetype}",
+            f"create_final_text_units.{output_filetype}",
+            f"create_final_relationships.{output_filetype}",
+            f"create_final_entities.{output_filetype}",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
@@ -260,24 +263,24 @@ def run_drift_search(
     return response, context_data
 
 
-def _resolve_parquet_files(
+def _resolve_output_files(
     root_dir: Path,
     config: GraphRagConfig,
-    parquet_list: list[str],
+    output_list: list[str],
     optional_list: list[str] | None = None,
 ) -> dict[str, pd.DataFrame]:
-    """Read parquet files to a dataframe dict."""
+    """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
     storage_obj = _create_storage(root_dir=root_dir, config=pipeline_config.storage)
-    for parquet_file in parquet_list:
-        df_key = parquet_file.split(".")[0]
+    for output_file in output_list:
+        df_key = output_file.split(".")[0]
         df_value = asyncio.run(
-            _load_table_from_storage(name=parquet_file, storage=storage_obj)
+            _load_table_from_storage(name=output_file, storage=storage_obj)
         )
         dataframe_dict[df_key] = df_value
 
-    # for optional parquet files, set the dict entry to None instead of erroring out if it does not exist
+    # for optional output files, set the dict entry to None instead of erroring out if it does not exist
     if optional_list:
         for optional_file in optional_list:
             file_exists = asyncio.run(storage_obj.has(optional_file))
