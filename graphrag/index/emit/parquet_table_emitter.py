@@ -21,12 +21,12 @@ class ParquetTableEmitter(TableEmitter):
 
     _storage: PipelineStorage
     _on_error: ErrorHandlerFn
+    extension = "parquet"
 
     def __init__(
         self,
         storage: PipelineStorage,
         on_error: ErrorHandlerFn,
-        extension = "parquet",
     ):
         """Create a new Parquet Table Emitter."""
         self._storage = storage
