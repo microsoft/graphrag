@@ -36,10 +36,10 @@ def load_storage(config: PipelineStorageConfig):
         case StorageType.cosmosdb:
             config = cast(PipelineCosmosDBStorageConfig, config)
             return create_cosmosdb_storage(
-                config.cosmosdb_account_url,
-                config.connection_string,
-                config.base_dir,
-                config.base_dir,
+                connection_string=config.connection_string,
+                cosmosdb_account_url=config.cosmosdb_account_url,
+                container_name=config.container_name,
+                base_dir=config.base_dir,
             )
         case StorageType.file:
             config = cast(PipelineFileStorageConfig, config)

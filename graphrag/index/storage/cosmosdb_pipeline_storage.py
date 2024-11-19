@@ -254,15 +254,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child storage instance."""
-        if name is None:
-            return self
-        return CosmosDBPipelineStorage(
-            cosmosdb_account_url=self._cosmosdb_account_url,
-            connection_string=self._connection_string,
-            database_name=self._database_name,
-            encoding=self._encoding,
-            current_container=name,
-        )
+        return self
     
     def create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""

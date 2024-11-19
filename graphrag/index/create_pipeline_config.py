@@ -421,16 +421,21 @@ def _get_storage_config(
             cosmosdb_account_url = storage_settings.cosmosdb_account_url
             connection_string = storage_settings.connection_string
             base_dir = storage_settings.base_dir
+            container_name = storage_settings.container_name
             if cosmosdb_account_url is None:
                 msg = "CosmosDB account url must be provided for cosmosdb storage."
                 raise ValueError(msg)
             if base_dir is None:
                 msg = "Base directory must be provided for cosmosdb storage."
                 raise ValueError(msg)
+            if container_name is None:
+                msg = "Container name must be provided for cosmosdb storage."
+                raise ValueError(msg)
             return PipelineCosmosDBStorageConfig(
                 cosmosdb_account_url=cosmosdb_account_url,
                 connection_string=connection_string,
                 base_dir=storage_settings.base_dir,
+                container_name=container_name,
             )
         case _:
             # relative to the root_dir
@@ -473,8 +478,12 @@ def _get_cache_config(
             cosmosdb_account_url = settings.cache.cosmosdb_account_url
             connection_string = settings.cache.connection_string
             base_dir = settings.cache.base_dir
+            container_name = settings.cache.container_name
             if base_dir is None:
                 msg = "Base directory must be provided for cosmosdb cache."
+                raise ValueError(msg)
+            if container_name is None:
+                msg = "Container name must be provided for cosmosdb cache."
                 raise ValueError(msg)
             if connection_string is None and cosmosdb_account_url is None:
                 msg = "Connection string or cosmosDB account url must be provided for cosmosdb cache."
@@ -482,7 +491,8 @@ def _get_cache_config(
             return PipelineCosmosDBCacheConfig(
                 cosmosdb_account_url=cosmosdb_account_url,
                 connection_string=connection_string,
-                base_dir=settings.cache.base_dir,
+                base_dir=base_dir,
+                container_name=container_name,
             )
         case _:
             # relative to root dir

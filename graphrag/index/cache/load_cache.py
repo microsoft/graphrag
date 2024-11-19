@@ -54,7 +54,7 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
             storage = create_cosmosdb_storage(
                 cosmosdb_account_url=config.cosmosdb_account_url,
                 connection_string=config.connection_string,
-                container_name=None,
+                container_name=config.container_name,
                 base_dir=config.base_dir,
             )
             return JsonPipelineCache(storage)
