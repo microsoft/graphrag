@@ -79,13 +79,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
     
     def create_database(self) -> None:
         """Create the database if it doesn't exist."""
-        if not self.database_exists():
-            database_name = self._database_name
-            database_names = [
-                database["id"] for database in self._cosmos_client.list_databases()
-            ]
-            if database_name not in database_names:
-                self._cosmos_client.create_database(database_name)
+        database_name = self._database_name
+        self._cosmos_client.create_database_if_not_exists(id=database_name)
 
     def delete_database(self) -> None:
         """Delete the database if it exists."""
@@ -259,17 +254,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
         database_client = self._database_client
-        if not self.container_exists() and self._current_container is not None:
-            container_names = [
-                container["id"]
-                for container in database_client.list_containers()
-            ]
-            if self._current_container not in container_names:
-                partition_key = PartitionKey(path="/id", kind="Hash")
-                database_client.create_container(
+        if self._current_container is not None:
+            partition_key = PartitionKey(path="/id", kind="Hash")
+            database_client.create_container_if_not_exists(
                     id=self._current_container,
                     partition_key=partition_key,
-                )
+            )
             
         
     def delete_container(self) -> None:
