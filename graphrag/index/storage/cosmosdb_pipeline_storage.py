@@ -1,4 +1,4 @@
- #Copyright (c) 2024 Microsoft Corporation.
+# Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
 """Azure CosmosDB Storage implementation of PipelineStorage."""
@@ -22,6 +22,7 @@ from .pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
+
 class CosmosDBPipelineStorage(PipelineStorage):
     """The CosmosDB-Storage Implementation."""
 
@@ -41,12 +42,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
     ):
         """Initialize the CosmosDB-Storage."""
         if connection_string:
-            self._cosmos_client = CosmosClient.from_connection_string(
-                connection_string
-            )
+            self._cosmos_client = CosmosClient.from_connection_string(connection_string)
         else:
             if cosmosdb_account_url is None:
-                msg = "Either connection_string or cosmosdb_accoun_url must be provided."
+                msg = (
+                    "Either connection_string or cosmosdb_accoun_url must be provided."
+                )
                 raise ValueError(msg)
 
             self._cosmos_client = CosmosClient(
@@ -76,7 +77,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self.create_database()
         if self._current_container is not None:
             self.create_container()
-    
+
     def create_database(self) -> None:
         """Create the database if it doesn't exist."""
         database_name = self._database_name
@@ -94,7 +95,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             database["id"] for database in self._cosmos_client.list_databases()
         ]
         return database_name in database_names
-    
+
     def find(
         self,
         file_pattern: re.Pattern[str],
@@ -126,18 +127,26 @@ class CosmosDBPipelineStorage(PipelineStorage):
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
-            return all(re.match(value, item.get(key, "")) for key, value in file_filter.items())
+            return all(
+                re.match(value, item.get(key, "")) for key, value in file_filter.items()
+            )
 
         try:
             database_client = self._database_client
-            container_client = database_client.get_container_client(str(self._current_container))
+            container_client = database_client.get_container_client(
+                str(self._current_container)
+            )
             query = "SELECT * FROM c WHERE CONTAINS(c.id, @pattern)"
-            parameters: list[dict[str, Any]] = [{"name": "@pattern", "value": file_pattern.pattern}]
+            parameters: list[dict[str, Any]] = [
+                {"name": "@pattern", "value": file_pattern.pattern}
+            ]
             if file_filter:
                 for key, value in file_filter.items():
                     query += f" AND c.{key} = @{key}"
                     parameters.append({"name": f"@{key}", "value": value})
-            items = container_client.query_items(query=query, parameters=parameters, enable_cross_partition_query=True)
+            items = container_client.query_items(
+                query=query, parameters=parameters, enable_cross_partition_query=True
+            )
             num_loaded = 0
             num_total = len(list(items))
             num_filtered = 0
@@ -159,7 +168,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         _create_progress_status(num_loaded, num_filtered, num_total)
                     )
         except Exception:
-            log.exception("An error occurred while searching for documents in Cosmos DB.")
+            log.exception(
+                "An error occurred while searching for documents in Cosmos DB."
+            )
 
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
@@ -176,9 +187,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 item_json_str = json.dumps(item_body)
                 if as_bytes:
                     item_df = pd.read_json(
-                        StringIO(item_json_str),
-                        orient="records",
-                        lines=False
+                        StringIO(item_json_str), orient="records", lines=False
                     )
                     return item_df.to_parquet()
                 return item_json_str
@@ -199,19 +208,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 if isinstance(value, bytes):
                     value_df = pd.read_parquet(BytesIO(value))
                     value_json = value_df.to_json(
-                        orient="records",
-                        lines=False,
-                        force_ascii=False
+                        orient="records", lines=False, force_ascii=False
                     )
-                    cosmos_db_item = {
-                        "id": key,
-                        "body": json.loads(value_json)
-                    }
+                    cosmos_db_item = {"id": key, "body": json.loads(value_json)}
                 else:
-                    cosmos_db_item = {
-                        "id": key,
-                        "body": json.loads(value)
-                    }
+                    cosmos_db_item = {"id": key, "body": json.loads(value)}
                 container_client.upsert_item(body=cosmos_db_item)
         except Exception:
             log.exception("Error writing item %s", key)
@@ -223,10 +224,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = database_client.get_container_client(
                 self._current_container
             )
-            item_names = [
-                item["id"]
-                for item in container_client.read_all_items()
-            ]
+            item_names = [item["id"] for item in container_client.read_all_items()]
             return key in item_names
         return False
 
@@ -246,22 +244,21 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """Return the keys in the storage."""
         msg = "CosmosDB storage does yet not support listing keys."
         raise NotImplementedError(msg)
-    
+
     def child(self, name: str | None) -> "PipelineStorage":
         """Create a child storage instance."""
         return self
-    
+
     def create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
         database_client = self._database_client
         if self._current_container is not None:
             partition_key = PartitionKey(path="/id", kind="Hash")
             database_client.create_container_if_not_exists(
-                    id=self._current_container,
-                    partition_key=partition_key,
+                id=self._current_container,
+                partition_key=partition_key,
             )
-            
-        
+
     def delete_container(self) -> None:
         """Delete the container with the current container name if it exists."""
         database_client = self._database_client
@@ -272,11 +269,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """Check if the container with the current container name exists."""
         database_client = self._database_client
         container_names = [
-            container["id"]
-            for container in database_client.list_containers()
+            container["id"] for container in database_client.list_containers()
         ]
         return self._current_container in container_names
-    
+
+
 def create_cosmosdb_storage(
     cosmosdb_account_url: str | None,
     connection_string: str | None,
@@ -297,6 +294,7 @@ def create_cosmosdb_storage(
         database_name=base_dir,
         current_container=container_name,
     )
+
 
 def _create_progress_status(
     num_loaded: int, num_filtered: int, num_total: int

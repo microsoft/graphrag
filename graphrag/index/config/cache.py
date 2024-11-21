@@ -73,6 +73,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The storage account blob url for cache"""
 
+
 class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb]]):
     """Represents the cosmosdb cache configuration for the pipeline."""
 
@@ -98,6 +99,7 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
         description="The cosmosdb account url for cache", default=None
     )
     """The cosmosdb account url for cache"""
+
 
 PipelineCacheConfigTypes = (
     PipelineFileCacheConfig

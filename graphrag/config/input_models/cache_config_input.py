@@ -17,4 +17,3 @@ class CacheConfigInput(TypedDict):
     container_name: NotRequired[str | None]
     storage_account_blob_url: NotRequired[str | None]
     cosmosdb_account_url: NotRequired[str | None]
-

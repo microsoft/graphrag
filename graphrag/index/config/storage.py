@@ -66,7 +66,10 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The storage account blob url."""
 
-class PipelineCosmosDBStorageConfig(PipelineStorageConfig[Literal[StorageType.cosmosdb]]):
+
+class PipelineCosmosDBStorageConfig(
+    PipelineStorageConfig[Literal[StorageType.cosmosdb]]
+):
     """Represents the cosmosdb storage configuration for the pipeline."""
 
     type: Literal[StorageType.cosmosdb] = StorageType.cosmosdb
@@ -94,5 +97,8 @@ class PipelineCosmosDBStorageConfig(PipelineStorageConfig[Literal[StorageType.co
 
 
 PipelineStorageConfigTypes = (
-    PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig | PipelineCosmosDBStorageConfig
+    PipelineFileStorageConfig
+    | PipelineMemoryStorageConfig
+    | PipelineBlobStorageConfig
+    | PipelineCosmosDBStorageConfig
 )
