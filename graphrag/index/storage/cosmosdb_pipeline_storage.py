@@ -46,7 +46,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         else:
             if cosmosdb_account_url is None:
                 msg = (
-                    "Either connection_string or cosmosdb_accoun_url must be provided."
+                    "Either connection_string or cosmosdb_account_url must be provided."
                 )
                 raise ValueError(msg)
 
@@ -210,10 +210,14 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     value_json = value_df.to_json(
                         orient="records", lines=False, force_ascii=False
                     )
-                    cosmos_db_item = {"id": key, "body": json.loads(value_json)}
+                    if value_json is None:
+                        log.exception("Error converting output %s to json", key)
+                    else:
+                        cosmos_db_item = {"id": key, "body": json.loads(value_json)}
+                        container_client.upsert_item(body=cosmos_db_item)
                 else:
                     cosmos_db_item = {"id": key, "body": json.loads(value)}
-                container_client.upsert_item(body=cosmos_db_item)
+                    container_client.upsert_item(body=cosmos_db_item)
         except Exception:
             log.exception("Error writing item %s", key)
 
