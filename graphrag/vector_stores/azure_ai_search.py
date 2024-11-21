@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A package containing the Azure AI Search  vector store implementation."""
+"""A package containing the Azure AI Search vector store implementation."""
 
 import json
 from typing import Any
