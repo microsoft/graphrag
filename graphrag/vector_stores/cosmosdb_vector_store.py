@@ -86,6 +86,72 @@ class CosmosDBVectoreStore(BaseVectorStore):
 
     def create_container(self) -> None:
         """Create the container if it doesn't exist."""
+        database_client = self._database_client
+        container_name = self._container_name
+        partition_key = PartitionKey(path="/id", kind="Hash")
+
+        # Define the container vector policy
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector",
+                    "dataType": "float32",
+                    "distanceFunction": "cosine",
+                    "dimensions": self.vector_size,
+                }
+            ]
+        }
+
+        # Define the vector indexing policy
+        indexing_policy = {
+            "indexingMode": "consistent",
+            "automatic": True,
+            "includedPaths": [
+                {
+                    "path": "/*"
+                }
+            ],
+            "excludedPaths": [
+                {
+                    "path": "/_etag/?"
+                },
+                {
+                    "path": "/vector/*"
+                }
+            ],
+            "vectorIndexes": [
+                {
+                    "path": "/vector",
+                    "type": "diskANN"
+                }
+            ]
+        }
+
+        # Create the container and container client
+        database_client.create_container_if_not_exists(
+            id=container_name,
+            partition_key=partition_key,
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy,
+        )
+        self._container_client = database_client.get_container_client(
+            container_name
+        )
+
+    def delete_container(self) -> None:
+        """Delete the vector store container in the database if it exists."""
+        database_client = self._database_client
+        if self.container_exists():
+            database_client.delete_container(self._container_name)
+
+    def container_exists(self) -> bool:
+        """Check if the container name exists in the database."""
+        database_client = self._database_client
+        container_names = [
+            container["id"]
+            for container in database_client.list_containers()
+        ]
+        return self._container_name in container_names
     
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
