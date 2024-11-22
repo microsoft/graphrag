@@ -50,19 +50,41 @@ class CosmosDBVectoreStore(BaseVectorStore):
         if database_name is None:
             msg = "Database name must be provided."
             raise ValueError(msg)
+        self._database_name = database_name
         container_name = kwargs.get("container_name")
         if container_name is None:
             msg = "Container name must be provided."
             raise ValueError(msg)
+        self._container_name = container_name
 
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
-        self.create_database(database_name)
-        self.create_container(container_name)
+        self.create_database()
+        self.create_container()
     
-    def create_database(self, database_name: str) -> None:
+    def create_database(self) -> None:
         """Create the database if it doesn't exist."""
+        database_name = self._database_name
+        self._cosmos_client.create_database_if_not_exists(
+            id=database_name
+        )
+        self._database_client = self._cosmos_client.get_database_client(
+            database_name
+        )
 
-    def create_container(self, container_name: str) -> None:
+    def delete_database(self) -> None:
+        """Delete the database if it exists."""
+        if self.database_exists():
+            self._cosmos_client.delete_database(self._database_name)
+
+    def database_exists(self) -> bool:
+        """Check if the database exists."""
+        database_name = self._database_name
+        database_names = [
+            database["id"] for database in self._cosmos_client.list_databases()
+        ]
+        return database_name in database_names
+
+    def create_container(self) -> None:
         """Create the container if it doesn't exist."""
     
     def load_documents(
