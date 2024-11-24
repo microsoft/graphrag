@@ -15,7 +15,7 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports as create_final_community_reports_flow,
 )
@@ -35,7 +35,7 @@ async def create_final_community_reports(
     """All the steps to transform community reports."""
     nodes = cast(pd.DataFrame, input.get_input())
     edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
-
+    entities = cast(pd.DataFrame, get_required_input_table(input, "entities").table)
     communities = cast(
         pd.DataFrame, get_required_input_table(input, "communities").table
     )
@@ -47,6 +47,7 @@ async def create_final_community_reports(
     output = await create_final_community_reports_flow(
         nodes,
         edges,
+        entities,
         communities,
         claims,
         callbacks,

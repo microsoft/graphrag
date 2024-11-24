@@ -9,10 +9,9 @@ import traceback
 import pandas as pd
 from pyarrow.lib import ArrowInvalid, ArrowTypeError
 
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.emit.table_emitter import TableEmitter
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
-
-from .table_emitter import TableEmitter
 
 log = logging.getLogger(__name__)
 

@@ -6,13 +6,15 @@
 from typing import Any, cast
 
 import networkx as nx
-from graspologic.utils import largest_connected_component
 
-from .normalize_node_names import normalize_node_names
+from graphrag.index.graph.utils.normalize_node_names import normalize_node_names
 
 
 def stable_largest_connected_component(graph: nx.Graph) -> nx.Graph:
     """Return the largest connected component of the graph, with nodes and edges sorted in a stable way."""
+    # NOTE: The import is done here to reduce the initial import time of the module
+    from graspologic.utils import largest_connected_component
+
     graph = graph.copy()
     graph = cast(nx.Graph, largest_connected_component(graph))
     graph = normalize_node_names(graph)

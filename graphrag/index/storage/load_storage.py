@@ -7,16 +7,15 @@ from __future__ import annotations
 
 from typing import cast
 
-from graphrag.config import StorageType
+from graphrag.config.enums import StorageType
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
     PipelineStorageConfig,
 )
-
-from .blob_pipeline_storage import create_blob_storage
-from .file_pipeline_storage import create_file_storage
-from .memory_pipeline_storage import create_memory_storage
+from graphrag.index.storage.blob_pipeline_storage import create_blob_storage
+from graphrag.index.storage.file_pipeline_storage import create_file_storage
+from graphrag.index.storage.memory_pipeline_storage import create_memory_storage
 
 
 def load_storage(config: PipelineStorageConfig):

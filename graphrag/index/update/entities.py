@@ -4,6 +4,7 @@
 """Entity related operations and utils for Incremental Indexing."""
 
 import asyncio
+import itertools
 
 import numpy as np
 import pandas as pd
@@ -36,10 +37,10 @@ def _group_and_resolve_entities(
     dict
         The id mapping for existing entities. In the form of {df_b.id: df_a.id}.
     """
-    # If a name exists in A and B, make a dictionary for {B.id : A.id}
-    merged = delta_entities_df[["id", "name"]].merge(
-        old_entities_df[["id", "name"]],
-        on="name",
+    # If a title exists in A and B, make a dictionary for {B.id : A.id}
+    merged = delta_entities_df[["id", "title"]].merge(
+        old_entities_df[["id", "title"]],
+        on="title",
         suffixes=("_B", "_A"),
         copy=False,
     )
@@ -55,17 +56,16 @@ def _group_and_resolve_entities(
         [old_entities_df, delta_entities_df], ignore_index=True, copy=False
     )
 
-    # Group by name and resolve conflicts
+    # Group by title and resolve conflicts
     aggregated = (
-        combined.groupby("name")
+        combined.groupby("title")
         .agg({
             "id": "first",
             "type": "first",
             "human_readable_id": "first",
-            "graph_embedding": "first",
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
-            "text_unit_ids": lambda x: ",".join(str(i) for j in x.tolist() for i in j),
+            "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
         })
         .reset_index()
     )
@@ -78,11 +78,10 @@ def _group_and_resolve_entities(
         :,
         [
             "id",
-            "name",
-            "description",
-            "type",
             "human_readable_id",
-            "graph_embedding",
+            "title",
+            "type",
+            "description",
             "text_unit_ids",
         ],
     ]
@@ -123,7 +122,7 @@ async def _run_entity_summarization(
         if isinstance(description, list) and len(description) > 1:
             # Run entity summarization asynchronously
             result = await run_entity_summarization(
-                row["name"], description, callbacks, cache, strategy
+                row["title"], description, callbacks, cache, strategy
             )
             return result.description
         # Handle case where description is a single-item list or not a list

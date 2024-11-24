@@ -5,7 +5,7 @@
 
 from typing_extensions import NotRequired
 
-from .llm_config_input import LLMConfigInput
+from graphrag.config.input_models.llm_config_input import LLMConfigInput
 
 
 class CommunityReportsConfigInput(LLMConfigInput):

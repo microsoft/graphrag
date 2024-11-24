@@ -10,7 +10,7 @@ import pyarrow as pa
 
 from graphrag.model.types import TextEmbedder
 
-from .base import (
+from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
     VectorStoreSearchResult,

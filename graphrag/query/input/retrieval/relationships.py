@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import Entity, Relationship
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
 
 
 def get_in_network_relationships(
@@ -27,9 +28,7 @@ def get_in_network_relationships(
         return selected_relationships
 
     # sort by ranking attribute
-    return sort_relationships_by_ranking_attribute(
-        selected_relationships, selected_entities, ranking_attribute
-    )
+    return sort_relationships_by_rank(selected_relationships, ranking_attribute)
 
 
 def get_out_network_relationships(
@@ -52,9 +51,7 @@ def get_out_network_relationships(
         and relationship.source not in selected_entity_names
     ]
     selected_relationships = source_relationships + target_relationships
-    return sort_relationships_by_ranking_attribute(
-        selected_relationships, selected_entities, ranking_attribute
-    )
+    return sort_relationships_by_rank(selected_relationships, ranking_attribute)
 
 
 def get_candidate_relationships(
@@ -81,35 +78,11 @@ def get_entities_from_relationships(
     return [entity for entity in entities if entity.title in selected_entity_names]
 
 
-def calculate_relationship_combined_rank(
+def sort_relationships_by_rank(
     relationships: list[Relationship],
-    entities: list[Entity],
     ranking_attribute: str = "rank",
 ) -> list[Relationship]:
-    """Calculate default rank for a relationship based on the combined rank of source and target entities."""
-    entity_mappings = {entity.title: entity for entity in entities}
-
-    for relationship in relationships:
-        if relationship.attributes is None:
-            relationship.attributes = {}
-        source = entity_mappings.get(relationship.source)
-        target = entity_mappings.get(relationship.target)
-        source_rank = source.rank if source and source.rank else 0
-        target_rank = target.rank if target and target.rank else 0
-        relationship.attributes[ranking_attribute] = source_rank + target_rank  # type: ignore
-    return relationships
-
-
-def sort_relationships_by_ranking_attribute(
-    relationships: list[Relationship],
-    entities: list[Entity],
-    ranking_attribute: str = "rank",
-) -> list[Relationship]:
-    """
-    Sort relationships by a ranking_attribute.
-
-    If no ranking attribute exists, sort by combined rank of source and target entities.
-    """
+    """Sort relationships by a ranking_attribute."""
     if len(relationships) == 0:
         return relationships
 
@@ -122,17 +95,10 @@ def sort_relationships_by_ranking_attribute(
             key=lambda x: int(x.attributes[ranking_attribute]) if x.attributes else 0,
             reverse=True,
         )
+    elif ranking_attribute == "rank":
+        relationships.sort(key=lambda x: x.rank if x.rank else 0.0, reverse=True)
     elif ranking_attribute == "weight":
         relationships.sort(key=lambda x: x.weight if x.weight else 0.0, reverse=True)
-    else:
-        # ranking attribute do not exist, calculate rank = combined ranks of source and target
-        relationships = calculate_relationship_combined_rank(
-            relationships, entities, ranking_attribute
-        )
-        relationships.sort(
-            key=lambda x: int(x.attributes[ranking_attribute]) if x.attributes else 0,
-            reverse=True,
-        )
     return relationships
 
 

@@ -27,8 +27,7 @@
             ],
             "nan_allowed_columns": [
                 "type",
-                "description",
-                "graph_embedding"
+                "description"
             ],
             "subworkflows": 1,
             "max_runtime": 300,
@@ -49,9 +48,7 @@
                 2500
             ],
             "nan_allowed_columns": [
-                "entity_type",
                 "description",
-                "graph_embedding",
                 "community",
                 "level"
             ],
@@ -74,14 +71,15 @@
                 2500
             ],
             "nan_allowed_columns": [
-                "community_id",
                 "title",
                 "summary",
                 "full_content",
                 "full_content_json",
                 "rank",
                 "rank_explanation",
-                "findings"
+                "findings",
+                "period",
+                "size"
             ],
             "subworkflows": 1,
             "max_runtime": 300,

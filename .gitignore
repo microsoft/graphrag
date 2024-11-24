@@ -50,3 +50,9 @@ site/
 docsite/
 .yarn/
 .pnp*
+
+# PyCharm
+.idea/
+
+# Jupyter notebook
+.ipynb_checkpoints/

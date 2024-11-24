@@ -9,7 +9,9 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model import Covariate, Entity, Relationship
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
 from graphrag.query.input.retrieval.covariates import (
     get_candidate_covariates,
     to_covariate_dataframe,
@@ -288,7 +290,12 @@ def _filter_relationships(
         )
 
     # sort by attributes[links] first, then by ranking_attribute
-    if relationship_ranking_attribute == "weight":
+    if relationship_ranking_attribute == "rank":
+        out_network_relationships.sort(
+            key=lambda x: (x.attributes["links"], x.rank),  # type: ignore
+            reverse=True,  # type: ignore
+        )
+    elif relationship_ranking_attribute == "weight":
         out_network_relationships.sort(
             key=lambda x: (x.attributes["links"], x.weight),  # type: ignore
             reverse=True,  # type: ignore

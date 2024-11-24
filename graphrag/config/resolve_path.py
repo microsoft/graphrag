@@ -7,8 +7,8 @@ import re
 from pathlib import Path
 from string import Template
 
-from .enums import ReportingType, StorageType
-from .models.graph_rag_config import GraphRagConfig
+from graphrag.config.enums import ReportingType, StorageType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def _resolve_timestamp_path_with_value(path: str | Path, timestamp_value: str) -> Path:

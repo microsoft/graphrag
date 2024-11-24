@@ -12,7 +12,7 @@ from datashaper import VerbCallbacks, progress_callback
 
 from graphrag.index.graph.visualization import GraphLayout
 from graphrag.index.operations.embed_graph import NodeEmbeddings
-from graphrag.index.utils import load_graph
+from graphrag.index.utils.load_graph import load_graph
 
 
 class LayoutGraphStrategyType(str, Enum):
@@ -102,7 +102,9 @@ def _run_layout(
     graph = load_graph(graphml_or_graph)
     match strategy:
         case LayoutGraphStrategyType.umap:
-            from .methods.umap import run as run_umap
+            from graphrag.index.operations.layout_graph.methods.umap import (
+                run as run_umap,
+            )
 
             return run_umap(
                 graph,
@@ -111,7 +113,9 @@ def _run_layout(
                 lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
             )
         case LayoutGraphStrategyType.zero:
-            from .methods.zero import run as run_zero
+            from graphrag.index.operations.layout_graph.methods.zero import (
+                run as run_zero,
+            )
 
             return run_zero(
                 graph,

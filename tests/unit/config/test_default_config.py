@@ -13,63 +13,82 @@ import yaml
 from pydantic import ValidationError
 
 import graphrag.config.defaults as defs
-from graphrag.config import (
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.enums import (
+    CacheType,
+    InputFileType,
+    InputType,
+    ReportingType,
+    StorageType,
+)
+from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
-    CacheConfig,
-    CacheConfigInput,
-    CacheType,
-    ChunkingConfig,
-    ChunkingConfigInput,
-    ClaimExtractionConfig,
-    ClaimExtractionConfigInput,
-    ClusterGraphConfig,
-    ClusterGraphConfigInput,
-    CommunityReportsConfig,
-    CommunityReportsConfigInput,
-    EmbedGraphConfig,
-    EmbedGraphConfigInput,
-    EntityExtractionConfig,
-    EntityExtractionConfigInput,
-    GlobalSearchConfig,
-    GraphRagConfig,
-    GraphRagConfigInput,
-    InputConfig,
-    InputConfigInput,
-    InputFileType,
-    InputType,
-    LLMParameters,
-    LLMParametersInput,
-    LocalSearchConfig,
-    ParallelizationParameters,
-    ReportingConfig,
-    ReportingConfigInput,
-    ReportingType,
-    SnapshotsConfig,
-    SnapshotsConfigInput,
-    StorageConfig,
-    StorageConfigInput,
-    StorageType,
-    SummarizeDescriptionsConfig,
-    SummarizeDescriptionsConfigInput,
-    TextEmbeddingConfig,
-    TextEmbeddingConfigInput,
-    UmapConfig,
-    UmapConfigInput,
-    create_graphrag_config,
 )
-from graphrag.index import (
-    PipelineConfig,
+from graphrag.config.input_models.cache_config_input import CacheConfigInput
+from graphrag.config.input_models.chunking_config_input import ChunkingConfigInput
+from graphrag.config.input_models.claim_extraction_config_input import (
+    ClaimExtractionConfigInput,
+)
+from graphrag.config.input_models.cluster_graph_config_input import (
+    ClusterGraphConfigInput,
+)
+from graphrag.config.input_models.community_reports_config_input import (
+    CommunityReportsConfigInput,
+)
+from graphrag.config.input_models.embed_graph_config_input import EmbedGraphConfigInput
+from graphrag.config.input_models.entity_extraction_config_input import (
+    EntityExtractionConfigInput,
+)
+from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
+from graphrag.config.input_models.input_config_input import InputConfigInput
+from graphrag.config.input_models.llm_parameters_input import LLMParametersInput
+from graphrag.config.input_models.reporting_config_input import ReportingConfigInput
+from graphrag.config.input_models.snapshots_config_input import SnapshotsConfigInput
+from graphrag.config.input_models.storage_config_input import StorageConfigInput
+from graphrag.config.input_models.summarize_descriptions_config_input import (
+    SummarizeDescriptionsConfigInput,
+)
+from graphrag.config.input_models.text_embedding_config_input import (
+    TextEmbeddingConfigInput,
+)
+from graphrag.config.input_models.umap_config_input import UmapConfigInput
+from graphrag.config.models.cache_config import CacheConfig
+from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
+from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
+from graphrag.config.models.community_reports_config import CommunityReportsConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.global_search_config import GlobalSearchConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.parallelization_parameters import ParallelizationParameters
+from graphrag.config.models.reporting_config import ReportingConfig
+from graphrag.config.models.snapshots_config import SnapshotsConfig
+from graphrag.config.models.storage_config import StorageConfig
+from graphrag.config.models.summarize_descriptions_config import (
+    SummarizeDescriptionsConfig,
+)
+from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
+from graphrag.config.models.umap_config import UmapConfig
+from graphrag.index.config.cache import PipelineFileCacheConfig
+from graphrag.index.config.input import (
     PipelineCSVInputConfig,
-    PipelineFileCacheConfig,
-    PipelineFileReportingConfig,
-    PipelineFileStorageConfig,
     PipelineInputConfig,
     PipelineTextInputConfig,
-    PipelineWorkflowReference,
-    create_pipeline_config,
 )
+from graphrag.index.config.pipeline import (
+    PipelineConfig,
+    PipelineWorkflowReference,
+)
+from graphrag.index.config.reporting import PipelineFileReportingConfig
+from graphrag.index.config.storage import PipelineFileStorageConfig
+from graphrag.index.create_pipeline_config import create_pipeline_config
 
 current_dir = os.path.dirname(__file__)
 
@@ -202,6 +221,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert ClaimExtractionConfig is not None
         assert ClusterGraphConfig is not None
         assert CommunityReportsConfig is not None
+        assert DRIFTSearchConfig is not None
         assert EmbedGraphConfig is not None
         assert EntityExtractionConfig is not None
         assert GlobalSearchConfig is not None

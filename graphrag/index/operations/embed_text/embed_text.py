@@ -11,14 +11,11 @@ import numpy as np
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
-from graphrag.vector_stores import (
-    BaseVectorStore,
-    VectorStoreDocument,
-    VectorStoreFactory,
-)
-
-from .strategies.typing import TextEmbeddingStrategy
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
+from graphrag.utils.embeddings import create_collection_name
+from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
+from graphrag.vector_stores.factory import VectorStoreFactory
 
 log = logging.getLogger(__name__)
 
@@ -229,8 +226,8 @@ def _create_vector_store(
 
 
 def _get_collection_name(vector_store_config: dict, embedding_name: str) -> str:
-    container_name = vector_store_config.get("container_name")
-    collection_name = f"{container_name}.{embedding_name}".replace(".", "-")
+    container_name = vector_store_config.get("container_name", "default")
+    collection_name = create_collection_name(container_name, embedding_name)
 
     msg = f"using vector store {vector_store_config.get('type')} with container_name {container_name} for embedding {embedding_name}: {collection_name}"
     log.info(msg)
@@ -241,11 +238,15 @@ def load_strategy(strategy: TextEmbedStrategyType) -> TextEmbeddingStrategy:
     """Load strategy method definition."""
     match strategy:
         case TextEmbedStrategyType.openai:
-            from .strategies.openai import run as run_openai
+            from graphrag.index.operations.embed_text.strategies.openai import (
+                run as run_openai,
+            )
 
             return run_openai
         case TextEmbedStrategyType.mock:
-            from .strategies.mock import run as run_mock
+            from graphrag.index.operations.embed_text.strategies.mock import (
+                run as run_mock,
+            )
 
             return run_mock
         case _:

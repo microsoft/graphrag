@@ -6,7 +6,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from .named import Named
+from graphrag.model.named import Named
 
 
 @dataclass
@@ -19,16 +19,10 @@ class Document(Named):
     text_unit_ids: list[str] = field(default_factory=list)
     """list of text units in the document."""
 
-    raw_content: str = ""
+    text: str = ""
     """The raw text content of the document."""
 
-    summary: str | None = None
-    """Summary of the document (optional)."""
-
-    summary_embedding: list[float] | None = None
-    """The semantic embedding for the document summary (optional)."""
-
-    raw_content_embedding: list[float] | None = None
+    text_embedding: list[float] | None = None
     """The semantic embedding for the document raw content (optional)."""
 
     attributes: dict[str, Any] | None = None
@@ -39,13 +33,11 @@ class Document(Named):
         cls,
         d: dict[str, Any],
         id_key: str = "id",
-        short_id_key: str = "short_id",
+        short_id_key: str = "human_readable_id",
         title_key: str = "title",
         type_key: str = "type",
-        raw_content_key: str = "raw_content",
-        summary_key: str = "summary",
-        summary_embedding_key: str = "summary_embedding",
-        raw_content_embedding_key: str = "raw_content_embedding",
+        text_key: str = "text",
+        text_embedding_key: str = "text_embedding",
         text_units_key: str = "text_units",
         attributes_key: str = "attributes",
     ) -> "Document":
@@ -55,10 +47,8 @@ class Document(Named):
             short_id=d.get(short_id_key),
             title=d[title_key],
             type=d.get(type_key, "text"),
-            raw_content=d[raw_content_key],
-            summary=d.get(summary_key),
-            summary_embedding=d.get(summary_embedding_key),
-            raw_content_embedding=d.get(raw_content_embedding_key),
+            text=d[text_key],
+            text_embedding=d.get(text_embedding_key),
             text_unit_ids=d.get(text_units_key, []),
             attributes=d.get(attributes_key),
         )

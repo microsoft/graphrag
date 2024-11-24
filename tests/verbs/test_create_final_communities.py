@@ -36,9 +36,12 @@ async def test_create_final_communities():
         context=context,
     )
 
-    # ignore the period column, because it is recalculated every time
+    # ignore the period and id columns, because they recalculated every time
+    assert "period" in expected.columns
+    assert "id" in expected.columns
     columns = list(expected.columns.values)
     columns.remove("period")
+    columns.remove("id")
     compare_outputs(
         actual,
         expected,

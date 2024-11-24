@@ -39,35 +39,7 @@ yarn run:index --config your_pipeline.yml # custom config mode
 
 ### Python API
 
-```python
-from graphrag.index import run_pipeline
-from graphrag.index.config import PipelineWorkflowReference
-
-workflows: list[PipelineWorkflowReference] = [
-    PipelineWorkflowReference(
-        steps=[
-            {
-                # built-in verb
-                "verb": "derive",  # https://github.com/microsoft/datashaper/blob/main/python/datashaper/datashaper/verbs/derive.py
-                "args": {
-                    "column1": "col1",  # from above
-                    "column2": "col2",  # from above
-                    "to": "col_multiplied",  # new column name
-                    "operator": "*",  # multiply the two columns
-                },
-                # Since we're trying to act on the default input, we don't need explicitly to specify an input
-            }
-        ]
-    ),
-]
-
-dataset = pd.DataFrame([{"col1": 2, "col2": 4}, {"col1": 5, "col2": 10}])
-outputs = []
-async for output in await run_pipeline(dataset=dataset, workflows=workflows):
-    outputs.append(output)
-pipeline_result = outputs[-1]
-print(pipeline_result)
-```
+Please see the [examples folder](https://github.com/microsoft/graphrag/blob/main/examples/README.md) for a handful of functional pipelines illustrating how to create and run via a custom settings.yml or through custom python scripts.
 
 ## Further Reading
 

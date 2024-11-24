@@ -16,6 +16,16 @@ import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
 from graphrag.llm.openai.utils import try_parse_json_object
+from graphrag.prompts.query.global_search_knowledge_system_prompt import (
+    GENERAL_KNOWLEDGE_INSTRUCTION,
+)
+from graphrag.prompts.query.global_search_map_system_prompt import (
+    MAP_SYSTEM_PROMPT,
+)
+from graphrag.prompts.query.global_search_reduce_system_prompt import (
+    NO_DATA_ANSWER,
+    REDUCE_SYSTEM_PROMPT,
+)
 from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
@@ -23,14 +33,6 @@ from graphrag.query.context_builder.conversation_history import (
 from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
-from graphrag.query.structured_search.global_search.map_system_prompt import (
-    MAP_SYSTEM_PROMPT,
-)
-from graphrag.query.structured_search.global_search.reduce_system_prompt import (
-    GENERAL_KNOWLEDGE_INSTRUCTION,
-    NO_DATA_ANSWER,
-    REDUCE_SYSTEM_PROMPT,
-)
 
 DEFAULT_MAP_LLM_PARAMS = {
     "max_tokens": 1000,
@@ -45,7 +47,7 @@ DEFAULT_REDUCE_LLM_PARAMS = {
 log = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class GlobalSearchResult(SearchResult):
     """A GlobalSearch result."""
 
@@ -62,11 +64,11 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         llm: BaseLLM,
         context_builder: GlobalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
-        map_system_prompt: str = MAP_SYSTEM_PROMPT,
-        reduce_system_prompt: str = REDUCE_SYSTEM_PROMPT,
+        map_system_prompt: str | None = None,
+        reduce_system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         allow_general_knowledge: bool = False,
-        general_knowledge_inclusion_prompt: str = GENERAL_KNOWLEDGE_INSTRUCTION,
+        general_knowledge_inclusion_prompt: str | None = None,
         json_mode: bool = True,
         callbacks: list[GlobalSearchLLMCallback] | None = None,
         max_data_tokens: int = 8000,
@@ -81,11 +83,13 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             token_encoder=token_encoder,
             context_builder_params=context_builder_params,
         )
-        self.map_system_prompt = map_system_prompt
-        self.reduce_system_prompt = reduce_system_prompt
+        self.map_system_prompt = map_system_prompt or MAP_SYSTEM_PROMPT
+        self.reduce_system_prompt = reduce_system_prompt or REDUCE_SYSTEM_PROMPT
         self.response_type = response_type
         self.allow_general_knowledge = allow_general_knowledge
-        self.general_knowledge_inclusion_prompt = general_knowledge_inclusion_prompt
+        self.general_knowledge_inclusion_prompt = (
+            general_knowledge_inclusion_prompt or GENERAL_KNOWLEDGE_INSTRUCTION
+        )
         self.callbacks = callbacks
         self.max_data_tokens = max_data_tokens
 
@@ -105,24 +109,25 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         conversation_history: ConversationHistory | None = None,
     ) -> AsyncGenerator:
         """Stream the global search response."""
-        context_chunks, context_records = self.context_builder.build_context(
-            conversation_history=conversation_history, **self.context_builder_params
+        context_result = await self.context_builder.build_context(
+            conversation_history=conversation_history,
+            **self.context_builder_params,
         )
         if self.callbacks:
             for callback in self.callbacks:
-                callback.on_map_response_start(context_chunks)  # type: ignore
+                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
-            for data in context_chunks
+            for data in context_result.context_chunks
         ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
 
         # send context records first before sending the reduce response
-        yield context_records
+        yield context_result.context_records
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
@@ -145,26 +150,33 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         - Step 2: Combine the answers from step 2 to generate the final answer
         """
         # Step 1: Generate answers for each batch of community short summaries
+        llm_calls, prompt_tokens, output_tokens = {}, {}, {}
 
         start_time = time.time()
-        context_chunks, context_records = self.context_builder.build_context(
-            conversation_history=conversation_history, **self.context_builder_params
+        context_result = await self.context_builder.build_context(
+            query=query,
+            conversation_history=conversation_history,
+            **self.context_builder_params,
         )
+        llm_calls["build_context"] = context_result.llm_calls
+        prompt_tokens["build_context"] = context_result.prompt_tokens
+        output_tokens["build_context"] = context_result.output_tokens
 
         if self.callbacks:
             for callback in self.callbacks:
-                callback.on_map_response_start(context_chunks)  # type: ignore
+                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
-            for data in context_chunks
+            for data in context_result.context_chunks
         ])
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
-        map_llm_calls = sum(response.llm_calls for response in map_responses)
-        map_prompt_tokens = sum(response.prompt_tokens for response in map_responses)
+        llm_calls["map"] = sum(response.llm_calls for response in map_responses)
+        prompt_tokens["map"] = sum(response.prompt_tokens for response in map_responses)
+        output_tokens["map"] = sum(response.output_tokens for response in map_responses)
 
         # Step 2: Combine the intermediate answers from step 2 to generate the final answer
         reduce_response = await self._reduce_response(
@@ -172,17 +184,24 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             query=query,
             **self.reduce_llm_params,
         )
+        llm_calls["reduce"] = reduce_response.llm_calls
+        prompt_tokens["reduce"] = reduce_response.prompt_tokens
+        output_tokens["reduce"] = reduce_response.output_tokens
 
         return GlobalSearchResult(
             response=reduce_response.response,
-            context_data=context_records,
-            context_text=context_chunks,
+            context_data=context_result.context_records,
+            context_text=context_result.context_chunks,
             map_responses=map_responses,
             reduce_context_data=reduce_response.context_data,
             reduce_context_text=reduce_response.context_text,
             completion_time=time.time() - start_time,
-            llm_calls=map_llm_calls + reduce_response.llm_calls,
-            prompt_tokens=map_prompt_tokens + reduce_response.prompt_tokens,
+            llm_calls=sum(llm_calls.values()),
+            prompt_tokens=sum(prompt_tokens.values()),
+            output_tokens=sum(output_tokens.values()),
+            llm_calls_categories=llm_calls,
+            prompt_tokens_categories=prompt_tokens,
+            output_tokens_categories=output_tokens,
         )
 
     def search(
@@ -230,6 +249,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
 
         except Exception:
@@ -241,6 +261,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=0,
             )
 
     def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
@@ -319,6 +340,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                     completion_time=time.time() - start_time,
                     llm_calls=0,
                     prompt_tokens=0,
+                    output_tokens=0,
                 )
 
             filtered_key_points = sorted(
@@ -372,6 +394,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=num_tokens(search_response, self.token_encoder),
             )
         except Exception:
             log.exception("Exception in reduce_response")
@@ -382,6 +405,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=0,
             )
 
     async def _stream_reduce_response(

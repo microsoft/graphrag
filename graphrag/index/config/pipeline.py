@@ -9,11 +9,11 @@ from devtools import pformat
 from pydantic import BaseModel
 from pydantic import Field as pydantic_Field
 
-from .cache import PipelineCacheConfigTypes
-from .input import PipelineInputConfigTypes
-from .reporting import PipelineReportingConfigTypes
-from .storage import PipelineStorageConfigTypes
-from .workflow import PipelineWorkflowReference
+from graphrag.index.config.cache import PipelineCacheConfigTypes
+from graphrag.index.config.input import PipelineInputConfigTypes
+from graphrag.index.config.reporting import PipelineReportingConfigTypes
+from graphrag.index.config.storage import PipelineStorageConfigTypes
+from graphrag.index.config.workflow import PipelineWorkflowReference
 
 
 class PipelineConfig(BaseModel):

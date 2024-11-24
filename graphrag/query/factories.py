@@ -3,24 +3,19 @@
 
 """Query Factory methods to support CLI."""
 
-import tiktoken
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from copy import deepcopy
 
-from graphrag.config import (
-    GraphRagConfig,
-    LLMType,
-)
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+import tiktoken
+
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
-from graphrag.query.llm.oai.typing import OpenaiApiType
+from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.drift_search.drift_context import (
     DRIFTSearchContextBuilder,
 )
@@ -33,72 +28,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.vector_stores import BaseVectorStore
-
-
-def get_llm(config: GraphRagConfig) -> ChatOpenAI:
-    """Get the LLM client."""
-    is_azure_client = (
-        config.llm.type == LLMType.AzureOpenAIChat
-        or config.llm.type == LLMType.AzureOpenAI
-    )
-    debug_llm_key = config.llm.api_key or ""
-    llm_debug_info = {
-        **config.llm.model_dump(),
-        "api_key": f"REDACTED,len={len(debug_llm_key)}",
-    }
-    audience = (
-        config.llm.audience
-        if config.llm.audience
-        else "https://cognitiveservices.azure.com/.default"
-    )
-    print(f"creating llm client with {llm_debug_info}")  # noqa T201
-    return ChatOpenAI(
-        api_key=config.llm.api_key,
-        azure_ad_token_provider=(
-            get_bearer_token_provider(DefaultAzureCredential(), audience)
-            if is_azure_client and not config.llm.api_key
-            else None
-        ),
-        api_base=config.llm.api_base,
-        organization=config.llm.organization,
-        model=config.llm.model,
-        api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
-        deployment_name=config.llm.deployment_name,
-        api_version=config.llm.api_version,
-        max_retries=config.llm.max_retries,
-        request_timeout=config.llm.request_timeout,
-    )
-
-
-def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
-    """Get the LLM client for embeddings."""
-    is_azure_client = config.embeddings.llm.type == LLMType.AzureOpenAIEmbedding
-    debug_embedding_api_key = config.embeddings.llm.api_key or ""
-    llm_debug_info = {
-        **config.embeddings.llm.model_dump(),
-        "api_key": f"REDACTED,len={len(debug_embedding_api_key)}",
-    }
-    if config.embeddings.llm.audience is None:
-        audience = "https://cognitiveservices.azure.com/.default"
-    else:
-        audience = config.embeddings.llm.audience
-    print(f"creating embedding llm client with {llm_debug_info}")  # noqa T201
-    return OpenAIEmbedding(
-        api_key=config.embeddings.llm.api_key,
-        azure_ad_token_provider=(
-            get_bearer_token_provider(DefaultAzureCredential(), audience)
-            if is_azure_client and not config.embeddings.llm.api_key
-            else None
-        ),
-        api_base=config.embeddings.llm.api_base,
-        organization=config.llm.organization,
-        api_type=OpenaiApiType.AzureOpenAI if is_azure_client else OpenaiApiType.OpenAI,
-        model=config.embeddings.llm.model,
-        deployment_name=config.embeddings.llm.deployment_name,
-        api_version=config.embeddings.llm.api_version,
-        max_retries=config.embeddings.llm.max_retries,
-    )
+from graphrag.vector_stores.base import BaseVectorStore
 
 
 def get_local_search_engine(
@@ -110,6 +40,7 @@ def get_local_search_engine(
     covariates: dict[str, list[Covariate]],
     response_type: str,
     description_embedding_store: BaseVectorStore,
+    system_prompt: str | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -120,6 +51,7 @@ def get_local_search_engine(
 
     return LocalSearch(
         llm=llm,
+        system_prompt=system_prompt,
         context_builder=LocalSearchMixedContext(
             community_reports=reports,
             text_units=text_units,
@@ -160,16 +92,45 @@ def get_global_search_engine(
     config: GraphRagConfig,
     reports: list[CommunityReport],
     entities: list[Entity],
+    communities: list[Community],
     response_type: str,
+    dynamic_community_selection: bool = False,
+    map_system_prompt: str | None = None,
+    reduce_system_prompt: str | None = None,
+    general_knowledge_inclusion_prompt: str | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     token_encoder = tiktoken.get_encoding(config.encoding_model)
     gs_config = config.global_search
 
+    dynamic_community_selection_kwargs = {}
+    if dynamic_community_selection:
+        gs_config = config.global_search
+        _config = deepcopy(config)
+        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
+        dynamic_community_selection_kwargs.update({
+            "llm": get_llm(_config),
+            "token_encoder": tiktoken.encoding_for_model(gs_config.dynamic_search_llm),
+            "keep_parent": gs_config.dynamic_search_keep_parent,
+            "num_repeats": gs_config.dynamic_search_num_repeats,
+            "use_summary": gs_config.dynamic_search_use_summary,
+            "concurrent_coroutines": gs_config.dynamic_search_concurrent_coroutines,
+            "threshold": gs_config.dynamic_search_threshold,
+            "max_level": gs_config.dynamic_search_max_level,
+        })
+
     return GlobalSearch(
         llm=get_llm(config),
+        map_system_prompt=map_system_prompt,
+        reduce_system_prompt=reduce_system_prompt,
+        general_knowledge_inclusion_prompt=general_knowledge_inclusion_prompt,
         context_builder=GlobalCommunityContext(
-            community_reports=reports, entities=entities, token_encoder=token_encoder
+            community_reports=reports,
+            communities=communities,
+            entities=entities,
+            token_encoder=token_encoder,
+            dynamic_community_selection=dynamic_community_selection,
+            dynamic_community_selection_kwargs=dynamic_community_selection_kwargs,
         ),
         token_encoder=token_encoder,
         max_data_tokens=gs_config.data_max_tokens,
@@ -211,6 +172,7 @@ def get_drift_search_engine(
     entities: list[Entity],
     relationships: list[Relationship],
     description_embedding_store: BaseVectorStore,
+    local_system_prompt: str | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -227,6 +189,8 @@ def get_drift_search_engine(
             reports=reports,
             entity_text_embeddings=description_embedding_store,
             text_units=text_units,
+            local_system_prompt=local_system_prompt,
+            config=config.drift_search,
         ),
         token_encoder=token_encoder,
     )

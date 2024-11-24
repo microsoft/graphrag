@@ -4,6 +4,8 @@
 """All the steps to transform final communities."""
 
 from datetime import datetime, timezone
+from typing import cast
+from uuid import uuid4
 
 import pandas as pd
 from datashaper import (
@@ -41,40 +43,51 @@ def create_final_communities(
     cluster_relationships = (
         combined_clusters.groupby(["cluster", "level_x"], sort=False)
         .agg(
-            relationship_ids=("id_y", "unique"), text_unit_ids=("source_id_x", "unique")
+            relationship_ids=("id_y", "unique"),
+            text_unit_ids=("source_id_x", "unique"),
+            entity_ids=("id_x", "unique"),
         )
         .reset_index()
     )
 
     all_clusters = (
         graph_nodes.groupby(["cluster", "level"], sort=False)
-        .agg(id=("cluster", "first"))
+        .agg(community=("cluster", "first"))
         .reset_index()
     )
 
     joined = all_clusters.merge(
         cluster_relationships,
-        left_on="id",
+        left_on="community",
         right_on="cluster",
         how="inner",
     )
 
-    filtered = joined[joined["level"] == joined["level_x"]].reset_index(drop=True)
+    filtered = cast(
+        pd.DataFrame,
+        joined[joined["level"] == joined["level_x"]].reset_index(drop=True),
+    )
 
-    filtered["title"] = "Community " + filtered["id"].astype(str)
+    filtered["id"] = filtered["community"].apply(lambda _x: str(uuid4()))
+    filtered["community"] = filtered["community"].astype(int)
+    filtered["human_readable_id"] = filtered["community"]
+    filtered["title"] = "Community " + filtered["community"].astype(str)
 
     # Add period timestamp to the community reports
     filtered["period"] = datetime.now(timezone.utc).date().isoformat()
 
     # Add size of the community
-    filtered["size"] = filtered.loc[:, "text_unit_ids"].apply(lambda x: len(x))
+    filtered["size"] = filtered.loc[:, "entity_ids"].apply(lambda x: len(x))
 
     return filtered.loc[
         :,
         [
             "id",
-            "title",
+            "human_readable_id",
+            "community",
             "level",
+            "title",
+            "entity_ids",
             "relationship_ids",
             "text_unit_ids",
             "period",
