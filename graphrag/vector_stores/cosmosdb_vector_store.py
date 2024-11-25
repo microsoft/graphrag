@@ -157,7 +157,26 @@ class CosmosDBVectoreStore(BaseVectorStore):
         self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
         """Load documents into CosmosDB."""
-        return None
+        # Create the CosmosDB container, if it doesn't exist
+        if overwrite:
+            self.delete_container()
+            self.create_container()
+
+        container_client = self._container_client
+        if container_client is None:
+            msg = "Container client is not initialized."
+            raise ValueError(msg)
+
+        # Upload documents to CosmosDB
+        for doc in documents:
+            if doc.vector is not None:
+                doc_json = {
+                    "id": doc.id,
+                    "vector": doc.vector,
+                    "text": doc.text,
+                    "attributes": json.dumps(doc.attributes),
+                }
+                container_client.upsert_item(doc_json)
     
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by a list of ids."""
@@ -177,4 +196,15 @@ class CosmosDBVectoreStore(BaseVectorStore):
     
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
-        return super().search_by_id(id)
+        container_client = self._container_client
+        if container_client is None:
+            msg = "Container client is not initialized."
+            raise ValueError(msg)
+        
+        item = container_client.read_item(item=id, partition_key=id)
+        return VectorStoreDocument(
+            id=item.get("id", ""),
+            vector=item.get("vector", []),
+            text=item.get("text", ""),
+            attributes=(json.loads(item.get("attributes", "{}"))),
+        )
