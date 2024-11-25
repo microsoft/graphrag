@@ -6,8 +6,10 @@
 from datashaper import AsyncType
 from typing_extensions import NotRequired, TypedDict
 
-from .llm_parameters_input import LLMParametersInput
-from .parallelization_parameters_input import ParallelizationParametersInput
+from graphrag.config.input_models.llm_parameters_input import LLMParametersInput
+from graphrag.config.input_models.parallelization_parameters_input import (
+    ParallelizationParametersInput,
+)
 
 
 class LLMConfigInput(TypedDict):

@@ -5,7 +5,7 @@
 
 import logging
 
-from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
 log = logging.getLogger(__name__)
 

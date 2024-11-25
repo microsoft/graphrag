@@ -3,6 +3,8 @@
     --md-code-hl-color: #3772d9;
     --md-code-hl-comment-color: #6b6b6b;
     --md-code-hl-operator-color: #6b6b6b;
+    --md-footer-fg-color--light: #ffffff;
+    --md-footer-fg-color--lighter: #ffffff;
 }
 
 [data-md-color-scheme="slate"] {
@@ -10,6 +12,8 @@
     --md-code-hl-color: #246be5;
     --md-code-hl-constant-color: #9a89ed;
     --md-code-hl-number-color: #f16e5f;
+    --md-footer-fg-color--light: #ffffff;
+    --md-footer-fg-color--lighter: #ffffff;
 }
 
 .md-tabs__item--active {

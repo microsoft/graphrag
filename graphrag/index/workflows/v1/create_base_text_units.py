@@ -5,7 +5,7 @@
 
 from datashaper import DEFAULT_INPUT_NAME
 
-from graphrag.index.config import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
 workflow_name = "create_base_text_units"
 

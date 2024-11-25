@@ -11,7 +11,7 @@ from typing import Any
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
-from graphrag.config.models.drift_config import DRIFTSearchConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI

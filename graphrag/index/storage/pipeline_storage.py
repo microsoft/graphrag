@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import Iterator
 from typing import Any
 
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 
 
 class PipelineStorage(metaclass=ABCMeta):

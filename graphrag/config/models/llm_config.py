@@ -7,9 +7,8 @@ from datashaper import AsyncType
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-
-from .llm_parameters import LLMParameters
-from .parallelization_parameters import ParallelizationParameters
+from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.parallelization_parameters import ParallelizationParameters
 
 
 class LLMConfig(BaseModel):

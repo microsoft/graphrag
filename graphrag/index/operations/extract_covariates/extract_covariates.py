@@ -14,9 +14,12 @@ from datashaper import (
     derive_from_rows,
 )
 
-from graphrag.index.cache import PipelineCache
-
-from .typing import Covariate, CovariateExtractStrategy, ExtractClaimsStrategyType
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.operations.extract_covariates.typing import (
+    Covariate,
+    CovariateExtractStrategy,
+    ExtractClaimsStrategyType,
+)
 
 log = logging.getLogger(__name__)
 
@@ -72,7 +75,9 @@ def load_strategy(strategy_type: ExtractClaimsStrategyType) -> CovariateExtractS
     """Load strategy method definition."""
     match strategy_type:
         case ExtractClaimsStrategyType.graph_intelligence:
-            from .strategies import run_graph_intelligence
+            from graphrag.index.operations.extract_covariates.strategies import (
+                run_graph_intelligence,
+            )
 
             return run_graph_intelligence
         case _:

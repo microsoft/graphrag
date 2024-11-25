@@ -7,15 +7,13 @@ from copy import deepcopy
 
 import tiktoken
 
-from graphrag.config import GraphRagConfig
-from graphrag.model import (
-    Community,
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -30,7 +28,7 @@ from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 
 def get_local_search_engine(

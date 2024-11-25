@@ -34,7 +34,7 @@ The graphrag library includes a CLI for a no-code approach to getting started. P
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](config/overview.md), which you can customize as needed using a [config file](config/json_yaml.md), which we recommend, or [environment variables](config/env_vars.md).
+Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](config/overview.md), which you can customize as needed using a [config file](config/yaml.md), which we recommend, or [environment variables](config/env_vars.md).
 
 First let's get a sample dataset ready:
 
@@ -85,7 +85,7 @@ deployment_name: <azure_model_deployment_name>
 
 - For more details about configuring GraphRAG, see the [configuration documentation](config/overview.md).
 - To learn more about Initialization, refer to the [Initialization documentation](config/init.md).
-- For more details about using the CLI, refer to the [CLI documentation](query/cli.md).
+- For more details about using the CLI, refer to the [CLI documentation](cli.md).
 
 ## Running the Indexing pipeline
 

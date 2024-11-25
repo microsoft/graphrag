@@ -8,7 +8,7 @@ from typing import Any
 import networkx as nx
 from datashaper import VerbCallbacks, progress_iterable
 
-from .typing import (
+from graphrag.index.operations.merge_graphs.typing import (
     BasicMergeOperation,
     DetailedAttributeMergeOperation,
     NumericOperation,

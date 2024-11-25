@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 
-from .identified import Identified
+from graphrag.model.identified import Identified
 
 
 @dataclass

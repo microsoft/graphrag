@@ -1,6 +1,17 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.5.0
+
+- minor: Data model changes.
+- patch: Add Parquet as part of the default emitters when not pressent
+- patch: Centralized prompts and export all for easier injection.
+- patch: Cleanup of artifact outputs/schemas.
+- patch: Config and docs updates.
+- patch: Implement dynamic community selection to global search
+- patch: fix autocompletion of existing files/directory paths.
+- patch: move import statements out of init files
+
 ## 0.4.1
 
 - patch: Add update cli entrypoint for incremental indexing

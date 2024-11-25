@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import Entity, TextUnit
+from graphrag.model.entity import Entity
+from graphrag.model.text_unit import TextUnit
 
 
 def get_candidate_text_units(
