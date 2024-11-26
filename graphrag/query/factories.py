@@ -3,8 +3,6 @@
 
 """Query Factory methods to support CLI."""
 
-from copy import deepcopy
-
 import tiktoken
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
