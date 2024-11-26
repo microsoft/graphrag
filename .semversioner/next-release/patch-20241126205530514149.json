@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix Global Search with dynamic Community selection bug"
+}

@@ -105,12 +105,11 @@ def get_global_search_engine(
 
     dynamic_community_selection_kwargs = {}
     if dynamic_community_selection:
-        gs_config = config.global_search
-        _config = deepcopy(config)
-        _config.llm.model = _config.llm.deployment_name = gs_config.dynamic_search_llm
+        # TODO: Allow for another llm definition only for Global Search to leverage -mini models
+        
         dynamic_community_selection_kwargs.update({
-            "llm": get_llm(_config),
-            "token_encoder": tiktoken.encoding_for_model(gs_config.dynamic_search_llm),
+            "llm": get_llm(config),
+            "token_encoder": tiktoken.encoding_for_model(config.llm.model),
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
@@ -118,6 +117,8 @@ def get_global_search_engine(
             "threshold": gs_config.dynamic_search_threshold,
             "max_level": gs_config.dynamic_search_max_level,
         })
+
+        print(dynamic_community_selection_kwargs)
 
     return GlobalSearch(
         llm=get_llm(config),
