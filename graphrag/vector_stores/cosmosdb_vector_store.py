@@ -180,19 +180,54 @@ class CosmosDBVectoreStore(BaseVectorStore):
     
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by a list of ids."""
+        if include_ids is None or len(include_ids) == 0:
+            self.query_filter = None
+            # Returning to keep consistency with other methods, but not needed
+            return self.query_filter
         return None
     
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
-        return super().similarity_search_by_vector(query_embedding, k, **kwargs)
+        container_client = self._container_client
+        if container_client is None:
+            msg = "Container client is not initialized."
+            raise ValueError(msg)
+        
+        query = f"SELECT TOP {k} c.id, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
+        query_params = [
+            {"name": "@embedding", "value": query_embedding}
+        ]
+        items = container_client.query_items(
+            query=query,
+            parameters=query_params,
+            enable_cross_partition_query=True,
+        )
+        
+        return [
+            VectorStoreSearchResult(
+                document=VectorStoreDocument(
+                    id=item.get("id", ""),
+                    text=item.get("text", ""),
+                    vector=item.get("vector", []),
+                    attributes=(json.loads(item.get("attributes", "{}"))),
+                ),
+                score=item.get("SimilarityScore", 0.0),
+            )
+            for item in items
+        ]
     
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform a text-based similarity search."""
-        return super().similarity_search_by_text(text, text_embedder, k, **kwargs)
+        query_embedding = text_embedder(text)
+        if query_embedding:
+            return self.similarity_search_by_vector(
+                query_embedding=query_embedding, k=k
+            )
+        return []
     
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
