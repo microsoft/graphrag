@@ -71,12 +71,14 @@ class LocalQuestionGen(BaseQuestionGen):
 
         if context_data is None:
             # generate context data based on the question history
-            context_data, context_records = self.context_builder.build_context(
+            result = self.context_builder.build_context(
                 query=question_text,
                 conversation_history=conversation_history,
                 **kwargs,
                 **self.context_builder_params,
             )  # type: ignore
+            context_data = result.context_chunks
+            context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
         log.info("GENERATE QUESTION: %s. LAST QUESTION: %s", start_time, question_text)
@@ -144,12 +146,14 @@ class LocalQuestionGen(BaseQuestionGen):
 
         if context_data is None:
             # generate context data based on the question history
-            context_data, context_records = self.context_builder.build_context(
+            result = self.context_builder.build_context(
                 query=question_text,
                 conversation_history=conversation_history,
                 **kwargs,
                 **self.context_builder_params,
             )  # type: ignore
+            context_data = result.context_chunks
+            context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
         log.info(
