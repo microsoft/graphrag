@@ -182,9 +182,13 @@ class CosmosDBVectoreStore(BaseVectorStore):
         """Build a query filter to filter documents by a list of ids."""
         if include_ids is None or len(include_ids) == 0:
             self.query_filter = None
-            # Returning to keep consistency with other methods, but not needed
-            return self.query_filter
-        return None
+        else:
+            if isinstance(include_ids[0], str):
+                id_filter = ", ".join([f"'{id}'" for id in include_ids])
+            else:
+                id_filter = ", ".join([str(id) for id in include_ids])
+            self.query_filter = f"SELECT * FROM c WHERE c.id IN ({id_filter})"  # noqa: S608
+        return self.query_filter
     
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
