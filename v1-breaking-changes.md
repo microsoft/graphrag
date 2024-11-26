@@ -11,6 +11,24 @@ Note that one of the new requirements is that we write embeddings to a vector st
 
 All of the breaking changes listed below are accounted for in the four steps above.
 
+## What if I don't have a cache available?
+
+If you no longer have your original GraphRAG cache, you can manually update your index. The most important aspect is ensuring that you have the required embeddings stored. If you already have your embeddings in a vector store, much of this can be avoided.
+
+Parquet changes:
+- The `create_final_entities.name` field has been renamed to `create_final_entities.title` for consistency with the other tables. Use your parquet editor of choice to fix this.
+- The `create_final_communities.id` field has been renamed to `create_final_communities.community` so that `id` can be repurposed for a UUID like the other tables. Use your parquet editor of choice to rename this. You can copy it to leave the `id` field in place, or use a tool such as pandas to give each community a new UUID in the `id` field. (We join on the `community` field internally, so `id` can be effectively ignored).
+
+- For Local Search, you need to have the entity.description embeddings
+- For DRIFT Search, you need the community.full_content embeddings
+
+The easiest way to get both of those is to run the pipeline with all workflows except for `generate_embeddings` skipped, which will embed those fields and write them to a vector store directly. Using a newer config file that has the embeddings.vector_store block:
+
+- Set the `skip_workflows` value to [create_base_entity_graph, create_base_text_units, create_final_text_units, create_final_community_reports, create_final_nodes, create_final_relationships, create_final_documents, create_final_covariates, create_final_entities, create_final_communities]
+- Re-run `graphrag index`
+
+What this does is run the pipeline, but skip over all of the usual artifact generation - the only workflow that is not skipped is the one that generates all default (or otherwise configured) embeddings.
+
 ## Updated data model
 
 - We have streamlined the data model of the index in a few small ways to align tables more consistently and remove redundant content. Notably:
