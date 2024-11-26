@@ -17,12 +17,14 @@ If you no longer have your original GraphRAG cache, you can manually update your
 
 Parquet changes:
 - The `create_final_entities.name` field has been renamed to `create_final_entities.title` for consistency with the other tables. Use your parquet editor of choice to fix this.
-- The `create_final_communities.id` field has been renamed to `create_final_communities.community` so that `id` can be repurposed for a UUID like the other tables. Use your parquet editor of choice to rename this. You can copy it to leave the `id` field in place, or use a tool such as pandas to give each community a new UUID in the `id` field. (We join on the `community` field internally, so `id` can be effectively ignored).
+- The `create_final_communities.id` field has been renamed to `create_final_communities.community` so that `id` can be repurposed for a UUID like the other tables. Use your parquet editor of choice to copy and rename this. You can copy it to leave the `id` field in place, or use a tool such as pandas to give each community a new UUID in the `id` field. (We join on the `community` field internally, so `id` can be effectively ignored).
 
-- For Local Search, you need to have the entity.description embeddings
-- For DRIFT Search, you need the community.full_content embeddings
+Embeddings changes:
+- For Local Search, you need to have the entity.description embeddings in a vector store
+- For DRIFT Search, you need the community.full_content embeddings in a vector store
+- If you are only using Global search, you do not need any embeddings
 
-The easiest way to get both of those is to run the pipeline with all workflows except for `generate_embeddings` skipped, which will embed those fields and write them to a vector store directly. Using a newer config file that has the embeddings.vector_store block:
+The easiest way to get both of those is to run the pipeline with all workflows skipped except for `generate_embeddings`, which will embed those fields and write them to a vector store directly. Using a newer config file that has the embeddings.vector_store block:
 
 - Set the `skip_workflows` value to [create_base_entity_graph, create_base_text_units, create_final_text_units, create_final_community_reports, create_final_nodes, create_final_relationships, create_final_documents, create_final_covariates, create_final_entities, create_final_communities]
 - Re-run `graphrag index`
