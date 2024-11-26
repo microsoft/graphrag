@@ -314,9 +314,9 @@ class LocalSearchMixedContext(LocalContextBuilder):
         """Rank matching text units and add them to the context window until it hits the max_tokens limit."""
         if not selected_entities or not self.text_units:
             return ("", {context_name.lower(): pd.DataFrame()})
-        selected_text_units = []
-        text_unit_ids_set = set()
 
+        selected_text_units = []
+        processed_text_unit_ids = []
         unit_info_list = []
         relationship_values = list(self.relationships.values())
 
@@ -329,12 +329,16 @@ class LocalSearchMixedContext(LocalContextBuilder):
             ]
 
             for text_id in entity.text_unit_ids or []:
-                if text_id not in text_unit_ids_set and text_id in self.text_units:
+                if (
+                    text_id not in processed_text_unit_ids
+                    and text_id in self.text_units
+                ):
                     selected_unit = deepcopy(self.text_units[text_id])
                     num_relationships = count_relationships(
                         entity_relationships, selected_unit
                     )
                     unit_info_list.append((selected_unit, index, num_relationships))
+                    processed_text_unit_ids.append(text_id)
 
         # sort by entity_order and the number of relationships desc
         unit_info_list.sort(key=lambda x: (x[1], -x[2]))
