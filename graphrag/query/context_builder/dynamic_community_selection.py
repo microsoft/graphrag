@@ -73,7 +73,7 @@ class DynamicCommunitySelection:
         }
         # mapping from level to communities
         self.levels: dict[str, list[str]] = {}
-     
+
         for community in communities:
             if community.level not in self.levels:
                 self.levels[community.level] = []
