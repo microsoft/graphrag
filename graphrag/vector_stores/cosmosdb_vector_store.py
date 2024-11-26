@@ -199,7 +199,7 @@ class CosmosDBVectoreStore(BaseVectorStore):
             msg = "Container client is not initialized."
             raise ValueError(msg)
         
-        query = f"SELECT TOP {k} c.id, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
+        query = f"SELECT TOP {k} c.id, c.text, c.vector, c.attributes, VectorDistance(c.vector, @embedding) AS SimilarityScore FROM c ORDER BY VectorDistance(c.vector, @embedding)"  # noqa: S608
         query_params = [
             {"name": "@embedding", "value": query_embedding}
         ]
