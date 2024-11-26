@@ -24,6 +24,7 @@ getcwd
 fillna
 noqa
 dtypes
+ints
 
 # Azure
 abfs
