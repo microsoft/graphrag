@@ -33,7 +33,7 @@ def get_levels(df: pd.DataFrame, level_column: str = schemas.NODE_LEVEL) -> list
 
 def filter_nodes_to_level(node_df: pd.DataFrame, level: int) -> pd.DataFrame:
     """Filter nodes to level."""
-    return cast(pd.DataFrame, node_df[node_df[schemas.NODE_LEVEL] == level])
+    return node_df.loc[node_df[schemas.NODE_LEVEL] == level]
 
 
 def filter_edges_to_nodes(edge_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:

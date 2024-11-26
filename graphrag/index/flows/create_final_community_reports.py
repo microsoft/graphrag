@@ -115,37 +115,27 @@ async def create_final_community_reports(
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    # merge values of four columns into a map column
-    input[NODE_DETAILS] = input.apply(
-        lambda x: {
-            NODE_ID: x[NODE_ID],
-            NODE_NAME: x[NODE_NAME],
-            NODE_DESCRIPTION: x[NODE_DESCRIPTION],
-            NODE_DEGREE: x[NODE_DEGREE],
-        },
-        axis=1,
-    )
+    # Fill missing NODE_DESCRIPTION 
+    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+    
+    # Create NODE_DETAILS column
+    input[NODE_DETAILS] = input[[NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]].to_dict(orient="records")
+    
     return input
 
 
 def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    input[EDGE_DETAILS] = input.apply(
-        lambda x: {
-            EDGE_ID: x[EDGE_ID],
-            EDGE_SOURCE: x[EDGE_SOURCE],
-            EDGE_TARGET: x[EDGE_TARGET],
-            EDGE_DESCRIPTION: x[EDGE_DESCRIPTION],
-            EDGE_DEGREE: x[EDGE_DEGREE],
-        },
-        axis=1,
-    )
+    # Fill missing NODE_DESCRIPTION 
+    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+    
+    # Create EDGE_DETAILS column
+    input[EDGE_DETAILS] = input[[EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]].to_dict(orient="records")
+    
     return input
 
 
 def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
-    # Fill NaN values in place to reduce memory usage
+    # Fill missing NODE_DESCRIPTION 
     input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
 
     # Create CLAIM_DETAILS column 
