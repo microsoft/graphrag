@@ -335,6 +335,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                         entity_relationships, selected_unit
                     )
                     unit_info_list.append((selected_unit, index, num_relationships))
+                text_unit_ids_set.add(text_id)
 
         # sort by entity_order and the number of relationships desc
         unit_info_list.sort(key=lambda x: (x[1], -x[2]))
