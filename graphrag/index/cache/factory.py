@@ -12,8 +12,8 @@ from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
     from graphrag.index.cache.pipeline_cache import PipelineCache

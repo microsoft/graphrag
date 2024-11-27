@@ -17,10 +17,10 @@ from graphrag.index.input.csv import input_type as csv
 from graphrag.index.input.csv import load as load_csv
 from graphrag.index.input.text import input_type as text
 from graphrag.index.input.text import load as load_text
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 log = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {

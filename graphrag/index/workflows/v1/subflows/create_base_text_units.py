@@ -17,7 +17,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.index.flows.create_base_text_units import (
     create_base_text_units as create_base_text_units_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(name="create_base_text_units", treats_input_tables_as_immutable=True)

@@ -20,9 +20,9 @@ from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.exporter.base import Exporter
 from graphrag.index.run.profiling import _write_workflow_stats
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logging.base import ProgressReporter
+from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
 log = logging.getLogger(__name__)

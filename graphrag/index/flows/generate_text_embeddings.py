@@ -23,7 +23,7 @@ from graphrag.index.config.embeddings import (
 )
 from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 

@@ -10,8 +10,8 @@ import pandas as pd
 from pyarrow.lib import ArrowInvalid, ArrowTypeError
 
 from graphrag.index.exporter.base import Exporter
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import ErrorHandlerFn
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 

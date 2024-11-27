@@ -17,7 +17,7 @@ from graphrag.config.logging import enable_logging_with_config
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.validate_config import validate_config_names
 from graphrag.logging.base import ProgressReporter
-from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.factory import create_progress_reporter
 from graphrag.logging.types import ReporterType
 from graphrag.utils.cli import redact
 

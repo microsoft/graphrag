@@ -16,8 +16,8 @@ from datashaper import (
 
 from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.hashing import gen_md5_hash
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_text_units(

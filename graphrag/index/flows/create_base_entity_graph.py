@@ -22,7 +22,7 @@ from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_entity_graph(

@@ -13,8 +13,8 @@ from datashaper import (
 
 from graphrag.index.config.pipeline import PipelineWorkflowReference
 from graphrag.index.run import run_pipeline
-from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def mock_verb(

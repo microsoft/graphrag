@@ -20,8 +20,8 @@ from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.generate_text_embeddings import (
     generate_text_embeddings as generate_text_embeddings_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_required_input_table
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 

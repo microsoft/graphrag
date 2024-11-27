@@ -42,8 +42,6 @@ from graphrag.index.run.workflow import (
     _create_callback_chain,
     _process_workflow,
 )
-from graphrag.index.storage.factory import create_storage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
@@ -56,6 +54,8 @@ from graphrag.index.workflows import (
 )
 from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
+from graphrag.storage.factory import create_storage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
