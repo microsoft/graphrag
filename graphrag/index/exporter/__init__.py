@@ -1,4 +1,4 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Definitions for emitting pipeline artifacts to storage."""
+"""Definitions for exporting pipeline artifacts to storage."""

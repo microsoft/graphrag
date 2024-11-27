@@ -105,8 +105,8 @@ def apply_clustering(
                 graph.nodes[node]["level"] = level
 
     # add node degree
-    for node_degree in graph.degree:
-        graph.nodes[str(node_degree[0])]["degree"] = int(node_degree[1])
+    for node, degree in graph.degree:  # type: ignore
+        graph.nodes[node]["degree"] = int(degree)
 
     # add node uuid and incremental record id (a human readable id used as reference in the final report)
     for index, node in enumerate(graph.nodes()):

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load_storage method definition."""
+"""A module containing create_storage method definition."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from graphrag.index.storage.file_pipeline_storage import create_file_storage
 from graphrag.index.storage.memory_pipeline_storage import create_memory_storage
 
 
-def load_storage(config: PipelineStorageConfig):
+def create_storage(config: PipelineStorageConfig):
     """Load the storage for a pipeline."""
     match config.type:
         case StorageType.memory:

@@ -76,8 +76,3 @@ class InMemoryCache(PipelineCache):
     def _create_cache_key(self, key: str) -> str:
         """Create a cache key for the given key."""
         return f"{self._name}{key}"
-
-
-def create_memory_cache() -> PipelineCache:
-    """Create a memory cache."""
-    return InMemoryCache()
