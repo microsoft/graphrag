@@ -1406,19 +1406,17 @@
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  --resume TEXT                   Resume a given indexing run
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  --reporter [rich|print|none]    The progress reporter to use.  [default:
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                                  rich]
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  --emit TEXT                     The data formats to emit, comma-separated.
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                                  [default: parquet]
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  --dry-run / --no-dry-run        Run the indexing pipeline without executing
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>                                  any steps to inspect and validate the
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>                                  configuration.  [default: no-dry-run]
-<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  --cache / --no-cache            Use LLM cache.  [default: cache]
-<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>  --skip-validation / --no-skip-validation
-<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>                                  Skip any preflight validation. Useful when
-<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>                                  running no LLM steps.  [default: no-skip-
-<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>                                  validation]
-<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>  --output PATH                   Indexing pipeline output directory.
-<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>                                  Overrides storage.base_dir in the
-<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>                                  configuration file.
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  --dry-run / --no-dry-run        Run the indexing pipeline without executing
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                                  any steps to inspect and validate the
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                                  configuration.  [default: no-dry-run]
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  --cache / --no-cache            Use LLM cache.  [default: cache]
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  --skip-validation / --no-skip-validation
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>                                  Skip any preflight validation. Useful when
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>                                  running no LLM steps.  [default: no-skip-
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>                                  validation]
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>  --output PATH                   Indexing pipeline output directory.
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>                                  Overrides storage.base_dir in the
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>                                  configuration file.
 </code></pre></div>
 <h2 id="init">init</h2>
 <p>Generate a default configuration file.</p>
@@ -1512,16 +1510,14 @@
 <a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>                                  profiling  [default: no-memprofile]
 <a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>  --reporter [rich|print|none]    The progress reporter to use.  [default:
 <a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>                                  rich]
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>  --emit TEXT                     The data formats to emit, comma-separated.
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>                                  [default: parquet]
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>  --cache / --no-cache            Use LLM cache.  [default: cache]
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>  --skip-validation / --no-skip-validation
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>                                  Skip any preflight validation. Useful when
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>                                  running no LLM steps.  [default: no-skip-
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>                                  validation]
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>  --output PATH                   Indexing pipeline output directory.
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>                                  Overrides storage.base_dir in the
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>                                  configuration file.
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>  --cache / --no-cache            Use LLM cache.  [default: cache]
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>  --skip-validation / --no-skip-validation
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>                                  Skip any preflight validation. Useful when
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>                                  running no LLM steps.  [default: no-skip-
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>                                  validation]
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>  --output PATH                   Indexing pipeline output directory.
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>                                  Overrides storage.base_dir in the
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>                                  configuration file.
 </code></pre></div>
 
 

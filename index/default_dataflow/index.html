@@ -1947,8 +1947,8 @@ flowchart LR
 <h3 id="entity-relationship-summarization">Entity &amp; Relationship Summarization</h3>
 <p>Now that we have a graph of entities and relationships, each with a list of descriptions, we can summarize these lists into a single description per entity and relationship. This is done by asking the LLM for a short summary that captures all of the distinct information from each description. This allows all of our entities and relationships to have a single concise description.</p>
 <h3 id="claim-extraction-emission">Claim Extraction &amp; Emission</h3>
-<p>Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These are emitted as a primary artifact called <strong>Covariates</strong>.</p>
-<p>Note: claim extraction is <em>optional</em> and turned off by default. This is because claim extraction generally needs prompt tuning to be useful.</p>
+<p>Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These get exported as a primary artifact called <strong>Covariates</strong>.</p>
+<p>Note: claim extraction is <em>optional</em> and turned off by default. This is because claim extraction generally requires prompt tuning to be useful.</p>
 <h2 id="phase-3-graph-augmentation">Phase 3: Graph Augmentation</h2>
 <p>Now that we have a usable graph of entities and relationships, we want to understand their community structure and augment the graph with additional information. This is done in two steps: <em>Community Detection</em> and <em>Graph Embedding</em>. These give us explicit (communities) and implicit (embeddings) ways of understanding the topological structure of our graph.</p>
 <pre class="mermaid"><code>---
@@ -1961,7 +1961,7 @@ flowchart LR
 <h3 id="graph-embedding">Graph Embedding</h3>
 <p>In this step, we generate a vector representation of our graph using the Node2Vec algorithm. This will allow us to understand the implicit structure of our graph and provide an additional vector-space in which to search for related concepts during our query phase.</p>
 <h3 id="graph-tables-emission">Graph Tables Emission</h3>
-<p>Once our graph augmentation steps are complete, the final <strong>Entities</strong> and <strong>Relationships</strong> tables are emitted after their text fields are text-embedded.</p>
+<p>Once our graph augmentation steps are complete, the final <strong>Entities</strong> and <strong>Relationships</strong> tables are exported after their text fields are text-embedded.</p>
 <h2 id="phase-4-community-summarization">Phase 4: Community Summarization</h2>
 <pre class="mermaid"><code>---
 title: Community Summarization
@@ -1977,7 +1977,7 @@ flowchart LR
 <h3 id="community-embedding">Community Embedding</h3>
 <p>In this step, we generate a vector representation of our communities by generating text embeddings of the community report, the community report summary, and the title of the community report.</p>
 <h3 id="community-tables-emission">Community Tables Emission</h3>
-<p>At this point, some bookkeeping work is performed and we emit the <strong>Communities</strong> and <strong>CommunityReports</strong> tables.</p>
+<p>At this point, some bookkeeping work is performed and we export the <strong>Communities</strong> and <strong>CommunityReports</strong> tables.</p>
 <h2 id="phase-5-document-processing">Phase 5: Document Processing</h2>
 <p>In this phase of the workflow, we create the <em>Documents</em> table for the knowledge model.</p>
 <pre class="mermaid"><code>---
@@ -1992,7 +1992,7 @@ flowchart LR
 <h3 id="document-embedding">Document Embedding</h3>
 <p>In this step, we generate a vector representation of our documents using an average embedding of document slices. We re-chunk documents without overlapping chunks, and then generate an embedding for each chunk. We create an average of these chunks weighted by token-count and use this as the document embedding. This will allow us to understand the implicit relationship between documents, and will help us generate a network representation of our documents.</p>
 <h3 id="documents-table-emission">Documents Table Emission</h3>
-<p>At this point, we can emit the <strong>Documents</strong> table into the knowledge Model.</p>
+<p>At this point, we can export the <strong>Documents</strong> table into the knowledge Model.</p>
 <h2 id="phase-6-network-visualization">Phase 6: Network Visualization</h2>
 <p>In this phase of the workflow, we perform some steps to support network visualization of our high-dimensional vector spaces within our existing graphs. At this point there are two logical graphs at play: the <em>Entity-Relationship</em> graph and the <em>Document</em> graph.</p>
 <pre class="mermaid"><code>---
@@ -2000,7 +2000,7 @@ title: Network Visualization Workflows
 ---
 flowchart LR
     nv[Umap Documents] --&gt; ne[Umap Entities] --&gt; ng[Nodes Table Emission]</code></pre>
-<p>For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are then emitted as a table of <em>Nodes</em>. The rows of this table include a discriminator indicating whether the node is a document or an entity, and the UMAP coordinates.</p>
+<p>For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are then exported as a table of <em>Nodes</em>. The rows of this table include a discriminator indicating whether the node is a document or an entity, and the UMAP coordinates.</p>
 
 
 

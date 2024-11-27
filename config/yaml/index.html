@@ -1439,7 +1439,7 @@
 <li><code>async_mode</code> (see Async Mode top-level config)</li>
 <li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
 <li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch # of tokens.</li>
-<li><code>target</code> <strong>required|all|none</strong> - Determines which set of embeddings to emit.</li>
+<li><code>target</code> <strong>required|all|none</strong> - Determines which set of embeddings to export.</li>
 <li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip. Only useful if target=all to customize the list.</li>
 <li><code>vector_store</code> <strong>dict</strong> - The vector store to use. Configured for lancedb by default.<ul>
 <li><code>type</code> <strong>str</strong> - <code>lancedb</code> or <code>azure_ai_search</code>. Default=<code>lancedb</code></li>
@@ -1566,7 +1566,7 @@
 <h3 id="cluster_graph">cluster_graph</h3>
 <h4 id="fields_13">Fields</h4>
 <ul>
-<li><code>max_cluster_size</code> <strong>int</strong> - The maximum cluster size to emit.</li>
+<li><code>max_cluster_size</code> <strong>int</strong> - The maximum cluster size to export.</li>
 <li><code>strategy</code> <strong>dict</strong> - Fully override the cluster_graph strategy.</li>
 </ul>
 <h3 id="embed_graph">embed_graph</h3>
@@ -1588,11 +1588,11 @@
 <h3 id="snapshots">snapshots</h3>
 <h4 id="fields_16">Fields</h4>
 <ul>
-<li><code>embeddings</code> <strong>bool</strong> - Emit embeddings snapshots to parquet.</li>
-<li><code>graphml</code> <strong>bool</strong> - Emit graph snapshots to GraphML.</li>
-<li><code>raw_entities</code> <strong>bool</strong> - Emit raw entity snapshots to JSON.</li>
-<li><code>top_level_nodes</code> <strong>bool</strong> - Emit top-level-node snapshots to JSON.</li>
-<li><code>transient</code> <strong>bool</strong> - Emit transient workflow tables snapshots to parquet.</li>
+<li><code>embeddings</code> <strong>bool</strong> - Export embeddings snapshots to parquet.</li>
+<li><code>graphml</code> <strong>bool</strong> - Export graph snapshots to GraphML.</li>
+<li><code>raw_entities</code> <strong>bool</strong> - Export raw entity snapshots to JSON.</li>
+<li><code>top_level_nodes</code> <strong>bool</strong> - Export top-level-node snapshots to JSON.</li>
+<li><code>transient</code> <strong>bool</strong> - Export transient workflow tables snapshots to parquet.</li>
 </ul>
 <h3 id="encoding_model">encoding_model</h3>
 <p><strong>str</strong> - The text encoding model to use. Default=<code>cl100k_base</code>.</p>
