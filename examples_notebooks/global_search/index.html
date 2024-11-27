@@ -2132,9 +2132,9 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="load-community-reports-as-context-for-global-search">Load community reports as context for global search<a class="anchor-link" href="#load-community-reports-as-context-for-global-search">¶</a></h3><ul>
-<li>Load all community reports in the <code>create_final_community_reports</code> table from the ire-indexing engine, to be used as context data for global search.</li>
-<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the ire-indexing engine, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
-<li>Load all communities in the <code>create_final_communites</code> table from the ire-indexing engine, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
+<li>Load all community reports in the <code>create_final_community_reports</code> table from the GraphRAG, to be used as context data for global search.</li>
+<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the GraphRAG, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
+<li>Load all communities in the <code>create_final_communites</code> table from the GraphRAG, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
 </ul>
 </div>
 </div>
@@ -2581,19 +2581,19 @@ print(result.response)</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>### Overview of Cosmic Vocalization
 
-Cosmic Vocalization is a phenomenon that has garnered significant attention from various individuals and groups. It is perceived as a cosmic event with potential implications for security and interstellar communication. The phenomenon is described as part of an "interstellar duet," suggesting that it may involve a form of communication or interaction with cosmic entities or events [Data: Reports (6)].
+Cosmic Vocalization is a phenomenon that has garnered significant attention from various individuals and groups. It is perceived as a focal point of interest within the community, suggesting its importance and the intrigue it holds for those studying or affected by it [Data: Reports (6)].
 
-### Key Stakeholders
+### Key Involvements
 
-1. **Paranormal Military Squad**: This group is actively engaged with Cosmic Vocalization, indicating that it is considered a matter of strategic importance. Their involvement suggests that the phenomenon is being monitored and possibly addressed as part of broader security measures [Data: Reports (6)].
+1. **Paranormal Military Squad**: This group is actively engaged with Cosmic Vocalization, indicating that it is part of their strategic response to cosmic phenomena. Their involvement highlights the significance of Cosmic Vocalization in security measures, suggesting that it may have implications for national or global safety [Data: Reports (6)].
 
-2. **Alex Mercer**: Alex Mercer views Cosmic Vocalization as part of an interstellar duet, which implies a responsive or interactive approach to these cosmic events. This perspective highlights the potential for Cosmic Vocalization to be more than just a passive occurrence, but rather an active element in cosmic interactions [Data: Reports (6)].
+2. **Alex Mercer**: Alex Mercer views Cosmic Vocalization as part of an interstellar duet. This perspective suggests a responsive approach to cosmic events, indicating that there may be an interactive or communicative aspect to the phenomenon [Data: Reports (6)].
 
-3. **Taylor Cruz**: Taylor Cruz has expressed concerns about Cosmic Vocalization, fearing it might be a "homing tune." This adds a layer of urgency and potential threat, suggesting that the phenomenon could have implications for attracting or signaling to unknown entities [Data: Reports (6)].
+3. **Taylor Cruz**: Taylor Cruz has raised concerns about Cosmic Vocalization, fearing it might be a homing tune. This adds a layer of urgency and potential threat, as it implies that the phenomenon could be attracting or guiding something or someone [Data: Reports (6)].
 
 ### Implications
 
-The involvement of these stakeholders underscores the complexity and potential significance of Cosmic Vocalization. The strategic engagement by the Paranormal Military Squad, coupled with the concerns raised by individuals like Taylor Cruz, suggests that this phenomenon may have far-reaching implications that warrant careful monitoring and analysis.
+The involvement of these diverse groups and individuals suggests that Cosmic Vocalization is not only a subject of scientific or academic interest but also a matter of strategic and security concern. The varying perspectives—from seeing it as a duet to fearing it as a homing signal—highlight the complexity and potential risks associated with this phenomenon. Further investigation and monitoring may be necessary to fully understand its implications and to develop appropriate responses.
 </pre>
 </div>
 </div>
@@ -2844,7 +2844,7 @@ print(
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 2. Prompt tokens: 11238. Output tokens: 507.
+<pre>LLM calls: 2. Prompt tokens: 11238. Output tokens: 511.
 </pre>
 </div>
 </div>

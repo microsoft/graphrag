@@ -1467,11 +1467,6 @@
 👉 <a href="../developing/">Use it from source</a><br/></p>
 <h2 id="quickstart">Quickstart</h2>
 <p>To get started with the GraphRAG system we recommend trying the <a href="https://github.com/Azure-Samples/graphrag-accelerator">Solution Accelerator</a> package. This provides a user-friendly end-to-end experience with Azure resources.</p>
-<h1 id="top-level-modules">Top-Level Modules</h1>
-<ul>
-<li><a href="../index/overview/">Indexing Pipeline Overview</a></li>
-<li><a href="../query/overview/">Query Engine Overview</a></li>
-</ul>
 <h1 id="overview">Overview</h1>
 <p>The following is a simple end-to-end example for using the GraphRAG system.
 It shows how to use the system to index some text, and then use the indexed data to answer questions about the documents.</p>
@@ -1480,16 +1475,13 @@ It shows how to use the system to index some text, and then use the indexed data
 </code></pre></div>
 <p>The graphrag library includes a CLI for a no-code approach to getting started. Please review the full <a href="../cli/">CLI documentation</a> for further detail.</p>
 <h1 id="running-the-indexer">Running the Indexer</h1>
-<p>Now we need to set up a data project and some initial configuration. Let's set that up. We're using the <a href="../config/overview/">default configuration mode</a>, which you can customize as needed using a <a href="../config/yaml/">config file</a>, which we recommend, or <a href="../config/env_vars/">environment variables</a>.</p>
-<p>First let's get a sample dataset ready:</p>
+<p>We need to set up a data project and some initial configuration. First let's get a sample dataset ready:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>./ragtest/input
 </code></pre></div>
-<p>Now let's get a copy of A Christmas Carol by Charles Dickens from a trusted source</p>
+<p>Get a copy of A Christmas Carol by Charles Dickens from a trusted source:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>https://www.gutenberg.org/cache/epub/24022/pg24022.txt<span class="w"> </span>-o<span class="w"> </span>./ragtest/input/book.txt
 </code></pre></div>
-<p>Next we'll inject some required config variables:</p>
 <h2 id="set-up-your-workspace-variables">Set Up Your Workspace Variables</h2>
-<p>First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the <a href="../config/overview/">variables documentation</a>.</p>
 <p>To initialize your workspace, first run the <code>graphrag init</code> command.
 Since we have already configured a directory named <code>./ragtest</code> in the previous step, run the following command:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>graphrag<span class="w"> </span>init<span class="w"> </span>--root<span class="w"> </span>./ragtest
