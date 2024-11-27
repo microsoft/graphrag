@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""TableExporter module."""
+"""ParquetExporter module."""
 
 import logging
 import traceback
@@ -9,15 +9,14 @@ import traceback
 import pandas as pd
 from pyarrow.lib import ArrowInvalid, ArrowTypeError
 
-from graphrag.index.exporter.base import Exporter
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
 
-class TableExporter(Exporter):
-    """TableExporter class.
+class ParquetExporter:
+    """ParquetExporter class.
 
     A class that exports dataframe's to a storage destination in .parquet file format.
     """
@@ -30,7 +29,7 @@ class TableExporter(Exporter):
         storage: PipelineStorage,
         on_error: ErrorHandlerFn,
     ):
-        """Create a new Parquet Table Exporter."""
+        """Create a new Parquet Table TableExporter."""
         self._storage = storage
         self._on_error = on_error
 

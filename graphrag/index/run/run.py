@@ -15,7 +15,7 @@ import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.callbacks.factories import create_pipeline_reporter
+from graphrag.callbacks.factory import create_pipeline_reporter
 from graphrag.index.cache.factory import create_cache
 from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import PipelineMemoryCacheConfig
@@ -25,7 +25,8 @@ from graphrag.index.config.pipeline import (
 )
 from graphrag.index.config.storage import PipelineFileStorageConfig
 from graphrag.index.config.workflow import PipelineWorkflowStep
-from graphrag.index.exporter.table_exporter import TableExporter
+from graphrag.index.exporter import ParquetExporter
+from graphrag.index.input.factory import create_input
 from graphrag.index.load_pipeline_config import load_pipeline_config
 from graphrag.index.run.postprocess import (
     _create_postprocess_steps,
@@ -34,7 +35,6 @@ from graphrag.index.run.postprocess import (
 from graphrag.index.run.profiling import _dump_stats
 from graphrag.index.run.utils import (
     _apply_substitutions,
-    _create_input,
     _validate_dataset,
     create_run_context,
 )
@@ -119,10 +119,11 @@ async def run_pipeline_with_config(
         if config.reporting
         else None
     )
+    # TODO: remove the type ignore when the new config system guarantees the existence of an input config
     dataset = (
         dataset
         if dataset is not None
-        else await _create_input(config.input, progress_reporter, root_dir)
+        else await create_input(config.input, progress_reporter, root_dir)  # type: ignore
     )
 
     post_process_steps = input_post_process_steps or _create_postprocess_steps(
@@ -229,7 +230,7 @@ async def run_pipeline(
     callbacks = _create_callback_chain(callbacks, progress_reporter)
 
     context = create_run_context(storage=storage, cache=cache, stats=None)
-    exporter = TableExporter(
+    exporter = ParquetExporter(
         context.storage,
         lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
             "Error exporting table", e, s, d

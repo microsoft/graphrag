@@ -18,7 +18,7 @@ from datashaper import (
 from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
 from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.context import PipelineRunContext
-from graphrag.index.exporter.base import Exporter
+from graphrag.index.exporter import ParquetExporter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logging.base import ProgressReporter
@@ -56,7 +56,7 @@ async def _inject_workflow_data_dependencies(
 
 
 async def _export_workflow_output(
-    workflow: Workflow, exporter: Exporter
+    workflow: Workflow, exporter: ParquetExporter
 ) -> pd.DataFrame:
     """Export the output from each step of the workflow."""
     output = cast(pd.DataFrame, workflow.output())
@@ -83,7 +83,7 @@ async def _process_workflow(
     workflow: Workflow,
     context: PipelineRunContext,
     callbacks: WorkflowCallbacks,
-    exporter: Exporter,
+    exporter: ParquetExporter,
     workflow_dependencies: dict[str, list[str]],
     dataset: pd.DataFrame,
     start_time: float,
