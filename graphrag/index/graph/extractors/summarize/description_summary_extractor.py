@@ -129,7 +129,7 @@ class SummarizeExtractor:
             self._summarization_prompt,
             name="summarize",
             variables={
-                self._entity_name_key: json.dumps(items),
+                self._entity_name_key: json.dumps(items, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
