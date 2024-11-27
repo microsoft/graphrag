@@ -14,10 +14,10 @@ from typing import cast
 import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
+from graphrag.cache.factory import create_cache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.factory import create_pipeline_reporter
-from graphrag.index.cache.factory import create_cache
-from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import PipelineMemoryCacheConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,

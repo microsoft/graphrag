@@ -16,7 +16,7 @@ from datashaper import (
     verb,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.generate_text_embeddings import (
     generate_text_embeddings as generate_text_embeddings_flow,
 )

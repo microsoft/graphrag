@@ -10,7 +10,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,

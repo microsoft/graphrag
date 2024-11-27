@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.extract_entities import extract_entities

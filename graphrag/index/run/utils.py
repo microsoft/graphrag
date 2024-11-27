@@ -9,8 +9,8 @@ from typing import Any
 
 import pandas as pd
 
-from graphrag.index.cache.memory_pipeline_cache import InMemoryCache
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.memory_pipeline_cache import InMemoryCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,

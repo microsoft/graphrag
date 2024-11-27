@@ -4,7 +4,7 @@ import asyncio
 import os
 import unittest
 
-from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
+from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.storage.file_pipeline_storage import (
     FilePipelineStorage,
 )

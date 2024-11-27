@@ -15,7 +15,7 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports as create_final_community_reports_flow,
 )
