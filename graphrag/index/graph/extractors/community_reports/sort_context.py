@@ -118,6 +118,8 @@ def sort_context(
         record_edges = [e for e in record_edges if not pd.isna(e)]
         record_node_details = record[node_details_column]
         record_claims = record.get(claim_details_column, [])
+        if not isinstance(record_claims, list):
+            record_claims = [record_claims]
         record_claims = [c for c in record_claims if not pd.isna(c)]
 
         edges.extend(record_edges)

@@ -29,27 +29,3 @@ def get_levels(df: pd.DataFrame, level_column: str = schemas.NODE_LEVEL) -> list
     """Get the levels of the communities."""
     result = sorted(df[level_column].fillna(-1).unique().tolist(), reverse=True)
     return [r for r in result if r != -1]
-
-
-def filter_nodes_to_level(node_df: pd.DataFrame, level: int) -> pd.DataFrame:
-    """Filter nodes to level."""
-    return node_df.loc[node_df[schemas.NODE_LEVEL] == level]
-
-
-def filter_edges_to_nodes(edge_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:
-    """Filter edges to nodes."""
-    return cast(
-        pd.DataFrame,
-        edge_df[
-            edge_df[schemas.EDGE_SOURCE].isin(nodes)
-            & edge_df[schemas.EDGE_TARGET].isin(nodes)
-        ],
-    )
-
-
-def filter_claims_to_nodes(claims_df: pd.DataFrame, nodes: list[str]) -> pd.DataFrame:
-    """Filter edges to nodes."""
-    return cast(
-        pd.DataFrame,
-        claims_df[claims_df[schemas.CLAIM_SUBJECT].isin(nodes)],
-    )
