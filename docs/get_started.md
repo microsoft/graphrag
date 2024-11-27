@@ -14,11 +14,6 @@ To get started with the GraphRAG system, you have a few options:
 
 To get started with the GraphRAG system we recommend trying the [Solution Accelerator](https://github.com/Azure-Samples/graphrag-accelerator) package. This provides a user-friendly end-to-end experience with Azure resources.
 
-# Top-Level Modules
-
-* [Indexing Pipeline Overview](index/overview.md)
-* [Query Engine Overview](query/overview.md)
-
 # Overview
 
 The following is a simple end-to-end example for using the GraphRAG system.
@@ -34,25 +29,19 @@ The graphrag library includes a CLI for a no-code approach to getting started. P
 
 # Running the Indexer
 
-Now we need to set up a data project and some initial configuration. Let's set that up. We're using the [default configuration mode](config/overview.md), which you can customize as needed using a [config file](config/yaml.md), which we recommend, or [environment variables](config/env_vars.md).
-
-First let's get a sample dataset ready:
+We need to set up a data project and some initial configuration. First let's get a sample dataset ready:
 
 ```sh
 mkdir -p ./ragtest/input
 ```
 
-Now let's get a copy of A Christmas Carol by Charles Dickens from a trusted source
+Get a copy of A Christmas Carol by Charles Dickens from a trusted source:
 
 ```sh
 curl https://www.gutenberg.org/cache/epub/24022/pg24022.txt -o ./ragtest/input/book.txt
 ```
 
-Next we'll inject some required config variables:
-
 ## Set Up Your Workspace Variables
-
-First let's make sure to setup the required environment variables. For details on these environment variables, and what environment variables are available, see the [variables documentation](config/overview.md).
 
 To initialize your workspace, first run the `graphrag init` command.
 Since we have already configured a directory named `./ragtest` in the previous step, run the following command:

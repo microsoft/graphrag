@@ -24,6 +24,7 @@ getcwd
 fillna
 noqa
 dtypes
+ints
 
 # Azure
 abfs
@@ -167,6 +168,7 @@ FIRUZABAD
 Krohaara
 KROHAARA
 POKRALLY
+René
 Tazbah
 TIRUZIA
 Tiruzia
