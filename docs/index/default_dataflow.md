@@ -105,9 +105,9 @@ Now that we have a graph of entities and relationships, each with a list of desc
 
 ### Claim Extraction & Emission
 
-Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These are emitted as a primary artifact called **Covariates**.
+Finally, as an independent workflow, we extract claims from the source TextUnits. These claims represent positive factual statements with an evaluated status and time-bounds. These get exported as a primary artifact called **Covariates**.
 
-Note: claim extraction is _optional_ and turned off by default. This is because claim extraction generally needs prompt tuning to be useful.
+Note: claim extraction is _optional_ and turned off by default. This is because claim extraction generally requires prompt tuning to be useful.
 
 ## Phase 3: Graph Augmentation
 
@@ -131,7 +131,7 @@ In this step, we generate a vector representation of our graph using the Node2Ve
 
 ### Graph Tables Emission
 
-Once our graph augmentation steps are complete, the final **Entities** and **Relationships** tables are emitted after their text fields are text-embedded.
+Once our graph augmentation steps are complete, the final **Entities** and **Relationships** tables are exported after their text fields are text-embedded.
 
 ## Phase 4: Community Summarization
 
@@ -161,7 +161,7 @@ In this step, we generate a vector representation of our communities by generati
 
 ### Community Tables Emission
 
-At this point, some bookkeeping work is performed and we emit the **Communities** and **CommunityReports** tables.
+At this point, some bookkeeping work is performed and we export the **Communities** and **CommunityReports** tables.
 
 ## Phase 5: Document Processing
 
@@ -189,7 +189,7 @@ In this step, we generate a vector representation of our documents using an aver
 
 ### Documents Table Emission
 
-At this point, we can emit the **Documents** table into the knowledge Model.
+At this point, we can export the **Documents** table into the knowledge Model.
 
 ## Phase 6: Network Visualization
 
@@ -203,4 +203,4 @@ flowchart LR
     nv[Umap Documents] --> ne[Umap Entities] --> ng[Nodes Table Emission]
 ```
 
-For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are then emitted as a table of _Nodes_. The rows of this table include a discriminator indicating whether the node is a document or an entity, and the UMAP coordinates.
+For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are then exported as a table of _Nodes_. The rows of this table include a discriminator indicating whether the node is a document or an entity, and the UMAP coordinates.

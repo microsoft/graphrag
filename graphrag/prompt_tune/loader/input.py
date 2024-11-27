@@ -9,7 +9,7 @@ from datashaper import NoopVerbCallbacks
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.input.load_input import load_input
+from graphrag.index.input.factory import create_input
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.llm.types.llm_types import EmbeddingLLM
@@ -58,7 +58,7 @@ async def load_docs_in_chunks(
     k: int = K,
 ) -> list[str]:
     """Load docs into chunks for generating prompts."""
-    dataset = await load_input(config.input, reporter, root)
+    dataset = await create_input(config.input, reporter, root)
 
     # covert to text units
     chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)

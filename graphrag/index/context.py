@@ -7,8 +7,8 @@
 from dataclasses import dataclass as dc_dataclass
 from dataclasses import field
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @dc_dataclass

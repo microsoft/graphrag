@@ -17,8 +17,8 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.index.flows.create_final_relationships import (
     create_final_relationships as create_final_relationships_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_required_input_table
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(

@@ -15,8 +15,8 @@ from datashaper import (
     derive_from_rows,
 )
 
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.bootstrap import bootstrap
-from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.extract_entities.strategies.typing import (
     Document,
     EntityExtractStrategy,

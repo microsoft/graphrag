@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load_cache method definition."""
+"""A module containing create_cache method definition."""
 
 from __future__ import annotations
 
@@ -12,21 +12,24 @@ from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
+    from graphrag.cache.pipeline_cache import PipelineCache
     from graphrag.index.config.cache import (
         PipelineCacheConfig,
     )
 
-from graphrag.index.cache.json_pipeline_cache import JsonPipelineCache
-from graphrag.index.cache.memory_pipeline_cache import create_memory_cache
-from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.cache.json_pipeline_cache import JsonPipelineCache
+from graphrag.cache.memory_pipeline_cache import InMemoryCache
+from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 
 
-def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
-    """Load the cache from the given config."""
+def create_cache(
+    config: PipelineCacheConfig | None, root_dir: str | None
+) -> PipelineCache:
+    """Create a cache from the given config."""
     if config is None:
         return NoopPipelineCache()
 
@@ -34,7 +37,7 @@ def load_cache(config: PipelineCacheConfig | None, root_dir: str | None):
         case CacheType.none:
             return NoopPipelineCache()
         case CacheType.memory:
-            return create_memory_cache()
+            return InMemoryCache()
         case CacheType.file:
             config = cast(PipelineFileCacheConfig, config)
             storage = FilePipelineStorage(root_dir).child(config.base_dir)

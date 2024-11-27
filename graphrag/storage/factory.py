@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load_storage method definition."""
+"""Factory functions for creating storage."""
 
 from __future__ import annotations
 
@@ -13,16 +13,16 @@ from graphrag.index.config.storage import (
     PipelineFileStorageConfig,
     PipelineStorageConfig,
 )
-from graphrag.index.storage.blob_pipeline_storage import create_blob_storage
-from graphrag.index.storage.file_pipeline_storage import create_file_storage
-from graphrag.index.storage.memory_pipeline_storage import create_memory_storage
+from graphrag.storage.blob_pipeline_storage import create_blob_storage
+from graphrag.storage.file_pipeline_storage import create_file_storage
+from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 
 
-def load_storage(config: PipelineStorageConfig):
-    """Load the storage for a pipeline."""
+def create_storage(config: PipelineStorageConfig):
+    """Create a storage object based on the config."""
     match config.type:
         case StorageType.memory:
-            return create_memory_storage()
+            return MemoryPipelineStorage()
         case StorageType.blob:
             config = cast(PipelineBlobStorageConfig, config)
             return create_blob_storage(

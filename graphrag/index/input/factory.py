@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing load_input method definition."""
+"""A module containing create_input method definition."""
 
 import logging
 from collections.abc import Awaitable, Callable
@@ -17,10 +17,10 @@ from graphrag.index.input.csv import input_type as csv
 from graphrag.index.input.csv import load as load_csv
 from graphrag.index.input.text import input_type as text
 from graphrag.index.input.text import load as load_text
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 log = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
@@ -29,12 +29,12 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 }
 
 
-async def load_input(
+async def create_input(
     config: PipelineInputConfig | InputConfig,
     progress_reporter: ProgressReporter | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:
-    """Load the input data for a pipeline."""
+    """Instantiate input data for a pipeline."""
     root_dir = root_dir or ""
     log.info("loading input from root_dir=%s", config.base_dir)
     progress_reporter = progress_reporter or NullProgressReporter()

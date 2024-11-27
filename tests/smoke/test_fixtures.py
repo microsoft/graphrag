@@ -15,10 +15,10 @@ from unittest import mock
 import pandas as pd
 import pytest
 
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.query.context_builder.community_context import (
     NO_COMMUNITY_RECORDS_WARNING,
 )
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 
 log = logging.getLogger(__name__)
 

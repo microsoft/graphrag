@@ -13,8 +13,8 @@ from datashaper import (
 
 from graphrag.index.config.pipeline import PipelineWorkflowReference
 from graphrag.index.run import run_pipeline
-from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def mock_verb(
@@ -50,7 +50,7 @@ async def mock_no_return_verb(
     )
 
 
-async def test_normal_result_emits_parquet():
+async def test_normal_result_exports_parquet():
     mock_verbs: Any = {"mock_verb": mock_verb}
     mock_workflows: Any = {
         "mock_workflow": lambda _x: [
@@ -84,10 +84,10 @@ async def test_normal_result_emits_parquet():
     assert len(pipeline_result) == 1
     assert (
         storage.keys() == ["stats.json", "mock_write", "mock_workflow.parquet"]
-    ), "Mock workflow output should be written to storage by the emitter when there is a non-empty data frame"
+    ), "Mock workflow output should be written to storage by the exporter when there is a non-empty data frame"
 
 
-async def test_empty_result_does_not_emit_parquet():
+async def test_empty_result_does_not_export_parquet():
     mock_verbs: Any = {"mock_no_return_verb": mock_no_return_verb}
     mock_workflows: Any = {
         "mock_workflow": lambda _x: [
@@ -122,4 +122,4 @@ async def test_empty_result_does_not_emit_parquet():
     assert storage.keys() == [
         "stats.json",
         "empty_write",
-    ], "Mock workflow output should not be written to storage by the emitter"
+    ], "Mock workflow output should not be written to storage by the exporter"
