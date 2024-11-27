@@ -73,11 +73,12 @@ class DynamicCommunitySelection:
         }
         # mapping from level to communities
         self.levels: dict[str, list[str]] = {}
+
         for community in communities:
             if community.level not in self.levels:
                 self.levels[community.level] = []
-            if community.id in self.reports:
-                self.levels[community.level].append(community.id)
+            if community.short_id in self.reports:
+                self.levels[community.level].append(community.short_id)
 
         # start from root communities (level 0)
         self.starting_communities = self.levels["0"]
@@ -100,6 +101,7 @@ class DynamicCommunitySelection:
             "output_tokens": 0,
         }
         relevant_communities = set()
+
         while queue:
             gather_results = await asyncio.gather(*[
                 rate_relevancy(
