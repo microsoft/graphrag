@@ -11,9 +11,10 @@ from datashaper import (
     create_verb_result,
 )
 
-from graphrag.index.config import PipelineWorkflowReference
+from graphrag.index.config.pipeline import PipelineWorkflowReference
 from graphrag.index.run import run_pipeline
-from graphrag.index.storage import MemoryPipelineStorage, PipelineStorage
+from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def mock_verb(

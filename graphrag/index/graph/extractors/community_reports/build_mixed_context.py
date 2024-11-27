@@ -5,9 +5,8 @@
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
+from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
 from graphrag.query.llm.text_utils import num_tokens
-
-from .sort_context import sort_context
 
 
 def build_mixed_context(context: list[dict], max_tokens: int) -> str:

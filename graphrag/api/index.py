@@ -10,13 +10,14 @@ Backwards compatibility is not guaranteed at this time.
 
 from pathlib import Path
 
-from graphrag.config import CacheType, GraphRagConfig
+from graphrag.config.enums import CacheType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging import ProgressReporter
+from graphrag.logging.base import ProgressReporter
 from graphrag.vector_stores.factory import VectorStoreType
 
 
@@ -58,6 +59,10 @@ async def build_index(
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
+
+    # Ensure Parquet is part of the emitters
+    if TableEmitterType.Parquet not in emit:
+        emit.append(TableEmitterType.Parquet)
 
     config = _patch_vector_config(config)
 

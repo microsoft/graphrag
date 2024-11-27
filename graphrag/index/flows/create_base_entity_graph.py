@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.extract_entities import extract_entities
@@ -22,7 +22,7 @@ from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_entity_graph(
@@ -30,8 +30,6 @@ async def create_base_entity_graph(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    text_column: str,
-    id_column: str,
     clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,
@@ -52,8 +50,8 @@ async def create_base_entity_graph(
         text_units,
         callbacks,
         cache,
-        text_column=text_column,
-        id_column=id_column,
+        text_column="text",
+        id_column="id",
         strategy=extraction_strategy,
         async_mode=extraction_async_mode,
         entity_types=entity_types,

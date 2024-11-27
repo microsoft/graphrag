@@ -5,8 +5,8 @@
 
 from typing import Any
 
-from .file_pipeline_storage import FilePipelineStorage
-from .pipeline_storage import PipelineStorage
+from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 class MemoryPipelineStorage(FilePipelineStorage):

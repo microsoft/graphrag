@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -41,7 +41,8 @@ from graphrag.index.operations.summarize_communities import (
 async def create_final_community_reports(
     nodes_input: pd.DataFrame,
     edges_input: pd.DataFrame,
-    communities_input: pd.DataFrame,
+    entities: pd.DataFrame,
+    communities: pd.DataFrame,
     claims_input: pd.DataFrame | None,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -50,7 +51,9 @@ async def create_final_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    nodes = _prep_nodes(nodes_input)
+    entities_df = entities.loc[:, ["id", "description"]]
+    nodes_df = nodes_input.merge(entities_df, on="id")
+    nodes = _prep_nodes(nodes_df)
     edges = _prep_edges(edges_input)
 
     claims = None
@@ -78,19 +81,37 @@ async def create_final_community_reports(
         num_threads=num_threads,
     )
 
+    community_reports["community"] = community_reports["community"].astype(int)
+    community_reports["human_readable_id"] = community_reports["community"]
     community_reports["id"] = community_reports["community"].apply(
         lambda _x: str(uuid4())
     )
 
-    # Merge by community and it with communities to add size and period
-    return community_reports.merge(
-        communities_input.loc[:, ["id", "size", "period"]],
-        left_on="community",
-        right_on="id",
+    # Merge with communities to add size and period
+    merged = community_reports.merge(
+        communities.loc[:, ["community", "size", "period"]],
+        on="community",
         how="left",
         copy=False,
-        suffixes=("", "_y"),
-    ).drop(columns=["id_y"])
+    )
+    return merged.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "community",
+            "level",
+            "title",
+            "summary",
+            "full_content",
+            "rank",
+            "rank_explanation",
+            "findings",
+            "full_content_json",
+            "period",
+            "size",
+        ],
+    ]
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:

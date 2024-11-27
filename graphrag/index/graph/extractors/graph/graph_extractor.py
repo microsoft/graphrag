@@ -15,10 +15,13 @@ import tiktoken
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.utils import clean_str
+from graphrag.index.utils.string import clean_str
 from graphrag.llm import CompletionLLM
-
-from .prompts import CONTINUE_PROMPT, GRAPH_EXTRACTION_PROMPT, LOOP_PROMPT
+from graphrag.prompts.index.entity_extraction import (
+    CONTINUE_PROMPT,
+    GRAPH_EXTRACTION_PROMPT,
+    LOOP_PROMPT,
+)
 
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
@@ -227,8 +230,8 @@ class GraphExtractor:
                                 str(source_doc_id),
                             })
                         )
-                        node["entity_type"] = (
-                            entity_type if entity_type != "" else node["entity_type"]
+                        node["type"] = (
+                            entity_type if entity_type != "" else node["type"]
                         )
                     else:
                         graph.add_node(

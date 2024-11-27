@@ -24,7 +24,7 @@ from graphrag.index.update.entities import (
     _run_entity_summarization,
 )
 from graphrag.index.update.relationships import _update_and_merge_relationships
-from graphrag.logging.types import ProgressReporter
+from graphrag.logging.print_progress import ProgressReporter
 from graphrag.utils.storage import _load_table_from_storage
 
 
@@ -282,7 +282,7 @@ async def _update_entities(
         old_entities, delta_entities
     )
 
-    # Re-run description summarization and embeddings
+    # Re-run description summarization
     merged_entities_df = await _run_entity_summarization(
         merged_entities_df,
         config,

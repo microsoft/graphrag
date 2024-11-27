@@ -13,11 +13,11 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_covariates import (
     create_final_covariates as create_final_covariates_flow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 @verb(name="create_final_covariates", treats_input_tables_as_immutable=True)
@@ -25,7 +25,6 @@ async def create_final_covariates(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     runtime_storage: PipelineStorage,
-    column: str,
     covariate_type: str,
     extraction_strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
@@ -40,7 +39,6 @@ async def create_final_covariates(
         text_units,
         callbacks,
         cache,
-        column,
         covariate_type,
         extraction_strategy,
         async_mode=async_mode,

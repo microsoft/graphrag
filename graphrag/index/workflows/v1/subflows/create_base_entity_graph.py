@@ -14,11 +14,11 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache import PipelineCache
+from graphrag.index.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_base_entity_graph import (
     create_base_entity_graph as create_base_entity_graph_flow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 
 
 @verb(
@@ -30,8 +30,6 @@ async def create_base_entity_graph(
     cache: PipelineCache,
     storage: PipelineStorage,
     runtime_storage: PipelineStorage,
-    text_column: str,
-    id_column: str,
     clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None,
     extraction_num_threads: int = 4,
@@ -55,8 +53,6 @@ async def create_base_entity_graph(
         callbacks,
         cache,
         storage,
-        text_column,
-        id_column,
         clustering_strategy=clustering_strategy,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extraction_num_threads,

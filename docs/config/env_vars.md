@@ -9,8 +9,8 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 ### Embedded Fields
 
 - `text_unit.text`
-- `document.raw_content`
-- `entity.name`
+- `document.text`
+- `entity.title`
 - `entity.description`
 - `relationship.description`
 - `community.title`

@@ -9,8 +9,7 @@ from dataclasses import dataclass
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.llm import CompletionLLM
-
-from .prompts import SUMMARIZE_PROMPT
+from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
 DEFAULT_MAX_INPUT_TOKENS = 4_000
@@ -130,7 +129,7 @@ class SummarizeExtractor:
             self._summarization_prompt,
             name="summarize",
             variables={
-                self._entity_name_key: json.dumps(items),
+                self._entity_name_key: json.dumps(items, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),

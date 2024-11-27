@@ -8,8 +8,7 @@ from pathlib import Path
 from pydantic import Field
 
 import graphrag.config.defaults as defs
-
-from .llm_config import LLMConfig
+from graphrag.config.models.llm_config import LLMConfig
 
 
 class ClaimExtractionConfig(LLMConfig):

@@ -1,13 +1,33 @@
 # Changelog
-
 Note: version releases in the 0.x.y range may introduce breaking changes.
+
+## 0.5.0
+
+- minor: Data model changes.
+- patch: Add Parquet as part of the default emitters when not pressent
+- patch: Centralized prompts and export all for easier injection.
+- patch: Cleanup of artifact outputs/schemas.
+- patch: Config and docs updates.
+- patch: Implement dynamic community selection to global search
+- patch: fix autocompletion of existing files/directory paths.
+- patch: move import statements out of init files
+
+## 0.4.1
+
+- patch: Add update cli entrypoint for incremental indexing
+- patch: Allow some CI/CD jobs to skip PRs dedicated to doc updates only.
+- patch: Fix a file paths issue in the viz guide.
+- patch: Fix optional covariates update in incremental indexing
+- patch: Raise error on empty deltas for inc indexing
+- patch: add visualization guide to doc site
+- patch: fix streaming output error
 
 ## 0.4.0
 
 - minor: Add Incremental Indexing
 - minor: Added DRIFT graph reasoning query module
 - minor: embeddings moved to a different workflow
-- minor: Add DRIFT search cli and example notebook
+- patch: Add DRIFT search cli and example notebook
 - patch: Add config for incremental updates
 - patch: Add embeddings to subflow.
 - patch: Add naive community merge using time period

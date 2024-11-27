@@ -11,7 +11,7 @@ from typing import Any
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
-from graphrag.config.models.drift_config import DRIFTSearchConfig
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
@@ -163,7 +163,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             action.asearch(search_engine=search_engine, global_query=global_query)
             for action in actions
         ]
-        return await tqdm_asyncio.gather(*tasks)
+        return await tqdm_asyncio.gather(*tasks, leave=False)
 
     async def asearch(
         self,
@@ -190,20 +190,25 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             error_msg = "DRIFT Search query cannot be empty."
             raise ValueError(error_msg)
 
+        llm_calls, prompt_tokens, output_tokens = {}, {}, {}
+
         start_time = time.perf_counter()
-        primer_token_ct = 0
-        context_token_ct = 0
 
         # Check if query state is empty
         if not self.query_state.graph:
             # Prime the search with the primer
-            primer_context = self.context_builder.build_context(query)
-            context_token_ct = self.context_builder.llm_tokens
+            primer_context, token_ct = self.context_builder.build_context(query)
+            llm_calls["build_context"] = token_ct["llm_calls"]
+            prompt_tokens["build_context"] = token_ct["prompt_tokens"]
+            output_tokens["build_context"] = token_ct["prompt_tokens"]
 
             primer_response = await self.primer.asearch(
                 query=query, top_k_reports=primer_context
             )
-            primer_token_ct = primer_response.prompt_tokens
+            llm_calls["primer"] = primer_response.llm_calls
+            prompt_tokens["primer"] = primer_response.prompt_tokens
+            output_tokens["primer"] = primer_response.output_tokens
+
             # Package response into DriftAction
             init_action = self._process_primer_results(query, primer_response)
             self.query_state.add_action(init_action)
@@ -233,9 +238,10 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         t_elapsed = time.perf_counter() - start_time
 
         # Calculate token usage
-        total_tokens = (
-            primer_token_ct + context_token_ct + self.query_state.action_token_ct()
-        )
+        token_ct = self.query_state.action_token_ct()
+        llm_calls["action"] = token_ct["llm_calls"]
+        prompt_tokens["action"] = token_ct["prompt_tokens"]
+        output_tokens["action"] = token_ct["output_tokens"]
 
         # Package up context data
         response_state, context_data, context_text = self.query_state.serialize(
@@ -247,10 +253,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             context_data=context_data,
             context_text=context_text,
             completion_time=t_elapsed,
-            llm_calls=1
-            + self.config.primer_folds
-            + (self.config.drift_k_followups - llm_call_offset) * self.config.n_depth,
-            prompt_tokens=total_tokens,
+            llm_calls=sum(llm_calls.values()),
+            prompt_tokens=sum(prompt_tokens.values()),
+            output_tokens=sum(output_tokens.values()),
+            llm_calls_categories=llm_calls,
+            prompt_tokens_categories=prompt_tokens,
+            output_tokens_categories=output_tokens,
         )
 
     def search(

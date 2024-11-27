@@ -3,7 +3,6 @@
 
 """The Indexing Engine graph extractors claims package root."""
 
-from .claim_extractor import ClaimExtractor
-from .prompts import CLAIM_EXTRACTION_PROMPT
+from graphrag.index.graph.extractors.claims.claim_extractor import ClaimExtractor
 
-__all__ = ["CLAIM_EXTRACTION_PROMPT", "ClaimExtractor"]
+__all__ = ["ClaimExtractor"]

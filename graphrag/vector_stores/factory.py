@@ -6,9 +6,9 @@
 from enum import Enum
 from typing import ClassVar
 
-from .azure_ai_search import AzureAISearch
-from .couchbasedb import CouchbaseVectorStore
-from .lancedb import LanceDBVectorStore
+from graphrag.vector_stores.azure_ai_search import AzureAISearch
+from graphrag.vector_stores.lancedb import LanceDBVectorStore
+from graphrag.vector_stores.couchbasedb import CouchbaseVectorStore
 
 
 class VectorStoreType(str, Enum):

@@ -8,7 +8,6 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.operations.split_text import split_text
 from graphrag.index.operations.unpack_graph import unpack_graph
 
 
@@ -20,25 +19,33 @@ def create_final_entities(
     # Process nodes
     nodes = (
         unpack_graph(entity_graph, callbacks, "clustered_graph", "nodes")
-        .rename(columns={"label": "name"})
+        .rename(columns={"label": "title"})
         .loc[
             :,
             [
                 "id",
-                "name",
+                "title",
                 "type",
                 "description",
                 "human_readable_id",
-                "graph_embedding",
                 "source_id",
             ],
         ]
         .drop_duplicates(subset="id")
     )
 
-    nodes = nodes.loc[nodes["name"].notna()]
+    nodes = nodes.loc[nodes["title"].notna()]
 
-    # Split 'source_id' column into 'text_unit_ids'
-    return split_text(
-        nodes, column="source_id", separator=",", to="text_unit_ids"
-    ).drop(columns=["source_id"])
+    nodes["text_unit_ids"] = nodes["source_id"].str.split(",")
+
+    return nodes.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "type",
+            "description",
+            "text_unit_ids",
+        ],
+    ]

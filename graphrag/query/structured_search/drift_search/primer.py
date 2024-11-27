@@ -13,15 +13,15 @@ import pandas as pd
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
-from graphrag.config.models.drift_config import DRIFTSearchConfig
-from graphrag.model import CommunityReport
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.model.community_report import CommunityReport
+from graphrag.prompts.query.drift_search_system_prompt import (
+    DRIFT_PRIMER_PROMPT,
+)
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import SearchResult
-from graphrag.query.structured_search.drift_search.system_prompt import (
-    DRIFT_PRIMER_PROMPT,
-)
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class PrimerQueryProcessor:
         self.token_encoder = token_encoder
         self.reports = reports
 
-    def expand_query(self, query: str) -> tuple[str, int]:
+    def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
         """
         Expand the query using a random community report template.
 
@@ -59,9 +59,8 @@ class PrimerQueryProcessor:
 
         Returns
         -------
-        tuple[str, int]: Expanded query text and the number of tokens used.
+        tuple[str, dict[str, int]]: Expanded query text and the number of tokens used.
         """
-        token_ct = 0
         template = secrets.choice(self.reports).full_content  # nosec S311
 
         prompt = f"""Create a hypothetical answer to the following query: {query}\n\n
@@ -72,13 +71,19 @@ class PrimerQueryProcessor:
         messages = [{"role": "user", "content": prompt}]
 
         text = self.chat_llm.generate(messages)
-        token_ct = num_tokens(text + query)
+        prompt_tokens = num_tokens(prompt, self.token_encoder)
+        output_tokens = num_tokens(text, self.token_encoder)
+        token_ct = {
+            "llm_calls": 1,
+            "prompt_tokens": prompt_tokens,
+            "output_tokens": output_tokens,
+        }
         if text == "":
             log.warning("Failed to generate expansion for query: %s", query)
             return query, token_ct
         return text, token_ct
 
-    def __call__(self, query: str) -> tuple[list[float], int]:
+    def __call__(self, query: str) -> tuple[list[float], dict[str, int]]:
         """
         Call method to process the query, expand it, and embed the result.
 
@@ -117,7 +122,7 @@ class DRIFTPrimer:
 
     async def decompose_query(
         self, query: str, reports: pd.DataFrame
-    ) -> tuple[dict, int]:
+    ) -> tuple[dict, dict[str, int]]:
         """
         Decompose the query into subqueries based on the fetched global structures.
 
@@ -127,7 +132,7 @@ class DRIFTPrimer:
 
         Returns
         -------
-        tuple[dict, int]: Parsed response and the number of tokens used.
+        tuple[dict, int, int]: Parsed response and the number of prompt and output tokens used.
         """
         community_reports = "\n\n".join(reports["full_content"].tolist())
         prompt = DRIFT_PRIMER_PROMPT.format(
@@ -140,7 +145,12 @@ class DRIFTPrimer:
         )
 
         parsed_response = json.loads(response)
-        token_ct = num_tokens(prompt + response, self.token_encoder)
+
+        token_ct = {
+            "llm_calls": 1,
+            "prompt_tokens": num_tokens(prompt, self.token_encoder),
+            "output_tokens": num_tokens(response, self.token_encoder),
+        }
 
         return parsed_response, token_ct
 
@@ -163,7 +173,7 @@ class DRIFTPrimer:
         start_time = time.perf_counter()
         report_folds = self.split_reports(top_k_reports)
         tasks = [self.decompose_query(query, fold) for fold in report_folds]
-        results_with_tokens = await tqdm_asyncio.gather(*tasks)
+        results_with_tokens = await tqdm_asyncio.gather(*tasks, leave=False)
 
         completion_time = time.perf_counter() - start_time
 
@@ -173,7 +183,8 @@ class DRIFTPrimer:
             context_text=top_k_reports.to_json() or "",
             completion_time=completion_time,
             llm_calls=len(results_with_tokens),
-            prompt_tokens=sum(tokens for _, tokens in results_with_tokens),
+            prompt_tokens=sum(ct["prompt_tokens"] for _, ct in results_with_tokens),
+            output_tokens=sum(ct["output_tokens"] for _, ct in results_with_tokens),
         )
 
     def split_reports(self, reports: pd.DataFrame) -> list[pd.DataFrame]:

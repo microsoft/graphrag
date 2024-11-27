@@ -15,13 +15,14 @@ import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.index.cache import PipelineCache
-from graphrag.index.config import (
+from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
-    PipelineWorkflowStep,
 )
-from graphrag.index.emit import TableEmitterType, create_table_emitters
+from graphrag.index.config.workflow import PipelineWorkflowStep
+from graphrag.index.emit.factories import create_table_emitters
+from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.load_pipeline_config import load_pipeline_config
 from graphrag.index.run.cache import _create_cache
 from graphrag.index.run.postprocess import (
@@ -40,7 +41,7 @@ from graphrag.index.run.workflow import (
     _create_callback_chain,
     _process_workflow,
 )
-from graphrag.index.storage import PipelineStorage
+from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.typing import PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
@@ -51,10 +52,8 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.logging import (
-    NullProgressReporter,
-    ProgressReporter,
-)
+from graphrag.logging.base import ProgressReporter
+from graphrag.logging.null_progress import NullProgressReporter
 from graphrag.utils.storage import _create_storage
 
 log = logging.getLogger(__name__)
