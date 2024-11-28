@@ -18,8 +18,8 @@ from graphrag.index.graph.extractors.community_reports import (
     get_levels,
     set_context_exceeds_flag,
     set_context_size,
-    sort_context,
 )
+from graphrag.index.graph.extractors.community_reports.sort_context import sort_context_batch
 
 log = logging.getLogger(__name__)
 
@@ -38,6 +38,9 @@ def prepare_community_reports(
         communities_at_level_df = _prepare_reports_at_level(
             nodes, edges, claims, level, max_tokens
         )
+        communities_at_level_df.loc[:,schemas.COMMUNITY_LEVEL] = level
+        print(communities_at_level_df.columns)
+        print(communities_at_level_df.head())
         dfs.append(communities_at_level_df)
 
     # build initial local context for all communities
@@ -75,40 +78,43 @@ def _prepare_reports_at_level(
     log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
     nodes_set = set(level_node_df[node_name_column])
 
-    # Filter edges and claims
+    # Filter and prepare edge details
     level_edge_df = edge_df[
-        edge_df[edge_source_column].isin(nodes_set) &
-        edge_df[edge_target_column].isin(nodes_set)
+        edge_df[edge_source_column].isin(nodes_set) & edge_df[edge_target_column].isin(nodes_set)
     ]
+    level_edge_df.loc[:, edge_details_column] = level_edge_df.loc[:, 
+        [edge_id_column, edge_source_column, edge_target_column, edge_degree_column]
+    ].to_dict(orient="records")
 
     level_claim_df = pd.DataFrame
     if claim_df is not None:
         level_claim_df = claim_df[claim_df[claim_subject_column].isin(nodes_set)]
 
-    # Combine edge details
-    level_edge_df.loc[:,edge_details_column] = level_edge_df.loc[:,
-        [edge_id_column, edge_source_column, edge_target_column, edge_degree_column]
-    ].to_dict(orient="records")
+    # Merge node and edge details
+    # Group edge details by node and aggregate into lists
+    source_edges = level_edge_df.groupby(edge_source_column).agg({
+        edge_details_column: "first"
+    }).reset_index().rename(columns={edge_source_column: node_name_column})
 
+    target_edges = level_edge_df.groupby(edge_target_column).agg({
+        edge_details_column: "first"
+    }).reset_index().rename(columns={edge_target_column: node_name_column})
 
+    # Merge aggregated edges into the node DataFrame
     merged_node_df = level_node_df.merge(
-        level_edge_df[[edge_source_column, edge_details_column]]
-            .rename(columns={edge_source_column: node_name_column}),
+        source_edges,
+        on=node_name_column,
+        how="left"
+    ).merge(
+        target_edges,
         on=node_name_column,
         how="left"
     )
+    
+    # Combine source and target edge details into a single column
+    merged_node_df.loc[:,edge_details_column] = merged_node_df[f"{edge_details_column}_x"].combine_first(merged_node_df[f"{edge_details_column}_y"])
 
-    merged_node_df = merged_node_df.merge(
-        level_edge_df[[edge_target_column, edge_details_column]]
-            .rename(columns={edge_target_column: node_name_column}),
-        on=node_name_column,
-        how="left"
-    )
-
-    # Resolve edge details using first
-    merged_node_df.loc[:,edge_details_column] = merged_node_df[f"{edge_details_column}_x"].combine_first(
-        merged_node_df[f"{edge_details_column}_y"]
-    )
+    # Drop intermediate columns
     merged_node_df.drop(columns=[f"{edge_details_column}_x", f"{edge_details_column}_y"], inplace=True)
 
     # Aggregate node and edge details
@@ -119,6 +125,8 @@ def _prepare_reports_at_level(
         edge_details_column: lambda x: list(x.dropna()),
     }).reset_index()
 
+    # Add ALL_CONTEXT column
+    # Ensure claim_details_column exists with the correct length
     # Merge claim details if available
     if claim_df is not None:
         merged_node_df = merged_node_df.merge(
@@ -128,7 +136,7 @@ def _prepare_reports_at_level(
             how="left"
         )
 
-    # Add all context
+    # Create the ALL_CONTEXT column
     merged_node_df[schemas.ALL_CONTEXT] = (
         merged_node_df.loc[:, [node_name_column, node_degree_column, node_details_column, edge_details_column]]
         .assign(
@@ -137,33 +145,22 @@ def _prepare_reports_at_level(
         .to_dict(orient="records")
     )
 
-    # Group by community
-    community_df = merged_node_df.groupby(node_community_column).agg({
-        schemas.ALL_CONTEXT: list
-    }).reset_index()
-    # Sort context and compute token sizes
-    community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-        lambda x: sort_context(
-            x,
-            node_id_column=node_id_column,
-            node_name_column=node_name_column,
-            node_details_column=node_details_column,
-            edge_id_column=edge_id_column,
-            edge_details_column=edge_details_column,
-            edge_degree_column=edge_degree_column,
-            edge_source_column=edge_source_column,
-            edge_target_column=edge_target_column,
-            claim_id_column=claim_id_column,
-            claim_details_column=claim_details_column,
-            community_id_column=community_id_column,
-        )
+    # Generate community-level context strings using vectorized batch processing
+    community_df = sort_context_batch(
+        merged_node_df,
+        node_id_column=node_id_column,
+        node_name_column=node_name_column,
+        node_details_column=node_details_column,
+        edge_id_column=edge_id_column,
+        edge_details_column=edge_details_column,
+        edge_degree_column=edge_degree_column,
+        edge_source_column=edge_source_column,
+        edge_target_column=edge_target_column,
+        claim_id_column=claim_id_column,
+        claim_details_column=claim_details_column,
+        community_id_column=node_community_column,
+        max_tokens=max_tokens,
     )
-    set_context_size(community_df)
-    set_context_exceeds_flag(community_df, max_tokens)
-
-    # Add level metadata
-    community_df[schemas.COMMUNITY_LEVEL] = level
-    community_df[node_community_column] = community_df[node_community_column].astype(int)
 
     print(f"Time taken to prepare reports at level {level}: {time.perf_counter() - start_time}")
 

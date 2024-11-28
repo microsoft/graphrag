@@ -24,135 +24,123 @@ def sort_context(
     claim_details_column: str = schemas.CLAIM_DETAILS,
     community_id_column: str = schemas.COMMUNITY_ID,
 ) -> str:
-    """Sort context by degree in descending order.
+    """Optimized sorting and formatting of context data."""
 
-    If max tokens is provided, we will return the context string that fits within the token limit.
-    """
+    # Preprocess local_context into DataFrames
+    context_df = pd.DataFrame(local_context)
+    edges = context_df[edge_details_column].explode().dropna()
+    nodes = context_df[[node_name_column, node_details_column]].drop_duplicates()
+    claims = context_df[claim_details_column].explode().dropna()
 
-    def _get_context_string(
-        entities: list[dict],
-        edges: list[dict],
-        claims: list[dict],
-        sub_community_reports: list[dict] | None = None,
-    ) -> str:
-        """Concatenate structured data into a context string."""
+    # Filter and deduplicate
+    edges_df = pd.DataFrame(edges.tolist()).drop_duplicates()
+    nodes_df = pd.DataFrame(nodes).drop_duplicates()
+    claims_df = pd.DataFrame(claims.tolist()).drop_duplicates()
+
+    # Pre-sort edges by degree descending
+    if not edges_df.empty:
+        edges_df = edges_df.sort_values(by=edge_degree_column, ascending=False)
+
+    # Group and map claims/nodes to edges
+    edges_df['source_details'] = edges_df[edge_source_column].map(
+        nodes_df.set_index(node_name_column)[node_details_column].to_dict()
+    )
+    edges_df['target_details'] = edges_df[edge_target_column].map(
+        nodes_df.set_index(node_name_column)[node_details_column].to_dict()
+    )
+    edges_df['source_claims'] = edges_df[edge_source_column].map(
+        claims_df.set_index(claim_id_column).to_dict(orient="list")
+    )
+    edges_df['target_claims'] = edges_df[edge_target_column].map(
+        claims_df.set_index(claim_id_column).to_dict(orient="list")
+    )
+
+    # Concatenate structured data into context string
+    def _generate_context_string():
         contexts = []
         if sub_community_reports:
-            sub_community_reports = [
-                report
-                for report in sub_community_reports
-                if community_id_column in report
-                and report[community_id_column]
-                and str(report[community_id_column]).strip() != ""
-            ]
             report_df = pd.DataFrame(sub_community_reports).drop_duplicates()
             if not report_df.empty:
-                if report_df[community_id_column].dtype == float:
-                    report_df[community_id_column] = report_df[
-                        community_id_column
-                    ].astype(int)
-                report_string = (
+                contexts.append(
                     f"----Reports-----\n{report_df.to_csv(index=False, sep=',')}"
                 )
-                contexts.append(report_string)
-
-        entities = [
-            entity
-            for entity in entities
-            if node_id_column in entity
-            and entity[node_id_column]
-            and str(entity[node_id_column]).strip() != ""
-        ]
-        entity_df = pd.DataFrame(entities).drop_duplicates()
-        if not entity_df.empty:
-            if entity_df[node_id_column].dtype == float:
-                entity_df[node_id_column] = entity_df[node_id_column].astype(int)
-            entity_string = (
-                f"-----Entities-----\n{entity_df.to_csv(index=False, sep=',')}"
+        if not nodes_df.empty:
+            contexts.append(
+                f"-----Entities-----\n{nodes_df.to_csv(index=False, sep=',')}"
             )
-            contexts.append(entity_string)
-
-        if claims and len(claims) > 0:
-            claims = [
-                claim
-                for claim in claims
-                if claim_id_column in claim
-                and claim[claim_id_column]
-                and str(claim[claim_id_column]).strip() != ""
-            ]
-            claim_df = pd.DataFrame(claims).drop_duplicates()
-            if not claim_df.empty:
-                if claim_df[claim_id_column].dtype == float:
-                    claim_df[claim_id_column] = claim_df[claim_id_column].astype(int)
-                claim_string = (
-                    f"-----Claims-----\n{claim_df.to_csv(index=False, sep=',')}"
-                )
-                contexts.append(claim_string)
-
-        edges = [
-            edge
-            for edge in edges
-            if edge_id_column in edge
-            and edge[edge_id_column]
-            and str(edge[edge_id_column]).strip() != ""
-        ]
-        edge_df = pd.DataFrame(edges).drop_duplicates()
-        if not edge_df.empty:
-            if edge_df[edge_id_column].dtype == float:
-                edge_df[edge_id_column] = edge_df[edge_id_column].astype(int)
-            edge_string = (
-                f"-----Relationships-----\n{edge_df.to_csv(index=False, sep=',')}"
+        if not edges_df.empty:
+            contexts.append(
+                f"-----Relationships-----\n{edges_df.to_csv(index=False, sep=',')}"
             )
-            contexts.append(edge_string)
-
+        if not claims_df.empty:
+            contexts.append(
+                f"-----Claims-----\n{claims_df.to_csv(index=False, sep=',')}"
+            )
         return "\n\n".join(contexts)
 
-    # sort node details by degree in descending order
-    edges = []
-    node_details = {}
-    claim_details = {}
+    context_string = _generate_context_string()
 
-    for record in local_context:
-        node_name = record[node_name_column]
-        record_edges = record.get(edge_details_column, [])
-        record_edges = [e for e in record_edges if not pd.isna(e)]
-        record_node_details = record[node_details_column]
-        record_claims = record.get(claim_details_column, [])
-        if not isinstance(record_claims, list):
-            record_claims = [record_claims]
-        record_claims = [c for c in record_claims if not pd.isna(c)]
-
-        edges.extend(record_edges)
-        node_details[node_name] = record_node_details
-        claim_details[node_name] = record_claims
-
-    edges = [edge for edge in edges if isinstance(edge, dict)]
-    edges = sorted(edges, key=lambda x: x[edge_degree_column], reverse=True)
-
-    sorted_edges = []
-    sorted_nodes = []
-    sorted_claims = []
-    context_string = ""
-    for edge in edges:
-        source_details = node_details.get(edge[edge_source_column], {})
-        target_details = node_details.get(edge[edge_target_column], {})
-        sorted_nodes.extend([source_details, target_details])
-        sorted_edges.append(edge)
-        source_claims = claim_details.get(edge[edge_source_column], [])
-        target_claims = claim_details.get(edge[edge_target_column], [])
-        sorted_claims.extend(source_claims if source_claims else [])
-        sorted_claims.extend(target_claims if source_claims else [])
-        if max_tokens:
-            new_context_string = _get_context_string(
-                sorted_nodes, sorted_edges, sorted_claims, sub_community_reports
-            )
-            if num_tokens(new_context_string) > max_tokens:
-                break
-            context_string = new_context_string
-
-    if context_string == "":
-        return _get_context_string(
-            sorted_nodes, sorted_edges, sorted_claims, sub_community_reports
-        )
+    # Enforce token constraints
+    if max_tokens:
+        while num_tokens(context_string) > max_tokens and not edges_df.empty:
+            edges_df = edges_df.iloc[:-1]  # Remove the least significant edge
+            context_string = _generate_context_string()
 
     return context_string
+
+
+
+def sort_context_batch(
+    local_contexts: pd.DataFrame,
+    node_id_column: str,
+    node_name_column: str,
+    node_details_column: str,
+    edge_id_column: str,
+    edge_details_column: str,
+    edge_degree_column: str,
+    edge_source_column: str,
+    edge_target_column: str,
+    claim_id_column: str,
+    claim_details_column: str,
+    community_id_column: str,
+    max_tokens: int | None = None,
+) -> pd.DataFrame:
+    """Batch processing for community context strings."""
+
+    def generate_context(group):
+        # Explode and deduplicate edges and claims
+        edges = pd.DataFrame(group[edge_details_column].explode().dropna().tolist())
+        claims = pd.DataFrame(group[claim_details_column].explode().dropna().tolist())
+        
+        nodes = group[[node_name_column, node_details_column]]
+        nodes.loc[:,node_details_column] = nodes.loc[:,node_details_column].astype(str)
+        nodes.drop_duplicates(inplace=True)
+
+        # Pre-sort edges by degree descending
+        if not edges.empty:
+            edges = edges.sort_values(by=edge_degree_column, ascending=False)
+
+        # Generate context string
+        contexts = []
+        if not nodes.empty:
+            contexts.append(f"-----Entities-----\n{nodes.to_csv(index=False, sep=',')}")
+        if not edges.empty:
+            contexts.append(f"-----Relationships-----\n{edges.to_csv(index=False, sep=',')}")
+        if not claims.empty:
+            contexts.append(f"-----Claims-----\n{claims.to_csv(index=False, sep=',')}")
+
+        context_string = "\n\n".join(contexts)
+        context_string_len = num_tokens(context_string)
+
+        return pd.Series({
+            schemas.CONTEXT_STRING: context_string,
+            schemas.CONTEXT_SIZE: context_string_len,
+            schemas.CONTEXT_EXCEED_FLAG: context_string_len > max_tokens if max_tokens else False,
+            schemas.ALL_CONTEXT: group[schemas.ALL_CONTEXT].tolist()
+        })
+
+    # Group by community and process in bulk
+    context_results = local_contexts.groupby(community_id_column).apply(generate_context)
+
+    # Return a DataFrame with the results
+    return context_results.reset_index()
