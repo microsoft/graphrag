@@ -10,7 +10,10 @@ Backwards compatibility is not guaranteed at this time.
 
 from pathlib import Path
 
+from datashaper import WorkflowCallbacks
+
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.callbacks.factory import create_pipeline_reporter
 from graphrag.config.enums import CacheType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
@@ -25,6 +28,7 @@ async def build_index(
     run_id: str = "",
     is_resume_run: bool = False,
     memory_profile: bool = False,
+    callbacks: list[WorkflowCallbacks] | None = None,
     progress_reporter: ProgressReporter | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
@@ -37,10 +41,10 @@ async def build_index(
         The run id. Creates a output directory with this name.
     is_resume_run : bool default=False
         Whether to resume a previous index run.
-    is_update_run : bool default=False
-        Whether to update a previous index run.
     memory_profile : bool
         Whether to enable memory profiling.
+    callbacks : list[WorkflowCallbacks] | None default=None
+        A list of callbacks to register.
     progress_reporter : ProgressReporter | None default=None
         The progress reporter.
 
@@ -61,12 +65,17 @@ async def build_index(
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
+    # TODO: remove the type ignore once the new config engine has been refactored
+    callbacks = (
+        [create_pipeline_reporter(config.reporting, None)] if config.reporting else None  # type: ignore
+    )  # type: ignore
     outputs: list[PipelineRunResult] = []
     async for output in run_pipeline_with_config(
         pipeline_config,
         run_id=run_id,
         memory_profile=memory_profile,
         cache=pipeline_cache,
+        callbacks=callbacks,
         progress_reporter=progress_reporter,
         is_resume_run=is_resume_run,
         is_update_run=is_update_run,
