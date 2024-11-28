@@ -110,11 +110,8 @@ def sort_context_batch(
     def generate_context(group):
         # Explode and deduplicate edges and claims
         edges = pd.DataFrame(group[edge_details_column].explode().dropna().tolist())
-        claims = pd.DataFrame(group[claim_details_column].explode().dropna().tolist())
-        
-        nodes = group[[node_name_column, node_details_column]]
-        nodes.loc[:,node_details_column] = nodes.loc[:,node_details_column].astype(str)
-        nodes.drop_duplicates(inplace=True)
+        claims = pd.DataFrame(group[claim_details_column].dropna().tolist())
+        nodes = pd.DataFrame(group[node_details_column].dropna().tolist())
 
         # Pre-sort edges by degree descending
         if not edges.empty:
@@ -122,11 +119,11 @@ def sort_context_batch(
 
         # Generate context string
         contexts = []
-        if not nodes.empty:
+        if not nodes.empty and len(nodes) > 1:
             contexts.append(f"-----Entities-----\n{nodes.to_csv(index=False, sep=',')}")
-        if not edges.empty:
+        if not edges.empty and len(edges) > 1:
             contexts.append(f"-----Relationships-----\n{edges.to_csv(index=False, sep=',')}")
-        if not claims.empty:
+        if not claims.empty and len(claims) > 1:
             contexts.append(f"-----Claims-----\n{claims.to_csv(index=False, sep=',')}")
 
         context_string = "\n\n".join(contexts)
