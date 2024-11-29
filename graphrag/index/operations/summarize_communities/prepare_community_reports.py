@@ -51,9 +51,7 @@ def _prepare_reports_at_level(
     level: int,
     max_tokens: int = 16_000,
 ) -> pd.DataFrame:
-    """Optimized preparation of reports at a given level."""
-    start_time = time.perf_counter()
-
+    """Prepare reports at a given level."""
     # Filter nodes to the specified level
     level_node_df = node_df[node_df[schemas.NODE_LEVEL] == level]
     log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
@@ -156,10 +154,6 @@ def _prepare_reports_at_level(
     community_df = sort_context_batch(
         merged_node_df,
         max_tokens=max_tokens,
-    )
-
-    print(
-        f"Time taken to prepare reports at level {level}: {time.perf_counter() - start_time}"
     )
 
     return community_df

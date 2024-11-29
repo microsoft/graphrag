@@ -4,6 +4,7 @@
 """All the steps to transform community reports."""
 
 from uuid import uuid4
+import time
 
 import pandas as pd
 from datashaper import (
@@ -52,6 +53,7 @@ async def create_final_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
+    start_time = time.perf_counter()
     entities_df = entities.loc[:, ["id", "description"]]
     nodes_df = nodes_input.merge(entities_df, on="id")
     nodes = _prep_nodes(nodes_df)
@@ -84,9 +86,7 @@ async def create_final_community_reports(
 
     community_reports["community"] = community_reports["community"].astype(int)
     community_reports["human_readable_id"] = community_reports["community"]
-    community_reports["id"] = community_reports["community"].apply(
-        lambda _x: str(uuid4())
-    )
+    community_reports["id"] = [str(uuid4()) for _ in range(len(community_reports))]
 
     # Merge with communities to add size and period
     merged = community_reports.merge(
@@ -95,6 +95,8 @@ async def create_final_community_reports(
         how="left",
         copy=False,
     )
+
+    print(f"Time taken to create final community reports: {time.perf_counter() - start_time}")
     return merged.loc[
         :,
         [

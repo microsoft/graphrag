@@ -45,9 +45,13 @@ def prep_community_report_context(
         report_df = pd.DataFrame()
 
     level = int(level)
-    level_context_df = _at_level(level, local_context_df)
-    valid_context_df = _within_context(level_context_df)
-    invalid_context_df = _exceeding_context(level_context_df)
+    # Filter by community level
+    level_context_df = local_context_df[local_context_df[schemas.COMMUNITY_LEVEL] == level]
+
+    # Filter valid and invalid contexts using boolean logic
+    valid_context_df = local_context_df[~local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
+    invalid_context_df = local_context_df[local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
+
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
@@ -81,7 +85,10 @@ def prep_community_report_context(
     )
 
     result = union(valid_context_df, community_df, remaining_df)
-    set_context_size(result)
+    result.loc[schemas.CONTEXT_SIZE] = result[
+            schemas.CONTEXT_STRING
+        ].map(num_tokens)
+    
     result[schemas.CONTEXT_EXCEED_FLAG] = 0
     return result
 
@@ -95,15 +102,6 @@ def _at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
     """Return records at the given level."""
     return where_column_equals(df, schemas.COMMUNITY_LEVEL, level)
 
-
-def _exceeding_context(df: pd.DataFrame) -> pd.DataFrame:
-    """Return records where the context exceeds the limit."""
-    return where_column_equals(df, schemas.CONTEXT_EXCEED_FLAG, 1)
-
-
-def _within_context(df: pd.DataFrame) -> pd.DataFrame:
-    """Return records where the context is within the limit."""
-    return where_column_equals(df, schemas.CONTEXT_EXCEED_FLAG, 0)
 
 
 def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
