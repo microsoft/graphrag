@@ -19,6 +19,7 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_STATUS,
     CLAIM_SUBJECT,
     CLAIM_TYPE,
+    COMMUNITY_ID,
     EDGE_DEGREE,
     EDGE_DESCRIPTION,
     EDGE_DETAILS,
@@ -115,11 +116,15 @@ async def create_final_community_reports(
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
-    # Fill missing NODE_DESCRIPTION 
-    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+    """Prepares nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
+    # Filter rows where community is not -1
+    input = input.loc[input[COMMUNITY_ID] != -1]
+
+    # Fill missing values in NODE_DESCRIPTION
+    input.loc[:, NODE_DESCRIPTION] = input[NODE_DESCRIPTION].fillna("No Description")
     
     # Create NODE_DETAILS column
-    input[NODE_DETAILS] = input[[NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]].to_dict(orient="records")
+    input.loc[:, NODE_DETAILS] = input.loc[:, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]].to_dict(orient="records")
     
     return input
 

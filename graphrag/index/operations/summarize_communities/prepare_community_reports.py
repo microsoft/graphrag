@@ -39,6 +39,7 @@ def prepare_community_reports(
             nodes, edges, claims, level, max_tokens
         )
         communities_at_level_df.loc[:,schemas.COMMUNITY_LEVEL] = level
+        
         dfs.append(communities_at_level_df)
 
     # build initial local context for all communities
