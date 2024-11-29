@@ -118,7 +118,7 @@ async def create_final_community_reports(
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     """Prepares nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
     # Filter rows where community is not -1
-    input = input.loc[input[COMMUNITY_ID] != -1]
+    input = input[input[COMMUNITY_ID] != -1]
 
     # Fill missing values in NODE_DESCRIPTION
     input.loc[:, NODE_DESCRIPTION] = input.loc[:, NODE_DESCRIPTION].fillna(
@@ -126,7 +126,7 @@ def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Create NODE_DETAILS column
-    input.loc[:, NODE_DETAILS] = input.loc[
+    input.loc[:,NODE_DETAILS] = input.loc[
         :, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]
     ].to_dict(orient="records")
 
