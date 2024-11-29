@@ -106,6 +106,7 @@ async def run_pipeline_with_config(
     storage = storage = create_storage(config.storage)  # type: ignore
 
     if is_update_run:
+        # TODO: remove the default choice (PipelineFileStorageConfig) once the new config system enforces a correct update-index-storage config when used.
         update_index_storage = update_index_storage or create_storage(
             config.update_index_storage
             or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
