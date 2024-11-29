@@ -33,7 +33,7 @@ def restore_community_hierarchy(
     }
 
     # get unique levels, sorted in ascending order
-    levels = sorted(community_levels.keys()) # type: ignore
+    levels = sorted(community_levels.keys())  # type: ignore
     community_hierarchy = []
 
     # Iterate through adjacent levels

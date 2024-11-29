@@ -13,7 +13,6 @@ from graphrag.index.graph.extractors.community_reports.build_mixed_context impor
     build_mixed_context,
 )
 from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
-from graphrag.index.graph.extractors.community_reports.utils import set_context_size
 from graphrag.index.utils.dataframes import (
     antijoin,
     drop_columns,
@@ -23,6 +22,7 @@ from graphrag.index.utils.dataframes import (
     union,
     where_column_equals,
 )
+from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
 
@@ -58,7 +58,9 @@ def prep_community_report_context(
         invalid_context_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
             invalid_context_df, max_tokens
         )
-        set_context_size(invalid_context_df)
+        invalid_context_df.loc[schemas.CONTEXT_SIZE] = invalid_context_df[
+            schemas.CONTEXT_STRING
+        ].map(num_tokens)
         invalid_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG] = 0
         return union(valid_context_df, invalid_context_df)
 
