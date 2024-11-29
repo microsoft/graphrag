@@ -3,8 +3,8 @@
 
 """All the steps to transform community reports."""
 
-from uuid import uuid4
 import time
+from uuid import uuid4
 
 import pandas as pd
 from datashaper import (
@@ -96,7 +96,9 @@ async def create_final_community_reports(
         copy=False,
     )
 
-    print(f"Time taken to create final community reports: {time.perf_counter() - start_time}")
+    print(
+        f"Time taken to create final community reports: {time.perf_counter() - start_time}"
+    )
     return merged.loc[
         :,
         [
@@ -128,7 +130,7 @@ def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Create NODE_DETAILS column
-    input.loc[:,NODE_DETAILS] = input.loc[
+    input.loc[:, NODE_DETAILS] = input.loc[
         :, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]
     ].to_dict(orient="records")
 

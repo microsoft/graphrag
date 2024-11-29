@@ -46,12 +46,13 @@ def prep_community_report_context(
 
     level = int(level)
     # Filter by community level
-    level_context_df = local_context_df[local_context_df[schemas.COMMUNITY_LEVEL] == level]
+    level_context_df = local_context_df[
+        local_context_df[schemas.COMMUNITY_LEVEL] == level
+    ]
 
     # Filter valid and invalid contexts using boolean logic
     valid_context_df = local_context_df[~local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
     invalid_context_df = local_context_df[local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
-
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
@@ -85,10 +86,8 @@ def prep_community_report_context(
     )
 
     result = union(valid_context_df, community_df, remaining_df)
-    result.loc[schemas.CONTEXT_SIZE] = result[
-            schemas.CONTEXT_STRING
-        ].map(num_tokens)
-    
+    result.loc[schemas.CONTEXT_SIZE] = result[schemas.CONTEXT_STRING].map(num_tokens)
+
     result[schemas.CONTEXT_EXCEED_FLAG] = 0
     return result
 
@@ -101,7 +100,6 @@ def _drop_community_level(df: pd.DataFrame) -> pd.DataFrame:
 def _at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
     """Return records at the given level."""
     return where_column_equals(df, schemas.COMMUNITY_LEVEL, level)
-
 
 
 def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
