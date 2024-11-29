@@ -3,10 +3,12 @@
 
 """A module containing 'InMemoryStorage' model."""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
+
+if TYPE_CHECKING:
+    from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 class MemoryPipelineStorage(FilePipelineStorage):
@@ -74,8 +76,3 @@ class MemoryPipelineStorage(FilePipelineStorage):
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
         return list(self._storage.keys())
-
-
-def create_memory_storage() -> PipelineStorage:
-    """Create memory storage."""
-    return MemoryPipelineStorage()

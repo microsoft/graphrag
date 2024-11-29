@@ -19,7 +19,7 @@ from graphrag.model.covariate import Covariate
 from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
-from graphrag.query.factories import get_text_embedder
+from graphrag.query.factory import get_text_embedder
 from graphrag.query.input.loaders.dfs import (
     read_communities,
     read_community_reports,

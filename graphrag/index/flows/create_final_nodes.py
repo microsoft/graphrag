@@ -13,7 +13,7 @@ from datashaper import (
 from graphrag.index.operations.layout_graph import layout_graph
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.unpack_graph import unpack_graph
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_final_nodes(

@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.extract_entities import extract_entities
@@ -22,7 +22,7 @@ from graphrag.index.operations.snapshot_rows import snapshot_rows
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_entity_graph(

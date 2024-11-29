@@ -14,7 +14,7 @@ from datashaper import (
     progress_ticker,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,

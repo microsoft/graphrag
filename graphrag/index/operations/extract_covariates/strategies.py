@@ -9,7 +9,7 @@ from typing import Any
 from datashaper import VerbCallbacks
 
 import graphrag.config.defaults as defs
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_covariates.typing import (

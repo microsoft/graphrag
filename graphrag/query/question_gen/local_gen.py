@@ -5,12 +5,15 @@
 
 import logging
 import time
-from typing import Any
+from typing import Any, cast
 
 import tiktoken
 
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
-from graphrag.query.context_builder.builders import LocalContextBuilder
+from graphrag.query.context_builder.builders import (
+    ContextBuilderResult,
+    LocalContextBuilder,
+)
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
@@ -71,12 +74,17 @@ class LocalQuestionGen(BaseQuestionGen):
 
         if context_data is None:
             # generate context data based on the question history
-            context_data, context_records = self.context_builder.build_context(
-                query=question_text,
-                conversation_history=conversation_history,
-                **kwargs,
-                **self.context_builder_params,
-            )  # type: ignore
+            result = cast(
+                ContextBuilderResult,
+                self.context_builder.build_context(
+                    query=question_text,
+                    conversation_history=conversation_history,
+                    **kwargs,
+                    **self.context_builder_params,
+                ),
+            )
+            context_data = cast(str, result.context_chunks)
+            context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
         log.info("GENERATE QUESTION: %s. LAST QUESTION: %s", start_time, question_text)
@@ -144,12 +152,17 @@ class LocalQuestionGen(BaseQuestionGen):
 
         if context_data is None:
             # generate context data based on the question history
-            context_data, context_records = self.context_builder.build_context(
-                query=question_text,
-                conversation_history=conversation_history,
-                **kwargs,
-                **self.context_builder_params,
-            )  # type: ignore
+            result = cast(
+                ContextBuilderResult,
+                self.context_builder.build_context(
+                    query=question_text,
+                    conversation_history=conversation_history,
+                    **kwargs,
+                    **self.context_builder_params,
+                ),
+            )
+            context_data = cast(str, result.context_chunks)
+            context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
         log.info(
