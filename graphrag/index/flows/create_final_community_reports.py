@@ -3,7 +3,6 @@
 
 """All the steps to transform community reports."""
 
-import time
 from uuid import uuid4
 
 import pandas as pd
