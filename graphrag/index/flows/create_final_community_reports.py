@@ -53,7 +53,6 @@ async def create_final_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    start_time = time.perf_counter()
     entities_df = entities.loc[:, ["id", "description"]]
     nodes_df = nodes_input.merge(entities_df, on="id")
     nodes = _prep_nodes(nodes_df)
@@ -94,10 +93,6 @@ async def create_final_community_reports(
         on="community",
         how="left",
         copy=False,
-    )
-
-    print(
-        f"Time taken to create final community reports: {time.perf_counter() - start_time}"
     )
     return merged.loc[
         :,
