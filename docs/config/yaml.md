@@ -67,7 +67,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `async_mode` (see Async Mode top-level config)
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
-- `target` **required|all|none** - Determines which set of embeddings to emit.
+- `target` **required|all|none** - Determines which set of embeddings to export.
 - `skip` **list[str]** - Which embeddings to skip. Only useful if target=all to customize the list.
 - `vector_store` **dict** - The vector store to use. Configured for lancedb by default.
     - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
@@ -203,7 +203,7 @@ This is the base LLM configuration section. Other steps may override this config
 
 #### Fields
 
-- `max_cluster_size` **int** - The maximum cluster size to emit.
+- `max_cluster_size` **int** - The maximum cluster size to export.
 - `strategy` **dict** - Fully override the cluster_graph strategy.
 
 ### embed_graph
@@ -228,11 +228,11 @@ This is the base LLM configuration section. Other steps may override this config
 
 #### Fields
 
-- `embeddings` **bool** - Emit embeddings snapshots to parquet.
-- `graphml` **bool** - Emit graph snapshots to GraphML.
-- `raw_entities` **bool** - Emit raw entity snapshots to JSON.
-- `top_level_nodes` **bool** - Emit top-level-node snapshots to JSON.
-- `transient` **bool** - Emit transient workflow tables snapshots to parquet.
+- `embeddings` **bool** - Export embeddings snapshots to parquet.
+- `graphml` **bool** - Export graph snapshots to GraphML.
+- `raw_entities` **bool** - Export raw entity snapshots to JSON.
+- `top_level_nodes` **bool** - Export top-level-node snapshots to JSON.
+- `transient` **bool** - Export transient workflow tables snapshots to parquet.
 
 ### encoding_model
 

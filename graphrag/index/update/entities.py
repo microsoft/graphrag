@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.operations.summarize_descriptions.strategies import (
     run_graph_intelligence as run_entity_summarization,

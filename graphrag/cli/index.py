@@ -15,10 +15,9 @@ from graphrag.config.enums import CacheType
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.config.resolve_path import resolve_paths
-from graphrag.index.emit.types import TableEmitterType
 from graphrag.index.validate_config import validate_config_names
 from graphrag.logging.base import ProgressReporter
-from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.factory import create_progress_reporter
 from graphrag.logging.types import ReporterType
 from graphrag.utils.cli import redact
 
@@ -73,7 +72,6 @@ def index_cli(
     cache: bool,
     reporter: ReporterType,
     config_filepath: Path | None,
-    emit: list[TableEmitterType],
     dry_run: bool,
     skip_validation: bool,
     output_dir: Path | None,
@@ -88,7 +86,6 @@ def index_cli(
         memprofile=memprofile,
         cache=cache,
         reporter=reporter,
-        emit=emit,
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output_dir,
@@ -102,7 +99,6 @@ def update_cli(
     cache: bool,
     reporter: ReporterType,
     config_filepath: Path | None,
-    emit: list[TableEmitterType],
     skip_validation: bool,
     output_dir: Path | None,
 ):
@@ -126,7 +122,6 @@ def update_cli(
         memprofile=memprofile,
         cache=cache,
         reporter=reporter,
-        emit=emit,
         dry_run=False,
         skip_validation=skip_validation,
         output_dir=output_dir,
@@ -140,7 +135,6 @@ def _run_index(
     memprofile,
     cache,
     reporter,
-    emit,
     dry_run,
     skip_validation,
     output_dir,
@@ -189,7 +183,6 @@ def _run_index(
             is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_reporter=progress_reporter,
-            emit=emit,
         )
     )
     encountered_errors = any(

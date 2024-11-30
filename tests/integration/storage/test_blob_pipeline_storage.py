@@ -4,7 +4,7 @@
 
 import re
 
-from graphrag.index.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 
 # cspell:disable-next-line well-known-key
 WELL_KNOWN_BLOB_STORAGE_KEY = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"

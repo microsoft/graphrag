@@ -17,8 +17,8 @@ from datashaper import (
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units as create_final_text_units_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(name="create_final_text_units", treats_input_tables_as_immutable=True)

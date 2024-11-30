@@ -13,8 +13,8 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
-from graphrag.index.storage.pipeline_storage import PipelineStorage
 from graphrag.logging.base import ProgressReporter
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
@@ -305,8 +305,8 @@ def create_blob_storage(
         msg = "No storage account blob url provided for blob storage."
         raise ValueError(msg)
     return BlobPipelineStorage(
-        connection_string,
-        container_name,
+        connection_string=connection_string,
+        container_name=container_name,
         path_prefix=base_dir,
         storage_account_blob_url=storage_account_blob_url,
     )

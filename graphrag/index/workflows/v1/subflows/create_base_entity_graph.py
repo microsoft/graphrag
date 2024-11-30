@@ -14,11 +14,11 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_base_entity_graph import (
     create_base_entity_graph as create_base_entity_graph_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(

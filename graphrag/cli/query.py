@@ -15,7 +15,8 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logging.print_progress import PrintProgressReporter
-from graphrag.utils.storage import _create_storage, _load_table_from_storage
+from graphrag.storage.factory import create_storage
+from graphrag.utils.storage import _load_table_from_storage
 
 reporter = PrintProgressReporter("")
 
@@ -40,7 +41,6 @@ def run_global_search(
     resolve_paths(config)
 
     dataframe_dict = _resolve_parquet_files(
-        root_dir=root_dir,
         config=config,
         parquet_list=[
             "create_final_nodes.parquet",
@@ -126,7 +126,6 @@ def run_local_search(
 
     # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_parquet_files(
-        root_dir=root_dir,
         config=config,
         parquet_list=[
             "create_final_nodes.parquet",
@@ -217,7 +216,6 @@ def run_drift_search(
     resolve_paths(config)
 
     dataframe_dict = _resolve_parquet_files(
-        root_dir=root_dir,
         config=config,
         parquet_list=[
             "create_final_nodes.parquet",
@@ -261,7 +259,6 @@ def run_drift_search(
 
 
 def _resolve_parquet_files(
-    root_dir: Path,
     config: GraphRagConfig,
     parquet_list: list[str],
     optional_list: list[str] | None = None,
@@ -269,7 +266,7 @@ def _resolve_parquet_files(
     """Read parquet files to a dataframe dict."""
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
-    storage_obj = _create_storage(root_dir=root_dir, config=pipeline_config.storage)
+    storage_obj = create_storage(pipeline_config.storage)  # type: ignore
     for parquet_file in parquet_list:
         df_key = parquet_file.split(".")[0]
         df_value = asyncio.run(

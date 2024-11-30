@@ -16,7 +16,7 @@ from datashaper import (
 
 import graphrag.config.defaults as defaults
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports import (
     prep_community_report_context,
 )

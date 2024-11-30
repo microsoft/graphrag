@@ -6,7 +6,7 @@
 from pathlib import Path
 
 from graphrag.config.init_content import INIT_DOTENV, INIT_YAML
-from graphrag.logging.factories import create_progress_reporter
+from graphrag.logging.factory import create_progress_reporter
 from graphrag.logging.types import ReporterType
 from graphrag.prompts.index.claim_extraction import CLAIM_EXTRACTION_PROMPT
 from graphrag.prompts.index.community_report import (
