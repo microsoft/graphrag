@@ -4,8 +4,6 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-import time
-from typing import cast
 
 import pandas as pd
 from datashaper import (
