@@ -5,7 +5,6 @@
 
 import logging
 from io import BytesIO, StringIO
-from pathlib import Path
 
 import pandas as pd
 

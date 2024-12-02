@@ -10,10 +10,12 @@ from typing import cast
 from graphrag.config.enums import StorageType
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
+    PipelineCosmosDBStorageConfig,
     PipelineFileStorageConfig,
     PipelineStorageConfig,
 )
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
+from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import create_file_storage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 
@@ -30,6 +32,14 @@ def create_storage(config: PipelineStorageConfig):
                 config.storage_account_blob_url,
                 config.container_name,
                 config.base_dir,
+            )
+        case StorageType.cosmosdb:
+            config = cast(PipelineCosmosDBStorageConfig, config)
+            return create_cosmosdb_storage(
+                connection_string=config.connection_string,
+                cosmosdb_account_url=config.cosmosdb_account_url,
+                container_name=config.container_name,
+                base_dir=config.base_dir,
             )
         case StorageType.file:
             config = cast(PipelineFileStorageConfig, config)

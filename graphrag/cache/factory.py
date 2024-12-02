@@ -10,9 +10,11 @@ from typing import TYPE_CHECKING, cast
 from graphrag.config.enums import CacheType
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
+    PipelineCosmosDBCacheConfig,
     PipelineFileCacheConfig,
 )
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
@@ -49,6 +51,15 @@ def create_cache(
                 config.container_name,
                 storage_account_blob_url=config.storage_account_blob_url,
             ).child(config.base_dir)
+            return JsonPipelineCache(storage)
+        case CacheType.cosmosdb:
+            config = cast(PipelineCosmosDBCacheConfig, config)
+            storage = create_cosmosdb_storage(
+                cosmosdb_account_url=config.cosmosdb_account_url,
+                connection_string=config.connection_string,
+                container_name=config.container_name,
+                base_dir=config.base_dir,
+            )
             return JsonPipelineCache(storage)
         case _:
             msg = f"Unknown cache type: {config.type}"

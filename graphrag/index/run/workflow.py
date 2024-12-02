@@ -98,7 +98,7 @@ async def _process_workflow(
     context.stats.workflows[workflow_name] = {"overall": 0.0}
 
     await _inject_workflow_data_dependencies(
-        workflow, workflow_dependencies, dataset, context.storage, emitters[0].extension
+        workflow, workflow_dependencies, dataset, context.storage, "parquet"
     )
 
     workflow_start_time = time.time()

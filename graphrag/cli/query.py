@@ -42,7 +42,6 @@ def run_global_search(
     resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
-        root_dir=root_dir,
         config=config,
         output_list=[
             f"create_final_nodes.{output_filetype}",
@@ -129,7 +128,6 @@ def run_local_search(
 
     # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_output_files(
-        root_dir=root_dir,
         config=config,
         output_list=[
             f"create_final_nodes.{output_filetype}",
@@ -221,7 +219,6 @@ def run_drift_search(
     resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
-        root_dir=root_dir,
         config=config,
         output_list=[
             f"create_final_nodes.{output_filetype}",
@@ -265,7 +262,6 @@ def run_drift_search(
 
 
 def _resolve_output_files(
-    root_dir: Path,
     config: GraphRagConfig,
     output_list: list[str],
     optional_list: list[str] | None = None,
