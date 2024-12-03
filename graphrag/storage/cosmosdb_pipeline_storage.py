@@ -278,6 +278,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
         return self._current_container in container_names
 
 
+# TODO remove this helper function and have the factory instantiate the class directly
+# once the new config system is in place and will enforce the correct types/existence of certain fields
 def create_cosmosdb_storage(
     cosmosdb_account_url: str | None,
     connection_string: str | None,
