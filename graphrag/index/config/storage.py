@@ -81,17 +81,17 @@ class PipelineCosmosDBStorageConfig(
     """The cosmosdb storage primary key for the storage."""
 
     container_name: str = pydantic_Field(
-        description="The container name for storage", default=None
+        description="The container name for storage", default=""
     )
     """The container name for storage."""
 
     base_dir: str = pydantic_Field(
-        description="The base directory for the storage.", default=None
+        description="The base directory for the storage.", default=""
     )
     """The base directory for the storage."""
 
-    cosmosdb_account_url: str | None = pydantic_Field(
-        description="The cosmosdb account url.", default=None
+    cosmosdb_account_url: str = pydantic_Field(
+        description="The cosmosdb account url.", default=""
     )
     """The cosmosdb account url."""
 
