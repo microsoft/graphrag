@@ -15,7 +15,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logging.print_progress import PrintProgressReporter
-from graphrag.storage.factory import create_storage
+from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import _load_table_from_storage
 
 reporter = PrintProgressReporter("")
@@ -269,7 +269,10 @@ def _resolve_output_files(
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
-    storage_obj = create_storage(pipeline_config.storage)  # type: ignore
+    storage_config = pipeline_config.storage.model_dump()  # type: ignore
+    storage_obj = StorageFactory.create_storage(
+        storage_type=storage_config["type"], kwargs=storage_config
+    )
     for output_file in output_list:
         df_key = output_file.split(".")[0]
         df_value = asyncio.run(
