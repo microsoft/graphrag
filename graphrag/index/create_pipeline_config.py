@@ -415,7 +415,7 @@ def _get_storage_config(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=storage_settings.base_dir,
-                storage_account_blob_url=storage_account_blob_url,
+                storage_account_blob_url=storage_account_blob_url, # type: ignore
             )
         case StorageType.cosmosdb:
             cosmosdb_account_url = storage_settings.cosmosdb_account_url

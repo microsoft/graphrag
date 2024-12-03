@@ -52,17 +52,17 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     """The blob storage connection string for the storage."""
 
     container_name: str = pydantic_Field(
-        description="The container name for storage", default=None
+        description="The container name for storage", default=""
     )
     """The container name for storage."""
 
-    base_dir: str | None = pydantic_Field(
-        description="The base directory for the storage.", default=None
+    base_dir: str = pydantic_Field(
+        description="The base directory for the storage.", default=""
     )
     """The base directory for the storage."""
 
-    storage_account_blob_url: str | None = pydantic_Field(
-        description="The storage account blob url.", default=None
+    storage_account_blob_url: str = pydantic_Field(
+        description="The storage account blob url.", default=""
     )
     """The storage account blob url."""
 
