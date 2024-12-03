@@ -4,7 +4,6 @@
 """All the steps to transform final communities."""
 
 from datetime import datetime, timezone
-from typing import Any, cast
 from uuid import uuid4
 
 import pandas as pd
@@ -26,7 +25,7 @@ def create_final_communities(
     # these are limited to only those where the source and target are in the same community
     max_level = base_communities["level"].max()
     all_grouped = pd.DataFrame(
-        columns=cast(Any, ["community", "level", "relationship_ids", "text_unit_ids"])
+        columns=["community", "level", "relationship_ids", "text_unit_ids"]  # type: ignore
     )
     for level in range(max_level + 1):
         communities_at_level = base_communities.loc[base_communities["level"] == level]
