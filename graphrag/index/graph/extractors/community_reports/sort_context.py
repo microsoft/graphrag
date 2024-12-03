@@ -232,3 +232,131 @@ def sort_context_batch(
 
     # Return a DataFrame with the results
     return context_results.reset_index()
+
+
+def sort_context_batch_v2(
+    local_contexts: pd.DataFrame,
+    node_details_column: str = schemas.NODE_DETAILS,
+    edge_details_column: str = schemas.EDGE_DETAILS,
+    claim_details_column: str = schemas.CLAIM_DETAILS,
+    community_id_column: str = schemas.COMMUNITY_ID,
+    sub_community_reports: pd.DataFrame | None = None,
+    max_tokens: int | None = None,
+) -> pd.DataFrame:
+    """Batch processing for community context strings, including subcommunity reports."""
+
+    def generate_context(group):
+        # Explode and deduplicate edges, claims, and nodes
+        edges = pd.DataFrame(
+            group[edge_details_column].explode().dropna().tolist()
+        ).drop_duplicates()
+        claims = pd.DataFrame(
+            group[claim_details_column].dropna().tolist()
+        ).drop_duplicates()
+        nodes = pd.DataFrame(
+            group[node_details_column].dropna().tolist()
+        ).drop_duplicates()
+
+        # Sort edges by degree descending
+        if not edges.empty:
+            edges = edges.sort_values(
+                by=[schemas.EDGE_DEGREE, schemas.EDGE_ID],
+                ascending=[False, True],
+            )
+
+        # Initialize context elements
+        sorted_edges, sorted_nodes, sorted_claims = [], [], []
+        contexts = []
+
+        # Include sub-community reports
+        if sub_community_reports is not None:
+            reports = sub_community_reports[
+                sub_community_reports[community_id_column] == group.name
+            ]
+            if not reports.empty:
+                report_string = (
+                    f"----Reports-----\n{reports.to_csv(index=False, sep=',')}"
+                )
+                contexts.append(report_string)
+
+        # Incrementally add edges and their related data until token limit is reached
+        context_string = ""
+        for _, edge in edges.iterrows():
+            source = edge[schemas.EDGE_SOURCE]
+            target = edge[schemas.EDGE_TARGET]
+
+            # Add source and target node details
+            source_nodes = nodes[nodes[schemas.NODE_NAME] == source].to_dict("records")
+            target_nodes = nodes[nodes[schemas.NODE_NAME] == target].to_dict("records")
+
+            if len(source_nodes) > 0:
+                sorted_nodes.append(source_nodes[0])
+            if len(target_nodes) > 0:
+                sorted_nodes.append(target_nodes[0])
+
+            # Add claims for source and target
+            if len(claims) > 0:
+                related_claims = claims[
+                    claims[schemas.CLAIM_SUBJECT].isin([source, target])
+                ]
+                if len(related_claims) > 0:
+                    sorted_claims.extend(related_claims.to_dict("records"))
+
+            # Add the edge itself
+            sorted_edges.append(edge.to_dict())
+
+            # Generate a new context string
+            new_context_string = _get_context_string(
+                sorted_nodes, sorted_edges, sorted_claims, contexts
+            )
+            if max_tokens and num_tokens(new_context_string) > max_tokens:
+                break
+            context_string = new_context_string
+
+        context_string_len = num_tokens(context_string)
+        return pd.Series({
+            schemas.CONTEXT_STRING: context_string,
+            schemas.CONTEXT_SIZE: context_string_len,
+            schemas.CONTEXT_EXCEED_FLAG: context_string_len > max_tokens
+            if max_tokens
+            else False,
+            schemas.ALL_CONTEXT: group[schemas.ALL_CONTEXT].tolist(),
+        })
+
+    def _get_context_string(
+        entities: list[dict],
+        edges: list[dict],
+        claims: list[dict],
+        existing_contexts: list[str],
+    ) -> str:
+        """Concatenate structured data into a context string."""
+        contexts = (
+            existing_contexts.copy()
+        )  # Start with existing contexts (e.g., reports)
+        if entities:
+            entity_df = pd.DataFrame(entities).drop_duplicates()
+            contexts.append(
+                f"-----Entities-----\n{entity_df.to_csv(index=False, sep=',')}"
+            )
+
+        if claims:
+            claim_df = pd.DataFrame(claims).drop_duplicates()
+            contexts.append(
+                f"-----Claims-----\n{claim_df.to_csv(index=False, sep=',')}"
+            )
+
+        if edges:
+            edge_df = pd.DataFrame(edges).drop_duplicates()
+            contexts.append(
+                f"-----Relationships-----\n{edge_df.to_csv(index=False, sep=',')}"
+            )
+
+        return "\n\n".join(contexts)
+
+    # Group by community and process in bulk
+    context_results = local_contexts.groupby(community_id_column).apply(
+        generate_context
+    )
+
+    # Return a DataFrame with the results
+    return context_results.reset_index()
