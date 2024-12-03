@@ -51,7 +51,7 @@ class CosmosDBVectoreStore(BaseVectorStore):
             msg = "Database name must be provided."
             raise ValueError(msg)
         self._database_name = database_name
-        container_name = kwargs.get("collection_name")
+        container_name = self.collection_name
         if container_name is None:
             msg = "Container name must be provided."
             raise ValueError(msg)
