@@ -21,23 +21,23 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 @verb(name="create_final_nodes", treats_input_tables_as_immutable=True)
 async def create_final_nodes(
     callbacks: VerbCallbacks,
-    storage: PipelineStorage,
     runtime_storage: PipelineStorage,
     layout_strategy: dict[str, Any],
-    level_for_node_positions: int,
-    snapshot_top_level_nodes_enabled: bool = False,
+    embedding_strategy: dict[str, Any] | None = None,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final nodes."""
-    entity_graph = await runtime_storage.get("base_entity_graph")
+    base_entity_nodes = await runtime_storage.get("base_entity_nodes")
+    base_relationship_edges = await runtime_storage.get("base_relationship_edges")
+    base_communities = await runtime_storage.get("base_communities")
 
-    output = await create_final_nodes_flow(
-        entity_graph,
+    output = create_final_nodes_flow(
+        base_entity_nodes,
+        base_relationship_edges,
+        base_communities,
         callbacks,
-        storage,
         layout_strategy,
-        level_for_node_positions,
-        snapshot_top_level_nodes_enabled=snapshot_top_level_nodes_enabled,
+        embedding_strategy=embedding_strategy,
     )
 
     return create_verb_result(

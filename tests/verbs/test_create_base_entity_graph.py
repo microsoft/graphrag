@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import networkx as nx
 import pytest
 
 from graphrag.config.enums import LLMType
@@ -14,8 +13,8 @@ from graphrag.index.workflows.v1.create_base_entity_graph import (
 from .util import (
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 MOCK_LLM_ENTITY_RESPONSES = [
@@ -53,7 +52,10 @@ async def test_create_base_entity_graph():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])
-    expected = load_expected(workflow_name)
+
+    nodes_expected = load_test_table("base_entity_nodes")
+    edges_expected = load_test_table("base_relationship_edges")
+    communities_expected = load_test_table("base_communities")
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -74,61 +76,31 @@ async def test_create_base_entity_graph():
         context=context,
     )
 
-    actual = await context.runtime_storage.get("base_entity_graph")
+    # graph construction creates transient tables for nodes, edges, and communities
+    nodes_actual = await context.runtime_storage.get("base_entity_nodes")
+    edges_actual = await context.runtime_storage.get("base_relationship_edges")
+    communities_actual = await context.runtime_storage.get("base_communities")
 
-    assert len(actual.columns) == len(
-        expected.columns
-    ), "Graph dataframe columns differ"
-    # let's parse a sample of the raw graphml
-    actual_graphml_0 = actual["clustered_graph"][:1][0]
-    actual_graph_0 = nx.parse_graphml(actual_graphml_0)
+    assert len(nodes_actual.columns) == len(
+        nodes_expected.columns
+    ), "Nodes dataframe columns differ"
 
-    assert actual_graph_0.number_of_nodes() == 3
-    assert actual_graph_0.number_of_edges() == 2
+    assert len(edges_actual.columns) == len(
+        edges_expected.columns
+    ), "Edges dataframe columns differ"
+
+    assert len(communities_actual.columns) == len(
+        communities_expected.columns
+    ), "Edges dataframe columns differ"
 
     # TODO: with the combined verb we can't force summarization
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized
     # we need to update the mocking to provide somewhat unique graphs so a true merge happens
     # the assertion should grab a node and ensure the description matches the mock description, not the original as we are doing below
-    nodes = list(actual_graph_0.nodes(data=True))
-    assert nodes[0][1]["description"] == "Company_A is a test company"
+
+    assert nodes_actual["description"].values[0] == "Company_A is a test company"  # noqa
 
     assert len(context.storage.keys()) == 0, "Storage should be empty"
-
-
-async def test_create_base_entity_graph_with_embeddings():
-    input_tables = load_input_tables([
-        "workflow:create_base_text_units",
-    ])
-    expected = load_expected(workflow_name)
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
-    )
-
-    config = get_config_for_workflow(workflow_name)
-
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
-    config["embed_graph_enabled"] = True
-
-    steps = build_steps(config)
-
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
-
-    actual = await context.runtime_storage.get("base_entity_graph")
-
-    assert (
-        len(actual.columns) == len(expected.columns) + 1
-    ), "Graph dataframe missing embedding column"
-    assert "embeddings" in actual.columns, "Graph dataframe missing embedding column"
 
 
 async def test_create_base_entity_graph_with_snapshots():
@@ -145,7 +117,6 @@ async def test_create_base_entity_graph_with_snapshots():
 
     config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
     config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
-    config["snapshot_raw_entities"] = True
     config["snapshot_graphml"] = True
     config["snapshot_transient"] = True
     config["embed_graph_enabled"] = True  # need this on in order to see the snapshot
@@ -161,12 +132,10 @@ async def test_create_base_entity_graph_with_snapshots():
     )
 
     assert context.storage.keys() == [
-        "raw_extracted_entities.json",
-        "merged_graph.graphml",
-        "summarized_graph.graphml",
-        "clustered_graph.graphml",
-        "embedded_graph.graphml",
-        "create_base_entity_graph.parquet",
+        "graph.graphml",
+        "base_entity_nodes.parquet",
+        "base_relationship_edges.parquet",
+        "base_communities.parquet",
     ], "Graph snapshot keys differ"
 
 
