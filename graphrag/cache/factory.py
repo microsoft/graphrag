@@ -21,7 +21,10 @@ from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 
 
 class CacheFactory:
-    """A factory class for cache implementations."""
+    """A factory class for cache implementations.
+
+    Includes a method for users to register a custom cache implementation.
+    """
 
     cache_types: ClassVar[dict[str, type]] = {}
 

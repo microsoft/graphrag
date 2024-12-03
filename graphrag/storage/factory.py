@@ -18,7 +18,10 @@ if TYPE_CHECKING:
 
 
 class StorageFactory:
-    """A factory class for storage implementations."""
+    """A factory class for storage implementations.
+
+    Includes a method for users to register a custom storage implementation.
+    """
 
     storage_types: ClassVar[dict[str, type]] = {}
 
