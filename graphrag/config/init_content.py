@@ -71,7 +71,7 @@ reporting:
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 storage:
-  type: {defs.STORAGE_TYPE.value} # one of [blob, cosmodb, file]
+  type: {defs.STORAGE_TYPE.value} # one of [blob, cosmosdb, file]
   base_dir: "{defs.STORAGE_BASE_DIR}"
 
 ## only turn this on if running `graphrag index` with custom settings
