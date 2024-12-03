@@ -134,23 +134,25 @@ def _merge_relationships(relationship_dfs) -> pd.DataFrame:
 def _prep_nodes(entities, summaries, graph) -> pd.DataFrame:
     degrees_df = _compute_degree(graph)
     entities.drop(columns=["description"], inplace=True)
-    nodes = entities.merge(summaries, on="name", how="left")
-    nodes = nodes.merge(degrees_df, on="name")
-    nodes = nodes.drop_duplicates(subset="name")
-    nodes = nodes.loc[nodes["name"].notna()]
-    nodes.reset_index(inplace=True)
-    nodes.rename(columns={"name": "title", "source_id": "text_unit_ids"}, inplace=True)
+    nodes = (
+        entities.merge(summaries, on="name", how="left")
+        .merge(degrees_df, on="name")
+        .drop_duplicates(subset="name")
+        .rename(columns={"name": "title", "source_id": "text_unit_ids"})
+    )
+    nodes = nodes.loc[nodes["title"].notna()].reset_index()
     nodes["human_readable_id"] = nodes.index
     nodes["id"] = nodes["human_readable_id"].apply(lambda _x: str(uuid4()))
     return nodes
 
 
 def _prep_edges(relationships, summaries) -> pd.DataFrame:
-    edges = relationships.drop(columns=["description"])
-    edges = edges.drop_duplicates(subset=["source", "target"])
-    edges = edges.merge(summaries, on=["source", "target"], how="left")
-    edges["id"] = edges["description"].apply(lambda _x: str(uuid4()))
-    edges.rename(columns={"source_id": "text_unit_ids"}, inplace=True)
+    edges = (
+        relationships.drop(columns=["description"])
+        .drop_duplicates(subset=["source", "target"])
+        .merge(summaries, on=["source", "target"], how="left")
+        .rename(columns={"source_id": "text_unit_ids"})
+    )
     edges["human_readable_id"] = edges.index
     edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
     return edges
