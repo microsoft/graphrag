@@ -66,7 +66,7 @@ def create_final_communities(
 
     # add fields for incremental update tracking
     communities["period"] = datetime.now(timezone.utc).date().isoformat()
-    communities["size"] = communities.loc[:, "entity_ids"].apply(lambda x: len(x))
+    communities["size"] = communities.loc[:, "entity_ids"].apply(len)
 
     return communities.loc[
         :,
