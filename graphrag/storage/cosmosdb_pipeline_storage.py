@@ -17,8 +17,7 @@ from azure.identity import DefaultAzureCredential
 from datashaper import Progress
 
 from graphrag.logging.base import ProgressReporter
-
-from .pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
@@ -249,7 +248,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         msg = "CosmosDB storage does yet not support listing keys."
         raise NotImplementedError(msg)
 
-    def child(self, name: str | None) -> "PipelineStorage":
+    def child(self, name: str | None) -> PipelineStorage:
         """Create a child storage instance."""
         return self
 
@@ -280,15 +279,14 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
 # TODO remove this helper function and have the factory instantiate the class directly
 # once the new config system is in place and will enforce the correct types/existence of certain fields
-def create_cosmosdb_storage(
-    cosmosdb_account_url: str | None,
-    connection_string: str | None,
-    base_dir: str,
-    container_name: str | None,
-) -> PipelineStorage:
+def create_cosmosdb_storage(**kwargs: Any) -> PipelineStorage:
     """Create a CosmosDB storage instance."""
     log.info("Creating cosmosdb storage")
-    if base_dir is None:
+    cosmosdb_account_url = kwargs.get("cosmosdb_account_url")
+    connection_string = kwargs.get("connection_string")
+    base_dir = kwargs.get("base_dir")
+    container_name = kwargs.get("container_name")
+    if not base_dir:
         msg = "No base_dir provided for database name"
         raise ValueError(msg)
     if connection_string is None and cosmosdb_account_url is None:

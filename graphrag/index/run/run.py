@@ -14,11 +14,10 @@ from typing import cast
 import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
-from graphrag.cache.factory import create_cache
+from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.factory import create_pipeline_reporter
-from graphrag.index.config.cache import PipelineMemoryCacheConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
@@ -112,8 +111,13 @@ async def run_pipeline_with_config(
             or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
         )
 
-    # TODO: remove the default choice (PipelineMemoryCacheConfig) when the new config system guarantees the existence of a cache config
-    cache = cache or create_cache(config.cache or PipelineMemoryCacheConfig(), root_dir)
+    # TODO: remove the type ignore when the new config system guarantees the existence of a cache config
+    cache_config = config.cache.model_dump()  # type: ignore
+    cache = cache or CacheFactory.create_cache(
+        cache_type=cache_config["type"],  # type: ignore
+        root_dir=root_dir,
+        kwargs=cache_config,
+    )
     callbacks = (
         create_pipeline_reporter(config.reporting, root_dir)
         if config.reporting
