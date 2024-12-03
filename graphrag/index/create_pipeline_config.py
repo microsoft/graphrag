@@ -472,7 +472,7 @@ def _get_cache_config(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.cache.base_dir,
-                storage_account_blob_url=storage_account_blob_url,
+                storage_account_blob_url=storage_account_blob_url,  # type: ignore
             )
         case CacheType.cosmosdb:
             cosmosdb_account_url = settings.cache.cosmosdb_account_url
@@ -489,7 +489,7 @@ def _get_cache_config(
                 msg = "Connection string or cosmosDB account url must be provided for cosmosdb cache."
                 raise ValueError(msg)
             return PipelineCosmosDBCacheConfig(
-                cosmosdb_account_url=cosmosdb_account_url,
+                cosmosdb_account_url=cosmosdb_account_url,  # type: ignore
                 connection_string=connection_string,
                 base_dir=base_dir,
                 container_name=container_name,

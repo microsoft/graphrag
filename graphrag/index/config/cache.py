@@ -53,8 +53,8 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     type: Literal[CacheType.blob] = CacheType.blob
     """The type of cache."""
 
-    base_dir: str | None = pydantic_Field(
-        description="The base directory for the cache.", default=None
+    base_dir: str = pydantic_Field(
+        description="The base directory for the cache.", default=""
     )
     """The base directory for the cache."""
 
@@ -64,12 +64,12 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     """The blob cache connection string for the cache."""
 
     container_name: str = pydantic_Field(
-        description="The container name for cache", default=None
+        description="The container name for cache", default=""
     )
     """The container name for cache"""
 
-    storage_account_blob_url: str | None = pydantic_Field(
-        description="The storage account blob url for cache", default=None
+    storage_account_blob_url: str = pydantic_Field(
+        description="The storage account blob url for cache", default=""
     )
     """The storage account blob url for cache"""
 
@@ -81,12 +81,12 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     """The type of cache."""
 
     base_dir: str = pydantic_Field(
-        description="The cosmosdb database name for the cache.", default=None
+        description="The cosmosdb database name for the cache.", default=""
     )
     """The cosmosdb database name for the cache."""
 
     container_name: str = pydantic_Field(
-        description="The container name for cache.", default=None
+        description="The container name for cache.", default=""
     )
     """The container name for cache."""
 
@@ -95,8 +95,8 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     )
     """The cosmosdb primary key for the cache."""
 
-    cosmosdb_account_url: str | None = pydantic_Field(
-        description="The cosmosdb account url for cache", default=None
+    cosmosdb_account_url: str = pydantic_Field(
+        description="The cosmosdb account url for cache", default=""
     )
     """The cosmosdb account url for cache"""
 
