@@ -39,7 +39,7 @@ class CosmosDBVectoreStore(BaseVectorStore):
             )
         else:
             if cosmosdb_account_url is None:
-                msg = "Either connection_string or cosmosdb_accoun_url must be provided."
+                msg = "Either connection_string or cosmosdb_account_url must be provided."
                 raise ValueError(msg)
             self._cosmos_client = CosmosClient(
                 url=cosmosdb_account_url,
@@ -51,7 +51,7 @@ class CosmosDBVectoreStore(BaseVectorStore):
             msg = "Database name must be provided."
             raise ValueError(msg)
         self._database_name = database_name
-        container_name = kwargs.get("container_name")
+        container_name = kwargs.get("collection_name")
         if container_name is None:
             msg = "Container name must be provided."
             raise ValueError(msg)
