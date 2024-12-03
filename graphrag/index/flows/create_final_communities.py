@@ -51,7 +51,7 @@ def create_final_communities(
             grouped.loc[:, ["community", "level", "relationship_ids", "text_unit_ids"]],
         ])
 
-    # dedup the lists
+    # deduplicate the lists
     all_grouped["relationship_ids"] = all_grouped["relationship_ids"].apply(
         lambda x: sorted(set(x))
     )
