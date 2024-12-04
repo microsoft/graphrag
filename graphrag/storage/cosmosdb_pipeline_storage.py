@@ -233,8 +233,18 @@ class CosmosDBPipelineStorage(PipelineStorage):
             )
             container_client.delete_item(item=key, partition_key=key)
 
+    # Function currently deletes all items within the current container, then deletes the container itself.
+    # TODO: Decide the granularity of deletion (e.g. delete all items within the current container, delete the current container, delete the current database)
     async def clear(self) -> None:
         """Clear the cosmosdb storage."""
+        if self._current_container:
+            container_client = self._database_client.get_container_client(
+                self._current_container
+            )
+            for item in container_client.read_all_items():
+                item_id = item["id"]
+                container_client.delete_item(item=item_id, partition_key=item_id)
+            self._delete_container()
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
