@@ -143,6 +143,9 @@ async def _text_embed_with_vector_store(
     insert_batch_size: int = (
         vector_store_config.get("batch_size") or DEFAULT_EMBEDDING_BATCH_SIZE
     )
+    
+    
+    input[embed_column] = input[embed_column].fillna(" ")
 
     overwrite: bool = vector_store_config.get("overwrite", True)
 
