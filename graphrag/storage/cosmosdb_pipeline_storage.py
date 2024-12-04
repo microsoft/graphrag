@@ -36,10 +36,10 @@ class CosmosDBPipelineStorage(PipelineStorage):
         cosmosdb_account_url: str | None,
         connection_string: str | None,
         database_name: str,
-        encoding: str | None = None,
+        encoding: str = "utf-8",
         current_container: str | None = None,
     ):
-        """Initialize the CosmosDB-Storage."""
+        """Initialize the CosmosDB Storage."""
         if connection_string:
             self._cosmos_client = CosmosClient.from_connection_string(connection_string)
         else:
@@ -54,11 +54,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 credential=DefaultAzureCredential(),
             )
 
-        self._encoding = encoding or "utf-8"
+        self._encoding = encoding
         self._database_name = database_name
         self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url
-        self._current_container = current_container or None
+        self._current_container = current_container
         self._cosmosdb_account_name = (
             cosmosdb_account_url.split("//")[1].split(".")[0]
             if cosmosdb_account_url
@@ -73,27 +73,25 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._cosmosdb_account_name,
             self._database_name,
         )
-        self.create_database()
-        if self._current_container is not None:
-            self.create_container()
+        self._create_database()
+        if self._current_container:
+            self._create_container()
 
-    def create_database(self) -> None:
+    def _create_database(self) -> None:
         """Create the database if it doesn't exist."""
-        database_name = self._database_name
-        self._cosmos_client.create_database_if_not_exists(id=database_name)
+        self._cosmos_client.create_database_if_not_exists(id=self._database_name)
 
-    def delete_database(self) -> None:
+    def _delete_database(self) -> None:
         """Delete the database if it exists."""
-        if self.database_exists():
+        if self._database_exists():
             self._cosmos_client.delete_database(self._database_name)
 
-    def database_exists(self) -> bool:
+    def _database_exists(self) -> bool:
         """Check if the database exists."""
-        database_name = self._database_name
         database_names = [
             database["id"] for database in self._cosmos_client.list_databases()
         ]
-        return database_name in database_names
+        return self._database_name in database_names
 
     def find(
         self,
@@ -131,8 +129,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             )
 
         try:
-            database_client = self._database_client
-            container_client = database_client.get_container_client(
+            container_client = self._database_client.get_container_client(
                 str(self._current_container)
             )
             query = "SELECT * FROM c WHERE CONTAINS(c.id, @pattern)"
@@ -176,9 +173,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
     ) -> Any:
         """Get a file in the database for the given key."""
         try:
-            database_client = self._database_client
-            if self._current_container is not None:
-                container_client = database_client.get_container_client(
+            if self._current_container:
+                container_client = self._database_client.get_container_client(
                     self._current_container
                 )
                 item = container_client.read_item(item=key, partition_key=key)
@@ -199,9 +195,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set a file in the database for the given key."""
         try:
-            database_client = self._database_client
-            if self._current_container is not None:
-                container_client = database_client.get_container_client(
+            if self._current_container:
+                container_client = self._database_client.get_container_client(
                     self._current_container
                 )
                 if isinstance(value, bytes):
@@ -222,9 +217,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Check if the given file exists in the cosmosdb storage."""
-        database_client = self._database_client
-        if self._current_container is not None:
-            container_client = database_client.get_container_client(
+        if self._current_container:
+            container_client = self._database_client.get_container_client(
                 self._current_container
             )
             item_names = [item["id"] for item in container_client.read_all_items()]
@@ -233,9 +227,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def delete(self, key: str) -> None:
         """Delete the given file from the cosmosdb storage."""
-        database_client = self._database_client
-        if self._current_container is not None:
-            container_client = database_client.get_container_client(
+        if self._current_container:
+            container_client = self._database_client.get_container_client(
                 self._current_container
             )
             container_client.delete_item(item=key, partition_key=key)
@@ -252,27 +245,24 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """Create a child storage instance."""
         return self
 
-    def create_container(self) -> None:
+    def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
-        database_client = self._database_client
-        if self._current_container is not None:
+        if self._current_container:
             partition_key = PartitionKey(path="/id", kind="Hash")
-            database_client.create_container_if_not_exists(
+            self._database_client.create_container_if_not_exists(
                 id=self._current_container,
                 partition_key=partition_key,
             )
 
-    def delete_container(self) -> None:
+    def _delete_container(self) -> None:
         """Delete the container with the current container name if it exists."""
-        database_client = self._database_client
-        if self.container_exists() and self._current_container is not None:
-            database_client.delete_container(self._current_container)
+        if self._container_exists() and self._current_container:
+            self._database_client.delete_container(self._current_container)
 
-    def container_exists(self) -> bool:
+    def _container_exists(self) -> bool:
         """Check if the container with the current container name exists."""
-        database_client = self._database_client
         container_names = [
-            container["id"] for container in database_client.list_containers()
+            container["id"] for container in self._database_client.list_containers()
         ]
         return self._current_container in container_names
 
