@@ -51,11 +51,11 @@ class CosmosDBVectoreStore(BaseVectorStore):
             msg = "Database name must be provided."
             raise ValueError(msg)
         self._database_name = database_name
-        container_name = self.collection_name
-        if container_name is None:
-            msg = "Container name must be provided."
+        collection_name = self.collection_name
+        if collection_name is None:
+            msg = "Collection name is empty or not provided."
             raise ValueError(msg)
-        self._container_name = container_name
+        self._container_name = collection_name
 
         self.vector_size = kwargs.get("vector_size", DEFAULT_VECTOR_SIZE)
         self.create_database()
