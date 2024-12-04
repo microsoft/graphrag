@@ -60,7 +60,7 @@ def create_final_communities(
 
     # join it all up and add some new fields
     communities = all_grouped.merge(entity_ids, on="community", how="inner")
-    communities["id"] = communities["community"].apply(lambda _x: str(uuid4()))
+    communities["id"] = [str(uuid4()) for _ in range(len(communities))]
     communities["human_readable_id"] = communities["community"]
     communities["title"] = "Community " + communities["community"].astype(str)
 
