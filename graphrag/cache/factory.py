@@ -35,7 +35,7 @@ class CacheFactory:
 
     @classmethod
     def create_cache(
-        cls, cache_type: CacheType | str | None, root_dir: str | None, kwargs: dict
+        cls, cache_type: CacheType | str | None, root_dir: str, kwargs: dict
     ) -> PipelineCache:
         """Create or get a cache from the provided type."""
         if not cache_type:
@@ -47,7 +47,7 @@ class CacheFactory:
                 return InMemoryCache()
             case CacheType.file:
                 return JsonPipelineCache(
-                    FilePipelineStorage(root_dir).child(kwargs["base_dir"])
+                    FilePipelineStorage(root_dir=root_dir).child(kwargs["base_dir"])
                 )
             case CacheType.blob:
                 return JsonPipelineCache(BlobPipelineStorage(**kwargs))

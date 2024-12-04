@@ -28,7 +28,6 @@ def run_global_search(
     community_level: int | None,
     dynamic_community_selection: bool,
     response_type: str,
-    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -44,10 +43,10 @@ def run_global_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            f"create_final_nodes.{output_filetype}",
-            f"create_final_entities.{output_filetype}",
-            f"create_final_communities.{output_filetype}",
-            f"create_final_community_reports.{output_filetype}",
+            "create_final_nodes.parquet",
+            "create_final_entities.parquet",
+            "create_final_communities.parquet",
+            "create_final_community_reports.parquet",
         ],
         optional_list=[],
     )
@@ -113,7 +112,6 @@ def run_local_search(
     root_dir: Path,
     community_level: int,
     response_type: str,
-    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -130,14 +128,14 @@ def run_local_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            f"create_final_nodes.{output_filetype}",
-            f"create_final_community_reports.{output_filetype}",
-            f"create_final_text_units.{output_filetype}",
-            f"create_final_relationships.{output_filetype}",
-            f"create_final_entities.{output_filetype}",
+            "create_final_nodes.parquet",
+            "create_final_community_reports.parquet",
+            "create_final_text_units.parquet",
+            "create_final_relationships.parquet",
+            "create_final_entities.parquet",
         ],
         optional_list=[
-            f"create_final_covariates.{output_filetype}",
+            "create_final_covariates.parquet",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
@@ -205,7 +203,6 @@ def run_drift_search(
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
-    output_filetype: str,
     streaming: bool,
     query: str,
 ):
@@ -221,11 +218,11 @@ def run_drift_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            f"create_final_nodes.{output_filetype}",
-            f"create_final_community_reports.{output_filetype}",
-            f"create_final_text_units.{output_filetype}",
-            f"create_final_relationships.{output_filetype}",
-            f"create_final_entities.{output_filetype}",
+            "create_final_nodes.parquet",
+            "create_final_community_reports.parquet",
+            "create_final_text_units.parquet",
+            "create_final_relationships.parquet",
+            "create_final_entities.parquet",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
