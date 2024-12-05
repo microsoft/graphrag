@@ -59,8 +59,8 @@ def _prepare_reports_at_level(
 
     # Filter and prepare edge details
     level_edge_df = edge_df[
-        edge_df[schemas.EDGE_SOURCE].isin(nodes_set)
-        & edge_df[schemas.EDGE_TARGET].isin(nodes_set)
+        edge_df.loc[:, schemas.EDGE_SOURCE].isin(nodes_set)
+        & edge_df.loc[:, schemas.EDGE_TARGET].isin(nodes_set)
     ]
     level_edge_df.loc[:, schemas.EDGE_DETAILS] = level_edge_df.loc[
         :,
@@ -75,7 +75,9 @@ def _prepare_reports_at_level(
 
     level_claim_df = pd.DataFrame()
     if claim_df is not None:
-        level_claim_df = claim_df[claim_df[schemas.CLAIM_SUBJECT].isin(nodes_set)]
+        level_claim_df = claim_df[
+            claim_df.loc[:, schemas.CLAIM_SUBJECT].isin(nodes_set)
+        ]
 
     # Merge node and edge details
     # Group edge details by node and aggregate into lists
@@ -99,9 +101,9 @@ def _prepare_reports_at_level(
     ).merge(target_edges, on=schemas.NODE_NAME, how="left")
 
     # Combine source and target edge details into a single column
-    merged_node_df.loc[:, schemas.EDGE_DETAILS] = merged_node_df[
-        f"{schemas.EDGE_DETAILS}_x"
-    ].combine_first(merged_node_df[f"{schemas.EDGE_DETAILS}_y"])
+    merged_node_df.loc[:, schemas.EDGE_DETAILS] = merged_node_df.loc[
+        :, f"{schemas.EDGE_DETAILS}_x"
+    ].combine_first(merged_node_df.loc[:, f"{schemas.EDGE_DETAILS}_y"])
 
     # Drop intermediate columns
     merged_node_df.drop(
@@ -128,9 +130,9 @@ def _prepare_reports_at_level(
     # Merge claim details if available
     if claim_df is not None:
         merged_node_df = merged_node_df.merge(
-            level_claim_df[[schemas.CLAIM_SUBJECT, schemas.CLAIM_DETAILS]].rename(
-                columns={schemas.CLAIM_SUBJECT: schemas.NODE_NAME}
-            ),
+            level_claim_df.loc[
+                :, [schemas.CLAIM_SUBJECT, schemas.CLAIM_DETAILS]
+            ].rename(columns={schemas.CLAIM_SUBJECT: schemas.NODE_NAME}),
             on=schemas.NODE_NAME,
             how="left",
         )
