@@ -31,7 +31,7 @@ def prep_community_report_context(
     report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
-    level: int | str,
+    level: int ,
     max_tokens: int,
 ) -> pd.DataFrame:
     """
@@ -44,15 +44,14 @@ def prep_community_report_context(
     if report_df is None:
         report_df = pd.DataFrame()
 
-    level = int(level)
     # Filter by community level
     level_context_df = local_context_df[
         local_context_df[schemas.COMMUNITY_LEVEL] == level
     ]
 
     # Filter valid and invalid contexts using boolean logic
-    valid_context_df = local_context_df[~local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
-    invalid_context_df = local_context_df[local_context_df[schemas.CONTEXT_EXCEED_FLAG]]
+    valid_context_df = level_context_df[~level_context_df[schemas.CONTEXT_EXCEED_FLAG]]
+    invalid_context_df = level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG]]
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities

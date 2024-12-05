@@ -84,7 +84,7 @@ async def create_final_community_reports(
 
     community_reports["community"] = community_reports["community"].astype(int)
     community_reports["human_readable_id"] = community_reports["community"]
-    community_reports["id"] = [str(uuid4()) for _ in range(len(community_reports))]
+    community_reports["id"] = [uuid4().hex for _ in range(len(community_reports))]
 
     # Merge with communities to add size and period
     merged = community_reports.merge(

@@ -13,7 +13,7 @@ from datashaper import (
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
 from graphrag.index.graph.extractors.community_reports.sort_context import (
-    sort_context_batch,
+    parallel_sort_context_batch,
 )
 from graphrag.index.graph.extractors.community_reports.utils import get_levels
 
@@ -29,12 +29,14 @@ def prepare_community_reports(
 ):
     """Prep communities for report generation."""
     levels = get_levels(nodes, schemas.NODE_LEVEL)
+
     dfs = []
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):
         communities_at_level_df = _prepare_reports_at_level(
             nodes, edges, claims, level, max_tokens
         )
+
         communities_at_level_df.loc[:, schemas.COMMUNITY_LEVEL] = level
         dfs.append(communities_at_level_df)
 
@@ -50,7 +52,7 @@ def _prepare_reports_at_level(
     max_tokens: int = 16_000,
 ) -> pd.DataFrame:
     """Prepare reports at a given level."""
-    # Filter nodes to the specified level
+    # Filter and prepare node details
     level_node_df = node_df[node_df[schemas.NODE_LEVEL] == level]
     log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
     nodes_set = set(level_node_df[schemas.NODE_NAME])
@@ -144,13 +146,20 @@ def _prepare_reports_at_level(
                 schemas.EDGE_DETAILS,
             ],
         ]
-        .assign(**{schemas.CLAIM_DETAILS: merged_node_df[schemas.CLAIM_DETAILS]})
+        .assign(**{schemas.CLAIM_DETAILS: merged_node_df[schemas.CLAIM_DETAILS]} if claim_df is not None else {})
         .to_dict(orient="records")
     )
 
+    # group all node details by community
+    community_df = (
+        merged_node_df.groupby(schemas.NODE_COMMUNITY)
+        .agg({schemas.ALL_CONTEXT: list})
+        .reset_index()
+    )
+
     # Generate community-level context strings using vectorized batch processing
-    community_df = sort_context_batch(
-        merged_node_df,
+    community_df = parallel_sort_context_batch(
+        community_df,
         max_tokens=max_tokens,
     )
 
