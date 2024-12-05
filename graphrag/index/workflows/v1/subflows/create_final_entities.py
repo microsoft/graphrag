@@ -7,7 +7,6 @@ from typing import cast
 
 from datashaper import (
     Table,
-    VerbCallbacks,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
@@ -23,16 +22,12 @@ from graphrag.storage.pipeline_storage import PipelineStorage
     treats_input_tables_as_immutable=True,
 )
 async def create_final_entities(
-    callbacks: VerbCallbacks,
     runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final entities."""
-    entity_graph = await runtime_storage.get("base_entity_graph")
+    base_entity_nodes = await runtime_storage.get("base_entity_nodes")
 
-    output = create_final_entities_flow(
-        entity_graph,
-        callbacks,
-    )
+    output = create_final_entities_flow(base_entity_nodes)
 
     return create_verb_result(cast(Table, output))

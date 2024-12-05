@@ -7,7 +7,7 @@ import asyncio
 import logging
 from typing import Any
 
-import networkx as nx
+import pandas as pd
 from datashaper import (
     ProgressTicker,
     VerbCallbacks,
@@ -24,12 +24,13 @@ log = logging.getLogger(__name__)
 
 
 async def summarize_descriptions(
-    input: nx.Graph,
+    entities_df: pd.DataFrame,
+    relationships_df: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
-) -> nx.Graph:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Summarize entity and relationship descriptions from an entity graph.
 
@@ -78,50 +79,67 @@ async def summarize_descriptions(
     )
     strategy_config = {**strategy}
 
-    async def get_resolved_entities(graph: nx.Graph, semaphore: asyncio.Semaphore):
-        ticker_length = len(graph.nodes) + len(graph.edges)
+    async def get_summarized(
+        nodes: pd.DataFrame, edges: pd.DataFrame, semaphore: asyncio.Semaphore
+    ):
+        ticker_length = len(nodes) + len(edges)
 
         ticker = progress_ticker(callbacks.progress, ticker_length)
 
-        futures = [
+        node_futures = [
             do_summarize_descriptions(
-                node,
-                sorted(set(graph.nodes[node].get("description", "").split("\n"))),
+                str(row[1]["name"]),
+                sorted(set(row[1]["description"])),
                 ticker,
                 semaphore,
             )
-            for node in graph.nodes()
+            for row in nodes.iterrows()
         ]
-        futures += [
+
+        node_results = await asyncio.gather(*node_futures)
+
+        node_descriptions = [
+            {
+                "name": result.id,
+                "description": result.description,
+            }
+            for result in node_results
+        ]
+
+        edge_futures = [
             do_summarize_descriptions(
-                edge,
-                sorted(set(graph.edges[edge].get("description", "").split("\n"))),
+                (str(row[1]["source"]), str(row[1]["target"])),
+                sorted(set(row[1]["description"])),
                 ticker,
                 semaphore,
             )
-            for edge in graph.edges()
+            for row in edges.iterrows()
         ]
 
-        results = await asyncio.gather(*futures)
+        edge_results = await asyncio.gather(*edge_futures)
 
-        for result in results:
-            graph_item = result.items
-            if isinstance(graph_item, str) and graph_item in graph.nodes():
-                graph.nodes[graph_item]["description"] = result.description
-            elif isinstance(graph_item, tuple) and graph_item in graph.edges():
-                graph.edges[graph_item]["description"] = result.description
+        edge_descriptions = [
+            {
+                "source": result.id[0],
+                "target": result.id[1],
+                "description": result.description,
+            }
+            for result in edge_results
+        ]
 
-        return graph
+        entity_descriptions = pd.DataFrame(node_descriptions)
+        relationship_descriptions = pd.DataFrame(edge_descriptions)
+        return entity_descriptions, relationship_descriptions
 
     async def do_summarize_descriptions(
-        graph_item: str | tuple[str, str],
+        id: str | tuple[str, str],
         descriptions: list[str],
         ticker: ProgressTicker,
         semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
             results = await strategy_exec(
-                graph_item,
+                id,
                 descriptions,
                 callbacks,
                 cache,
@@ -132,7 +150,7 @@ async def summarize_descriptions(
 
     semaphore = asyncio.Semaphore(num_threads)
 
-    return await get_resolved_entities(input, semaphore)
+    return await get_summarized(entities_df, relationships_df, semaphore)
 
 
 def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy:
