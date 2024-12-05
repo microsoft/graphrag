@@ -31,7 +31,7 @@ def prep_community_report_context(
     report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
-    level: int ,
+    level: int,
     max_tokens: int,
 ) -> pd.DataFrame:
     """

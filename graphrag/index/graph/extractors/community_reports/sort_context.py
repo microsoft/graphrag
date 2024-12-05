@@ -37,7 +37,9 @@ def sort_context(
         if sub_community_reports:
             report_df = pd.DataFrame(sub_community_reports)
             if not report_df.empty:
-                contexts.append(f"----Reports-----\n{report_df.to_csv(index=False, sep=',')}")
+                contexts.append(
+                    f"----Reports-----\n{report_df.to_csv(index=False, sep=',')}"
+                )
 
         for label, data in [
             ("Entities", entities),
@@ -47,7 +49,9 @@ def sort_context(
             if data:
                 df = pd.DataFrame(data)
                 if not df.empty:
-                    contexts.append(f"-----{label}-----\n{df.to_csv(index=False, sep=',')}")
+                    contexts.append(
+                        f"-----{label}-----\n{df.to_csv(index=False, sep=',')}"
+                    )
 
         return "\n\n".join(contexts)
 
@@ -73,7 +77,8 @@ def sort_context(
             for c in record.get(claim_details_column, [])
             if isinstance(c, dict) and c.get(schemas.CLAIM_ID) is not None
         ]
-        for record in local_context if isinstance(record.get(claim_details_column), list)
+        for record in local_context
+        if isinstance(record.get(claim_details_column), list)
     }
 
     # Sort edges by degree (desc) and ID (asc)
@@ -120,29 +125,33 @@ def sort_context(
     )
 
 
-
-
-def parallel_sort_context_batch(community_df, max_tokens, parallel = False):
+def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
     """Calculate context using parallelization if enabled"""
     if parallel:
-         # Use ThreadPoolExecutor for parallel execution
+        # Use ThreadPoolExecutor for parallel execution
         from concurrent.futures import ThreadPoolExecutor
 
         with ThreadPoolExecutor(max_workers=None) as executor:
-            context_strings = list(executor.map(
-                lambda x: sort_context(x, max_tokens=max_tokens),
-                community_df[schemas.ALL_CONTEXT]
-            ))
+            context_strings = list(
+                executor.map(
+                    lambda x: sort_context(x, max_tokens=max_tokens),
+                    community_df[schemas.ALL_CONTEXT],
+                )
+            )
         community_df[schemas.CONTEXT_STRING] = context_strings
 
     else:
         # Assign context strings directly to the DataFrame
         community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-            lambda context_list : sort_context(context_list, max_tokens=max_tokens)
+            lambda context_list: sort_context(context_list, max_tokens=max_tokens)
         )
 
     # Calculate other columns
-    community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(num_tokens)
-    community_df[schemas.CONTEXT_EXCEED_FLAG] = community_df[schemas.CONTEXT_SIZE] > max_tokens
+    community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(
+        num_tokens
+    )
+    community_df[schemas.CONTEXT_EXCEED_FLAG] = (
+        community_df[schemas.CONTEXT_SIZE] > max_tokens
+    )
 
     return community_df

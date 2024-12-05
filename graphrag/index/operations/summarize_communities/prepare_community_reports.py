@@ -146,7 +146,11 @@ def _prepare_reports_at_level(
                 schemas.EDGE_DETAILS,
             ],
         ]
-        .assign(**{schemas.CLAIM_DETAILS: merged_node_df[schemas.CLAIM_DETAILS]} if claim_df is not None else {})
+        .assign(
+            **{schemas.CLAIM_DETAILS: merged_node_df[schemas.CLAIM_DETAILS]}
+            if claim_df is not None
+            else {}
+        )
         .to_dict(orient="records")
     )
 
