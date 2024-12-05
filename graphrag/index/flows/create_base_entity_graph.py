@@ -169,5 +169,6 @@ def _prep_communities(communities) -> pd.DataFrame:
 
 def _compute_degree(graph: nx.Graph) -> pd.DataFrame:
     return pd.DataFrame([
-        {"name": node, "degree": int(degree)} for node, degree in graph.degree
-    ])  # type: ignore
+        {"name": node, "degree": int(degree)}
+        for node, degree in graph.degree  # type: ignore
+    ])
