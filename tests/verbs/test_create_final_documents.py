@@ -11,8 +11,8 @@ from .util import (
     compare_outputs,
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 
@@ -20,7 +20,7 @@ async def test_create_final_documents():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -44,7 +44,7 @@ async def test_create_final_documents():
 
 async def test_create_final_documents_with_attribute_columns():
     input_tables = load_input_tables(["workflow:create_base_text_units"])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(

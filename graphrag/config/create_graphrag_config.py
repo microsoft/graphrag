@@ -409,9 +409,6 @@ def create_graphrag_config(
         ):
             snapshots_model = SnapshotsConfig(
                 graphml=reader.bool("graphml") or defs.SNAPSHOTS_GRAPHML,
-                raw_entities=reader.bool("raw_entities") or defs.SNAPSHOTS_RAW_ENTITIES,
-                top_level_nodes=reader.bool("top_level_nodes")
-                or defs.SNAPSHOTS_TOP_LEVEL_NODES,
                 embeddings=reader.bool("embeddings") or defs.SNAPSHOTS_EMBEDDINGS,
                 transient=reader.bool("transient") or defs.SNAPSHOTS_TRANSIENT,
             )

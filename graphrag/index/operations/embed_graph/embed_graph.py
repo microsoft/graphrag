@@ -4,11 +4,9 @@
 """A module containing embed_graph and run_embeddings methods definition."""
 
 from enum import Enum
-from typing import Any, cast
+from typing import Any
 
 import networkx as nx
-import pandas as pd
-from datashaper import VerbCallbacks, derive_from_rows
 
 from graphrag.index.graph.embedding import embed_nod2vec
 from graphrag.index.graph.utils import stable_largest_connected_component
@@ -26,21 +24,16 @@ class EmbedGraphStrategyType(str, Enum):
         return f'"{self.value}"'
 
 
-async def embed_graph(
-    input: pd.DataFrame,
-    callbacks: VerbCallbacks,
+def embed_graph(
+    graph: nx.Graph,
     strategy: dict[str, Any],
-    column: str,
-    num_threads: int = 4,
-):
+) -> NodeEmbeddings:
     """
-    Embed a graph into a vector space. The graph is expected to be in graphml format. The operation outputs a new column containing a mapping between node_id and vector.
+    Embed a graph into a vector space. The graph is expected to be in nx.Graph format. The operation outputs a mapping between node name and vector.
 
     ## Usage
     ```yaml
     args:
-        column: clustered_graph # The name of the column containing the graph, should be a graphml graph
-        to: embeddings # The name of the column to output the embeddings to
         strategy: <strategy config> # See strategies section below
     ```
 
@@ -64,17 +57,7 @@ async def embed_graph(
     strategy_type = strategy.get("type", EmbedGraphStrategyType.node2vec)
     strategy_args = {**strategy}
 
-    async def run_strategy(row):  # noqa RUF029 async is required for interface
-        return run_embeddings(strategy_type, cast(Any, row[column]), strategy_args)
-
-    results = await derive_from_rows(
-        input,
-        run_strategy,
-        callbacks=callbacks,
-        num_threads=num_threads,
-    )
-
-    return list(results)
+    return run_embeddings(strategy_type, graph, strategy_args)
 
 
 def run_embeddings(

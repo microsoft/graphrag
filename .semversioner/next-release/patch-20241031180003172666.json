@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "fix autocompletion of existing files/directory paths."
-}

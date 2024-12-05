@@ -6,7 +6,7 @@
 from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_descriptions.typing import (
@@ -16,7 +16,7 @@ from graphrag.index.operations.summarize_descriptions.typing import (
 
 
 async def run_graph_intelligence(
-    described_items: str | tuple[str, str],
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -27,14 +27,12 @@ async def run_graph_intelligence(
     llm = load_llm(
         "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
     )
-    return await run_summarize_descriptions(
-        llm, described_items, descriptions, callbacks, args
-    )
+    return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
 
 async def run_summarize_descriptions(
     llm: ChatLLM,
-    items: str | tuple[str, str],
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     args: StrategyConfig,
@@ -60,7 +58,5 @@ async def run_summarize_descriptions(
         max_input_tokens=max_tokens,
     )
 
-    result = await extractor(items=items, descriptions=descriptions)
-    return SummarizedDescriptionResult(
-        items=result.items, description=result.description
-    )
+    result = await extractor(id=id, descriptions=descriptions)
+    return SummarizedDescriptionResult(id=result.id, description=result.description)

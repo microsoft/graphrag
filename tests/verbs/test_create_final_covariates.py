@@ -15,8 +15,8 @@ from graphrag.index.workflows.v1.create_final_covariates import (
 from .util import (
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 MOCK_LLM_RESPONSES = [
@@ -30,7 +30,7 @@ MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONS
 
 async def test_create_final_covariates():
     input_tables = load_input_tables(["workflow:create_base_text_units"])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(

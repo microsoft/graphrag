@@ -10,7 +10,7 @@ from typing import Any, NamedTuple
 
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 
 StrategyConfig = dict[str, Any]
 
@@ -19,7 +19,7 @@ StrategyConfig = dict[str, Any]
 class SummarizedDescriptionResult:
     """Entity summarization result class definition."""
 
-    items: str | tuple[str, str]
+    id: str | tuple[str, str]
     description: str
 
 

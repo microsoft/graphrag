@@ -1,43 +1,28 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.index.run.utils import create_run_context
+from graphrag.index.flows.create_final_relationships import (
+    create_final_relationships,
+)
 from graphrag.index.workflows.v1.create_final_relationships import (
-    build_steps,
     workflow_name,
 )
 
 from .util import (
     compare_outputs,
-    get_config_for_workflow,
-    get_workflow_output,
-    load_expected,
-    load_input_tables,
+    load_test_table,
 )
 
 
-async def test_create_final_relationships():
-    input_tables = load_input_tables([
-        "workflow:create_base_entity_graph",
-        "workflow:create_final_nodes",
-    ])
-    expected = load_expected(workflow_name)
+def test_create_final_relationships():
+    edges = load_test_table("base_relationship_edges")
+    nodes = load_test_table("base_entity_nodes")
+    expected = load_test_table(workflow_name)
 
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_entity_graph", input_tables["workflow:create_base_entity_graph"]
-    )
+    actual = create_final_relationships(edges, nodes)
 
-    config = get_config_for_workflow(workflow_name)
-
-    steps = build_steps(config)
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
-
-    compare_outputs(actual, expected)
+    assert "id" in expected.columns
+    columns = list(expected.columns.values)
+    columns.remove("id")
+    compare_outputs(actual, expected, columns)
+    assert len(actual.columns) == len(expected.columns)

@@ -30,7 +30,7 @@ from .mock_llm import MockChatLLM
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
 
-    from graphrag.index.cache.pipeline_cache import PipelineCache
+    from graphrag.cache.pipeline_cache import PipelineCache
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)

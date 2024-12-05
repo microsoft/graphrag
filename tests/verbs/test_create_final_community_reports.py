@@ -19,8 +19,8 @@ from .util import (
     compare_outputs,
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 MOCK_RESPONSES = [
@@ -55,7 +55,7 @@ async def test_create_final_community_reports():
         "workflow:create_final_entities",
         "workflow:create_final_communities",
     ])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     config = get_config_for_workflow(workflow_name)
 

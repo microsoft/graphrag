@@ -6,7 +6,7 @@ import os
 import re
 from pathlib import Path
 
-from graphrag.index.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 __dirname__ = os.path.dirname(__file__)
 

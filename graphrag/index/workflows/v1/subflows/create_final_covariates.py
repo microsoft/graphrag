@@ -13,11 +13,11 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.flows.create_final_covariates import (
     create_final_covariates as create_final_covariates_flow,
 )
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(name="create_final_covariates", treats_input_tables_as_immutable=True)
