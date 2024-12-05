@@ -17,7 +17,6 @@ from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 from graphrag.cache.factory import create_cache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.callbacks.factory import create_pipeline_reporter
 from graphrag.index.config.cache import PipelineMemoryCacheConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,
@@ -67,7 +66,7 @@ async def run_pipeline_with_config(
     storage: PipelineStorage | None = None,
     update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
-    callbacks: WorkflowCallbacks | None = None,
+    callbacks: list[WorkflowCallbacks] | None = None,
     progress_reporter: ProgressReporter | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
@@ -107,6 +106,7 @@ async def run_pipeline_with_config(
     storage = storage = create_storage(config.storage)  # type: ignore
 
     if is_update_run:
+        # TODO: remove the default choice (PipelineFileStorageConfig) once the new config system enforces a correct update-index-storage config when used.
         update_index_storage = update_index_storage or create_storage(
             config.update_index_storage
             or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
@@ -114,11 +114,6 @@ async def run_pipeline_with_config(
 
     # TODO: remove the default choice (PipelineMemoryCacheConfig) when the new config system guarantees the existence of a cache config
     cache = cache or create_cache(config.cache or PipelineMemoryCacheConfig(), root_dir)
-    callbacks = (
-        create_pipeline_reporter(config.reporting, root_dir)
-        if config.reporting
-        else None
-    )
     # TODO: remove the type ignore when the new config system guarantees the existence of an input config
     dataset = (
         dataset
@@ -195,7 +190,7 @@ async def run_pipeline(
     dataset: pd.DataFrame,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
-    callbacks: WorkflowCallbacks | None = None,
+    callbacks: list[WorkflowCallbacks] | None = None,
     progress_reporter: ProgressReporter | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
@@ -226,13 +221,12 @@ async def run_pipeline(
     start_time = time.time()
 
     progress_reporter = progress_reporter or NullProgressReporter()
-    callbacks = callbacks or ConsoleWorkflowCallbacks()
-    callbacks = _create_callback_chain(callbacks, progress_reporter)
-
+    callbacks = callbacks or [ConsoleWorkflowCallbacks()]
+    callback_chain = _create_callback_chain(callbacks, progress_reporter)
     context = create_run_context(storage=storage, cache=cache, stats=None)
     exporter = ParquetExporter(
         context.storage,
-        lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
+        lambda e, s, d: cast(WorkflowCallbacks, callback_chain).on_error(
             "Error exporting table", e, s, d
         ),
     )
@@ -246,7 +240,7 @@ async def run_pipeline(
     workflows_to_run = loaded_workflows.workflows
     workflow_dependencies = loaded_workflows.dependencies
     dataset = await _run_post_process_steps(
-        input_post_process_steps, dataset, context, callbacks
+        input_post_process_steps, dataset, context, callback_chain
     )
 
     # ensure the incoming data is valid
@@ -266,7 +260,7 @@ async def run_pipeline(
             result = await _process_workflow(
                 workflow_to_run.workflow,
                 context,
-                callbacks,
+                callback_chain,
                 exporter,
                 workflow_dependencies,
                 dataset,
