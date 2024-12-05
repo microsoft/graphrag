@@ -28,7 +28,7 @@ def antijoin(df: pd.DataFrame, exclude: pd.DataFrame, column: str) -> pd.DataFra
     * exclude: The DataFrame containing rows to remove.
     * column: The join-on column.
     """
-    return df[~df.loc[:, column].isin(exclude[column])]
+    return df[~df.loc[:, column].isin(exclude.loc[:, column])]
 
 
 def transform_series(series: pd.Series, fn: Callable[[Any], Any]) -> pd.Series:
