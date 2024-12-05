@@ -61,5 +61,6 @@ async def run(  # noqa RUF029 async is required for interface
             {"type": entity_type, "name": name}
             for name, entity_type in entity_map.items()
         ],
+        relationships=[],
         graph=graph,
     )

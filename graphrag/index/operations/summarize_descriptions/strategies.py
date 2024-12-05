@@ -16,7 +16,7 @@ from graphrag.llm import CompletionLLM
 
 
 async def run_graph_intelligence(
-    described_items: str | tuple[str, str],
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -26,14 +26,12 @@ async def run_graph_intelligence(
     llm_config = args.get("llm", {})
     llm_type = llm_config.get("type")
     llm = load_llm("summarize_descriptions", llm_type, callbacks, cache, llm_config)
-    return await run_summarize_descriptions(
-        llm, described_items, descriptions, callbacks, args
-    )
+    return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
 
 async def run_summarize_descriptions(
     llm: CompletionLLM,
-    items: str | tuple[str, str],
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     args: StrategyConfig,
@@ -59,7 +57,5 @@ async def run_summarize_descriptions(
         max_input_tokens=max_tokens,
     )
 
-    result = await extractor(items=items, descriptions=descriptions)
-    return SummarizedDescriptionResult(
-        items=result.items, description=result.description
-    )
+    result = await extractor(id=id, descriptions=descriptions)
+    return SummarizedDescriptionResult(id=result.id, description=result.description)

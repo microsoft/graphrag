@@ -7,7 +7,6 @@ import logging
 from enum import Enum
 from typing import Any
 
-import networkx as nx
 import pandas as pd
 from datashaper import (
     AsyncType,
@@ -41,17 +40,16 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
 async def extract_entities(
-    input: pd.DataFrame,
+    text_units: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     text_column: str,
     id_column: str,
-    to: str,
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types=DEFAULT_ENTITY_TYPES,
     num_threads: int = 4,
-) -> tuple[pd.DataFrame, list[nx.Graph]]:
+) -> tuple[list[pd.DataFrame], list[pd.DataFrame]]:
     """
     Extract entities from a piece of text.
 
@@ -135,29 +133,24 @@ async def extract_entities(
             strategy_config,
         )
         num_started += 1
-        return [result.entities, result.graph]
+        return [result.entities, result.relationships, result.graph]
 
     results = await derive_from_rows(
-        input,
+        text_units,
         run_strategy,
         callbacks,
         scheduling_type=async_mode,
         num_threads=num_threads,
     )
 
-    to_result = []
-    graphs = []
+    entity_dfs = []
+    relationship_dfs = []
     for result in results:
         if result:
-            to_result.append(result[0])
-            graphs.append(result[1])
-        else:
-            to_result.append(None)
-            graphs.append(None)
+            entity_dfs.append(pd.DataFrame(result[0]))
+            relationship_dfs.append(pd.DataFrame(result[1]))
 
-    input[to] = to_result
-
-    return (input.reset_index(drop=True), graphs)
+    return (entity_dfs, relationship_dfs)
 
 
 def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStrategy:
