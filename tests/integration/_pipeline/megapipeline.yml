@@ -22,7 +22,6 @@ workflows:
   - name: create_base_entity_graph
     config:
       snapshot_graphml_enabled: True
-      embed_graph_enabled: True
       entity_extract:
         strategy:
           type: graph_intelligence
@@ -51,7 +50,9 @@ workflows:
           verbose: True
 
   - name: create_final_nodes
-
+    config:
+      embed_graph_enabled: True
+  
   - name: create_final_communities
   - name: create_final_text_units
     config:

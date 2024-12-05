@@ -16,7 +16,7 @@ from datashaper import (
 
 from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.utils.hashing import gen_md5_hash
+from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
@@ -67,7 +67,7 @@ async def create_base_text_units(
         },
         inplace=True,
     )
-    chunked["id"] = chunked.apply(lambda row: gen_md5_hash(row, ["chunk"]), axis=1)
+    chunked["id"] = chunked.apply(lambda row: gen_sha512_hash(row, ["chunk"]), axis=1)
     chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
         chunked["chunk"].tolist(), index=chunked.index
     )

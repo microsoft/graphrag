@@ -32,7 +32,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     return input_tables
 
 
-def load_expected(output: str) -> pd.DataFrame:
+def load_test_table(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
 
