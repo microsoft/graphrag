@@ -2538,27 +2538,319 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>### Overview of Cosmic Vocalization
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">RateLimitError</span>                            Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[9], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search_engine<span style="color: rgb(98,98,98)">.</span>asearch(
+<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is Cosmic Vocalization and who are involved in it?</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> )
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
-Cosmic Vocalization is a phenomenon that has captured the attention of various individuals and groups within the community. It is perceived as a significant cosmic event, with different interpretations and implications for those involved.
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py:157</span>, in <span class="ansi-cyan-fg">GlobalSearch.asearch</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    154</span> llm_calls, prompt_tokens, output_tokens <span style="color: rgb(98,98,98)">=</span> {}, {}, {}
+<span class="ansi-green-intense-fg ansi-bold">    156</span> start_time <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>time()
+<span class="ansi-green-fg">--&gt; 157</span> context_result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder<span style="color: rgb(98,98,98)">.</span>build_context(
+<span class="ansi-green-intense-fg ansi-bold">    158</span>     query<span style="color: rgb(98,98,98)">=</span>query,
+<span class="ansi-green-intense-fg ansi-bold">    159</span>     conversation_history<span style="color: rgb(98,98,98)">=</span>conversation_history,
+<span class="ansi-green-intense-fg ansi-bold">    160</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder_params,
+<span class="ansi-green-intense-fg ansi-bold">    161</span> )
+<span class="ansi-green-intense-fg ansi-bold">    162</span> llm_calls[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>llm_calls
+<span class="ansi-green-intense-fg ansi-bold">    163</span> prompt_tokens[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>prompt_tokens
 
-### Key Perspectives and Concerns
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/global_search/community_context.py:98</span>, in <span class="ansi-cyan-fg">GlobalCommunityContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, use_community_summary, column_delimiter, shuffle_data, include_community_rank, min_community_rank, community_rank_name, include_community_weight, community_weight_name, normalize_community_weight, max_tokens, context_name, conversation_history_user_turns_only, conversation_history_max_turns, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     93</span> community_reports <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>community_reports
+<span class="ansi-green-intense-fg ansi-bold">     94</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>dynamic_community_selection <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-intense-fg ansi-bold">     95</span>     (
+<span class="ansi-green-intense-fg ansi-bold">     96</span>         community_reports,
+<span class="ansi-green-intense-fg ansi-bold">     97</span>         dynamic_info,
+<span class="ansi-green-fg">---&gt; 98</span>     ) <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>dynamic_community_selection<span style="color: rgb(98,98,98)">.</span>select(query)
+<span class="ansi-green-intense-fg ansi-bold">     99</span>     llm_calls <span style="color: rgb(98,98,98)">+</span><span style="color: rgb(98,98,98)">=</span> dynamic_info[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">llm_calls</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">    100</span>     prompt_tokens <span style="color: rgb(98,98,98)">+</span><span style="color: rgb(98,98,98)">=</span> dynamic_info[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">prompt_tokens</span><span style="color: rgb(175,0,0)">"</span>]
 
-Alex Mercer views Cosmic Vocalization as part of an interstellar duet, suggesting a responsive and perhaps harmonious interaction with cosmic events. This perspective highlights the potential for Cosmic Vocalization to be seen as a form of communication or interaction on a cosmic scale [Data: Reports (6)].
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/dynamic_community_selection.py:106</span>, in <span class="ansi-cyan-fg">DynamicCommunitySelection.select</span><span class="ansi-blue-fg">(self, query)</span>
+<span class="ansi-green-intense-fg ansi-bold">    103</span> relevant_communities <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">set</span>()
+<span class="ansi-green-intense-fg ansi-bold">    105</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> queue:
+<span class="ansi-green-fg">--&gt; 106</span>     gather_results <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> asyncio<span style="color: rgb(98,98,98)">.</span>gather(<span style="color: rgb(98,98,98)">*</span>[
+<span class="ansi-green-intense-fg ansi-bold">    107</span>         rate_relevancy(
+<span class="ansi-green-intense-fg ansi-bold">    108</span>             query<span style="color: rgb(98,98,98)">=</span>query,
+<span class="ansi-green-intense-fg ansi-bold">    109</span>             description<span style="color: rgb(98,98,98)">=</span>(
+<span class="ansi-green-intense-fg ansi-bold">    110</span>                 <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reports[community]<span style="color: rgb(98,98,98)">.</span>summary
+<span class="ansi-green-intense-fg ansi-bold">    111</span>                 <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>use_summary
+<span class="ansi-green-intense-fg ansi-bold">    112</span>                 <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reports[community]<span style="color: rgb(98,98,98)">.</span>full_content
+<span class="ansi-green-intense-fg ansi-bold">    113</span>             ),
+<span class="ansi-green-intense-fg ansi-bold">    114</span>             llm<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>llm,
+<span class="ansi-green-intense-fg ansi-bold">    115</span>             token_encoder<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>token_encoder,
+<span class="ansi-green-intense-fg ansi-bold">    116</span>             rate_query<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>rate_query,
+<span class="ansi-green-intense-fg ansi-bold">    117</span>             num_repeats<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>num_repeats,
+<span class="ansi-green-intense-fg ansi-bold">    118</span>             semaphore<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>semaphore,
+<span class="ansi-green-intense-fg ansi-bold">    119</span>             <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>llm_kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    120</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    121</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> community <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> queue
+<span class="ansi-green-intense-fg ansi-bold">    122</span>     ])
+<span class="ansi-green-intense-fg ansi-bold">    124</span>     communities_to_rate <span style="color: rgb(98,98,98)">=</span> []
+<span class="ansi-green-intense-fg ansi-bold">    125</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> community, result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">zip</span>(queue, gather_results, strict<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>):
 
-On the other hand, Taylor Cruz raises concerns about the implications of Cosmic Vocalization, fearing it might serve as a homing tune. This interpretation adds a layer of urgency and potential threat, suggesting that the phenomenon could attract unwanted attention or pose risks to those who are aware of it [Data: Reports (6)].
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/rate_relevancy.py:55</span>, in <span class="ansi-cyan-fg">rate_relevancy</span><span class="ansi-blue-fg">(query, description, llm, token_encoder, rate_query, num_repeats, semaphore, **llm_kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     53</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> _ <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">range</span>(num_repeats):
+<span class="ansi-green-intense-fg ansi-bold">     54</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> semaphore <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> semaphore <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> nullcontext():
+<span class="ansi-green-fg">---&gt; 55</span>         response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> llm<span style="color: rgb(98,98,98)">.</span>agenerate(messages<span style="color: rgb(98,98,98)">=</span>messages, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>llm_kwargs)
+<span class="ansi-green-intense-fg ansi-bold">     56</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">     57</span>         _, parsed_response <span style="color: rgb(98,98,98)">=</span> try_parse_json_object(response)
 
-### Involvement of the Paranormal Military Squad
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:142</span>, in <span class="ansi-cyan-fg">ChatOpenAI.agenerate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    135</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">    136</span>     retryer <span style="color: rgb(98,98,98)">=</span> AsyncRetrying(
+<span class="ansi-green-intense-fg ansi-bold">    137</span>         stop<span style="color: rgb(98,98,98)">=</span>stop_after_attempt(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>max_retries),
+<span class="ansi-green-intense-fg ansi-bold">    138</span>         wait<span style="color: rgb(98,98,98)">=</span>wait_exponential_jitter(<span style="color: rgb(0,135,0)">max</span><span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">10</span>),
+<span class="ansi-green-intense-fg ansi-bold">    139</span>         reraise<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-intense-fg ansi-bold">    140</span>         retry<span style="color: rgb(98,98,98)">=</span>retry_if_exception_type(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>retry_error_types),  <span style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    141</span>     )
+<span class="ansi-green-fg">--&gt; 142</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> attempt <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> retryer:
+<span class="ansi-green-intense-fg ansi-bold">    143</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> attempt:
+<span class="ansi-green-intense-fg ansi-bold">    144</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_agenerate(
+<span class="ansi-green-intense-fg ansi-bold">    145</span>                 messages<span style="color: rgb(98,98,98)">=</span>messages,
+<span class="ansi-green-intense-fg ansi-bold">    146</span>                 streaming<span style="color: rgb(98,98,98)">=</span>streaming,
+<span class="ansi-green-intense-fg ansi-bold">    147</span>                 callbacks<span style="color: rgb(98,98,98)">=</span>callbacks,
+<span class="ansi-green-intense-fg ansi-bold">    148</span>                 <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    149</span>             )
 
-The Paranormal Military Squad is actively engaged with Cosmic Vocalization, indicating its strategic importance in their mission. Their involvement underscores the significance of Cosmic Vocalization in security measures and suggests that it is being taken seriously by entities responsible for safeguarding against potential cosmic threats [Data: Reports (6)].
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/asyncio/__init__.py:166</span>, in <span class="ansi-cyan-fg">AsyncRetrying.__anext__</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    164</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">__anext__</span>(<span style="color: rgb(0,135,0)">self</span>) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> AttemptManager:
+<span class="ansi-green-intense-fg ansi-bold">    165</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+<span class="ansi-green-fg">--&gt; 166</span>         do <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>iter(retry_state<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_retry_state)
+<span class="ansi-green-intense-fg ansi-bold">    167</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> do <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-intense-fg ansi-bold">    168</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">StopAsyncIteration</span>
 
-### Metaphorical Interpretation
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/asyncio/__init__.py:153</span>, in <span class="ansi-cyan-fg">AsyncRetrying.iter</span><span class="ansi-blue-fg">(self, retry_state)</span>
+<span class="ansi-green-intense-fg ansi-bold">    151</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    152</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> action <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>iter_state<span style="color: rgb(98,98,98)">.</span>actions:
+<span class="ansi-green-fg">--&gt; 153</span>     result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> action(retry_state)
+<span class="ansi-green-intense-fg ansi-bold">    154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
 
-The Universe is metaphorically treated as a concert hall by the Paranormal Military Squad, which reflects a broader perspective on how cosmic events like Cosmic Vocalization are interpreted and responded to by human entities. This metaphor suggests a view of the universe as a stage for cosmic interactions, where events are not only observed but also responded to in a strategic manner [Data: Reports (6)].
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/_utils.py:99</span>, in <span class="ansi-cyan-fg">wrap_to_async_func.&lt;locals&gt;.inner</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     98</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">inner</span>(<span style="color: rgb(98,98,98)">*</span>args: typing<span style="color: rgb(98,98,98)">.</span>Any, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs: typing<span style="color: rgb(98,98,98)">.</span>Any) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> typing<span style="color: rgb(98,98,98)">.</span>Any:
+<span class="ansi-green-fg">---&gt; 99</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">call</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
 
-In summary, Cosmic Vocalization is a multifaceted phenomenon involving various interpretations and responses from individuals like Alex Mercer and Taylor Cruz, as well as strategic engagement by the Paranormal Military Squad. Each perspective contributes to a complex understanding of its potential implications and significance.
-</pre>
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:418</span>, in <span class="ansi-cyan-fg">BaseRetrying._post_stop_check_actions.&lt;locals&gt;.exc_check</span><span class="ansi-blue-fg">(rs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    416</span> retry_exc <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>retry_error_cls(fut)
+<span class="ansi-green-intense-fg ansi-bold">    417</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reraise:
+<span class="ansi-green-fg">--&gt; 418</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-yellow-bg">retry_exc</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">reraise</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    419</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> retry_exc <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">fut</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">exception</span>()
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:185</span>, in <span class="ansi-cyan-fg">RetryError.reraise</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    183</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">reraise</span>(<span style="color: rgb(0,135,0)">self</span>) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> t<span style="color: rgb(98,98,98)">.</span>NoReturn:
+<span class="ansi-green-intense-fg ansi-bold">    184</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>last_attempt<span style="color: rgb(98,98,98)">.</span>failed:
+<span class="ansi-green-fg">--&gt; 185</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">last_attempt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    186</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/concurrent/futures/_base.py:449</span>, in <span class="ansi-cyan-fg">Future.result</span><span class="ansi-blue-fg">(self, timeout)</span>
+<span class="ansi-green-intense-fg ansi-bold">    447</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> CancelledError()
+<span class="ansi-green-intense-fg ansi-bold">    448</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_state <span style="color: rgb(98,98,98)">==</span> FINISHED:
+<span class="ansi-green-fg">--&gt; 449</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__get_result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    451</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_condition<span style="color: rgb(98,98,98)">.</span>wait(timeout)
+<span class="ansi-green-intense-fg ansi-bold">    453</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_state <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> [CANCELLED, CANCELLED_AND_NOTIFIED]:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/concurrent/futures/_base.py:401</span>, in <span class="ansi-cyan-fg">Future.__get_result</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    399</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_exception:
+<span class="ansi-green-intense-fg ansi-bold">    400</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; 401</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_exception
+<span class="ansi-green-intense-fg ansi-bold">    402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-intense-fg ansi-bold">    403</span>         <span style="color: rgb(95,135,135)"># Break a reference cycle with the exception in self._exception</span>
+<span class="ansi-green-intense-fg ansi-bold">    404</span>         <span style="color: rgb(0,135,0)">self</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:144</span>, in <span class="ansi-cyan-fg">ChatOpenAI.agenerate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    142</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> attempt <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> retryer:
+<span class="ansi-green-intense-fg ansi-bold">    143</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> attempt:
+<span class="ansi-green-fg">--&gt; 144</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_agenerate(
+<span class="ansi-green-intense-fg ansi-bold">    145</span>                 messages<span style="color: rgb(98,98,98)">=</span>messages,
+<span class="ansi-green-intense-fg ansi-bold">    146</span>                 streaming<span style="color: rgb(98,98,98)">=</span>streaming,
+<span class="ansi-green-intense-fg ansi-bold">    147</span>                 callbacks<span style="color: rgb(98,98,98)">=</span>callbacks,
+<span class="ansi-green-intense-fg ansi-bold">    148</span>                 <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    149</span>             )
+<span class="ansi-green-intense-fg ansi-bold">    150</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> RetryError <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-intense-fg ansi-bold">    151</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_reporter<span style="color: rgb(98,98,98)">.</span>error(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Error at agenerate(): </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:268</span>, in <span class="ansi-cyan-fg">ChatOpenAI._agenerate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    266</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> model:
+<span class="ansi-green-intense-fg ansi-bold">    267</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(_MODEL_REQUIRED_MSG)
+<span class="ansi-green-fg">--&gt; 268</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>async_client<span style="color: rgb(98,98,98)">.</span>chat<span style="color: rgb(98,98,98)">.</span>completions<span style="color: rgb(98,98,98)">.</span>create(  <span style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    269</span>     model<span style="color: rgb(98,98,98)">=</span>model,
+<span class="ansi-green-intense-fg ansi-bold">    270</span>     messages<span style="color: rgb(98,98,98)">=</span>messages,  <span style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    271</span>     stream<span style="color: rgb(98,98,98)">=</span>streaming,
+<span class="ansi-green-intense-fg ansi-bold">    272</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    273</span> )
+<span class="ansi-green-intense-fg ansi-bold">    274</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> streaming:
+<span class="ansi-green-intense-fg ansi-bold">    275</span>     full_response <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/resources/chat/completions.py:1661</span>, in <span class="ansi-cyan-fg">AsyncCompletions.create</span><span class="ansi-blue-fg">(self, messages, model, audio, frequency_penalty, function_call, functions, logit_bias, logprobs, max_completion_tokens, max_tokens, metadata, modalities, n, parallel_tool_calls, prediction, presence_penalty, response_format, seed, service_tier, stop, store, stream, stream_options, temperature, tool_choice, tools, top_logprobs, top_p, user, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1620</span> <span style="color: rgb(175,0,255)">@required_args</span>([<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">messages</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">model</span><span style="color: rgb(175,0,0)">"</span>], [<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">messages</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">model</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">stream</span><span style="color: rgb(175,0,0)">"</span>])
+<span class="ansi-green-intense-fg ansi-bold">   1621</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">create</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1622</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1658</span>     timeout: <span style="color: rgb(0,135,0)">float</span> <span style="color: rgb(98,98,98)">|</span> httpx<span style="color: rgb(98,98,98)">.</span>Timeout <span style="color: rgb(98,98,98)">|</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span style="color: rgb(98,98,98)">|</span> NotGiven <span style="color: rgb(98,98,98)">=</span> NOT_GIVEN,
+<span class="ansi-green-intense-fg ansi-bold">   1659</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> ChatCompletion <span style="color: rgb(98,98,98)">|</span> AsyncStream[ChatCompletionChunk]:
+<span class="ansi-green-intense-fg ansi-bold">   1660</span>     validate_response_format(response_format)
+<span class="ansi-green-fg">-&gt; 1661</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_post(
+<span class="ansi-green-intense-fg ansi-bold">   1662</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">/chat/completions</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1663</span>         body<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_maybe_transform(
+<span class="ansi-green-intense-fg ansi-bold">   1664</span>             {
+<span class="ansi-green-intense-fg ansi-bold">   1665</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">messages</span><span style="color: rgb(175,0,0)">"</span>: messages,
+<span class="ansi-green-intense-fg ansi-bold">   1666</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">model</span><span style="color: rgb(175,0,0)">"</span>: model,
+<span class="ansi-green-intense-fg ansi-bold">   1667</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">audio</span><span style="color: rgb(175,0,0)">"</span>: audio,
+<span class="ansi-green-intense-fg ansi-bold">   1668</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">frequency_penalty</span><span style="color: rgb(175,0,0)">"</span>: frequency_penalty,
+<span class="ansi-green-intense-fg ansi-bold">   1669</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">function_call</span><span style="color: rgb(175,0,0)">"</span>: function_call,
+<span class="ansi-green-intense-fg ansi-bold">   1670</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">functions</span><span style="color: rgb(175,0,0)">"</span>: functions,
+<span class="ansi-green-intense-fg ansi-bold">   1671</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">logit_bias</span><span style="color: rgb(175,0,0)">"</span>: logit_bias,
+<span class="ansi-green-intense-fg ansi-bold">   1672</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">logprobs</span><span style="color: rgb(175,0,0)">"</span>: logprobs,
+<span class="ansi-green-intense-fg ansi-bold">   1673</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">max_completion_tokens</span><span style="color: rgb(175,0,0)">"</span>: max_completion_tokens,
+<span class="ansi-green-intense-fg ansi-bold">   1674</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">max_tokens</span><span style="color: rgb(175,0,0)">"</span>: max_tokens,
+<span class="ansi-green-intense-fg ansi-bold">   1675</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">metadata</span><span style="color: rgb(175,0,0)">"</span>: metadata,
+<span class="ansi-green-intense-fg ansi-bold">   1676</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">modalities</span><span style="color: rgb(175,0,0)">"</span>: modalities,
+<span class="ansi-green-intense-fg ansi-bold">   1677</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">n</span><span style="color: rgb(175,0,0)">"</span>: n,
+<span class="ansi-green-intense-fg ansi-bold">   1678</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">parallel_tool_calls</span><span style="color: rgb(175,0,0)">"</span>: parallel_tool_calls,
+<span class="ansi-green-intense-fg ansi-bold">   1679</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">prediction</span><span style="color: rgb(175,0,0)">"</span>: prediction,
+<span class="ansi-green-intense-fg ansi-bold">   1680</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">presence_penalty</span><span style="color: rgb(175,0,0)">"</span>: presence_penalty,
+<span class="ansi-green-intense-fg ansi-bold">   1681</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">response_format</span><span style="color: rgb(175,0,0)">"</span>: response_format,
+<span class="ansi-green-intense-fg ansi-bold">   1682</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">seed</span><span style="color: rgb(175,0,0)">"</span>: seed,
+<span class="ansi-green-intense-fg ansi-bold">   1683</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">service_tier</span><span style="color: rgb(175,0,0)">"</span>: service_tier,
+<span class="ansi-green-intense-fg ansi-bold">   1684</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">stop</span><span style="color: rgb(175,0,0)">"</span>: stop,
+<span class="ansi-green-intense-fg ansi-bold">   1685</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">store</span><span style="color: rgb(175,0,0)">"</span>: store,
+<span class="ansi-green-intense-fg ansi-bold">   1686</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">stream</span><span style="color: rgb(175,0,0)">"</span>: stream,
+<span class="ansi-green-intense-fg ansi-bold">   1687</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">stream_options</span><span style="color: rgb(175,0,0)">"</span>: stream_options,
+<span class="ansi-green-intense-fg ansi-bold">   1688</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">temperature</span><span style="color: rgb(175,0,0)">"</span>: temperature,
+<span class="ansi-green-intense-fg ansi-bold">   1689</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tool_choice</span><span style="color: rgb(175,0,0)">"</span>: tool_choice,
+<span class="ansi-green-intense-fg ansi-bold">   1690</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">tools</span><span style="color: rgb(175,0,0)">"</span>: tools,
+<span class="ansi-green-intense-fg ansi-bold">   1691</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">top_logprobs</span><span style="color: rgb(175,0,0)">"</span>: top_logprobs,
+<span class="ansi-green-intense-fg ansi-bold">   1692</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">top_p</span><span style="color: rgb(175,0,0)">"</span>: top_p,
+<span class="ansi-green-intense-fg ansi-bold">   1693</span>                 <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">user</span><span style="color: rgb(175,0,0)">"</span>: user,
+<span class="ansi-green-intense-fg ansi-bold">   1694</span>             },
+<span class="ansi-green-intense-fg ansi-bold">   1695</span>             completion_create_params<span style="color: rgb(98,98,98)">.</span>CompletionCreateParams,
+<span class="ansi-green-intense-fg ansi-bold">   1696</span>         ),
+<span class="ansi-green-intense-fg ansi-bold">   1697</span>         options<span style="color: rgb(98,98,98)">=</span>make_request_options(
+<span class="ansi-green-intense-fg ansi-bold">   1698</span>             extra_headers<span style="color: rgb(98,98,98)">=</span>extra_headers, extra_query<span style="color: rgb(98,98,98)">=</span>extra_query, extra_body<span style="color: rgb(98,98,98)">=</span>extra_body, timeout<span style="color: rgb(98,98,98)">=</span>timeout
+<span class="ansi-green-intense-fg ansi-bold">   1699</span>         ),
+<span class="ansi-green-intense-fg ansi-bold">   1700</span>         cast_to<span style="color: rgb(98,98,98)">=</span>ChatCompletion,
+<span class="ansi-green-intense-fg ansi-bold">   1701</span>         stream<span style="color: rgb(98,98,98)">=</span>stream <span class="ansi-bold" style="color: rgb(175,0,255)">or</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1702</span>         stream_cls<span style="color: rgb(98,98,98)">=</span>AsyncStream[ChatCompletionChunk],
+<span class="ansi-green-intense-fg ansi-bold">   1703</span>     )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1838</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, files, options, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1824</span> <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">post</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1825</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1826</span>     path: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1833</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_AsyncStreamT] <span style="color: rgb(98,98,98)">|</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1834</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> ResponseT <span style="color: rgb(98,98,98)">|</span> _AsyncStreamT:
+<span class="ansi-green-intense-fg ansi-bold">   1835</span>     opts <span style="color: rgb(98,98,98)">=</span> FinalRequestOptions<span style="color: rgb(98,98,98)">.</span>construct(
+<span class="ansi-green-intense-fg ansi-bold">   1836</span>         method<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">post</span><span style="color: rgb(175,0,0)">"</span>, url<span style="color: rgb(98,98,98)">=</span>path, json_data<span style="color: rgb(98,98,98)">=</span>body, files<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">await</span> async_to_httpx_files(files), <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>options
+<span class="ansi-green-intense-fg ansi-bold">   1837</span>     )
+<span class="ansi-green-fg">-&gt; 1838</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>request(cast_to, opts, stream<span style="color: rgb(98,98,98)">=</span>stream, stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls)
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1532</span>, in <span class="ansi-cyan-fg">AsyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls, remaining_retries)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1529</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">   1530</span>     retries_taken <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(98,98,98)">0</span>
+<span class="ansi-green-fg">-&gt; 1532</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request(
+<span class="ansi-green-intense-fg ansi-bold">   1533</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1534</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-intense-fg ansi-bold">   1535</span>     stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1536</span>     stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1537</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1538</span> )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1618</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls, retries_taken)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1616</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1617</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>aclose()
+<span class="ansi-green-fg">-&gt; 1618</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_retry_request(
+<span class="ansi-green-intense-fg ansi-bold">   1619</span>         input_options,
+<span class="ansi-green-intense-fg ansi-bold">   1620</span>         cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1621</span>         retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1622</span>         response_headers<span style="color: rgb(98,98,98)">=</span>err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>headers,
+<span class="ansi-green-intense-fg ansi-bold">   1623</span>         stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1624</span>         stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1625</span>     )
+<span class="ansi-green-intense-fg ansi-bold">   1627</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1628</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1629</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1665</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1661</span> log<span style="color: rgb(98,98,98)">.</span>info(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Retrying request to </span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)"> in </span><span class="ansi-bold" style="color: rgb(175,95,135)">%f</span><span style="color: rgb(175,0,0)"> seconds</span><span style="color: rgb(175,0,0)">"</span>, options<span style="color: rgb(98,98,98)">.</span>url, timeout)
+<span class="ansi-green-intense-fg ansi-bold">   1663</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> anyio<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1665</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request(
+<span class="ansi-green-intense-fg ansi-bold">   1666</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-intense-fg ansi-bold">   1667</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1668</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken <span style="color: rgb(98,98,98)">+</span> <span style="color: rgb(98,98,98)">1</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1669</span>     stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1670</span>     stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1671</span> )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1618</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls, retries_taken)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1616</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1617</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>aclose()
+<span class="ansi-green-fg">-&gt; 1618</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_retry_request(
+<span class="ansi-green-intense-fg ansi-bold">   1619</span>         input_options,
+<span class="ansi-green-intense-fg ansi-bold">   1620</span>         cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1621</span>         retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1622</span>         response_headers<span style="color: rgb(98,98,98)">=</span>err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>headers,
+<span class="ansi-green-intense-fg ansi-bold">   1623</span>         stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1624</span>         stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1625</span>     )
+<span class="ansi-green-intense-fg ansi-bold">   1627</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1628</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1629</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1665</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1661</span> log<span style="color: rgb(98,98,98)">.</span>info(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Retrying request to </span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)"> in </span><span class="ansi-bold" style="color: rgb(175,95,135)">%f</span><span style="color: rgb(175,0,0)"> seconds</span><span style="color: rgb(175,0,0)">"</span>, options<span style="color: rgb(98,98,98)">.</span>url, timeout)
+<span class="ansi-green-intense-fg ansi-bold">   1663</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> anyio<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1665</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request(
+<span class="ansi-green-intense-fg ansi-bold">   1666</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-intense-fg ansi-bold">   1667</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1668</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken <span style="color: rgb(98,98,98)">+</span> <span style="color: rgb(98,98,98)">1</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1669</span>     stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1670</span>     stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1671</span> )
+
+    <span class="ansi-red-fg">[... skipping similar frames: AsyncAPIClient._request at line 1618 (17 times), AsyncAPIClient._retry_request at line 1665 (17 times)]</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1618</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls, retries_taken)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1616</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1617</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>aclose()
+<span class="ansi-green-fg">-&gt; 1618</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_retry_request(
+<span class="ansi-green-intense-fg ansi-bold">   1619</span>         input_options,
+<span class="ansi-green-intense-fg ansi-bold">   1620</span>         cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1621</span>         retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1622</span>         response_headers<span style="color: rgb(98,98,98)">=</span>err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>headers,
+<span class="ansi-green-intense-fg ansi-bold">   1623</span>         stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1624</span>         stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1625</span>     )
+<span class="ansi-green-intense-fg ansi-bold">   1627</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1628</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1629</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1665</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1661</span> log<span style="color: rgb(98,98,98)">.</span>info(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Retrying request to </span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)"> in </span><span class="ansi-bold" style="color: rgb(175,95,135)">%f</span><span style="color: rgb(175,0,0)"> seconds</span><span style="color: rgb(175,0,0)">"</span>, options<span style="color: rgb(98,98,98)">.</span>url, timeout)
+<span class="ansi-green-intense-fg ansi-bold">   1663</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> anyio<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1665</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_request(
+<span class="ansi-green-intense-fg ansi-bold">   1666</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-intense-fg ansi-bold">   1667</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1668</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken <span style="color: rgb(98,98,98)">+</span> <span style="color: rgb(98,98,98)">1</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1669</span>     stream<span style="color: rgb(98,98,98)">=</span>stream,
+<span class="ansi-green-intense-fg ansi-bold">   1670</span>     stream_cls<span style="color: rgb(98,98,98)">=</span>stream_cls,
+<span class="ansi-green-intense-fg ansi-bold">   1671</span> )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1633</span>, in <span class="ansi-cyan-fg">AsyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, stream, stream_cls, retries_taken)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1630</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>aread()
+<span class="ansi-green-intense-fg ansi-bold">   1632</span>     log<span style="color: rgb(98,98,98)">.</span>debug(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Re-raising status error</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">-&gt; 1633</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_make_status_error_from_response(err<span style="color: rgb(98,98,98)">.</span>response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">   1635</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_process_response(
+<span class="ansi-green-intense-fg ansi-bold">   1636</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1637</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1641</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1642</span> )
+
+<span class="ansi-red-fg">RateLimitError</span>: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}</pre>
 </div>
 </div>
 </div>
@@ -2596,94 +2888,17 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[10], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
+<span class="ansi-green-fg">----&gt; 2</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span>]
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>title</th>
-<th>occurrence weight</th>
-<th>content</th>
-<th>rank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>15</td>
-<td>Dulce Base and the Paranormal Military Squad: ...</td>
-<td>1.00</td>
-<td># Dulce Base and the Paranormal Military Squad...</td>
-<td>9.5</td>
-</tr>
-<tr>
-<th>1</th>
-<td>1</td>
-<td>Earth's Interstellar Communication Initiative</td>
-<td>0.16</td>
-<td># Earth's Interstellar Communication Initiativ...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>2</th>
-<td>16</td>
-<td>Dulce Military Base and Alien Intelligence Com...</td>
-<td>0.08</td>
-<td># Dulce Military Base and Alien Intelligence C...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>3</th>
-<td>4</td>
-<td>Dulce Facility and Control Room of Dulce: Extr...</td>
-<td>0.02</td>
-<td># Dulce Facility and Control Room of Dulce: Ex...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>4</th>
-<td>17</td>
-<td>Dulce Team and Underground Command Center: Int...</td>
-<td>0.02</td>
-<td># Dulce Team and Underground Command Center: I...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>5</th>
-<td>19</td>
-<td>Central Terminal and Viewing Monitors at Dulce...</td>
-<td>0.02</td>
-<td># Central Terminal and Viewing Monitors at Dul...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>6</th>
-<td>6</td>
-<td>Cosmic Vocalization and Universe Interactions</td>
-<td>0.02</td>
-<td># Cosmic Vocalization and Universe Interaction...</td>
-<td>7.5</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2755,12 +2970,17 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Build context (gpt-4o-mini)
-LLM calls: 12. Prompt tokens: 8565. Output tokens: 1111.
-Map-reduce (gpt-4o)
-LLM calls: 2. Prompt tokens: 5918. Output tokens: 614.
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[11], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens in dynamic community selection</span>
+<span class="ansi-green-fg">----&gt; 2</span> llm_calls <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>llm_calls_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">      3</span> prompt_tokens <span style="color: rgb(98,98,98)">=</span> result<span style="color: rgb(98,98,98)">.</span>prompt_tokens_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">      4</span> output_tokens <span style="color: rgb(98,98,98)">=</span> result<span style="color: rgb(98,98,98)">.</span>output_tokens_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
