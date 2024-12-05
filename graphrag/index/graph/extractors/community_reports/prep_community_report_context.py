@@ -45,7 +45,7 @@ def prep_community_report_context(
         report_df = pd.DataFrame()
 
     # Filter by community level
-    level_context_df = local_context_df[
+    level_context_df = local_context_df.loc[
         local_context_df.loc[:, schemas.COMMUNITY_LEVEL] == level
     ]
 
