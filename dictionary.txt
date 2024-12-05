@@ -67,6 +67,7 @@ numpy
 pypi
 nbformat
 semversioner
+qdrant
 mkdocs
 typer
 
