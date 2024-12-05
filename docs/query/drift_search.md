@@ -9,7 +9,7 @@ DRIFT search (Dynamic Reasoning and Inference with Flexible Traversal) builds up
 ## Methodology
 
 <p align="center">
-<img src="../../img/drift-search-diagram.png" alt="Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process." align="center" />
+<img src="../img/drift-search-diagram.png" alt="Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process." align="center" />
 </p>
 <p align="center"><i><small>
 Figure 1. An entire DRIFT search hierarchy highlighting the three core phases of the DRIFT search process. A (Primer): DRIFT compares the user’s query with the top K most semantically relevant community reports, generating a broad initial answer and follow-up questions to steer further exploration. B (Follow-Up): DRIFT uses local search to refine queries, producing additional intermediate answers and follow-up questions that enhance specificity, guiding the engine towards context-rich information. A glyph on each node in the diagram shows the confidence the algorithm has to continue the query expansion step.  C (Output Hierarchy): The final output is a hierarchical structure of questions and answers ranked by relevance, reflecting a balanced mix of global insights and local refinements, making the results adaptable and comprehensive.</small></i></p>
