@@ -110,6 +110,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
     ) -> AsyncGenerator:
         """Stream the global search response."""
         context_result = await self.context_builder.build_context(
+            query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
