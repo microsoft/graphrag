@@ -46,12 +46,16 @@ def prep_community_report_context(
 
     # Filter by community level
     level_context_df = local_context_df[
-        local_context_df.loc[:,schemas.COMMUNITY_LEVEL] == level
+        local_context_df.loc[:, schemas.COMMUNITY_LEVEL] == level
     ]
 
     # Filter valid and invalid contexts using boolean logic
-    valid_context_df = level_context_df[~level_context_df.loc[:,schemas.CONTEXT_EXCEED_FLAG]]
-    invalid_context_df = level_context_df[level_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG]]
+    valid_context_df = level_context_df.loc[
+        ~level_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG]
+    ]
+    invalid_context_df = level_context_df.loc[
+        level_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG]
+    ]
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
@@ -59,11 +63,11 @@ def prep_community_report_context(
         return valid_context_df
 
     if report_df.empty:
-        invalid_context_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
+        invalid_context_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
             invalid_context_df, max_tokens
         )
-        invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df[
-            schemas.CONTEXT_STRING
+        invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df.loc[
+            :, schemas.CONTEXT_STRING
         ].map(num_tokens)
         invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
         return union(valid_context_df, invalid_context_df)
@@ -80,12 +84,12 @@ def prep_community_report_context(
     # handle any remaining invalid records that can't be subsituted with sub-community reports
     # this should be rare, but if it happens, we will just trim the local context to fit the limit
     remaining_df = _antijoin_reports(invalid_context_df, community_df)
-    remaining_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
+    remaining_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
         remaining_df, max_tokens
     )
 
     result = union(valid_context_df, community_df, remaining_df)
-    result.loc[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(num_tokens)
+    result[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(num_tokens)
 
     result[schemas.CONTEXT_EXCEED_FLAG] = 0
     return result

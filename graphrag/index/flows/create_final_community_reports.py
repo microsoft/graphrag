@@ -116,7 +116,7 @@ async def create_final_community_reports(
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     """Prepare nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
     # Filter rows where community is not -1
-    input = input.loc[input.loc[:,COMMUNITY_ID] != -1]
+    input = input.loc[input.loc[:, COMMUNITY_ID] != -1]
 
     # Fill missing values in NODE_DESCRIPTION
     input.loc[:, NODE_DESCRIPTION] = input.loc[:, NODE_DESCRIPTION].fillna(
@@ -136,8 +136,8 @@ def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
 
     # Create EDGE_DETAILS column
-    input[EDGE_DETAILS] = input.loc[:,
-        [EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]
+    input[EDGE_DETAILS] = input.loc[
+        :, [EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]
     ].to_dict(orient="records")
 
     return input
@@ -148,8 +148,8 @@ def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
 
     # Create CLAIM_DETAILS column
-    input[CLAIM_DETAILS] = input.loc[:,
-        [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
+    input[CLAIM_DETAILS] = input.loc[
+        :, [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
     ].to_dict(orient="records")
 
     return input
