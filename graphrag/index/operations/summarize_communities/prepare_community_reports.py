@@ -162,9 +162,7 @@ def _prepare_reports_at_level(
     )
 
     # Generate community-level context strings using vectorized batch processing
-    community_df = parallel_sort_context_batch(
+    return parallel_sort_context_batch(
         community_df,
         max_tokens=max_tokens,
     )
-
-    return community_df

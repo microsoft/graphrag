@@ -114,7 +114,7 @@ async def create_final_community_reports(
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
-    """Prepares nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
+    """Prepare nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
     # Filter rows where community is not -1
     input = input[input[COMMUNITY_ID] != -1]
 

@@ -4,6 +4,7 @@
 """A module containing create_graph, _get_node_attributes, _get_edge_attributes and _get_attribute_column_mapping methods definition."""
 
 import logging
+from itertools import pairwise
 
 import pandas as pd
 
@@ -37,7 +38,7 @@ def restore_community_hierarchy(
     community_hierarchy = []
 
     # Iterate through adjacent levels
-    for current_level, next_level in zip(levels, levels[1:]):
+    for current_level, next_level in pairwise(levels):
         current_communities = community_levels[current_level]
         next_communities = community_levels[next_level]
 

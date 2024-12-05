@@ -12,7 +12,6 @@ def sort_context(
     local_context: list[dict],
     sub_community_reports: list[dict] | None = None,
     max_tokens: int | None = None,
-    node_id_column: str = schemas.NODE_ID,
     node_name_column: str = schemas.NODE_NAME,
     node_details_column: str = schemas.NODE_DETAILS,
     edge_id_column: str = schemas.EDGE_ID,
@@ -20,9 +19,7 @@ def sort_context(
     edge_degree_column: str = schemas.EDGE_DEGREE,
     edge_source_column: str = schemas.EDGE_SOURCE,
     edge_target_column: str = schemas.EDGE_TARGET,
-    claim_id_column: str = schemas.CLAIM_ID,
     claim_details_column: str = schemas.CLAIM_DETAILS,
-    community_id_column: str = schemas.COMMUNITY_ID,
 ) -> str:
     """Sort context by degree in descending order, optimizing for performance."""
 
@@ -47,10 +44,10 @@ def sort_context(
             ("Relationships", edges),
         ]:
             if data:
-                df = pd.DataFrame(data)
-                if not df.empty:
+                data_df = pd.DataFrame(data)
+                if not data_df.empty:
                     contexts.append(
-                        f"-----{label}-----\n{df.to_csv(index=False, sep=',')}"
+                        f"-----{label}-----\n{data_df.to_csv(index=False, sep=',')}"
                     )
 
         return "\n\n".join(contexts)
@@ -126,7 +123,7 @@ def sort_context(
 
 
 def parallel_sort_context_batch(community_df, max_tokens, parallel=False):
-    """Calculate context using parallelization if enabled"""
+    """Calculate context using parallelization if enabled."""
     if parallel:
         # Use ThreadPoolExecutor for parallel execution
         from concurrent.futures import ThreadPoolExecutor

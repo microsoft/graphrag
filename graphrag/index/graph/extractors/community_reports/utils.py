@@ -3,8 +3,6 @@
 
 """A module containing community report generation utilities."""
 
-from typing import cast
-
 import pandas as pd
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
