@@ -1,42 +1,32 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.index.run.utils import create_run_context
+from graphrag.index.flows.create_final_communities import (
+    create_final_communities,
+)
 from graphrag.index.workflows.v1.create_final_communities import (
-    build_steps,
     workflow_name,
 )
 
 from .util import (
     compare_outputs,
-    get_workflow_output,
-    load_expected,
-    load_input_tables,
+    load_test_table,
 )
 
 
-async def test_create_final_communities():
-    input_tables = load_input_tables([
-        "workflow:create_base_entity_graph",
-    ])
-    expected = load_expected(workflow_name)
+def test_create_final_communities():
+    base_entity_nodes = load_test_table("base_entity_nodes")
+    base_relationship_edges = load_test_table("base_relationship_edges")
+    base_communities = load_test_table("base_communities")
 
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_entity_graph", input_tables["workflow:create_base_entity_graph"]
+    expected = load_test_table(workflow_name)
+
+    actual = create_final_communities(
+        base_entity_nodes=base_entity_nodes,
+        base_relationship_edges=base_relationship_edges,
+        base_communities=base_communities,
     )
 
-    steps = build_steps({})
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
-
-    # ignore the period and id columns, because they recalculated every time
     assert "period" in expected.columns
     assert "id" in expected.columns
     columns = list(expected.columns.values)

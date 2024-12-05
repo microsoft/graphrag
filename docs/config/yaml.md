@@ -230,8 +230,6 @@ This is the base LLM configuration section. Other steps may override this config
 
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
 - `graphml` **bool** - Export graph snapshots to GraphML.
-- `raw_entities` **bool** - Export raw entity snapshots to JSON.
-- `top_level_nodes` **bool** - Export top-level-node snapshots to JSON.
 - `transient` **bool** - Export transient workflow tables snapshots to parquet.
 
 ### encoding_model

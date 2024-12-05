@@ -11,7 +11,7 @@ from typing import Any
 import pandas as pd
 
 from graphrag.index.config.input import PipelineInputConfig
-from graphrag.index.utils.hashing import gen_md5_hash
+from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logging.base import ProgressReporter
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -36,7 +36,7 @@ async def load(
             group = {}
         text = await storage.get(path, encoding="utf-8")
         new_item = {**group, "text": text}
-        new_item["id"] = gen_md5_hash(new_item, new_item.keys())
+        new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
         return new_item
 

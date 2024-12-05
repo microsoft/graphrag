@@ -11,7 +11,7 @@ from typing import cast
 import pandas as pd
 
 from graphrag.index.config.input import PipelineCSVInputConfig, PipelineInputConfig
-from graphrag.index.utils.hashing import gen_md5_hash
+from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logging.base import ProgressReporter
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -42,7 +42,7 @@ async def load(
                 lambda _row: pd.Series([group[key] for key in additional_keys]), axis=1
             )
         if "id" not in data.columns:
-            data["id"] = data.apply(lambda x: gen_md5_hash(x, x.keys()), axis=1)
+            data["id"] = data.apply(lambda x: gen_sha512_hash(x, x.keys()), axis=1)
         if csv_config.source_column is not None and "source" not in data.columns:
             if csv_config.source_column not in data.columns:
                 log.warning(
