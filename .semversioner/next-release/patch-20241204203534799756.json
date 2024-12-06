@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "replaced md5 hash with sha256"
-}
