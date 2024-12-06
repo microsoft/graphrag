@@ -50,4 +50,4 @@ def to_text_unit_dataframe(text_units: list[TextUnit]) -> pd.DataFrame:
             ],
         ]
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

@@ -122,7 +122,7 @@ class TokenTextSplitter(TextSplitter):
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""
-        if cast(bool, pd.isna(text)) or text == "":
+        if cast("bool", pd.isna(text)) or text == "":
             return []
         if isinstance(text, list):
             text = " ".join(text)

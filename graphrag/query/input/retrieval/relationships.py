@@ -136,4 +136,4 @@ def to_relationship_dataframe(
             )
             new_record.append(field_value)
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

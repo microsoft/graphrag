@@ -46,19 +46,28 @@ def path_autocomplete(
         regex = re.escape(pattern).replace(r"\?", ".").replace(r"\*", ".*")
         return re.fullmatch(regex, string) is not None
 
+    from pathlib import Path
+
     def completer(incomplete: str) -> list[str]:
-        items = os.listdir()
+        # List items in the current directory as Path objects
+        items = Path().iterdir()
         completions = []
+
         for item in items:
-            if not file_okay and Path(item).is_file():
+            # Filter based on file/directory properties
+            if not file_okay and item.is_file():
                 continue
-            if not dir_okay and Path(item).is_dir():
+            if not dir_okay and item.is_dir():
                 continue
             if readable and not os.access(item, os.R_OK):
                 continue
             if writable and not os.access(item, os.W_OK):
                 continue
-            completions.append(item)
+
+            # Append the name of the matching item
+            completions.append(item.name)
+
+        # Apply wildcard matching if required
         if match_wildcard:
             completions = filter(
                 lambda i: wildcard_match(i, match_wildcard)
@@ -66,6 +75,8 @@ def path_autocomplete(
                 else False,
                 completions,
             )
+
+        # Return completions that start with the given incomplete string
         return [i for i in completions if i.startswith(incomplete)]
 
     return completer

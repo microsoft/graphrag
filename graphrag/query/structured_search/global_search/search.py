@@ -277,8 +277,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
         """
-        search_response, _j = try_parse_json_object(search_response)
-        if _j == {}:
+        search_response, j = try_parse_json_object(search_response)
+        if j == {}:
             return [{"answer": "", "score": 0}]
 
         parsed_elements = json.loads(search_response).get("points")

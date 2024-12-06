@@ -74,7 +74,7 @@ def load_workflows(
         if is_anonymous:
             name = f"Anonymous Workflow {anonymous_workflow_count}"
             anonymous_workflow_count += 1
-        name = cast(str, name)
+        name = cast("str", name)
 
         config = reference.config
         workflow = create_workflow(

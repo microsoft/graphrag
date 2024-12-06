@@ -226,7 +226,7 @@ async def run_pipeline(
     context = create_run_context(storage=storage, cache=cache, stats=None)
     exporter = ParquetExporter(
         context.storage,
-        lambda e, s, d: cast(WorkflowCallbacks, callback_chain).on_error(
+        lambda e, s, d: cast("WorkflowCallbacks", callback_chain).on_error(
             "Error exporting table", e, s, d
         ),
     )
@@ -274,7 +274,7 @@ async def run_pipeline(
         await _dump_stats(context.stats, context.storage)
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
-        cast(WorkflowCallbacks, callbacks).on_error(
+        cast("WorkflowCallbacks", callbacks).on_error(
             "Error running pipeline!", e, traceback.format_exc()
         )
         yield PipelineRunResult(last_workflow, None, [e])

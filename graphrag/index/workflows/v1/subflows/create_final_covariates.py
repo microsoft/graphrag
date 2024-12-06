@@ -46,4 +46,4 @@ async def create_final_covariates(
         num_threads=num_threads,
     )
 
-    return create_verb_result(cast(Table, output))
+    return create_verb_result(cast("Table", output))

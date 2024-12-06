@@ -3,9 +3,8 @@
 
 """All the steps to transform final documents."""
 
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-import pandas as pd
 from datashaper import (
     Table,
     VerbInput,
@@ -17,6 +16,9 @@ from graphrag.index.flows.create_final_documents import (
     create_final_documents as create_final_documents_flow,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 @verb(
@@ -30,9 +32,9 @@ async def create_final_documents(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final documents."""
-    source = cast(pd.DataFrame, input.get_input())
+    source = cast("pd.DataFrame", input.get_input())
     text_units = await runtime_storage.get("base_text_units")
 
     output = create_final_documents_flow(source, text_units, document_attribute_columns)
 
-    return create_verb_result(cast(Table, output))
+    return create_verb_result(cast("Table", output))

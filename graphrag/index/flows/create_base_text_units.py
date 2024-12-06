@@ -59,7 +59,7 @@ async def create_base_text_units(
         strategy=chunk_strategy,
     )
 
-    chunked = cast(pd.DataFrame, chunked[[*chunk_by_columns, "chunks"]])
+    chunked = cast("pd.DataFrame", chunked[[*chunk_by_columns, "chunks"]])
     chunked = chunked.explode("chunks")
     chunked.rename(
         columns={
@@ -74,7 +74,9 @@ async def create_base_text_units(
     # rename for downstream consumption
     chunked.rename(columns={"chunk": "text"}, inplace=True)
 
-    output = cast(pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True))
+    output = cast(
+        "pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True)
+    )
 
     if snapshot_transient_enabled:
         await snapshot(
@@ -103,7 +105,7 @@ def _aggregate_df(
         output_grouped = input.groupby(lambda _x: True)
     else:
         output_grouped = input.groupby(groupby, sort=False)
-    output = cast(pd.DataFrame, output_grouped.agg(df_aggregations))
+    output = cast("pd.DataFrame", output_grouped.agg(df_aggregations))
     output.rename(
         columns={agg.column: agg.to for agg in aggregations_to_apply.values()},
         inplace=True,

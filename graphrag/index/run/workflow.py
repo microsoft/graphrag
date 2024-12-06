@@ -59,7 +59,7 @@ async def _export_workflow_output(
     workflow: Workflow, exporter: ParquetExporter
 ) -> pd.DataFrame:
     """Export the output from each step of the workflow."""
-    output = cast(pd.DataFrame, workflow.output())
+    output = cast("pd.DataFrame", workflow.output())
     # only write final output that is not empty (i.e. has content)
     # NOTE: this design is intentional - it accounts for workflow steps with "side effects" that don't produce a formal output to save
     if not output.empty:

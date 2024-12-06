@@ -42,7 +42,7 @@ async def create_final_nodes(
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             output,
         )
     )

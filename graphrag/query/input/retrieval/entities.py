@@ -89,7 +89,7 @@ def to_entity_dataframe(
             )
             new_record.append(field_value)
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))
 
 
 def is_valid_uuid(value: str) -> bool:
