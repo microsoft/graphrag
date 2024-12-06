@@ -1,6 +1,19 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 0.9.0
+
+- minor: Refactor graph creation.
+- patch: Dependency updates
+- patch: Fix Global Search with dynamic Community selection bug
+- patch: Fix question gen.
+- patch: Optimize Final Community Reports calculation and stabilize cache
+- patch: miscellaneous code cleanup and minor changes for better alignment of style across the codebase.
+- patch: replace llm package with fnllm
+- patch: replaced md5 hash with sha256
+- patch: replaced md5 hash with sha512
+- patch: update API and add a demonstration notebook
+
 ## 0.5.0
 
 - minor: Data model changes.

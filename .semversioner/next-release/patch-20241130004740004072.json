@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Optimize Final Community Reports calculation and stabilize cache"
-}
