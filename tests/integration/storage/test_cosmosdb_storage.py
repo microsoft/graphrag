@@ -8,7 +8,7 @@ import pytest
 
 # the cosmosdb emulator is only available on windows runners at this time
 if not sys.platform.startswith("win"):
-    pytest.skip("skipping windows-only tests", allow_module_level=True)
+    pytest.skip("encountered windows-only tests -- skipping", allow_module_level=True)
 
 
 def test_find():
