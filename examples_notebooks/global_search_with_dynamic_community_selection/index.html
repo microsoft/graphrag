@@ -12,7 +12,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.43">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
     
     
       
@@ -2548,16 +2548,16 @@ Cell <span class="ansi-green-fg">In[9], line 1</span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> )
 <span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py:157</span>, in <span class="ansi-cyan-fg">GlobalSearch.asearch</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    154</span> llm_calls, prompt_tokens, output_tokens <span style="color: rgb(98,98,98)">=</span> {}, {}, {}
-<span class="ansi-green-intense-fg ansi-bold">    156</span> start_time <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>time()
-<span class="ansi-green-fg">--&gt; 157</span> context_result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder<span style="color: rgb(98,98,98)">.</span>build_context(
-<span class="ansi-green-intense-fg ansi-bold">    158</span>     query<span style="color: rgb(98,98,98)">=</span>query,
-<span class="ansi-green-intense-fg ansi-bold">    159</span>     conversation_history<span style="color: rgb(98,98,98)">=</span>conversation_history,
-<span class="ansi-green-intense-fg ansi-bold">    160</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder_params,
-<span class="ansi-green-intense-fg ansi-bold">    161</span> )
-<span class="ansi-green-intense-fg ansi-bold">    162</span> llm_calls[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>llm_calls
-<span class="ansi-green-intense-fg ansi-bold">    163</span> prompt_tokens[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>prompt_tokens
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/global_search/search.py:156</span>, in <span class="ansi-cyan-fg">GlobalSearch.asearch</span><span class="ansi-blue-fg">(self, query, conversation_history, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    153</span> llm_calls, prompt_tokens, output_tokens <span style="color: rgb(98,98,98)">=</span> {}, {}, {}
+<span class="ansi-green-intense-fg ansi-bold">    155</span> start_time <span style="color: rgb(98,98,98)">=</span> time<span style="color: rgb(98,98,98)">.</span>time()
+<span class="ansi-green-fg">--&gt; 156</span> context_result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder<span style="color: rgb(98,98,98)">.</span>build_context(
+<span class="ansi-green-intense-fg ansi-bold">    157</span>     query<span style="color: rgb(98,98,98)">=</span>query,
+<span class="ansi-green-intense-fg ansi-bold">    158</span>     conversation_history<span style="color: rgb(98,98,98)">=</span>conversation_history,
+<span class="ansi-green-intense-fg ansi-bold">    159</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>context_builder_params,
+<span class="ansi-green-intense-fg ansi-bold">    160</span> )
+<span class="ansi-green-intense-fg ansi-bold">    161</span> llm_calls[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>llm_calls
+<span class="ansi-green-intense-fg ansi-bold">    162</span> prompt_tokens[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> context_result<span style="color: rgb(98,98,98)">.</span>prompt_tokens
 
 File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/global_search/community_context.py:98</span>, in <span class="ansi-cyan-fg">GlobalCommunityContext.build_context</span><span class="ansi-blue-fg">(self, query, conversation_history, use_community_summary, column_delimiter, shuffle_data, include_community_rank, min_community_rank, community_rank_name, include_community_weight, community_weight_name, normalize_community_weight, max_tokens, context_name, conversation_history_user_turns_only, conversation_history_max_turns, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">     93</span> community_reports <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>community_reports
@@ -2592,12 +2592,12 @@ File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context
 <span class="ansi-green-intense-fg ansi-bold">    124</span>     communities_to_rate <span style="color: rgb(98,98,98)">=</span> []
 <span class="ansi-green-intense-fg ansi-bold">    125</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> community, result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">zip</span>(queue, gather_results, strict<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>):
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/rate_relevancy.py:55</span>, in <span class="ansi-cyan-fg">rate_relevancy</span><span class="ansi-blue-fg">(query, description, llm, token_encoder, rate_query, num_repeats, semaphore, **llm_kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">     53</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> _ <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">range</span>(num_repeats):
-<span class="ansi-green-intense-fg ansi-bold">     54</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> semaphore <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> semaphore <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> nullcontext():
-<span class="ansi-green-fg">---&gt; 55</span>         response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> llm<span style="color: rgb(98,98,98)">.</span>agenerate(messages<span style="color: rgb(98,98,98)">=</span>messages, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>llm_kwargs)
-<span class="ansi-green-intense-fg ansi-bold">     56</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">     57</span>         _, parsed_response <span style="color: rgb(98,98,98)">=</span> try_parse_json_object(response)
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/context_builder/rate_relevancy.py:54</span>, in <span class="ansi-cyan-fg">rate_relevancy</span><span class="ansi-blue-fg">(query, description, llm, token_encoder, rate_query, num_repeats, semaphore, **llm_kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     52</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> _ <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">range</span>(num_repeats):
+<span class="ansi-green-intense-fg ansi-bold">     53</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">async</span> <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> semaphore <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> semaphore <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> nullcontext():
+<span class="ansi-green-fg">---&gt; 54</span>         response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> llm<span style="color: rgb(98,98,98)">.</span>agenerate(messages<span style="color: rgb(98,98,98)">=</span>messages, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>llm_kwargs)
+<span class="ansi-green-intense-fg ansi-bold">     55</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">     56</span>         _, parsed_response <span style="color: rgb(98,98,98)">=</span> try_parse_json_object(response)
 
 File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:142</span>, in <span class="ansi-cyan-fg">ChatOpenAI.agenerate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
 <span class="ansi-green-intense-fg ansi-bold">    135</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
