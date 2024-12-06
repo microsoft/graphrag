@@ -81,24 +81,24 @@ async def test_create_base_entity_graph():
     edges_actual = await context.runtime_storage.get("base_relationship_edges")
     communities_actual = await context.runtime_storage.get("base_communities")
 
-    assert len(nodes_actual.columns) == len(
-        nodes_expected.columns
-    ), "Nodes dataframe columns differ"
+    assert len(nodes_actual.columns) == len(nodes_expected.columns), (
+        "Nodes dataframe columns differ"
+    )
 
-    assert len(edges_actual.columns) == len(
-        edges_expected.columns
-    ), "Edges dataframe columns differ"
+    assert len(edges_actual.columns) == len(edges_expected.columns), (
+        "Edges dataframe columns differ"
+    )
 
-    assert len(communities_actual.columns) == len(
-        communities_expected.columns
-    ), "Edges dataframe columns differ"
+    assert len(communities_actual.columns) == len(communities_expected.columns), (
+        "Edges dataframe columns differ"
+    )
 
     # TODO: with the combined verb we can't force summarization
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized
     # we need to update the mocking to provide somewhat unique graphs so a true merge happens
     # the assertion should grab a node and ensure the description matches the mock description, not the original as we are doing below
 
-    assert nodes_actual["description"].values[0] == "Company_A is a test company"  # noqa
+    assert nodes_actual["description"].values[0] == "Company_A is a test company"
 
     assert len(context.storage.keys()) == 0, "Storage should be empty"
 

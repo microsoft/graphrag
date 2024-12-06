@@ -7,8 +7,7 @@ from __future__ import annotations
 
 from typing import Generic, Literal, TypeVar
 
-from pydantic import BaseModel
-from pydantic import Field as pydantic_Field
+from pydantic import BaseModel, Field
 
 from graphrag.config.enums import StorageType
 
@@ -27,7 +26,7 @@ class PipelineFileStorageConfig(PipelineStorageConfig[Literal[StorageType.file]]
     type: Literal[StorageType.file] = StorageType.file
     """The type of storage."""
 
-    base_dir: str | None = pydantic_Field(
+    base_dir: str | None = Field(
         description="The base directory for the storage.", default=None
     )
     """The base directory for the storage."""
@@ -46,7 +45,7 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     type: Literal[StorageType.blob] = StorageType.blob
     """The type of storage."""
 
-    connection_string: str | None = pydantic_Field(
+    connection_string: str | None = Field(
         description="The blob storage connection string for the storage.", default=None
     )
     """The blob storage connection string for the storage."""

@@ -22,7 +22,7 @@ def test_init_yaml_uncommented():
     lines = [line for line in lines if "##" not in line]
 
     def uncomment_line(line: str) -> str:
-        leading_whitespace = cast(Any, re.search(r"^(\s*)", line)).group(1)
+        leading_whitespace = cast("Any", re.search(r"^(\s*)", line)).group(1)
         return re.sub(r"^\s*# ", leading_whitespace, line, count=1)
 
     content = "\n".join([uncomment_line(line) for line in lines])

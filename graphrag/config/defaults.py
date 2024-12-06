@@ -97,6 +97,13 @@ VECTOR_STORE = f"""
     overwrite: true\
 """
 
+VECTOR_STORE_DICT = {
+    "type": VectorStoreType.LanceDB.value,
+    "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
+    "container_name": "default",
+    "overwrite": True,
+}
+
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5
 LOCAL_SEARCH_COMMUNITY_PROP = 0.1

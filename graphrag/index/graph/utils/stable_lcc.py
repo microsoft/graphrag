@@ -16,7 +16,7 @@ def stable_largest_connected_component(graph: nx.Graph) -> nx.Graph:
     from graspologic.utils import largest_connected_component
 
     graph = graph.copy()
-    graph = cast(nx.Graph, largest_connected_component(graph))
+    graph = cast("nx.Graph", largest_connected_component(graph))
     graph = normalize_node_names(graph)
     return _stabilize_graph(graph)
 

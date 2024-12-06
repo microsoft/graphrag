@@ -20,7 +20,7 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 async def mock_verb(
     input: VerbInput, storage: PipelineStorage, **_kwargs
 ) -> VerbResult:
-    source = cast(pd.DataFrame, input.get_input())
+    source = cast("pd.DataFrame", input.get_input())
 
     output = source[["id"]]
 
@@ -28,7 +28,7 @@ async def mock_verb(
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             output,
         )
     )
@@ -37,14 +37,14 @@ async def mock_verb(
 async def mock_no_return_verb(
     input: VerbInput, storage: PipelineStorage, **_kwargs
 ) -> VerbResult:
-    source = cast(pd.DataFrame, input.get_input())
+    source = cast("pd.DataFrame", input.get_input())
 
     # write some outputs to storage independent of the return
     await storage.set("empty_write", source[["name"]])
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             pd.DataFrame(),
         )
     )
@@ -82,9 +82,9 @@ async def test_normal_result_exports_parquet():
     ]
 
     assert len(pipeline_result) == 1
-    assert (
-        storage.keys() == ["stats.json", "mock_write", "mock_workflow.parquet"]
-    ), "Mock workflow output should be written to storage by the exporter when there is a non-empty data frame"
+    assert storage.keys() == ["stats.json", "mock_write", "mock_workflow.parquet"], (
+        "Mock workflow output should be written to storage by the exporter when there is a non-empty data frame"
+    )
 
 
 async def test_empty_result_does_not_export_parquet():

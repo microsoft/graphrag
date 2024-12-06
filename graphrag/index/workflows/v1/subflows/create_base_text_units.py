@@ -32,7 +32,7 @@ async def create_base_text_units(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform base text_units."""
-    source = cast(pd.DataFrame, input.get_input())
+    source = cast("pd.DataFrame", input.get_input())
 
     output = await create_base_text_units_flow(
         source,
@@ -47,7 +47,7 @@ async def create_base_text_units(
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             pd.DataFrame(),
         )
     )

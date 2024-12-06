@@ -75,7 +75,7 @@ class LocalQuestionGen(BaseQuestionGen):
         if context_data is None:
             # generate context data based on the question history
             result = cast(
-                ContextBuilderResult,
+                "ContextBuilderResult",
                 self.context_builder.build_context(
                     query=question_text,
                     conversation_history=conversation_history,
@@ -83,7 +83,7 @@ class LocalQuestionGen(BaseQuestionGen):
                     **self.context_builder_params,
                 ),
             )
-            context_data = cast(str, result.context_chunks)
+            context_data = cast("str", result.context_chunks)
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
@@ -153,7 +153,7 @@ class LocalQuestionGen(BaseQuestionGen):
         if context_data is None:
             # generate context data based on the question history
             result = cast(
-                ContextBuilderResult,
+                "ContextBuilderResult",
                 self.context_builder.build_context(
                     query=question_text,
                     conversation_history=conversation_history,
@@ -161,7 +161,7 @@ class LocalQuestionGen(BaseQuestionGen):
                     **self.context_builder_params,
                 ),
             )
-            context_data = cast(str, result.context_chunks)
+            context_data = cast("str", result.context_chunks)
             context_records = result.context_records
         else:
             context_records = {"context_data": context_data}
