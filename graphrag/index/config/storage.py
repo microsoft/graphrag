@@ -50,17 +50,15 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The blob storage connection string for the storage."""
 
-    container_name: str = pydantic_Field(
+    container_name: str = Field(
         description="The container name for storage", default=""
     )
     """The container name for storage."""
 
-    base_dir: str = pydantic_Field(
-        description="The base directory for the storage.", default=""
-    )
+    base_dir: str = Field(description="The base directory for the storage.", default="")
     """The base directory for the storage."""
 
-    storage_account_blob_url: str = pydantic_Field(
+    storage_account_blob_url: str = Field(
         description="The storage account blob url.", default=""
     )
     """The storage account blob url."""
@@ -74,22 +72,20 @@ class PipelineCosmosDBStorageConfig(
     type: Literal[StorageType.cosmosdb] = StorageType.cosmosdb
     """The type of storage."""
 
-    connection_string: str | None = pydantic_Field(
+    connection_string: str | None = Field(
         description="The cosmosdb storage primary key for the storage.", default=None
     )
     """The cosmosdb storage primary key for the storage."""
 
-    container_name: str = pydantic_Field(
+    container_name: str = Field(
         description="The container name for storage", default=""
     )
     """The container name for storage."""
 
-    base_dir: str = pydantic_Field(
-        description="The base directory for the storage.", default=""
-    )
+    base_dir: str = Field(description="The base directory for the storage.", default="")
     """The base directory for the storage."""
 
-    cosmosdb_account_url: str = pydantic_Field(
+    cosmosdb_account_url: str = Field(
         description="The cosmosdb account url.", default=""
     )
     """The cosmosdb account url."""
