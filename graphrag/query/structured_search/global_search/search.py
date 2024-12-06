@@ -15,7 +15,6 @@ import pandas as pd
 import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
-from graphrag.llm.openai.utils import try_parse_json_object
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -31,7 +30,7 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.llm.base import BaseLLM
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
 DEFAULT_MAP_LLM_PARAMS = {
@@ -355,10 +354,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             for point in filtered_key_points:
                 formatted_response_data = []
                 formatted_response_data.append(
-                    f'----Analyst {point["analyst"] + 1}----'
+                    f"----Analyst {point['analyst'] + 1}----"
                 )
                 formatted_response_data.append(
-                    f'Importance Score: {point["score"]}'  # type: ignore
+                    f"Importance Score: {point['score']}"  # type: ignore
                 )
                 formatted_response_data.append(point["answer"])  # type: ignore
                 formatted_response_text = "\n".join(formatted_response_data)
@@ -456,8 +455,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         total_tokens = 0
         for point in filtered_key_points:
             formatted_response_data = [
-                f'----Analyst {point["analyst"] + 1}----',
-                f'Importance Score: {point["score"]}',
+                f"----Analyst {point['analyst'] + 1}----",
+                f"Importance Score: {point['score']}",
                 point["answer"],
             ]
             formatted_response_text = "\n".join(formatted_response_data)

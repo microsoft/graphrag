@@ -6,9 +6,10 @@
 import json
 from dataclasses import dataclass
 
+from fnllm import ChatLLM
+
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
-from graphrag.llm import CompletionLLM
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
@@ -28,7 +29,7 @@ class SummarizationResult:
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: ChatLLM
     _entity_name_key: str
     _input_descriptions_key: str
     _summarization_prompt: str
@@ -38,7 +39,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: ChatLLM,
         entity_name_key: str | None = None,
         input_descriptions_key: str | None = None,
         summarization_prompt: str | None = None,
@@ -126,15 +127,14 @@ class SummarizeExtractor:
     ):
         """Summarize descriptions using the LLM."""
         response = await self._llm(
-            self._summarization_prompt,
-            name="summarize",
-            variables={
+            self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
-            },
+            }),
+            name="summarize",
             model_parameters={"max_tokens": self._max_summary_length},
         )
         # Calculate result
-        return str(response.output)
+        return str(response.output.content)

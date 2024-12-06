@@ -20,9 +20,11 @@ from graphrag.vector_stores.factory import VectorStoreType
 
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
+AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 #
 # LLM Parameters
 #
+LLM_FREQUENCY_PENALTY = 0.0
 LLM_TYPE = LLMType.OpenAIChat
 LLM_MODEL = "gpt-4-turbo-preview"
 LLM_MAX_TOKENS = 4000
@@ -34,6 +36,7 @@ LLM_TOKENS_PER_MINUTE = 0
 LLM_REQUESTS_PER_MINUTE = 0
 LLM_MAX_RETRIES = 10
 LLM_MAX_RETRY_WAIT = 10.0
+LLM_PRESENCE_PENALTY = 0.0
 LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION = True
 LLM_CONCURRENT_REQUESTS = 25
 

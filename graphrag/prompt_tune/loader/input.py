@@ -6,13 +6,15 @@
 import numpy as np
 import pandas as pd
 from datashaper import NoopVerbCallbacks
+from fnllm import ChatLLM
+from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.llm.types.llm_types import EmbeddingLLM
 from graphrag.logging.base import ProgressReporter
 from graphrag.prompt_tune.defaults import (
     MIN_CHUNK_OVERLAP,
@@ -25,13 +27,13 @@ from graphrag.prompt_tune.types import DocSelectionType
 
 async def _embed_chunks(
     text_chunks: pd.DataFrame,
-    embedding_llm: EmbeddingLLM,
+    embedding_llm: ChatLLM,
     n_subset_max: int = N_SUBSET_MAX,
 ) -> tuple[pd.DataFrame, np.ndarray]:
     """Convert text chunks into dense text embeddings."""
     sampled_text_chunks = text_chunks.sample(n=min(n_subset_max, len(text_chunks)))
     embeddings = await embedding_llm(sampled_text_chunks["chunks"].tolist())
-    return text_chunks, np.array(embeddings.output)
+    return text_chunks, np.array(embeddings.output.embeddings)
 
 
 def _sample_chunks_from_embeddings(
@@ -58,6 +60,10 @@ async def load_docs_in_chunks(
     k: int = K,
 ) -> list[str]:
     """Load docs into chunks for generating prompts."""
+    llm_config = TypeAdapter(LLMParameters).validate_python(
+        config.embeddings.resolved_strategy()["llm"]
+    )
+
     dataset = await create_input(config.input, reporter, root)
 
     # covert to text units
@@ -91,11 +97,10 @@ async def load_docs_in_chunks(
             msg = "k must be an integer > 0"
             raise ValueError(msg)
         embedding_llm = load_llm_embeddings(
-            name="prompt_tuning_embeddings",
-            llm_type=config.embeddings.resolved_strategy()["llm"]["type"],
+            "prompt_tuning_embeddings",
+            llm_config,
             callbacks=NoopVerbCallbacks(),
             cache=None,
-            llm_config=config.embeddings.resolved_strategy()["llm"],
         )
 
         chunks_df, embeddings = await _embed_chunks(

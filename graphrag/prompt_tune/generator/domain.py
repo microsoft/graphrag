@@ -3,11 +3,12 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from graphrag.llm.types.llm_types import CompletionLLM
+from fnllm import ChatLLM
+
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
 
-async def generate_domain(llm: CompletionLLM, docs: str | list[str]) -> str:
+async def generate_domain(llm: ChatLLM, docs: str | list[str]) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters
@@ -24,4 +25,4 @@ async def generate_domain(llm: CompletionLLM, docs: str | list[str]) -> str:
 
     response = await llm(domain_prompt)
 
-    return str(response.output)
+    return str(response.output.content)

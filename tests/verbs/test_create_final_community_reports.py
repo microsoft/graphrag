@@ -1,12 +1,15 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import json
 
 import pytest
 from datashaper.errors import VerbParallelizationError
 
 from graphrag.config.enums import LLMType
+from graphrag.index.graph.extractors.community_reports.community_reports_extractor import (
+    CommunityReportResponse,
+    FindingModel,
+)
 from graphrag.index.workflows.v1.create_final_community_reports import (
     build_steps,
     workflow_name,
@@ -21,25 +24,27 @@ from .util import (
 )
 
 MOCK_RESPONSES = [
-    json.dumps({
-        "title": "<report_title>",
-        "summary": "<executive_summary>",
-        "rating": 2,
-        "rating_explanation": "<rating_explanation>",
-        "findings": [
-            {
-                "summary": "<insight_1_summary>",
-                "explanation": "<insight_1_explanation",
-            },
-            {
-                "summary": "<insight_2_summary>",
-                "explanation": "<insight_2_explanation",
-            },
+    CommunityReportResponse(
+        title="<report_title>",
+        summary="<executive_summary>",
+        rating=2,
+        rating_explanation="<rating_explanation>",
+        findings=[
+            FindingModel(
+                summary="<insight_1_summary>", explanation="<insight_1_explanation"
+            ),
+            FindingModel(
+                summary="<insight_2_summary>", explanation="<insight_2_explanation"
+            ),
         ],
-    })
+    )
 ]
 
-MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_RESPONSES}
+MOCK_LLM_CONFIG = {
+    "type": LLMType.StaticResponse,
+    "responses": MOCK_RESPONSES,
+    "parse_json": True,
+}
 
 
 async def test_create_final_community_reports():

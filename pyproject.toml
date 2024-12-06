@@ -76,9 +76,6 @@ pyyaml = "^6.0.2"
 pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.0"
 
-# Network
-tenacity = "^9.0.0"
-
 pydantic = "^2.9.2"
 rich = "^13.6.0"
 devtools = "^0.12.2"
@@ -87,11 +84,10 @@ typing-extensions = "^4.12.2"
 #Azure
 azure-storage-blob = "^12.22.0"
 azure-identity = "^1.17.1"
-json-repair = "^0.30.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.12.5"
-
+fnllm = "^0.0.8"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.0"
@@ -110,6 +106,7 @@ deptry = "^0.20.0"
 mkdocs-material = "^9.5.39"
 mkdocs-jupyter = "^0.25.0"
 mkdocs-exclude-search = "^0.6.6"
+pytest-dotenv = "^0.5.2"
 mkdocs-typer = "^0.0.3"
 
 [build-system]
@@ -273,5 +270,4 @@ exclude = ["**/node_modules", "**/__pycache__"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 timeout = 1000
-# log_cli = true
-# log_cli_level = "INFO"
+env_files = [".env"]
