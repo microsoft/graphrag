@@ -43,3 +43,6 @@ class MockChatLLM(ChatLLM):
             output=ContentResponse(content=response),
             parsed_json=cast("TJsonModel", parsed_json),
         )
+
+    def child(self, name):
+        raise NotImplementedError

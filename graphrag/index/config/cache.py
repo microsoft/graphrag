@@ -63,7 +63,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     )
     """The blob cache connection string for the cache."""
 
-    container_name: str = pydantic_Field(
+    container_name: str | None = pydantic_Field(
         description="The container name for cache", default=None
     )
     """The container name for cache"""

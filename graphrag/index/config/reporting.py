@@ -54,7 +54,7 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     )
     """The blob reporting connection string for the reporting."""
 
-    container_name: str = pydantic_Field(
+    container_name: str | None = pydantic_Field(
         description="The container name for reporting", default=None
     )
     """The container name for reporting"""
