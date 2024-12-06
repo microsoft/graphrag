@@ -207,11 +207,18 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     if value_json is None:
                         log.exception("Error converting output %s to json", key)
                     else:
-                        cosmos_db_item = {"id": key, "body": json.loads(value_json)}
-                        container_client.upsert_item(body=cosmos_db_item)
+                        cosmosdb_item_list = json.loads(value_json)
+                        for cosmosdb_item in cosmosdb_item_list:
+                            prefixed_id = f"{key}-{cosmosdb_item['id']}"
+                            cosmosdb_item["id"] = prefixed_id
+                            container_client.upsert_item(body=cosmosdb_item)
                 else:
-                    cosmos_db_item = {"id": key, "body": json.loads(value)}
-                    container_client.upsert_item(body=cosmos_db_item)
+                    cosmosdb_item_list = json.loads(value)
+                    for cosmosdb_item in cosmosdb_item_list:
+                        prefixed_id = f"{key}-{cosmosdb_item['id']}"
+                        cosmosdb_item["id"] = prefixed_id
+                        container_client.upsert_item(body=cosmosdb_item)
+                        
         except Exception:
             log.exception("Error writing item %s", key)
 
