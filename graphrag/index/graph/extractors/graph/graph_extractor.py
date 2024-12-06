@@ -140,6 +140,7 @@ class GraphExtractor:
             all_records,
             prompt_variables.get(self._tuple_delimiter_key, DEFAULT_TUPLE_DELIMITER),
             prompt_variables.get(self._record_delimiter_key, DEFAULT_RECORD_DELIMITER),
+            prompt_variables.get(self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER),
         )
 
         return GraphExtractionResult(
@@ -187,6 +188,7 @@ class GraphExtractor:
         results: dict[int, str],
         tuple_delimiter: str,
         record_delimiter: str,
+        complete_delimiter: str,
     ) -> nx.Graph:
         """Parse the result string to create an undirected unipartite graph.
 
@@ -194,12 +196,15 @@ class GraphExtractor:
             - results - dict of results from the extraction chain
             - tuple_delimiter - delimiter between tuples in an output record, default is '<|>'
             - record_delimiter - delimiter between records, default is '##'
+            - complete_delimiter - complete between records, default is '<|COMPLETE|>'
         Returns:
             - output - unipartite graph in graphML format
         """
         graph = nx.Graph()
         for source_doc_id, extracted_data in results.items():
-            records = [r.strip() for r in extracted_data.split(record_delimiter)]
+            records = [r.strip() for r in extracted_data.split(complete_delimiter)]
+            records = [r.split(record_delimiter) for r in records]
+            records = [r for sublist in records for r in sublist]
 
             for record in records:
                 record = re.sub(r"^\(|\)$", "", record.strip())
@@ -240,7 +245,7 @@ class GraphExtractor:
                             source_id=str(source_doc_id),
                         )
 
-                if (
+                elif (
                     record_attributes[0] == '"relationship"'
                     and len(record_attributes) >= 5
                 ):
@@ -292,7 +297,6 @@ class GraphExtractor:
                         description=edge_description,
                         source_id=edge_source_id,
                     )
-
         return graph
 
 
