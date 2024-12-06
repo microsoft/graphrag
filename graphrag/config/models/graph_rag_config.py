@@ -40,8 +40,8 @@ class GraphRagConfig(LLMConfig):
         """Get a string representation."""
         return self.model_dump_json(indent=4)
 
-    root_dir: str | None = Field(
-        description="The root directory for the configuration.", default=None
+    root_dir: str = Field(
+        description="The root directory for the configuration.", default="."
     )
 
     reporting: ReportingConfig = Field(

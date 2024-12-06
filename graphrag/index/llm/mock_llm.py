@@ -45,4 +45,5 @@ class MockChatLLM(ChatLLM):
         )
 
     def child(self, name):
+        """Return a new mock LLM."""
         raise NotImplementedError
