@@ -63,20 +63,21 @@ def path_autocomplete(
                 continue
             if writable and not os.access(item, os.W_OK):
                 continue
-            
+
             # Append the name of the matching item
             completions.append(item.name)
-        
+
         # Apply wildcard matching if required
         if match_wildcard:
             completions = filter(
-                lambda i: wildcard_match(i, match_wildcard) if match_wildcard else False,
+                lambda i: wildcard_match(i, match_wildcard)
+                if match_wildcard
+                else False,
                 completions,
             )
-        
+
         # Return completions that start with the given incomplete string
         return [i for i in completions if i.startswith(incomplete)]
-
 
     return completer
 

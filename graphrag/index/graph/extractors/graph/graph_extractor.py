@@ -30,6 +30,7 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 log = logging.getLogger(__name__)
 
+
 @dataclass
 class GraphExtractionResult:
     """Unipartite graph extraction result class definition."""
