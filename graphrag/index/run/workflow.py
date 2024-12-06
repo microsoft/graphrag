@@ -68,12 +68,12 @@ async def _export_workflow_output(
 
 
 def _create_callback_chain(
-    callbacks: WorkflowCallbacks | None, progress: ProgressReporter | None
+    callbacks: list[WorkflowCallbacks] | None, progress: ProgressReporter | None
 ) -> WorkflowCallbacks:
-    """Create a callbacks manager."""
+    """Create a callback manager that encompasses multiple callbacks."""
     manager = WorkflowCallbacksManager()
-    if callbacks is not None:
-        manager.register(callbacks)
+    for callback in callbacks or []:
+        manager.register(callback)
     if progress is not None:
         manager.register(ProgressWorkflowCallbacks(progress))
     return manager

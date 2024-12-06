@@ -20,7 +20,6 @@ def build_steps(
 
     ## Dependencies
     * `workflow:create_base_entity_graph`
-    * `workflow:create_final_nodes`
     """
     return [
         {
@@ -28,7 +27,6 @@ def build_steps(
             "args": {},
             "input": {
                 "source": "workflow:create_base_entity_graph",
-                "nodes": "workflow:create_final_nodes",
             },
         },
     ]

@@ -4,6 +4,7 @@
 """A module containing create_graph, _get_node_attributes, _get_edge_attributes and _get_attribute_column_mapping methods definition."""
 
 import logging
+from itertools import pairwise
 
 import pandas as pd
 
@@ -19,49 +20,38 @@ def restore_community_hierarchy(
     level_column: str = schemas.NODE_LEVEL,
 ) -> pd.DataFrame:
     """Restore the community hierarchy from the node data."""
+    # Group by community and level, aggregate names as lists
     community_df = (
-        input.groupby([community_column, level_column])
-        .agg({name_column: list})
+        input.groupby([community_column, level_column])[name_column]
+        .apply(set)
         .reset_index()
     )
-    community_levels = {}
-    for _, row in community_df.iterrows():
-        level = row[level_column]
-        name = row[name_column]
-        community = row[community_column]
 
-        if community_levels.get(level) is None:
-            community_levels[level] = {}
-        community_levels[level][community] = name
+    # Build dictionary with levels as integers
+    community_levels = {
+        level: group.set_index(community_column)[name_column].to_dict()
+        for level, group in community_df.groupby(level_column)
+    }
 
     # get unique levels, sorted in ascending order
-    levels = sorted(community_levels.keys())
+    levels = sorted(community_levels.keys())  # type: ignore
     community_hierarchy = []
 
-    for idx in range(len(levels) - 1):
-        level = levels[idx]
-        next_level = levels[idx + 1]
-        current_level_communities = community_levels[level]
-        next_level_communities = community_levels[next_level]
+    # Iterate through adjacent levels
+    for current_level, next_level in pairwise(levels):
+        current_communities = community_levels[current_level]
+        next_communities = community_levels[next_level]
 
-        for current_community in current_level_communities:
-            current_entities = current_level_communities[current_community]
-
-            # loop through next level's communities to find all the subcommunities
-            entities_found = 0
-            for next_level_community in next_level_communities:
-                next_entities = next_level_communities[next_level_community]
-                if set(next_entities).issubset(set(current_entities)):
+        # Find sub-communities
+        for curr_comm, curr_entities in current_communities.items():
+            for next_comm, next_entities in next_communities.items():
+                if next_entities.issubset(curr_entities):
                     community_hierarchy.append({
-                        community_column: current_community,
-                        schemas.COMMUNITY_LEVEL: level,
-                        schemas.SUB_COMMUNITY: next_level_community,
+                        community_column: curr_comm,
+                        schemas.COMMUNITY_LEVEL: current_level,
+                        schemas.SUB_COMMUNITY: next_comm,
                         schemas.SUB_COMMUNITY_SIZE: len(next_entities),
                     })
-
-                    entities_found += len(next_entities)
-                    if entities_found == len(current_entities):
-                        break
 
     return pd.DataFrame(
         community_hierarchy,

@@ -4,7 +4,6 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
-from typing import cast
 
 import pandas as pd
 from datashaper import (
@@ -13,15 +12,10 @@ from datashaper import (
 )
 
 import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.graph.extractors.community_reports import (
-    filter_claims_to_nodes,
-    filter_edges_to_nodes,
-    filter_nodes_to_level,
-    get_levels,
-    set_context_exceeds_flag,
-    set_context_size,
-    sort_context,
+from graphrag.index.graph.extractors.community_reports.sort_context import (
+    parallel_sort_context_batch,
 )
+from graphrag.index.graph.extractors.community_reports.utils import get_levels
 
 log = logging.getLogger(__name__)
 
@@ -35,12 +29,15 @@ def prepare_community_reports(
 ):
     """Prep communities for report generation."""
     levels = get_levels(nodes, schemas.NODE_LEVEL)
+
     dfs = []
 
     for level in progress_iterable(levels, callbacks.progress, len(levels)):
         communities_at_level_df = _prepare_reports_at_level(
             nodes, edges, claims, level, max_tokens
         )
+
+        communities_at_level_df.loc[:, schemas.COMMUNITY_LEVEL] = level
         dfs.append(communities_at_level_df)
 
     # build initial local context for all communities
@@ -53,127 +50,121 @@ def _prepare_reports_at_level(
     claim_df: pd.DataFrame | None,
     level: int,
     max_tokens: int = 16_000,
-    community_id_column: str = schemas.COMMUNITY_ID,
-    node_id_column: str = schemas.NODE_ID,
-    node_name_column: str = schemas.NODE_NAME,
-    node_details_column: str = schemas.NODE_DETAILS,
-    node_level_column: str = schemas.NODE_LEVEL,
-    node_degree_column: str = schemas.NODE_DEGREE,
-    node_community_column: str = schemas.NODE_COMMUNITY,
-    edge_id_column: str = schemas.EDGE_ID,
-    edge_source_column: str = schemas.EDGE_SOURCE,
-    edge_target_column: str = schemas.EDGE_TARGET,
-    edge_degree_column: str = schemas.EDGE_DEGREE,
-    edge_details_column: str = schemas.EDGE_DETAILS,
-    claim_id_column: str = schemas.CLAIM_ID,
-    claim_subject_column: str = schemas.CLAIM_SUBJECT,
-    claim_details_column: str = schemas.CLAIM_DETAILS,
-):
-    def get_edge_details(node_df: pd.DataFrame, edge_df: pd.DataFrame, name_col: str):
-        return node_df.merge(
-            cast(
-                pd.DataFrame,
-                edge_df[[name_col, schemas.EDGE_DETAILS]],
-            ).rename(columns={name_col: schemas.NODE_NAME}),
-            on=schemas.NODE_NAME,
-            how="left",
-        )
-
-    level_node_df = filter_nodes_to_level(node_df, level)
+) -> pd.DataFrame:
+    """Prepare reports at a given level."""
+    # Filter and prepare node details
+    level_node_df = node_df[node_df[schemas.NODE_LEVEL] == level]
     log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
-    nodes = level_node_df[node_name_column].tolist()
+    nodes_set = set(level_node_df[schemas.NODE_NAME])
 
-    # Filter edges & claims to those containing the target nodes
-    level_edge_df = filter_edges_to_nodes(edge_df, nodes)
-    level_claim_df = (
-        filter_claims_to_nodes(claim_df, nodes) if claim_df is not None else None
-    )
-
-    # concat all edge details per node
-    merged_node_df = pd.concat(
+    # Filter and prepare edge details
+    level_edge_df = edge_df[
+        edge_df.loc[:, schemas.EDGE_SOURCE].isin(nodes_set)
+        & edge_df.loc[:, schemas.EDGE_TARGET].isin(nodes_set)
+    ]
+    level_edge_df.loc[:, schemas.EDGE_DETAILS] = level_edge_df.loc[
+        :,
         [
-            get_edge_details(level_node_df, level_edge_df, edge_source_column),
-            get_edge_details(level_node_df, level_edge_df, edge_target_column),
+            schemas.EDGE_ID,
+            schemas.EDGE_SOURCE,
+            schemas.EDGE_TARGET,
+            schemas.EDGE_DESCRIPTION,
+            schemas.EDGE_DEGREE,
         ],
-        axis=0,
-    )
-    merged_node_df = (
-        merged_node_df.groupby([
-            node_name_column,
-            node_community_column,
-            node_degree_column,
-            node_level_column,
-        ])
-        .agg({node_details_column: "first", edge_details_column: list})
+    ].to_dict(orient="records")
+
+    level_claim_df = pd.DataFrame()
+    if claim_df is not None:
+        level_claim_df = claim_df[
+            claim_df.loc[:, schemas.CLAIM_SUBJECT].isin(nodes_set)
+        ]
+
+    # Merge node and edge details
+    # Group edge details by node and aggregate into lists
+    source_edges = (
+        level_edge_df.groupby(schemas.EDGE_SOURCE)
+        .agg({schemas.EDGE_DETAILS: "first"})
         .reset_index()
+        .rename(columns={schemas.EDGE_SOURCE: schemas.NODE_NAME})
     )
 
-    # concat claim details per node
-    if level_claim_df is not None:
-        merged_node_df = merged_node_df.merge(
-            cast(
-                pd.DataFrame,
-                level_claim_df[[claim_subject_column, claim_details_column]],
-            ).rename(columns={claim_subject_column: node_name_column}),
-            on=node_name_column,
-            how="left",
-        )
+    target_edges = (
+        level_edge_df.groupby(schemas.EDGE_TARGET)
+        .agg({schemas.EDGE_DETAILS: "first"})
+        .reset_index()
+        .rename(columns={schemas.EDGE_TARGET: schemas.NODE_NAME})
+    )
+
+    # Merge aggregated edges into the node DataFrame
+    merged_node_df = level_node_df.merge(
+        source_edges, on=schemas.NODE_NAME, how="left"
+    ).merge(target_edges, on=schemas.NODE_NAME, how="left")
+
+    # Combine source and target edge details into a single column
+    merged_node_df.loc[:, schemas.EDGE_DETAILS] = merged_node_df.loc[
+        :, f"{schemas.EDGE_DETAILS}_x"
+    ].combine_first(merged_node_df.loc[:, f"{schemas.EDGE_DETAILS}_y"])
+
+    # Drop intermediate columns
+    merged_node_df.drop(
+        columns=[f"{schemas.EDGE_DETAILS}_x", f"{schemas.EDGE_DETAILS}_y"], inplace=True
+    )
+
+    # Aggregate node and edge details
     merged_node_df = (
         merged_node_df.groupby([
-            node_name_column,
-            node_community_column,
-            node_level_column,
-            node_degree_column,
+            schemas.NODE_NAME,
+            schemas.NODE_COMMUNITY,
+            schemas.NODE_LEVEL,
+            schemas.NODE_DEGREE,
         ])
         .agg({
-            node_details_column: "first",
-            edge_details_column: "first",
-            **({claim_details_column: list} if level_claim_df is not None else {}),
+            schemas.NODE_DETAILS: "first",
+            schemas.EDGE_DETAILS: lambda x: list(x.dropna()),
         })
         .reset_index()
     )
 
-    # concat all node details, including name, degree, node_details, edge_details, and claim_details
-    merged_node_df[schemas.ALL_CONTEXT] = merged_node_df.apply(
-        lambda x: {
-            node_name_column: x[node_name_column],
-            node_degree_column: x[node_degree_column],
-            node_details_column: x[node_details_column],
-            edge_details_column: x[edge_details_column],
-            claim_details_column: x[claim_details_column]
-            if level_claim_df is not None
-            else [],
-        },
-        axis=1,
+    # Add ALL_CONTEXT column
+    # Ensure schemas.CLAIM_DETAILS exists with the correct length
+    # Merge claim details if available
+    if claim_df is not None:
+        merged_node_df = merged_node_df.merge(
+            level_claim_df.loc[
+                :, [schemas.CLAIM_SUBJECT, schemas.CLAIM_DETAILS]
+            ].rename(columns={schemas.CLAIM_SUBJECT: schemas.NODE_NAME}),
+            on=schemas.NODE_NAME,
+            how="left",
+        )
+
+    # Create the ALL_CONTEXT column
+    merged_node_df[schemas.ALL_CONTEXT] = (
+        merged_node_df.loc[
+            :,
+            [
+                schemas.NODE_NAME,
+                schemas.NODE_DEGREE,
+                schemas.NODE_DETAILS,
+                schemas.EDGE_DETAILS,
+            ],
+        ]
+        .assign(
+            **{schemas.CLAIM_DETAILS: merged_node_df[schemas.CLAIM_DETAILS]}
+            if claim_df is not None
+            else {}
+        )
+        .to_dict(orient="records")
     )
 
     # group all node details by community
     community_df = (
-        merged_node_df.groupby(node_community_column)
+        merged_node_df.groupby(schemas.NODE_COMMUNITY)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )
-    community_df[schemas.CONTEXT_STRING] = community_df[schemas.ALL_CONTEXT].apply(
-        lambda x: sort_context(
-            x,
-            node_id_column=node_id_column,
-            node_name_column=node_name_column,
-            node_details_column=node_details_column,
-            edge_id_column=edge_id_column,
-            edge_details_column=edge_details_column,
-            edge_degree_column=edge_degree_column,
-            edge_source_column=edge_source_column,
-            edge_target_column=edge_target_column,
-            claim_id_column=claim_id_column,
-            claim_details_column=claim_details_column,
-            community_id_column=community_id_column,
-        )
-    )
-    set_context_size(community_df)
-    set_context_exceeds_flag(community_df, max_tokens)
 
-    community_df[schemas.COMMUNITY_LEVEL] = level
-    community_df[node_community_column] = community_df[node_community_column].astype(
-        int
+    # Generate community-level context strings using vectorized batch processing
+    return parallel_sort_context_batch(
+        community_df,
+        max_tokens=max_tokens,
     )
-    return community_df

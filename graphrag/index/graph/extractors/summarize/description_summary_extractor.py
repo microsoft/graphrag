@@ -6,9 +6,10 @@
 import json
 from dataclasses import dataclass
 
+from fnllm import ChatLLM
+
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
-from graphrag.llm import CompletionLLM
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
@@ -21,14 +22,14 @@ DEFAULT_MAX_SUMMARY_LENGTH = 500
 class SummarizationResult:
     """Unipartite graph extraction result class definition."""
 
-    items: str | tuple[str, str]
+    id: str | tuple[str, str]
     description: str
 
 
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: ChatLLM
     _entity_name_key: str
     _input_descriptions_key: str
     _summarization_prompt: str
@@ -38,7 +39,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: ChatLLM,
         entity_name_key: str | None = None,
         input_descriptions_key: str | None = None,
         summarization_prompt: str | None = None,
@@ -59,7 +60,7 @@ class SummarizeExtractor:
 
     async def __call__(
         self,
-        items: str | tuple[str, str],
+        id: str | tuple[str, str],
         descriptions: list[str],
     ) -> SummarizationResult:
         """Call method definition."""
@@ -69,18 +70,18 @@ class SummarizeExtractor:
         elif len(descriptions) == 1:
             result = descriptions[0]
         else:
-            result = await self._summarize_descriptions(items, descriptions)
+            result = await self._summarize_descriptions(id, descriptions)
 
         return SummarizationResult(
-            items=items,
+            id=id,
             description=result or "",
         )
 
     async def _summarize_descriptions(
-        self, items: str | tuple[str, str], descriptions: list[str]
+        self, id: str | tuple[str, str], descriptions: list[str]
     ) -> str:
         """Summarize descriptions into a single description."""
-        sorted_items = sorted(items) if isinstance(items, list) else items
+        sorted_id = sorted(id) if isinstance(id, list) else id
 
         # Safety check, should always be a list
         if not isinstance(descriptions, list):
@@ -107,7 +108,7 @@ class SummarizeExtractor:
             ):
                 # Calculate result (final or partial)
                 result = await self._summarize_descriptions_with_llm(
-                    sorted_items, descriptions_collected
+                    sorted_id, descriptions_collected
                 )
 
                 # If we go for another loop, reset values to new
@@ -122,19 +123,18 @@ class SummarizeExtractor:
         return result
 
     async def _summarize_descriptions_with_llm(
-        self, items: str | tuple[str, str] | list[str], descriptions: list[str]
+        self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
         response = await self._llm(
-            self._summarization_prompt,
-            name="summarize",
-            variables={
-                self._entity_name_key: json.dumps(items, ensure_ascii=False),
+            self._summarization_prompt.format(**{
+                self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(
                     sorted(descriptions), ensure_ascii=False
                 ),
-            },
+            }),
+            name="summarize",
             model_parameters={"max_tokens": self._max_summary_length},
         )
         # Calculate result
-        return str(response.output)
+        return str(response.output.content)

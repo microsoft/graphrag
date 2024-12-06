@@ -14,25 +14,11 @@ from graphrag.index.graph.extractors.community_reports.prep_community_report_con
     prep_community_report_context,
 )
 from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
-from graphrag.index.graph.extractors.community_reports.utils import (
-    filter_claims_to_nodes,
-    filter_edges_to_nodes,
-    filter_nodes_to_level,
-    get_levels,
-    set_context_exceeds_flag,
-    set_context_size,
-)
 
 __all__ = [
     "CommunityReportsExtractor",
     "build_mixed_context",
-    "filter_claims_to_nodes",
-    "filter_edges_to_nodes",
-    "filter_nodes_to_level",
-    "get_levels",
     "prep_community_report_context",
     "schemas",
-    "set_context_exceeds_flag",
-    "set_context_size",
     "sort_context",
 ]

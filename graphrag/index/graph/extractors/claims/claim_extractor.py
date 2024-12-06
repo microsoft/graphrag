@@ -9,10 +9,10 @@ from dataclasses import dataclass
 from typing import Any
 
 import tiktoken
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.llm import CompletionLLM
 from graphrag.prompts.index.claim_extraction import (
     CLAIM_EXTRACTION_PROMPT,
     CONTINUE_PROMPT,
@@ -36,7 +36,7 @@ class ClaimExtractorResult:
 class ClaimExtractor:
     """Claim extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: ChatLLM
     _extraction_prompt: str
     _summary_prompt: str
     _output_formatter_prompt: str
@@ -48,10 +48,11 @@ class ClaimExtractor:
     _completion_delimiter_key: str
     _max_gleanings: int
     _on_error: ErrorHandlerFn
+    _loop_args: dict[str, Any]
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: ChatLLM,
         extraction_prompt: str | None = None,
         input_text_key: str | None = None,
         input_entity_spec_key: str | None = None,
@@ -87,9 +88,9 @@ class ClaimExtractor:
 
         # Construct the looping arguments
         encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
-        yes = encoding.encode("YES")
-        no = encoding.encode("NO")
-        self._loop_args = {"logit_bias": {yes[0]: 100, no[0]: 100}, "max_tokens": 1}
+        yes = f"{encoding.encode('YES')[0]}"
+        no = f"{encoding.encode('NO')[0]}"
+        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, inputs: dict[str, Any], prompt_variables: dict | None = None
@@ -164,13 +165,12 @@ class ClaimExtractor:
         )
 
         response = await self._llm(
-            self._extraction_prompt,
-            variables={
+            self._extraction_prompt.format(**{
                 self._input_text_key: doc,
                 **prompt_args,
-            },
+            })
         )
-        results = response.output or ""
+        results = response.output.content or ""
         claims = results.strip().removesuffix(completion_delimiter)
 
         # Repeat to ensure we maximize entity count
@@ -180,7 +180,7 @@ class ClaimExtractor:
                 name=f"extract-continuation-{i}",
                 history=response.history,
             )
-            extension = response.output or ""
+            extension = response.output.content or ""
             claims += record_delimiter + extension.strip().removesuffix(
                 completion_delimiter
             )
@@ -195,7 +195,7 @@ class ClaimExtractor:
                 history=response.history,
                 model_parameters=self._loop_args,
             )
-            if response.output != "YES":
+            if response.output.content != "YES":
                 break
 
         return self._parse_claim_tuples(results, prompt_args)

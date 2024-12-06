@@ -17,7 +17,6 @@ def build_steps(
     ## Dependencies
     * `workflow:create_base_entity_graph`
     """
-    snapshot_top_level_nodes = config.get("snapshot_top_level_nodes", False)
     layout_graph_enabled = config.get("layout_graph_enabled", True)
     layout_graph_config = config.get(
         "layout_graph",
@@ -28,16 +27,31 @@ def build_steps(
         },
     )
     layout_strategy = layout_graph_config.get("strategy")
-    level_for_node_positions = config.get("level_for_node_positions", 0)
+
+    embed_graph_config = config.get(
+        "embed_graph",
+        {
+            "strategy": {
+                "type": "node2vec",
+                "num_walks": config.get("embed_num_walks", 10),
+                "walk_length": config.get("embed_walk_length", 40),
+                "window_size": config.get("embed_window_size", 2),
+                "iterations": config.get("embed_iterations", 3),
+                "random_seed": config.get("embed_random_seed", 86),
+            }
+        },
+    )
+    embedding_strategy = embed_graph_config.get("strategy")
+    embed_graph_enabled = config.get("embed_graph_enabled", False) or False
 
     return [
         {
-            "id": "laid_out_entity_graph",
             "verb": "create_final_nodes",
             "args": {
                 "layout_strategy": layout_strategy,
-                "level_for_node_positions": level_for_node_positions,
-                "snapshot_top_level_nodes_enabled": snapshot_top_level_nodes,
+                "embedding_strategy": embedding_strategy
+                if embed_graph_enabled
+                else None,
             },
             "input": {"source": "workflow:create_base_entity_graph"},
         },
