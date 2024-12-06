@@ -177,15 +177,20 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 container_client = self._database_client.get_container_client(
                     self._current_container
                 )
-                item = container_client.read_item(item=key, partition_key=key)
-                item_body = item.get("body")
-                item_json_str = json.dumps(item_body)
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+                queried_items = container_client.query_items(
+                    query=query, enable_cross_partition_query=True
+                )
+                for item in queried_items:
+                    item["id"] = item["id"].split("-")[1]
+
+                items_json_str = json.dumps(queried_items)
                 if as_bytes:
-                    item_df = pd.read_json(
-                        StringIO(item_json_str), orient="records", lines=False
+                    items_df = pd.read_json(
+                        StringIO(items_json_str), orient="records", lines=False
                     )
-                    return item_df.to_parquet()
-                return item_json_str
+                    return items_df.to_parquet()
+                return items_json_str
         except Exception:
             log.exception("Error reading item %s", key)
             return None
@@ -218,7 +223,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         prefixed_id = f"{key}-{cosmosdb_item['id']}"
                         cosmosdb_item["id"] = prefixed_id
                         container_client.upsert_item(body=cosmosdb_item)
-                        
+
         except Exception:
             log.exception("Error writing item %s", key)
 
