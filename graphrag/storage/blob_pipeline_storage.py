@@ -345,7 +345,7 @@ def validate_blob_container_name(container_name: str):
         )
 
     # Check for valid characters (letters, numbers, hyphen) and lowercase letters
-    if not re.match("^[a-z0-9-]+$", container_name):
+    if not re.match(r"^[a-z0-9-]+$", container_name):
         return ValueError(
             f"Container name must only contain:\n- lowercase letters\n- numbers\n- or hyphens\nName provided was {container_name}."
         )

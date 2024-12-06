@@ -27,14 +27,14 @@ def create_pipeline_reporter(
 
     match config.type:
         case ReportingType.file:
-            config = cast(PipelineFileReportingConfig, config)
+            config = cast("PipelineFileReportingConfig", config)
             return FileWorkflowCallbacks(
                 str(Path(root_dir or "") / (config.base_dir or ""))
             )
         case ReportingType.console:
             return ConsoleWorkflowCallbacks()
         case ReportingType.blob:
-            config = cast(PipelineBlobReportingConfig, config)
+            config = cast("PipelineBlobReportingConfig", config)
             return BlobWorkflowCallbacks(
                 config.connection_string,
                 config.container_name,

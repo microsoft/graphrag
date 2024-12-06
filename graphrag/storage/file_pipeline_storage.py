@@ -102,7 +102,7 @@ class FilePipelineStorage(PipelineStorage):
 
         async with aiofiles.open(
             path,
-            cast(Any, read_type),
+            cast("Any", read_type),
             encoding=encoding,
         ) as f:
             return await f.read()
@@ -114,7 +114,7 @@ class FilePipelineStorage(PipelineStorage):
         encoding = None if is_bytes else encoding or self._encoding
         async with aiofiles.open(
             join_path(self._root_dir, key),
-            cast(Any, write_type),
+            cast("Any", write_type),
             encoding=encoding,
         ) as f:
             await f.write(value)
@@ -144,7 +144,7 @@ class FilePipelineStorage(PipelineStorage):
 
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
-        return os.listdir(self._root_dir)
+        return [item.name for item in Path(self._root_dir).iterdir() if item.is_file()]
 
 
 def join_path(file_path: str, file_name: str) -> Path:

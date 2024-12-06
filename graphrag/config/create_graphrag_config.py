@@ -64,7 +64,7 @@ def create_graphrag_config(
     values = values or {}
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
-    _token_replace(cast(dict, values))
+    _token_replace(cast("dict", values))
     InputModelValidator.validate_python(values, strict=True)
 
     reader = EnvironmentReader(env)

@@ -540,7 +540,7 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_malformed_input_dict_throws(self):
         with pytest.raises(ValidationError):
-            create_graphrag_config(cast(Any, {"llm": 12}))
+            create_graphrag_config(cast("Any", {"llm": 12}))
 
     @mock.patch.dict(
         os.environ,

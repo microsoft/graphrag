@@ -61,4 +61,4 @@ async def create_base_entity_graph(
         snapshot_transient_enabled=snapshot_transient_enabled,
     )
 
-    return create_verb_result(cast(Table, pd.DataFrame()))
+    return create_verb_result(cast("Table", pd.DataFrame()))

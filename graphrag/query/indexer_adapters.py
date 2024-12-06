@@ -153,7 +153,7 @@ def read_indexer_entities(
     if community_level is not None:
         nodes_df = _filter_under_community_level(nodes_df, community_level)
 
-    nodes_df = cast(pd.DataFrame, nodes_df[["id", "degree", "community"]])
+    nodes_df = cast("pd.DataFrame", nodes_df[["id", "degree", "community"]])
 
     nodes_df["community"] = nodes_df["community"].fillna(-1)
     nodes_df["community"] = nodes_df["community"].astype(int)
@@ -272,6 +272,6 @@ def _filter_under_community_level(
     df: pd.DataFrame, community_level: int
 ) -> pd.DataFrame:
     return cast(
-        pd.DataFrame,
+        "pd.DataFrame",
         df[df.level <= community_level],
     )

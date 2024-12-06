@@ -34,7 +34,7 @@ async def create_final_communities(
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             output,
         )
     )

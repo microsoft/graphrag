@@ -38,19 +38,19 @@ async def generate_text_embeddings(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to generate embeddings."""
-    source = cast(pd.DataFrame, input.get_input())
+    source = cast("pd.DataFrame", input.get_input())
     final_relationships = cast(
-        pd.DataFrame, get_required_input_table(input, "relationships").table
+        "pd.DataFrame", get_required_input_table(input, "relationships").table
     )
     final_text_units = cast(
-        pd.DataFrame, get_required_input_table(input, "text_units").table
+        "pd.DataFrame", get_required_input_table(input, "text_units").table
     )
     final_entities = cast(
-        pd.DataFrame, get_required_input_table(input, "entities").table
+        "pd.DataFrame", get_required_input_table(input, "entities").table
     )
 
     final_community_reports = cast(
-        pd.DataFrame, get_required_input_table(input, "community_reports").table
+        "pd.DataFrame", get_required_input_table(input, "community_reports").table
     )
 
     await generate_text_embeddings_flow(
@@ -67,4 +67,4 @@ async def generate_text_embeddings(
         snapshot_embeddings_enabled=snapshot_embeddings_enabled,
     )
 
-    return create_verb_result(cast(Table, pd.DataFrame()))
+    return create_verb_result(cast("Table", pd.DataFrame()))
