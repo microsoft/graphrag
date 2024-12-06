@@ -99,7 +99,7 @@ VECTOR_STORE = f"""
 
 VECTOR_STORE_DICT = {
     "type": VectorStoreType.LanceDB.value,
-    "db_uri": str((Path(STORAGE_BASE_DIR) / "lancedb")),
+    "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
     "container_name": "default",
     "overwrite": True,
 }
