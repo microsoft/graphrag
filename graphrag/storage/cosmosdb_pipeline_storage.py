@@ -177,7 +177,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 container_client = self._database_client.get_container_client(
                     self._current_container
                 )
-                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+                prefix = self._get_prefix(key)
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}-')"  # noqa: S608
                 queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
                 )
@@ -185,7 +186,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 for item in items_list:
                     item["id"] = item["id"].split("-")[1]
 
-                items_json_str = json.dumps(queried_items)
+                items_json_str = json.dumps(items_list)
                 if as_bytes:
                     items_df = pd.read_json(
                         StringIO(items_json_str), orient="records", lines=False
@@ -205,6 +206,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 container_client = self._database_client.get_container_client(
                     self._current_container
                 )
+                prefix = self._get_prefix(key)
                 if isinstance(value, bytes):
                     value_df = pd.read_parquet(BytesIO(value))
                     value_json = value_df.to_json(
@@ -215,13 +217,13 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     else:
                         cosmosdb_item_list = json.loads(value_json)
                         for cosmosdb_item in cosmosdb_item_list:
-                            prefixed_id = f"{key}-{cosmosdb_item['id']}"
+                            prefixed_id = f"{prefix}-{cosmosdb_item['id']}"
                             cosmosdb_item["id"] = prefixed_id
                             container_client.upsert_item(body=cosmosdb_item)
                 else:
                     cosmosdb_item_list = json.loads(value)
                     for cosmosdb_item in cosmosdb_item_list:
-                        prefixed_id = f"{key}-{cosmosdb_item['id']}"
+                        prefixed_id = f"{prefix}-{cosmosdb_item['id']}"
                         cosmosdb_item["id"] = prefixed_id
                         container_client.upsert_item(body=cosmosdb_item)
 
@@ -234,7 +236,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = self._database_client.get_container_client(
                 self._current_container
             )
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+            prefix = self._get_prefix(key)
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}-')"  # noqa: S608
             queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
             )
@@ -247,7 +250,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = self._database_client.get_container_client(
                 self._current_container
             )
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+            prefix = self._get_prefix(key)
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}-')"  # noqa: S608
             queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
             )
@@ -275,6 +279,10 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def child(self, name: str | None) -> PipelineStorage:
         """Create a child storage instance."""
         return self
+    
+    def _get_prefix(self, key: str) -> str:
+        """Get the prefix of the filename key."""
+        return key.split(".")[0]
 
     def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
