@@ -5,24 +5,27 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import TYPE_CHECKING, Any
 
-from graphrag.config.enums import LLMType
-from graphrag.llm import (
-    CompletionLLM,
-    EmbeddingLLM,
-    LLMCache,
-    LLMLimiter,
-    MockCompletionLLM,
-    OpenAIConfiguration,
+from fnllm import ChatLLM, EmbeddingsLLM, JsonStrategy, LLMEvents
+from fnllm.caching import Cache as LLMCache
+from fnllm.openai import (
+    AzureOpenAIConfig,
+    OpenAIConfig,
+    PublicOpenAIConfig,
     create_openai_chat_llm,
     create_openai_client,
-    create_openai_completion_llm,
-    create_openai_embedding_llm,
-    create_tpm_rpm_limiters,
+    create_openai_embeddings_llm,
 )
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from pydantic import TypeAdapter
+
+import graphrag.config.defaults as defs
+from graphrag.config.enums import LLMType
+from graphrag.config.models.llm_parameters import LLMParameters
+
+from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
     from datashaper import VerbCallbacks
@@ -32,30 +35,91 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
-_semaphores: dict[str, asyncio.Semaphore] = {}
-_rate_limiters: dict[str, LLMLimiter] = {}
+
+class GraphRagLLMEvents(LLMEvents):
+    """LLM events handler that calls the error handler."""
+
+    def __init__(self, on_error: ErrorHandlerFn):
+        self._on_error = on_error
+
+    async def on_error(
+        self,
+        error: BaseException | None,
+        traceback: str | None = None,
+        arguments: dict[str, Any] | None = None,
+    ) -> None:
+        """Handle an fnllm error."""
+        self._on_error(error, traceback, arguments)
+
+
+class GraphRagLLMCache(LLMCache):
+    """A cache for the pipeline."""
+
+    def __init__(self, cache: PipelineCache):
+        self._cache = cache
+
+    async def has(self, key: str) -> bool:
+        """Check if the cache has a value."""
+        return await self._cache.has(key)
+
+    async def get(self, key: str) -> Any | None:
+        """Retrieve a value from the cache."""
+        return await self._cache.get(key)
+
+    async def set(
+        self, key: str, value: Any, metadata: dict[str, Any] | None = None
+    ) -> None:
+        """Write a value into the cache."""
+        await self._cache.set(key, value, metadata)
+
+    async def remove(self, key: str) -> None:
+        """Remove a value from the cache."""
+        await self._cache.delete(key)
+
+    async def clear(self) -> None:
+        """Clear the cache."""
+        await self._cache.clear()
+
+    def child(self, key: str):
+        """Create a child cache."""
+        child_cache = self._cache.child(key)
+        return GraphRagLLMCache(child_cache)
+
+
+def create_cache(cache: PipelineCache | None, name: str) -> LLMCache | None:
+    """Create an LLM cache from a pipeline cache."""
+    if cache is None:
+        return None
+    return GraphRagLLMCache(cache).child(name)
+
+
+def read_llm_params(llm_args: dict[str, Any]) -> LLMParameters:
+    """Read the LLM parameters from the arguments."""
+    if llm_args == {}:
+        msg = "LLM arguments are required"
+        raise ValueError(msg)
+    return TypeAdapter(LLMParameters).validate_python(llm_args)
 
 
 def load_llm(
     name: str,
-    llm_type: LLMType,
+    config: LLMParameters,
+    *,
     callbacks: VerbCallbacks,
     cache: PipelineCache | None,
-    llm_config: dict[str, Any] | None = None,
     chat_only=False,
-) -> CompletionLLM:
+) -> ChatLLM:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
+    llm_type = config.type
 
     if llm_type in loaders:
         if chat_only and not loaders[llm_type]["chat"]:
             msg = f"LLM type {llm_type} does not support chat"
             raise ValueError(msg)
-        if cache is not None:
-            cache = cache.child(name)
 
         loader = loaders[llm_type]
-        return loader["load"](on_error, cache, llm_config or {})
+        return loader["load"](on_error, create_cache(cache, name), config)
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
@@ -63,21 +127,22 @@ def load_llm(
 
 def load_llm_embeddings(
     name: str,
-    llm_type: LLMType,
+    llm_config: LLMParameters,
+    *,
     callbacks: VerbCallbacks,
     cache: PipelineCache | None,
-    llm_config: dict[str, Any] | None = None,
     chat_only=False,
-) -> EmbeddingLLM:
+) -> EmbeddingsLLM:
     """Load the LLM for the entity extraction chain."""
     on_error = _create_error_handler(callbacks)
+    llm_type = llm_config.type
     if llm_type in loaders:
         if chat_only and not loaders[llm_type]["chat"]:
             msg = f"LLM type {llm_type} does not support chat"
             raise ValueError(msg)
-        if cache is not None:
-            cache = cache.child(name)
-        return loaders[llm_type]["load"](on_error, cache, llm_config or {})
+        return loaders[llm_type]["load"](
+            on_error, create_cache(cache, name), llm_config or {}
+        )
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
@@ -94,130 +159,108 @@ def _create_error_handler(callbacks: VerbCallbacks) -> ErrorHandlerFn:
     return on_error
 
 
-def _load_openai_completion_llm(
-    on_error: ErrorHandlerFn,
-    cache: LLMCache,
-    config: dict[str, Any],
-    azure=False,
-):
-    return _create_openai_completion_llm(
-        OpenAIConfiguration({
-            **_get_base_config(config),
-            "model": config.get("model", "gpt-4-turbo-preview"),
-            "deployment_name": config.get("deployment_name"),
-            "temperature": config.get("temperature", 0.0),
-            "frequency_penalty": config.get("frequency_penalty", 0),
-            "presence_penalty": config.get("presence_penalty", 0),
-            "top_p": config.get("top_p", 1),
-            "max_tokens": config.get("max_tokens", 4000),
-            "n": config.get("n"),
-        }),
-        on_error,
-        cache,
-        azure,
-    )
-
-
 def _load_openai_chat_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: dict[str, Any],
+    config: LLMParameters,
     azure=False,
 ):
     return _create_openai_chat_llm(
-        OpenAIConfiguration({
-            # Set default values
-            **_get_base_config(config),
-            "model": config.get("model", "gpt-4-turbo-preview"),
-            "deployment_name": config.get("deployment_name"),
-            "temperature": config.get("temperature", 0.0),
-            "frequency_penalty": config.get("frequency_penalty", 0),
-            "presence_penalty": config.get("presence_penalty", 0),
-            "top_p": config.get("top_p", 1),
-            "max_tokens": config.get("max_tokens"),
-            "n": config.get("n"),
-        }),
+        _create_openai_config(config, azure),
         on_error,
         cache,
-        azure,
     )
 
 
 def _load_openai_embeddings_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: dict[str, Any],
+    config: LLMParameters,
     azure=False,
 ):
-    # TODO: Inject Cache
     return _create_openai_embeddings_llm(
-        OpenAIConfiguration({
-            **_get_base_config(config),
-            "model": config.get(
-                "embeddings_model", config.get("model", "text-embedding-3-small")
-            ),
-            "deployment_name": config.get("deployment_name"),
-        }),
+        _create_openai_config(config, azure),
         on_error,
         cache,
-        azure,
     )
 
 
-def _load_azure_openai_completion_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: dict[str, Any]
-):
-    return _load_openai_completion_llm(on_error, cache, config, True)
+def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
+    encoding_model = config.encoding_model or defs.ENCODING_MODEL
+    json_strategy = (
+        JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
+    )
+    chat_parameters = OpenAIChatParameters(
+        frequency_penalty=config.frequency_penalty,
+        presence_penalty=config.presence_penalty,
+        top_p=config.top_p,
+        max_tokens=config.max_tokens,
+        n=config.n,
+        temperature=config.temperature,
+    )
+    if azure:
+        if config.api_base is None:
+            msg = "Azure OpenAI Chat LLM requires an API base"
+            raise ValueError(msg)
+
+        audience = config.audience or defs.AZURE_AUDIENCE
+        return AzureOpenAIConfig(
+            api_key=config.api_key,
+            endpoint=config.api_base,
+            json_strategy=json_strategy,
+            api_version=config.api_version,
+            organization=config.organization,
+            max_retries=config.max_retries,
+            max_retry_wait=config.max_retry_wait,
+            requests_per_minute=config.requests_per_minute,
+            tokens_per_minute=config.tokens_per_minute,
+            cognitive_services_endpoint=audience,
+            timeout=config.request_timeout,
+            max_concurrency=config.concurrent_requests,
+            model=config.model,
+            encoding=encoding_model,
+            deployment=config.deployment_name,
+            chat_parameters=chat_parameters,
+        )
+    return PublicOpenAIConfig(
+        api_key=config.api_key,
+        base_url=config.proxy,
+        json_strategy=json_strategy,
+        organization=config.organization,
+        max_retries=config.max_retries,
+        max_retry_wait=config.max_retry_wait,
+        requests_per_minute=config.requests_per_minute,
+        tokens_per_minute=config.tokens_per_minute,
+        timeout=config.request_timeout,
+        max_concurrency=config.concurrent_requests,
+        model=config.model,
+        encoding=encoding_model,
+        chat_parameters=chat_parameters,
+    )
 
 
 def _load_azure_openai_chat_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: dict[str, Any]
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
 ):
     return _load_openai_chat_llm(on_error, cache, config, True)
 
 
 def _load_azure_openai_embeddings_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: dict[str, Any]
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
 ):
     return _load_openai_embeddings_llm(on_error, cache, config, True)
 
 
-def _get_base_config(config: dict[str, Any]) -> dict[str, Any]:
-    api_key = config.get("api_key")
-
-    return {
-        # Pass in all parameterized values
-        **config,
-        # Set default values
-        "api_key": api_key,
-        "api_base": config.get("api_base"),
-        "api_version": config.get("api_version"),
-        "organization": config.get("organization"),
-        "proxy": config.get("proxy"),
-        "max_retries": config.get("max_retries", 10),
-        "request_timeout": config.get("request_timeout", 60.0),
-        "model_supports_json": config.get("model_supports_json"),
-        "concurrent_requests": config.get("concurrent_requests", 4),
-        "encoding_model": config.get("encoding_model", "cl100k_base"),
-        "audience": config.get("audience"),
-    }
-
-
 def _load_static_response(
-    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: dict[str, Any]
-) -> CompletionLLM:
-    return MockCompletionLLM(config.get("responses", []))
+    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: LLMParameters
+) -> ChatLLM:
+    if config.responses is None:
+        msg = "Static response LLM requires responses"
+        raise ValueError(msg)
+    return MockChatLLM(config.responses or [])
 
 
 loaders = {
-    LLMType.OpenAI: {
-        "load": _load_openai_completion_llm,
-        "chat": False,
-    },
-    LLMType.AzureOpenAI: {
-        "load": _load_azure_openai_completion_llm,
-        "chat": False,
-    },
     LLMType.OpenAIChat: {
         "load": _load_openai_chat_llm,
         "chat": True,
@@ -242,71 +285,30 @@ loaders = {
 
 
 def _create_openai_chat_llm(
-    configuration: OpenAIConfiguration,
+    configuration: OpenAIConfig,
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    azure=False,
-) -> CompletionLLM:
+) -> ChatLLM:
     """Create an openAI chat llm."""
-    client = create_openai_client(configuration=configuration, azure=azure)
-    limiter = _create_limiter(configuration)
-    semaphore = _create_semaphore(configuration)
+    client = create_openai_client(configuration)
     return create_openai_chat_llm(
-        client, configuration, cache, limiter, semaphore, on_error=on_error
-    )
-
-
-def _create_openai_completion_llm(
-    configuration: OpenAIConfiguration,
-    on_error: ErrorHandlerFn,
-    cache: LLMCache,
-    azure=False,
-) -> CompletionLLM:
-    """Create an openAI completion llm."""
-    client = create_openai_client(configuration=configuration, azure=azure)
-    limiter = _create_limiter(configuration)
-    semaphore = _create_semaphore(configuration)
-    return create_openai_completion_llm(
-        client, configuration, cache, limiter, semaphore, on_error=on_error
+        configuration,
+        client=client,
+        cache=cache,
+        events=GraphRagLLMEvents(on_error),
     )
 
 
 def _create_openai_embeddings_llm(
-    configuration: OpenAIConfiguration,
+    configuration: OpenAIConfig,
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    azure=False,
-) -> EmbeddingLLM:
+) -> EmbeddingsLLM:
     """Create an openAI embeddings llm."""
-    client = create_openai_client(configuration=configuration, azure=azure)
-    limiter = _create_limiter(configuration)
-    semaphore = _create_semaphore(configuration)
-    return create_openai_embedding_llm(
-        client, configuration, cache, limiter, semaphore, on_error=on_error
+    client = create_openai_client(configuration)
+    return create_openai_embeddings_llm(
+        configuration,
+        client=client,
+        cache=cache,
+        events=GraphRagLLMEvents(on_error),
     )
-
-
-def _create_limiter(configuration: OpenAIConfiguration) -> LLMLimiter:
-    limit_name = configuration.model or configuration.deployment_name or "default"
-    if limit_name not in _rate_limiters:
-        tpm = configuration.tokens_per_minute
-        rpm = configuration.requests_per_minute
-        log.info("create TPM/RPM limiter for %s: TPM=%s, RPM=%s", limit_name, tpm, rpm)
-        _rate_limiters[limit_name] = create_tpm_rpm_limiters(configuration)
-    return _rate_limiters[limit_name]
-
-
-def _create_semaphore(configuration: OpenAIConfiguration) -> asyncio.Semaphore | None:
-    limit_name = configuration.model or configuration.deployment_name or "default"
-    concurrency = configuration.concurrent_requests
-
-    # bypass the semaphore if concurrency is zero
-    if not concurrency:
-        log.info("no concurrency limiter for %s", limit_name)
-        return None
-
-    if limit_name not in _semaphores:
-        log.info("create concurrency limiter for %s: %s", limit_name, concurrency)
-        _semaphores[limit_name] = asyncio.Semaphore(concurrency)
-
-    return _semaphores[limit_name]

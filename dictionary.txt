@@ -69,6 +69,7 @@ pypi
 nbformat
 semversioner
 mkdocs
+fnllm
 typer
 
 # Library Methods

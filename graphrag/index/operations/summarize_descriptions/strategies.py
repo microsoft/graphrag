@@ -4,36 +4,35 @@
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
 from datashaper import VerbCallbacks
+from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.summarize import SummarizeExtractor
-from graphrag.index.llm.load_llm import load_llm
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_descriptions.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
 )
-from graphrag.llm import CompletionLLM
 
 
 async def run_graph_intelligence(
-    described_items: str | tuple[str, str],
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("summarize_descriptions", llm_type, callbacks, cache, llm_config)
-    return await run_summarize_descriptions(
-        llm, described_items, descriptions, callbacks, args
+    llm_config = read_llm_params(args.get("llm", {}))
+    llm = load_llm(
+        "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
     )
+    return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
 
 async def run_summarize_descriptions(
-    llm: CompletionLLM,
-    items: str | tuple[str, str],
+    llm: ChatLLM,
+    id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: VerbCallbacks,
     args: StrategyConfig,
@@ -59,7 +58,5 @@ async def run_summarize_descriptions(
         max_input_tokens=max_tokens,
     )
 
-    result = await extractor(items=items, descriptions=descriptions)
-    return SummarizedDescriptionResult(
-        items=result.items, description=result.description
-    )
+    result = await extractor(id=id, descriptions=descriptions)
+    return SummarizedDescriptionResult(id=result.id, description=result.description)

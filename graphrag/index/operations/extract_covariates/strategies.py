@@ -7,16 +7,16 @@ from collections.abc import Iterable
 from typing import Any
 
 from datashaper import VerbCallbacks
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.claims import ClaimExtractor
-from graphrag.index.llm.load_llm import load_llm
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
-from graphrag.llm import CompletionLLM
 
 
 async def run_graph_intelligence(
@@ -28,16 +28,15 @@ async def run_graph_intelligence(
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    llm_config = strategy_config.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("claim_extraction", llm_type, callbacks, cache, llm_config)
+    llm_config = read_llm_params(strategy_config.get("llm", {}))
+    llm = load_llm("claim_extraction", llm_config, callbacks=callbacks, cache=cache)
     return await _execute(
         llm, input, entity_types, resolved_entities_map, callbacks, strategy_config
     )
 
 
 async def _execute(
-    llm: CompletionLLM,
+    llm: ChatLLM,
     texts: Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],

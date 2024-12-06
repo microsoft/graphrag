@@ -20,7 +20,13 @@ class LLMParameters(BaseModel):
     type: LLMType = Field(
         description="The type of LLM model to use.", default=defs.LLM_TYPE
     )
+    encoding_model: str | None = Field(
+        description="The encoding model to use", default=defs.ENCODING_MODEL
+    )
     model: str = Field(description="The LLM model to use.", default=defs.LLM_MODEL)
+    embeddings_model: str | None = Field(
+        description="The embeddings model to use.", default=defs.EMBEDDING_MODEL
+    )
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.",
         default=defs.LLM_MAX_TOKENS,
@@ -36,6 +42,14 @@ class LLMParameters(BaseModel):
     n: int | None = Field(
         description="The number of completions to generate.",
         default=defs.LLM_N,
+    )
+    frequency_penalty: float | None = Field(
+        description="The frequency penalty to use for token generation.",
+        default=defs.LLM_FREQUENCY_PENALTY,
+    )
+    presence_penalty: float | None = Field(
+        description="The presence penalty to use for token generation.",
+        default=defs.LLM_PRESENCE_PENALTY,
     )
     request_timeout: float = Field(
         description="The request timeout to use.", default=defs.LLM_REQUEST_TIMEOUT
@@ -85,4 +99,7 @@ class LLMParameters(BaseModel):
     concurrent_requests: int = Field(
         description="Whether to use concurrent requests for the LLM service.",
         default=defs.LLM_CONCURRENT_REQUESTS,
+    )
+    responses: list[str | BaseModel] | None = Field(
+        default=None, description="Static responses to use in mock mode."
     )

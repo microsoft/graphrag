@@ -64,7 +64,7 @@ async def run_pipeline_with_config(
     storage: PipelineStorage | None = None,
     update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
-    callbacks: WorkflowCallbacks | None = None,
+    callbacks: list[WorkflowCallbacks] | None = None,
     progress_reporter: ProgressReporter | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
@@ -202,7 +202,7 @@ async def run_pipeline(
     dataset: pd.DataFrame,
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
-    callbacks: WorkflowCallbacks | None = None,
+    callbacks: list[WorkflowCallbacks] | None = None,
     progress_reporter: ProgressReporter | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
@@ -233,13 +233,12 @@ async def run_pipeline(
     start_time = time.time()
 
     progress_reporter = progress_reporter or NullProgressReporter()
-    callbacks = callbacks or ConsoleWorkflowCallbacks()
-    callbacks = _create_callback_chain(callbacks, progress_reporter)
-
+    callbacks = callbacks or [ConsoleWorkflowCallbacks()]
+    callback_chain = _create_callback_chain(callbacks, progress_reporter)
     context = create_run_context(storage=storage, cache=cache, stats=None)
     exporter = ParquetExporter(
         context.storage,
-        lambda e, s, d: cast(WorkflowCallbacks, callbacks).on_error(
+        lambda e, s, d: cast(WorkflowCallbacks, callback_chain).on_error(
             "Error exporting table", e, s, d
         ),
     )
@@ -253,7 +252,7 @@ async def run_pipeline(
     workflows_to_run = loaded_workflows.workflows
     workflow_dependencies = loaded_workflows.dependencies
     dataset = await _run_post_process_steps(
-        input_post_process_steps, dataset, context, callbacks
+        input_post_process_steps, dataset, context, callback_chain
     )
 
     # ensure the incoming data is valid
@@ -273,7 +272,7 @@ async def run_pipeline(
             result = await _process_workflow(
                 workflow_to_run.workflow,
                 context,
-                callbacks,
+                callback_chain,
                 exporter,
                 workflow_dependencies,
                 dataset,

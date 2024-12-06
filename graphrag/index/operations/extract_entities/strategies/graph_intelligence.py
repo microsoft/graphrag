@@ -3,12 +3,14 @@
 
 """A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
 
+import networkx as nx
 from datashaper import VerbCallbacks
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors import GraphExtractor
-from graphrag.index.llm.load_llm import load_llm
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_entities.strategies.typing import (
     Document,
     EntityExtractionResult,
@@ -20,7 +22,6 @@ from graphrag.index.text_splitting.text_splitting import (
     TextSplitter,
     TokenTextSplitter,
 )
-from graphrag.llm import CompletionLLM
 
 
 async def run_graph_intelligence(
@@ -31,14 +32,13 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = args.get("llm", {})
-    llm_type = llm_config.get("type")
-    llm = load_llm("entity_extraction", llm_type, callbacks, cache, llm_config)
+    llm_config = read_llm_params(args.get("llm", {}))
+    llm = load_llm("entity_extraction", llm_config, callbacks=callbacks, cache=cache)
     return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 
 
 async def run_extract_entities(
-    llm: CompletionLLM,
+    llm: ChatLLM,
     docs: list[Document],
     entity_types: EntityTypes,
     callbacks: VerbCallbacks | None,
@@ -111,7 +111,9 @@ async def run_extract_entities(
         if item is not None
     ]
 
-    return EntityExtractionResult(entities, graph)
+    relationships = nx.to_pandas_edgelist(graph)
+
+    return EntityExtractionResult(entities, relationships, graph)
 
 
 def _create_text_splitter(

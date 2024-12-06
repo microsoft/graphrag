@@ -3,11 +3,12 @@
 
 """Language detection for GraphRAG prompts."""
 
-from graphrag.llm.types.llm_types import CompletionLLM
+from fnllm import ChatLLM
+
 from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
 
 
-async def detect_language(llm: CompletionLLM, docs: str | list[str]) -> str:
+async def detect_language(llm: ChatLLM, docs: str | list[str]) -> str:
     """Detect input language to use for GraphRAG prompts.
 
     Parameters
@@ -24,4 +25,4 @@ async def detect_language(llm: CompletionLLM, docs: str | list[str]) -> str:
 
     response = await llm(language_prompt)
 
-    return str(response.output)
+    return str(response.output.content)

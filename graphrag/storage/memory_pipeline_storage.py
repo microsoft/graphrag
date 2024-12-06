@@ -18,7 +18,7 @@ class MemoryPipelineStorage(FilePipelineStorage):
 
     def __init__(self):
         """Init method definition."""
-        super().__init__(root_dir=".output")
+        super().__init__()
         self._storage = {}
 
     async def get(

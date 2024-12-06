@@ -19,7 +19,7 @@ StrategyConfig = dict[str, Any]
 class SummarizedDescriptionResult:
     """Entity summarization result class definition."""
 
-    items: str | tuple[str, str]
+    id: str | tuple[str, str]
     description: str
 
 

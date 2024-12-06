@@ -5,15 +5,11 @@
 
 import logging
 from enum import Enum
-from random import Random
-from typing import Any, cast
+from typing import Any
 
 import networkx as nx
-import pandas as pd
-from datashaper import VerbCallbacks, progress_iterable
 
 from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.utils.uuid import gen_uuid
 
 Communities = list[tuple[int, str, list[str]]]
 
@@ -33,92 +29,10 @@ log = logging.getLogger(__name__)
 
 def cluster_graph(
     input: nx.Graph,
-    callbacks: VerbCallbacks,
     strategy: dict[str, Any],
-    column: str,
-    to: str,
-    level_to: str | None = None,
-) -> pd.DataFrame:
+) -> Communities:
     """Apply a hierarchical clustering algorithm to a graph."""
-    output = pd.DataFrame()
-    # TODO: for back-compat, downstream expects a graphml string
-    output[column] = ["\n".join(nx.generate_graphml(input))]
-    communities = run_layout(strategy, input)
-
-    community_map_to = "communities"
-    output[community_map_to] = [communities]
-
-    level_to = level_to or f"{to}_level"
-    output[level_to] = output.apply(
-        lambda x: list({level for level, _, _ in x[community_map_to]}), axis=1
-    )
-    output[to] = None
-
-    num_total = len(output)
-
-    # Create a seed for this run (if not provided)
-    seed = strategy.get("seed", Random().randint(0, 0xFFFFFFFF))  # noqa S311
-
-    # Go through each of the rows
-    graph_level_pairs_column: list[list[tuple[int, str]]] = []
-    for _, row in progress_iterable(output.iterrows(), callbacks.progress, num_total):
-        levels = row[level_to]
-        graph_level_pairs: list[tuple[int, str]] = []
-
-        # For each of the levels, get the graph and add it to the list
-        for level in levels:
-            graphml = "\n".join(
-                nx.generate_graphml(
-                    apply_clustering(
-                        input,
-                        cast(Communities, row[community_map_to]),
-                        level,
-                        seed=seed,
-                    )
-                )
-            )
-            graph_level_pairs.append((level, graphml))
-        graph_level_pairs_column.append(graph_level_pairs)
-    output[to] = graph_level_pairs_column
-
-    # explode the list of (level, graph) pairs into separate rows
-    output = output.explode(to, ignore_index=True)
-
-    # split the (level, graph) pairs into separate columns
-    # TODO: There is probably a better way to do this
-    output[[level_to, to]] = pd.DataFrame(output[to].tolist(), index=output.index)
-
-    # clean up the community map
-    output.drop(columns=[community_map_to], inplace=True)
-    return output
-
-
-def apply_clustering(
-    graph: nx.Graph, communities: Communities, level: int = 0, seed: int | None = None
-) -> nx.Graph:
-    """Apply clustering to a graph."""
-    random = Random(seed)  # noqa S311
-    for community_level, community_id, nodes in communities:
-        if level == community_level:
-            for node in nodes:
-                graph.nodes[node]["cluster"] = community_id
-                graph.nodes[node]["level"] = level
-
-    # add node degree
-    for node, degree in graph.degree:  # type: ignore
-        graph.nodes[node]["degree"] = int(degree)
-
-    # add node uuid and incremental record id (a human readable id used as reference in the final report)
-    for index, node in enumerate(graph.nodes()):
-        graph.nodes[node]["human_readable_id"] = index
-        graph.nodes[node]["id"] = str(gen_uuid(random))
-
-    # add ids to edges
-    for index, edge in enumerate(graph.edges()):
-        graph.edges[edge]["id"] = str(gen_uuid(random))
-        graph.edges[edge]["human_readable_id"] = index
-        graph.edges[edge]["level"] = level
-    return graph
+    return run_layout(strategy, input)
 
 
 def run_layout(strategy: dict[str, Any], graph: nx.Graph) -> Communities:

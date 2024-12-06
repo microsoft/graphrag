@@ -222,7 +222,6 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
             config={
                 "snapshot_graphml": settings.snapshots.graphml,
                 "snapshot_transient": settings.snapshots.transient,
-                "snapshot_raw_entities": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
@@ -238,11 +237,9 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
                         settings.root_dir,
                     ),
                 },
-                "embed_graph_enabled": settings.embed_graph.enabled,
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()
                 },
-                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
             },
         ),
         PipelineWorkflowReference(
@@ -257,7 +254,8 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
             name=create_final_nodes,
             config={
                 "layout_graph_enabled": settings.umap.enabled,
-                "snapshot_top_level_nodes": settings.snapshots.top_level_nodes,
+                "embed_graph_enabled": settings.embed_graph.enabled,
+                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
             },
         ),
     ]

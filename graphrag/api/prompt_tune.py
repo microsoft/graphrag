@@ -97,10 +97,9 @@ async def generate_indexing_prompts(
     # Create LLM from config
     llm = load_llm(
         "prompt_tuning",
-        config.llm.type,
-        NoopVerbCallbacks(),
-        None,
-        config.llm.model_dump(),
+        config.llm,
+        cache=None,
+        callbacks=NoopVerbCallbacks(),
     )
 
     if not domain:

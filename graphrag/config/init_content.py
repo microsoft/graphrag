@@ -115,8 +115,6 @@ umap:
 
 snapshots:
   graphml: false
-  raw_entities: false
-  top_level_nodes: false
   embeddings: false
   transient: false
 
