@@ -171,7 +171,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     async def get(
         self, key: str, as_bytes: bool | None = None, encoding: str | None = None
     ) -> Any:
-        """Get a file in the database for the given key."""
+        """Fetch all cosmosdb items belonging to the given filename key."""
         try:
             if self._current_container:
                 container_client = self._database_client.get_container_client(
@@ -181,7 +181,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
                 )
-                for item in queried_items:
+                items_list = list(queried_items)
+                for item in items_list:
                     item["id"] = item["id"].split("-")[1]
 
                 items_json_str = json.dumps(queried_items)
@@ -198,7 +199,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             return None
 
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
-        """Set a file in the database for the given key."""
+        """Insert the contents of a file into cosmosdb for the given filename key. For optimization, the file is destructured such that each row is a unique cosmosdb item."""
         try:
             if self._current_container:
                 container_client = self._database_client.get_container_client(
@@ -228,22 +229,30 @@ class CosmosDBPipelineStorage(PipelineStorage):
             log.exception("Error writing item %s", key)
 
     async def has(self, key: str) -> bool:
-        """Check if the given file exists in the cosmosdb storage."""
+        """Check if the contents of the given filename key exist in the cosmosdb storage."""
         if self._current_container:
             container_client = self._database_client.get_container_client(
                 self._current_container
             )
-            item_names = [item["id"] for item in container_client.read_all_items()]
-            return key in item_names
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+            queried_items = container_client.query_items(
+                    query=query, enable_cross_partition_query=True
+            )
+            return len(list(queried_items)) > 0
         return False
 
     async def delete(self, key: str) -> None:
-        """Delete the given file from the cosmosdb storage."""
+        """Delete all comsmosdb items belonging to the given filename key."""
         if self._current_container:
             container_client = self._database_client.get_container_client(
                 self._current_container
             )
-            container_client.delete_item(item=key, partition_key=key)
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{key}-')"  # noqa: S608
+            queried_items = container_client.query_items(
+                    query=query, enable_cross_partition_query=True
+            )
+            for item in queried_items:
+                container_client.delete_item(item=item["id"], partition_key=item["id"])
 
     # Function currently deletes all items within the current container, then deletes the container itself.
     # TODO: Decide the granularity of deletion (e.g. delete all items within the current container, delete the current container, delete the current database)
