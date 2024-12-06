@@ -9,10 +9,6 @@
       
       
       
-        <link rel="prev" href="../local_search/">
-      
-      
-        <link rel="next" href="../../config/overview/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +16,7 @@
     
     
       
-        <title>DRIFT Search - GraphRAG</title>
+        <title>Api overview - GraphRAG</title>
       
     
     
@@ -75,6 +71,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#api-overview" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -105,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              DRIFT Search
+              Api overview
             
           </span>
         </div>
@@ -264,12 +265,10 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../../query/overview/" class="md-tabs__link">
           
   
@@ -728,28 +727,23 @@
       
   
   
-    
   
   
-  
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -760,7 +754,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Query
@@ -876,8 +870,6 @@
                 
   
   
-    
-  
   
   
     
@@ -887,11 +879,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
         
           
           <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
@@ -905,7 +897,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4_6">
             <span class="md-nav__icon md-icon"></span>
             Notebooks
@@ -979,17 +971,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../drift_search/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -998,7 +983,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1361,6 +1345,83 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisite
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Load configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate-a-object" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generate a object
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#indexing-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Indexing API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-an-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build an index
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-an-index" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query an index
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1377,7 +1438,7 @@
   
 
 
-  <h1>DRIFT Search</h1>
+  <h1>Api overview</h1>
 
 <script>
 (function (global, factory) {
@@ -1843,6 +1904,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="api-overview">API Overview<a class="anchor-link" href="#api-overview">¶</a></h2><p>This notebook provides a demonstration of how to interact with graphrag as a library using the API as opposed to the CLI. Note that graphrag's CLI actually connects to the library through this API for all operations.</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -1862,139 +1934,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">tiktoken</span>
-
-<span class="kn">from</span> <span class="nn">graphrag.query.indexer_adapters</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">read_indexer_entities</span><span class="p">,</span>
-    <span class="n">read_indexer_relationships</span><span class="p">,</span>
-    <span class="n">read_indexer_reports</span><span class="p">,</span>
-    <span class="n">read_indexer_text_units</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.input.loaders.dfs</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">store_entity_semantic_embeddings</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.chat_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.embedding</span> <span class="kn">import</span> <span class="n">OpenAIEmbedding</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.typing</span> <span class="kn">import</span> <span class="n">OpenaiApiType</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.structured_search.drift_search.drift_context</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DRIFTSearchContextBuilder</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.structured_search.drift_search.search</span> <span class="kn">import</span> <span class="n">DRIFTSearch</span>
-<span class="kn">from</span> <span class="nn">graphrag.vector_stores.lancedb</span> <span class="kn">import</span> <span class="n">LanceDBVectorStore</span>
-
-<span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
-<span class="n">LANCEDB_URI</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/lancedb"</span>
-
-<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_community_reports"</span>
-<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_nodes"</span>
-<span class="n">ENTITY_EMBEDDING_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_entities"</span>
-<span class="n">RELATIONSHIP_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_relationships"</span>
-<span class="n">COVARIATE_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_covariates"</span>
-<span class="n">TEXT_UNIT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_text_units"</span>
-<span class="n">COMMUNITY_LEVEL</span> <span class="o">=</span> <span class="mi">2</span>
-
-
-<span class="c1"># read nodes table to get community and degree data</span>
-<span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">entity_embedding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_EMBEDDING_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-
-<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">entity_embedding_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
-
-<span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
-<span class="c1"># to connect to a remote db, specify url and port values.</span>
-<span class="n">description_embedding_store</span> <span class="o">=</span> <span class="n">LanceDBVectorStore</span><span class="p">(</span>
-    <span class="n">collection_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
-<span class="n">entity_description_embeddings</span> <span class="o">=</span> <span class="n">store_entity_semantic_embeddings</span><span class="p">(</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">vectorstore</span><span class="o">=</span><span class="n">description_embedding_store</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">entity_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="n">relationship_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">RELATIONSHIP_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">relationships</span> <span class="o">=</span> <span class="n">read_indexer_relationships</span><span class="p">(</span><span class="n">relationship_df</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Relationship count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">relationship_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">relationship_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="n">text_unit_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">TEXT_UNIT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">text_units</span> <span class="o">=</span> <span class="n">read_indexer_text_units</span><span class="p">(</span><span class="n">text_unit_df</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Text unit records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text_unit_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">text_unit_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">graphrag.api</span> <span class="k">as</span> <span class="nn">api</span>
+<span class="kn">from</span> <span class="nn">graphrag.index.typing</span> <span class="kn">import</span> <span class="n">PipelineRunResult</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import os
-from pathlib import Path
-
-import pandas as pd
-import tiktoken
-
-from graphrag.query.indexer_adapters import (
-    read_indexer_entities,
-    read_indexer_relationships,
-    read_indexer_reports,
-    read_indexer_text_units,
-)
-from graphrag.query.input.loaders.dfs import (
-    store_entity_semantic_embeddings,
-)
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
-from graphrag.query.llm.oai.typing import OpenaiApiType
-from graphrag.query.structured_search.drift_search.drift_context import (
-    DRIFTSearchContextBuilder,
-)
-from graphrag.query.structured_search.drift_search.search import DRIFTSearch
-from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-INPUT_DIR = "./inputs/operation dulce"
-LANCEDB_URI = f"{INPUT_DIR}/lancedb"
-
-COMMUNITY_REPORT_TABLE = "create_final_community_reports"
-ENTITY_TABLE = "create_final_nodes"
-ENTITY_EMBEDDING_TABLE = "create_final_entities"
-RELATIONSHIP_TABLE = "create_final_relationships"
-COVARIATE_TABLE = "create_final_covariates"
-TEXT_UNIT_TABLE = "create_final_text_units"
-COMMUNITY_LEVEL = 2
-
-
-# read nodes table to get community and degree data
-entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
-entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
-
-entities = read_indexer_entities(entity_df, entity_embedding_df, COMMUNITY_LEVEL)
-
-# load description embeddings to an in-memory lancedb vectorstore
-# to connect to a remote db, specify url and port values.
-description_embedding_store = LanceDBVectorStore(
-    collection_name="default-entity-description",
-)
-description_embedding_store.connect(db_uri=LANCEDB_URI)
-entity_description_embeddings = store_entity_semantic_embeddings(
-    entities=entities, vectorstore=description_embedding_store
-)
-
-print(f"Entity count: {len(entity_df)}")
-entity_df.head()
-
-relationship_df = pd.read_parquet(f"{INPUT_DIR}/{RELATIONSHIP_TABLE}.parquet")
-relationships = read_indexer_relationships(relationship_df)
-
-print(f"Relationship count: {len(relationship_df)}")
-relationship_df.head()
-
-text_unit_df = pd.read_parquet(f"{INPUT_DIR}/{TEXT_UNIT_TABLE}.parquet")
-text_units = read_indexer_text_units(text_unit_df)
-
-print(f"Text unit records: {len(text_unit_df)}")
-text_unit_df.head()</div>
+<div class="clipboard-copy-txt" id="cell-2">import graphrag.api as api
+from graphrag.index.typing import PipelineRunResult</div>
 </div>
 </div>
 </div>
@@ -2006,110 +1950,28 @@ text_unit_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Entity count: 178
-Relationship count: 373
-Text unit records: 50
+<pre>
 </pre>
 </div>
 </div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>[2024-12-05T21:35:25Z WARN  lance::dataset] No existing dataset at /home/runner/work/graphrag/graphrag/docs/examples_notebooks/inputs/operation dulce/lancedb/default-entity-description.lance, it will be created
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>text</th>
-<th>n_tokens</th>
-<th>document_ids</th>
-<th>entity_ids</th>
-<th>relationship_ids</th>
-<th>covariate_ids</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>06bdff339c02ab35c80fa49320d5da66</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[439081a3-bfeb-4693-968a-0f6189d8fa50, 3399e3d...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>28dc4aa41a3e99deb7f354682f3e9904</td>
-<td>'s authoritarian performance. _Protocols_, Jor...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[4119fd06010c494caa07f439b333f4c5, 077d2820ae1...</td>
-<td>[9a6f414210e14841a5b0e661aedc898d, db541b72609...</td>
-<td>[b09594cb-d4b7-4de4-a1af-97778300eb1b, f7c5ea4...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>813db3138ef511c34be86f841f68aa8f</td>
-<td>, rehearsing the speech for their subordinates...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 077d2820ae1...</td>
-<td>[0467928aa65e4a4fba62bdb1467e3a54, 7cc3356d38d...</td>
-<td>[7642fe21-7cb9-4428-848b-d2e3f5ab10ca, 6fe3d6c...</td>
-</tr>
-<tr>
-<th>3</th>
-<td>d0afd106abf3a2966ff88a99eef710db</td>
-<td>, weighing his words carefully. "Our tech is t...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[956e4c22-e343-4b5d-ad3c-d44ca3ce5fb5]</td>
-</tr>
-<tr>
-<th>4</th>
-<td>f4c7c95d7bf621c6eb73d331cbf0b608</td>
-<td>stepping into their exchange. The authority i...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[077d2820ae1845bcbb1803379a3d1eae, 1fd3fa8bb5a...</td>
-<td>[478e4c72d8fb46dd8cc9f0691c9878fd, 82b0446e7c9...</td>
-<td>[a54eda4d-b5bf-471d-989f-370eb9aff961, 9f85274...</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="prerequisite">Prerequisite<a class="anchor-link" href="#prerequisite">¶</a></h2><p>As a prerequisite to all API operations, a <code>GraphRagConfig</code> object is required. It is the primary means to control the behavior of graphrag and can be instantiated from a <code>settings.yaml</code> configuration file.</p>
+<p>Please refer to the <a href="https://microsoft.github.io/graphrag/cli/#init">CLI docs</a> for more detailed information on how to generate the <code>settings.yaml</code> file.</p>
+<h4 id="load-settingsyaml-configuration">Load <code>settings.yaml</code> configuration<a class="anchor-link" href="#load-settingsyaml-configuration">¶</a></h4>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2127,51 +1989,65 @@ Text unit records: 50
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_API_KEY"</span><span class="p">]</span>
-<span class="n">llm_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_LLM_MODEL"</span><span class="p">]</span>
-<span class="n">embedding_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_EMBEDDING_MODEL"</span><span class="p">]</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="n">chat_llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">llm_model</span><span class="p">,</span>
-    <span class="n">api_type</span><span class="o">=</span><span class="n">OpenaiApiType</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span>  <span class="c1"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">get_encoding</span><span class="p">(</span><span class="s2">"cl100k_base"</span><span class="p">)</span>
-
-<span class="n">text_embedder</span> <span class="o">=</span> <span class="n">OpenAIEmbedding</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="n">api_base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">api_type</span><span class="o">=</span><span class="n">OpenaiApiType</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">,</span>
-    <span class="n">deployment_name</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">,</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">"&lt;project_directory&gt;/settings.yaml"</span><span class="p">))</span>  <span class="c1"># noqa: PTH123, SIM115</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">api_key = os.environ["GRAPHRAG_API_KEY"]
-llm_model = os.environ["GRAPHRAG_LLM_MODEL"]
-embedding_model = os.environ["GRAPHRAG_EMBEDDING_MODEL"]
+<div class="clipboard-copy-txt" id="cell-3">import yaml
 
-chat_llm = ChatOpenAI(
-    api_key=api_key,
-    model=llm_model,
-    api_type=OpenaiApiType.OpenAI,  # OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI
-    max_retries=20,
-)
-
-token_encoder = tiktoken.get_encoding("cl100k_base")
-
-text_embedder = OpenAIEmbedding(
-    api_key=api_key,
-    api_base=None,
-    api_type=OpenaiApiType.OpenAI,
-    model=embedding_model,
-    deployment_name=embedding_model,
-    max_retries=20,
-)</div>
+settings = yaml.safe_load(open("<project_directory>/settings.yaml"))  # noqa: PTH123, SIM115</project_directory></div>
 </div>
 </div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[3], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> <span class="ansi-bold" style="color: rgb(0,0,255)">yaml</span>
+<span class="ansi-green-fg">----&gt; 3</span> settings <span style="color: rgb(98,98,98)">=</span> yaml<span style="color: rgb(98,98,98)">.</span>safe_load(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&lt;project_directory&gt;/settings.yaml</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>)  <span style="color: rgb(95,135,135)"># noqa: PTH123, SIM115</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/IPython/core/interactiveshell.py:324</span>, in <span class="ansi-cyan-fg">_modified_open</span><span class="ansi-blue-fg">(file, *args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    317</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> {<span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">2</span>}:
+<span class="ansi-green-intense-fg ansi-bold">    318</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(
+<span class="ansi-green-intense-fg ansi-bold">    319</span>         <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">IPython won</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t let you open fd=</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>file<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> by default </span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    320</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">as it is likely to crash IPython. If you know what you are doing, </span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    321</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">you can use builtins</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> open.</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    322</span>     )
+<span class="ansi-green-fg">--&gt; 324</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">io_open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">file</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/settings.yaml'</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>At this point, you can modify the imported settings to align with your application's requirements. For example, if building a UI application, the application might need to change the input and/or storage destinations dynamically in order to enable users to build and query different indexes.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="generate-a-graphragconfig-object">Generate a <code>GraphRagConfig</code> object<a class="anchor-link" href="#generate-a-graphragconfig-object">¶</a></h3>
 </div>
 </div>
 </div>
@@ -2194,81 +2070,17 @@ text_embedder = OpenAIEmbedding(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">embed_community_reports</span><span class="p">(</span>
-    <span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">embedder</span><span class="p">:</span> <span class="n">OpenAIEmbedding</span><span class="p">,</span>
-    <span class="n">community_report_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">COMMUNITY_REPORT_TABLE</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">.parquet"</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">_with_embeddings.parquet"</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">graphrag.config.create_graphrag_config</span> <span class="kn">import</span> <span class="n">create_graphrag_config</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Embedding file not found. Computing community report embeddings..."</span><span class="p">)</span>
-
-        <span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">"full_content"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">report_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"'full_content' column not found in </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">"</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
-
-        <span class="n">report_df</span><span class="p">[</span><span class="s2">"full_content_embeddings"</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">"full_content"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">embedder</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Save the DataFrame with embeddings to the output path</span>
-        <span class="n">report_df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Embeddings saved to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">report_df</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Embeddings file already exists at </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-
-
-<span class="n">report_df</span> <span class="o">=</span> <span class="n">embed_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">,</span> <span class="n">text_embedder</span><span class="p">)</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
-    <span class="n">report_df</span><span class="p">,</span>
-    <span class="n">entity_df</span><span class="p">,</span>
-    <span class="n">COMMUNITY_LEVEL</span><span class="p">,</span>
-    <span class="n">content_embedding_col</span><span class="o">=</span><span class="s2">"full_content_embeddings"</span><span class="p">,</span>
+<span class="n">graphrag_config</span> <span class="o">=</span> <span class="n">create_graphrag_config</span><span class="p">(</span>
+    <span class="n">values</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="s2">"&lt;project_directory&gt;"</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">def embed_community_reports(
-    input_dir: str,
-    embedder: OpenAIEmbedding,
-    community_report_table: str = COMMUNITY_REPORT_TABLE,
-):
-    """Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""
-    input_path = Path(input_dir) / f"{community_report_table}.parquet"
-    output_path = Path(input_dir) / f"{community_report_table}_with_embeddings.parquet"
+<div class="clipboard-copy-txt" id="cell-4">from graphrag.config.create_graphrag_config import create_graphrag_config
 
-    if not Path(output_path).exists():
-        print("Embedding file not found. Computing community report embeddings...")
-
-        report_df = pd.read_parquet(input_path)
-
-        if "full_content" not in report_df.columns:
-            error_msg = f"'full_content' column not found in {input_path}"
-            raise ValueError(error_msg)
-
-        report_df["full_content_embeddings"] = report_df.loc[:, "full_content"].apply(
-            lambda x: embedder.embed(x)
-        )
-
-        # Save the DataFrame with embeddings to the output path
-        report_df.to_parquet(output_path)
-        print(f"Embeddings saved to {output_path}")
-        return report_df
-    print(f"Embeddings file already exists at {output_path}")
-    return pd.read_parquet(output_path)
-
-
-report_df = embed_community_reports(INPUT_DIR, text_embedder)
-reports = read_indexer_reports(
-    report_df,
-    entity_df,
-    COMMUNITY_LEVEL,
-    content_embedding_col="full_content_embeddings",
-)</div>
+graphrag_config = create_graphrag_config(
+    values=settings, root_dir="<project_directory>"
+)</project_directory></div>
 </div>
 </div>
 </div>
@@ -2279,133 +2091,41 @@ reports = read_indexer_reports(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Embedding file not found. Computing community report embeddings...
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Error embedding chunk {'OpenAIEmbedding': "Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"}
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ZeroDivisionError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 31</span>
-<span class="ansi-green-intense-fg ansi-bold">     27</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Embeddings file already exists at </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>output_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     28</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(output_path)
-<span class="ansi-green-fg">---&gt; 31</span> report_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">embed_community_reports</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     32</span> reports <span style="color: rgb(98,98,98)">=</span> read_indexer_reports(
-<span class="ansi-green-intense-fg ansi-bold">     33</span>     report_df,
-<span class="ansi-green-intense-fg ansi-bold">     34</span>     entity_df,
-<span class="ansi-green-intense-fg ansi-bold">     35</span>     COMMUNITY_LEVEL,
-<span class="ansi-green-intense-fg ansi-bold">     36</span>     content_embedding_col<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     37</span> )
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[4], line 4</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_graphrag_config</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_graphrag_config
+<span class="ansi-green-intense-fg ansi-bold">      3</span> graphrag_config <span style="color: rgb(98,98,98)">=</span> create_graphrag_config(
+<span class="ansi-green-fg">----&gt; 4</span>     values<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">settings</span>, root_dir<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">&lt;project_directory&gt;</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span> )
 
-Cell <span class="ansi-green-fg">In[4], line 19</span>, in <span class="ansi-cyan-fg">embed_community_reports</span><span class="ansi-blue-fg">(input_dir, embedder, community_report_table)</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     error_msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> column not found in </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>input_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(error_msg)
-<span class="ansi-green-fg">---&gt; 19</span> report_df[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">report_df</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">loc</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">full_content</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">     20</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">lambda</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">embedder</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span style="color: rgb(95,135,135)"># Save the DataFrame with embeddings to the output path</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> report_df<span style="color: rgb(98,98,98)">.</span>to_parquet(output_path)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/series.py:4924</span>, in <span class="ansi-cyan-fg">Series.apply</span><span class="ansi-blue-fg">(self, func, convert_dtype, args, by_row, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4789</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">apply</span>(
-<span class="ansi-green-intense-fg ansi-bold">   4790</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-intense-fg ansi-bold">   4791</span>     func: AggFuncType,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4796</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">   4797</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> DataFrame <span style="color: rgb(98,98,98)">|</span> Series:
-<span class="ansi-green-intense-fg ansi-bold">   4798</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">   4799</span> <span style="color: rgb(175,0,0)">    Invoke function on values of Series.</span>
-<span class="ansi-green-intense-fg ansi-bold">   4800</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4915</span> <span style="color: rgb(175,0,0)">    dtype: float64</span>
-<span class="ansi-green-intense-fg ansi-bold">   4916</span> <span style="color: rgb(175,0,0)">    """</span>
-<span class="ansi-green-intense-fg ansi-bold">   4917</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">SeriesApply</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">   4918</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4919</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4920</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">convert_dtype</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert_dtype</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4921</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">by_row</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">by_row</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4922</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4923</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">-&gt; 4924</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/apply.py:1427</span>, in <span class="ansi-cyan-fg">SeriesApply.apply</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1424</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>apply_compat()
-<span class="ansi-green-intense-fg ansi-bold">   1426</span> <span style="color: rgb(95,135,135)"># self.func is Callable</span>
-<span class="ansi-green-fg">-&gt; 1427</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply_standard</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/apply.py:1507</span>, in <span class="ansi-cyan-fg">SeriesApply.apply_standard</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1501</span> <span style="color: rgb(95,135,135)"># row-wise access</span>
-<span class="ansi-green-intense-fg ansi-bold">   1502</span> <span style="color: rgb(95,135,135)"># apply doesn't have a `na_action` keyword and for backward compat reasons</span>
-<span class="ansi-green-intense-fg ansi-bold">   1503</span> <span style="color: rgb(95,135,135)"># we need to give `na_action="ignore"` for categorical data.</span>
-<span class="ansi-green-intense-fg ansi-bold">   1504</span> <span style="color: rgb(95,135,135)"># TODO: remove the `na_action="ignore"` when that default has been changed in</span>
-<span class="ansi-green-intense-fg ansi-bold">   1505</span> <span style="color: rgb(95,135,135)">#  Categorical (GH51645).</span>
-<span class="ansi-green-intense-fg ansi-bold">   1506</span> action <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">ignore</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(obj<span style="color: rgb(98,98,98)">.</span>dtype, CategoricalDtype) <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">-&gt; 1507</span> mapped <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_map_values</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">   1508</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">curried</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">action</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">convert_dtype</span>
-<span class="ansi-green-intense-fg ansi-bold">   1509</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1511</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">len</span>(mapped) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(mapped[<span style="color: rgb(98,98,98)">0</span>], ABCSeries):
-<span class="ansi-green-intense-fg ansi-bold">   1512</span>     <span style="color: rgb(95,135,135)"># GH#43986 Need to do list(mapped) in order to get treated as nested</span>
-<span class="ansi-green-intense-fg ansi-bold">   1513</span>     <span style="color: rgb(95,135,135)">#  See also GH#25959 regarding EA support</span>
-<span class="ansi-green-intense-fg ansi-bold">   1514</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj<span style="color: rgb(98,98,98)">.</span>_constructor_expanddim(<span style="color: rgb(0,135,0)">list</span>(mapped), index<span style="color: rgb(98,98,98)">=</span>obj<span style="color: rgb(98,98,98)">.</span>index)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/base.py:921</span>, in <span class="ansi-cyan-fg">IndexOpsMixin._map_values</span><span class="ansi-blue-fg">(self, mapper, na_action, convert)</span>
-<span class="ansi-green-intense-fg ansi-bold">    918</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(arr, ExtensionArray):
-<span class="ansi-green-intense-fg ansi-bold">    919</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> arr<span style="color: rgb(98,98,98)">.</span>map(mapper, na_action<span style="color: rgb(98,98,98)">=</span>na_action)
-<span class="ansi-green-fg">--&gt; 921</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">algorithms</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">map_array</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">arr</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/algorithms.py:1743</span>, in <span class="ansi-cyan-fg">map_array</span><span class="ansi-blue-fg">(arr, mapper, na_action, convert)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1741</span> values <span style="color: rgb(98,98,98)">=</span> arr<span style="color: rgb(98,98,98)">.</span>astype(<span style="color: rgb(0,135,0)">object</span>, copy<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>)
-<span class="ansi-green-intense-fg ansi-bold">   1742</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> na_action <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">-&gt; 1743</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">lib</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">map_infer</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">values</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1744</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">   1745</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> lib<span style="color: rgb(98,98,98)">.</span>map_infer_mask(
-<span class="ansi-green-intense-fg ansi-bold">   1746</span>         values, mapper, mask<span style="color: rgb(98,98,98)">=</span>isna(values)<span style="color: rgb(98,98,98)">.</span>view(np<span style="color: rgb(98,98,98)">.</span>uint8), convert<span style="color: rgb(98,98,98)">=</span>convert
-<span class="ansi-green-intense-fg ansi-bold">   1747</span>     )
-
-File <span class="ansi-green-fg">lib.pyx:2972</span>, in <span class="ansi-cyan-fg">pandas._libs.lib.map_infer</span><span class="ansi-blue-fg">()</span>
-
-Cell <span class="ansi-green-fg">In[4], line 20</span>, in <span class="ansi-cyan-fg">embed_community_reports.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(x)</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     error_msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> column not found in </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>input_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(error_msg)
-<span class="ansi-green-intense-fg ansi-bold">     19</span> report_df[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> report_df<span style="color: rgb(98,98,98)">.</span>loc[:, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>apply(
-<span class="ansi-green-fg">---&gt; 20</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> x: <span class="ansi-yellow-bg">embedder</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> )
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span style="color: rgb(95,135,135)"># Save the DataFrame with embeddings to the output path</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> report_df<span style="color: rgb(98,98,98)">.</span>to_parquet(output_path)
-
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/embedding.py:96</span>, in <span class="ansi-cyan-fg">OpenAIEmbedding.embed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">     90</span>         <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_reporter<span style="color: rgb(98,98,98)">.</span>error(
-<span class="ansi-green-intense-fg ansi-bold">     91</span>             message<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Error embedding chunk</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     92</span>             details<span style="color: rgb(98,98,98)">=</span>{<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__class__</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__name__</span>: <span style="color: rgb(0,135,0)">str</span>(e)},
-<span class="ansi-green-intense-fg ansi-bold">     93</span>         )
-<span class="ansi-green-intense-fg ansi-bold">     95</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">continue</span>
-<span class="ansi-green-fg">---&gt; 96</span> chunk_embeddings <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">np</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">average</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">chunk_embeddings</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">axis</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">weights</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">chunk_lens</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     97</span> chunk_embeddings <span style="color: rgb(98,98,98)">=</span> chunk_embeddings <span style="color: rgb(98,98,98)">/</span> np<span style="color: rgb(98,98,98)">.</span>linalg<span style="color: rgb(98,98,98)">.</span>norm(chunk_embeddings)
-<span class="ansi-green-intense-fg ansi-bold">     98</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> chunk_embeddings<span style="color: rgb(98,98,98)">.</span>tolist()
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/numpy/lib/function_base.py:550</span>, in <span class="ansi-cyan-fg">average</span><span class="ansi-blue-fg">(a, axis, weights, returned, keepdims)</span>
-<span class="ansi-green-intense-fg ansi-bold">    548</span>     scl <span style="color: rgb(98,98,98)">=</span> wgt<span style="color: rgb(98,98,98)">.</span>sum(axis<span style="color: rgb(98,98,98)">=</span>axis, dtype<span style="color: rgb(98,98,98)">=</span>result_dtype, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>keepdims_kw)
-<span class="ansi-green-intense-fg ansi-bold">    549</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> np<span style="color: rgb(98,98,98)">.</span>any(scl <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">0.0</span>):
-<span class="ansi-green-fg">--&gt; 550</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ZeroDivisionError</span>(
-<span class="ansi-green-intense-fg ansi-bold">    551</span>             <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Weights sum to zero, can</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t be normalized</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    553</span>     avg <span style="color: rgb(98,98,98)">=</span> avg_as_array <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>multiply(a, wgt,
-<span class="ansi-green-intense-fg ansi-bold">    554</span>                       dtype<span style="color: rgb(98,98,98)">=</span>result_dtype)<span style="color: rgb(98,98,98)">.</span>sum(axis, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>keepdims_kw) <span style="color: rgb(98,98,98)">/</span> scl
-<span class="ansi-green-intense-fg ansi-bold">    556</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> returned:
-
-<span class="ansi-red-fg">ZeroDivisionError</span>: Weights sum to zero, can't be normalized</pre>
+<span class="ansi-red-fg">NameError</span>: name 'settings' is not defined</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="indexing-api">Indexing API<a class="anchor-link" href="#indexing-api">¶</a></h2><p><em>Indexing</em> is the process of ingesting raw text data and constructing a knowledge graph. GraphRAG currently supports plaintext (<code>.txt</code>) and <code>.csv</code> file formats.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="build-an-index">Build an index<a class="anchor-link" href="#build-an-index">¶</a></h2>
 </div>
 </div>
 </div>
@@ -2428,33 +2148,19 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">context_builder</span> <span class="o">=</span> <span class="n">DRIFTSearchContextBuilder</span><span class="p">(</span>
-    <span class="n">chat_llm</span><span class="o">=</span><span class="n">chat_llm</span><span class="p">,</span>
-    <span class="n">text_embedder</span><span class="o">=</span><span class="n">text_embedder</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
-    <span class="n">relationships</span><span class="o">=</span><span class="n">relationships</span><span class="p">,</span>
-    <span class="n">reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span>
-    <span class="n">entity_text_embeddings</span><span class="o">=</span><span class="n">entity_description_embeddings</span><span class="p">,</span>
-    <span class="n">text_units</span><span class="o">=</span><span class="n">text_units</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">index_result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PipelineRunResult</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">build_index</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">graphrag_config</span><span class="p">)</span>
 
-<span class="n">search</span> <span class="o">=</span> <span class="n">DRIFTSearch</span><span class="p">(</span>
-    <span class="n">llm</span><span class="o">=</span><span class="n">chat_llm</span><span class="p">,</span> <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span> <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span>
-<span class="p">)</span>
+<span class="c1"># index_result is a list of workflows that make up the indexing pipeline that was run</span>
+<span class="k">for</span> <span class="n">workflow_result</span> <span class="ow">in</span> <span class="n">index_result</span><span class="p">:</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"error</span><span class="se">\n</span><span class="si">{</span><span class="n">workflow_result</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">workflow_result</span><span class="o">.</span><span class="n">errors</span> <span class="k">else</span> <span class="s2">"success"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Workflow Name: </span><span class="si">{</span><span class="n">workflow_result</span><span class="o">.</span><span class="n">workflow</span><span class="si">}</span><span class="se">\t</span><span class="s2">Status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">context_builder = DRIFTSearchContextBuilder(
-    chat_llm=chat_llm,
-    text_embedder=text_embedder,
-    entities=entities,
-    relationships=relationships,
-    reports=reports,
-    entity_text_embeddings=entity_description_embeddings,
-    text_units=text_units,
-)
+<div class="clipboard-copy-txt" id="cell-5">index_result: list[PipelineRunResult] = await api.build_index(config=graphrag_config)
 
-search = DRIFTSearch(
-    llm=chat_llm, context_builder=context_builder, token_encoder=token_encoder
-)</div>
+# index_result is a list of workflows that make up the indexing pipeline that was run
+for workflow_result in index_result:
+    status = f"error\n{workflow_result.errors}" if workflow_result.errors else "success"
+    print(f"Workflow Name: {workflow_result.workflow}\tStatus: {status}")</div>
 </div>
 </div>
 </div>
@@ -2469,23 +2175,25 @@ search = DRIFTSearch(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 6</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> DRIFTSearchContextBuilder(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     chat_llm<span style="color: rgb(98,98,98)">=</span>chat_llm,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     text_embedder<span style="color: rgb(98,98,98)">=</span>text_embedder,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-fg">----&gt; 6</span>     reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>entity_description_embeddings,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
-<span class="ansi-green-intense-fg ansi-bold">      9</span> )
-<span class="ansi-green-intense-fg ansi-bold">     11</span> search <span style="color: rgb(98,98,98)">=</span> DRIFTSearch(
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     llm<span style="color: rgb(98,98,98)">=</span>chat_llm, context_builder<span style="color: rgb(98,98,98)">=</span>context_builder, token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder
-<span class="ansi-green-intense-fg ansi-bold">     13</span> )
+Cell <span class="ansi-green-fg">In[5], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> index_result: <span style="color: rgb(0,135,0)">list</span>[PipelineRunResult] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> api<span style="color: rgb(98,98,98)">.</span>build_index(config<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">graphrag_config</span>)
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(95,135,135)"># index_result is a list of workflows that make up the indexing pipeline that was run</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> workflow_result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> index_result:
 
-<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'graphrag_config' is not defined</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="query-an-index">Query an index<a class="anchor-link" href="#query-an-index">¶</a></h2><p>To query an index, several index files must first be read into memory and passed to the query API.</p>
 </div>
 </div>
 </div>
@@ -2508,9 +2216,55 @@ Cell <span class="ansi-green-fg">In[5], line 6</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span><span class="s2">"Who is agent Mercer?"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">final_nodes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"&lt;project_directory&gt;/output/create_final_nodes.parquet"</span><span class="p">)</span>
+<span class="n">final_entities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
+    <span class="s2">"&lt;project_directory&gt;/output/create_final_entities.parquet"</span>
+<span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
+    <span class="s2">"&lt;project_directory&gt;/output/create_final_communities.parquet"</span>
+<span class="p">)</span>
+<span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
+    <span class="s2">"&lt;project_directory&gt;/output/create_final_community_reports.parquet"</span>
+<span class="p">)</span>
+
+<span class="n">response</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">global_search</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">graphrag_config</span><span class="p">,</span>
+    <span class="n">nodes</span><span class="o">=</span><span class="n">final_nodes</span><span class="p">,</span>
+    <span class="n">entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
+    <span class="n">communities</span><span class="o">=</span><span class="n">final_communities</span><span class="p">,</span>
+    <span class="n">community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">community_level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dynamic_community_selection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">response_type</span><span class="o">=</span><span class="s2">"Multiple Paragraphs"</span><span class="p">,</span>
+    <span class="n">query</span><span class="o">=</span><span class="s2">"Who is Scrooge and what are his main relationships?"</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">resp = await search.asearch("Who is agent Mercer?")</div>
+<div class="clipboard-copy-txt" id="cell-6">import pandas as pd
+
+final_nodes = pd.read_parquet("<project_directory>/output/create_final_nodes.parquet")
+final_entities = pd.read_parquet(
+    "<project_directory>/output/create_final_entities.parquet"
+)
+final_communities = pd.read_parquet(
+    "<project_directory>/output/create_final_communities.parquet"
+)
+final_community_reports = pd.read_parquet(
+    "<project_directory>/output/create_final_community_reports.parquet"
+)
+
+response, context = await api.global_search(
+    config=graphrag_config,
+    nodes=final_nodes,
+    entities=final_entities,
+    communities=final_communities,
+    community_reports=final_community_reports,
+    community_level=2,
+    dynamic_community_selection=False,
+    response_type="Multiple Paragraphs",
+    query="Who is Scrooge and what are his main relationships?",
+)</project_directory></project_directory></project_directory></project_directory></div>
 </div>
 </div>
 </div>
@@ -2524,13 +2278,89 @@ Cell <span class="ansi-green-fg">In[5], line 6</span>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search</span><span style="color: rgb(98,98,98)">.</span>asearch(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Who is agent Mercer?</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> <span class="ansi-bold" style="color: rgb(0,0,255)">pandas</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> <span class="ansi-bold" style="color: rgb(0,0,255)">pd</span>
+<span class="ansi-green-fg">----&gt; 3</span> final_nodes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&lt;project_directory&gt;/output/create_final_nodes.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> final_entities <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">&lt;project_directory&gt;/output/create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> )
+<span class="ansi-green-intense-fg ansi-bold">      7</span> final_communities <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">&lt;project_directory&gt;/output/create_final_communities.parquet</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'search' is not defined</pre>
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
+<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
+<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
+<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
+<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
+<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
+<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
+<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
+<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
+<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
+<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
+<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
+<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
+<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
+<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
+<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
+
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/output/create_final_nodes.parquet'</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>The response object is the official reponse from graphrag while the context object holds various metadata regarding the querying process used to obtain the final response.</p>
 </div>
 </div>
 </div>
@@ -2553,9 +2383,9 @@ Cell <span class="ansi-green-fg">In[6], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span><span class="o">.</span><span class="n">response</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">resp.response</div>
+<div class="clipboard-copy-txt" id="cell-7">print(response)</div>
 </div>
 </div>
 </div>
@@ -2571,11 +2401,22 @@ Cell <span class="ansi-green-fg">In[6], line 1</span>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">resp</span><span style="color: rgb(98,98,98)">.</span>response
+<span class="ansi-green-fg">----&gt; 1</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">response</span>)
 
-<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'response' is not defined</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Digging into the context a bit more provides users with extremely granular information such as what sources of data (down to the level of text chunks) were ultimately retrieved and used as part of the context sent to the LLM model).</p>
 </div>
 </div>
 </div>
@@ -2598,9 +2439,13 @@ Cell <span class="ansi-green-fg">In[7], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">resp</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s2">"nodes"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"answer"</span><span class="p">]</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="n">pprint</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># noqa: T203</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">resp.response["nodes"][0]["answer"]</div>
+<div class="clipboard-copy-txt" id="cell-8">from pprint import pprint
+
+pprint(context)  # noqa: T203</div>
 </div>
 </div>
 </div>
@@ -2615,10 +2460,11 @@ Cell <span class="ansi-green-fg">In[7], line 1</span>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">resp</span><span style="color: rgb(98,98,98)">.</span>response[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">nodes</span><span style="color: rgb(175,0,0)">"</span>][<span style="color: rgb(98,98,98)">0</span>][<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">answer</span><span style="color: rgb(175,0,0)">"</span>]
+Cell <span class="ansi-green-fg">In[8], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">pprint</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pprint
+<span class="ansi-green-fg">----&gt; 3</span> pprint(<span class="ansi-yellow-bg">context</span>)  <span style="color: rgb(95,135,135)"># noqa: T203</span>
 
-<span class="ansi-red-fg">NameError</span>: name 'resp' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'context' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2656,44 +2502,6 @@ Cell <span class="ansi-green-fg">In[8], line 1</span>
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../local_search/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Local Search">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Local Search
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../../config/overview/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Overview
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
