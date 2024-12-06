@@ -28,7 +28,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 ## 0.4.1
 
 - patch: Add update cli entrypoint for incremental indexing
-- patch: Allow some cicd jobs to skip PRs dedicated to doc updates only.
+- patch: Allow some CI/CD jobs to skip PRs dedicated to doc updates only.
 - patch: Fix a file paths issue in the viz guide.
 - patch: Fix optional covariates update in incremental indexing
 - patch: Raise error on empty deltas for inc indexing
