@@ -8,21 +8,18 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
-from pathlib import Path
 from typing import cast
 
 import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
-from graphrag.cache.factory import create_cache
+from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.index.config.cache import PipelineMemoryCacheConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
 )
-from graphrag.index.config.storage import PipelineFileStorageConfig
 from graphrag.index.config.workflow import PipelineWorkflowStep
 from graphrag.index.exporter import ParquetExporter
 from graphrag.index.input.factory import create_input
@@ -53,7 +50,7 @@ from graphrag.index.workflows import (
 )
 from graphrag.logging.base import ProgressReporter
 from graphrag.logging.null_progress import NullProgressReporter
-from graphrag.storage.factory import create_storage
+from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -103,17 +100,26 @@ async def run_pipeline_with_config(
     root_dir = config.root_dir or ""
 
     progress_reporter = progress_reporter or NullProgressReporter()
-    storage = storage = create_storage(config.storage)  # type: ignore
+    storage_config = config.storage.model_dump()  # type: ignore
+    storage = storage or StorageFactory.create_storage(
+        storage_type=storage_config["type"],  # type: ignore
+        kwargs=storage_config,
+    )
 
     if is_update_run:
-        # TODO: remove the default choice (PipelineFileStorageConfig) once the new config system enforces a correct update-index-storage config when used.
-        update_index_storage = update_index_storage or create_storage(
-            config.update_index_storage
-            or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
+        update_storage_config = config.update_index_storage.model_dump()  # type: ignore
+        update_index_storage = update_index_storage or StorageFactory.create_storage(
+            storage_type=update_storage_config["type"],  # type: ignore
+            kwargs=update_storage_config,
         )
 
-    # TODO: remove the default choice (PipelineMemoryCacheConfig) when the new config system guarantees the existence of a cache config
-    cache = cache or create_cache(config.cache or PipelineMemoryCacheConfig(), root_dir)
+    # TODO: remove the type ignore when the new config system guarantees the existence of a cache config
+    cache_config = config.cache.model_dump()  # type: ignore
+    cache = cache or CacheFactory.create_cache(
+        cache_type=cache_config["type"],  # type: ignore
+        root_dir=root_dir,
+        kwargs=cache_config,
+    )
     # TODO: remove the type ignore when the new config system guarantees the existence of an input config
     dataset = (
         dataset

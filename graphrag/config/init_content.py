@@ -33,7 +33,7 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 
 embeddings:
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  vector_store:{defs.VECTOR_STORE}
+  vector_store: {defs.VECTOR_STORE}
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
@@ -63,7 +63,7 @@ chunks:
 ## connection_string and container_name must be provided
 
 cache:
-  type: {defs.CACHE_TYPE.value} # or blob
+  type: {defs.CACHE_TYPE.value} # one of [blob, cosmosdb, file]
   base_dir: "{defs.CACHE_BASE_DIR}"
 
 reporting:
@@ -71,7 +71,7 @@ reporting:
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 storage:
-  type: {defs.STORAGE_TYPE.value} # or blob
+  type: {defs.STORAGE_TYPE.value} # one of [blob, cosmosdb, file]
   base_dir: "{defs.STORAGE_BASE_DIR}"
 
 ## only turn this on if running `graphrag index` with custom settings
