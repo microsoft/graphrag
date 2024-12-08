@@ -82,7 +82,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         chunk_lens = []
         for chunk in token_chunks:
             try:
-                embedding, chunk_len = self._embed_with_retry(chunk, **kwargs)
+                embedding, chunk_len = self._embed_with_retry(self.token_encoder.decode(chunk), **kwargs)
                 chunk_embeddings.append(embedding)
                 chunk_lens.append(chunk_len)
             # TODO: catch a more specific exception
@@ -109,7 +109,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         chunk_embeddings = []
         chunk_lens = []
         embedding_results = await asyncio.gather(*[
-            self._aembed_with_retry(chunk, **kwargs) for chunk in token_chunks
+            self._aembed_with_retry(self.token_encoder.decode(chunk), **kwargs) for chunk in token_chunks
         ])
         embedding_results = [result for result in embedding_results if result[0]]
         chunk_embeddings = [result[0] for result in embedding_results]
