@@ -33,7 +33,7 @@ async_mode: {defs.ASYNC_MODE.value} # or asyncio
 
 embeddings:
   async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  vector_store:{defs.VECTOR_STORE}
+  vector_store: {defs.VECTOR_STORE}
   llm:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
