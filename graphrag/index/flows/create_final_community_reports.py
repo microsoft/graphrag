@@ -88,7 +88,7 @@ async def create_final_community_reports(
 
     # Merge with communities to add size and period
     merged = community_reports.merge(
-        communities.loc[:, ["community", "size", "period"]],
+        communities.loc[:, ["community", "parent", "size", "period"]],
         on="community",
         how="left",
         copy=False,
@@ -99,6 +99,7 @@ async def create_final_community_reports(
             "id",
             "human_readable_id",
             "community",
+            "parent",
             "level",
             "title",
             "summary",
@@ -124,7 +125,7 @@ def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Create NODE_DETAILS column
-    input[NODE_DETAILS] = input.loc[
+    input.loc[:, NODE_DETAILS] = input.loc[
         :, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]
     ].to_dict(orient="records")
 
@@ -136,7 +137,7 @@ def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
 
     # Create EDGE_DETAILS column
-    input[EDGE_DETAILS] = input.loc[
+    input.loc[:, EDGE_DETAILS] = input.loc[
         :, [EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]
     ].to_dict(orient="records")
 
@@ -148,7 +149,7 @@ def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
     input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
 
     # Create CLAIM_DETAILS column
-    input[CLAIM_DETAILS] = input.loc[
+    input.loc[:, CLAIM_DETAILS] = input.loc[
         :, [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
     ].to_dict(orient="records")
 

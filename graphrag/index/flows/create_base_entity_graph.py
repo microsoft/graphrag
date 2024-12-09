@@ -3,7 +3,7 @@
 
 """All the steps to create the base entity graph."""
 
-from typing import Any, cast
+from typing import Any
 from uuid import uuid4
 
 import networkx as nx
@@ -159,11 +159,31 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
 
 
 def _prep_communities(communities) -> pd.DataFrame:
+    # Convert the input into a DataFrame and explode the title column
     base_communities = pd.DataFrame(
-        communities, columns=cast("Any", ["level", "community", "title"])
-    )
-    base_communities = base_communities.explode("title")
+        communities, columns=["level", "community", "title"]
+    ).explode("title")
+
+    # Ensure community column is an integer
     base_communities["community"] = base_communities["community"].astype(int)
+
+    return add_community_parent(base_communities)
+
+
+def add_community_parent(base_communities: pd.DataFrame) -> pd.DataFrame:
+    """Add a parent column to the base communities DataFrame."""
+    # Create a parent mapping by adding 1 to the level column
+    parent_mapping = base_communities[["level", "community", "title"]]
+    parent_mapping["level"] += 1  # Shift levels for parent relationship
+    parent_mapping.rename(columns={"community": "parent"}, inplace=True)
+
+    # Merge the parent information back into the base DataFrame
+    base_communities = base_communities.merge(
+        parent_mapping, on=["level", "title"], how="left"
+    )
+
+    # Fill missing parents with -1 (default value)
+    base_communities["parent"] = base_communities["parent"].fillna(-1).astype(int)
     return base_communities
 
 
