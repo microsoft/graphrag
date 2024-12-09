@@ -31,4 +31,4 @@ async def create_final_relationships(
 
     output = create_final_relationships_flow(base_relationship_edges, base_entity_nodes)
 
-    return create_verb_result(cast(Table, output))
+    return create_verb_result(cast("Table", output))

@@ -78,7 +78,7 @@ async def create_input(
         )
         loader = loaders[config.file_type]
         results = await loader(config, progress, storage)
-        return cast(pd.DataFrame, results)
+        return cast("pd.DataFrame", results)
 
     msg = f"Unknown input type {config.file_type}"
     raise ValueError(msg)

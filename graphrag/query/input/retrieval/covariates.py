@@ -50,4 +50,4 @@ def to_covariate_dataframe(covariates: list[Covariate]) -> pd.DataFrame:
             )
             new_record.append(field_value)
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

@@ -72,7 +72,7 @@ def chunk_text(
 
     output[to] = output.apply(
         cast(
-            Any,
+            "Any",
             lambda x: run_strategy(strategy_exec, x[column], strategy_config, tick),
         ),
         axis=1,

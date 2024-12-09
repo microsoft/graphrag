@@ -160,7 +160,7 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
 
 def _prep_communities(communities) -> pd.DataFrame:
     base_communities = pd.DataFrame(
-        communities, columns=cast(Any, ["level", "community", "title"])
+        communities, columns=cast("Any", ["level", "community", "title"])
     )
     base_communities = base_communities.explode("title")
     base_communities["community"] = base_communities["community"].astype(int)

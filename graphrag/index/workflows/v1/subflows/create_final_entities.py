@@ -30,4 +30,4 @@ async def create_final_entities(
 
     output = create_final_entities_flow(base_entity_nodes)
 
-    return create_verb_result(cast(Table, output))
+    return create_verb_result(cast("Table", output))

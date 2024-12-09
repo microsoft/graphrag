@@ -3,9 +3,8 @@
 
 """All the steps to transform community reports."""
 
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-import pandas as pd
 from datashaper import (
     AsyncType,
     Table,
@@ -21,6 +20,9 @@ from graphrag.index.flows.create_final_community_reports import (
 )
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
+if TYPE_CHECKING:
+    import pandas as pd
+
 
 @verb(name="create_final_community_reports", treats_input_tables_as_immutable=True)
 async def create_final_community_reports(
@@ -33,16 +35,16 @@ async def create_final_community_reports(
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform community reports."""
-    nodes = cast(pd.DataFrame, input.get_input())
-    edges = cast(pd.DataFrame, get_required_input_table(input, "relationships").table)
-    entities = cast(pd.DataFrame, get_required_input_table(input, "entities").table)
+    nodes = cast("pd.DataFrame", input.get_input())
+    edges = cast("pd.DataFrame", get_required_input_table(input, "relationships").table)
+    entities = cast("pd.DataFrame", get_required_input_table(input, "entities").table)
     communities = cast(
-        pd.DataFrame, get_required_input_table(input, "communities").table
+        "pd.DataFrame", get_required_input_table(input, "communities").table
     )
 
     claims = get_named_input_table(input, "covariates")
     if claims:
-        claims = cast(pd.DataFrame, claims.table)
+        claims = cast("pd.DataFrame", claims.table)
 
     output = await create_final_community_reports_flow(
         nodes,
@@ -59,7 +61,7 @@ async def create_final_community_reports(
 
     return create_verb_result(
         cast(
-            Table,
+            "Table",
             output,
         )
     )

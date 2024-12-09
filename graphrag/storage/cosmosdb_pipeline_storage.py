@@ -28,7 +28,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     _cosmosdb_account_url: str | None
     _connection_string: str | None
     _database_name: str
-    _current_container: str | None
+    container_name: str | None
     _encoding: str
 
     def __init__(
@@ -58,7 +58,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self._database_name = database_name
         self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url
-        self._current_container = current_container
+        self.container_name = current_container
         self._cosmosdb_account_name = (
             cosmosdb_account_url.split("//")[1].split(".")[0]
             if cosmosdb_account_url
@@ -74,7 +74,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._database_name,
         )
         self._create_database()
-        if self._current_container:
+        if self.container_name:
             self._create_container()
 
     def _create_database(self) -> None:
@@ -117,7 +117,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
         log.info(
             "search container %s for documents matching %s",
-            self._current_container,
+            self.container_name,
             file_pattern.pattern,
         )
 
@@ -130,7 +130,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
         try:
             container_client = self._database_client.get_container_client(
-                str(self._current_container)
+                str(self.container_name)
             )
             query = "SELECT * FROM c WHERE CONTAINS(c.id, @pattern)"
             parameters: list[dict[str, Any]] = [
@@ -173,9 +173,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     ) -> Any:
         """Fetch all cosmosdb items belonging to the given filename key."""
         try:
-            if self._current_container:
+            if self.container_name:
                 container_client = self._database_client.get_container_client(
-                    self._current_container
+                    self.container_name
                 )
                 prefix = self._get_prefix(key)
                 query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
@@ -202,9 +202,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Insert the contents of a file into cosmosdb for the given filename key. For optimization, the file is destructured such that each row is a unique cosmosdb item."""
         try:
-            if self._current_container:
+            if self.container_name:
                 container_client = self._database_client.get_container_client(
-                    self._current_container
+                    self.container_name
                 )
                 prefix = self._get_prefix(key)
                 if isinstance(value, bytes):
@@ -234,7 +234,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """Check if the contents of the given filename key exist in the cosmosdb storage."""
         if self._current_container:
             container_client = self._database_client.get_container_client(
-                self._current_container
+                self.container_name
             )
             prefix = self._get_prefix(key)
             query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
@@ -262,9 +262,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     # TODO: Decide the granularity of deletion (e.g. delete all items within the current container, delete the current container, delete the current database)
     async def clear(self) -> None:
         """Clear the cosmosdb storage."""
-        if self._current_container:
+        if self.container_name:
             container_client = self._database_client.get_container_client(
-                self._current_container
+                self.container_name
             )
             for item in container_client.read_all_items():
                 item_id = item["id"]
@@ -286,24 +286,24 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
-        if self._current_container:
+        if self.container_name:
             partition_key = PartitionKey(path="/id", kind="Hash")
             self._database_client.create_container_if_not_exists(
-                id=self._current_container,
+                id=self.container_name,
                 partition_key=partition_key,
             )
 
     def _delete_container(self) -> None:
         """Delete the container with the current container name if it exists."""
-        if self._container_exists() and self._current_container:
-            self._database_client.delete_container(self._current_container)
+        if self._container_exists() and self.container_name:
+            self._database_client.delete_container(self.container_name)
 
     def _container_exists(self) -> bool:
         """Check if the container with the current container name exists."""
         container_names = [
             container["id"] for container in self._database_client.list_containers()
         ]
-        return self._current_container in container_names
+        return self.container_name in container_names
 
 
 # TODO remove this helper function and have the factory instantiate the class directly

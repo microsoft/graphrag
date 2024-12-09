@@ -28,7 +28,7 @@ async def load(
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""
-    csv_config = cast(PipelineCSVInputConfig, config)
+    csv_config = cast("PipelineCSVInputConfig", config)
     log.info("Loading csv files from %s", csv_config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:

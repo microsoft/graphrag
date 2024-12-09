@@ -83,8 +83,8 @@ jobs:
       - name: Install Azurite
         id: azuright
         uses: potatoqualitee/azuright@v1.1
-      
-      - name: Azure Cosmos DB Emulator
+
+      - name: Install Azure Cosmos DB Emulator
         if: runner.os == 'Windows'
         uses: southpolesteve/cosmos-emulator-github-action@v1
 

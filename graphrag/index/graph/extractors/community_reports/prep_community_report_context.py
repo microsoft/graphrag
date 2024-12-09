@@ -112,13 +112,13 @@ def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
 
 def _sort_and_trim_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
     """Sort and trim context to fit the limit."""
-    series = cast(pd.Series, df[schemas.ALL_CONTEXT])
+    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(series, lambda x: sort_context(x, max_tokens=max_tokens))
 
 
 def _build_mixed_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
     """Sort and trim context to fit the limit."""
-    series = cast(pd.Series, df[schemas.ALL_CONTEXT])
+    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(
         series, lambda x: build_mixed_context(x, max_tokens=max_tokens)
     )
