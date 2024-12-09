@@ -48,8 +48,8 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.logging.base import ProgressReporter
-from graphrag.logging.null_progress import NullProgressReporter
+from graphrag.logger.base import ProgressLogger
+from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -64,7 +64,7 @@ async def run_pipeline_with_config(
     update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -99,7 +99,7 @@ async def run_pipeline_with_config(
     config = _apply_substitutions(config, run_id)
     root_dir = config.root_dir or ""
 
-    progress_reporter = progress_reporter or NullProgressReporter()
+    progress_reporter = progress_reporter or NullProgressLogger()
     storage_config = config.storage.model_dump()  # type: ignore
     storage = storage or StorageFactory.create_storage(
         storage_type=storage_config["type"],  # type: ignore
@@ -197,7 +197,7 @@ async def run_pipeline(
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -226,7 +226,7 @@ async def run_pipeline(
     """
     start_time = time.time()
 
-    progress_reporter = progress_reporter or NullProgressReporter()
+    progress_reporter = progress_reporter or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
     callback_chain = _create_callback_chain(callbacks, progress_reporter)
     context = create_run_context(storage=storage, cache=cache, stats=None)

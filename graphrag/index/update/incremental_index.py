@@ -23,7 +23,7 @@ from graphrag.index.update.entities import (
     _run_entity_summarization,
 )
 from graphrag.index.update.relationships import _update_and_merge_relationships
-from graphrag.logging.print_progress import ProgressReporter
+from graphrag.logger.print_progress import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import _load_table_from_storage
 
@@ -85,7 +85,7 @@ async def update_dataframe_outputs(
     config: PipelineConfig,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
-    progress_reporter: ProgressReporter,
+    progress_reporter: ProgressLogger,
 ) -> None:
     """Update the mergeable outputs.
 

@@ -12,7 +12,7 @@ from typing import Annotated
 
 import typer
 
-from graphrag.logging.types import ReporterType
+from graphrag.logger.types import LoggerType
 from graphrag.prompt_tune.defaults import (
     MAX_TOKEN_COUNT,
     MIN_CHUNK_SIZE,
@@ -146,8 +146,8 @@ def _index_cli(
         str | None, typer.Option(help="Resume a given indexing run")
     ] = None,
     reporter: Annotated[
-        ReporterType, typer.Option(help="The progress reporter to use.")
-    ] = ReporterType.RICH,
+        LoggerType, typer.Option(help="The progress reporter to use.")
+    ] = LoggerType.RICH,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -180,7 +180,7 @@ def _index_cli(
         resume=resume,
         memprofile=memprofile,
         cache=cache,
-        reporter=ReporterType(reporter),
+        reporter=LoggerType(reporter),
         config_filepath=config,
         dry_run=dry_run,
         skip_validation=skip_validation,
@@ -213,8 +213,8 @@ def _update_cli(
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
     reporter: Annotated[
-        ReporterType, typer.Option(help="The progress reporter to use.")
-    ] = ReporterType.RICH,
+        LoggerType, typer.Option(help="The progress reporter to use.")
+    ] = LoggerType.RICH,
     cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
     skip_validation: Annotated[
         bool,
@@ -244,7 +244,7 @@ def _update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        reporter=ReporterType(reporter),
+        reporter=LoggerType(reporter),
         config_filepath=config,
         skip_validation=skip_validation,
         output_dir=output,

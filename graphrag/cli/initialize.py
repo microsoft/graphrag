@@ -6,8 +6,7 @@
 from pathlib import Path
 
 from graphrag.config.init_content import INIT_DOTENV, INIT_YAML
-from graphrag.logging.factory import create_progress_reporter
-from graphrag.logging.types import ReporterType
+from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.prompts.index.claim_extraction import CLAIM_EXTRACTION_PROMPT
 from graphrag.prompts.index.community_report import (
     COMMUNITY_REPORT_PROMPT,
@@ -28,7 +27,7 @@ from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PR
 
 def initialize_project_at(path: Path) -> None:
     """Initialize the project at the given path."""
-    progress_reporter = create_progress_reporter(ReporterType.RICH)
+    progress_reporter = LoggerFactory.create_logger(LoggerType.RICH)
     progress_reporter.info(f"Initializing project at {path}")
     root = Path(path)
     if not root.exists():

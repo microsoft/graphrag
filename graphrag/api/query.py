@@ -29,7 +29,7 @@ from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
 )
-from graphrag.logging.print_progress import PrintProgressReporter
+from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.query.factory import (
     get_drift_search_engine,
     get_global_search_engine,
@@ -52,7 +52,7 @@ from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 if TYPE_CHECKING:
     from graphrag.query.structured_search.base import SearchResult
 
-reporter = PrintProgressReporter("")
+reporter = PrintProgressLogger("")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})

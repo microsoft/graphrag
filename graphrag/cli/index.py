@@ -16,9 +16,8 @@ from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logging.base import ProgressReporter
-from graphrag.logging.factory import create_progress_reporter
-from graphrag.logging.types import ReporterType
+from graphrag.logger.base import ProgressLogger
+from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
@@ -27,7 +26,7 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 log = logging.getLogger(__name__)
 
 
-def _logger(reporter: ProgressReporter):
+def _logger(reporter: ProgressLogger):
     def info(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
@@ -46,7 +45,7 @@ def _logger(reporter: ProgressReporter):
     return info, error, success
 
 
-def _register_signal_handlers(reporter: ProgressReporter):
+def _register_signal_handlers(reporter: ProgressLogger):
     import signal
 
     def handle_signal(signum, _):
@@ -70,7 +69,7 @@ def index_cli(
     resume: str | None,
     memprofile: bool,
     cache: bool,
-    reporter: ReporterType,
+    reporter: LoggerType,
     config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
@@ -97,7 +96,7 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    reporter: ReporterType,
+    reporter: LoggerType,
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
@@ -139,7 +138,7 @@ def _run_index(
     skip_validation,
     output_dir,
 ):
-    progress_reporter = create_progress_reporter(reporter)
+    progress_reporter = LoggerFactory.create_logger(reporter)
     info, error, success = _logger(progress_reporter)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 

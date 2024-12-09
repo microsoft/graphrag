@@ -10,12 +10,10 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
-from graphrag.logging.print_progress import ProgressReporter
+from graphrag.logger.print_progress import ProgressLogger
 
 
-def validate_config_names(
-    reporter: ProgressReporter, parameters: GraphRagConfig
-) -> None:
+def validate_config_names(reporter: ProgressLogger, parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     llm = load_llm(

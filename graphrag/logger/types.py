@@ -1,18 +1,18 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Types for status reporting."""
+"""Logging types."""
 
 from enum import Enum
 
 
-class ReporterType(str, Enum):
-    """The type of reporter to use."""
+class LoggerType(str, Enum):
+    """The type of logger to use."""
 
     RICH = "rich"
     PRINT = "print"
     NONE = "none"
 
     def __str__(self):
-        """Return the string representation of the enum value."""
+        """Return a string representation of the enum value."""
         return self.value

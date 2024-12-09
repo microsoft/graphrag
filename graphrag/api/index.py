@@ -19,7 +19,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.vector_stores.factory import VectorStoreType
 
 
@@ -29,7 +29,7 @@ async def build_index(
     is_resume_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_reporter: ProgressLogger | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -45,7 +45,7 @@ async def build_index(
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
-    progress_reporter : ProgressReporter | None default=None
+    progress_reporter : ProgressLogger | None default=None
         The progress reporter.
 
     Returns
