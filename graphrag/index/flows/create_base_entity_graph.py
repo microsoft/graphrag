@@ -161,7 +161,7 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
 def _prep_communities(communities) -> pd.DataFrame:
     # Convert the input into a DataFrame and explode the title column
     base_communities = pd.DataFrame(
-        communities, columns=["level", "community", "title"]
+        communities, columns=pd.Index(["level", "community", "title"])
     ).explode("title")
 
     # Ensure community column is an integer
@@ -173,7 +173,7 @@ def _prep_communities(communities) -> pd.DataFrame:
 def add_community_parent(base_communities: pd.DataFrame) -> pd.DataFrame:
     """Add a parent column to the base communities DataFrame."""
     # Create a parent mapping by adding 1 to the level column
-    parent_mapping = base_communities[["level", "community", "title"]]
+    parent_mapping = base_communities.loc[:, ["level", "community", "title"]]
     parent_mapping["level"] += 1  # Shift levels for parent relationship
     parent_mapping.rename(columns={"community": "parent"}, inplace=True)
 
