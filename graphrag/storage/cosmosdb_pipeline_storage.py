@@ -37,7 +37,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         connection_string: str | None,
         database_name: str,
         encoding: str = "utf-8",
-        current_container: str | None = None,
+        container_name: str | None = None,
     ):
         """Initialize the CosmosDB Storage."""
         if connection_string:
@@ -58,7 +58,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self._database_name = database_name
         self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url
-        self.container_name = current_container
+        self.container_name = container_name
         self._cosmosdb_account_name = (
             cosmosdb_account_url.split("//")[1].split(".")[0]
             if cosmosdb_account_url
@@ -232,7 +232,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Check if the contents of the given filename key exist in the cosmosdb storage."""
-        if self._current_container:
+        if self.container_name:
             container_client = self._database_client.get_container_client(
                 self.container_name
             )
@@ -246,9 +246,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def delete(self, key: str) -> None:
         """Delete all comsmosdb items belonging to the given filename key."""
-        if self._current_container:
+        if self.container_name:
             container_client = self._database_client.get_container_client(
-                self._current_container
+                self.container_name
             )
             prefix = self._get_prefix(key)
             query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
@@ -325,7 +325,7 @@ def create_cosmosdb_storage(**kwargs: Any) -> PipelineStorage:
         cosmosdb_account_url=cosmosdb_account_url,
         connection_string=connection_string,
         database_name=base_dir,
-        current_container=container_name,
+        container_name=container_name,
     )
 
 
