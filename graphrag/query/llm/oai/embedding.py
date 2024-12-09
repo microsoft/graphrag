@@ -46,7 +46,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
-        reporter: StatusLogger | None = None,
+        logger: StatusLogger | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,
@@ -59,7 +59,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             organization=organization,
             max_retries=max_retries,
             request_timeout=request_timeout,
-            reporter=reporter,
+            logger=logger,
         )
 
         self.model = model

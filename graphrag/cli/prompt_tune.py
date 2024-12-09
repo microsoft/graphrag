@@ -52,7 +52,7 @@ async def prompt_tune(
     - k: The number of documents to select when using auto selection method.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     """
-    reporter = PrintProgressLogger("")
+    logger = PrintProgressLogger("")
     root_path = Path(root).resolve()
     graph_config = load_config(root_path, config)
 
@@ -73,7 +73,7 @@ async def prompt_tune(
 
     output_path = output.resolve()
     if output_path:
-        reporter.info(f"Writing prompts to {output_path}")
+        logger.info(f"Writing prompts to {output_path}")  # noqa: G004
         output_path.mkdir(parents=True, exist_ok=True)
         entity_extraction_prompt_path = output_path / ENTITY_EXTRACTION_FILENAME
         entity_summarization_prompt_path = output_path / ENTITY_SUMMARIZATION_FILENAME

@@ -27,8 +27,8 @@ from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PR
 
 def initialize_project_at(path: Path) -> None:
     """Initialize the project at the given path."""
-    progress_reporter = LoggerFactory.create_logger(LoggerType.RICH)
-    progress_reporter.info(f"Initializing project at {path}")
+    progress_logger = LoggerFactory.create_logger(LoggerType.RICH)
+    progress_logger.info(f"Initializing project at {path}")  # noqa: G004
     root = Path(path)
     if not root.exists():
         root.mkdir(parents=True, exist_ok=True)

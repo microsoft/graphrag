@@ -52,7 +52,7 @@ from graphrag.vector_stores.factory import VectorStoreFactory, VectorStoreType
 if TYPE_CHECKING:
     from graphrag.query.structured_search.base import SearchResult
 
-reporter = PrintProgressLogger("")
+logger = PrintProgressLogger("")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -253,7 +253,7 @@ async def local_search(
         lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
@@ -329,7 +329,7 @@ async def local_search_streaming(
         lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
@@ -414,7 +414,7 @@ async def drift_search(
         lancedb_dir = Path(config.root_dir).resolve() / db_uri
         vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
 
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore

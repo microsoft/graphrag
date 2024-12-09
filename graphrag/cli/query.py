@@ -18,7 +18,7 @@ from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import _load_table_from_storage
 
-reporter = PrintProgressLogger("")
+logger = PrintProgressLogger("")
 
 
 def run_global_search(
@@ -100,7 +100,7 @@ def run_global_search(
             query=query,
         )
     )
-    reporter.success(f"Global Search Response:\n{response}")
+    logger.success(f"Global Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -192,7 +192,7 @@ def run_local_search(
             query=query,
         )
     )
-    reporter.success(f"Local Search Response:\n{response}")
+    logger.success(f"Local Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -251,7 +251,7 @@ def run_drift_search(
             query=query,
         )
     )
-    reporter.success(f"DRIFT Search Response:\n{response}")
+    logger.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     # TODO: Map/Reduce Drift Search answer to a single response

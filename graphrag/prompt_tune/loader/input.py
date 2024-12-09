@@ -54,7 +54,7 @@ async def load_docs_in_chunks(
     config: GraphRagConfig,
     select_method: DocSelectionType,
     limit: int,
-    reporter: ProgressLogger,
+    logger: ProgressLogger,
     chunk_size: int = MIN_CHUNK_SIZE,
     n_subset_max: int = N_SUBSET_MAX,
     k: int = K,
@@ -64,7 +64,7 @@ async def load_docs_in_chunks(
         config.embeddings.resolved_strategy()["llm"]
     )
 
-    dataset = await create_input(config.input, reporter, root)
+    dataset = await create_input(config.input, logger, root)
 
     # covert to text units
     chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)

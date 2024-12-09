@@ -26,35 +26,35 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 log = logging.getLogger(__name__)
 
 
-def _logger(reporter: ProgressLogger):
+def _logger(logger: ProgressLogger):
     def info(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
-            reporter.info(msg)
+            logger.info(msg)
 
     def error(msg: str, verbose: bool = False):
         log.error(msg)
         if verbose:
-            reporter.error(msg)
+            logger.error(msg)
 
     def success(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
-            reporter.success(msg)
+            logger.success(msg)
 
     return info, error, success
 
 
-def _register_signal_handlers(reporter: ProgressLogger):
+def _register_signal_handlers(logger: ProgressLogger):
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
-        reporter.info(f"Received signal {signum}, exiting...")
-        reporter.dispose()
+        logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
+        logger.dispose()
         for task in asyncio.all_tasks():
             task.cancel()
-        reporter.info("All tasks cancelled. Exiting...")
+        logger.info("All tasks cancelled. Exiting...")
 
     # Register signal handlers for SIGINT and SIGHUP
     signal.signal(signal.SIGINT, handle_signal)

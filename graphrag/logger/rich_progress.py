@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Rich-based progress reporter for CLI use."""
+"""Rich-based progress logger for CLI use."""
 
 # Print iterations progress
 import asyncio
