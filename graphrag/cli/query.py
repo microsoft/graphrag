@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of query subcommand."""
+"""CLI implementation of the query subcommand."""
 
 import asyncio
 import sys

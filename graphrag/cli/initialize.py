@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of initialization subcommand."""
+"""CLI implementation of the initialization subcommand."""
 
 from pathlib import Path
 

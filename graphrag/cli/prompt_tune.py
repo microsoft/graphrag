@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of prompt-tune subcommand."""
+"""CLI implementation of the prompt-tune subcommand."""
 
 from pathlib import Path
 

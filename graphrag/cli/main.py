@@ -145,8 +145,8 @@ def _index_cli(
     resume: Annotated[
         str | None, typer.Option(help="Resume a given indexing run")
     ] = None,
-    reporter: Annotated[
-        LoggerType, typer.Option(help="The progress reporter to use.")
+    logger: Annotated[
+        LoggerType, typer.Option(help="The progress logger to use.")
     ] = LoggerType.RICH,
     dry_run: Annotated[
         bool,
@@ -180,7 +180,7 @@ def _index_cli(
         resume=resume,
         memprofile=memprofile,
         cache=cache,
-        reporter=LoggerType(reporter),
+        logger=LoggerType(logger),
         config_filepath=config,
         dry_run=dry_run,
         skip_validation=skip_validation,
@@ -212,8 +212,8 @@ def _update_cli(
     memprofile: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
-    reporter: Annotated[
-        LoggerType, typer.Option(help="The progress reporter to use.")
+    logger: Annotated[
+        LoggerType, typer.Option(help="The progress logger to use.")
     ] = LoggerType.RICH,
     cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
     skip_validation: Annotated[
@@ -244,7 +244,7 @@ def _update_cli(
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        reporter=LoggerType(reporter),
+        logger=LoggerType(logger),
         config_filepath=config,
         skip_validation=skip_validation,
         output_dir=output,
