@@ -177,22 +177,27 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 container_client = self._database_client.get_container_client(
                     self.container_name
                 )
-                prefix = self._get_prefix(key)
-                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
-                queried_items = container_client.query_items(
-                    query=query, enable_cross_partition_query=True
-                )
-                items_list = list(queried_items)
-                for item in items_list:
-                    item["id"] = item["id"].split(":")[1]
-                
-                items_json_str = json.dumps(items_list)
                 if as_bytes:
+                    prefix = self._get_prefix(key)
+                    query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
+                    queried_items = container_client.query_items(
+                        query=query, enable_cross_partition_query=True
+                    )
+                    items_list = list(queried_items)
+                    for item in items_list:
+                        item["id"] = item["id"].split(":")[1]
+                    
+                    items_json_str = json.dumps(items_list)
+
                     items_df = pd.read_json(
                         StringIO(items_json_str), orient="records", lines=False
                     )
                     return items_df.to_parquet()
-                return items_json_str
+                
+                item = container_client.read_item(item=key, partition_key=key)
+                item_body = item.get("body")
+                return json.dumps(item_body)
+            
         except Exception:
             log.exception("Error reading item %s", key)
             return None
