@@ -58,13 +58,13 @@ class PipelineBlobReportingConfig(PipelineReportingConfig[Literal[ReportingType.
     )
     """The container name for reporting"""
 
-    storage_account_blob_url: str | None = Field(
-        description="The storage account blob url for reporting", default=None
+    storage_account_blob_url: str = Field(
+        description="The storage account blob url for reporting", default=""
     )
     """The storage account blob url for reporting"""
 
-    base_dir: str | None = Field(
-        description="The base directory for the reporting.", default=None
+    base_dir: str = Field(
+        description="The base directory for the reporting.", default=""
     )
     """The base directory for the reporting."""
 

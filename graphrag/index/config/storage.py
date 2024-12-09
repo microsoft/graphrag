@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'PipelineStorageConfig', 'PipelineFileStorageConfig' and 'PipelineMemoryStorageConfig' models."""
+"""A module containing 'PipelineStorageConfig', 'PipelineFileStorageConfig','PipelineMemoryStorageConfig', 'PipelineBlobStorageConfig', and 'PipelineCosmosDBStorageConfig' models."""
 
 from __future__ import annotations
 
@@ -55,17 +55,45 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The container name for storage."""
 
-    base_dir: str | None = Field(
-        description="The base directory for the storage.", default=None
-    )
+    base_dir: str = Field(description="The base directory for the storage.", default="")
     """The base directory for the storage."""
 
-    storage_account_blob_url: str | None = Field(
-        description="The storage account blob url.", default=None
+    storage_account_blob_url: str = Field(
+        description="The storage account blob url.", default=""
     )
     """The storage account blob url."""
 
 
+class PipelineCosmosDBStorageConfig(
+    PipelineStorageConfig[Literal[StorageType.cosmosdb]]
+):
+    """Represents the cosmosdb storage configuration for the pipeline."""
+
+    type: Literal[StorageType.cosmosdb] = StorageType.cosmosdb
+    """The type of storage."""
+
+    connection_string: str | None = Field(
+        description="The cosmosdb storage primary key for the storage.", default=None
+    )
+    """The cosmosdb storage primary key for the storage."""
+
+    container_name: str = Field(
+        description="The container name for storage", default=""
+    )
+    """The container name for storage."""
+
+    base_dir: str = Field(description="The base directory for the storage.", default="")
+    """The base directory for the storage."""
+
+    cosmosdb_account_url: str = Field(
+        description="The cosmosdb account url.", default=""
+    )
+    """The cosmosdb account url."""
+
+
 PipelineStorageConfigTypes = (
-    PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig
+    PipelineFileStorageConfig
+    | PipelineMemoryStorageConfig
+    | PipelineBlobStorageConfig
+    | PipelineCosmosDBStorageConfig
 )

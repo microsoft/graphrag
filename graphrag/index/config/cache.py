@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'PipelineCacheConfig', 'PipelineFileCacheConfig' and 'PipelineMemoryCacheConfig' models."""
+"""A module containing 'PipelineCacheConfig', 'PipelineFileCacheConfig', 'PipelineMemoryCacheConfig', 'PipelineBlobCacheConfig', 'PipelineCosmosDBCacheConfig' models."""
 
 from __future__ import annotations
 
@@ -52,9 +52,7 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     type: Literal[CacheType.blob] = CacheType.blob
     """The type of cache."""
 
-    base_dir: str | None = Field(
-        description="The base directory for the cache.", default=None
-    )
+    base_dir: str = Field(description="The base directory for the cache.", default="")
     """The base directory for the cache."""
 
     connection_string: str | None = Field(
@@ -65,10 +63,35 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     container_name: str = Field(description="The container name for cache", default="")
     """The container name for cache"""
 
-    storage_account_blob_url: str | None = Field(
-        description="The storage account blob url for cache", default=None
+    storage_account_blob_url: str = Field(
+        description="The storage account blob url for cache", default=""
     )
     """The storage account blob url for cache"""
+
+
+class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb]]):
+    """Represents the cosmosdb cache configuration for the pipeline."""
+
+    type: Literal[CacheType.cosmosdb] = CacheType.cosmosdb
+    """The type of cache."""
+
+    base_dir: str = Field(
+        description="The cosmosdb database name for the cache.", default=""
+    )
+    """The cosmosdb database name for the cache."""
+
+    container_name: str = Field(description="The container name for cache.", default="")
+    """The container name for cache."""
+
+    connection_string: str | None = Field(
+        description="The cosmosdb primary key for the cache.", default=None
+    )
+    """The cosmosdb primary key for the cache."""
+
+    cosmosdb_account_url: str = Field(
+        description="The cosmosdb account url for cache", default=""
+    )
+    """The cosmosdb account url for cache"""
 
 
 PipelineCacheConfigTypes = (
@@ -76,4 +99,5 @@ PipelineCacheConfigTypes = (
     | PipelineMemoryCacheConfig
     | PipelineBlobCacheConfig
     | PipelineNoneCacheConfig
+    | PipelineCosmosDBCacheConfig
 )
