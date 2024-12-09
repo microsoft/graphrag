@@ -206,8 +206,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 container_client = self._database_client.get_container_client(
                     self.container_name
                 )
-                prefix = self._get_prefix(key)
+                # Value represents a parquet file output
                 if isinstance(value, bytes):
+                    print(key)
+                    prefix = self._get_prefix(key)
+                    print(prefix)
                     value_df = pd.read_parquet(BytesIO(value))
                     value_json = value_df.to_json(
                         orient="records", lines=False, force_ascii=False
@@ -220,12 +223,13 @@ class CosmosDBPipelineStorage(PipelineStorage):
                             prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
                             cosmosdb_item["id"] = prefixed_id
                             container_client.upsert_item(body=cosmosdb_item)
+                # Value represents a cache output or stats.json
                 else:
-                    cosmosdb_item_list = json.loads(value)
-                    for cosmosdb_item in cosmosdb_item_list:
-                        prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
-                        cosmosdb_item["id"] = prefixed_id
-                        container_client.upsert_item(body=cosmosdb_item)
+                    cosmosdb_item = {
+                        "id": key,
+                        "body": json.loads(value),
+                    }
+                    container_client.upsert_item(body=cosmosdb_item)
 
         except Exception:
             log.exception("Error writing item %s", key)
