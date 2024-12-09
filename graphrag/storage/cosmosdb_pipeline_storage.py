@@ -185,7 +185,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 items_list = list(queried_items)
                 for item in items_list:
                     item["id"] = item["id"].split(":")[1]
-
+                
                 items_json_str = json.dumps(items_list)
                 if as_bytes:
                     items_df = pd.read_json(
