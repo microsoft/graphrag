@@ -19,7 +19,7 @@ class LoggerFactory:
 
     @classmethod
     def register(cls, logger_type: str, logger: type):
-        """Register a vector store type."""
+        """Register a custom logger implementation."""
         cls.logger_types[logger_type] = logger
 
     @classmethod
