@@ -38,16 +38,23 @@ def create_final_communities(
         matched = targets.loc[targets["community_x"] == targets["community_y"]]
         text_units = matched.explode("text_unit_ids")
         grouped = (
-            text_units.groupby(["community_x", "level_x"])
+            text_units.groupby(["community_x", "level_x", "parent_x"])
             .agg(relationship_ids=("id", list), text_unit_ids=("text_unit_ids", list))
             .reset_index()
         )
         grouped.rename(
-            columns={"community_x": "community", "level_x": "level"}, inplace=True
+            columns={
+                "community_x": "community",
+                "level_x": "level",
+                "parent_x": "parent",
+            },
+            inplace=True,
         )
         all_grouped = pd.concat([
             all_grouped,
-            grouped.loc[:, ["community", "level", "relationship_ids", "text_unit_ids"]],
+            grouped.loc[
+                :, ["community", "level", "parent", "relationship_ids", "text_unit_ids"]
+            ],
         ])
 
     # deduplicate the lists
@@ -63,6 +70,7 @@ def create_final_communities(
     communities["id"] = [str(uuid4()) for _ in range(len(communities))]
     communities["human_readable_id"] = communities["community"]
     communities["title"] = "Community " + communities["community"].astype(str)
+    communities["parent"] = communities["parent"].astype(int)
 
     # add fields for incremental update tracking
     communities["period"] = datetime.now(timezone.utc).date().isoformat()
@@ -74,6 +82,7 @@ def create_final_communities(
             "id",
             "human_readable_id",
             "community",
+            "parent",
             "level",
             "title",
             "entity_ids",

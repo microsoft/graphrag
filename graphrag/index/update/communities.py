@@ -54,6 +54,7 @@ def _merge_and_resolve_nodes(
         v: v + old_max_community_id + 1
         for k, v in delta_nodes["community"].dropna().astype(int).items()
     }
+    community_id_mapping.update({-1: -1})
 
     delta_nodes["community"] = delta_nodes["community"].where(
         delta_nodes["community"].isna(),
@@ -130,6 +131,12 @@ def _update_and_merge_communities(
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
+    delta_communities["parent"] = (
+        delta_communities["parent"]
+        .astype(int)
+        .apply(lambda x: community_id_mapping.get(x, x))
+    )
+
     old_communities["community"] = old_communities["community"].astype(int)
 
     # Merge the final communities
@@ -150,6 +157,7 @@ def _update_and_merge_communities(
             "id",
             "human_readable_id",
             "community",
+            "parent",
             "level",
             "title",
             "entity_ids",
@@ -201,6 +209,12 @@ def _update_and_merge_community_reports(
         .apply(lambda x: community_id_mapping.get(x, x))
     )
 
+    delta_community_reports["parent"] = (
+        delta_community_reports["parent"]
+        .astype(int)
+        .apply(lambda x: community_id_mapping.get(x, x))
+    )
+
     old_community_reports["community"] = old_community_reports["community"].astype(int)
 
     # Merge the final community reports
@@ -223,6 +237,7 @@ def _update_and_merge_community_reports(
             "id",
             "human_readable_id",
             "community",
+            "parent",
             "level",
             "title",
             "summary",
