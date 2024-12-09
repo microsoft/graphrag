@@ -132,7 +132,6 @@ coverage_report = 'coverage report --omit "**/tests/**" --show-missing'
 check_format = 'ruff format . --check'
 fix = "ruff check --fix ."
 fix_unsafe = "ruff check --fix --unsafe-fixes ."
-
 _test_all = "coverage run -m pytest ./tests"
 test_unit = "pytest ./tests/unit"
 test_integration = "pytest ./tests/integration"
@@ -146,7 +145,6 @@ query = "python -m graphrag query"
 prompt_tune = "python -m graphrag prompt-tune"
 # Pass in a test pattern
 test_only = "pytest -s -k"
-
 serve_docs = "mkdocs serve"
 build_docs = "mkdocs build"
 

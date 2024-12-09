@@ -1,26 +1,26 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Console Reporter."""
+"""Console Log."""
 
 from typing import Any
 
-from graphrag.logging.base import StatusLogger
+from graphrag.logger.base import StatusLogger
 
 
 class ConsoleReporter(StatusLogger):
-    """A reporter that writes to a console."""
+    """A logger that writes to a console."""
 
     def error(self, message: str, details: dict[str, Any] | None = None):
-        """Report an error."""
+        """Log an error."""
         print(message, details)  # noqa T201
 
     def warning(self, message: str, details: dict[str, Any] | None = None):
-        """Report a warning."""
+        """Log a warning."""
         _print_warning(message)
 
     def log(self, message: str, details: dict[str, Any] | None = None):
-        """Report a log."""
+        """Log a log."""
         print(message, details)  # noqa T201
 
 

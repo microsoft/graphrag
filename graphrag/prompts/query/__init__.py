@@ -1,4 +1,4 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""All prompts for query."""
+"""All prompts for the query engine."""

@@ -3,19 +3,19 @@
 
 """Null Progress Reporter."""
 
-from graphrag.logging.base import Progress, ProgressReporter
+from graphrag.logger.base import Progress, ProgressLogger
 
 
-class NullProgressReporter(ProgressReporter):
-    """A progress reporter that does nothing."""
+class NullProgressLogger(ProgressLogger):
+    """A progress logger that does nothing."""
 
     def __call__(self, update: Progress) -> None:
         """Update progress."""
 
     def dispose(self) -> None:
-        """Dispose of the progress reporter."""
+        """Dispose of the progress logger."""
 
-    def child(self, prefix: str, transient: bool = True) -> ProgressReporter:
+    def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress bar."""
         return self
 
@@ -23,16 +23,16 @@ class NullProgressReporter(ProgressReporter):
         """Force a refresh."""
 
     def stop(self) -> None:
-        """Stop the progress reporter."""
+        """Stop the progress logger."""
 
     def error(self, message: str) -> None:
-        """Report an error."""
+        """Log an error."""
 
     def warning(self, message: str) -> None:
-        """Report a warning."""
+        """Log a warning."""
 
     def info(self, message: str) -> None:
-        """Report information."""
+        """Log information."""
 
     def success(self, message: str) -> None:
-        """Report success."""
+        """Log success."""

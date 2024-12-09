@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Create a pipeline reporter."""
+"""Create a pipeline logger."""
 
 from pathlib import Path
 from typing import cast
@@ -22,7 +22,7 @@ from graphrag.index.config.reporting import (
 def create_pipeline_reporter(
     config: PipelineReportingConfig | None, root_dir: str | None
 ) -> WorkflowCallbacks:
-    """Create a reporter for the given pipeline config."""
+    """Create a logger for the given pipeline config."""
     config = config or PipelineFileReportingConfig(base_dir="logs")
 
     match config.type:

@@ -8,8 +8,8 @@ from collections.abc import Callable
 
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
-from graphrag.logging.base import StatusLogger
-from graphrag.logging.console import ConsoleReporter
+from graphrag.logger.base import StatusLogger
+from graphrag.logger.console import ConsoleReporter
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
 
@@ -101,7 +101,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         organization: str | None = None,
         max_retries: int = 10,
         request_timeout: float = 180.0,
-        reporter: StatusLogger | None = None,
+        logger: StatusLogger | None = None,
     ):
         self.api_key = api_key
         self.azure_ad_token_provider = azure_ad_token_provider
@@ -112,7 +112,7 @@ class OpenAILLMImpl(BaseOpenAILLM):
         self.organization = organization
         self.max_retries = max_retries
         self.request_timeout = request_timeout
-        self.reporter = reporter or ConsoleReporter()
+        self.logger = logger or ConsoleReporter()
 
         try:
             # Create OpenAI sync and async clients

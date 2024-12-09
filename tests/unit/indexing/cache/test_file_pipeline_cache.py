@@ -13,7 +13,7 @@ TEMP_DIR = "./.tmp"
 
 
 def create_cache():
-    storage = FilePipelineStorage(os.path.join(os.getcwd(), ".tmp"))
+    storage = FilePipelineStorage(root_dir=os.path.join(os.getcwd(), ".tmp"))
     return JsonPipelineCache(storage)
 
 

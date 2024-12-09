@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class BlobPipelineStorage(PipelineStorage):
         self,
         connection_string: str | None,
         container_name: str,
-        encoding: str | None = None,
+        encoding: str = "utf-8",
         path_prefix: str | None = None,
         storage_account_blob_url: str | None = None,
     ):
@@ -50,7 +50,7 @@ class BlobPipelineStorage(PipelineStorage):
                 account_url=storage_account_blob_url,
                 credential=DefaultAzureCredential(),
             )
-        self._encoding = encoding or "utf-8"
+        self._encoding = encoding
         self._container_name = container_name
         self._connection_string = connection_string
         self._path_prefix = path_prefix or ""
@@ -95,7 +95,7 @@ class BlobPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressReporter | None = None,
+        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -179,7 +179,7 @@ class BlobPipelineStorage(PipelineStorage):
             blob_client = container_client.get_blob_client(key)
             blob_data = blob_client.download_blob().readall()
             if not as_bytes:
-                coding = encoding or "utf-8"
+                coding = encoding or self._encoding
                 blob_data = blob_data.decode(coding)
         except Exception:
             log.exception("Error getting key %s", key)
@@ -198,7 +198,7 @@ class BlobPipelineStorage(PipelineStorage):
             if isinstance(value, bytes):
                 blob_client.upload_blob(value, overwrite=True)
             else:
-                coding = encoding or "utf-8"
+                coding = encoding or self._encoding
                 blob_client.upload_blob(value.encode(coding), overwrite=True)
         except Exception:
             log.exception("Error setting key %s: %s", key)
