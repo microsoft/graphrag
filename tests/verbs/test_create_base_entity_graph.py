@@ -55,7 +55,6 @@ async def test_create_base_entity_graph():
 
     nodes_expected = load_test_table("base_entity_nodes")
     edges_expected = load_test_table("base_relationship_edges")
-    communities_expected = load_test_table("base_communities")
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -79,17 +78,12 @@ async def test_create_base_entity_graph():
     # graph construction creates transient tables for nodes, edges, and communities
     nodes_actual = await context.runtime_storage.get("base_entity_nodes")
     edges_actual = await context.runtime_storage.get("base_relationship_edges")
-    communities_actual = await context.runtime_storage.get("base_communities")
 
     assert len(nodes_actual.columns) == len(nodes_expected.columns), (
         "Nodes dataframe columns differ"
     )
 
     assert len(edges_actual.columns) == len(edges_expected.columns), (
-        "Edges dataframe columns differ"
-    )
-
-    assert len(communities_actual.columns) == len(communities_expected.columns), (
         "Edges dataframe columns differ"
     )
 
@@ -135,7 +129,6 @@ async def test_create_base_entity_graph_with_snapshots():
         "graph.graphml",
         "base_entity_nodes.parquet",
         "base_relationship_edges.parquet",
-        "base_communities.parquet",
     ], "Graph snapshot keys differ"
 
 
