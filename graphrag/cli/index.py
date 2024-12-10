@@ -138,7 +138,7 @@ def _run_index(
     skip_validation,
     output_dir,
 ):
-    progress_logger = LoggerFactory.create_logger(logger)
+    progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 

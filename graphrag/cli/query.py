@@ -267,7 +267,7 @@ def _resolve_output_files(
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
     storage_config = pipeline_config.storage.model_dump()  # type: ignore
-    storage_obj = StorageFactory.create_storage(
+    storage_obj = StorageFactory().create_storage(
         storage_type=storage_config["type"], kwargs=storage_config
     )
     for output_file in output_list:

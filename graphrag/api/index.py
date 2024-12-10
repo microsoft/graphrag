@@ -65,10 +65,10 @@ async def build_index(
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
+    # create a pipeline reporter and add to any additional callbacks
     # TODO: remove the type ignore once the new config engine has been refactored
-    callbacks = (
-        [create_pipeline_reporter(config.reporting, None)] if config.reporting else None  # type: ignore
-    )  # type: ignore
+    callbacks = callbacks or []
+    callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
     async for output in run_pipeline_with_config(
         pipeline_config,
