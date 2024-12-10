@@ -3,16 +3,7 @@
 
 """A package containing default workflows definitions."""
 
-# load and register all subflows
-from graphrag.index.workflows.v1.subflows import *  # noqa
-
 from graphrag.index.workflows.typing import WorkflowDefinitions
-from graphrag.index.workflows.v1.extract_graph import (
-    build_steps as build_extract_graph_steps,
-)
-from graphrag.index.workflows.v1.extract_graph import (
-    workflow_name as extract_graph,
-)
 from graphrag.index.workflows.v1.compute_communities import (
     build_steps as build_compute_communities_steps,
 )
@@ -73,10 +64,15 @@ from graphrag.index.workflows.v1.create_final_text_units import (
 from graphrag.index.workflows.v1.create_final_text_units import (
     workflow_name as create_final_text_units,
 )
+from graphrag.index.workflows.v1.extract_graph import (
+    build_steps as build_extract_graph_steps,
+)
+from graphrag.index.workflows.v1.extract_graph import (
+    workflow_name as extract_graph,
+)
 from graphrag.index.workflows.v1.generate_text_embeddings import (
     build_steps as build_generate_text_embeddings_steps,
 )
-
 from graphrag.index.workflows.v1.generate_text_embeddings import (
     workflow_name as generate_text_embeddings,
 )
