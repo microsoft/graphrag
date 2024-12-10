@@ -3,6 +3,9 @@
 
 """The Indexing Engine workflows -> subflows package root."""
 
+from graphrag.index.workflows.v1.subflows.create_base_communities import (
+    create_base_communities,
+)
 from graphrag.index.workflows.v1.subflows.create_base_entity_graph import (
     create_base_entity_graph,
 )
@@ -36,6 +39,7 @@ from graphrag.index.workflows.v1.subflows.generate_text_embeddings import (
 )
 
 __all__ = [
+    "create_base_communities",
     "create_base_entity_graph",
     "create_base_text_units",
     "create_final_communities",

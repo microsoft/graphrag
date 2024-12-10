@@ -30,7 +30,6 @@ async def create_base_entity_graph(
     cache: PipelineCache,
     storage: PipelineStorage,
     runtime_storage: PipelineStorage,
-    clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None,
     extraction_num_threads: int = 4,
     extraction_async_mode: AsyncType = AsyncType.AsyncIO,
@@ -44,13 +43,11 @@ async def create_base_entity_graph(
     """All the steps to create the base entity graph."""
     text_units = await runtime_storage.get("base_text_units")
 
-    await create_base_entity_graph_flow(
+    base_entity_nodes, base_relationship_edges = await create_base_entity_graph_flow(
         text_units,
         callbacks,
         cache,
         storage,
-        runtime_storage,
-        clustering_strategy=clustering_strategy,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extraction_num_threads,
         extraction_async_mode=extraction_async_mode,
@@ -60,5 +57,8 @@ async def create_base_entity_graph(
         snapshot_graphml_enabled=snapshot_graphml_enabled,
         snapshot_transient_enabled=snapshot_transient_enabled,
     )
+
+    await runtime_storage.set("base_entity_nodes", base_entity_nodes)
+    await runtime_storage.set("base_relationship_edges", base_relationship_edges)
 
     return create_verb_result(cast("Table", pd.DataFrame()))

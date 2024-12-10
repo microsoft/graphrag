@@ -13,6 +13,12 @@ from graphrag.index.workflows.v1.create_base_entity_graph import (
 from graphrag.index.workflows.v1.create_base_entity_graph import (
     workflow_name as create_base_entity_graph,
 )
+from graphrag.index.workflows.v1.create_base_communities import (
+    build_steps as build_create_base_communities_steps,
+)
+from graphrag.index.workflows.v1.create_base_communities import (
+    workflow_name as create_base_communities,
+)
 from graphrag.index.workflows.v1.create_base_text_units import (
     build_steps as build_create_base_text_units_steps,
 )
@@ -77,6 +83,7 @@ from graphrag.index.workflows.v1.generate_text_embeddings import (
 
 default_workflows: WorkflowDefinitions = {
     create_base_entity_graph: build_create_base_entity_graph_steps,
+    create_base_communities: build_create_base_communities_steps,
     create_base_text_units: build_create_base_text_units_steps,
     create_final_text_units: build_create_final_text_units,
     create_final_community_reports: build_create_final_community_reports_steps,

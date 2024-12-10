@@ -52,6 +52,7 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
+    create_base_communities,
     create_base_entity_graph,
     create_base_text_units,
     create_final_communities,
@@ -235,9 +236,15 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
                         settings.root_dir,
                     ),
                 },
+            },
+        ),
+        PipelineWorkflowReference(
+            name=create_base_communities,
+            config={
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()
                 },
+                "snapshot_transient": settings.snapshots.transient,
             },
         ),
         PipelineWorkflowReference(

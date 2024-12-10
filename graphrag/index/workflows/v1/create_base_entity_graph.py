@@ -31,12 +31,6 @@ def build_steps(
     summarization_strategy = summarize_descriptions_config.get("strategy")
     summarization_num_threads = summarize_descriptions_config.get("num_threads", 4)
 
-    clustering_config = config.get(
-        "cluster_graph",
-        {"strategy": {"type": "leiden"}},
-    )
-    clustering_strategy = clustering_config.get("strategy")
-
     snapshot_graphml = config.get("snapshot_graphml", False) or False
     snapshot_transient = config.get("snapshot_transient", False) or False
 
@@ -50,7 +44,6 @@ def build_steps(
                 "entity_types": entity_types,
                 "summarization_strategy": summarization_strategy,
                 "summarization_num_threads": summarization_num_threads,
-                "clustering_strategy": clustering_strategy,
                 "snapshot_graphml_enabled": snapshot_graphml,
                 "snapshot_transient_enabled": snapshot_transient,
             },

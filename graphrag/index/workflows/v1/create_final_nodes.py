@@ -53,6 +53,9 @@ def build_steps(
                 if embed_graph_enabled
                 else None,
             },
-            "input": {"source": "workflow:create_base_entity_graph"},
+            "input": {
+                "source": "workflow:create_base_entity_graph",
+                "communities": "workflow:create_base_communities",
+            },
         },
     ]
