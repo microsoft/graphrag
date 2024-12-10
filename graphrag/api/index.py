@@ -91,14 +91,7 @@ async def build_index(
 
 
 def _patch_vector_config(config: GraphRagConfig):
-    """Back-compat patch to ensure a default vector store configuration."""
-    if not config.embeddings.vector_store:
-        config.embeddings.vector_store = {
-            "type": "lancedb",
-            "db_uri": "output/lancedb",
-            "container_name": "default",
-            "overwrite": True,
-        }
+    """Resolve paths for the vector store if needed."""
     # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
     # TODO: remove the type ignore annotations below once the new config engine has been refactored
     vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
