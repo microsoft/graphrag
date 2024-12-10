@@ -23,7 +23,7 @@ from graphrag.index.update.entities import (
     _run_entity_summarization,
 )
 from graphrag.index.update.relationships import _update_and_merge_relationships
-from graphrag.logging.print_progress import ProgressReporter
+from graphrag.logger.print_progress import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage
 
@@ -85,7 +85,7 @@ async def update_dataframe_outputs(
     config: PipelineConfig,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
-    progress_reporter: ProgressReporter,
+    progress_logger: ProgressLogger,
 ) -> None:
     """Update the mergeable outputs.
 
@@ -96,25 +96,25 @@ async def update_dataframe_outputs(
     storage : PipelineStorage
         The storage used to store the dataframes.
     """
-    progress_reporter.info("Updating Final Documents")
+    progress_logger.info("Updating Final Documents")
     final_documents_df = await _concat_dataframes(
         "create_final_documents", dataframe_dict, storage, update_storage
     )
 
     # Update entities and merge them
-    progress_reporter.info("Updating Final Entities")
+    progress_logger.info("Updating Final Entities")
     merged_entities_df, entity_id_mapping = await _update_entities(
         dataframe_dict, storage, update_storage, config, cache, callbacks
     )
 
     # Update relationships with the entities id mapping
-    progress_reporter.info("Updating Final Relationships")
+    progress_logger.info("Updating Final Relationships")
     merged_relationships_df = await _update_relationships(
         dataframe_dict, storage, update_storage
     )
 
     # Update and merge final text units
-    progress_reporter.info("Updating Final Text Units")
+    progress_logger.info("Updating Final Text Units")
     merged_text_units = await _update_text_units(
         dataframe_dict, storage, update_storage, entity_id_mapping
     )
@@ -124,23 +124,23 @@ async def update_dataframe_outputs(
         await storage.has("create_final_covariates.parquet")
         and "create_final_covariates" in dataframe_dict
     ):
-        progress_reporter.info("Updating Final Covariates")
+        progress_logger.info("Updating Final Covariates")
         await _update_covariates(dataframe_dict, storage, update_storage)
 
     # Merge final nodes and update community ids
-    progress_reporter.info("Updating Final Nodes")
+    progress_logger.info("Updating Final Nodes")
     _, community_id_mapping = await _update_nodes(
         dataframe_dict, storage, update_storage, merged_entities_df
     )
 
     # Merge final communities
-    progress_reporter.info("Updating Final Communities")
+    progress_logger.info("Updating Final Communities")
     await _update_communities(
         dataframe_dict, storage, update_storage, community_id_mapping
     )
 
     # Merge community reports
-    progress_reporter.info("Updating Final Community Reports")
+    progress_logger.info("Updating Final Community Reports")
     merged_community_reports = await _update_community_reports(
         dataframe_dict, storage, update_storage, community_id_mapping
     )
@@ -151,7 +151,7 @@ async def update_dataframe_outputs(
     )
 
     # Generate text embeddings
-    progress_reporter.info("Updating Text Embeddings")
+    progress_logger.info("Updating Text Embeddings")
     await generate_text_embeddings(
         final_documents=final_documents_df,
         final_relationships=merged_relationships_df,

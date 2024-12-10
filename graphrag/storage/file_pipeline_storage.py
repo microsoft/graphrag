@@ -16,7 +16,7 @@ from aiofiles.os import remove
 from aiofiles.ospath import exists
 from datashaper import Progress
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -28,17 +28,17 @@ class FilePipelineStorage(PipelineStorage):
     _root_dir: str
     _encoding: str
 
-    def __init__(self, root_dir: str | None = None, encoding: str | None = None):
+    def __init__(self, root_dir: str = "", encoding: str = "utf-8"):
         """Init method definition."""
-        self._root_dir = root_dir or ""
-        self._encoding = encoding or "utf-8"
+        self._root_dir = root_dir
+        self._encoding = encoding
         Path(self._root_dir).mkdir(parents=True, exist_ok=True)
 
     def find(
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressReporter | None = None,
+        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -152,10 +152,11 @@ def join_path(file_path: str, file_name: str) -> Path:
     return Path(file_path) / Path(file_name).parent / Path(file_name).name
 
 
-def create_file_storage(out_dir: str | None) -> PipelineStorage:
+def create_file_storage(**kwargs: Any) -> PipelineStorage:
     """Create a file based storage."""
-    log.info("Creating file storage at %s", out_dir)
-    return FilePipelineStorage(out_dir)
+    base_dir = kwargs["base_dir"]
+    log.info("Creating file storage at %s", base_dir)
+    return FilePipelineStorage(root_dir=base_dir)
 
 
 def _create_progress_status(

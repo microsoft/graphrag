@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
@@ -13,41 +13,45 @@ from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
     from graphrag.cache.pipeline_cache import PipelineCache
-    from graphrag.index.config.cache import (
-        PipelineBlobCacheConfig,
-        PipelineCacheConfig,
-        PipelineFileCacheConfig,
-    )
 
 from graphrag.cache.json_pipeline_cache import JsonPipelineCache
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 
 
-def create_cache(
-    config: PipelineCacheConfig | None, root_dir: str | None
-) -> PipelineCache:
-    """Create a cache from the given config."""
-    if config is None:
-        return NoopPipelineCache()
+class CacheFactory:
+    """A factory class for cache implementations.
 
-    match config.type:
-        case CacheType.none:
+    Includes a method for users to register a custom cache implementation.
+    """
+
+    cache_types: ClassVar[dict[str, type]] = {}
+
+    @classmethod
+    def register(cls, cache_type: str, cache: type):
+        """Register a custom cache implementation."""
+        cls.cache_types[cache_type] = cache
+
+    @classmethod
+    def create_cache(
+        cls, cache_type: CacheType | str | None, root_dir: str, kwargs: dict
+    ) -> PipelineCache:
+        """Create or get a cache from the provided type."""
+        if not cache_type:
             return NoopPipelineCache()
-        case CacheType.memory:
-            return InMemoryCache()
-        case CacheType.file:
-            config = cast("PipelineFileCacheConfig", config)
-            storage = FilePipelineStorage(root_dir).child(config.base_dir)
-            return JsonPipelineCache(storage)
-        case CacheType.blob:
-            config = cast("PipelineBlobCacheConfig", config)
-            storage = BlobPipelineStorage(
-                config.connection_string,
-                config.container_name,
-                storage_account_blob_url=config.storage_account_blob_url,
-            ).child(config.base_dir)
-            return JsonPipelineCache(storage)
-        case _:
-            msg = f"Unknown cache type: {config.type}"
-            raise ValueError(msg)
+        match cache_type:
+            case CacheType.none:
+                return NoopPipelineCache()
+            case CacheType.memory:
+                return InMemoryCache()
+            case CacheType.file:
+                return JsonPipelineCache(
+                    FilePipelineStorage(root_dir=root_dir).child(kwargs["base_dir"])
+                )
+            case CacheType.blob:
+                return JsonPipelineCache(BlobPipelineStorage(**kwargs))
+            case _:
+                if cache_type in cls.cache_types:
+                    return cls.cache_types[cache_type](**kwargs)
+                msg = f"Unknown cache type: {cache_type}"
+                raise ValueError(msg)

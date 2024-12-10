@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Rich-based progress reporter for CLI use."""
+"""Rich-based progress logger for CLI use."""
 
 # Print iterations progress
 import asyncio
@@ -13,12 +13,12 @@ from rich.progress import Progress, TaskID, TimeElapsedColumn
 from rich.spinner import Spinner
 from rich.tree import Tree
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 
 
 # https://stackoverflow.com/a/34325723
-class RichProgressReporter(ProgressReporter):
-    """A rich-based progress reporter for CLI use."""
+class RichProgressLogger(ProgressLogger):
+    """A rich-based progress logger for CLI use."""
 
     _console: Console
     _group: Group
@@ -32,7 +32,7 @@ class RichProgressReporter(ProgressReporter):
     _last_refresh: float = 0
 
     def dispose(self) -> None:
-        """Dispose of the progress reporter."""
+        """Dispose of the progress logger."""
         self._disposing = True
         self._live.stop()
 
@@ -59,10 +59,10 @@ class RichProgressReporter(ProgressReporter):
     def __init__(
         self,
         prefix: str,
-        parent: "RichProgressReporter | None" = None,
+        parent: "RichProgressLogger | None" = None,
         transient: bool = True,
     ) -> None:
-        """Create a new rich-based progress reporter."""
+        """Create a new rich-based progress logger."""
         self._prefix = prefix
 
         if parent is None:
@@ -115,27 +115,27 @@ class RichProgressReporter(ProgressReporter):
         self.live.refresh()
 
     def stop(self) -> None:
-        """Stop the progress reporter."""
+        """Stop the progress logger."""
         self._live.stop()
 
-    def child(self, prefix: str, transient: bool = True) -> ProgressReporter:
+    def child(self, prefix: str, transient: bool = True) -> ProgressLogger:
         """Create a child progress bar."""
-        return RichProgressReporter(parent=self, prefix=prefix, transient=transient)
+        return RichProgressLogger(parent=self, prefix=prefix, transient=transient)
 
     def error(self, message: str) -> None:
-        """Report an error."""
+        """Log an error."""
         self._console.print(f"❌ [red]{message}[/red]")
 
     def warning(self, message: str) -> None:
-        """Report a warning."""
+        """Log a warning."""
         self._console.print(f"⚠️ [yellow]{message}[/yellow]")
 
     def success(self, message: str) -> None:
-        """Report success."""
+        """Log success."""
         self._console.print(f"🚀 [green]{message}[/green]")
 
     def info(self, message: str) -> None:
-        """Report information."""
+        """Log information."""
         self._console.print(message)
 
     def __call__(self, progress_update: DSProgress) -> None:

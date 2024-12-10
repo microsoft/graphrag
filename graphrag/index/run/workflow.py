@@ -21,7 +21,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.exporter import ParquetExporter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage
 
@@ -68,7 +68,7 @@ async def _export_workflow_output(
 
 
 def _create_callback_chain(
-    callbacks: list[WorkflowCallbacks] | None, progress: ProgressReporter | None
+    callbacks: list[WorkflowCallbacks] | None, progress: ProgressLogger | None
 ) -> WorkflowCallbacks:
     """Create a callback manager that encompasses multiple callbacks."""
     manager = WorkflowCallbacksManager()

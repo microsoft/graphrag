@@ -19,7 +19,7 @@ async def load_table_from_storage(name: str, storage: PipelineStorage) -> pd.Dat
         msg = f"Could not find {name} in storage!"
         raise ValueError(msg)
     try:
-        log.info("read table from storage: %s", name)
+        log.info("reading table from storage: %s", name)
         return pd.read_parquet(BytesIO(await storage.get(name, as_bytes=True)))
     except Exception:
         log.exception("error loading table from storage: %s", name)

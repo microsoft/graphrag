@@ -10,23 +10,55 @@
 # Getting Started
 
 ## Install Dependencies
-
-```sh
-# Install Python dependencies.
+```shell
+# install python dependencies
 poetry install
 ```
 
-## Executing the Indexing Engine
-
-```sh
+## Execute the indexing engine
+```shell
 poetry run poe index <...args>
 ```
 
-## Executing Queries
+## Execute prompt tuning
+```shell
+poetry run poe prompt_tune <...args>
+```
 
-```sh
+## Execute Queries
+```shell
 poetry run poe query <...args>
 ```
+
+## Repository Structure
+An overview of the repository's top-level folder structure is provided below, detailing the overall design and purpose.
+We leverage a factory design pattern where possible, enabling a variety of implementations for each core component of graphrag.
+
+```shell
+graphrag
+├── api             # library API definitions
+├── cache           # cache module supporting several options
+│    └─ factory.py  #  └─ main entrypoint to create a cache
+├── callbacks       # a collection of commonly used callback functions
+├── cli             # library CLI
+│    └─ main.py     #  └─ primary CLI entrypoint
+├── config          # configuration management
+├── index           # indexing engine
+|    └─ run/run.py  #  main entrypoint to build an index
+├── llm             # generic llm interfaces
+├── logger          # logger module supporting several options
+│    └─ factory.py  #  └─ main entrypoint to create a logger
+├── model           # data model definitions associated with the knowledge graph
+├── prompt_tune     # prompt tuning module 
+├── prompts         # a collection of all the system prompts used by graphrag
+├── query           # query engine
+├── storage         # storage module supporting several options
+│    └─ factory.py  #  └─ main entrypoint to create/load a storage endpoint
+├── utils           # helper functions used throughout the library
+└── vector_stores   # vector store module containing a few options
+     └─ factory.py  #  └─ main entrypoint to create a vector store
+```
+Where appropriate, the factories expose a registration method for users to provide their own custom implementations if desired.
 
 ## Versioning
 
