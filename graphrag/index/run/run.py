@@ -126,10 +126,6 @@ async def run_pipeline_with_config(
     )
     workflows = workflows or config.workflows
 
-    if dataset is None:
-        msg = "No dataset provided!"
-        raise ValueError(msg)
-
     if is_update_run and update_index_storage:
         delta_dataset = await get_delta_docs(dataset, storage)
 

@@ -22,9 +22,6 @@ class Document(Named):
     text: str = ""
     """The raw text content of the document."""
 
-    text_embedding: list[float] | None = None
-    """The semantic embedding for the document raw content (optional)."""
-
     attributes: dict[str, Any] | None = None
     """A dictionary of structured attributes such as author, etc (optional)."""
 
@@ -37,7 +34,6 @@ class Document(Named):
         title_key: str = "title",
         type_key: str = "type",
         text_key: str = "text",
-        text_embedding_key: str = "text_embedding",
         text_units_key: str = "text_units",
         attributes_key: str = "attributes",
     ) -> "Document":
@@ -48,7 +44,6 @@ class Document(Named):
             title=d[title_key],
             type=d.get(type_key, "text"),
             text=d[text_key],
-            text_embedding=d.get(text_embedding_key),
             text_unit_ids=d.get(text_units_key, []),
             attributes=d.get(attributes_key),
         )

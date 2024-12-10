@@ -25,9 +25,6 @@ class CommunityReport(Named):
     rank: float | None = 1.0
     """Rank of the report, used for sorting (optional). Higher means more important"""
 
-    summary_embedding: list[float] | None = None
-    """The semantic (i.e. text) embedding of the report summary (optional)."""
-
     full_content_embedding: list[float] | None = None
     """The semantic (i.e. text) embedding of the full report content (optional)."""
 
@@ -51,8 +48,6 @@ class CommunityReport(Named):
         summary_key: str = "summary",
         full_content_key: str = "full_content",
         rank_key: str = "rank",
-        summary_embedding_key: str = "summary_embedding",
-        full_content_embedding_key: str = "full_content_embedding",
         attributes_key: str = "attributes",
         size_key: str = "size",
         period_key: str = "period",
@@ -66,8 +61,6 @@ class CommunityReport(Named):
             summary=d[summary_key],
             full_content=d[full_content_key],
             rank=d[rank_key],
-            summary_embedding=d.get(summary_embedding_key),
-            full_content_embedding=d.get(full_content_embedding_key),
             attributes=d.get(attributes_key),
             size=d.get(size_key),
             period=d.get(period_key),

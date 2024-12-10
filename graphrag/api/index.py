@@ -8,8 +8,6 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from pathlib import Path
-
 from datashaper import WorkflowCallbacks
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
@@ -20,7 +18,6 @@ from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logging.base import ProgressReporter
-from graphrag.vector_stores.factory import VectorStoreType
 
 
 async def build_index(
@@ -59,8 +56,6 @@ async def build_index(
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
 
-    config = _patch_vector_config(config)
-
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
@@ -88,22 +83,3 @@ async def build_index(
                 progress_reporter.success(output.workflow)
             progress_reporter.info(str(output.result))
     return outputs
-
-
-def _patch_vector_config(config: GraphRagConfig):
-    """Back-compat patch to ensure a default vector store configuration."""
-    if not config.embeddings.vector_store:
-        config.embeddings.vector_store = {
-            "type": "lancedb",
-            "db_uri": "output/lancedb",
-            "container_name": "default",
-            "overwrite": True,
-        }
-    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
-    return config

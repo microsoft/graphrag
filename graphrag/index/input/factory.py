@@ -39,10 +39,6 @@ async def create_input(
     log.info("loading input from root_dir=%s", config.base_dir)
     progress_reporter = progress_reporter or NullProgressReporter()
 
-    if config is None:
-        msg = "No input specified!"
-        raise ValueError(msg)
-
     match config.type:
         case InputType.blob:
             log.info("using blob storage input")

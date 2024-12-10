@@ -9,6 +9,7 @@ from string import Template
 
 from graphrag.config.enums import ReportingType, StorageType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.vector_stores.factory import VectorStoreType
 
 
 def _resolve_timestamp_path_with_value(path: str | Path, timestamp_value: str) -> Path:
@@ -203,3 +204,11 @@ def resolve_paths(
                 pattern_or_timestamp_value,
             )
         )
+
+    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
+    # TODO: remove the type ignore annotations below once the new config engine has been refactored
+    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
+    if vector_store_type == VectorStoreType.LanceDB:
+        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
+        lancedb_dir = Path(config.root_dir).resolve() / db_uri
+        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
