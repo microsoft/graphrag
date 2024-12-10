@@ -1874,9 +1874,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">read_indexer_reports</span><span class="p">,</span>
     <span class="n">read_indexer_text_units</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.input.loaders.dfs</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">store_entity_semantic_embeddings</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.chat_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.embedding</span> <span class="kn">import</span> <span class="n">OpenAIEmbedding</span>
 <span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.typing</span> <span class="kn">import</span> <span class="n">OpenaiApiType</span>
@@ -1910,9 +1907,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">collection_name</span><span class="o">=</span><span class="s2">"default-entity-description"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">description_embedding_store</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_uri</span><span class="o">=</span><span class="n">LANCEDB_URI</span><span class="p">)</span>
-<span class="n">entity_description_embeddings</span> <span class="o">=</span> <span class="n">store_entity_semantic_embeddings</span><span class="p">(</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">vectorstore</span><span class="o">=</span><span class="n">description_embedding_store</span>
-<span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">entity_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">entity_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -1940,9 +1934,6 @@ from graphrag.query.indexer_adapters import (
     read_indexer_relationships,
     read_indexer_reports,
     read_indexer_text_units,
-)
-from graphrag.query.input.loaders.dfs import (
-    store_entity_semantic_embeddings,
 )
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
@@ -1977,9 +1968,6 @@ description_embedding_store = LanceDBVectorStore(
     collection_name="default-entity-description",
 )
 description_embedding_store.connect(db_uri=LANCEDB_URI)
-entity_description_embeddings = store_entity_semantic_embeddings(
-    entities=entities, vectorstore=description_embedding_store
-)
 
 print(f"Entity count: {len(entity_df)}")
 entity_df.head()
@@ -2005,104 +1993,70 @@ text_unit_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Entity count: 178
-Relationship count: 373
-Text unit records: 50
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>[2024-12-06T20:30:59Z WARN  lance::dataset::write::insert] No existing dataset at /home/runner/work/graphrag/graphrag/docs/examples_notebooks/inputs/operation dulce/lancedb/default-entity-description.lance, it will be created
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[2], line 38</span>
+<span class="ansi-green-intense-fg ansi-bold">     35</span> entity_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">     36</span> entity_embedding_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_EMBEDDING_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">---&gt; 38</span> entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">read_indexer_entities</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">entity_df</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">entity_embedding_df</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">COMMUNITY_LEVEL</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     40</span> <span style="color: rgb(95,135,135)"># load description embeddings to an in-memory lancedb vectorstore</span>
+<span class="ansi-green-intense-fg ansi-bold">     41</span> <span style="color: rgb(95,135,135)"># to connect to a remote db, specify url and port values.</span>
+<span class="ansi-green-intense-fg ansi-bold">     42</span> description_embedding_store <span style="color: rgb(98,98,98)">=</span> LanceDBVectorStore(
+<span class="ansi-green-intense-fg ansi-bold">     43</span>     collection_name<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">default-entity-description</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">     44</span> )
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/indexer_adapters.py:154</span>, in <span class="ansi-cyan-fg">read_indexer_entities</span><span class="ansi-blue-fg">(final_nodes, final_entities, community_level)</span>
+<span class="ansi-green-intense-fg ansi-bold">    149</span> final_df <span style="color: rgb(98,98,98)">=</span> nodes_df<span style="color: rgb(98,98,98)">.</span>merge(entities_df, on<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">id</span><span style="color: rgb(175,0,0)">"</span>, how<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inner</span><span style="color: rgb(175,0,0)">"</span>)<span style="color: rgb(98,98,98)">.</span>drop_duplicates(
+<span class="ansi-green-intense-fg ansi-bold">    150</span>     subset<span style="color: rgb(98,98,98)">=</span>[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">id</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">    151</span> )
+<span class="ansi-green-intense-fg ansi-bold">    153</span> <span style="color: rgb(95,135,135)"># read entity dataframe to knowledge model objects</span>
+<span class="ansi-green-fg">--&gt; 154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">read_entities</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    155</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">df</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">final_df</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    156</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">id_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    157</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">title_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">title</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    158</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">type_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">type</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    159</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">short_id_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">human_readable_id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    160</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">description_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">description</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    161</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">community_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">community</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    162</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">rank_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">degree</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    163</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">name_embedding_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    164</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">description_embedding_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">description_embedding</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    165</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_unit_ids_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">text_unit_ids</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    166</span> <span class="ansi-yellow-bg">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>text</th>
-<th>n_tokens</th>
-<th>document_ids</th>
-<th>entity_ids</th>
-<th>relationship_ids</th>
-<th>covariate_ids</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>06bdff339c02ab35c80fa49320d5da66</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[439081a3-bfeb-4693-968a-0f6189d8fa50, 3399e3d...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>28dc4aa41a3e99deb7f354682f3e9904</td>
-<td>'s authoritarian performance. _Protocols_, Jor...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[4119fd06010c494caa07f439b333f4c5, 077d2820ae1...</td>
-<td>[9a6f414210e14841a5b0e661aedc898d, db541b72609...</td>
-<td>[b09594cb-d4b7-4de4-a1af-97778300eb1b, f7c5ea4...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>813db3138ef511c34be86f841f68aa8f</td>
-<td>, rehearsing the speech for their subordinates...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 077d2820ae1...</td>
-<td>[0467928aa65e4a4fba62bdb1467e3a54, 7cc3356d38d...</td>
-<td>[7642fe21-7cb9-4428-848b-d2e3f5ab10ca, 6fe3d6c...</td>
-</tr>
-<tr>
-<th>3</th>
-<td>d0afd106abf3a2966ff88a99eef710db</td>
-<td>, weighing his words carefully. "Our tech is t...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[956e4c22-e343-4b5d-ad3c-d44ca3ce5fb5]</td>
-</tr>
-<tr>
-<th>4</th>
-<td>f4c7c95d7bf621c6eb73d331cbf0b608</td>
-<td>stepping into their exchange. The authority i...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[077d2820ae1845bcbb1803379a3d1eae, 1fd3fa8bb5a...</td>
-<td>[478e4c72d8fb46dd8cc9f0691c9878fd, 82b0446e7c9...</td>
-<td>[a54eda4d-b5bf-471d-989f-370eb9aff961, 9f85274...</td>
-</tr>
-</tbody>
-</table>
-</div>
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/dfs.py:44</span>, in <span class="ansi-cyan-fg">read_entities</span><span class="ansi-blue-fg">(df, id_col, short_id_col, title_col, type_col, description_col, name_embedding_col, description_embedding_col, community_col, text_unit_ids_col, rank_col, attributes_cols)</span>
+<span class="ansi-green-intense-fg ansi-bold">     39</span> entities <span style="color: rgb(98,98,98)">=</span> []
+<span class="ansi-green-intense-fg ansi-bold">     40</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> idx, row <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> df<span style="color: rgb(98,98,98)">.</span>iterrows():
+<span class="ansi-green-intense-fg ansi-bold">     41</span>     entity <span style="color: rgb(98,98,98)">=</span> Entity(
+<span class="ansi-green-intense-fg ansi-bold">     42</span>         <span style="color: rgb(0,135,0)">id</span><span style="color: rgb(98,98,98)">=</span>to_str(row, id_col),
+<span class="ansi-green-intense-fg ansi-bold">     43</span>         short_id<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, short_id_col) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> short_id_col <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span style="color: rgb(0,135,0)">str</span>(idx),
+<span class="ansi-green-fg">---&gt; 44</span>         title<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">to_str</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">row</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">title_col</span><span class="ansi-yellow-bg">)</span>,
+<span class="ansi-green-intense-fg ansi-bold">     45</span>         <span style="color: rgb(0,135,0)">type</span><span style="color: rgb(98,98,98)">=</span>to_optional_str(row, type_col),
+<span class="ansi-green-intense-fg ansi-bold">     46</span>         description<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, description_col),
+<span class="ansi-green-intense-fg ansi-bold">     47</span>         name_embedding<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, name_embedding_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">float</span>),
+<span class="ansi-green-intense-fg ansi-bold">     48</span>         description_embedding<span style="color: rgb(98,98,98)">=</span>to_optional_list(
+<span class="ansi-green-intense-fg ansi-bold">     49</span>             row, description_embedding_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">float</span>
+<span class="ansi-green-intense-fg ansi-bold">     50</span>         ),
+<span class="ansi-green-intense-fg ansi-bold">     51</span>         community_ids<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, community_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">str</span>),
+<span class="ansi-green-intense-fg ansi-bold">     52</span>         text_unit_ids<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, text_unit_ids_col),
+<span class="ansi-green-intense-fg ansi-bold">     53</span>         rank<span style="color: rgb(98,98,98)">=</span>to_optional_int(row, rank_col),
+<span class="ansi-green-intense-fg ansi-bold">     54</span>         attributes<span style="color: rgb(98,98,98)">=</span>(
+<span class="ansi-green-intense-fg ansi-bold">     55</span>             {col: row<span style="color: rgb(98,98,98)">.</span>get(col) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> col <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> attributes_cols}
+<span class="ansi-green-intense-fg ansi-bold">     56</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> attributes_cols
+<span class="ansi-green-intense-fg ansi-bold">     57</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">     58</span>         ),
+<span class="ansi-green-intense-fg ansi-bold">     59</span>     )
+<span class="ansi-green-intense-fg ansi-bold">     60</span>     entities<span style="color: rgb(98,98,98)">.</span>append(entity)
+<span class="ansi-green-intense-fg ansi-bold">     61</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> entities
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/utils.py:19</span>, in <span class="ansi-cyan-fg">to_str</span><span class="ansi-blue-fg">(data, column_name)</span>
+<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">str</span>(data[column_name])
+<span class="ansi-green-intense-fg ansi-bold">     18</span> msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Column </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>column_name<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> not found in data</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">---&gt; 19</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(msg)
+
+<span class="ansi-red-fg">ValueError</span>: Column title not found in data</pre>
 </div>
 </div>
 </div>
@@ -2175,8 +2129,8 @@ text_embedder = OpenAIEmbedding(
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2194,37 +2148,16 @@ text_embedder = OpenAIEmbedding(
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">embed_community_reports</span><span class="p">(</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">read_community_reports</span><span class="p">(</span>
     <span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">embedder</span><span class="p">:</span> <span class="n">OpenAIEmbedding</span><span class="p">,</span>
     <span class="n">community_report_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">COMMUNITY_REPORT_TABLE</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""</span>
     <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">.parquet"</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">community_report_table</span><span class="si">}</span><span class="s2">_with_embeddings.parquet"</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Embedding file not found. Computing community report embeddings..."</span><span class="p">)</span>
-
-        <span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">"full_content"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">report_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"'full_content' column not found in </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">"</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
-
-        <span class="n">report_df</span><span class="p">[</span><span class="s2">"full_content_embeddings"</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">"full_content"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">embedder</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Save the DataFrame with embeddings to the output path</span>
-        <span class="n">report_df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Embeddings saved to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">report_df</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Embeddings file already exists at </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
 
 
-<span class="n">report_df</span> <span class="o">=</span> <span class="n">embed_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">,</span> <span class="n">text_embedder</span><span class="p">)</span>
+<span class="n">report_df</span> <span class="o">=</span> <span class="n">read_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">)</span>
 <span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
     <span class="n">report_df</span><span class="p">,</span>
     <span class="n">entity_df</span><span class="p">,</span>
@@ -2232,178 +2165,22 @@ text_embedder = OpenAIEmbedding(
     <span class="n">content_embedding_col</span><span class="o">=</span><span class="s2">"full_content_embeddings"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">def embed_community_reports(
+<div class="clipboard-copy-txt" id="cell-4">def read_community_reports(
     input_dir: str,
-    embedder: OpenAIEmbedding,
     community_report_table: str = COMMUNITY_REPORT_TABLE,
 ):
     """Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""
     input_path = Path(input_dir) / f"{community_report_table}.parquet"
-    output_path = Path(input_dir) / f"{community_report_table}_with_embeddings.parquet"
-
-    if not Path(output_path).exists():
-        print("Embedding file not found. Computing community report embeddings...")
-
-        report_df = pd.read_parquet(input_path)
-
-        if "full_content" not in report_df.columns:
-            error_msg = f"'full_content' column not found in {input_path}"
-            raise ValueError(error_msg)
-
-        report_df["full_content_embeddings"] = report_df.loc[:, "full_content"].apply(
-            lambda x: embedder.embed(x)
-        )
-
-        # Save the DataFrame with embeddings to the output path
-        report_df.to_parquet(output_path)
-        print(f"Embeddings saved to {output_path}")
-        return report_df
-    print(f"Embeddings file already exists at {output_path}")
-    return pd.read_parquet(output_path)
+    return pd.read_parquet(input_path)
 
 
-report_df = embed_community_reports(INPUT_DIR, text_embedder)
+report_df = read_community_reports(INPUT_DIR)
 reports = read_indexer_reports(
     report_df,
     entity_df,
     COMMUNITY_LEVEL,
     content_embedding_col="full_content_embeddings",
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Embedding file not found. Computing community report embeddings...
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Error embedding chunk {'OpenAIEmbedding': "Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"}
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ZeroDivisionError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 31</span>
-<span class="ansi-green-intense-fg ansi-bold">     27</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Embeddings file already exists at </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>output_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     28</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(output_path)
-<span class="ansi-green-fg">---&gt; 31</span> report_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">embed_community_reports</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">text_embedder</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     32</span> reports <span style="color: rgb(98,98,98)">=</span> read_indexer_reports(
-<span class="ansi-green-intense-fg ansi-bold">     33</span>     report_df,
-<span class="ansi-green-intense-fg ansi-bold">     34</span>     entity_df,
-<span class="ansi-green-intense-fg ansi-bold">     35</span>     COMMUNITY_LEVEL,
-<span class="ansi-green-intense-fg ansi-bold">     36</span>     content_embedding_col<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     37</span> )
-
-Cell <span class="ansi-green-fg">In[4], line 19</span>, in <span class="ansi-cyan-fg">embed_community_reports</span><span class="ansi-blue-fg">(input_dir, embedder, community_report_table)</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     error_msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> column not found in </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>input_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(error_msg)
-<span class="ansi-green-fg">---&gt; 19</span> report_df[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">report_df</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">loc</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">full_content</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">     20</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">lambda</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">embedder</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span style="color: rgb(95,135,135)"># Save the DataFrame with embeddings to the output path</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> report_df<span style="color: rgb(98,98,98)">.</span>to_parquet(output_path)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/series.py:4924</span>, in <span class="ansi-cyan-fg">Series.apply</span><span class="ansi-blue-fg">(self, func, convert_dtype, args, by_row, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4789</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">apply</span>(
-<span class="ansi-green-intense-fg ansi-bold">   4790</span>     <span style="color: rgb(0,135,0)">self</span>,
-<span class="ansi-green-intense-fg ansi-bold">   4791</span>     func: AggFuncType,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4796</span>     <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">   4797</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> DataFrame <span style="color: rgb(98,98,98)">|</span> Series:
-<span class="ansi-green-intense-fg ansi-bold">   4798</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""</span>
-<span class="ansi-green-intense-fg ansi-bold">   4799</span> <span style="color: rgb(175,0,0)">    Invoke function on values of Series.</span>
-<span class="ansi-green-intense-fg ansi-bold">   4800</span> 
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">   4915</span> <span style="color: rgb(175,0,0)">    dtype: float64</span>
-<span class="ansi-green-intense-fg ansi-bold">   4916</span> <span style="color: rgb(175,0,0)">    """</span>
-<span class="ansi-green-intense-fg ansi-bold">   4917</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">SeriesApply</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">   4918</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4919</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4920</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">convert_dtype</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert_dtype</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4921</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">by_row</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">by_row</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4922</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">   4923</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-fg">-&gt; 4924</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/apply.py:1427</span>, in <span class="ansi-cyan-fg">SeriesApply.apply</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1424</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>apply_compat()
-<span class="ansi-green-intense-fg ansi-bold">   1426</span> <span style="color: rgb(95,135,135)"># self.func is Callable</span>
-<span class="ansi-green-fg">-&gt; 1427</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">apply_standard</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/apply.py:1507</span>, in <span class="ansi-cyan-fg">SeriesApply.apply_standard</span><span class="ansi-blue-fg">(self)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1501</span> <span style="color: rgb(95,135,135)"># row-wise access</span>
-<span class="ansi-green-intense-fg ansi-bold">   1502</span> <span style="color: rgb(95,135,135)"># apply doesn't have a `na_action` keyword and for backward compat reasons</span>
-<span class="ansi-green-intense-fg ansi-bold">   1503</span> <span style="color: rgb(95,135,135)"># we need to give `na_action="ignore"` for categorical data.</span>
-<span class="ansi-green-intense-fg ansi-bold">   1504</span> <span style="color: rgb(95,135,135)"># TODO: remove the `na_action="ignore"` when that default has been changed in</span>
-<span class="ansi-green-intense-fg ansi-bold">   1505</span> <span style="color: rgb(95,135,135)">#  Categorical (GH51645).</span>
-<span class="ansi-green-intense-fg ansi-bold">   1506</span> action <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">ignore</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(obj<span style="color: rgb(98,98,98)">.</span>dtype, CategoricalDtype) <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-fg">-&gt; 1507</span> mapped <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_map_values</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">   1508</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">curried</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">action</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">convert_dtype</span>
-<span class="ansi-green-intense-fg ansi-bold">   1509</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1511</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">len</span>(mapped) <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">isinstance</span>(mapped[<span style="color: rgb(98,98,98)">0</span>], ABCSeries):
-<span class="ansi-green-intense-fg ansi-bold">   1512</span>     <span style="color: rgb(95,135,135)"># GH#43986 Need to do list(mapped) in order to get treated as nested</span>
-<span class="ansi-green-intense-fg ansi-bold">   1513</span>     <span style="color: rgb(95,135,135)">#  See also GH#25959 regarding EA support</span>
-<span class="ansi-green-intense-fg ansi-bold">   1514</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> obj<span style="color: rgb(98,98,98)">.</span>_constructor_expanddim(<span style="color: rgb(0,135,0)">list</span>(mapped), index<span style="color: rgb(98,98,98)">=</span>obj<span style="color: rgb(98,98,98)">.</span>index)
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/base.py:921</span>, in <span class="ansi-cyan-fg">IndexOpsMixin._map_values</span><span class="ansi-blue-fg">(self, mapper, na_action, convert)</span>
-<span class="ansi-green-intense-fg ansi-bold">    918</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(arr, ExtensionArray):
-<span class="ansi-green-intense-fg ansi-bold">    919</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> arr<span style="color: rgb(98,98,98)">.</span>map(mapper, na_action<span style="color: rgb(98,98,98)">=</span>na_action)
-<span class="ansi-green-fg">--&gt; 921</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">algorithms</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">map_array</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">arr</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">na_action</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/algorithms.py:1743</span>, in <span class="ansi-cyan-fg">map_array</span><span class="ansi-blue-fg">(arr, mapper, na_action, convert)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1741</span> values <span style="color: rgb(98,98,98)">=</span> arr<span style="color: rgb(98,98,98)">.</span>astype(<span style="color: rgb(0,135,0)">object</span>, copy<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>)
-<span class="ansi-green-intense-fg ansi-bold">   1742</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> na_action <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
-<span class="ansi-green-fg">-&gt; 1743</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">lib</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">map_infer</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">values</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mapper</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">convert</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   1744</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">   1745</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> lib<span style="color: rgb(98,98,98)">.</span>map_infer_mask(
-<span class="ansi-green-intense-fg ansi-bold">   1746</span>         values, mapper, mask<span style="color: rgb(98,98,98)">=</span>isna(values)<span style="color: rgb(98,98,98)">.</span>view(np<span style="color: rgb(98,98,98)">.</span>uint8), convert<span style="color: rgb(98,98,98)">=</span>convert
-<span class="ansi-green-intense-fg ansi-bold">   1747</span>     )
-
-File <span class="ansi-green-fg">lib.pyx:2972</span>, in <span class="ansi-cyan-fg">pandas._libs.lib.map_infer</span><span class="ansi-blue-fg">()</span>
-
-Cell <span class="ansi-green-fg">In[4], line 20</span>, in <span class="ansi-cyan-fg">embed_community_reports.&lt;locals&gt;.&lt;lambda&gt;</span><span class="ansi-blue-fg">(x)</span>
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     error_msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> column not found in </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>input_path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(error_msg)
-<span class="ansi-green-intense-fg ansi-bold">     19</span> report_df[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> report_df<span style="color: rgb(98,98,98)">.</span>loc[:, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>apply(
-<span class="ansi-green-fg">---&gt; 20</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">lambda</span> x: <span class="ansi-yellow-bg">embedder</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">embed</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">x</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     21</span> )
-<span class="ansi-green-intense-fg ansi-bold">     23</span> <span style="color: rgb(95,135,135)"># Save the DataFrame with embeddings to the output path</span>
-<span class="ansi-green-intense-fg ansi-bold">     24</span> report_df<span style="color: rgb(98,98,98)">.</span>to_parquet(output_path)
-
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/embedding.py:96</span>, in <span class="ansi-cyan-fg">OpenAIEmbedding.embed</span><span class="ansi-blue-fg">(self, text, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">     90</span>         <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_reporter<span style="color: rgb(98,98,98)">.</span>error(
-<span class="ansi-green-intense-fg ansi-bold">     91</span>             message<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Error embedding chunk</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     92</span>             details<span style="color: rgb(98,98,98)">=</span>{<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__class__</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__name__</span>: <span style="color: rgb(0,135,0)">str</span>(e)},
-<span class="ansi-green-intense-fg ansi-bold">     93</span>         )
-<span class="ansi-green-intense-fg ansi-bold">     95</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">continue</span>
-<span class="ansi-green-fg">---&gt; 96</span> chunk_embeddings <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">np</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">average</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">chunk_embeddings</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">axis</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">0</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">weights</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">chunk_lens</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     97</span> chunk_embeddings <span style="color: rgb(98,98,98)">=</span> chunk_embeddings <span style="color: rgb(98,98,98)">/</span> np<span style="color: rgb(98,98,98)">.</span>linalg<span style="color: rgb(98,98,98)">.</span>norm(chunk_embeddings)
-<span class="ansi-green-intense-fg ansi-bold">     98</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> chunk_embeddings<span style="color: rgb(98,98,98)">.</span>tolist()
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/numpy/lib/function_base.py:550</span>, in <span class="ansi-cyan-fg">average</span><span class="ansi-blue-fg">(a, axis, weights, returned, keepdims)</span>
-<span class="ansi-green-intense-fg ansi-bold">    548</span>     scl <span style="color: rgb(98,98,98)">=</span> wgt<span style="color: rgb(98,98,98)">.</span>sum(axis<span style="color: rgb(98,98,98)">=</span>axis, dtype<span style="color: rgb(98,98,98)">=</span>result_dtype, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>keepdims_kw)
-<span class="ansi-green-intense-fg ansi-bold">    549</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> np<span style="color: rgb(98,98,98)">.</span>any(scl <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(98,98,98)">0.0</span>):
-<span class="ansi-green-fg">--&gt; 550</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ZeroDivisionError</span>(
-<span class="ansi-green-intense-fg ansi-bold">    551</span>             <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Weights sum to zero, can</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t be normalized</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">    553</span>     avg <span style="color: rgb(98,98,98)">=</span> avg_as_array <span style="color: rgb(98,98,98)">=</span> np<span style="color: rgb(98,98,98)">.</span>multiply(a, wgt,
-<span class="ansi-green-intense-fg ansi-bold">    554</span>                       dtype<span style="color: rgb(98,98,98)">=</span>result_dtype)<span style="color: rgb(98,98,98)">.</span>sum(axis, <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>keepdims_kw) <span style="color: rgb(98,98,98)">/</span> scl
-<span class="ansi-green-intense-fg ansi-bold">    556</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> returned:
-
-<span class="ansi-red-fg">ZeroDivisionError</span>: Weights sum to zero, can't be normalized</pre>
 </div>
 </div>
 </div>
@@ -2434,7 +2211,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
     <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>
     <span class="n">relationships</span><span class="o">=</span><span class="n">relationships</span><span class="p">,</span>
     <span class="n">reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span>
-    <span class="n">entity_text_embeddings</span><span class="o">=</span><span class="n">entity_description_embeddings</span><span class="p">,</span>
+    <span class="n">entity_text_embeddings</span><span class="o">=</span><span class="n">description_embedding_store</span><span class="p">,</span>
     <span class="n">text_units</span><span class="o">=</span><span class="n">text_units</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -2448,7 +2225,7 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
     entities=entities,
     relationships=relationships,
     reports=reports,
-    entity_text_embeddings=entity_description_embeddings,
+    entity_text_embeddings=description_embedding_store,
     text_units=text_units,
 )
 
@@ -2469,21 +2246,21 @@ search = DRIFTSearch(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 6</span>
+Cell <span class="ansi-green-fg">In[5], line 4</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> DRIFTSearchContextBuilder(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     chat_llm<span style="color: rgb(98,98,98)">=</span>chat_llm,
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     text_embedder<span style="color: rgb(98,98,98)">=</span>text_embedder,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,
+<span class="ansi-green-fg">----&gt; 4</span>     entities<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">entities</span>,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-fg">----&gt; 6</span>     reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>entity_description_embeddings,
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     reports<span style="color: rgb(98,98,98)">=</span>reports,
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>description_embedding_store,
 <span class="ansi-green-intense-fg ansi-bold">      8</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
 <span class="ansi-green-intense-fg ansi-bold">      9</span> )
 <span class="ansi-green-intense-fg ansi-bold">     11</span> search <span style="color: rgb(98,98,98)">=</span> DRIFTSearch(
 <span class="ansi-green-intense-fg ansi-bold">     12</span>     llm<span style="color: rgb(98,98,98)">=</span>chat_llm, context_builder<span style="color: rgb(98,98,98)">=</span>context_builder, token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder
 <span class="ansi-green-intense-fg ansi-bold">     13</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'entities' is not defined</pre>
 </div>
 </div>
 </div>

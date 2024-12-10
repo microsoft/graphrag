@@ -16,7 +16,7 @@
     
     
       
-        <title>Global search with dynamic community selection - GraphRAG</title>
+        <title>Index migration - GraphRAG</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#global-search-example" class="md-skip">
+        <a href="#index-migration" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Global search with dynamic community selection
+              Index migration
             
           </span>
         </div>
@@ -1352,59 +1352,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#global-search-example" class="md-nav__link">
+  <a href="#index-migration" class="md-nav__link">
     <span class="md-ellipsis">
-      Global Search example
+      Index Migration
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Global Search example">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#llm-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      LLM setup
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#load-community-reports-as-context-for-global-search" class="md-nav__link">
-    <span class="md-ellipsis">
-      Load community reports as context for global search
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Load community reports as context for global search">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#build-global-context-with-dynamic-community-selection" class="md-nav__link">
-    <span class="md-ellipsis">
-      Build global context with dynamic community selection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#perform-global-search-with-dynamic-community-selection" class="md-nav__link">
-    <span class="md-ellipsis">
-      Perform global search with dynamic community selection
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1426,7 +1378,7 @@
   
 
 
-  <h1>Global search with dynamic community selection</h1>
+  <h1>Index migration</h1>
 
 <script>
 (function (global, factory) {
@@ -1892,6 +1844,19 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="index-migration">Index Migration<a class="anchor-link" href="#index-migration">¶</a></h2><p>This notebook is used to maintain data model parity with older indexes for the latest versions of GraphRAG. If you have a pre-1.0 index and need to migrate without re-running the entire pipeline, you can use this notebook to only update the pieces necessary for alignment.</p>
+<p>NOTE: we recommend regenerating your settings.yml with the latest version of GraphRAG using <code>graphrag init</code>. Copy your LLM settings into it before running this notebook. This ensures your config is aligned with the latest version for the migration. This also ensures that you have default vector store config, which is now required or indexing will fail.</p>
+<p>WARNING: This will overwrite your parquet files, you may want to make a backup!</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -1911,68 +1876,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">tiktoken</span>
-
-<span class="kn">from</span> <span class="nn">graphrag.query.indexer_adapters</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">read_indexer_communities</span><span class="p">,</span>
-    <span class="n">read_indexer_entities</span><span class="p">,</span>
-    <span class="n">read_indexer_reports</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.chat_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.llm.oai.typing</span> <span class="kn">import</span> <span class="n">OpenaiApiType</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.structured_search.global_search.community_context</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">GlobalCommunityContext</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphrag.query.structured_search.global_search.search</span> <span class="kn">import</span> <span class="n">GlobalSearch</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># This is the directory that has your settings.yml</span>
+<span class="c1"># NOTE: much older indexes may have been output with a timestamped directory</span>
+<span class="c1"># if this is the case, you will need to make sure the storage.base_dir in settings.yml points to it correctly</span>
+<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory&gt;"</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import os
-
-import pandas as pd
-import tiktoken
-
-from graphrag.query.indexer_adapters import (
-    read_indexer_communities,
-    read_indexer_entities,
-    read_indexer_reports,
-)
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
-from graphrag.query.llm.oai.typing import OpenaiApiType
-from graphrag.query.structured_search.global_search.community_context import (
-    GlobalCommunityContext,
-)
-from graphrag.query.structured_search.global_search.search import GlobalSearch</div>
+<div class="clipboard-copy-txt" id="cell-2"># This is the directory that has your settings.yml
+# NOTE: much older indexes may have been output with a timestamped directory
+# if this is the case, you will need to make sure the storage.base_dir in settings.yml points to it correctly
+PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="global-search-example">Global Search example<a class="anchor-link" href="#global-search-example">¶</a></h2><p>Global search method generates answers by searching over all AI-generated community reports in a map-reduce fashion. This is a resource-intensive method, but often gives good responses for questions that require an understanding of the dataset as a whole (e.g. What are the most significant values of the herbs mentioned in this notebook?).</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="llm-setup">LLM setup<a class="anchor-link" href="#llm-setup">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1990,46 +1909,70 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_API_KEY"</span><span class="p">]</span>
-<span class="n">llm_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"GRAPHRAG_LLM_MODEL"</span><span class="p">]</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">llm_model</span><span class="p">,</span>
-    <span class="n">api_type</span><span class="o">=</span><span class="n">OpenaiApiType</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span>  <span class="c1"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">graphrag.config.load_config</span> <span class="kn">import</span> <span class="n">load_config</span>
+<span class="kn">from</span> <span class="nn">graphrag.config.resolve_path</span> <span class="kn">import</span> <span class="n">resolve_paths</span>
+<span class="kn">from</span> <span class="nn">graphrag.index.create_pipeline_config</span> <span class="kn">import</span> <span class="n">create_pipeline_config</span>
+<span class="kn">from</span> <span class="nn">graphrag.storage.factory</span> <span class="kn">import</span> <span class="n">create_storage</span>
 
-<span class="n">token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">llm_model</span><span class="p">)</span>
+<span class="c1"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_DIRECTORY</span><span class="p">))</span>
+<span class="n">resolve_paths</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">create_pipeline_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">create_storage</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">api_key = os.environ["GRAPHRAG_API_KEY"]
-llm_model = os.environ["GRAPHRAG_LLM_MODEL"]
+<div class="clipboard-copy-txt" id="cell-3">from pathlib import Path
 
-llm = ChatOpenAI(
-    api_key=api_key,
-    model=llm_model,
-    api_type=OpenaiApiType.OpenAI,  # OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI
-    max_retries=20,
-)
+from graphrag.config.load_config import load_config
+from graphrag.config.resolve_path import resolve_paths
+from graphrag.index.create_pipeline_config import create_pipeline_config
+from graphrag.storage.factory import create_storage
 
-token_encoder = tiktoken.encoding_for_model(llm_model)</div>
+# This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow
+config = load_config(Path(PROJECT_DIRECTORY))
+resolve_paths(config)
+pipeline_config = create_pipeline_config(config)
+storage = create_storage(pipeline_config.storage)</div>
 </div>
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[3], line 9</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_storage
+<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(95,135,135)"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
+<span class="ansi-green-fg">----&gt; 9</span> config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">load_config</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     10</span> resolve_paths(config)
+<span class="ansi-green-intense-fg ansi-bold">     11</span> pipeline_config <span style="color: rgb(98,98,98)">=</span> create_pipeline_config(config)
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:43</span>, in <span class="ansi-cyan-fg">load_config</span><span class="ansi-blue-fg">(root_dir, config_filepath)</span>
+<span class="ansi-green-intense-fg ansi-bold">     40</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">     41</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">     42</span>     <span style="color: rgb(95,135,135)"># resolve config filepath from the root directory if it exists</span>
+<span class="ansi-green-fg">---&gt; 43</span>     config_path <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">search_for_config_in_root_dir</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     44</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> config_path:
+<span class="ansi-green-intense-fg ansi-bold">     45</span>     config <span style="color: rgb(98,98,98)">=</span> load_config_from_file(config_path)
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/config_file_loader.py:37</span>, in <span class="ansi-cyan-fg">search_for_config_in_root_dir</span><span class="ansi-blue-fg">(root)</span>
+<span class="ansi-green-intense-fg ansi-bold">     35</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> root<span style="color: rgb(98,98,98)">.</span>is_dir():
+<span class="ansi-green-intense-fg ansi-bold">     36</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid config path: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> is not a directory</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">---&gt; 37</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">     39</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
+<span class="ansi-green-intense-fg ansi-bold">     40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root <span style="color: rgb(98,98,98)">/</span> file)<span style="color: rgb(98,98,98)">.</span>is_file():
+
+<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory&gt; is not a directory</pre>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="load-community-reports-as-context-for-global-search">Load community reports as context for global search<a class="anchor-link" href="#load-community-reports-as-context-for-global-search">¶</a></h3><ul>
-<li>Load all community reports in the <code>create_final_community_reports</code> table from the ire-indexing engine, to be used as context data for global search.</li>
-<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the ire-indexing engine, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
-<li>Load all communities in the <code>create_final_communites</code> table from the ire-indexing engine, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
-</ul>
 </div>
 </div>
 </div>
@@ -2052,34 +1995,20 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parquet files generated from indexing pipeline</span>
-<span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
-<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_communities"</span>
-<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_community_reports"</span>
-<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_nodes"</span>
-<span class="n">ENTITY_EMBEDDING_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_entities"</span>
-
-<span class="c1"># we don't fix a specific community level but instead use an agent to dynamicially</span>
-<span class="c1"># search through all the community reports to check if they are relevant.</span>
-<span class="n">COMMUNITY_LEVEL</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">remove_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Remove columns from a DataFrame, suppressing errors."""</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4"># parquet files generated from indexing pipeline
-INPUT_DIR = "./inputs/operation dulce"
-COMMUNITY_TABLE = "create_final_communities"
-COMMUNITY_REPORT_TABLE = "create_final_community_reports"
-ENTITY_TABLE = "create_final_nodes"
-ENTITY_EMBEDDING_TABLE = "create_final_entities"
-
-# we don't fix a specific community level but instead use an agent to dynamicially
-# search through all the community reports to check if they are relevant.
-COMMUNITY_LEVEL = None</div>
+<div class="clipboard-copy-txt" id="cell-4">def remove_columns(df, columns):
+    """Remove columns from a DataFrame, suppressing errors."""
+    df.drop(labels=columns, axis=1, errors="ignore", inplace=True)</div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2097,108 +2026,51 @@ COMMUNITY_LEVEL = None</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">community_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_REPORT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">entity_embedding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_EMBEDDING_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">get_community_parent</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the parent community using the node membership as a lookup."""</span>
+    <span class="n">parent_mapping</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
 
-<span class="n">communities</span> <span class="o">=</span> <span class="n">read_indexer_communities</span><span class="p">(</span><span class="n">community_df</span><span class="p">,</span> <span class="n">entity_df</span><span class="p">,</span> <span class="n">report_df</span><span class="p">)</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
-    <span class="n">report_df</span><span class="p">,</span>
-    <span class="n">entity_df</span><span class="p">,</span>
-    <span class="n">community_level</span><span class="o">=</span><span class="n">COMMUNITY_LEVEL</span><span class="p">,</span>
-    <span class="n">dynamic_community_selection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span>
-    <span class="n">entity_df</span><span class="p">,</span> <span class="n">entity_embedding_df</span><span class="p">,</span> <span class="n">community_level</span><span class="o">=</span><span class="n">COMMUNITY_LEVEL</span>
-<span class="p">)</span>
+    <span class="c1"># Create a parent mapping by adding 1 to the level column</span>
+    <span class="n">parent_mapping</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Shift levels for parent relationship</span>
+    <span class="n">parent_mapping</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"community"</span><span class="p">:</span> <span class="s2">"parent"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total report count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"Report count after filtering by community level </span><span class="si">{</span><span class="n">COMMUNITY_LEVEL</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reports</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-<span class="p">)</span>
+    <span class="c1"># Merge the parent information back into the base DataFrame</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">parent_mapping</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
 
-<span class="n">report_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+    <span class="c1"># Fill missing parents with -1 (default value)</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">join</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="nb">list</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">join</span><span class="p">[</span><span class="n">join</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">]]</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
-entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
-report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
-entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
+<div class="clipboard-copy-txt" id="cell-5">def get_community_parent(nodes):
+    """Compute the parent community using the node membership as a lookup."""
+    parent_mapping = nodes.loc[:, ["level", "community", "title"]]
+    nodes = nodes.loc[:, ["level", "community", "title"]]
 
-communities = read_indexer_communities(community_df, entity_df, report_df)
-reports = read_indexer_reports(
-    report_df,
-    entity_df,
-    community_level=COMMUNITY_LEVEL,
-    dynamic_community_selection=True,
-)
-entities = read_indexer_entities(
-    entity_df, entity_embedding_df, community_level=COMMUNITY_LEVEL
-)
+    # Create a parent mapping by adding 1 to the level column
+    parent_mapping["level"] += 1  # Shift levels for parent relationship
+    parent_mapping.rename(columns={"community": "parent"}, inplace=True)
 
-print(f"Total report count: {len(report_df)}")
-print(
-    f"Report count after filtering by community level {COMMUNITY_LEVEL}: {len(reports)}"
-)
+    # Merge the parent information back into the base DataFrame
+    nodes = nodes.merge(parent_mapping, on=["level", "title"], how="left")
 
-report_df.head()</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-<span class="ansi-green-fg">/tmp/ipykernel_2040/2760368953.py</span> in <span class="ansi-cyan-fg">?</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> entity_df <span class="ansi-blue-fg">=</span> pd<span class="ansi-blue-fg">.</span>read_parquet<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f"{INPUT_DIR}/{ENTITY_TABLE}.parquet"</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> report_df <span class="ansi-blue-fg">=</span> pd<span class="ansi-blue-fg">.</span>read_parquet<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet"</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> entity_embedding_df <span class="ansi-blue-fg">=</span> pd<span class="ansi-blue-fg">.</span>read_parquet<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet"</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> 
-<span class="ansi-green-fg">----&gt; 6</span><span class="ansi-red-fg"> </span>communities <span class="ansi-blue-fg">=</span> read_indexer_communities<span class="ansi-blue-fg">(</span>community_df<span class="ansi-blue-fg">,</span> entity_df<span class="ansi-blue-fg">,</span> report_df<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> reports = read_indexer_reports(
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     report_df<span class="ansi-blue-fg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     entity_df<span class="ansi-blue-fg">,</span>
+    # Fill missing parents with -1 (default value)
+    nodes["parent"] = nodes["parent"].fillna(-1).astype(int)
 
-<span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/indexer_adapters.py</span> in <span class="ansi-cyan-fg">?</span><span class="ansi-blue-fg">(final_communities, final_nodes, final_community_reports)</span>
-<span class="ansi-green-intense-fg ansi-bold">    180</span>     reports_df <span class="ansi-blue-fg">=</span> final_community_reports
-<span class="ansi-green-intense-fg ansi-bold">    181</span> 
-<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span class="ansi-red-fg"># ensure communities matches community reports</span>
-<span class="ansi-green-intense-fg ansi-bold">    183</span>     missing_reports = communities_df[
-<span class="ansi-green-fg">--&gt; 184</span><span class="ansi-red-fg">         </span><span class="ansi-blue-fg">~</span>communities_df<span class="ansi-blue-fg">.</span>community<span class="ansi-blue-fg">.</span>isin<span class="ansi-blue-fg">(</span>reports_df<span class="ansi-blue-fg">.</span>community<span class="ansi-blue-fg">.</span>unique<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    185</span>     ].community.to_list()
-<span class="ansi-green-intense-fg ansi-bold">    186</span>     <span class="ansi-green-fg">if</span> len<span class="ansi-blue-fg">(</span>missing_reports<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    187</span>         log<span class="ansi-blue-fg">.</span>warning<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"Missing reports for communities: %s"</span><span class="ansi-blue-fg">,</span> missing_reports<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/core/generic.py</span> in <span class="ansi-cyan-fg">?</span><span class="ansi-blue-fg">(self, name)</span>
-<span class="ansi-green-intense-fg ansi-bold">   6295</span>             <span class="ansi-green-fg">and</span> name <span class="ansi-green-fg">not</span> <span class="ansi-green-fg">in</span> self<span class="ansi-blue-fg">.</span>_accessors
-<span class="ansi-green-intense-fg ansi-bold">   6296</span>             <span class="ansi-green-fg">and</span> self<span class="ansi-blue-fg">.</span>_info_axis<span class="ansi-blue-fg">.</span>_can_hold_identifiers_and_holds_name<span class="ansi-blue-fg">(</span>name<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">   6297</span>         ):
-<span class="ansi-green-intense-fg ansi-bold">   6298</span>             <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">[</span>name<span class="ansi-blue-fg">]</span>
-<span class="ansi-green-fg">-&gt; 6299</span><span class="ansi-red-fg">         </span><span class="ansi-green-fg">return</span> object<span class="ansi-blue-fg">.</span>__getattribute__<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> name<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">AttributeError</span>: 'DataFrame' object has no attribute 'community'</pre>
+    join = (
+        nodes.groupby(["community", "level", "parent"])
+        .agg({"title": list})
+        .reset_index()
+    )
+    return join[join["community"] &gt; -1].loc[:, ["community", "parent"]]</div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="build-global-context-with-dynamic-community-selection">Build global context with dynamic community selection<a class="anchor-link" href="#build-global-context-with-dynamic-community-selection">¶</a></h4><p>The goal of dynamic community selection reduce the number of community reports that need to be processed in the map-reduce operation. To that end, we take advantage of the hierachical structure of the indexed dataset. We first ask the LLM to rate how relevant each level 0 community is with respect to the user query, we then traverse down the child node(s) if the current community report is deemed relevant.</p>
-<p>You can still set a <code>COMMUNITY_LEVEL</code> to filter out lower level community reports and apply dynamic community selection on the filtered reports.</p>
-<p>Note that the dataset is quite small, with only consist of 20 communities from 2 levels (level 0 and 1). Dynamic community selection is more effective when there are large amount of content to be filtered out.</p>
 </div>
 </div>
 </div>
@@ -2221,44 +2093,200 @@ report_df.head()</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">mini_llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="s2">"gpt-4o-mini"</span><span class="p">,</span>
-    <span class="n">api_type</span><span class="o">=</span><span class="n">OpenaiApiType</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span>  <span class="c1"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
-    <span class="n">max_retries</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">mini_token_encoder</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">mini_llm</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
-<span class="n">context_builder</span> <span class="o">=</span> <span class="n">GlobalCommunityContext</span><span class="p">(</span>
-    <span class="n">community_reports</span><span class="o">=</span><span class="n">reports</span><span class="p">,</span>
-    <span class="n">communities</span><span class="o">=</span><span class="n">communities</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span>  <span class="c1"># default to None if you don't want to use community weights for ranking</span>
-    <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span><span class="p">,</span>
-    <span class="n">dynamic_community_selection</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">dynamic_community_selection_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">"llm"</span><span class="p">:</span> <span class="n">mini_llm</span><span class="p">,</span>
-        <span class="s2">"token_encoder"</span><span class="p">:</span> <span class="n">mini_token_encoder</span><span class="p">,</span>
-    <span class="p">},</span>
+<span class="kn">from</span> <span class="nn">graphrag.utils.storage</span> <span class="kn">import</span> <span class="n">load_table_from_storage</span><span class="p">,</span> <span class="n">write_table_to_storage</span>
+
+<span class="c1"># First we'll go through any parquet files that had model changes and update them</span>
+<span class="c1"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
+
+<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_documents.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_text_units.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_relationships</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_relationships.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_communities.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="n">final_community_reports</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_community_reports.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Documents renames raw_content for consistency</span>
+<span class="k">if</span> <span class="s2">"raw_content"</span> <span class="ow">in</span> <span class="n">final_documents</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_documents</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"raw_content"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">final_documents</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_documents</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># Text units just get a human_readable_id or consistency</span>
+<span class="n">final_text_units</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_text_units</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># We renamed "name" to "title" for consistency with the rest of the tables</span>
+<span class="k">if</span> <span class="s2">"name"</span> <span class="ow">in</span> <span class="n">final_entities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_entities</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span>
+    <span class="n">final_entities</span><span class="p">,</span> <span class="p">[</span><span class="s2">"mname_embedding"</span><span class="p">,</span> <span class="s2">"graph_embedding"</span><span class="p">,</span> <span class="s2">"description_embedding"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Final nodes uses community for joins, which is now an int everywhere</span>
+<span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span>
+    <span class="n">final_nodes</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">"type"</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">,</span>
+        <span class="s2">"source_id"</span><span class="p">,</span>
+        <span class="s2">"graph_embedding"</span><span class="p">,</span>
+        <span class="s2">"entity_type"</span><span class="p">,</span>
+        <span class="s2">"top_level_node_id"</span><span class="p">,</span>
+        <span class="s2">"size"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Relationships renames "rank" to "combined_degree" to be clear what the default ranking is</span>
+<span class="k">if</span> <span class="s2">"rank"</span> <span class="ow">in</span> <span class="n">final_relationships</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_relationships</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"rank"</span><span class="p">:</span> <span class="s2">"combined_degree"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Compute the parents for each community, to add to communities and reports</span>
+<span class="n">parent_df</span> <span class="o">=</span> <span class="n">get_community_parent</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">)</span>
+
+<span class="c1"># Communities previously used the "id" field for the Leiden id, but we've moved this to the community field and use a uuid for id like the others</span>
+<span class="k">if</span> <span class="s2">"community"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_communities</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_communities</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_communities</span><span class="p">))]</span>
+<span class="k">if</span> <span class="s2">"parent"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_communities</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span><span class="n">final_communities</span><span class="p">,</span> <span class="p">[</span><span class="s2">"raw_community"</span><span class="p">])</span>
+
+<span class="c1"># We need int for community and the human_readable_id copy for consistency</span>
+<span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span>
+<span class="k">if</span> <span class="s2">"parent"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_community_reports</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
+    <span class="p">)</span>
+
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"create_final_documents.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
+    <span class="n">final_text_units</span><span class="p">,</span> <span class="s2">"create_final_text_units.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_entities</span><span class="p">,</span> <span class="s2">"create_final_entities.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">,</span> <span class="s2">"create_final_nodes.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
+    <span class="n">final_relationships</span><span class="p">,</span> <span class="s2">"create_final_relationships.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
+    <span class="n">final_communities</span><span class="p">,</span> <span class="s2">"create_final_communities.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
+    <span class="n">final_community_reports</span><span class="p">,</span> <span class="s2">"create_final_community_reports.parquet"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">mini_llm = ChatOpenAI(
-    api_key=api_key,
-    model="gpt-4o-mini",
-    api_type=OpenaiApiType.OpenAI,  # OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI
-    max_retries=20,
-)
-mini_token_encoder = tiktoken.encoding_for_model(mini_llm.model)
+<div class="clipboard-copy-txt" id="cell-6">from uuid import uuid4
 
-context_builder = GlobalCommunityContext(
-    community_reports=reports,
-    communities=communities,
-    entities=entities,  # default to None if you don't want to use community weights for ranking
-    token_encoder=token_encoder,
-    dynamic_community_selection=True,
-    dynamic_community_selection_kwargs={
-        "llm": mini_llm,
-        "token_encoder": mini_token_encoder,
-    },
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+# First we'll go through any parquet files that had model changes and update them
+# The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility
+
+final_documents = await load_table_from_storage(
+    "create_final_documents.parquet", storage
+)
+final_text_units = await load_table_from_storage(
+    "create_final_text_units.parquet", storage
+)
+final_entities = await load_table_from_storage("create_final_entities.parquet", storage)
+final_nodes = await load_table_from_storage("create_final_nodes.parquet", storage)
+final_relationships = await load_table_from_storage(
+    "create_final_relationships.parquet", storage
+)
+final_communities = await load_table_from_storage(
+    "create_final_communities.parquet", storage
+)
+final_community_reports = await load_table_from_storage(
+    "create_final_community_reports.parquet", storage
+)
+
+
+# Documents renames raw_content for consistency
+if "raw_content" in final_documents.columns:
+    final_documents.rename(columns={"raw_content": "text"}, inplace=True)
+final_documents["human_readable_id"] = final_documents.index + 1
+
+# Text units just get a human_readable_id or consistency
+final_text_units["human_readable_id"] = final_text_units.index + 1
+
+# We renamed "name" to "title" for consistency with the rest of the tables
+if "name" in final_entities.columns:
+    final_entities.rename(columns={"name": "title"}, inplace=True)
+remove_columns(
+    final_entities, ["mname_embedding", "graph_embedding", "description_embedding"]
+)
+
+# Final nodes uses community for joins, which is now an int everywhere
+final_nodes["community"] = final_nodes["community"].fillna(-1)
+final_nodes["community"] = final_nodes["community"].astype(int)
+remove_columns(
+    final_nodes,
+    [
+        "type",
+        "description",
+        "source_id",
+        "graph_embedding",
+        "entity_type",
+        "top_level_node_id",
+        "size",
+    ],
+)
+
+# Relationships renames "rank" to "combined_degree" to be clear what the default ranking is
+if "rank" in final_relationships.columns:
+    final_relationships.rename(columns={"rank": "combined_degree"}, inplace=True)
+
+
+# Compute the parents for each community, to add to communities and reports
+parent_df = get_community_parent(final_nodes)
+
+# Communities previously used the "id" field for the Leiden id, but we've moved this to the community field and use a uuid for id like the others
+if "community" not in final_communities.columns:
+    final_communities["community"] = final_communities["id"].astype(int)
+    final_communities["human_readable_id"] = final_communities["community"]
+    final_communities["id"] = [str(uuid4()) for _ in range(len(final_communities))]
+if "parent" not in final_communities.columns:
+    final_communities = final_communities.merge(parent_df, on="community", how="left")
+remove_columns(final_communities, ["raw_community"])
+
+# We need int for community and the human_readable_id copy for consistency
+final_community_reports["community"] = final_community_reports["community"].astype(int)
+final_community_reports["human_readable_id"] = final_community_reports["community"]
+if "parent" not in final_community_reports.columns:
+    final_community_reports = final_community_reports.merge(
+        parent_df, on="community", how="left"
+    )
+
+await write_table_to_storage(final_documents, "create_final_documents.parquet", storage)
+await write_table_to_storage(
+    final_text_units, "create_final_text_units.parquet", storage
+)
+await write_table_to_storage(final_entities, "create_final_entities.parquet", storage)
+await write_table_to_storage(final_nodes, "create_final_nodes.parquet", storage)
+await write_table_to_storage(
+    final_relationships, "create_final_relationships.parquet", storage
+)
+await write_table_to_storage(
+    final_communities, "create_final_communities.parquet", storage
+)
+await write_table_to_storage(
+    final_community_reports, "create_final_community_reports.parquet", storage
 )</div>
 </div>
 </div>
@@ -2274,45 +2302,26 @@ context_builder = GlobalCommunityContext(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 10</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> mini_llm <span style="color: rgb(98,98,98)">=</span> ChatOpenAI(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     model<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">gpt-4o-mini</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     api_type<span style="color: rgb(98,98,98)">=</span>OpenaiApiType<span style="color: rgb(98,98,98)">.</span>OpenAI,  <span style="color: rgb(95,135,135)"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     max_retries<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">20</span>,
-<span class="ansi-green-intense-fg ansi-bold">      6</span> )
-<span class="ansi-green-intense-fg ansi-bold">      7</span> mini_token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(mini_llm<span style="color: rgb(98,98,98)">.</span>model)
-<span class="ansi-green-intense-fg ansi-bold">      9</span> context_builder <span style="color: rgb(98,98,98)">=</span> GlobalCommunityContext(
-<span class="ansi-green-fg">---&gt; 10</span>     community_reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
-<span class="ansi-green-intense-fg ansi-bold">     11</span>     communities<span style="color: rgb(98,98,98)">=</span>communities,
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     dynamic_community_selection<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
-<span class="ansi-green-intense-fg ansi-bold">     15</span>     dynamic_community_selection_kwargs<span style="color: rgb(98,98,98)">=</span>{
-<span class="ansi-green-intense-fg ansi-bold">     16</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">llm</span><span style="color: rgb(175,0,0)">"</span>: mini_llm,
-<span class="ansi-green-intense-fg ansi-bold">     17</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">token_encoder</span><span style="color: rgb(175,0,0)">"</span>: mini_token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     18</span>     },
-<span class="ansi-green-intense-fg ansi-bold">     19</span> )
+Cell <span class="ansi-green-fg">In[6], line 9</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">utils</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_table_from_storage, write_table_to_storage
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(95,135,135)"># First we'll go through any parquet files that had model changes and update them</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span> final_documents <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(
+<span class="ansi-green-fg">----&gt; 9</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_documents.parquet</span><span style="color: rgb(175,0,0)">"</span>, <span class="ansi-yellow-bg">storage</span>
+<span class="ansi-green-intense-fg ansi-bold">     10</span> )
+<span class="ansi-green-intense-fg ansi-bold">     11</span> final_text_units <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(
+<span class="ansi-green-intense-fg ansi-bold">     12</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_text_units.parquet</span><span style="color: rgb(175,0,0)">"</span>, storage
+<span class="ansi-green-intense-fg ansi-bold">     13</span> )
+<span class="ansi-green-intense-fg ansi-bold">     14</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>, storage)
 
-<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="perform-global-search-with-dynamic-community-selection">Perform global search with dynamic community selection<a class="anchor-link" href="#perform-global-search-with-dynamic-community-selection">¶</a></h4>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2330,103 +2339,66 @@ Cell <span class="ansi-green-fg">In[6], line 10</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">context_builder_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"use_community_summary"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># False means using full community reports. True means using community short summaries.</span>
-    <span class="s2">"shuffle_data"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">"include_community_rank"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">"min_community_rank"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">"community_rank_name"</span><span class="p">:</span> <span class="s2">"rank"</span><span class="p">,</span>
-    <span class="s2">"include_community_weight"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">"community_weight_name"</span><span class="p">:</span> <span class="s2">"occurrence weight"</span><span class="p">,</span>
-    <span class="s2">"normalize_community_weight"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">12_000</span><span class="p">,</span>  <span class="c1"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
-    <span class="s2">"context_name"</span><span class="p">:</span> <span class="s2">"Reports"</span><span class="p">,</span>
-<span class="p">}</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">datashaper</span> <span class="kn">import</span> <span class="n">NoopVerbCallbacks</span>
 
-<span class="n">map_llm_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">"response_format"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"json_object"</span><span class="p">},</span>
-<span class="p">}</span>
+<span class="kn">from</span> <span class="nn">graphrag.cache.factory</span> <span class="kn">import</span> <span class="n">create_cache</span>
+<span class="kn">from</span> <span class="nn">graphrag.index.flows.generate_text_embeddings</span> <span class="kn">import</span> <span class="n">generate_text_embeddings</span>
 
-<span class="n">reduce_llm_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>  <span class="c1"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500)</span>
-    <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-7">context_builder_params = {
-    "use_community_summary": False,  # False means using full community reports. True means using community short summaries.
-    "shuffle_data": True,
-    "include_community_rank": True,
-    "min_community_rank": 0,
-    "community_rank_name": "rank",
-    "include_community_weight": True,
-    "community_weight_name": "occurrence weight",
-    "normalize_community_weight": True,
-    "max_tokens": 12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
-    "context_name": "Reports",
-}
+<span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
+<span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
 
-map_llm_params = {
-    "max_tokens": 1000,
-    "temperature": 0.0,
-    "response_format": {"type": "json_object"},
-}
+<span class="n">workflow</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">workflows</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"generate_text_embeddings"</span><span class="p">),</span> <span class="kc">None</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">config</span>
+<span class="n">text_embed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text_embed"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedded_fields"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopVerbCallbacks</span><span class="p">()</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">create_cache</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">PROJECT_DIRECTORY</span><span class="p">)</span>
 
-reduce_llm_params = {
-    "max_tokens": 2000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000-1500)
-    "temperature": 0.0,
-}</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">search_engine</span> <span class="o">=</span> <span class="n">GlobalSearch</span><span class="p">(</span>
-    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span>
-    <span class="n">context_builder</span><span class="o">=</span><span class="n">context_builder</span><span class="p">,</span>
-    <span class="n">token_encoder</span><span class="o">=</span><span class="n">token_encoder</span><span class="p">,</span>
-    <span class="n">max_data_tokens</span><span class="o">=</span><span class="mi">12_000</span><span class="p">,</span>  <span class="c1"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
-    <span class="n">map_llm_params</span><span class="o">=</span><span class="n">map_llm_params</span><span class="p">,</span>
-    <span class="n">reduce_llm_params</span><span class="o">=</span><span class="n">reduce_llm_params</span><span class="p">,</span>
-    <span class="n">allow_general_knowledge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
-    <span class="n">json_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># set this to False if your LLM model does not support JSON mode.</span>
-    <span class="n">context_builder_params</span><span class="o">=</span><span class="n">context_builder_params</span><span class="p">,</span>
-    <span class="n">concurrent_coroutines</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-    <span class="n">response_type</span><span class="o">=</span><span class="s2">"multiple paragraphs"</span><span class="p">,</span>  <span class="c1"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
+    <span class="n">final_documents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">final_relationships</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">final_text_units</span><span class="o">=</span><span class="n">final_text_units</span><span class="p">,</span>
+    <span class="n">final_entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
+    <span class="n">final_community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+    <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span>
+    <span class="n">text_embed_config</span><span class="o">=</span><span class="n">text_embed</span><span class="p">,</span>
+    <span class="n">embedded_fields</span><span class="o">=</span><span class="n">embedded_fields</span><span class="p">,</span>
+    <span class="n">snapshot_embeddings_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">search_engine = GlobalSearch(
-    llm=llm,
-    context_builder=context_builder,
-    token_encoder=token_encoder,
-    max_data_tokens=12_000,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
-    map_llm_params=map_llm_params,
-    reduce_llm_params=reduce_llm_params,
-    allow_general_knowledge=False,  # set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.
-    json_mode=True,  # set this to False if your LLM model does not support JSON mode.
-    context_builder_params=context_builder_params,
-    concurrent_coroutines=32,
-    response_type="multiple paragraphs",  # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
+<div class="clipboard-copy-txt" id="cell-7">from datashaper import NoopVerbCallbacks
+
+from graphrag.cache.factory import create_cache
+from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
+
+# We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
+# We'll construct the context and run this function flow directly to avoid everything else
+
+workflow = next(
+    (x for x in pipeline_config.workflows if x.name == "generate_text_embeddings"), None
+)
+config = workflow.config
+text_embed = config.get("text_embed", {})
+embedded_fields = config.get("embedded_fields", {})
+callbacks = NoopVerbCallbacks()
+cache = create_cache(pipeline_config.cache, PROJECT_DIRECTORY)
+
+await generate_text_embeddings(
+    final_documents=None,
+    final_relationships=None,
+    final_text_units=final_text_units,
+    final_entities=final_entities,
+    final_community_reports=final_community_reports,
+    callbacks=callbacks,
+    cache=cache,
+    storage=storage,
+    text_embed_config=text_embed,
+    embedded_fields=embedded_fields,
+    snapshot_embeddings_enabled=False,
 )</div>
 </div>
 </div>
@@ -2442,208 +2414,17 @@ reduce_llm_params = {
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> GlobalSearch(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     max_data_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     map_llm_params<span style="color: rgb(98,98,98)">=</span>map_llm_params,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     reduce_llm_params<span style="color: rgb(98,98,98)">=</span>reduce_llm_params,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     allow_general_knowledge<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     json_mode<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,  <span style="color: rgb(95,135,135)"># set this to False if your LLM model does not support JSON mode.</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>context_builder_params,
-<span class="ansi-green-intense-fg ansi-bold">     11</span>     concurrent_coroutines<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">32</span>,
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span> )
+Cell <span class="ansi-green-fg">In[7], line 10</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># We'll construct the context and run this function flow directly to avoid everything else</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span> workflow <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">next</span>(
+<span class="ansi-green-fg">---&gt; 10</span>     (x <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> x <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">pipeline_config</span><span style="color: rgb(98,98,98)">.</span>workflows <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> x<span style="color: rgb(98,98,98)">.</span>name <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">generate_text_embeddings</span><span style="color: rgb(175,0,0)">"</span>), <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">     11</span> )
+<span class="ansi-green-intense-fg ansi-bold">     12</span> config <span style="color: rgb(98,98,98)">=</span> workflow<span style="color: rgb(98,98,98)">.</span>config
+<span class="ansi-green-intense-fg ansi-bold">     13</span> text_embed <span style="color: rgb(98,98,98)">=</span> config<span style="color: rgb(98,98,98)">.</span>get(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">text_embed</span><span style="color: rgb(175,0,0)">"</span>, {})
 
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-9">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span>
-    <span class="s2">"What is Cosmic Vocalization and who are involved in it?"</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-9">result = await search_engine.asearch(
-    "What is Cosmic Vocalization and who are involved in it?"
-)
-
-print(result.response)</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[9], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is Cosmic Vocalization and who are involved in it?</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> )
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
-
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-10">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># inspect the data used to build the context for the LLM responses</span>
-<span class="n">result</span><span class="o">.</span><span class="n">context_data</span><span class="p">[</span><span class="s2">"reports"</span><span class="p">]</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-10"># inspect the data used to build the context for the LLM responses
-result.context_data["reports"]</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
-<span class="ansi-green-fg">----&gt; 2</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span>]
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-11">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># inspect number of LLM calls and tokens in dynamic community selection</span>
-<span class="n">llm_calls</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">llm_calls_categories</span><span class="p">[</span><span class="s2">"build_context"</span><span class="p">]</span>
-<span class="n">prompt_tokens</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">prompt_tokens_categories</span><span class="p">[</span><span class="s2">"build_context"</span><span class="p">]</span>
-<span class="n">output_tokens</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">output_tokens_categories</span><span class="p">[</span><span class="s2">"build_context"</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"Build context (</span><span class="si">{</span><span class="n">mini_llm</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">LLM calls: </span><span class="si">{</span><span class="n">llm_calls</span><span class="si">}</span><span class="s2">. Prompt tokens: </span><span class="si">{</span><span class="n">prompt_tokens</span><span class="si">}</span><span class="s2">. Output tokens: </span><span class="si">{</span><span class="n">output_tokens</span><span class="si">}</span><span class="s2">."</span>
-<span class="p">)</span>
-<span class="c1"># inspect number of LLM calls and tokens in map-reduce</span>
-<span class="n">llm_calls</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">llm_calls_categories</span><span class="p">[</span><span class="s2">"map"</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">llm_calls_categories</span><span class="p">[</span><span class="s2">"reduce"</span><span class="p">]</span>
-<span class="n">prompt_tokens</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">prompt_tokens_categories</span><span class="p">[</span><span class="s2">"map"</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">prompt_tokens_categories</span><span class="p">[</span><span class="s2">"reduce"</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">output_tokens</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">output_tokens_categories</span><span class="p">[</span><span class="s2">"map"</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="o">.</span><span class="n">output_tokens_categories</span><span class="p">[</span><span class="s2">"reduce"</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"Map-reduce (</span><span class="si">{</span><span class="n">llm</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">LLM calls: </span><span class="si">{</span><span class="n">llm_calls</span><span class="si">}</span><span class="s2">. Prompt tokens: </span><span class="si">{</span><span class="n">prompt_tokens</span><span class="si">}</span><span class="s2">. Output tokens: </span><span class="si">{</span><span class="n">output_tokens</span><span class="si">}</span><span class="s2">."</span>
-<span class="p">)</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-11"># inspect number of LLM calls and tokens in dynamic community selection
-llm_calls = result.llm_calls_categories["build_context"]
-prompt_tokens = result.prompt_tokens_categories["build_context"]
-output_tokens = result.output_tokens_categories["build_context"]
-print(
-    f"Build context ({mini_llm.model})\nLLM calls: {llm_calls}. Prompt tokens: {prompt_tokens}. Output tokens: {output_tokens}."
-)
-# inspect number of LLM calls and tokens in map-reduce
-llm_calls = result.llm_calls_categories["map"] + result.llm_calls_categories["reduce"]
-prompt_tokens = (
-    result.prompt_tokens_categories["map"] + result.prompt_tokens_categories["reduce"]
-)
-output_tokens = (
-    result.output_tokens_categories["map"] + result.output_tokens_categories["reduce"]
-)
-print(
-    f"Map-reduce ({llm.model})\nLLM calls: {llm_calls}. Prompt tokens: {prompt_tokens}. Output tokens: {output_tokens}."
-)</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[11], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens in dynamic community selection</span>
-<span class="ansi-green-fg">----&gt; 2</span> llm_calls <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>llm_calls_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      3</span> prompt_tokens <span style="color: rgb(98,98,98)">=</span> result<span style="color: rgb(98,98,98)">.</span>prompt_tokens_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">      4</span> output_tokens <span style="color: rgb(98,98,98)">=</span> result<span style="color: rgb(98,98,98)">.</span>output_tokens_categories[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>]
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'pipeline_config' is not defined</pre>
 </div>
 </div>
 </div>
