@@ -18,7 +18,7 @@ from graphrag.config.enums import (
     CacheType,
     InputFileType,
     InputType,
-    ReportingType,
+    PipelineLoggerType,
     StorageType,
 )
 from graphrag.config.errors import (
@@ -82,11 +82,11 @@ from graphrag.index.config.input import (
     PipelineInputConfig,
     PipelineTextInputConfig,
 )
+from graphrag.index.config.logger import PipelineFileLoggerConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
 )
-from graphrag.index.config.reporting import PipelineFileReportingConfig
 from graphrag.index.config.storage import PipelineFileStorageConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
 
@@ -237,7 +237,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert TextEmbeddingConfig is not None
         assert UmapConfig is not None
         assert PipelineConfig is not None
-        assert PipelineFileReportingConfig is not None
+        assert PipelineFileLoggerConfig is not None
         assert PipelineFileStorageConfig is not None
         assert PipelineInputConfig is not None
         assert PipelineFileCacheConfig is not None
@@ -637,7 +637,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
-        assert parameters.reporting.type == ReportingType.blob
+        assert parameters.reporting.type == PipelineLoggerType.blob
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
         assert parameters.snapshots.embeddings
@@ -692,7 +692,7 @@ class TestDefaultConfig(unittest.TestCase):
                     storage_account_blob_url="cache_account_blob_url",
                 ),
                 reporting=ReportingConfigInput(
-                    type=ReportingType.blob,
+                    type=PipelineLoggerType.blob,
                     connection_string="test_cs2",
                     container_name="test_cn2",
                     base_dir="/some/reporting/dir",
@@ -812,7 +812,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.reporting.base_dir == "/some/reporting/dir"
         assert parameters.reporting.connection_string == "test_cs2"
         assert parameters.reporting.container_name == "test_cn2"
-        assert parameters.reporting.type == ReportingType.blob
+        assert parameters.reporting.type == PipelineLoggerType.blob
         assert (
             parameters.reporting.storage_account_blob_url
             == "reporting_account_blob_url"

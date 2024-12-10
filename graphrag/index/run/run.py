@@ -101,21 +101,21 @@ async def run_pipeline_with_config(
 
     progress_logger = logger or NullProgressLogger()
     storage_config = config.storage.model_dump()  # type: ignore
-    storage = storage or StorageFactory.create_storage(
+    storage = storage or StorageFactory().create_storage(
         storage_type=storage_config["type"],  # type: ignore
         kwargs=storage_config,
     )
 
     if is_update_run:
         update_storage_config = config.update_index_storage.model_dump()  # type: ignore
-        update_index_storage = update_index_storage or StorageFactory.create_storage(
+        update_index_storage = update_index_storage or StorageFactory().create_storage(
             storage_type=update_storage_config["type"],  # type: ignore
             kwargs=update_storage_config,
         )
 
     # TODO: remove the type ignore when the new config system guarantees the existence of a cache config
     cache_config = config.cache.model_dump()  # type: ignore
-    cache = cache or CacheFactory.create_cache(
+    cache = cache or CacheFactory().create_cache(
         cache_type=cache_config["type"],  # type: ignore
         root_dir=root_dir,
         kwargs=cache_config,

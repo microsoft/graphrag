@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from graphrag.index.config.cache import PipelineCacheConfigTypes
 from graphrag.index.config.input import PipelineInputConfigTypes
-from graphrag.index.config.reporting import PipelineReportingConfigTypes
+from graphrag.index.config.logger import PipelineReportingConfigTypes
 from graphrag.index.config.storage import PipelineStorageConfigTypes
 from graphrag.index.config.workflow import PipelineWorkflowReference
 

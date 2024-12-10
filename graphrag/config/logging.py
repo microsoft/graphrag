@@ -6,7 +6,7 @@
 import logging
 from pathlib import Path
 
-from graphrag.config.enums import ReportingType
+from graphrag.config.enums import PipelineLoggerType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
@@ -54,7 +54,7 @@ def enable_logging_with_config(
         (False, "") if logging was not enabled.
         (True, str) if logging was enabled.
     """
-    if config.reporting.type == ReportingType.file:
+    if config.reporting.type == PipelineLoggerType.file:
         log_path = Path(config.reporting.base_dir) / "indexing-engine.log"
         enable_logging(log_path, verbose)
         return (True, str(log_path))

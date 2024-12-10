@@ -7,6 +7,7 @@ import json
 import logging
 from io import TextIOWrapper
 from pathlib import Path
+from typing import Any
 
 from datashaper import NoopWorkflowCallbacks
 
@@ -18,11 +19,12 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
 
     _out_stream: TextIOWrapper
 
-    def __init__(self, directory: str):
+    def __init__(self, **kwargs: Any):
         """Create a new file-based workflow logger."""
-        Path(directory).mkdir(parents=True, exist_ok=True)
+        base_dir = kwargs["base_dir"]
+        Path(base_dir).mkdir(parents=True, exist_ok=True)
         self._out_stream = open(  # noqa: PTH123, SIM115
-            Path(directory) / "logs.json", "a", encoding="utf-8", errors="strict"
+            Path(base_dir) / "logs.json", "a", encoding="utf-8", errors="strict"
         )
 
     def on_error(

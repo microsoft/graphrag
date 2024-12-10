@@ -6,13 +6,13 @@
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import ReportingType
+from graphrag.config.enums import PipelineLoggerType
 
 
 class ReportingConfig(BaseModel):
     """The default configuration section for Reporting."""
 
-    type: ReportingType = Field(
+    type: PipelineLoggerType = Field(
         description="The reporting type to use.", default=defs.REPORTING_TYPE
     )
     base_dir: str = Field(

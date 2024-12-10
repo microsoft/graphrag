@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from string import Template
 
-from graphrag.config.enums import ReportingType, StorageType
+from graphrag.config.enums import PipelineLoggerType, StorageType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
@@ -195,7 +195,7 @@ def resolve_paths(
             )
         )
 
-    if config.reporting.type == ReportingType.file:
+    if config.reporting.type == PipelineLoggerType.file:
         config.reporting.base_dir = str(
             resolve_path(
                 config.reporting.base_dir,

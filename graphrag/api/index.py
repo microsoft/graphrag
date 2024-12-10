@@ -13,7 +13,7 @@ from pathlib import Path
 from datashaper import WorkflowCallbacks
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
-from graphrag.callbacks.factory import create_pipeline_reporter
+from graphrag.callbacks.factory import PipelineLoggerFactory
 from graphrag.config.enums import CacheType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
@@ -65,10 +65,14 @@ async def build_index(
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
-    # TODO: remove the type ignore once the new config engine has been refactored
-    callbacks = (
-        [create_pipeline_reporter(config.reporting, None)] if config.reporting else None  # type: ignore
-    )  # type: ignore
+    # create a pipeline logger and add to any additional callbacks
+    callbacks = callbacks or []
+    pipeline_logger_config = config.reporting.model_dump()
+    callbacks.append(
+        PipelineLoggerFactory().create_pipeline_logger(
+            config.reporting.type, pipeline_logger_config
+        )
+    )
     outputs: list[PipelineRunResult] = []
     async for output in run_pipeline_with_config(
         pipeline_config,

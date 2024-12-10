@@ -3,44 +3,51 @@
 
 """Create a pipeline logger."""
 
-from pathlib import Path
-from typing import cast
+from typing import ClassVar
 
 from datashaper import WorkflowCallbacks
 
 from graphrag.callbacks.blob_workflow_callbacks import BlobWorkflowCallbacks
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.file_workflow_callbacks import FileWorkflowCallbacks
-from graphrag.config.enums import ReportingType
-from graphrag.index.config.reporting import (
-    PipelineBlobReportingConfig,
-    PipelineFileReportingConfig,
-    PipelineReportingConfig,
-)
+from graphrag.config.enums import PipelineLoggerType
 
 
-def create_pipeline_reporter(
-    config: PipelineReportingConfig | None, root_dir: str | None
-) -> WorkflowCallbacks:
-    """Create a logger for the given pipeline config."""
-    config = config or PipelineFileReportingConfig(base_dir="logs")
+class PipelineLoggerFactory:
+    """A factory class for indexing pipeline logger implementations.
 
-    match config.type:
-        case ReportingType.file:
-            config = cast("PipelineFileReportingConfig", config)
-            return FileWorkflowCallbacks(
-                str(Path(root_dir or "") / (config.base_dir or ""))
-            )
-        case ReportingType.console:
-            return ConsoleWorkflowCallbacks()
-        case ReportingType.blob:
-            config = cast("PipelineBlobReportingConfig", config)
-            return BlobWorkflowCallbacks(
-                config.connection_string,
-                config.container_name,
-                base_dir=config.base_dir,
-                storage_account_blob_url=config.storage_account_blob_url,
-            )
-        case _:
-            msg = f"Unknown reporting type: {config.type}"
-            raise ValueError(msg)
+    Pipeline loggers are designed with callback functions that the indexing engine
+    calls to log updates during the indexing process.
+
+    Includes a method for users to register custom indexing pipeline logger implementations.
+    """
+
+    pipeline_logger_types: ClassVar[dict[str, type]] = {}
+
+    @classmethod
+    def register(cls, logger_type: str, logger: type):
+        """Register a custom pipeline logger implementation."""
+        cls.pipeline_logger_types[logger_type] = logger
+
+    @classmethod
+    def create_pipeline_logger(
+        cls,
+        pipeline_logger_type: PipelineLoggerType | str,
+        kwargs: dict | None = None,
+    ) -> WorkflowCallbacks:
+        """Create a pipeline logger from the provided type."""
+        if not kwargs:
+            kwargs = {}
+
+        match pipeline_logger_type:
+            case PipelineLoggerType.blob:
+                return BlobWorkflowCallbacks(**kwargs)
+            case PipelineLoggerType.console:
+                return ConsoleWorkflowCallbacks()
+            case PipelineLoggerType.file:
+                return FileWorkflowCallbacks(**kwargs)
+            case _:
+                if pipeline_logger_type in cls.pipeline_logger_types:
+                    return cls.pipeline_logger_types[pipeline_logger_type](**kwargs)
+                # Default to console logger if no match
+                return ConsoleWorkflowCallbacks()

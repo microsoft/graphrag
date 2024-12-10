@@ -66,8 +66,8 @@ class StorageType(str, Enum):
         return f'"{self.value}"'
 
 
-class ReportingType(str, Enum):
-    """The reporting configuration type for the pipeline."""
+class PipelineLoggerType(str, Enum):
+    """The logger configuration type for the pipeline."""
 
     file = "file"
     """The file reporting configuration type."""

@@ -5,13 +5,13 @@
 
 from typing_extensions import NotRequired, TypedDict
 
-from graphrag.config.enums import ReportingType
+from graphrag.config.enums import PipelineLoggerType
 
 
 class ReportingConfigInput(TypedDict):
     """The default configuration section for Reporting."""
 
-    type: NotRequired[ReportingType | str | None]
+    type: NotRequired[PipelineLoggerType | str | None]
     base_dir: NotRequired[str | None]
     connection_string: NotRequired[str | None]
     container_name: NotRequired[str | None]

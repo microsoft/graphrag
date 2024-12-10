@@ -20,18 +20,14 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
     _container_name: str
     _max_block_count: int = 25000  # 25k blocks per blob
 
-    def __init__(
-        self,
-        connection_string: str | None,
-        container_name: str,
-        blob_name: str = "",
-        base_dir: str | None = None,
-        storage_account_blob_url: str | None = None,
-    ):  # type: ignore
+    def __init__(self, **kwargs: Any):
         """Create a new instance of the BlobStorageReporter class."""
-        if container_name is None:
-            msg = "No container name provided for blob storage."
-            raise ValueError(msg)
+        container_name = kwargs["container_name"]
+        connection_string = kwargs.get("connection_string")
+        base_dir = kwargs["base_dir"]
+        storage_account_blob_url = kwargs.get("storage_account_blob_url")
+        blob_name = kwargs.get("blob_name", "")
+
         if connection_string is None and storage_account_blob_url is None:
             msg = "No storage account blob url provided for blob storage."
             raise ValueError(msg)
@@ -51,10 +47,10 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
                 credential=DefaultAzureCredential(),
             )
 
-        if blob_name == "":
+        if not blob_name:
             blob_name = f"report/{datetime.now(tz=timezone.utc).strftime('%Y-%m-%d-%H:%M:%S:%f')}.logs.json"
-
         self._blob_name = str(Path(base_dir or "") / blob_name)
+
         self._container_name = container_name
         self._blob_client = self._blob_service_client.get_blob_client(
             self._container_name, self._blob_name
@@ -70,8 +66,8 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
             self._num_blocks >= self._max_block_count
         ):  # Check if block count exceeds 25k
             self.__init__(
-                self._connection_string,
-                self._container_name,
+                connection_string=self._connection_string,
+                container_name=self._container_name,
                 storage_account_blob_url=self._storage_account_blob_url,
             )
 
@@ -90,7 +86,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         stack: str | None = None,
         details: dict | None = None,
     ):
-        """Report an error."""
+        """Log an error."""
         self._write_log({
             "type": "error",
             "data": message,
@@ -100,9 +96,24 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         })
 
     def on_warning(self, message: str, details: dict | None = None):
-        """Report a warning."""
+        """Log a warning."""
         self._write_log({"type": "warning", "data": message, "details": details})
 
     def on_log(self, message: str, details: dict | None = None):
-        """Report a generic log message."""
+        """Log a generic log message."""
         self._write_log({"type": "log", "data": message, "details": details})
+
+
+def create_blob_workflow_callback(
+    connection_string: str | None,
+    storage_account_blob_url: str | None,
+    container_name: str,
+    base_dir: str | None,
+) -> BlobWorkflowCallbacks:
+    """Create a BlobWorkflowCallbacks instance."""
+    return BlobWorkflowCallbacks(
+        connection_string=connection_string,
+        container_name=container_name,
+        base_dir=base_dir,
+        storage_account_blob_url=storage_account_blob_url,
+    )

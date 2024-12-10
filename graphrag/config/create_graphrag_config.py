@@ -18,7 +18,7 @@ from graphrag.config.enums import (
     InputFileType,
     InputType,
     LLMType,
-    ReportingType,
+    PipelineLoggerType,
     StorageType,
     TextEmbeddingTarget,
 )
@@ -358,7 +358,7 @@ def create_graphrag_config(
         ):
             r_type = reader.str(Fragment.type)
             reporting_model = ReportingConfig(
-                type=ReportingType(r_type) if r_type else defs.REPORTING_TYPE,
+                type=PipelineLoggerType(r_type) if r_type else defs.REPORTING_TYPE,
                 connection_string=reader.str(Fragment.conn_string),
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),

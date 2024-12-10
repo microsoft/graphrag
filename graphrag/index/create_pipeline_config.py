@@ -10,7 +10,7 @@ from pathlib import Path
 from graphrag.config.enums import (
     CacheType,
     InputFileType,
-    ReportingType,
+    PipelineLoggerType,
     StorageType,
     TextEmbeddingTarget,
 )
@@ -33,14 +33,14 @@ from graphrag.index.config.input import (
     PipelineInputConfigTypes,
     PipelineTextInputConfig,
 )
+from graphrag.index.config.logger import (
+    PipelineBlobLoggerConfig,
+    PipelineConsoleLoggerConfig,
+    PipelineFileLoggerConfig,
+    PipelineReportingConfigTypes,
+)
 from graphrag.index.config.pipeline import (
     PipelineConfig,
-)
-from graphrag.index.config.reporting import (
-    PipelineBlobReportingConfig,
-    PipelineConsoleReportingConfig,
-    PipelineFileReportingConfig,
-    PipelineReportingConfigTypes,
 )
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
@@ -353,10 +353,10 @@ def _get_reporting_config(
 ) -> PipelineReportingConfigTypes:
     """Get the reporting config from the settings."""
     match settings.reporting.type:
-        case ReportingType.file:
+        case PipelineLoggerType.file:
             # relative to the root_dir
-            return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
-        case ReportingType.blob:
+            return PipelineFileLoggerConfig(base_dir=settings.reporting.base_dir)
+        case PipelineLoggerType.blob:
             connection_string = settings.reporting.connection_string
             storage_account_blob_url = settings.reporting.storage_account_blob_url
             container_name = settings.reporting.container_name
@@ -366,17 +366,17 @@ def _get_reporting_config(
             if connection_string is None and storage_account_blob_url is None:
                 msg = "Connection string or storage account blob url must be provided for blob reporting."
                 raise ValueError(msg)
-            return PipelineBlobReportingConfig(
+            return PipelineBlobLoggerConfig(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.reporting.base_dir,
                 storage_account_blob_url=storage_account_blob_url,
             )
-        case ReportingType.console:
-            return PipelineConsoleReportingConfig()
+        case PipelineLoggerType.console:
+            return PipelineConsoleLoggerConfig()
         case _:
             # relative to the root_dir
-            return PipelineFileReportingConfig(base_dir=settings.reporting.base_dir)
+            return PipelineFileLoggerConfig(base_dir=settings.reporting.base_dir)
 
 
 def _get_storage_config(

@@ -543,7 +543,7 @@ def _get_embedding_store(
     collection_name = create_collection_name(
         config_args.get("container_name", "default"), embedding_name
     )
-    embedding_store = VectorStoreFactory.create_vector_store(
+    embedding_store = VectorStoreFactory().create_vector_store(
         vector_store_type=vector_store_type,
         kwargs={**config_args, "collection_name": collection_name},
     )

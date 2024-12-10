@@ -15,11 +15,11 @@ from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.config.pipeline import PipelineConfig
-from graphrag.index.config.reporting import (
-    PipelineBlobReportingConfig,
-    PipelineFileReportingConfig,
+from graphrag.index.config.logger import (
+    PipelineBlobLoggerConfig,
+    PipelineFileLoggerConfig,
 )
+from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
@@ -76,7 +76,7 @@ def _apply_substitutions(config: PipelineConfig, run_id: str) -> PipelineConfig:
 
     if (
         isinstance(
-            config.reporting, PipelineFileReportingConfig | PipelineBlobReportingConfig
+            config.reporting, PipelineFileLoggerConfig | PipelineBlobLoggerConfig
         )
         and config.reporting.base_dir
     ):

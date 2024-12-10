@@ -12,7 +12,7 @@ from graphrag.config.enums import (
     InputFileType,
     InputType,
     LLMType,
-    ReportingType,
+    PipelineLoggerType,
     StorageType,
     TextEmbeddingTarget,
 )
@@ -79,7 +79,7 @@ NODE2VEC_WALK_LENGTH = 40
 NODE2VEC_WINDOW_SIZE = 2
 NODE2VEC_ITERATIONS = 3
 NODE2VEC_RANDOM_SEED = 597832
-REPORTING_TYPE = ReportingType.file
+REPORTING_TYPE = PipelineLoggerType.file
 REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_EMBEDDINGS = False
