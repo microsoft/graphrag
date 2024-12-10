@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Create separate community workflow, collapse subflows."
+}
