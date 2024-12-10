@@ -15,7 +15,7 @@ def build_steps(
     Create the final community reports table.
 
     ## Dependencies
-    * `workflow:create_base_entity_graph`
+    * `workflow:extract_graph`
     """
     covariates_enabled = config.get("covariates_enabled", False)
     create_community_reports_config = config.get("create_community_reports", {})

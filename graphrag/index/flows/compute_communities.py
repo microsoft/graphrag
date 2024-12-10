@@ -13,7 +13,7 @@ from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-async def create_base_communities(
+async def compute_communities(
     base_relationship_edges: pd.DataFrame,
     storage: PipelineStorage,
     clustering_strategy: dict[str, Any],

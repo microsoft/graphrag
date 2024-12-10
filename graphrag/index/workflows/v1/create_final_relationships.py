@@ -19,14 +19,14 @@ def build_steps(
     Create the final relationships table.
 
     ## Dependencies
-    * `workflow:create_base_entity_graph`
+    * `workflow:extract_graph`
     """
     return [
         {
             "verb": "create_final_relationships",
             "args": {},
             "input": {
-                "source": "workflow:create_base_entity_graph",
+                "source": "workflow:extract_graph",
             },
         },
     ]

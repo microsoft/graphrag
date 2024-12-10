@@ -9,7 +9,7 @@ from datashaper import (
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
-workflow_name = "create_base_entity_graph"
+workflow_name = "extract_graph"
 
 
 def build_steps(
@@ -36,7 +36,7 @@ def build_steps(
 
     return [
         {
-            "verb": "create_base_entity_graph",
+            "verb": "extract_graph",
             "args": {
                 "extraction_strategy": extraction_strategy,
                 "extraction_num_threads": extraction_num_threads,

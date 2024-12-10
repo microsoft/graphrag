@@ -15,11 +15,11 @@ def build_steps(
     Create the final communities table.
 
     ## Dependencies
-    * `workflow:create_base_entity_graph`
+    * `workflow:extract_graph`
     """
     return [
         {
             "verb": "create_final_communities",
-            "input": {"source": "workflow:create_base_entity_graph"},
+            "input": {"source": "workflow:extract_graph"},
         },
     ]

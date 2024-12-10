@@ -15,17 +15,17 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.flows.create_base_entity_graph import (
-    create_base_entity_graph as create_base_entity_graph_flow,
+from graphrag.index.flows.extract_graph import (
+    extract_graph as extract_graph_flow,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(
-    name="create_base_entity_graph",
+    name="extract_graph",
     treats_input_tables_as_immutable=True,
 )
-async def create_base_entity_graph(
+async def extract_graph(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
@@ -43,7 +43,7 @@ async def create_base_entity_graph(
     """All the steps to create the base entity graph."""
     text_units = await runtime_storage.get("base_text_units")
 
-    base_entity_nodes, base_relationship_edges = await create_base_entity_graph_flow(
+    base_entity_nodes, base_relationship_edges = await extract_graph_flow(
         text_units,
         callbacks,
         cache,

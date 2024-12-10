@@ -19,7 +19,7 @@ workflows:
       # Just lump everything together
       chunk_by: []
 
-  - name: create_base_entity_graph
+  - name: extract_graph
     config:
       snapshot_graphml_enabled: True
       entity_extract:

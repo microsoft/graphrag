@@ -12,17 +12,17 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
-from graphrag.index.flows.create_base_communities import (
-    create_base_communities as create_base_communities_flow,
+from graphrag.index.flows.compute_communities import (
+    compute_communities as compute_communities_flow,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 @verb(
-    name="create_base_communities",
+    name="compute_communities",
     treats_input_tables_as_immutable=True,
 )
-async def create_base_communities(
+async def compute_communities(
     storage: PipelineStorage,
     runtime_storage: PipelineStorage,
     clustering_strategy: dict[str, Any],
@@ -32,7 +32,7 @@ async def create_base_communities(
     """All the steps to create the base entity graph."""
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
 
-    base_communities = await create_base_communities_flow(
+    base_communities = await compute_communities_flow(
         base_relationship_edges,
         storage,
         clustering_strategy=clustering_strategy,

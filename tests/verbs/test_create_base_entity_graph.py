@@ -5,7 +5,7 @@ import pytest
 
 from graphrag.config.enums import LLMType
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.create_base_entity_graph import (
+from graphrag.index.workflows.v1.extract_graph import (
     build_steps,
     workflow_name,
 )
@@ -48,7 +48,7 @@ MOCK_LLM_SUMMARIZATION_CONFIG = {
 }
 
 
-async def test_create_base_entity_graph():
+async def test_extract_graph():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])
@@ -97,7 +97,7 @@ async def test_create_base_entity_graph():
     assert len(context.storage.keys()) == 0, "Storage should be empty"
 
 
-async def test_create_base_entity_graph_with_snapshots():
+async def test_extract_graph_with_snapshots():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])
@@ -132,7 +132,7 @@ async def test_create_base_entity_graph_with_snapshots():
     ], "Graph snapshot keys differ"
 
 
-async def test_create_base_entity_graph_missing_llm_throws():
+async def test_extract_graph_missing_llm_throws():
     input_tables = load_input_tables([
         "workflow:create_base_text_units",
     ])

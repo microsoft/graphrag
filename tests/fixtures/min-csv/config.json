@@ -11,7 +11,7 @@
             "max_runtime": 150,
             "expected_artifacts": 0
         },
-        "create_base_entity_graph": {
+        "extract_graph": {
             "row_range": [
                 1,
                 2500

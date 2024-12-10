@@ -15,7 +15,7 @@ def build_steps(
     Create the base table for the document graph.
 
     ## Dependencies
-    * `workflow:create_base_entity_graph`
+    * `workflow:extract_graph`
     """
     layout_graph_enabled = config.get("layout_graph_enabled", True)
     layout_graph_config = config.get(
@@ -54,8 +54,8 @@ def build_steps(
                 else None,
             },
             "input": {
-                "source": "workflow:create_base_entity_graph",
-                "communities": "workflow:create_base_communities",
+                "source": "workflow:extract_graph",
+                "communities": "workflow:compute_communities",
             },
         },
     ]

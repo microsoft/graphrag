@@ -24,7 +24,7 @@ from graphrag.index.operations.summarize_descriptions import (
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-async def create_base_entity_graph(
+async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,

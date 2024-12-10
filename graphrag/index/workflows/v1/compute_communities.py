@@ -5,7 +5,7 @@
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 
-workflow_name = "create_base_communities"
+workflow_name = "compute_communities"
 
 
 def build_steps(
@@ -15,7 +15,7 @@ def build_steps(
     Create the base communities from the graph edges.
 
     ## Dependencies
-    * `workflow:create_base_entity_graph`
+    * `workflow:extract_graph`
     """
     clustering_config = config.get(
         "cluster_graph",
@@ -27,11 +27,11 @@ def build_steps(
 
     return [
         {
-            "verb": "create_base_communities",
+            "verb": "compute_communities",
             "args": {
                 "clustering_strategy": clustering_strategy,
                 "snapshot_transient_enabled": snapshot_transient,
             },
-            "input": ({"source": "workflow:create_base_entity_graph"}),
+            "input": ({"source": "workflow:extract_graph"}),
         },
     ]
