@@ -16,7 +16,7 @@ from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logging.print_progress import PrintProgressReporter
 from graphrag.storage.factory import create_storage
-from graphrag.utils.storage import _load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage
 
 reporter = PrintProgressReporter("")
 
@@ -124,7 +124,6 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_parquet_files(
         config=config,
         parquet_list=[
@@ -270,7 +269,7 @@ def _resolve_parquet_files(
     for parquet_file in parquet_list:
         df_key = parquet_file.split(".")[0]
         df_value = asyncio.run(
-            _load_table_from_storage(name=parquet_file, storage=storage_obj)
+            load_table_from_storage(name=parquet_file, storage=storage_obj)
         )
         dataframe_dict[df_key] = df_value
 
@@ -281,7 +280,7 @@ def _resolve_parquet_files(
             df_key = optional_file.split(".")[0]
             if file_exists:
                 df_value = asyncio.run(
-                    _load_table_from_storage(name=optional_file, storage=storage_obj)
+                    load_table_from_storage(name=optional_file, storage=storage_obj)
                 )
                 dataframe_dict[df_key] = df_value
             else:

@@ -63,17 +63,10 @@ def read_indexer_covariates(final_covariates: pd.DataFrame) -> list[Covariate]:
 
 def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relationship]:
     """Read in the Relationships from the raw indexing outputs."""
-    # rank is for back-compat with older indexes
-    # TODO: remove for 1.0
-    rank_col = (
-        "combined_degree"
-        if "combined_degree" in final_relationships.columns
-        else "rank"
-    )
     return read_relationships(
         df=final_relationships,
         short_id_col="human_readable_id",
-        rank_col=rank_col,
+        rank_col="combined_degree",
         description_embedding_col=None,
         attributes_cols=None,
     )
@@ -106,10 +99,6 @@ def read_indexer_reports(
         nodes_df = nodes_df.groupby(["title"]).agg({"community": "max"}).reset_index()
         filtered_community_df = nodes_df["community"].drop_duplicates()
 
-        # todo: pre 1.0 back-compat where community was a string
-        reports_df.loc[:, "community"] = reports_df["community"].fillna(-1)
-        reports_df.loc[:, "community"] = reports_df["community"].astype(int)
-
         reports_df = reports_df.merge(
             filtered_community_df, on="community", how="inner"
         )
@@ -127,7 +116,6 @@ def read_indexer_reports(
         df=reports_df,
         id_col="id",
         short_id_col="community",
-        summary_embedding_col=None,
         content_embedding_col=content_embedding_col,
     )
 
@@ -155,20 +143,12 @@ def read_indexer_entities(
 
     nodes_df = cast("pd.DataFrame", nodes_df[["id", "degree", "community"]])
 
-    nodes_df["community"] = nodes_df["community"].fillna(-1)
-    nodes_df["community"] = nodes_df["community"].astype(int)
-    nodes_df["degree"] = nodes_df["degree"].astype(int)
-
     # group entities by id and degree and remove duplicated community IDs
     nodes_df = nodes_df.groupby(["id", "degree"]).agg({"community": set}).reset_index()
     nodes_df["community"] = nodes_df["community"].apply(lambda x: [str(i) for i in x])
     final_df = nodes_df.merge(entities_df, on="id", how="inner").drop_duplicates(
         subset=["id"]
     )
-
-    # todo: pre 1.0 back-compat where title was name
-    if "title" not in final_df.columns:
-        final_df["title"] = final_df["name"]
 
     # read entity dataframe to knowledge model objects
     return read_entities(
@@ -198,10 +178,6 @@ def read_indexer_communities(
     communities_df = final_communities
     nodes_df = final_nodes
     reports_df = final_community_reports
-
-    # todo: pre 1.0 back-compat!
-    if "community" not in communities_df.columns:
-        communities_df["community"] = communities_df["id"]
 
     # ensure communities matches community reports
     missing_reports = communities_df[

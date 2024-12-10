@@ -24,9 +24,6 @@ class LLMParameters(BaseModel):
         description="The encoding model to use", default=defs.ENCODING_MODEL
     )
     model: str = Field(description="The LLM model to use.", default=defs.LLM_MODEL)
-    embeddings_model: str | None = Field(
-        description="The embeddings model to use.", default=defs.EMBEDDING_MODEL
-    )
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.",
         default=defs.LLM_MAX_TOKENS,

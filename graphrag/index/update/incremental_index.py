@@ -25,7 +25,7 @@ from graphrag.index.update.entities import (
 from graphrag.index.update.relationships import _update_and_merge_relationships
 from graphrag.logging.print_progress import ProgressReporter
 from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.storage import _load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage
 
 
 @dataclass
@@ -61,7 +61,7 @@ async def get_delta_docs(
     InputDelta
         The input delta. With new inputs and deleted inputs.
     """
-    final_docs = await _load_table_from_storage(
+    final_docs = await load_table_from_storage(
         "create_final_documents.parquet", storage
     )
 
@@ -171,7 +171,7 @@ async def _update_community_reports(
     dataframe_dict, storage, update_storage, community_id_mapping
 ):
     """Update the community reports output."""
-    old_community_reports = await _load_table_from_storage(
+    old_community_reports = await load_table_from_storage(
         "create_final_community_reports.parquet", storage
     )
     delta_community_reports = dataframe_dict["create_final_community_reports"]
@@ -192,7 +192,7 @@ async def _update_communities(
     dataframe_dict, storage, update_storage, community_id_mapping
 ):
     """Update the communities output."""
-    old_communities = await _load_table_from_storage(
+    old_communities = await load_table_from_storage(
         "create_final_communities.parquet", storage
     )
     delta_communities = dataframe_dict["create_final_communities"]
@@ -207,7 +207,7 @@ async def _update_communities(
 
 async def _update_nodes(dataframe_dict, storage, update_storage, merged_entities_df):
     """Update the nodes output."""
-    old_nodes = await _load_table_from_storage("create_final_nodes.parquet", storage)
+    old_nodes = await load_table_from_storage("create_final_nodes.parquet", storage)
     delta_nodes = dataframe_dict["create_final_nodes"]
 
     merged_nodes, community_id_mapping = _merge_and_resolve_nodes(
@@ -220,7 +220,7 @@ async def _update_nodes(dataframe_dict, storage, update_storage, merged_entities
 
 async def _update_covariates(dataframe_dict, storage, update_storage):
     """Update the covariates output."""
-    old_covariates = await _load_table_from_storage(
+    old_covariates = await load_table_from_storage(
         "create_final_covariates.parquet", storage
     )
     delta_covariates = dataframe_dict["create_final_covariates"]
@@ -235,7 +235,7 @@ async def _update_text_units(
     dataframe_dict, storage, update_storage, entity_id_mapping
 ):
     """Update the text units output."""
-    old_text_units = await _load_table_from_storage(
+    old_text_units = await load_table_from_storage(
         "create_final_text_units.parquet", storage
     )
     delta_text_units = dataframe_dict["create_final_text_units"]
@@ -253,7 +253,7 @@ async def _update_text_units(
 
 async def _update_relationships(dataframe_dict, storage, update_storage):
     """Update the relationships output."""
-    old_relationships = await _load_table_from_storage(
+    old_relationships = await load_table_from_storage(
         "create_final_relationships.parquet", storage
     )
     delta_relationships = dataframe_dict["create_final_relationships"]
@@ -273,7 +273,7 @@ async def _update_entities(
     dataframe_dict, storage, update_storage, config, cache, callbacks
 ):
     """Update Final Entities output."""
-    old_entities = await _load_table_from_storage(
+    old_entities = await load_table_from_storage(
         "create_final_entities.parquet", storage
     )
     delta_entities = dataframe_dict["create_final_entities"]
@@ -310,7 +310,7 @@ async def _concat_dataframes(name, dataframe_dict, storage, update_storage):
     storage : PipelineStorage
         The storage used to store the dataframes.
     """
-    old_df = await _load_table_from_storage(f"{name}.parquet", storage)
+    old_df = await load_table_from_storage(f"{name}.parquet", storage)
     delta_df = dataframe_dict[name]
 
     # Merge the final documents
