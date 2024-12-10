@@ -10,12 +10,10 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
-from graphrag.logging.print_progress import ProgressReporter
+from graphrag.logger.print_progress import ProgressLogger
 
 
-def validate_config_names(
-    reporter: ProgressReporter, parameters: GraphRagConfig
-) -> None:
+def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     llm = load_llm(
@@ -26,9 +24,9 @@ def validate_config_names(
     )
     try:
         asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
-        reporter.success("LLM Config Params Validated")
+        logger.success("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
-        reporter.error(f"LLM configuration error detected. Exiting...\n{e}")
+        logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)
 
     # Validate Embeddings LLM configs
@@ -40,7 +38,7 @@ def validate_config_names(
     )
     try:
         asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
-        reporter.success("Embedding LLM Config Params Validated")
+        logger.success("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
-        reporter.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")
+        logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)

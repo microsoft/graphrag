@@ -137,7 +137,7 @@ class TestIndexer:
             "--verbose" if debug else None,
             "--root",
             root.resolve().as_posix(),
-            "--reporter",
+            "--logger",
             "print",
         ]
         command = [arg for arg in command if arg]

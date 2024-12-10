@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of query subcommand."""
+"""CLI implementation of the query subcommand."""
 
 import asyncio
 import sys
@@ -14,11 +14,11 @@ from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
-from graphrag.logging.print_progress import PrintProgressReporter
-from graphrag.storage.factory import create_storage
+from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import load_table_from_storage
 
-reporter = PrintProgressReporter("")
+logger = PrintProgressLogger("")
 
 
 def run_global_search(
@@ -40,9 +40,9 @@ def run_global_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         config=config,
-        parquet_list=[
+        output_list=[
             "create_final_nodes.parquet",
             "create_final_entities.parquet",
             "create_final_communities.parquet",
@@ -100,7 +100,7 @@ def run_global_search(
             query=query,
         )
     )
-    reporter.success(f"Global Search Response:\n{response}")
+    logger.success(f"Global Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -124,9 +124,9 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         config=config,
-        parquet_list=[
+        output_list=[
             "create_final_nodes.parquet",
             "create_final_community_reports.parquet",
             "create_final_text_units.parquet",
@@ -191,7 +191,7 @@ def run_local_search(
             query=query,
         )
     )
-    reporter.success(f"Local Search Response:\n{response}")
+    logger.success(f"Local Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -214,9 +214,9 @@ def run_drift_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    dataframe_dict = _resolve_parquet_files(
+    dataframe_dict = _resolve_output_files(
         config=config,
-        parquet_list=[
+        output_list=[
             "create_final_nodes.parquet",
             "create_final_community_reports.parquet",
             "create_final_text_units.parquet",
@@ -250,30 +250,33 @@ def run_drift_search(
             query=query,
         )
     )
-    reporter.success(f"DRIFT Search Response:\n{response}")
+    logger.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     # TODO: Map/Reduce Drift Search answer to a single response
     return response, context_data
 
 
-def _resolve_parquet_files(
+def _resolve_output_files(
     config: GraphRagConfig,
-    parquet_list: list[str],
+    output_list: list[str],
     optional_list: list[str] | None = None,
 ) -> dict[str, pd.DataFrame]:
-    """Read parquet files to a dataframe dict."""
+    """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
-    storage_obj = create_storage(pipeline_config.storage)  # type: ignore
-    for parquet_file in parquet_list:
-        df_key = parquet_file.split(".")[0]
+    storage_config = pipeline_config.storage.model_dump()  # type: ignore
+    storage_obj = StorageFactory().create_storage(
+        storage_type=storage_config["type"], kwargs=storage_config
+    )
+    for output_file in output_list:
+        df_key = output_file.split(".")[0]
         df_value = asyncio.run(
-            load_table_from_storage(name=parquet_file, storage=storage_obj)
+            load_table_from_storage(name=output_file, storage=storage_obj)
         )
         dataframe_dict[df_key] = df_value
 
-    # for optional parquet files, set the dict entry to None instead of erroring out if it does not exist
+    # for optional output files, set the dict entry to None instead of erroring out if it does not exist
     if optional_list:
         for optional_file in optional_list:
             file_exists = asyncio.run(storage_obj.has(optional_file))

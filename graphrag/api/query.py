@@ -19,7 +19,7 @@ Backwards compatibility is not guaranteed at this time.
 
 from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 from pydantic import validate_call
@@ -29,7 +29,7 @@ from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
 )
-from graphrag.logging.print_progress import PrintProgressReporter
+from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.query.factory import (
     get_drift_search_engine,
     get_global_search_engine,
@@ -44,13 +44,15 @@ from graphrag.query.indexer_adapters import (
     read_indexer_reports,
     read_indexer_text_units,
 )
-from graphrag.query.structured_search.base import SearchResult  # noqa: TC001
 from graphrag.utils.cli import redact
 from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.factory import VectorStoreFactory
 
-reporter = PrintProgressReporter("")
+if TYPE_CHECKING:
+    from graphrag.query.structured_search.base import SearchResult
+
+logger = PrintProgressLogger("")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -241,7 +243,7 @@ async def local_search(
     TODO: Document any exceptions to expect.
     """
     vector_store_args = config.embeddings.vector_store
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
@@ -307,7 +309,7 @@ async def local_search_streaming(
     TODO: Document any exceptions to expect.
     """
     vector_store_args = config.embeddings.vector_store
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
@@ -380,7 +382,7 @@ async def drift_search(
     TODO: Document any exceptions to expect.
     """
     vector_store_args = config.embeddings.vector_store
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
@@ -430,7 +432,7 @@ def _get_embedding_store(
     collection_name = create_collection_name(
         config_args.get("container_name", "default"), embedding_name
     )
-    embedding_store = VectorStoreFactory.get_vector_store(
+    embedding_store = VectorStoreFactory().create_vector_store(
         vector_store_type=vector_store_type,
         kwargs={**config_args, "collection_name": collection_name},
     )

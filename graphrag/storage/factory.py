@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import StorageType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
@@ -13,29 +13,36 @@ from graphrag.storage.file_pipeline_storage import create_file_storage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 
 if TYPE_CHECKING:
-    from graphrag.index.config.storage import (
-        PipelineBlobStorageConfig,
-        PipelineFileStorageConfig,
-        PipelineStorageConfig,
-    )
+    from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-def create_storage(config: PipelineStorageConfig):
-    """Create a storage object based on the config."""
-    match config.type:
-        case StorageType.memory:
-            return MemoryPipelineStorage()
-        case StorageType.blob:
-            config = cast("PipelineBlobStorageConfig", config)
-            return create_blob_storage(
-                config.connection_string,
-                config.storage_account_blob_url,
-                config.container_name,
-                config.base_dir,
-            )
-        case StorageType.file:
-            config = cast("PipelineFileStorageConfig", config)
-            return create_file_storage(config.base_dir)
-        case _:
-            msg = f"Unknown storage type: {config.type}"
-            raise ValueError(msg)
+class StorageFactory:
+    """A factory class for storage implementations.
+
+    Includes a method for users to register a custom storage implementation.
+    """
+
+    storage_types: ClassVar[dict[str, type]] = {}
+
+    @classmethod
+    def register(cls, storage_type: str, storage: type):
+        """Register a custom storage implementation."""
+        cls.storage_types[storage_type] = storage
+
+    @classmethod
+    def create_storage(
+        cls, storage_type: StorageType | str, kwargs: dict
+    ) -> PipelineStorage:
+        """Create or get a storage object from the provided type."""
+        match storage_type:
+            case StorageType.blob:
+                return create_blob_storage(**kwargs)
+            case StorageType.file:
+                return create_file_storage(**kwargs)
+            case StorageType.memory:
+                return MemoryPipelineStorage()
+            case _:
+                if storage_type in cls.storage_types:
+                    return cls.storage_types[storage_type](**kwargs)
+                msg = f"Unknown storage type: {storage_type}"
+                raise ValueError(msg)

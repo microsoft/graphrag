@@ -15,7 +15,7 @@ from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.prompt_tune.defaults import (
     MIN_CHUNK_OVERLAP,
     MIN_CHUNK_SIZE,
@@ -54,7 +54,7 @@ async def load_docs_in_chunks(
     config: GraphRagConfig,
     select_method: DocSelectionType,
     limit: int,
-    reporter: ProgressReporter,
+    logger: ProgressLogger,
     chunk_size: int = MIN_CHUNK_SIZE,
     n_subset_max: int = N_SUBSET_MAX,
     k: int = K,
@@ -64,7 +64,7 @@ async def load_docs_in_chunks(
         config.embeddings.resolved_strategy()["llm"]
     )
 
-    dataset = await create_input(config.input, reporter, root)
+    dataset = await create_input(config.input, logger, root)
 
     # covert to text units
     chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)

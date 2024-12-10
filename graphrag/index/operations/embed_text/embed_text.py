@@ -217,7 +217,7 @@ def _create_vector_store(
     if collection_name:
         vector_store_config.update({"collection_name": collection_name})
 
-    vector_store = VectorStoreFactory.get_vector_store(
+    vector_store = VectorStoreFactory().create_vector_store(
         vector_store_type, kwargs=vector_store_config
     )
 

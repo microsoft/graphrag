@@ -8,21 +8,18 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
-from pathlib import Path
 from typing import cast
 
 import pandas as pd
 from datashaper import NoopVerbCallbacks, WorkflowCallbacks
 
-from graphrag.cache.factory import create_cache
+from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.index.config.cache import PipelineMemoryCacheConfig
 from graphrag.index.config.pipeline import (
     PipelineConfig,
     PipelineWorkflowReference,
 )
-from graphrag.index.config.storage import PipelineFileStorageConfig
 from graphrag.index.config.workflow import PipelineWorkflowStep
 from graphrag.index.exporter import ParquetExporter
 from graphrag.index.input.factory import create_input
@@ -51,9 +48,9 @@ from graphrag.index.workflows import (
     WorkflowDefinitions,
     load_workflows,
 )
-from graphrag.logging.base import ProgressReporter
-from graphrag.logging.null_progress import NullProgressReporter
-from graphrag.storage.factory import create_storage
+from graphrag.logger.base import ProgressLogger
+from graphrag.logger.null_progress import NullProgressLogger
+from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -67,7 +64,7 @@ async def run_pipeline_with_config(
     update_index_storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    logger: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -85,7 +82,7 @@ async def run_pipeline_with_config(
         - dataset - The dataset to run the pipeline on (this overrides the config)
         - storage - The storage to use for the pipeline (this overrides the config)
         - cache - The cache to use for the pipeline (this overrides the config)
-        - reporter - The reporter to use for the pipeline (this overrides the config)
+        - logger - The logger to use for the pipeline (this overrides the config)
         - input_post_process_steps - The post process steps to run on the input data (this overrides the config)
         - additional_verbs - The custom verbs to use for the pipeline.
         - additional_workflows - The custom workflows to use for the pipeline.
@@ -102,23 +99,32 @@ async def run_pipeline_with_config(
     config = _apply_substitutions(config, run_id)
     root_dir = config.root_dir or ""
 
-    progress_reporter = progress_reporter or NullProgressReporter()
-    storage = storage = create_storage(config.storage)  # type: ignore
+    progress_logger = logger or NullProgressLogger()
+    storage_config = config.storage.model_dump()  # type: ignore
+    storage = storage or StorageFactory().create_storage(
+        storage_type=storage_config["type"],  # type: ignore
+        kwargs=storage_config,
+    )
 
     if is_update_run:
-        # TODO: remove the default choice (PipelineFileStorageConfig) once the new config system enforces a correct update-index-storage config when used.
-        update_index_storage = update_index_storage or create_storage(
-            config.update_index_storage
-            or PipelineFileStorageConfig(base_dir=str(Path(root_dir) / "output"))
+        update_storage_config = config.update_index_storage.model_dump()  # type: ignore
+        update_index_storage = update_index_storage or StorageFactory().create_storage(
+            storage_type=update_storage_config["type"],  # type: ignore
+            kwargs=update_storage_config,
         )
 
-    # TODO: remove the default choice (PipelineMemoryCacheConfig) when the new config system guarantees the existence of a cache config
-    cache = cache or create_cache(config.cache or PipelineMemoryCacheConfig(), root_dir)
+    # TODO: remove the type ignore when the new config system guarantees the existence of a cache config
+    cache_config = config.cache.model_dump()  # type: ignore
+    cache = cache or CacheFactory().create_cache(
+        cache_type=cache_config["type"],  # type: ignore
+        root_dir=root_dir,
+        kwargs=cache_config,
+    )
     # TODO: remove the type ignore when the new config system guarantees the existence of an input config
     dataset = (
         dataset
         if dataset is not None
-        else await create_input(config.input, progress_reporter, root_dir)  # type: ignore
+        else await create_input(config.input, progress_logger, root_dir)  # type: ignore
     )
 
     post_process_steps = input_post_process_steps or _create_postprocess_steps(
@@ -148,12 +154,12 @@ async def run_pipeline_with_config(
             memory_profile=memory_profile,
             additional_verbs=additional_verbs,
             additional_workflows=additional_workflows,
-            progress_reporter=progress_reporter,
+            progress_logger=progress_logger,
             is_resume_run=False,
         ):
             tables_dict[table.workflow] = table.result
 
-        progress_reporter.success("Finished running workflows on new documents.")
+        progress_logger.success("Finished running workflows on new documents.")
         await update_dataframe_outputs(
             dataframe_dict=tables_dict,
             storage=storage,
@@ -161,7 +167,7 @@ async def run_pipeline_with_config(
             config=config,
             cache=cache,
             callbacks=NoopVerbCallbacks(),
-            progress_reporter=progress_reporter,
+            progress_logger=progress_logger,
         )
 
     else:
@@ -175,7 +181,7 @@ async def run_pipeline_with_config(
             memory_profile=memory_profile,
             additional_verbs=additional_verbs,
             additional_workflows=additional_workflows,
-            progress_reporter=progress_reporter,
+            progress_logger=progress_logger,
             is_resume_run=is_resume_run,
         ):
             yield table
@@ -187,7 +193,7 @@ async def run_pipeline(
     storage: PipelineStorage | None = None,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_logger: ProgressLogger | None = None,
     input_post_process_steps: list[PipelineWorkflowStep] | None = None,
     additional_verbs: VerbDefinitions | None = None,
     additional_workflows: WorkflowDefinitions | None = None,
@@ -206,7 +212,7 @@ async def run_pipeline(
             These must exist after any post process steps are run if there are any!
         - storage - The storage to use for the pipeline
         - cache - The cache to use for the pipeline
-        - reporter - The reporter to use for the pipeline
+        - progress_logger - The logger to use for the pipeline
         - input_post_process_steps - The post process steps to run on the input data
         - additional_verbs - The custom verbs to use for the pipeline
         - additional_workflows - The custom workflows to use for the pipeline
@@ -216,7 +222,7 @@ async def run_pipeline(
     """
     start_time = time.time()
 
-    progress_reporter = progress_reporter or NullProgressReporter()
+    progress_reporter = progress_logger or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
     callback_chain = _create_callback_chain(callbacks, progress_reporter)
     context = create_run_context(storage=storage, cache=cache, stats=None)
