@@ -19,7 +19,6 @@ from graphrag.query.input.loaders.utils import (
     to_optional_str,
     to_str,
 )
-from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 
 
 def read_entities(
@@ -60,50 +59,6 @@ def read_entities(
         )
         entities.append(entity)
     return entities
-
-
-def store_entity_semantic_embeddings(
-    entities: list[Entity],
-    vectorstore: BaseVectorStore,
-) -> BaseVectorStore:
-    """Store entity semantic embeddings in a vectorstore."""
-    documents = [
-        VectorStoreDocument(
-            id=entity.id,
-            text=entity.description,
-            vector=entity.description_embedding,
-            attributes=(
-                {"title": entity.title, **entity.attributes}
-                if entity.attributes
-                else {"title": entity.title}
-            ),
-        )
-        for entity in entities
-    ]
-    vectorstore.load_documents(documents=documents)
-    return vectorstore
-
-
-def store_reports_semantic_embeddings(
-    reports: list[CommunityReport],
-    vectorstore: BaseVectorStore,
-) -> BaseVectorStore:
-    """Store entity semantic embeddings in a vectorstore."""
-    documents = [
-        VectorStoreDocument(
-            id=report.id,
-            text=report.full_content,
-            vector=report.full_content_embedding,
-            attributes=(
-                {"title": report.title, **report.attributes}
-                if report.attributes
-                else {"title": report.title}
-            ),
-        )
-        for report in reports
-    ]
-    vectorstore.load_documents(documents=documents)
-    return vectorstore
 
 
 def read_relationships(
@@ -219,7 +174,6 @@ def read_community_reports(
     summary_col: str = "summary",
     content_col: str = "full_content",
     rank_col: str | None = "rank",
-    summary_embedding_col: str | None = "summary_embedding",
     content_embedding_col: str | None = "full_content_embedding",
     attributes_cols: list[str] | None = None,
 ) -> list[CommunityReport]:
@@ -234,9 +188,6 @@ def read_community_reports(
             summary=to_str(row, summary_col),
             full_content=to_str(row, content_col),
             rank=to_optional_float(row, rank_col),
-            summary_embedding=to_optional_list(
-                row, summary_embedding_col, item_type=float
-            ),
             full_content_embedding=to_optional_list(
                 row, content_embedding_col, item_type=float
             ),
@@ -259,7 +210,6 @@ def read_text_units(
     covariates_col: str | None = "covariate_ids",
     tokens_col: str | None = "n_tokens",
     document_ids_col: str | None = "document_ids",
-    embedding_col: str | None = "text_embedding",
     attributes_cols: list[str] | None = None,
 ) -> list[TextUnit]:
     """Read text units from a dataframe."""
@@ -274,7 +224,6 @@ def read_text_units(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            text_embedding=to_optional_list(row, embedding_col, item_type=float),  # type: ignore
             n_tokens=to_optional_int(row, tokens_col),
             document_ids=to_optional_list(row, document_ids_col, item_type=str),
             attributes=(
