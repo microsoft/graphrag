@@ -16,9 +16,6 @@ class TextUnit(Identified):
     text: str
     """The text of the unit."""
 
-    text_embedding: list[float] | None = None
-    """The text embedding for the text unit (optional)."""
-
     entity_ids: list[str] | None = None
     """List of entity IDs related to the text unit (optional)."""
 
@@ -44,7 +41,6 @@ class TextUnit(Identified):
         id_key: str = "id",
         short_id_key: str = "human_readable_id",
         text_key: str = "text",
-        text_embedding_key: str = "text_embedding",
         entities_key: str = "entity_ids",
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
@@ -57,7 +53,6 @@ class TextUnit(Identified):
             id=d[id_key],
             short_id=d.get(short_id_key),
             text=d[text_key],
-            text_embedding=d.get(text_embedding_key),
             entity_ids=d.get(entities_key),
             relationship_ids=d.get(relationships_key),
             covariate_ids=d.get(covariates_key),

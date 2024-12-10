@@ -3,7 +3,7 @@
 
 """All the steps to create the base entity graph."""
 
-from typing import Any, cast
+from typing import Any
 from uuid import uuid4
 
 import networkx as nx
@@ -159,12 +159,10 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
 
 
 def _prep_communities(communities) -> pd.DataFrame:
-    base_communities = pd.DataFrame(
-        communities, columns=cast("Any", ["level", "community", "title"])
-    )
-    base_communities = base_communities.explode("title")
-    base_communities["community"] = base_communities["community"].astype(int)
-    return base_communities
+    # Convert the input into a DataFrame and explode the title column
+    return pd.DataFrame(
+        communities, columns=pd.Index(["level", "community", "parent", "title"])
+    ).explode("title")
 
 
 def _compute_degree(graph: nx.Graph) -> pd.DataFrame:

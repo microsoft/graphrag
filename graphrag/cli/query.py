@@ -16,7 +16,7 @@ from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
-from graphrag.utils.storage import _load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage
 
 logger = PrintProgressLogger("")
 
@@ -124,7 +124,6 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
@@ -273,7 +272,7 @@ def _resolve_output_files(
     for output_file in output_list:
         df_key = output_file.split(".")[0]
         df_value = asyncio.run(
-            _load_table_from_storage(name=output_file, storage=storage_obj)
+            load_table_from_storage(name=output_file, storage=storage_obj)
         )
         dataframe_dict[df_key] = df_value
 
@@ -284,7 +283,7 @@ def _resolve_output_files(
             df_key = optional_file.split(".")[0]
             if file_exists:
                 df_value = asyncio.run(
-                    _load_table_from_storage(name=optional_file, storage=storage_obj)
+                    load_table_from_storage(name=optional_file, storage=storage_obj)
                 )
                 dataframe_dict[df_key] = df_value
             else:
