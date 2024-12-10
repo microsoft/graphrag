@@ -1626,6 +1626,11 @@
 <td>Leiden-generated cluster ID for the community. Note that these increment with depth, so they are unique through all levels of the community hierarchy. For this table, human_readable_id is a copy of the community ID rather than a plain increment.</td>
 </tr>
 <tr>
+<td>parent</td>
+<td>int</td>
+<td>Parent community ID.</td>
+</tr>
+<tr>
 <td>level</td>
 <td>int</td>
 <td>Depth of the community in the hierarchy.</td>
@@ -1677,6 +1682,11 @@
 <td>community</td>
 <td>int</td>
 <td>Short ID of the community this report applies to.</td>
+</tr>
+<tr>
+<td>parent</td>
+<td>int</td>
+<td>Parent community ID.</td>
 </tr>
 <tr>
 <td>level</td>
