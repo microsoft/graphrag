@@ -124,7 +124,6 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_parquet_files(
         config=config,
         parquet_list=[
