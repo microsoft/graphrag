@@ -165,7 +165,6 @@ def _prep_communities(communities) -> pd.DataFrame:
     ).explode("title")
 
 
-
 def _compute_degree(graph: nx.Graph) -> pd.DataFrame:
     return pd.DataFrame([
         {"name": node, "degree": int(degree)}
