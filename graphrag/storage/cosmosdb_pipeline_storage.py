@@ -179,7 +179,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 )
                 if as_bytes:
                     prefix = self._get_prefix(key)
-                    query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
+                    query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
                     queried_items = container_client.query_items(
                         query=query, enable_cross_partition_query=True
                     )
@@ -213,9 +213,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 )
                 # Value represents a parquet file output
                 if isinstance(value, bytes):
-                    print(key)
                     prefix = self._get_prefix(key)
-                    print(prefix)
                     value_df = pd.read_parquet(BytesIO(value))
                     value_json = value_df.to_json(
                         orient="records", lines=False, force_ascii=False
@@ -225,7 +223,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     else:
                         cosmosdb_item_list = json.loads(value_json)
                         for cosmosdb_item in cosmosdb_item_list:
-                            prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
+                            # Append an additional prefix to the id to force a unique identifier for the create_final_nodes rows
+                            if (prefix == "create_final_nodes"):
+                                prefixed_id = f"{prefix}-community_{cosmosdb_item['community']}:{cosmosdb_item['id']}"
+                            else:
+                                prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
                             cosmosdb_item["id"] = prefixed_id
                             container_client.upsert_item(body=cosmosdb_item)
                 # Value represents a cache output or stats.json
@@ -246,7 +248,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 self.container_name
             )
             prefix = self._get_prefix(key)
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
             queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
             )
@@ -260,7 +262,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 self.container_name
             )
             prefix = self._get_prefix(key)
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}:')"  # noqa: S608
+            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
             queried_items = container_client.query_items(
                     query=query, enable_cross_partition_query=True
             )
