@@ -44,6 +44,9 @@ workflows:
             type: static_response
             responses:
               - This is a MOCK response for the LLM. It is summarized!
+
+- name: compute_communities
+    config:
       cluster_graph:
         strategy:
           type: leiden
