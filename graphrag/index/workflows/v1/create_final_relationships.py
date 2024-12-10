@@ -14,7 +14,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_relationships import (
-    create_final_relationships as create_final_relationships_flow,
+    create_final_relationships,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -34,7 +34,7 @@ def build_steps(
     """
     return [
         {
-            "verb": "create_final_relationships",
+            "verb": workflow_name,
             "args": {},
             "input": {
                 "source": "workflow:extract_graph",
@@ -44,10 +44,10 @@ def build_steps(
 
 
 @verb(
-    name="create_final_relationships",
+    name=workflow_name,
     treats_input_tables_as_immutable=True,
 )
-async def create_final_relationships(
+async def workflow(
     runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
@@ -55,6 +55,6 @@ async def create_final_relationships(
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
     base_entity_nodes = await runtime_storage.get("base_entity_nodes")
 
-    output = create_final_relationships_flow(base_relationship_edges, base_entity_nodes)
+    output = create_final_relationships(base_relationship_edges, base_entity_nodes)
 
     return create_verb_result(cast("Table", output))

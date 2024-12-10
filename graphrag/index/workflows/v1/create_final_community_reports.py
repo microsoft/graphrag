@@ -17,7 +17,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_community_reports import (
-    create_final_community_reports as create_final_community_reports_flow,
+    create_final_community_reports,
 )
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 
@@ -53,7 +53,7 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_community_reports",
+            "verb": workflow_name,
             "args": {
                 "summarization_strategy": summarization_strategy,
                 "async_mode": async_mode,
@@ -64,8 +64,8 @@ def build_steps(
     ]
 
 
-@verb(name="create_final_community_reports", treats_input_tables_as_immutable=True)
-async def create_final_community_reports(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -86,7 +86,7 @@ async def create_final_community_reports(
     if claims:
         claims = cast("pd.DataFrame", claims.table)
 
-    output = await create_final_community_reports_flow(
+    output = await create_final_community_reports(
         nodes,
         edges,
         entities,

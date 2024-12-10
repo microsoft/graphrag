@@ -16,7 +16,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_covariates import (
-    create_final_covariates as create_final_covariates_flow,
+    create_final_covariates,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -39,7 +39,7 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_covariates",
+            "verb": workflow_name,
             "args": {
                 "covariate_type": "claim",
                 "extraction_strategy": extraction_strategy,
@@ -51,8 +51,8 @@ def build_steps(
     ]
 
 
-@verb(name="create_final_covariates", treats_input_tables_as_immutable=True)
-async def create_final_covariates(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     runtime_storage: PipelineStorage,
@@ -66,7 +66,7 @@ async def create_final_covariates(
     """All the steps to extract and format covariates."""
     text_units = await runtime_storage.get("base_text_units")
 
-    output = await create_final_covariates_flow(
+    output = await create_final_covariates(
         text_units,
         callbacks,
         cache,

@@ -17,7 +17,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_base_text_units import (
-    create_base_text_units as create_base_text_units_flow,
+    create_base_text_units,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -40,7 +40,7 @@ def build_steps(
     snapshot_transient = config.get("snapshot_transient", False) or False
     return [
         {
-            "verb": "create_base_text_units",
+            "verb": workflow_name,
             "args": {
                 "chunk_by_columns": chunk_by_columns,
                 "chunk_strategy": chunk_strategy,
@@ -51,8 +51,8 @@ def build_steps(
     ]
 
 
-@verb(name="create_base_text_units", treats_input_tables_as_immutable=True)
-async def create_base_text_units(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     input: VerbInput,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
@@ -65,7 +65,7 @@ async def create_base_text_units(
     """All the steps to transform base text_units."""
     source = cast("pd.DataFrame", input.get_input())
 
-    output = await create_base_text_units_flow(
+    output = await create_base_text_units(
         source,
         callbacks,
         storage,

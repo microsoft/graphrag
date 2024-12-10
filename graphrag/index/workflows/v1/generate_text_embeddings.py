@@ -19,7 +19,7 @@ from datashaper import (
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.generate_text_embeddings import (
-    generate_text_embeddings as generate_text_embeddings_flow,
+    generate_text_embeddings,
 )
 from graphrag.index.utils.ds_util import get_required_input_table
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -55,7 +55,7 @@ def build_steps(
     snapshot_embeddings = config.get("snapshot_embeddings", False)
     return [
         {
-            "verb": "generate_text_embeddings",
+            "verb": workflow_name,
             "args": {
                 "text_embed": text_embed,
                 "embedded_fields": embedded_fields,
@@ -66,8 +66,8 @@ def build_steps(
     ]
 
 
-@verb(name="generate_text_embeddings", treats_input_tables_as_immutable=True)
-async def generate_text_embeddings(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     input: VerbInput,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
@@ -93,7 +93,7 @@ async def generate_text_embeddings(
         "pd.DataFrame", get_required_input_table(input, "community_reports").table
     )
 
-    await generate_text_embeddings_flow(
+    await generate_text_embeddings(
         final_documents=source,
         final_relationships=final_relationships,
         final_text_units=final_text_units,

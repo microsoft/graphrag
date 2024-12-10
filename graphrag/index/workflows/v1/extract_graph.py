@@ -17,7 +17,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.extract_graph import (
-    extract_graph as extract_graph_flow,
+    extract_graph,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -48,7 +48,7 @@ def build_steps(
 
     return [
         {
-            "verb": "extract_graph",
+            "verb": workflow_name,
             "args": {
                 "extraction_strategy": extraction_strategy,
                 "extraction_num_threads": extraction_num_threads,
@@ -65,10 +65,10 @@ def build_steps(
 
 
 @verb(
-    name="extract_graph",
+    name=workflow_name,
     treats_input_tables_as_immutable=True,
 )
-async def extract_graph(
+async def workflow(
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
@@ -86,7 +86,7 @@ async def extract_graph(
     """All the steps to create the base entity graph."""
     text_units = await runtime_storage.get("base_text_units")
 
-    base_entity_nodes, base_relationship_edges = await extract_graph_flow(
+    base_entity_nodes, base_relationship_edges = await extract_graph(
         text_units,
         callbacks,
         cache,

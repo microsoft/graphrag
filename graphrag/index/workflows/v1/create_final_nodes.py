@@ -14,7 +14,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_nodes import (
-    create_final_nodes as create_final_nodes_flow,
+    create_final_nodes,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -59,7 +59,7 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_nodes",
+            "verb": workflow_name,
             "args": {
                 "layout_strategy": layout_strategy,
                 "embedding_strategy": embedding_strategy
@@ -74,8 +74,8 @@ def build_steps(
     ]
 
 
-@verb(name="create_final_nodes", treats_input_tables_as_immutable=True)
-async def create_final_nodes(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     callbacks: VerbCallbacks,
     runtime_storage: PipelineStorage,
     layout_strategy: dict[str, Any],
@@ -87,7 +87,7 @@ async def create_final_nodes(
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
     base_communities = await runtime_storage.get("base_communities")
 
-    output = create_final_nodes_flow(
+    output = create_final_nodes(
         base_entity_nodes,
         base_relationship_edges,
         base_communities,

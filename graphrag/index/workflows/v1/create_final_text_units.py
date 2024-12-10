@@ -15,7 +15,7 @@ from datashaper import (
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_text_units import (
-    create_final_text_units as create_final_text_units_flow,
+    create_final_text_units,
 )
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -50,15 +50,15 @@ def build_steps(
 
     return [
         {
-            "verb": "create_final_text_units",
+            "verb": workflow_name,
             "args": {},
             "input": input,
         },
     ]
 
 
-@verb(name="create_final_text_units", treats_input_tables_as_immutable=True)
-async def create_final_text_units(
+@verb(name=workflow_name, treats_input_tables_as_immutable=True)
+async def workflow(
     input: VerbInput,
     runtime_storage: PipelineStorage,
     **_kwargs: dict,
@@ -76,7 +76,7 @@ async def create_final_text_units(
     if final_covariates:
         final_covariates = cast("pd.DataFrame", final_covariates.table)
 
-    output = create_final_text_units_flow(
+    output = create_final_text_units(
         text_units,
         final_entities,
         final_relationships,

@@ -14,7 +14,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_final_entities import (
-    create_final_entities as create_final_entities_flow,
+    create_final_entities,
 )
 from graphrag.storage.pipeline_storage import PipelineStorage
 
@@ -33,7 +33,7 @@ def build_steps(
     """
     return [
         {
-            "verb": "create_final_entities",
+            "verb": workflow_name,
             "args": {},
             "input": {"source": "workflow:extract_graph"},
         },
@@ -41,16 +41,16 @@ def build_steps(
 
 
 @verb(
-    name="create_final_entities",
+    name=workflow_name,
     treats_input_tables_as_immutable=True,
 )
-async def create_final_entities(
+async def workflow(
     runtime_storage: PipelineStorage,
     **_kwargs: dict,
 ) -> VerbResult:
     """All the steps to transform final entities."""
     base_entity_nodes = await runtime_storage.get("base_entity_nodes")
 
-    output = create_final_entities_flow(base_entity_nodes)
+    output = create_final_entities(base_entity_nodes)
 
     return create_verb_result(cast("Table", output))
