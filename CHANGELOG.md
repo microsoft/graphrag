@@ -1,6 +1,14 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.0.0
+
+- patch: Add Parent id to communities data model
+- patch: Add migration notebook.
+- patch: Create separate community workflow, collapse subflows.
+- patch: Dependency Updates
+- patch: cleanup and refactor factory classes.
+
 ## 0.9.0
 
 - minor: Refactor graph creation.
