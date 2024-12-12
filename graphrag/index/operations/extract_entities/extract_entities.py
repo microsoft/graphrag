@@ -183,7 +183,7 @@ def _merge_entities(entity_dfs) -> pd.DataFrame:
     all_entities = pd.concat(entity_dfs, ignore_index=True)
     return (
         all_entities.groupby(["title", "type"], sort=False)
-        .agg({"description": list, "source_id": list})
+        .agg(description=("description", list), text_unit_ids=("source_id", list))
         .reset_index()
     )
 
@@ -192,6 +192,10 @@ def _merge_relationships(relationship_dfs) -> pd.DataFrame:
     all_relationships = pd.concat(relationship_dfs, ignore_index=False)
     return (
         all_relationships.groupby(["source", "target"], sort=False)
-        .agg({"description": list, "source_id": list, "weight": "sum"})
+        .agg(
+            description=("description", list),
+            text_unit_ids=("source_id", list),
+            weight=("weight", "sum"),
+        )
         .reset_index()
     )
