@@ -64,7 +64,7 @@ async def get_delta_docs(
     final_docs = await _load_table_from_storage(
         "create_final_documents.parquet", storage
     )
-
+    print(final_docs)
     # Select distinct title from final docs and from dataset
     previous_docs: list[str] = final_docs["title"].unique().tolist()
     dataset_docs: list[str] = input_dataset["title"].unique().tolist()

@@ -1,0 +1,2803 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d13" for="edge" attr.name="level" attr.type="long" />
+  <key id="d12" for="edge" attr.name="human_readable_id" attr.type="long" />
+  <key id="d11" for="edge" attr.name="id" attr.type="string" />
+  <key id="d10" for="edge" attr.name="source_id" attr.type="string" />
+  <key id="d9" for="edge" attr.name="description" attr.type="string" />
+  <key id="d8" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d7" for="node" attr.name="id" attr.type="string" />
+  <key id="d6" for="node" attr.name="human_readable_id" attr.type="long" />
+  <key id="d5" for="node" attr.name="degree" attr.type="long" />
+  <key id="d4" for="node" attr.name="level" attr.type="long" />
+  <key id="d3" for="node" attr.name="cluster" attr.type="string" />
+  <key id="d2" for="node" attr.name="source_id" attr.type="string" />
+  <key id="d1" for="node" attr.name="description" attr.type="string" />
+  <key id="d0" for="node" attr.name="type" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="DARK T-SHIRT">
+      <data key="d0">CLOTHING, ATTIRE</data>
+      <data key="d1">A dark t-shirt worn by the male influencer, complementing his casual look in the video. It contrasts with the light-colored cap and the car's interior.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">65</data>
+      <data key="d7">ed4c079d10b84542ada26733d40892f7</data>
+    </node>
+    <node id="ENGLISH LYRICS">
+      <data key="d0">TEXT, LYRICS</data>
+      <data key="d1">Lyrics sung in English with phrases like "Baby," "Cause I know you stay," "Meet me at my place," conveying a longing and seductive tone. The lyrics are fragmented and incomplete.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">289</data>
+      <data key="d7">50fffe5067e74591adf4b339b3375fd3</data>
+    </node>
+    <node id="WHITE DRESS">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">620</data>
+      <data key="d7">a4068ce21486451ca0dbc5b816077453</data>
+    </node>
+    <node id="NATHANIEL HUGHES">
+      <data key="d0">PERSON, TIKTOKER</data>
+      <data key="d1">Another TikToker mentioned in the audio, who has 47,000 followers and is associated with a family show in Branson. He is suggested as a potential collaborator with the male influencer and is featured on a flyer wearing a white shirt in the middle.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">429</data>
+      <data key="d7">282c8516432e4f448d14fe5cead08312</data>
+    </node>
+    <node id="ON-SCREEN TEXT">
+      <data key="d0">TEXT</data>
+      <data key="d1">The "ON-SCREEN TEXT" in the video serves multiple purposes. It prominently features phrases such as "Steve Madden Site Wide Sale!!" and "Black Friday Deal," highlighting discounted prices and special sale events, which suggests a promotional theme. Additionally, the text overlay includes a humorous or commentary-based message, "Yeah that's a no for me on country music," adding a layer of personal or comedic expression. The presence of the TikTok logo and the username handle (@hunger4more1212) identifies the platform and the influencer's account, providing context for the source of the content.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00,d10d1600273aae8d1af408f44323e874</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">6</data>
+      <data key="d6">271</data>
+      <data key="d7">ec9302b80b904113982edbde9d88efa5</data>
+    </node>
+    <node id="SEATBELT">
+      <data key="d0">SAFETY FEATURE, VEHICLE COMPONENT</data>
+      <data key="d1">The seatbelt worn by the influencer in the car setting, indicating adherence to safety norms while recording the video. It is a visible element in the video, contributing to the authenticity of the car setting.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">63</data>
+      <data key="d7">807fa4f25f6d4d0db4cea1e1285b380a</data>
+    </node>
+    <node id="YOUNG GIRL">
+      <data key="d0">PERSON, CHILD INFLUENCER</data>
+      <data key="d1">A young girl, likely a child influencer, is featured in the video. She is seen exploring a zoo or animal enclosure, displaying curiosity and excitement through her expressions and body language. Her actions include interacting with a gate and showing agility and curiosity about her surroundings.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">19</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">111</data>
+      <data key="d7">3f369072118e4cbdb88955b5f2785883</data>
+    </node>
+    <node id="NEON SIGNS">
+      <data key="d0">VISUAL ELEMENT, DECOR</data>
+      <data key="d1">Neon signs or posters visible in the video, possibly related to branding or interior décor, enhancing the venue's atmosphere with ambient purple lighting.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">16</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">433</data>
+      <data key="d7">8c06175aeeab45d4a36f28560073f352</data>
+    </node>
+    <node id="COUNTRY MUSIC">
+      <data key="d0">MUSIC GENRE</data>
+      <data key="d1">A genre of music that the influencer expresses disapproval of in the video. The text overlay and body language suggest a humorous rejection of this music style.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">351</data>
+      <data key="d7">53bd8712447f4997b9d98d8527899aa2</data>
+    </node>
+    <node id="SNAPS">
+      <data key="d0">MUSIC, SOUND</data>
+      <data key="d1">Snaps that are part of the audio's percussive elements, contributing to the rhythm and beat.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">297</data>
+      <data key="d7">c81109000b674d048e3e0d6b7661eb00</data>
+    </node>
+    <node id="FEMALE SPEAKER">
+      <data key="d0">PERSON, AUDIO NARRATOR</data>
+      <data key="d1">The FEMALE SPEAKER is a woman who engages her audience with a friendly and upbeat tone. She is known for her detailed and enthusiastic reviews of various products. In one instance, she reviews the Glossier Generation G lipstick, where she expresses enthusiasm and provides a comprehensive description of the product's attributes and her personal experience using it. Additionally, she highlights key features of the Archeer's palm desk lamp in another review. Her voice, generally characterized by a mid-range pitch with slight variations to convey emotion and emphasis, also provides clear instructions and commentary on using a gadget to peel a hard-boiled egg.</data>
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0,a002485b1115c477d55b159ad0d6a57e,c9013479d475e9c29fb961d09468e0d4</data>
+      <data key="d3">48</data>
+      <data key="d4">1</data>
+      <data key="d5">12</data>
+      <data key="d6">346</data>
+      <data key="d7">2d64ef568ed34e939dd7d50ed37f85d1</data>
+    </node>
+    <node id="POP SONG AUDIO">
+      <data key="d0">AUDIO, MUSIC</data>
+      <data key="d1">The audio in the video is a pop song with a fast beat and catchy melody. It features a female vocalist, background vocals, synthesizer, bass, and drums. The lyrics describe a woman's longing for love and companionship, using a repetitive structure and simple lyrics.</data>
+      <data key="d2">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d3">7</data>
+      <data key="d4">0</data>
+      <data key="d5">5</data>
+      <data key="d6">601</data>
+      <data key="d7">952d2b521bdb4f1aae7c6f6b63941958</data>
+    </node>
+    <node id="CAP AND GLASSES">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">67</data>
+      <data key="d7">80fd15fbacfe419687d1aee530fa3b0c</data>
+    </node>
+    <node id="LIPSTICK PACKAGING">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">349</data>
+      <data key="d7">36f9572eb7204f4795083fa4ea6409ac</data>
+    </node>
+    <node id="MINIMALIST WALL DECOR">
+      <data key="d0">OBJECT, DECOR</data>
+      <data key="d1">Minimalist wall decor in the cozy room, enhancing the simple and relaxed aesthetic of the video setting.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">571</data>
+      <data key="d7">626c080eeec64849980d4ce5178f8732</data>
+    </node>
+    <node id="PLANT">
+      <data key="d0">OBJECT, DECOR</data>
+      <data key="d1">A plant present in the foreground of the video, enhancing the homely vibe and contributing to the cozy and relaxed atmosphere.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">566</data>
+      <data key="d7">6b15cfedfcea4edea06d66944f02e086</data>
+    </node>
+    <node id="LYRICS">
+      <data key="d0" />
+      <data key="d1">The lyrics of the song "LYRICS" encompass a range of themes and emotions. They include lines such as "Cuz I can't get it out of my..." and "No, I can't shake this feeling that grows inside," which are delivered with a sense of building intensity. Additionally, the song features lines like "And I hope this ain't surprising, That I've been fantasizing, This ain't no joke, let me clear my throat, I wanna make love to you, It's alright baby, this my favorite love song," indicating a romantic and intimate theme. Furthermore, the lyrics also contain a repeated phrase "White guys 1985," suggesting a social commentary on privilege and societal inequalities. Overall, the lyrics of "LYRICS" blend personal introspection, romantic expression, and social critique.</data>
+      <data key="d2">11fa2ff78c553bc655e39b4fe4ee1f70,bd0108cc8dead065670304d06327cd74,f3b9e809ca452d329def191f4b4841a5,f433a526135612002eb1078cfe3efffd,f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">53</data>
+      <data key="d4">1</data>
+      <data key="d5">11</data>
+      <data key="d6">507</data>
+      <data key="d7">e868d21504d2415f9f7aee05579b7649</data>
+    </node>
+    <node id="POWER LINES">
+      <data key="d0">VISUAL ELEMENT, SCENERY</data>
+      <data key="d1">Visible power lines seen through the car windows, indicating motion and adding context to the setting of the video.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">312</data>
+      <data key="d7">32f680cf242c4cf991e319a750be9582</data>
+    </node>
+    <node id="TEXT ELEMENT">
+      <data key="d0">TEXT, GRAPHIC ELEMENT</data>
+      <data key="d1">The text in the video frame includes a comment bubble and the TikTok username, which are distinct from the influencer, products, humans, and the environment.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">172</data>
+      <data key="d7">7bfdeab0dfc54e9da1f4bf584204fea0</data>
+    </node>
+    <node id="INCOMPLETE LYRICS">
+      <data key="d0">TEXT, LYRICS</data>
+      <data key="d1">Lyrics that are fragmented and incomplete, making it challenging to fully understand the intended message or narrative of the song.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">9</data>
+      <data key="d4">0</data>
+      <data key="d5">2</data>
+      <data key="d6">294</data>
+      <data key="d7">9e32c6075b394568ab3800b52bc59495</data>
+    </node>
+    <node id="LIGHT-COLORED CAP">
+      <data key="d0">CLOTHING, ACCESSORY</data>
+      <data key="d1">A light-colored cap worn by the male influencer, contrasting with the dark tones of the car's interior. It is part of his casual attire in the video.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">64</data>
+      <data key="d7">21ad90c1a77441c6a755c6d1d921fee4</data>
+    </node>
+    <node id="PINK COILED CABLE">
+      <data key="d0">OBJECT, TECHNOLOGY</data>
+      <data key="d1">A pink coiled cable, potentially connected to the keyboard, contributing to the coordinated and visually appealing setup of the desk.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">701</data>
+      <data key="d7">f0d20849a207403faa5027c22bf35748</data>
+    </node>
+    <node id="T-SHIRT GRAPHIC">
+      <data key="d0">CLOTHING, BRANDING</data>
+      <data key="d1">The male influencer's t-shirt might feature a graphic or logo, signifying a brand or theme, contributing to the video’s setting and thematic presentation.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">435</data>
+      <data key="d7">0e8eae94e1bd471d90554f2d404bd1c6</data>
+    </node>
+    <node id="MALE VOICE">
+      <data key="d0">AUDIO ELEMENT, SOUND EFFECT</data>
+      <data key="d1">The entity "MALE VOICE" is characterized by a deep pitch and serves multiple roles in the audio content. In one context, it speaks in a casual tone, adding humor to the video with statements about power levels, which helps engage the listener through emphasis and enthusiasm. This voice is the primary audio feature in the video, maintaining a consistent speaking style and pitch to convey information clearly. Additionally, the male voice is also used in a musical context, where it sings soulfully over a simple arrangement of bass, pad, and snaps. In this setting, several vocal effects are applied, including heavy reverb, delay, and possible pitch correction, enhancing the overall auditory experience.</data>
+      <data key="d2">1d61e6e87599f01151314e67240b7321,74fdb1c52ec4f67c2566984663b08219,ae1e678816d07e8ac191b47b471cbd56,b7888713fc5a3eca49219867b85e733f,c7c7d1dd41b138ad696677699a556b06,e3b6a53cbf465db59d385d6199f0e94d</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">21</data>
+      <data key="d6">35</data>
+      <data key="d7">e1e40ac30f28462db62df78fea4e6edd</data>
+    </node>
+    <node id="MEDIUM SILENCES">
+      <data key="d0">AUDIO CHARACTERISTIC, PAUSE</data>
+      <data key="d1">"MEDIUM SILENCES" are strategically used pauses in audio or speech that typically last between 0.5 to 3 seconds. These silences serve multiple purposes, such as creating anticipation, emphasizing key points, and marking transitions in the narrative or musical composition. They are often employed to build suspense, allow the audience time to process information, or provide a clear transition between sections. For instance, in a musical context, a medium silence around 0:14-0:17 separates the first vocal section from the main song, enhancing the build-up of anticipation. Similarly, in speech, these pauses can occur at the end of phrases like "to the ground" or "provoke in me," allowing the music or narrative to breathe. Examples of such pauses can be found at timestamps 0:12, 0:28, 0:34, 0:35, and 0:39, where they indicate transitions between thoughts or slightly emphasize a point. Overall, medium silences are a deliberate and effective tool in both audio and speech to enhance the delivery and impact of the content.</data>
+      <data key="d2">1168d88d5cced606799459db965be8b6,303db47682136626158d85218710d9e1,467639eef6c05cc36566fb35e09bae99,6ca723d21ba0d9357481799d2b8dd215,9e39d246b4204a1737fd53531a94cc68,aec4bb257e3f06ebbd5c93d1ad3ff979,b5a5bb9683c2c2432ec2b2f215b5be96,b7888713fc5a3eca49219867b85e733f,e4c3a8d3563fe52ffe078dab7f26e32a,fde37cde07d353300c509863b626745b</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">16</data>
+      <data key="d6">75</data>
+      <data key="d7">6740ec0ec3624d388e0d7c6ee7f26c93</data>
+    </node>
+    <node id="METAL GATE AND PADLOCK">
+      <data key="d0">OBJECTS, VISUAL ELEMENTS</data>
+      <data key="d1">A black metal gate and silver padlock are visible in the video, contributing to the setting's context. The gate is a focal point for the young girl's interaction and exploration.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">19</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">113</data>
+      <data key="d7">a05e9f694832446381c6b85ab20c4a05</data>
+    </node>
+    <node id="GUITARS">
+      <data key="d0">OBJECTS, DECOR</data>
+      <data key="d1">Multiple guitars are mounted on the wall in the background, indicating a possible interest in music or serving as decorative elements in the indoor setting.</data>
+      <data key="d2">f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">56</data>
+      <data key="d4">2</data>
+      <data key="d5">2</data>
+      <data key="d6">514</data>
+      <data key="d7">8b64b4a64d044cd5b2b22747a22479d8</data>
+    </node>
+    <node id="MUFFLED VOICE EFFECT">
+      <data key="d0">AUDIO EFFECT, SOUND MODIFICATION</data>
+      <data key="d1">An audio effect achieved by placing a blanket over the speaker's head, demonstrating the improvement in audio quality. This effect is used to provide a clear example of the tutorial's effectiveness.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">11</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">553</data>
+      <data key="d7">47f914c396bb45309f1944b2f0a8c0d5</data>
+    </node>
+    <node id="KITCHEN SETTING">
+      <data key="d0">LOCATION, VISUAL ELEMENT</data>
+      <data key="d1">The setting of the video is a kitchen, which combines elements of both modern and cozy domestic environments. It features a modern stove, microwave, and a light blue kettle, contributing to the authenticity typical of cooking videos. The kitchen includes white cabinets and a speckled or granite countertop, enhancing its modern appeal. Additionally, the setting incorporates neutral tones with dark brown cabinets and tan or beige-colored tile flooring, creating a cozy atmosphere. A refrigerator with various items on it adds to the casual and domestic feel of the space. Overall, the kitchen setting effectively blends modern and homey elements, making it an ideal backdrop for cooking videos.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00,d96bb6a76269bc6033b49d4061dfb8b1</data>
+      <data key="d3">14</data>
+      <data key="d4">1</data>
+      <data key="d5">13</data>
+      <data key="d6">350</data>
+      <data key="d7">4bc4eb5c0a474c368fe758c010a7f328</data>
+    </node>
+    <node id="CLOTHING ELEMENTS WITH TEXT AND GRAPHICS">
+      <data key="d0">CLOTHING, VISUAL ELEMENT</data>
+      <data key="d1">Clothing elements worn by the male influencer that include text and graphics, adding to the visual interest and style of the video. These elements are part of the visual presentation.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">558</data>
+      <data key="d7">ab4d2617dda940ba802517cf349df339</data>
+    </node>
+    <node id="POSTERS AND SIGNS">
+      <data key="d0">VISUAL ELEMENT, DECOR</data>
+      <data key="d1">Posters and signs on the walls of the venue suggest a business or organizational setting, adding to the ambiance and providing visual context for the video.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">16</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">432</data>
+      <data key="d7">be658b30b1c54c7dbc49205faa051d6d</data>
+    </node>
+    <node id="CHARACTER ILLUSTRATIONS">
+      <data key="d0">DESIGN, VISUAL ELEMENT</data>
+      <data key="d1">Illustrations of characters like Kirby, featured on the decorative mat, contributing to the playful and vibrant theme of the desk setup.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">699</data>
+      <data key="d7">fca8adcf14f842f6a22e051fa306fd68</data>
+    </node>
+    <node id="TERABOX APP">
+      <data key="d0">APPLICATION, CLOUD STORAGE</data>
+      <data key="d1">TeraBox App is an application that offers users a full terabyte of free cloud storage. It serves as an alternative to purchasing additional phone storage, particularly for Android phone users. The app is highlighted in a video that explains the installation process and how to effectively use TeraBox to manage and expand storage capacity without incurring extra costs.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980,f47477a557c7bb194b0ab4d2f3a671db</data>
+      <data key="d3">40</data>
+      <data key="d4">1</data>
+      <data key="d5">8</data>
+      <data key="d6">168</data>
+      <data key="d7">e7ca689cd6014b348fbdee7ea4c5036e</data>
+    </node>
+    <node id="VERTICAL BLINDS">
+      <data key="d0">VISUAL ELEMENT, LOCATION FEATURE</data>
+      <data key="d1">Vertical blinds visible in the indoor setting, suggesting the filtering of natural light into the room. They are part of the visual elements that contribute to the ambiance of the video setting.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">555</data>
+      <data key="d7">c942edd2a847489ca8329b23d5a5db64</data>
+    </node>
+    <node id="PROMOTIONAL TEXT">
+      <data key="d0">TEXT, PROMOTIONAL CONTENT</data>
+      <data key="d1">Additional promotional text displayed on the screen, including "FALL PRINCESS POLLY try-on haul," providing context for the video content.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">57</data>
+      <data key="d4">2</data>
+      <data key="d5">2</data>
+      <data key="d6">619</data>
+      <data key="d7">d440fad95c254e3fa5de695c206f8f1e</data>
+    </node>
+    <node id="PRODUCTS">
+      <data key="d0">OBJECTS, VISUAL ELEMENTS</data>
+      <data key="d1">The video prominently features various products that are neatly arranged to grab attention. These products are related to gaming or desk setup, contributing significantly to the video's aesthetic and organizational theme. Additionally, these products play a crucial role in enhancing the context and theme of the video content.</data>
+      <data key="d2">27b2a836d1ffe890ac66ef37a9ae297d,f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">54</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">98</data>
+      <data key="d7">e7f323e26af74550948a306c40eb3bb7</data>
+    </node>
+    <node id="TEXT OVERLAY">
+      <data key="d0">TEXT, VISUAL ELEMENT</data>
+      <data key="d1">TEXT OVERLAY is a dynamic and interactive element commonly used in influencer videos to engage viewers and enhance the storytelling experience. These overlays often display viewer questions, which the influencer responds to, fostering a direct connection with the audience. For instance, a text overlay might present a comment like "S22 ultra vs 12s ultra moon shot," centrally placed near the bottom of the frame, to highlight a comparison between smartphone camera capabilities. This type of engagement is typical in influencer content, drawing viewers into the discussion.
+
+Additionally, text overlays can serve promotional purposes, such as displaying discount codes like "use code: RACHK" during a "FALL PRINCESS POLLY try-on haul," or featuring product information and sponsorship details, as seen with "Glossier’s Generation G" and hashtags like "#glossierpartner." These elements provide viewers with valuable information and encourage interaction with the brand.
+
+Text overlays also contribute to the thematic and comedic aspects of videos. For example, phrases like "Give Me A Few Years" suggest themes of transformation, while "When She drives" sets a comedic tone. Promotional campaigns are often highlighted through overlays, such as "come #suja with me :)" which invites viewers to engage with a brand or product.
+
+Furthermore, text overlays can convey tips or tricks, as seen with "BEST WHATABURGER HACK," immediately informing viewers of the video's focus. They also provide context for ongoing series or narratives, like "New TikTok series lol stump the wife" with the TikTok handle `@hunger4more1212`, or humorous scenarios such as "POV: You let yourself get too relaxed that your family snuck up on you."
+
+Overall, TEXT OVERLAY is a versatile tool that enhances video content by providing information, promoting engagement, and enriching the viewer's experience through humor, narrative, and promotional elements.</data>
+      <data key="d2">1d61e6e87599f01151314e67240b7321,27b2a836d1ffe890ac66ef37a9ae297d,41206a9dcbd9f0296df0c8a5c5cb55bb,5716c08ba1e84f95ed3ae2cb20f7d956,84363de382dfc88a3a818e2028fda415,8a2c54c41399f62724f15cdee3cfaf06,9620abc87541ef7979d1fb884c699247,9b9b7ae98cb6226b1ccb4917fc58dfd8,d754e889db4471d37bb3e6a1209d3621,e9187a72c14026d3d916a08f483b49be,eb90a53aab5db4531bc49f4f0f15b305,ee1bcc0411ef220776c26d57fda23165,f2a29d0c2328e43988fa2ccd045264cd,f38a9d67287854bb1aa006c7a6f767f5,f66823b405d45f64b1b8d18f4cccd0ac,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">57</data>
+      <data key="d4">2</data>
+      <data key="d5">14</data>
+      <data key="d6">81</data>
+      <data key="d7">76ec42bf2ef94d53bc4d5599520cb66a</data>
+    </node>
+    <node id="GESTURES">
+      <data key="d0">VISUAL ELEMENT, BODY LANGUAGE</data>
+      <data key="d1">The male influencer uses hand movements and body language to convey high energy and enthusiasm, supporting the perception of engagement with the topic.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">169</data>
+      <data key="d7">1cde9a181025407089f048c7d1fb644a</data>
+    </node>
+    <node id="FLOOR RUG">
+      <data key="d0">OBJECT, DECOR</data>
+      <data key="d1">A floor rug in the cozy room, adding texture and warmth to the setting and contributing to the relaxed atmosphere.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">570</data>
+      <data key="d7">149d6510a4504735bec7cbadd81fc8e6</data>
+    </node>
+    <node id="PAD">
+      <data key="d0">MUSIC, INSTRUMENT</data>
+      <data key="d1">A pad sound that forms part of the musical arrangement, adding depth and texture to the audio.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">296</data>
+      <data key="d7">b489e6a2d5744f53bcb64c909ed8e7c2</data>
+    </node>
+    <node id="MALE PARTNER">
+      <data key="d0">PERSON, CHARACTER</data>
+      <data key="d1">The male partner in the video, whose cautious and calm driving style is humorously contrasted with the female partner's spirited driving. He is part of the comedic theme exploring differences in driving behavior between a couple.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">309</data>
+      <data key="d7">471fd617d308414397d606872e7db763</data>
+    </node>
+    <node id="SUJA DRINK BOTTLE">
+      <data key="d0">PRODUCT, BEVERAGE</data>
+      <data key="d1">A bottle labeled "Suja ORGANIC" and "GINGER LOVE," featuring ingredients like purified water, lemon, ginger, and pineapple. It is part of the visual elements in the video, possibly indicating a focus on health or wellness.</data>
+      <data key="d2">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d3">57</data>
+      <data key="d4">2</data>
+      <data key="d5">4</data>
+      <data key="d6">599</data>
+      <data key="d7">a0a71155deda43d7a411b33091dd6c88</data>
+    </node>
+    <node id="CASUAL ATTIRE">
+      <data key="d0">CLOTHING, FASHION</data>
+      <data key="d1">CASUAL ATTIRE refers to the clothing worn by the male influencer, which is typical for dance videos. This attire complements the energetic and rhythmic style of the performance, enhancing the overall visual appeal and movement fluidity.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d,8daf89fe23d41add9c9c2b43d52a4074</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">305</data>
+      <data key="d7">a9c3a665af9e48c2822cba0f96ba4479</data>
+    </node>
+    <node id="BRIGHT BLUE SKY">
+      <data key="d0">VISUAL ELEMENT, SCENERY</data>
+      <data key="d1">The bright blue sky visible through the car windows, contributing to the visual setting and atmosphere of the video.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">313</data>
+      <data key="d7">f603ddb0fcbf4b4c880b9dad47aed862</data>
+    </node>
+    <node id="UPBEAT BACKGROUND TUNE">
+      <data key="d0">AUDIO ELEMENT, MUSIC</data>
+      <data key="d1">A lighthearted, upbeat tune playing in the background of the video, contributing to the overall positive and engaging tone of the audio.</data>
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d3">48</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">347</data>
+      <data key="d7">ba503e3aa1d147068ad98242d804366e</data>
+    </node>
+    <node id="THE AXE GAME">
+      <data key="d0">ACTIVITY, THEME</data>
+      <data key="d1">A potential activity or theme of the venue, suggested by the text on the male influencer's shirt. It implies that the venue might be an axe-throwing establishment or offer similar entertainment options.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">428</data>
+      <data key="d7">ec0fc30764e24b5e98113c32057a34c7</data>
+    </node>
+    <node id="WICKER CHAIR">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">573</data>
+      <data key="d7">d9a1170c31d2479ca3abbf9198d9016b</data>
+    </node>
+    <node id="EYEGLASSES">
+      <data key="d0">ACCESSORY, VISUAL ELEMENT</data>
+      <data key="d1">Eyeglasses worn by the male influencer, contributing to his appearance and possibly aiding in reading or viewing content during the video. They are part of the visual elements that define the influencer's presentation style.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">556</data>
+      <data key="d7">9ec1afeb40964954b88439721588ee90</data>
+    </node>
+    <node id="ZOO OR ANIMAL ENCLOSURE">
+      <data key="d0">LOCATION, OUTDOOR SETTING</data>
+      <data key="d1">The setting of the video appears to be a zoo or animal enclosure, characterized by a fenced area and lush, natural surroundings. This environment provides a backdrop for the young girl's exploration and interaction with animals.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">19</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">112</data>
+      <data key="d7">68c64ccb60614a6da962ee978f13a2de</data>
+    </node>
+    <node id="DIM LIGHTING">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">16</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">436</data>
+      <data key="d7">28df1edcd2fe4aca948b8ee76adc15dc</data>
+    </node>
+    <node id="MELLOW AND SENSUAL MOOD">
+      <data key="d0">MOOD, TONE</data>
+      <data key="d1">The overall mood of the audio, characterized by a mellow and sensual tone, conveyed through the combination of the male voice, lyrics, and musical arrangement.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">293</data>
+      <data key="d7">496b2e0936dc4db79ba4ef8413152cb5</data>
+    </node>
+    <node id="CLOTHING TAGS">
+      <data key="d0">OBJECTS, FASHION</data>
+      <data key="d1">Visible tags attached to the clothing items the influencer is holding, providing additional information about the products.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">617</data>
+      <data key="d7">aea38162b7574ae8892695e21efdd856</data>
+    </node>
+    <node id="SECOND MALE VOICE">
+      <data key="d0">PERSON, AUDIO ELEMENT</data>
+      <data key="d1">A different male voice, higher pitched, responds in the audio, adding to the call-and-response pattern and enhancing the dynamic nature of the sound environment.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">51</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">117</data>
+      <data key="d7">371db4abdd4c447fb841c69bb2c91831</data>
+    </node>
+    <node id="GLOSSIER GENERATION G LIPSTICK">
+      <data key="d0">PRODUCT, COSMETIC</data>
+      <data key="d1">The "GLOSSIER GENERATION G LIPSTICK" is a lip product from Glossier's Generation G line, specifically showcased in the shade "Fuzz." This lipstick is prominently featured in a video by an influencer, who demonstrates its effect and texture. The product is highlighted for its ease of application and buildable nature, making it the perfect everyday lipstick.</data>
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0,f2a29d0c2328e43988fa2ccd045264cd</data>
+      <data key="d3">34</data>
+      <data key="d4">1</data>
+      <data key="d5">6</data>
+      <data key="d6">340</data>
+      <data key="d7">c884ec9d3fc44468a481858890749f79</data>
+    </node>
+    <node id="CLOTHING ITEMS">
+      <data key="d0">OBJECTS, FASHION</data>
+      <data key="d1">Several clothing items held by the influencer, indicating a fashion or try-on haul theme in the video.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">615</data>
+      <data key="d7">7f0f7e0d29214ad1bd1bafdcdcfa3074</data>
+    </node>
+    <node id="MECHANICAL PINK-THEMED KEYBOARD">
+      <data key="d0">OBJECT, TECHNOLOGY</data>
+      <data key="d1">A mechanical keyboard with a pink theme, part of the desk setup. It contributes to the coordinated and visually appealing aesthetic of the workspace.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">694</data>
+      <data key="d7">570144f7d45748fb97c42d851afe7eeb</data>
+    </node>
+    <node id="TIKTOK USERNAME">
+      <data key="d0">INFLUENCER IDENTITY</data>
+      <data key="d1">The TikTok usernames "@imparkerburton," "@jookstogo," and "@sarahweldonbeauty" are visible in various videos, each serving to identify the respective influencers and link their content to their social media presence. "@imparkerburton" and "@jookstogo" are displayed in the top-left corner of the videos, often accompanied by TikTok's logo, highlighting their social media presence and providing a way for viewers to follow or engage with them. Meanwhile, "@sarahweldonbeauty" is associated with a female influencer, and its visibility in the video provides context for the content, linking it to her social media account.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630,2ecf3238379fca69be65d8f0b90fb96e,76a0e88ba9039b6cbe2445b0b9ae1980,8887036f161d1487e43e279ca1317b51,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">7</data>
+      <data key="d6">167</data>
+      <data key="d7">6debb0be7d4a473eab18eb9ce6fc3364</data>
+    </node>
+    <node id="LIGHTING">
+      <data key="d0">VISUAL ELEMENT, ENVIRONMENT</data>
+      <data key="d1">The video features a variety of lighting elements under the entity "LIGHTING," which collectively contribute to a warm and inviting atmosphere. Ceiling lights are used to provide a bright and cozy setting in the kitchen space, enhancing the overall ambiance. Additionally, artificial lighting, likely from softbox lights, offers a soft glow that further enhances the visual appeal. Several hanging light bulbs are also present, adding to the indoor setting's cozy atmosphere. Together, these lighting elements play a crucial role in enhancing both the mood and visual appeal of the video.</data>
+      <data key="d2">032ec3a1fb3a29419b053a5c3833d86f,24b558d41f8cd017c8a8372409d44e00,f38a9d67287854bb1aa006c7a6f767f5</data>
+      <data key="d3">14</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">355</data>
+      <data key="d7">e5d58a8afbd246fb9c624b0e5f1f4eac</data>
+    </node>
+    <node id="SHORT SILENCES">
+      <data key="d0">AUDIO CHARACTERISTIC, PAUSE</data>
+      <data key="d1">"SHORT SILENCES" are brief pauses occurring throughout audio content, each lasting less than one second. These pauses are strategically used by speakers to emphasize points, separate phrases, and enhance the clarity and pacing of speech. They occur frequently and naturally, often between words and phrases, contributing to the natural rhythm and flow of conversation. In musical contexts, these short silences, typically under 0.5 seconds, are sprinkled between musical phrases, providing a sense of breathing room and rhythmic anticipation. Examples of these pauses can be found at various timestamps, such as 0:04, 0:06, 0:09, 0:11, 0:15, and 0:17, particularly within repetitive sections like "rama rama" for lyrical emphasis. Overall, these natural pauses play a crucial role in the delivery and comprehension of both speech and music.</data>
+      <data key="d2">00e15aa16b1c81ca264ac34dc0429907,467639eef6c05cc36566fb35e09bae99,6ca723d21ba0d9357481799d2b8dd215,9e39d246b4204a1737fd53531a94cc68,aec4bb257e3f06ebbd5c93d1ad3ff979,b5a5bb9683c2c2432ec2b2f215b5be96,b7888713fc5a3eca49219867b85e733f,bd0108cc8dead065670304d06327cd74,e433bfd46d756de31fd1118e0cfb1923,e4c3a8d3563fe52ffe078dab7f26e32a,fde37cde07d353300c509863b626745b</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">18</data>
+      <data key="d6">74</data>
+      <data key="d7">e8d8dadfdfde4112acb4ffd132a38585</data>
+    </node>
+    <node id="BRIGHT PASTEL THEME">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">702</data>
+      <data key="d7">72b2c2c797ad42ff9783f00d2fddf9ba</data>
+    </node>
+    <node id="BASS">
+      <data key="d0">MUSIC, INSTRUMENT</data>
+      <data key="d1">A simple bass arrangement that accompanies the male voice, contributing to the audio's musical composition.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">295</data>
+      <data key="d7">f49975303dca437c987b95d4d5f70772</data>
+    </node>
+    <node id="LONG SILENCES">
+      <data key="d0">AUDIO CHARACTERISTIC, PAUSE</data>
+      <data key="d1">"LONG SILENCES" refer to pauses in speech or music that last over 2 seconds. These pauses are typically used to create suspense and engage the listener, often leaving them wanting more. In musical contexts, such pauses are unlikely unless there is a musical bridge or breakdown not reflected in the provided text. In speech, these silences can be accompanied by non-verbal sounds like laughter and are used deliberately to indicate the end of a thought, prompt a response or interaction, or signal a transition to a new topic. They serve as a tool for the speaker to gather thoughts before continuing or to emphasize the conclusion of a section.</data>
+      <data key="d2">303db47682136626158d85218710d9e1,b5a5bb9683c2c2432ec2b2f215b5be96,e4c3a8d3563fe52ffe078dab7f26e32a,fde37cde07d353300c509863b626745b</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">9</data>
+      <data key="d6">76</data>
+      <data key="d7">e204d292d3824db8a779b2b2be6e754a</data>
+    </node>
+    <node id="INFLUENCER">
+      <data key="d0">PERSON, CONTENT CREATOR</data>
+      <data key="d1">The INFLUENCER is an individual whose gender is not identifiable from the content provided. This influencer is featured in various creative roles across different videos. In one video, they demonstrate the process of making bear-shaped onigiri, engaging the audience with their creative presentation of the recipe. In another video, the influencer showcases a desk setup, organizing and decorating it with a colorful and creative theme to enhance its aesthetic appeal. Additionally, the influencer presents a transformation or glow-up themed video, utilizing a before-and-after concept that captures their expressions transitioning from nostalgic reflection to joy. Through these diverse roles, the influencer effectively engages their audience by creatively presenting content across different themes.</data>
+      <data key="d2">8887036f161d1487e43e279ca1317b51,8a2c54c41399f62724f15cdee3cfaf06,f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">29</data>
+      <data key="d4">1</data>
+      <data key="d5">16</data>
+      <data key="d6">278</data>
+      <data key="d7">ec32d3c9d215479d9596da380e01a3f8</data>
+    </node>
+    <node id="CLEAN MINIMALISTIC BACKDROP">
+      <data key="d0">LOCATION, VISUAL ELEMENT</data>
+      <data key="d1">The setting of the video features closet doors and light wooden flooring, creating a clean and minimalistic backdrop. This environment appears tidy and well-lit, likely from natural light.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">614</data>
+      <data key="d7">4a6b5b29874b424189708c61137b1a35</data>
+    </node>
+    <node id="GRANDMOTHER">
+      <data key="d0">PERSON, FAMILY MEMBER</data>
+      <data key="d1">The male influencer's grandmother, who is mentioned in the anecdote shared in the video. She is part of a conversation about marriage, providing advice and humorous commentary on the influencer's relationship status.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">62</data>
+      <data key="d7">202126427486441db0c5eb994ba83a18</data>
+    </node>
+    <node id="BRANSON, MISSOURI">
+      <data key="d0">GEO, LOCATION</data>
+      <data key="d1">The location mentioned in the audio where both the male influencer and Nathaniel Hughes are based. It is suggested as a place with entertainment options and a community of TikTokers.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">1</data>
+      <data key="d6">430</data>
+      <data key="d7">20cb077faef748298f7ad26355f5e8fa</data>
+    </node>
+    <node id="ACOUSTIC GUITAR">
+      <data key="d0">INSTRUMENT, MUSICAL ELEMENT</data>
+      <data key="d1">The acoustic guitar is a key instrument used in the song, contributing to its slow, steady tempo and contemplative mood. It is an integral part of the instrumental arrangement that supports the male vocalist. Additionally, the guitar is played by a male influencer, who uses it to showcase his musical talent or share a personal rendition of a song. This makes the acoustic guitar central to the music-related theme of the video.</data>
+      <data key="d2">a6b893ef90b65fe97e03cc57bc42da5c,e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">49</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">358</data>
+      <data key="d7">9ffd908349f2466784e95789f8eac870</data>
+    </node>
+    <node id="SOULFUL FEMALE VOCALIZATION">
+      <data key="d0">AUDIO, MUSIC</data>
+      <data key="d1">The audio begins with a soulful, female vocalization "oh, oh" held over a simple, mid-tempo beat, creating an intimate and emotional atmosphere.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">53</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">618</data>
+      <data key="d7">51173b4e543f42f298f795200709598b</data>
+    </node>
+    <node id="KITCHEN APPLIANCE">
+      <data key="d0">OBJECT, VISUAL ELEMENT</data>
+      <data key="d1">A refrigerator visible in the background, with various items and magnets or notes attached, adding a personalized touch to the kitchen setting.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d3">14</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">354</data>
+      <data key="d7">5ee49c92f47242668ef070489152b29b</data>
+    </node>
+    <node id="AUDIO TUTORIAL">
+      <data key="d0">AUDIO CONTENT, INSTRUCTIONAL</data>
+      <data key="d1">The audio component of the video is a tutorial on achieving crispier audio for voiceovers. It includes instructions on microphone placement and using a blanket to improve audio quality, with examples and notable audio effects to demonstrate the difference in sound.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">11</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">552</data>
+      <data key="d7">af7f9294588342d59a04728d65e60c52</data>
+    </node>
+    <node id="SOCIAL HANDLE">
+      <data key="d0">INFLUENCER IDENTITY</data>
+      <data key="d1">The social media handle @hunger4more121, also referred to as @HUNGER4MORE1212, belongs to a male influencer who presents videos and engages with viewers on TikTok. This handle provides a way for followers to connect with the content creator and stay updated with his content.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00,fbeec581b9233e618159eac9c7933c6e</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">186</data>
+      <data key="d7">52273d6d1a3c45ba9d6fc13ee0c7761e</data>
+    </node>
+    <node id="NATURAL OR ARTIFICIAL LIGHTING">
+      <data key="d0">VISUAL ELEMENT, LIGHTING</data>
+      <data key="d1">The lighting in the cozy room, which enhances the warm ambiance and contributes to the comfortable atmosphere of the video setting.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">572</data>
+      <data key="d7">8c6e3c44029545fc99b0ed69470e6f5e</data>
+    </node>
+    <node id="OVERALL DEMEANOR">
+      <data key="d0">PERSONALITY, BEHAVIOR</data>
+      <data key="d1">The male influencer appears comfortable and confident, with a clear intention to effectively convey his message, showing no visible signs of discomfort or insincerity.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">171</data>
+      <data key="d7">52782719f3334fd09cef278172f70f40</data>
+    </node>
+    <node id="CROWD NOISE">
+      <data key="d0">AUDIO ELEMENT, SOUND ENVIRONMENT</data>
+      <data key="d1">The entity "CROWD NOISE" is characterized by indistinct chatter and movement audible in the background, which contributes to a lively and dynamic sound environment. This noise suggests the presence of a crowd, adding authenticity to the video. Particularly noticeable when the drumming stops, the crowd noise becomes more prominent, further indicating the presence of people. Additionally, the realistic swelling and fading of the crowd noise in the boxing match audio reflect the excitement and energy typical of a live sporting event. Overall, the crowd noise enhances the realism and immersive experience of the video.</data>
+      <data key="d2">0b77bfb215d0816191bf058f62eb5b59,8daf89fe23d41add9c9c2b43d52a4074,c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">8</data>
+      <data key="d4">0</data>
+      <data key="d5">7</data>
+      <data key="d6">118</data>
+      <data key="d7">bb7ae3a85fc84a6089889eef5992c9c2</data>
+    </node>
+    <node id="12S ULTRA">
+      <data key="d0">TECHNOLOGY, SMARTPHONE</data>
+      <data key="d1">Another smartphone model featured in the video, also known for its camera capabilities. The video compares its performance, particularly in capturing images of the moon, against the S22 Ultra.</data>
+      <data key="d2">84363de382dfc88a3a818e2028fda415</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">80</data>
+      <data key="d7">1edf0d4988ef416b883059bc90ef7fc7</data>
+    </node>
+    <node id="HAT WITH LOGO">
+      <data key="d0">CLOTHING, BRANDING</data>
+      <data key="d1">The male influencer wears a hat with a visible logo or text, contributing to the video’s setting and thematic presentation, possibly indicating a brand or theme.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">434</data>
+      <data key="d7">cdd2a3924ef54280a57fbb8943b3795a</data>
+    </node>
+    <node id="HIP HOP SONG">
+      <data key="d0">AUDIO, MUSIC</data>
+      <data key="d1">The audio track used in the video, featuring a hip hop song with heavy bass. It includes a catchy beat, electronic melody, and male rapping vocals, contributing to the video's energetic and entertaining atmosphere.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">18</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">310</data>
+      <data key="d7">bd0001588cec49da872b300099a4f89a</data>
+    </node>
+    <node id="ROCK ON GESTURE">
+      <data key="d0">HAND GESTURE, BODY LANGUAGE</data>
+      <data key="d1">A hand gesture used by the influencer, known as the "rock on" or "devil horns" gesture. It involves the fist being mostly closed, with the index and pinky fingers extended, often signaling enjoyment or excitement.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">66</data>
+      <data key="d7">03c740ae2ec54d709b8cca6d4919b9b3</data>
+    </node>
+    <node id="INDOOR AMBIENT SOUNDS">
+      <data key="d0">BACKGROUND NOISE, AUDIO ELEMENT</data>
+      <data key="d1">Minor ambient sounds common to indoor spaces, slightly affecting the noise floor but not significantly impacting the clarity of the speaker's voice.</data>
+      <data key="d2">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">655</data>
+      <data key="d7">1044a719ea0241f0bef4eb1d52b67274</data>
+    </node>
+    <node id="FEMALE VOCAL MELODY">
+      <data key="d0">AUDIO, MUSIC</data>
+      <data key="d1">The audio content of the video features a female vocal melody with a backing track, including layered vocals, a simple drum beat, and synthesized instrumentals. The melody utilizes a mix of high and low pitches to create emotional depth, with the repeating "Ramada downdown" acting as a catchy hook.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">1</data>
+      <data key="d6">567</data>
+      <data key="d7">9b5dde1c49fb491f91c7bbd906af3a4c</data>
+    </node>
+    <node id="INDOOR KITCHEN SETTING">
+      <data key="d0">LOCATION, VISUAL ELEMENT</data>
+      <data key="d1">The video is filmed indoors, likely in a kitchen or dining area. The setting includes a bowl, a flat surface like a table or countertop, and blurred background elements such as cabinets or shelves. The ambience is clean and minimalistic, with neutral tones like white and beige.</data>
+      <data key="d2">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d3">12</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">598</data>
+      <data key="d7">5ada3e0a6b66410ba98fcf94bdf6d4f4</data>
+    </node>
+    <node id="HAND GESTURE">
+      <data key="d0">BODY LANGUAGE, ANIME REFERENCE</data>
+      <data key="d1">The entity "HAND GESTURE" encompasses a variety of expressive movements used by influencers to convey different messages and emotions. One gesture involves mimicking iconic poses from the "Dragon Ball" series, symbolizing the act of charging or releasing energy, which is performed by an influencer. Another gesture, made by a female influencer, involves raising her index finger and shaking it side to side, often interpreted as a playful or signaling gesture to indicate disagreement or disapproval. Additionally, a male influencer employs a hand gesture that involves pointing the index finger upward and forward, followed by a circular wrist rotation, to emphasize a topic or idea. Furthermore, the same male influencer uses a gesture where his hand and fingers make a repeated movement near the mouth, mimicking the action of quickly eating or chewing, adding humor by playfully representing overeating or indulging. These gestures highlight the diverse ways influencers use hand movements to communicate and entertain their audiences.</data>
+      <data key="d2">84363de382dfc88a3a818e2028fda415,e3b6a53cbf465db59d385d6199f0e94d,f38a9d67287854bb1aa006c7a6f767f5,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">29</data>
+      <data key="d7">9b20f9a5f21d44bdb6d7db3e2b782387</data>
+    </node>
+    <node id="DRIVING BEHAVIOR">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">56</data>
+      <data key="d4">2</data>
+      <data key="d5">2</data>
+      <data key="d6">314</data>
+      <data key="d7">726bb818d9744ed183d7253d1f263377</data>
+    </node>
+    <node id="RAINBOW MOTIFS">
+      <data key="d0">DESIGN, VISUAL ELEMENT</data>
+      <data key="d1">Rainbow motifs included in the desk setup, enhancing the colorful and cheerful aesthetic of the workspace.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">700</data>
+      <data key="d7">777dc67437c949cba317a0bd27acde08</data>
+    </node>
+    <node id="PASTEL ORGANIZERS">
+      <data key="d0">OBJECTS, STORAGE</data>
+      <data key="d1">Small, matching organizers or containers in light pastel colors, used to enhance the desk's functionality and maintain its aesthetic appeal.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">696</data>
+      <data key="d7">12630e6f694849f6b7f21b4ba6feeb4f</data>
+    </node>
+    <node id="ENTERTAINMENT VENUE">
+      <data key="d0">LOCATION, BUSINESS</data>
+      <data key="d1">The setting of the video, likely an entertainment or recreational center with dim lighting accented by purple tones. The venue exudes a laid-back, recreational vibe, possibly featuring games or activities such as axe-throwing, as suggested by the text on the male influencer's shirt, "The Axe Game." Posters and signs on the walls suggest a business or organizational setting.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">16</data>
+      <data key="d4">1</data>
+      <data key="d5">5</data>
+      <data key="d6">427</data>
+      <data key="d7">faca833bd3984dd28e5f97a0b1c18423</data>
+    </node>
+    <node id="NATURAL GREENERY">
+      <data key="d0">VISUAL ELEMENT, ENVIRONMENT</data>
+      <data key="d1">The surrounding environment is lush with natural greenery, indicating a garden or park-like setting. This natural backdrop enhances the authenticity and outdoor exploration theme of the video.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">19</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">114</data>
+      <data key="d7">82db70168a1f4ccb92ab4e7a74dc3774</data>
+    </node>
+    <node id="ATMOSPHERIC SOUNDS">
+      <data key="d0">SOUND, AUDIO ELEMENT</data>
+      <data key="d1">Atmospheric sounds present in the audio clip, enhancing the mood and providing a backdrop to the male voice and percussive beat.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">291</data>
+      <data key="d7">e0027d59a08141e2a729ee787faceeef</data>
+    </node>
+    <node id="CAR INTERIOR">
+      <data key="d0">LOCATION, SETTING</data>
+      <data key="d1">The setting of the video takes place inside a car, characterized by dark gray and black tones that create a casual and relaxed atmosphere. Natural light streams in through the windows, offering a contrast with the bright blue sky visible outside. The interior details, such as the seatbelt, car seat, and visible power lines, add context and depth to the scene. This environment serves as a relatable backdrop for the influencer, who is seated while demonstrating a hack. The setting appeals to a young, on-the-go audience interested in quick food tips, enhancing the video's engaging and approachable nature.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956,93374b613b0705014f4e336b03206c22,eb90a53aab5db4531bc49f4f0f15b305</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">8</data>
+      <data key="d6">145</data>
+      <data key="d7">e07e77d466ff4e769c24ac2345712e18</data>
+    </node>
+    <node id="VINYL RECORD SHELVES">
+      <data key="d0">OBJECT, DECOR</data>
+      <data key="d1">Bookshelves filled with vinyl records in the background of the video, enhancing the homely and musically oriented atmosphere of the setting.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">565</data>
+      <data key="d7">bbf5e8caff0e4b40bdf84901523d4e3e</data>
+    </node>
+    <node id="NEUTRAL BEIGE WALL">
+      <data key="d0">OBJECT, DECOR</data>
+      <data key="d1">A neutral beige wall in the cozy room, contributing to the warm and earthy color scheme of the video setting.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">569</data>
+      <data key="d7">c53d93440fe845efaec61c9016cc2846</data>
+    </node>
+    <node id="QUIET INDOOR ENVIRONMENT">
+      <data key="d0">LOCATION, AUDIO SETTING</data>
+      <data key="d1">The "QUIET INDOOR ENVIRONMENT" is characterized by consistently low background noise levels, typically ranging from 10 to 25 decibels. This setting indicates a calm and subdued atmosphere with minimal ambient sounds, making it an ideal environment for activities requiring concentration or relaxation. The noise level is generally around -45 dB, further emphasizing the tranquility and quietness of the space.</data>
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0,6ca723d21ba0d9357481799d2b8dd215,e4c3a8d3563fe52ffe078dab7f26e32a</data>
+      <data key="d3">48</data>
+      <data key="d4">1</data>
+      <data key="d5">11</data>
+      <data key="d6">69</data>
+      <data key="d7">5c07eb9fbba344ed92fe01233a8f2c6e</data>
+    </node>
+    <node id="BOWL">
+      <data key="d0">OBJECT, VISUAL ELEMENT</data>
+      <data key="d1">A bowl located to the left of the Suja drink bottle, appearing to contain food. It is likely part of the meal setup in the video, contributing to the kitchen or dining area theme.</data>
+      <data key="d2">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d3">12</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">600</data>
+      <data key="d7">0240b6a8d43f423392b50ce9b5717853</data>
+    </node>
+    <node id="TIKTOK GAME">
+      <data key="d0">INTERACTIVE CONTENT, SOCIAL MEDIA FEATURE</data>
+      <data key="d1">An interactive game or challenge on TikTok called "Who'd You Rather," where participants choose between different options. The game involves decision-making or preferences related to various scenarios or people, as indicated by the text overlay.</data>
+      <data key="d2">f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">513</data>
+      <data key="d7">742d11d873254f94bcaba97cd3d65026</data>
+    </node>
+    <node id="DECORATIONS AND KITCHEN ITEMS">
+      <data key="d0">OBJECTS, VISUAL ELEMENTS</data>
+      <data key="d1">Cabinets with decorative handles, kitchen countertops with various items, and a towel hanging on the oven door, contributing to the everyday, home-like setting of the video.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d3">14</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">356</data>
+      <data key="d7">049aa765892c4c7a94c4f40a3fb358b7</data>
+    </node>
+    <node id="RAPPING VOCALS">
+      <data key="d0">AUDIO, VOCAL PERFORMANCE</data>
+      <data key="d1">The male voice rapping in the audio, delivering verses in a rhythmic and conversational style. The lyrics include phrases like "When I die, she's in love with who I am," adding a memorable hook to the audio.</data>
+      <data key="d2">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d3">18</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">311</data>
+      <data key="d7">5a5be446f83149e6a9445aac92d272ed</data>
+    </node>
+    <node id="DRAMATIC VOICEOVER SAMPLE">
+      <data key="d0">AUDIO SAMPLE, DEMONSTRATION</data>
+      <data key="d1">A sample voiceover provided in the video, using a dramatic tone to emphasize the improvement in audio quality achieved through the tutorial's techniques.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">11</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">554</data>
+      <data key="d7">6541efb26680417a879f8467aff8a535</data>
+    </node>
+    <node id="DESK SETUP">
+      <data key="d0">OBJECT, VISUAL ELEMENT</data>
+      <data key="d1">A creative and colorful desk setup or organization demonstration with a bright, pastel-colored theme. The setup includes a pink keyboard, decorative mat, and small organizers, focusing on visual appeal and functionality.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">8</data>
+      <data key="d6">693</data>
+      <data key="d7">f23efe1661c847aca5460161994d337c</data>
+    </node>
+    <node id="COUNTER-STRIKE: GLOBAL OFFENSIVE AUDIO">
+      <data key="d0">AUDIO, SOUND EFFECTS</data>
+      <data key="d1">The audio features sound effects from the video game "Counter-Strike: Global Offensive," including footsteps, gunshots, and other game-related sounds, contributing to the video's atmosphere.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">1</data>
+      <data key="d6">697</data>
+      <data key="d7">a38be1e8704e4b42911b8dc7d6d35ee3</data>
+    </node>
+    <node id="DECORATIVE MAT">
+      <data key="d0">OBJECT, VISUAL ELEMENT</data>
+      <data key="d1">A decorative mat featuring vibrant designs like a character and a rainbow, part of the desk setup. It enhances the desk's aesthetic appeal and theme.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">13</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">695</data>
+      <data key="d7">8d1fa715905a49758427654bfe353dc0</data>
+    </node>
+    <node id="PAUSE STRATEGY">
+      <data key="d0">SPEECH TECHNIQUE, AUDIO ELEMENT</data>
+      <data key="d1">The deliberate use of pauses of varying lengths to enhance the natural rhythm, emphasize points, and create transitions in the speaker's delivery.</data>
+      <data key="d2">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">656</data>
+      <data key="d7">6db232ff051046f5a296fa57f64479f7</data>
+    </node>
+    <node id="SPONSORED PRODUCT">
+      <data key="d0">PRODUCT, SPONSORSHIP ELEMENT</data>
+      <data key="d1">A product featured in the video as a sponsored element. The male influencer introduces and interacts with the product, demonstrating its features to help viewers understand its practical use. Visual and verbal cues reinforce the sponsorship, with a call to action towards the end, such as a discount code or link.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">551</data>
+      <data key="d7">6f57f70c171b41b28293de197c406a51</data>
+    </node>
+    <node id="COZY ROOM">
+      <data key="d0">LOCATION, SETTING</data>
+      <data key="d1">The setting of the video is a cozy room, potentially a living area, characterized by warm, earthy colors, including browns, beiges, and greens. Notable elements include bookshelves filled with vinyl records, a wicker chair, a large foreground plant, a neutral beige wall, and a floor rug, contributing to a comfortable, relaxed, and musically oriented atmosphere.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">10</data>
+      <data key="d6">564</data>
+      <data key="d7">512873986aae4e108dd0657325453ff0</data>
+    </node>
+    <node id="PERCUSSIVE BEAT">
+      <data key="d0">MUSIC, SOUND</data>
+      <data key="d1">A percussive beat that forms the primary component of the audio clip, accompanied by atmospheric sounds, contributing to the overall mellow and sensual mood.</data>
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">290</data>
+      <data key="d7">2edb116462b044d4be14cb68c6677963</data>
+    </node>
+    <node id="FLYER">
+      <data key="d0">PROMOTIONAL MATERIAL</data>
+      <data key="d1">A flyer mentioned in the audio that features both the male influencer and Nathaniel Hughes. It serves as a promotional tool, highlighting their presence and possibly their collaboration in Branson.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">431</data>
+      <data key="d7">20505bf685a841da94149db8fb1ac7b7</data>
+    </node>
+    <node id="LOUD BACKGROUND NOISE">
+      <data key="d0">AUDIO ELEMENT, SOUND ENVIRONMENT</data>
+      <data key="d1">The background noise in the video is consistently loud, ranging from 60-75 decibels, dominated by drumming, chanting, and crowd noise. This sound environment adds to the video's dynamic and lively setting.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">8</data>
+      <data key="d4">0</data>
+      <data key="d5">3</data>
+      <data key="d6">116</data>
+      <data key="d7">d56071bf675340a69782d7745bb8c754</data>
+    </node>
+    <node id="PITCH VARIATIONS">
+      <data key="d0">AUDIO ELEMENT, SPEECH CHARACTERISTIC</data>
+      <data key="d1">The variations in the female speaker's pitch, including high pitches for enthusiasm and low pitches for calm statements, contributing to the dynamic and engaging tone of the audio.</data>
+      <data key="d2">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d3">51</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">348</data>
+      <data key="d7">816b737ff90c4cec9c57c2122cbb1718</data>
+    </node>
+    <node id="SENTENCE CLARITY">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">657</data>
+      <data key="d7">1018fca8e93741a58a6ef001faadfe7a</data>
+    </node>
+    <node id="HIGH AUTHENTIC VIDEO">
+      <data key="d0">VIDEO WITH AUTHENTICITY</data>
+      <data key="d1">The video titled "HIGH AUTHENTIC VIDEO" is rated as having high authenticity, indicating that its content is genuine, trustworthy, and credible. This rating suggests that the video is likely unedited or minimally manipulated, enhancing its authenticity and reliability. The elements within the video, such as clear audio, natural speech patterns, and the demeanor of any influencers or presenters, contribute to its realistic and credible depiction of the subject matter. Overall, the video appears authentic and credible to viewers, free from significant editing or manipulation, and effectively presents a genuine portrayal of the events or activities shown.</data>
+      <data key="d2">0b4562e6cd9b4a8d10763fa583013630,1ea10a10e4ccc92da01237f256c90bd0,24b558d41f8cd017c8a8372409d44e00,398c3a0379739d47c87943d71e123f5d,4d784f0f552114e54afdcac9b3c33c7b,5716c08ba1e84f95ed3ae2cb20f7d956,76a0e88ba9039b6cbe2445b0b9ae1980,84363de382dfc88a3a818e2028fda415,9620abc87541ef7979d1fb884c699247,ae1e678816d07e8ac191b47b471cbd56,b5a5bb9683c2c2432ec2b2f215b5be96,c7c7d1dd41b138ad696677699a556b06,e7c8d289d8bcc1a6fb998afbac4121fe,f07e77dc48904172a457efe4aac0cbdb,f66823b405d45f64b1b8d18f4cccd0ac,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">132</data>
+      <data key="d6">60</data>
+      <data key="d7">66fd0d8f64594f999037af0b0b4f9c24</data>
+    </node>
+    <node id="BODY MOVEMENTS">
+      <data key="d0">BODY LANGUAGE, NON-VERBAL CUES</data>
+      <data key="d1">The influencer's body movements, such as crossing arms and maintaining a forward focus, emphasize a strong, disapproving stance on the topic of country music.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">352</data>
+      <data key="d7">3c725498b42a4560b26b0db35a4f26dd</data>
+    </node>
+    <node id="TIKTOK INTERFACE ELEMENTS">
+      <data key="d0">PLATFORM, SOCIAL MEDIA</data>
+      <data key="d1">The TikTok logo and the username "@rachellkang" visible in the top left corner, indicating the platform and user associated with the video.</data>
+      <data key="d2">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">616</data>
+      <data key="d7">284382e7105846d9b554b8a44cfe6cba</data>
+    </node>
+    <node id="PINK TOP">
+      <data key="d0">CLOTHING, VISUAL ELEMENT</data>
+      <data key="d1">The young girl is wearing a pink top, which stands out against the natural greens of the setting. This clothing choice adds a visual element to the video, highlighting the girl's presence and activities.</data>
+      <data key="d2">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d3">19</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">115</data>
+      <data key="d7">9f52fbcad6e446e98039f0e5d0dff72f</data>
+    </node>
+    <node id="TIKTOK LOGO">
+      <data key="d0">PLATFORM IDENTIFIER</data>
+      <data key="d1">The TikTok logo, as displayed in the video, serves as an indicator of the platform on which the content is shared. This logo helps identify TikTok as the source and provides context for the video content, signifying that it is shared on this popular social media platform.</data>
+      <data key="d2">24b558d41f8cd017c8a8372409d44e00,fbeec581b9233e618159eac9c7933c6e</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">185</data>
+      <data key="d7">08ffc57391d94bcea19394e855c84d61</data>
+    </node>
+    <node id="YOUTHFUL AUDIENCE">
+      <data key="d0">TARGET AUDIENCE, VIEWERS</data>
+      <data key="d1">The video targets a youthful or creative audience, promoting an organized and personalized workspace that appeals to their aesthetic preferences.</data>
+      <data key="d2">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">1</data>
+      <data key="d6">698</data>
+      <data key="d7">21aaaf482a604f859246ba078f1c51bc</data>
+    </node>
+    <node id="FACIAL EXPRESSION">
+      <data key="d0" />
+      <data key="d1">The entity "FACIAL EXPRESSION" is characterized by the influencer smiling, which suggests enthusiasm and friendliness. This expression enhances the perceived sincerity and positivity of the content, making it more engaging and appealing to the audience.</data>
+      <data key="d2">032ec3a1fb3a29419b053a5c3833d86f,76a0e88ba9039b6cbe2445b0b9ae1980,e9187a72c14026d3d916a08f483b49be</data>
+      <data key="d3">26</data>
+      <data key="d4">1</data>
+      <data key="d5">4</data>
+      <data key="d6">173</data>
+      <data key="d7">211ba22945244f8daa3d79327e821cc9</data>
+    </node>
+    <node id="S22 ULTRA">
+      <data key="d0">TECHNOLOGY, SMARTPHONE</data>
+      <data key="d1">A smartphone model featured in the video, known for its camera capabilities. The video compares its performance, particularly in capturing images of the moon, against another phone model, the 12s Ultra.</data>
+      <data key="d2">84363de382dfc88a3a818e2028fda415</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">79</data>
+      <data key="d7">ef85a184e18a4fa7bfccdfa41e4d0fee</data>
+    </node>
+    <node id="CAP">
+      <data key="d0">ACCESSORY, VISUAL ELEMENT</data>
+      <data key="d1">A dark cap worn by the male influencer, contributing to his casual appearance. It is part of the visual elements that define the influencer's presentation style.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">557</data>
+      <data key="d7">d348f91e9ddc487c9859fe7d0e20bb8f</data>
+    </node>
+    <node id="TONE OF VOICE">
+      <data key="d0">AUDIO ELEMENT, COMMUNICATION</data>
+      <data key="d1">Although the audio is not present, the male influencer's animated expressions and body language suggest an energetic and lively tone of voice.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">170</data>
+      <data key="d7">3c9b17f626114ef5a97553fc79baa686</data>
+    </node>
+    <node id="VOCAL EFFECTS">
+      <data key="d0" />
+      <data key="d1" />
+      <data key="d2">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d3">17</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">298</data>
+      <data key="d7">3c065b01eeac414d8a7f31d7716a9d7b</data>
+    </node>
+    <node id="COMMENT BUBBLE">
+      <data key="d0">TEXT, GRAPHIC ELEMENT</data>
+      <data key="d1">A text element in the form of a comment bubble that reads: "How can I get free storage?" by a user named skylarburton35. It includes graphic design elements typical of social media platforms like TikTok.</data>
+      <data key="d2">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">166</data>
+      <data key="d7">30bd3ad446bf4153ab1edb67cff38e68</data>
+    </node>
+    <node id="WARM EARTHY COLORS">
+      <data key="d0">VISUAL ELEMENT, COLOR SCHEME</data>
+      <data key="d1">The color scheme of the cozy room, including browns, beiges, and greens, which enhances the comfortable and relaxed atmosphere of the video setting.</data>
+      <data key="d2">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d3">15</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">568</data>
+      <data key="d7">f6792bdf7d3a4a099cbffb6bf6434d52</data>
+    </node>
+    <node id="CAR SETTING">
+      <data key="d0">LOCATION, ENVIRONMENT</data>
+      <data key="d1">The setting of the video is inside a car, with the influencer seated in a car seat and wearing a seatbelt. The car's interior features dominant dark tones, contrasting with the influencer's light-colored cap and dark t-shirt. The setting suggests movement or travel, adding context to the narrative.</data>
+      <data key="d2">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d3">10</data>
+      <data key="d4">1</data>
+      <data key="d5">2</data>
+      <data key="d6">61</data>
+      <data key="d7">c7d5d8ac10ed46938e1d1dfa5f92a143</data>
+    </node>
+    <node id="MICROPHONE">
+      <data key="d0">AUDIO EQUIPMENT, OBJECT</data>
+      <data key="d1">The MICROPHONE is a prominently positioned and essential piece of equipment in the video, indicating a strong focus on audio quality. It is used by the male influencer for recording audio, possibly for a podcast or live stream. The influencer's close proximity to the microphone suggests an emphasis on delivering a clear and significant message or discussion. This positioning may also imply potential sponsorship or a particular focus on the importance of audio quality in the content being produced.</data>
+      <data key="d2">398c3a0379739d47c87943d71e123f5d,74fdb1c52ec4f67c2566984663b08219</data>
+      <data key="d3">20</data>
+      <data key="d4">1</data>
+      <data key="d5">3</data>
+      <data key="d6">104</data>
+      <data key="d7">4e025db5bee0441d955b3fe2b8e5ee44</data>
+    </node>
+    <node id="EXCELLENT AUDIO FILE">
+      <data key="d0">AUDIO, MEDIA</data>
+      <data key="d1">The audio file is described as excellent, with clear sentences, no mumbling or slurring, and good audio quality, making it easy to understand everything being said.</data>
+      <data key="d2">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d3">47</data>
+      <data key="d4">1</data>
+      <data key="d5">8</data>
+      <data key="d6">654</data>
+      <data key="d7">c345bea684f2447aa779370b5f7dc326</data>
+    </node>
+    <edge source="DARK T-SHIRT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The dark t-shirt complements the influencer's casual attire, contributing to the video's authenticity by maintaining a consistent and relatable appearance.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">5703a75de7ad41a38eb1f943ad13ff62</data>
+      <data key="d12">935</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ENGLISH LYRICS" target="MALE VOICE">
+      <data key="d8">9.0</data>
+      <data key="d9">The male voice sings the English lyrics, conveying the song's longing and seductive tone.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">615483041a4a48ccb4846a11d692704b</data>
+      <data key="d12">733</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ENGLISH LYRICS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The English lyrics are part of the high authentic video, adding to its genuine and trustworthy nature.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">839cfcb7e529450da82b8301c256d1e0</data>
+      <data key="d12">956</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ENGLISH LYRICS" target="MELLOW AND SENSUAL MOOD">
+      <data key="d8">8.0</data>
+      <data key="d9">The English lyrics contribute to the mellow and sensual mood of the audio, with their longing and seductive tone.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">039e295317ce47ba88ef2ea0f3ebcdc6</data>
+      <data key="d12">1377</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="WHITE DRESS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The white dress worn by the influencer is part of the fashion haul, contributing to the video's high authenticity by showcasing genuine fashion items.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">c608ae2b2c1b4c8991a23a55460be7ae</data>
+      <data key="d12">1033</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NATHANIEL HUGHES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">Nathaniel Hughes is mentioned in the audio as a potential collaborator, adding a layer of authenticity by connecting the video to a broader community of TikTokers in Branson.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">9a10d4235c1c4640891617fb609e8dae</data>
+      <data key="d12">991</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ON-SCREEN TEXT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The on-screen text adds a humorous element to the video, enhancing its authenticity by providing context to the influencer's expressions and maintaining a consistent theme.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">f9b704ac45014dea94a035e00bafb63e</data>
+      <data key="d12">980</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ON-SCREEN TEXT" target="TIKTOK LOGO">
+      <data key="d8">7.0</data>
+      <data key="d9">The on-screen text is accompanied by the TikTok logo, indicating that the video is shared on this platform. This connection helps identify the source and context of the content.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">981d8c657cc148d4a3f3e12edb1d1273</data>
+      <data key="d12">1322</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ON-SCREEN TEXT" target="SOCIAL HANDLE">
+      <data key="d8">8.0</data>
+      <data key="d9">The on-screen text includes the influencer's social handle (@hunger4more1212), linking the content to the influencer's TikTok account and providing a way for viewers to engage with him.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">0bd2da18763c449f87b5006261568746</data>
+      <data key="d12">1323</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SEATBELT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The seatbelt is a visible safety feature in the car setting, supporting the video's authenticity by showing adherence to safety norms.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">56732e28e1e142c59dbce470a9f37d02</data>
+      <data key="d12">933</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="YOUNG GIRL" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The young girl's genuine expressions and interactions with her surroundings contribute to the video's high authenticity rating, suggesting a realistic and credible depiction of her exploration.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">606b5bee2bbf486ab33f7960dcf7c414</data>
+      <data key="d12">940</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="YOUNG GIRL" target="ZOO OR ANIMAL ENCLOSURE">
+      <data key="d8">9.0</data>
+      <data key="d9">The young girl is exploring the zoo or animal enclosure, interacting with the environment and displaying curiosity and excitement about the animals and surroundings.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">af05b79a769f434dbea89158197aac42</data>
+      <data key="d12">1180</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="YOUNG GIRL" target="METAL GATE AND PADLOCK">
+      <data key="d8">8.0</data>
+      <data key="d9">The young girl interacts with the metal gate and padlock, showing curiosity and engagement with her surroundings. Her actions suggest an interest in exploring beyond the gate.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">f2b4e18bc7af446d9d1c24e09ca5be0c</data>
+      <data key="d12">1181</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="YOUNG GIRL" target="NATURAL GREENERY">
+      <data key="d8">7.0</data>
+      <data key="d9">The natural greenery provides a lush backdrop for the young girl's exploration, enhancing the authenticity and outdoor theme of the video.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">d375b04254ce483dbc6c3760f41478e0</data>
+      <data key="d12">1182</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="YOUNG GIRL" target="PINK TOP">
+      <data key="d8">6.0</data>
+      <data key="d9">The pink top worn by the young girl adds a visual element to the video, highlighting her presence and activities within the natural setting.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">76368cf1b95844c8862a195136738631</data>
+      <data key="d12">1183</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NEON SIGNS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The neon signs enhance the video's atmosphere with ambient lighting, contributing to the high authenticity rating by adding a stylish or modern vibe.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">33b8820a74484df5a0674da4866477e7</data>
+      <data key="d12">996</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NEON SIGNS" target="ENTERTAINMENT VENUE">
+      <data key="d8">7.0</data>
+      <data key="d9">The neon signs or posters are part of the venue's decor, enhancing the atmosphere with ambient purple lighting and contributing to the overall theme.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">b6c95ade11124a36bd559a9ba509410e</data>
+      <data key="d12">1481</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="COUNTRY MUSIC" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The humorous rejection of country music in the video adds to its authenticity by showcasing the influencer's genuine personal preferences and reactions.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">74740cc80d5242658bd3c59ac1af294e</data>
+      <data key="d12">983</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SNAPS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The snaps are part of the high authentic video's percussive elements, enhancing its rhythm and beat.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">811566d77201444899fd4843d91fcf43</data>
+      <data key="d12">964</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SNAPS" target="PERCUSSIVE BEAT">
+      <data key="d8">8.0</data>
+      <data key="d9">The snaps are part of the percussive beat, contributing to the rhythm and overall sound of the audio.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">73dc7d26ead24a43be26970aa68f1f2c</data>
+      <data key="d12">1379</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FEMALE SPEAKER" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The female speaker's genuine and enthusiastic review of the lipstick contributes to the video's high authenticity rating, as her personal experience and clear communication enhance credibility.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">e0c4d241084b4b8db024b2dd04164f6f</data>
+      <data key="d12">974</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FEMALE SPEAKER" target="QUIET INDOOR ENVIRONMENT">
+      <data key="d8">9.0</data>
+      <data key="d9">The quiet indoor environment allows the female speaker's voice to be clearly heard without interference from background noise, ensuring the focus remains on her review.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">b0e95f2c53bf44eda6cfc4ce91db5908</data>
+      <data key="d12">1064</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FEMALE SPEAKER" target="GLOSSIER GENERATION G LIPSTICK">
+      <data key="d8">9.0</data>
+      <data key="d9">The female speaker reviews and describes the Glossier Generation G lipstick, highlighting its features and her personal experience with the product.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">9b1ead7cb2db43e79b23bdec4db43e40</data>
+      <data key="d12">1408</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FEMALE SPEAKER" target="UPBEAT BACKGROUND TUNE">
+      <data key="d8">8.0</data>
+      <data key="d9">The upbeat background tune complements the female speaker's enthusiastic review, enhancing the engaging and positive tone of the audio.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">cfea3168858d4f4cb5c2c1eee2f6c690</data>
+      <data key="d12">1412</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="POP SONG AUDIO" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The pop song audio enhances the video's engagement and mood, contributing to its high authenticity by providing a professional and polished presentation.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">9b8f5772248f495f8ca2d2bf61048595</data>
+      <data key="d12">1026</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CAP AND GLASSES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The cap and glasses worn by the influencer contribute to the video's authenticity by enhancing his relatable and casual appearance.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">e9188b5b71f647ae8c1494d5015940ed</data>
+      <data key="d12">932</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LIPSTICK PACKAGING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The video features the lipstick packaging as part of the visual elements, supporting the high authenticity rating by providing a clear view of the product.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">15c9129e86ca4d3b9c62ecad20656cd6</data>
+      <data key="d12">977</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LIPSTICK PACKAGING" target="GLOSSIER GENERATION G LIPSTICK">
+      <data key="d8">8.0</data>
+      <data key="d9">The lipstick packaging is part of the visual presentation of the Glossier Generation G lipstick, highlighting the product's brand and shade.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">0e49c8b9288a409bbdb9ac82ecba316c</data>
+      <data key="d12">1409</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MINIMALIST WALL DECOR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The minimalist wall decor enhances the simple and relaxed aesthetic of the video, supporting the high authenticity rating by contributing to the genuine setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">da7d0ce5311942bcab6ec0712b2866f0</data>
+      <data key="d12">1021</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MINIMALIST WALL DECOR" target="COZY ROOM">
+      <data key="d8">7.0</data>
+      <data key="d9">The minimalist wall decor is part of the cozy room's aesthetic, enhancing the simple and relaxed atmosphere of the video setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">3e9d5f1bb2514a6a9a6c2c869710186b</data>
+      <data key="d12">1512</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PLANT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The plant adds to the homely and relaxed atmosphere of the video, contributing to its high authenticity rating by enhancing the genuine and comfortable setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">d00bde25d07f4fd7a1ca9471dd390a6d</data>
+      <data key="d12">1015</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PLANT" target="COZY ROOM">
+      <data key="d8">8.0</data>
+      <data key="d9">The plant is part of the cozy room's decor, adding to the homely vibe and contributing to the relaxed and comfortable atmosphere of the setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">9ba66e093da244498ef050964469279e</data>
+      <data key="d12">1507</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LYRICS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The lyrics in the audio add depth and emotion to the video, enhancing its authenticity by providing a genuine auditory experience.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">3652105f992b41b387ee6878c99131ec</data>
+      <data key="d12">1032</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LYRICS" target="SOULFUL FEMALE VOCALIZATION">
+      <data key="d8">8.0</data>
+      <data key="d9">The soulful female vocalization is part of the audio, which includes the lyrics, creating an emotional atmosphere.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">3ed4b258f4d746ec8419e7b1b3dac412</data>
+      <data key="d12">1496</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="POWER LINES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The power lines are part of the high authentic video, providing visual context and indicating motion, which supports the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">b56c5abfe01d472687b91de5987fedf5</data>
+      <data key="d12">971</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="POWER LINES" target="CAR INTERIOR">
+      <data key="d8">7.0</data>
+      <data key="d9">The power lines are visible from the car interior, adding context and indicating motion in the video.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">50fe26eedd0d4d249039b412991138f2</data>
+      <data key="d12">1305</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT ELEMENT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The text element, including the comment bubble and TikTok username, adds to the video's authenticity by providing context and interaction with the audience.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">72c4d0b3c6ef4bb6aa5e1d806f6734c8</data>
+      <data key="d12">955</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT ELEMENT" target="COMMENT BUBBLE">
+      <data key="d8">7.0</data>
+      <data key="d9">The text element includes the comment bubble, which is part of the video content and distinct from other elements like the influencer and the environment.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">1c991a9dd6e745bdb793de213ca29cc8</data>
+      <data key="d12">1313</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT ELEMENT" target="TIKTOK USERNAME">
+      <data key="d8">7.0</data>
+      <data key="d9">The text element includes the TikTok username, which is part of the video content and distinct from other elements like the influencer and the environment.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">7c0110382830445d8c08bc0317c5356f</data>
+      <data key="d12">1314</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INCOMPLETE LYRICS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The incomplete lyrics are part of the high authentic video, reflecting its genuine and unpolished nature.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">80955d3e090741ce8280d6dd341d4228</data>
+      <data key="d12">960</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LIGHT-COLORED CAP" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The light-colored cap adds to the influencer's casual look, supporting the video's authenticity by presenting a natural and uncontrived appearance.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">c464fc94efef4a10a68e66a915d9c419</data>
+      <data key="d12">934</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PINK COILED CABLE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The pink coiled cable is part of the desk setup, contributing to the video's high authenticity rating by enhancing the coordinated and visually appealing aesthetic.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">be2bb1dc6dbe4cf3bd343770b2c4faec</data>
+      <data key="d12">1055</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PINK COILED CABLE" target="MECHANICAL PINK-THEMED KEYBOARD">
+      <data key="d8">8.0</data>
+      <data key="d9">The pink coiled cable is potentially connected to the mechanical pink-themed keyboard, contributing to the coordinated and visually appealing setup of the desk.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">150c3f1e0437428b8c34f386fae09149</data>
+      <data key="d12">1573</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="T-SHIRT GRAPHIC" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The t-shirt graphic worn by the male influencer is part of the video's visual elements, contributing to the authenticity by indicating a brand or theme.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">5c04c00f241646e7829442c2d049b8f3</data>
+      <data key="d12">998</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">14.0</data>
+      <data key="d9">The male voice is a key element of the high authentic video, contributing significantly to its genuine and trustworthy content. It enhances the video's authenticity by adding a dynamic and rhythmic element to the audio, which enriches the overall atmosphere.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56,c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">32bfe0a014924591be3e1f43c9ddea04</data>
+      <data key="d12">726</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="SECOND MALE VOICE">
+      <data key="d8">8.0</data>
+      <data key="d9">The male voice and the second male voice engage in a call-and-response pattern, contributing to the rhythmic and dynamic nature of the audio.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">d1cf4ccedc2247a287f4ae1bf266bd01</data>
+      <data key="d12">727</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="SHORT SILENCES">
+      <data key="d8">8.0</data>
+      <data key="d9">The short silences in the audio are natural pauses in the male voice's delivery, contributing to the clarity and flow of the narration.</data>
+      <data key="d10">b7888713fc5a3eca49219867b85e733f</data>
+      <data key="d11">fdfc2a7b6abc48d283dbdd6e98a943be</data>
+      <data key="d12">731</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="MEDIUM SILENCES">
+      <data key="d8">7.0</data>
+      <data key="d9">The medium silences in the audio are pauses in the male voice's delivery, likely used for emphasis or to take a breath.</data>
+      <data key="d10">b7888713fc5a3eca49219867b85e733f</data>
+      <data key="d11">9a2e3a8ccc404152be09f158c44b45f2</data>
+      <data key="d12">732</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="PERCUSSIVE BEAT">
+      <data key="d8">8.0</data>
+      <data key="d9">The male voice is accompanied by the percussive beat, creating the primary musical arrangement of the audio clip.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">c9566a452522458a80160ea85e3ae081</data>
+      <data key="d12">734</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="ATMOSPHERIC SOUNDS">
+      <data key="d8">7.0</data>
+      <data key="d9">The atmospheric sounds provide a backdrop to the male voice, enhancing the overall mood of the audio.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">ff2f01460efa4431965e1f31d92342e9</data>
+      <data key="d12">735</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="VOCAL EFFECTS">
+      <data key="d8">8.0</data>
+      <data key="d9">The vocal effects are applied to the male voice, enhancing its sound and contributing to the audio's overall quality.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">8f2efa4d054f4a7c94721520fdeaabb4</data>
+      <data key="d12">736</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="BASS">
+      <data key="d8">7.0</data>
+      <data key="d9">The bass arrangement accompanies the male voice, forming part of the audio's musical composition.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">8e43a75b55624ebcb0a43d55723f2b39</data>
+      <data key="d12">737</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE VOICE" target="PAD">
+      <data key="d8">7.0</data>
+      <data key="d9">The pad sound accompanies the male voice, adding depth and texture to the audio.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">723c161df3e2494db9a79620391a73b2</data>
+      <data key="d12">738</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MEDIUM SILENCES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">Medium silences are used effectively in the video to emphasize points, supporting its high authenticity rating.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">273a2a0406cb435090edeb83c895161b</data>
+      <data key="d12">1039</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MEDIUM SILENCES" target="QUIET INDOOR ENVIRONMENT">
+      <data key="d8">7.0</data>
+      <data key="d9">The medium silences are used intentionally within the quiet indoor environment to create anticipation or mark transitions.</data>
+      <data key="d10">6ca723d21ba0d9357481799d2b8dd215</data>
+      <data key="d11">5b0d886990b34484a1baaff4f8df9d87</data>
+      <data key="d12">1062</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MEDIUM SILENCES" target="EXCELLENT AUDIO FILE">
+      <data key="d8">8.0</data>
+      <data key="d9">Medium silences are used strategically in the audio file to emphasize points and create transitions.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">07b56f81e405477ea5d12a4d216bcae8</data>
+      <data key="d12">1140</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="METAL GATE AND PADLOCK" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The metal gate and padlock are part of the video's setting, contributing to the authenticity by providing a realistic element for the young girl's interaction and exploration.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">66e1f2daaa5144a7b3b9270975763542</data>
+      <data key="d12">942</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="GUITARS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The presence of guitars in the background adds to the video's authenticity by suggesting a personal or genuine interest in music, contributing to the overall setting.</data>
+      <data key="d10">f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d11">f8a8d4e5f00e4eb6b91b829d9e09ddbd</data>
+      <data key="d12">1000</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MUFFLED VOICE EFFECT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The muffled voice effect is a demonstration within the high authentic video, illustrating the effectiveness of the audio tutorial. This effect adds a practical and authentic element to the content.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">0c4d754619a944cfb5a05c0a6903e52a</data>
+      <data key="d12">1005</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MUFFLED VOICE EFFECT" target="AUDIO TUTORIAL">
+      <data key="d8">8.0</data>
+      <data key="d9">The muffled voice effect is a demonstration within the audio tutorial, illustrating the improvement in audio quality achieved through the techniques shared by the male influencer.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">1c46289cad1641489cfbf576f1eb6a8d</data>
+      <data key="d12">1504</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="KITCHEN SETTING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The kitchen setting provides a casual and authentic backdrop for the video, supporting the high authenticity rating by creating a relatable and genuine environment.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">5d7989fddcca47198ba76372398759bc</data>
+      <data key="d12">979</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="KITCHEN SETTING" target="KITCHEN APPLIANCE">
+      <data key="d8">7.0</data>
+      <data key="d9">The refrigerator is a prominent feature in the kitchen setting, adding a personalized and domestic touch to the video environment.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">e6db902428be493ca4cdd1d3f30b998c</data>
+      <data key="d12">1416</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="KITCHEN SETTING" target="LIGHTING">
+      <data key="d8">8.0</data>
+      <data key="d9">The warm lighting in the kitchen setting creates a cozy atmosphere, enhancing the casual and authentic feel of the video.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">44586062567c44548f83f1d76b1fb9a3</data>
+      <data key="d12">1417</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="KITCHEN SETTING" target="DECORATIONS AND KITCHEN ITEMS">
+      <data key="d8">8.0</data>
+      <data key="d9">The decorations and kitchen items contribute to the everyday, home-like setting of the video, supporting its authentic and relatable tone.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">62b3278221d04b2389ce501b71437c1f</data>
+      <data key="d12">1418</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CLOTHING ELEMENTS WITH TEXT AND GRAPHICS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The clothing elements with text and graphics worn by the male influencer add visual interest to the high authentic video, contributing to the video's style and authenticity.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">47200fc5084e40ed90901c58d09cfe51</data>
+      <data key="d12">1011</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="POSTERS AND SIGNS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The posters and signs in the video add to the authenticity by providing visual context and suggesting a business or organizational setting.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">d93c2a2781644e109d63fb2e7e117501</data>
+      <data key="d12">995</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="POSTERS AND SIGNS" target="ENTERTAINMENT VENUE">
+      <data key="d8">7.0</data>
+      <data key="d9">The posters and signs on the walls are part of the venue's decor, suggesting a business or organizational setting and adding to the ambiance.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">48523b37462b4e38a967672aceea1e06</data>
+      <data key="d12">1480</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CHARACTER ILLUSTRATIONS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The character illustrations on the decorative mat contribute to the video's high authenticity rating by enhancing the playful and vibrant theme.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">e5d3cbcb7ede4ab594ef0376c46450b4</data>
+      <data key="d12">1053</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CHARACTER ILLUSTRATIONS" target="DECORATIVE MAT">
+      <data key="d8">8.0</data>
+      <data key="d9">The character illustrations are featured on the decorative mat, contributing to the vibrant and playful theme of the desk setup.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">155313163801452480cf1f8f20723bf5</data>
+      <data key="d12">1574</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TERABOX APP" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The video features the TeraBox app as a genuine solution for cloud storage, supporting the high authenticity rating.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">035cd78752ee472091cad797ec9cdec0</data>
+      <data key="d12">950</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="VERTICAL BLINDS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The vertical blinds in the indoor setting contribute to the high authentic video's ambiance by filtering natural light, enhancing the setting's authenticity and credibility.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">8b14f86b0bce4740b9c201d77d195b77</data>
+      <data key="d12">1008</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PROMOTIONAL TEXT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The promotional text provides clear marketing information, contributing to the video's high authenticity by being straightforward and transparent.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">83a098b36e6b4010abc48f8929c3d88a</data>
+      <data key="d12">1035</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PROMOTIONAL TEXT" target="TEXT OVERLAY">
+      <data key="d8">7.0</data>
+      <data key="d9">The text overlay includes promotional text, providing additional context and marketing information related to the video content.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">996a74c2ca71478d81dde5d526eb87a1</data>
+      <data key="d12">1154</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PRODUCTS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The products featured in the video are presented in a way that enhances the desk setup's aesthetic and organizational theme, contributing to the video's high authenticity rating.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">9bd969a4f3cf46858e9fe3f73e701a36</data>
+      <data key="d12">1046</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PRODUCTS" target="DESK SETUP">
+      <data key="d8">8.0</data>
+      <data key="d9">The products are an integral part of the desk setup, contributing to its aesthetic and organizational theme. They are arranged to grab attention and display a connection to gaming or desk setup.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">2287bc1d3a8d414ca8fa83f9d9bab208</data>
+      <data key="d12">1158</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT OVERLAY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">29.0</data>
+      <data key="d9">The "HIGH AUTHENTIC VIDEO" is characterized by its use of various text overlays that enhance its authenticity and engagement. The text overlay "When She drives" sets a comedic theme and context, contributing to the video's genuine feel. Another overlay, "come #suja with me :)", encourages authentic interaction with the product, further supporting the video's high authenticity rating. Additionally, the text overlays provide context for interactive content, such as a TikTok game, and highlight the main theme of the video, which involves a comparison between the S22 Ultra and 12s Ultra. This reinforces the video's focus and authenticity. Overall, the text overlays serve as promotional content that is clear and straightforward, significantly contributing to the video's high authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956,84363de382dfc88a3a818e2028fda415,9620abc87541ef7979d1fb884c699247,f66823b405d45f64b1b8d18f4cccd0ac,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d11">c559dacab576498aaf21c8e92137a543</data>
+      <data key="d12">939</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT OVERLAY" target="INFLUENCER">
+      <data key="d8">8.0</data>
+      <data key="d9">The text overlay "Give Me A Few Years" is associated with the influencer's transformation theme, emphasizing the change over time.</data>
+      <data key="d10">8a2c54c41399f62724f15cdee3cfaf06</data>
+      <data key="d11">cd98b1e8a3c243aa88db468d80a3e471</data>
+      <data key="d12">1150</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TEXT OVERLAY" target="SUJA DRINK BOTTLE">
+      <data key="d8">8.0</data>
+      <data key="d9">The text overlay "come #suja with me :)" is directly related to the Suja drink bottle, suggesting a promotional message encouraging viewers to engage with the product.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">dac018d8b7b34383a7caaafa43a9191c</data>
+      <data key="d12">1153</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="GESTURES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The male influencer's gestures enhance the video's high authenticity by demonstrating genuine enthusiasm and engagement.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">acc67df2c1264a0f87720199c6f8d6ab</data>
+      <data key="d12">952</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FLOOR RUG" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The floor rug adds texture and warmth to the video setting, supporting the high authenticity rating by contributing to the relaxed atmosphere.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">d3e0b0a9a73d456db2d11972f7fe933b</data>
+      <data key="d12">1020</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FLOOR RUG" target="COZY ROOM">
+      <data key="d8">7.0</data>
+      <data key="d9">The floor rug is part of the cozy room's decor, adding texture and warmth to the setting and contributing to the relaxed atmosphere.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">b9b888f4805d41a287bcee91db5fe632</data>
+      <data key="d12">1511</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PAD" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The pad sound is included in the high authentic video, contributing to its depth and texture.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">263c50855ed943378036bcdaa61742b6</data>
+      <data key="d12">963</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MALE PARTNER" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The male partner is part of the high authentic video, contributing to the comedic contrast in driving behaviors that enhances the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">e99f96ccb0b84741a01745299dfc1de3</data>
+      <data key="d12">966</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SUJA DRINK BOTTLE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The inclusion of the Suja drink bottle, with its organic and health-focused branding, aligns with the video's authentic and credible presentation.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">fe85ed972117449f8b681e7cf7fbd4a9</data>
+      <data key="d12">1024</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CASUAL ATTIRE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The casual attire of the male influencer contributes to the high authentic video's relaxed and genuine atmosphere, supporting the video's credibility and authenticity.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">1013cc19e3614f65a2d8c15be5c3a3c4</data>
+      <data key="d12">1007</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BRIGHT BLUE SKY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The bright blue sky is part of the high authentic video, enhancing the visual setting and contributing to the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">4bf3183df8144bde9a533701f3d27578</data>
+      <data key="d12">972</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BRIGHT BLUE SKY" target="CAR INTERIOR">
+      <data key="d8">7.0</data>
+      <data key="d9">The bright blue sky is visible from the car interior, enhancing the visual setting and atmosphere of the video.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">83e37ac2e56c4660924a437ae0939275</data>
+      <data key="d12">1306</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="UPBEAT BACKGROUND TUNE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The upbeat background tune adds to the video's engaging and positive atmosphere, supporting the high authenticity rating by creating a pleasant listening experience.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">3b6bd82c20714a7993ea0d7e8b868e18</data>
+      <data key="d12">975</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="THE AXE GAME" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The theme or activity of "The Axe Game" is part of the video's content, adding to the entertainment value and contributing to the high authenticity rating by presenting a genuine activity offered at the venue.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">38e72e19b0f14ba19daa73ceedb7a06d</data>
+      <data key="d12">990</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="WICKER CHAIR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The wicker chair contributes to the casual and relaxed atmosphere of the video, supporting the high authenticity rating by providing a genuine and comfortable setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">ef25ed3985a34ca69e49e2fb982c4aee</data>
+      <data key="d12">1017</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="WICKER CHAIR" target="COZY ROOM">
+      <data key="d8">8.0</data>
+      <data key="d9">The wicker chair is part of the cozy room's decor, providing a comfortable seating arrangement for the male influencer and contributing to the relaxed atmosphere.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">0bc24177190b442fae4a51d1ac4d12ae</data>
+      <data key="d12">1508</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="EYEGLASSES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The eyeglasses worn by the male influencer are part of the high authentic video's visual elements, contributing to the influencer's appearance and the video's overall authenticity.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">1cdd84b5c4c64b40ac833cf0c2637bec</data>
+      <data key="d12">1009</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ZOO OR ANIMAL ENCLOSURE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The zoo or animal enclosure setting provides a natural and authentic backdrop for the video, enhancing its credibility and genuine depiction of outdoor exploration.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">d3b6c0b8a4f74fe1ae1d39a20c417ee0</data>
+      <data key="d12">941</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DIM LIGHTING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The dim lighting with purple tones is part of the video's visual elements, contributing to the high authenticity rating by creating a specific atmosphere.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">9f807328c3b24a0882dc98e6c56e9335</data>
+      <data key="d12">994</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DIM LIGHTING" target="ENTERTAINMENT VENUE">
+      <data key="d8">8.0</data>
+      <data key="d9">The dim lighting with purple tones is a characteristic of the entertainment venue, contributing to its casual and inviting atmosphere.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">5ceab76d949140509346728112086f9e</data>
+      <data key="d12">1479</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MELLOW AND SENSUAL MOOD" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The mellow and sensual mood is a defining characteristic of the high authentic video, contributing to its overall tone and authenticity.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">748d08c12af149e4a20f533908593d21</data>
+      <data key="d12">959</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MELLOW AND SENSUAL MOOD" target="PERCUSSIVE BEAT">
+      <data key="d8">7.0</data>
+      <data key="d9">The percussive beat helps establish the mellow and sensual mood of the audio.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">a1bf192cb860402daddc4f667d910b0d</data>
+      <data key="d12">1378</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MELLOW AND SENSUAL MOOD" target="ATMOSPHERIC SOUNDS">
+      <data key="d8">7.0</data>
+      <data key="d9">The atmospheric sounds enhance the mellow and sensual mood of the audio.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">0139f2ecb114437bbfc370391a2a3008</data>
+      <data key="d12">1380</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CLOTHING TAGS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The clothing tags provide additional product information, enhancing the video's authenticity by offering transparency about the items.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">6a86579c9ff24444b135405cb89bcf94</data>
+      <data key="d12">1030</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CLOTHING TAGS" target="CLOTHING ITEMS">
+      <data key="d8">7.0</data>
+      <data key="d9">The clothing tags are attached to the clothing items held by the influencer, providing additional product information.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">e9e0406e273047a19e8739671b97325b</data>
+      <data key="d12">1534</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SECOND MALE VOICE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The second male voice adds to the video's authenticity by participating in the call-and-response pattern, contributing to the dynamic and lively sound environment.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">28a034621e9e44148526d1c45094ef13</data>
+      <data key="d12">946</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="GLOSSIER GENERATION G LIPSTICK" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The video features the Glossier Generation G lipstick as a central product, with a genuine review that contributes to the high authenticity rating.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">401591c32652488fb859a2a22ba07d9b</data>
+      <data key="d12">973</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CLOTHING ITEMS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The clothing items are central to the video's theme, and their presentation in a genuine manner contributes to the high authenticity rating.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">438e8eedb5834b098932a8296f45c11e</data>
+      <data key="d12">1028</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MECHANICAL PINK-THEMED KEYBOARD" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The mechanical pink-themed keyboard is part of the desk setup, contributing to the video's high authenticity rating by enhancing the visual appeal and theme.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">37616a7090af443e80e1ffebab901b37</data>
+      <data key="d12">1047</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="MECHANICAL PINK-THEMED KEYBOARD" target="DESK SETUP">
+      <data key="d8">8.0</data>
+      <data key="d9">The mechanical pink-themed keyboard is a key component of the desk setup, contributing to the coordinated and visually appealing aesthetic of the workspace.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">449acb6012864197a2214a28be11108f</data>
+      <data key="d12">1569</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TIKTOK USERNAME" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">18.0</data>
+      <data key="d9">The TikTok username "@imparkerburton" is prominently displayed in the video, linking the content to a male influencer's social media presence. This connection supports the video's authenticity by providing a direct link to a real social media account. Additionally, the username "@sarahweldonbeauty" is also associated with the video, further contributing to its authenticity by connecting it to another real influencer's social media presence. Together, these usernames enhance the video's credibility by associating it with genuine individuals on TikTok.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630,76a0e88ba9039b6cbe2445b0b9ae1980,f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d11">d54fb61ac6b34764a78c2c2401d56184</data>
+      <data key="d12">949</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TIKTOK USERNAME" target="INFLUENCER">
+      <data key="d8">10.0</data>
+      <data key="d9">The TikTok username "@jookstogo" identifies the influencer conducting the cooking demonstration, linking the content to their social media presence.</data>
+      <data key="d10">8887036f161d1487e43e279ca1317b51</data>
+      <data key="d11">4443bfacd6b44d948e546dfab080631a</data>
+      <data key="d12">1315</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LIGHTING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The warm lighting in the video supports its high authenticity by creating a cozy and inviting atmosphere that feels genuine.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">fb21def6ae484ac9926f0161101a55e7</data>
+      <data key="d12">987</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SHORT SILENCES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">Short silences contribute to the natural flow of the video, supporting its high authenticity rating.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">8c783d98eb384c9a9401e32d9bf9ec37</data>
+      <data key="d12">1038</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SHORT SILENCES" target="QUIET INDOOR ENVIRONMENT">
+      <data key="d8">6.0</data>
+      <data key="d9">The short silences occur naturally within the quiet indoor environment, contributing to the conversational flow of the audio.</data>
+      <data key="d10">6ca723d21ba0d9357481799d2b8dd215</data>
+      <data key="d11">136faebc856748e3bdf3e7c03fb23432</data>
+      <data key="d12">1061</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SHORT SILENCES" target="EXCELLENT AUDIO FILE">
+      <data key="d8">8.0</data>
+      <data key="d9">Short silences are part of the audio file, contributing to the natural rhythm and flow of the speech.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">cc2885096d96477c9506965c4d68643b</data>
+      <data key="d12">1131</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BRIGHT PASTEL THEME" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The bright pastel theme is central to the video's aesthetic, contributing to its high authenticity rating by presenting a genuine and visually appealing workspace.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">4cde2aa55b1348308ad987fd6363ffe7</data>
+      <data key="d12">1052</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BRIGHT PASTEL THEME" target="DESK SETUP">
+      <data key="d8">9.0</data>
+      <data key="d9">The bright pastel theme is a defining characteristic of the desk setup, contributing to its playful and visually appealing aesthetic.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">28c77d1445ad4378aafbe5dcc1ad281b</data>
+      <data key="d12">1572</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BASS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The bass is part of the high authentic video's musical arrangement, adding to its overall sound quality.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">53b9476dba7147fba417e97d104e401b</data>
+      <data key="d12">962</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LONG SILENCES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">Long silences are used strategically in the video, enhancing its authenticity by indicating thoughtful pauses or prompts for interaction.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">67e5790918914beb9566b01a615dcd14</data>
+      <data key="d12">1040</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LONG SILENCES" target="EXCELLENT AUDIO FILE">
+      <data key="d8">8.0</data>
+      <data key="d9">Long silences are deliberately used in the audio file to indicate the end of thoughts or prompt responses.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">8f2ceb87c2354b90a2944003e35a5e02</data>
+      <data key="d12">1145</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INFLUENCER" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The influencer's genuine and creative approach to organizing the desk setup contributes to the video's high authenticity rating, suggesting a credible and trustworthy presentation.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">27e85c8e56654fa0868de10096a0deb2</data>
+      <data key="d12">1044</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INFLUENCER" target="DESK SETUP">
+      <data key="d8">9.0</data>
+      <data key="d9">The influencer is actively involved in organizing or decorating the desk setup, showcasing their creativity and attention to detail in creating a visually appealing workspace.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">ddaf975676164172b539a6b070fa2bad</data>
+      <data key="d12">1374</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CLEAN MINIMALISTIC BACKDROP" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The clean and minimalistic backdrop contributes to the video's high authenticity by providing a genuine and tidy setting.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">d0fdf3880f414a288ec63926aaa7e303</data>
+      <data key="d12">1027</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="GRANDMOTHER" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The inclusion of the grandmother in the anecdote adds a personal and relatable element to the video, enhancing its authenticity by grounding the content in real-life experiences and family interactions.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">d47d029a10f14618957ec6aec976983f</data>
+      <data key="d12">931</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BRANSON, MISSOURI" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The video is set in Branson, Missouri, providing a real-world location that enhances the video's authenticity by grounding it in a specific place known for entertainment options.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">9dd35488c115456f999968589317aebf</data>
+      <data key="d12">992</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ACOUSTIC GUITAR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The acoustic guitar is central to the video's theme and contributes to its high authenticity rating by showcasing genuine musical talent and creativity.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">ebda0e5452ca4081a4c27e074acb4835</data>
+      <data key="d12">1013</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SOULFUL FEMALE VOCALIZATION" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The soulful female vocalization adds an emotional and genuine audio element, contributing to the video's high authenticity.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">f155ad96788c4bf5a3c05b3a26aeae83</data>
+      <data key="d12">1031</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="KITCHEN APPLIANCE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The presence of a refrigerator with personal items adds to the video's authenticity by creating a relatable and genuine domestic setting.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">e9f57ee866164fdba469daa624dbb2a3</data>
+      <data key="d12">986</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="AUDIO TUTORIAL" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The audio tutorial is a key component of the high authentic video, providing valuable information and techniques for improving audio quality. The tutorial's instructional nature aligns with the video's authenticity and credibility.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">d8508409cb914ca2a29cceae1afbc672</data>
+      <data key="d12">1003</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="AUDIO TUTORIAL" target="DRAMATIC VOICEOVER SAMPLE">
+      <data key="d8">8.0</data>
+      <data key="d9">The dramatic voiceover sample is used in the audio tutorial to further emphasize the improvement in audio quality. It serves as an example of the tutorial's effectiveness in enhancing voiceover recordings.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">57df26de1aa4438084572e223478ca70</data>
+      <data key="d12">1505</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SOCIAL HANDLE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The social handle (@hunger4more1212) connects the video to the influencer's TikTok account, enhancing authenticity by linking the content to a real person.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">7b9e3c7d8f6c4f5ab1fddf50ede08b57</data>
+      <data key="d12">982</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NATURAL OR ARTIFICIAL LIGHTING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The natural or artificial lighting enhances the warm ambiance of the video, supporting the high authenticity rating by contributing to the comfortable atmosphere.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">92aa68642d1947958c3e71a8b3d14924</data>
+      <data key="d12">1022</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NATURAL OR ARTIFICIAL LIGHTING" target="COZY ROOM">
+      <data key="d8">8.0</data>
+      <data key="d9">The natural or artificial lighting in the cozy room enhances the warm ambiance and contributes to the comfortable atmosphere of the video setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">b89c784c3a2349b09fd5ea319eb4a0b0</data>
+      <data key="d12">1513</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="OVERALL DEMEANOR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The male influencer's overall demeanor supports the video's high authenticity by showing confidence and sincerity in communication.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">409a30b3f6144acb9eea34439d13540b</data>
+      <data key="d12">954</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CROWD NOISE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The crowd noise enhances the video's authenticity by suggesting a real and lively environment, adding to the dynamic soundscape.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">065ef58d17ff4c3383585abf43a29c07</data>
+      <data key="d12">947</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CROWD NOISE" target="LOUD BACKGROUND NOISE">
+      <data key="d8">8.0</data>
+      <data key="d9">The crowd noise is part of the loud background noise, contributing to the dynamic and lively sound environment of the video.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">c162eabe9666499ea5ab053d67f0e658</data>
+      <data key="d12">1184</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="12S ULTRA" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The 12s Ultra is a central focus of the video, with its camera capabilities being compared to another model, contributing to the video's theme and authenticity.</data>
+      <data key="d10">84363de382dfc88a3a818e2028fda415</data>
+      <data key="d11">d750577b9d534616b19df373ba59afaf</data>
+      <data key="d12">938</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HAT WITH LOGO" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The hat with a logo worn by the male influencer is part of the video's visual elements, contributing to the authenticity by indicating a brand or theme.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">19a0a541a20f4be0b51a696a937146f7</data>
+      <data key="d12">997</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIP HOP SONG" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The hip hop song is the audio track for the high authentic video, enhancing the energetic and entertaining atmosphere that supports the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">70138b095a594b05a450cfd9873a6dff</data>
+      <data key="d12">968</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIP HOP SONG" target="RAPPING VOCALS">
+      <data key="d8">9.0</data>
+      <data key="d9">The rapping vocals are part of the hip hop song used in the video, contributing to the audio's energetic and engaging atmosphere.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">6b776804b6b6462e9dd1abc7e10743b3</data>
+      <data key="d12">1389</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ROCK ON GESTURE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The "rock on" gesture used by the influencer adds to the video's authenticity by showcasing genuine expressions of enjoyment or excitement.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">3599add85fff42afac859e9f1f1c8758</data>
+      <data key="d12">936</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INDOOR AMBIENT SOUNDS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The presence of indoor ambient sounds adds a layer of realism to the video, supporting its high authenticity rating.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">0044d240416f43dca8a040d50df978ee</data>
+      <data key="d12">1041</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INDOOR AMBIENT SOUNDS" target="EXCELLENT AUDIO FILE">
+      <data key="d8">6.0</data>
+      <data key="d9">Indoor ambient sounds are present in the audio file, slightly affecting the noise floor but not impacting the overall quality.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">34ff8eb04b15445094a617c4f99cdf8e</data>
+      <data key="d12">1555</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FEMALE VOCAL MELODY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The female vocal melody, with its emotional depth and catchy hook, contributes to the high authenticity rating by providing a genuine and engaging audio experience.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">7cc7b519722b4e0b93f99ee3d40dac73</data>
+      <data key="d12">1016</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INDOOR KITCHEN SETTING" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The indoor kitchen setting adds to the video's authenticity by providing a relatable and genuine environment, contributing to the high authenticity rating.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">f2054bb77179427fbdb05344a2424e56</data>
+      <data key="d12">1023</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="INDOOR KITCHEN SETTING" target="BOWL">
+      <data key="d8">6.0</data>
+      <data key="d9">The bowl is part of the indoor kitchen setting, contributing to the overall theme and environment of the video.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">f843657f0bba4ebda30f123a5710778e</data>
+      <data key="d12">1527</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HAND GESTURE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The hand gesture adds to the video's authenticity by providing a spontaneous and genuine element of interaction, enhancing the overall engagement.</data>
+      <data key="d10">f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d11">26ed58fd91fa4e3c98437663523249ad</data>
+      <data key="d12">684</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DRIVING BEHAVIOR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The driving behavior is a key element of the high authentic video, contributing to the comedic theme and authenticity of the content.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">63789174360648a0a695518a4e650782</data>
+      <data key="d12">970</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="RAINBOW MOTIFS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The rainbow motifs in the desk setup contribute to the video's high authenticity rating by enhancing the colorful and cheerful aesthetic.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">1ec45a27d1004cc9909030fd93b0e04b</data>
+      <data key="d12">1054</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="RAINBOW MOTIFS" target="DECORATIVE MAT">
+      <data key="d8">8.0</data>
+      <data key="d9">The rainbow motifs are part of the decorative mat, enhancing the colorful and cheerful aesthetic of the desk setup.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">ae8a92d0b6ae4ce7a32e9b570979e5fe</data>
+      <data key="d12">1575</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PASTEL ORGANIZERS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The pastel organizers are part of the desk setup, contributing to the video's high authenticity rating by enhancing functionality and maintaining aesthetic appeal.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">4c9b80e334f64596a18de0088723ad9d</data>
+      <data key="d12">1049</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PASTEL ORGANIZERS" target="DESK SETUP">
+      <data key="d8">8.0</data>
+      <data key="d9">The pastel organizers are used in the desk setup to enhance functionality while maintaining the aesthetic appeal, contributing to the organized and personalized workspace.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">720b0ed535a945ad9a5bee6f37d181d9</data>
+      <data key="d12">1571</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ENTERTAINMENT VENUE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The video showcases the entertainment venue, highlighting its features and activities. The realistic depiction of the venue contributes to the video's high authenticity rating.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">9c4bb046395b4c81b168138de36f01ad</data>
+      <data key="d12">989</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NATURAL GREENERY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The natural greenery enhances the video's authenticity by providing a lush and realistic environment for the young girl's exploration and interaction with nature.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">13075f21883240c09e12d55287b73f9b</data>
+      <data key="d12">943</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="ATMOSPHERIC SOUNDS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The atmospheric sounds are included in the high authentic video, enhancing its mood and authenticity.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">73468f33f9c94e458766ba267eb9a00e</data>
+      <data key="d12">958</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="CAR INTERIOR" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The car interior is the setting for the high authentic video, providing a realistic and familiar environment that supports the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">3a485f1eaaa2468eb618d3e6509f66c6</data>
+      <data key="d12">967</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="VINYL RECORD SHELVES" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The vinyl record shelves enhance the musically oriented atmosphere of the video, contributing to its high authenticity rating by adding genuine and relatable elements to the setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">f1d501f350be4d4ca615f6eb17bca50e</data>
+      <data key="d12">1014</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="VINYL RECORD SHELVES" target="COZY ROOM">
+      <data key="d8">8.0</data>
+      <data key="d9">The vinyl record shelves are part of the cozy room's decor, enhancing the musically oriented atmosphere and contributing to the overall setting of the video.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">3e73637e17ea4b5b8d811f3339ba3b43</data>
+      <data key="d12">1506</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NEUTRAL BEIGE WALL" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The neutral beige wall contributes to the warm and earthy color scheme of the video, supporting the high authenticity rating by enhancing the genuine setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">a1f6435b28594b01876675513af76a0a</data>
+      <data key="d12">1019</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="NEUTRAL BEIGE WALL" target="COZY ROOM">
+      <data key="d8">7.0</data>
+      <data key="d9">The neutral beige wall is part of the cozy room's decor, contributing to the warm and earthy color scheme of the video setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">9b557f502e974af9949bc55f04ebc7de</data>
+      <data key="d12">1510</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="QUIET INDOOR ENVIRONMENT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The quiet indoor environment ensures clear audio quality, which supports the high authenticity rating by allowing the speaker's review to be easily understood without distractions.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">5b6e255224dc41d0b6854fe6a06648d7</data>
+      <data key="d12">976</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="BOWL" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">6.0</data>
+      <data key="d9">The presence of the bowl as part of the meal setup in the kitchen setting adds to the video's authenticity by creating a relatable and genuine environment.</data>
+      <data key="d10">9620abc87541ef7979d1fb884c699247</data>
+      <data key="d11">4e4d0c0a3fd845fab5a5b395361b0142</data>
+      <data key="d12">1025</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="TIKTOK GAME" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The TikTok game "Who'd You Rather" is a central theme of the video, contributing to its high authenticity by providing genuine interactive content.</data>
+      <data key="d10">f76293c8d9f42089ed173ddc34c6fd2a</data>
+      <data key="d11">4566d97ecec54414b48ab3dad4fddf93</data>
+      <data key="d12">999</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DECORATIONS AND KITCHEN ITEMS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The everyday kitchen items and decorations contribute to the video's authenticity by enhancing the relatable and home-like setting.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">9310446fd55642a1bfeae7116b927c5e</data>
+      <data key="d12">988</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="RAPPING VOCALS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The rapping vocals are part of the high authentic video, adding a memorable and engaging element to the audio that supports the video's authenticity.</data>
+      <data key="d10">5716c08ba1e84f95ed3ae2cb20f7d956</data>
+      <data key="d11">0244b51b6da24d6f9c062a832927d78a</data>
+      <data key="d12">969</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DRAMATIC VOICEOVER SAMPLE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The dramatic voiceover sample is used in the high authentic video to demonstrate the improvement in audio quality. It serves as an engaging and authentic example of the tutorial's impact.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">55bb7ec46887442497a13506e136f543</data>
+      <data key="d12">1006</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DESK SETUP" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The creative and colorful desk setup is central to the video's theme, contributing to its high authenticity rating by showcasing genuine and visually appealing content.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">236c0764959f43dbb87922c29fe7514a</data>
+      <data key="d12">1045</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DESK SETUP" target="DECORATIVE MAT">
+      <data key="d8">8.0</data>
+      <data key="d9">The decorative mat is part of the desk setup, enhancing its aesthetic appeal with vibrant designs and contributing to the overall theme.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">118ee9e695cd4399b71fc47ea4af24d8</data>
+      <data key="d12">1570</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="COUNTER-STRIKE: GLOBAL OFFENSIVE AUDIO" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The audio from "Counter-Strike: Global Offensive" adds an immersive element to the video, contributing to its high authenticity rating by enhancing the atmosphere and theme.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">90d16d47807d46bfb89e1b7479459be1</data>
+      <data key="d12">1050</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="DECORATIVE MAT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The decorative mat is part of the desk setup, contributing to the video's high authenticity rating by enhancing the aesthetic appeal and theme.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">e3773d6db1fa4818b50773e4c7d10110</data>
+      <data key="d12">1048</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PAUSE STRATEGY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The effective use of pauses in the video supports its high authenticity rating by enhancing the natural flow and emphasis of the content.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">4584387bd8de493eb774d6b62b3bf9f7</data>
+      <data key="d12">1043</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PAUSE STRATEGY" target="EXCELLENT AUDIO FILE">
+      <data key="d8">8.0</data>
+      <data key="d9">The pause strategy used in the audio file contributes to its excellence by enhancing the natural rhythm and engagement of the speech.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">c6ec444643e34035a4187760776535f2</data>
+      <data key="d12">1557</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SPONSORED PRODUCT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The sponsored product is featured in the high authentic video, with the male influencer naturally interacting with it. The product's integration into the content is seamless, enhancing the video's credibility and authenticity.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">8554eb9d56fb438c9d5d7176a43bdfd9</data>
+      <data key="d12">1001</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="COZY ROOM" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">8.0</data>
+      <data key="d9">The cozy room provides a genuine and intimate setting for the video, contributing to its high authenticity rating by creating a comfortable and relatable atmosphere.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">ef56261ddf984812a70dca788c3ad8cd</data>
+      <data key="d12">1012</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="COZY ROOM" target="WARM EARTHY COLORS">
+      <data key="d8">8.0</data>
+      <data key="d9">The warm earthy colors are part of the cozy room's color scheme, enhancing the comfortable and relaxed atmosphere of the video setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">a9c3c1ee534f463ba93c0a67421a45ad</data>
+      <data key="d12">1509</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PERCUSSIVE BEAT" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">7.0</data>
+      <data key="d9">The percussive beat is an integral part of the high authentic video, contributing to its overall musical arrangement.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">2edb4a31a53c42a7b097f71609f6ab30</data>
+      <data key="d12">957</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="FLYER" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The flyer is part of the video's content, serving as a promotional element that adds to the authenticity by visually representing the collaboration between the male influencer and Nathaniel Hughes.</data>
+      <data key="d10">0b4562e6cd9b4a8d10763fa583013630</data>
+      <data key="d11">0281d60deb4e499d9b90042f7244f739</data>
+      <data key="d12">993</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="LOUD BACKGROUND NOISE" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The loud background noise, including drumming and chanting, adds to the video's authenticity by creating a lively and dynamic sound environment that matches the visual content.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">e85443040ea945faa5d01808f0366843</data>
+      <data key="d12">945</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="PITCH VARIATIONS" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">1.0</data>
+      <data key="d9">The pitch variations in the female speaker's voice enhance the video's engaging and authentic tone, supporting the high authenticity rating.</data>
+      <data key="d10">1ea10a10e4ccc92da01237f256c90bd0</data>
+      <data key="d11">34b86f3e661f4a7999a2d53c28ccece2</data>
+      <data key="d12">978</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SENTENCE CLARITY" target="HIGH AUTHENTIC VIDEO">
+      <data key="d8">9.0</data>
+      <data key="d9">The clarity of sentences in the audio supports the high authenticity rating of the video, as it ensures the content is easily comprehensible and genuine.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">b1627f4e6cdc4d009081381bebb81e8c</data>
+      <data key="d12">1042</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="SENTENCE CLARITY" target="EXCELLENT AUDIO FILE">
+      <data key="d8">9.0</data>
+      <data key="d9">The sentence clarity is a key component of the excellent audio file, ensuring that the content is easily understandable.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">d6de651fe5a64d7d9377f797232b5feb</data>
+      <data key="d12">1556</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="CAR SETTING">
+      <data key="d8">8.0</data>
+      <data key="d9">The car setting provides a relatable and informal backdrop for the video, supporting the high authenticity rating by creating a natural and uncontrived environment for the influencer's message.</data>
+      <data key="d10">4d784f0f552114e54afdcac9b3c33c7b</data>
+      <data key="d11">24099e8092c644969923c2adc9b4e05c</data>
+      <data key="d12">930</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="S22 ULTRA">
+      <data key="d8">8.0</data>
+      <data key="d9">The S22 Ultra is a central focus of the video, with its camera capabilities being compared to another model, contributing to the video's theme and authenticity.</data>
+      <data key="d10">84363de382dfc88a3a818e2028fda415</data>
+      <data key="d11">477ceb2aea71425e9c786f33f6ce2085</data>
+      <data key="d12">937</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="PINK TOP">
+      <data key="d8">6.0</data>
+      <data key="d9">The pink top worn by the young girl adds a visual element to the video, contributing to its authenticity by highlighting her presence and activities in a natural setting.</data>
+      <data key="d10">c7c7d1dd41b138ad696677699a556b06</data>
+      <data key="d11">569d810e2049429c8e88fb61f7525b74</data>
+      <data key="d12">944</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="COMMENT BUBBLE">
+      <data key="d8">7.0</data>
+      <data key="d9">The comment bubble adds an interactive element to the video, enhancing its authenticity by showing real audience engagement.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">5fce5478117b468c8f8dee24a93ae49d</data>
+      <data key="d12">948</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="FACIAL EXPRESSION">
+      <data key="d8">8.0</data>
+      <data key="d9">The male influencer's facial expression contributes to the video's high authenticity by conveying genuine excitement and eagerness.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">b4d245ea809a4ebea6f61e04d817232c</data>
+      <data key="d12">951</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="TONE OF VOICE">
+      <data key="d8">7.0</data>
+      <data key="d9">The likely energetic and lively tone of voice contributes to the video's high authenticity by engaging the audience effectively.</data>
+      <data key="d10">76a0e88ba9039b6cbe2445b0b9ae1980</data>
+      <data key="d11">da3f17789fea4948b30d8d900ec5b16b</data>
+      <data key="d12">953</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="VOCAL EFFECTS">
+      <data key="d8">7.0</data>
+      <data key="d9">The vocal effects enhance the audio quality of the high authentic video, contributing to its genuine and polished sound.</data>
+      <data key="d10">ae1e678816d07e8ac191b47b471cbd56</data>
+      <data key="d11">5152eecaba2b42e8bb457c3934f8ac9e</data>
+      <data key="d12">961</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="TIKTOK LOGO">
+      <data key="d8">7.0</data>
+      <data key="d9">The presence of the TikTok logo indicates the platform where the video is shared, supporting the authenticity by showing the original source of the content.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">c56045254e60470b91eabc9995415909</data>
+      <data key="d12">981</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="BODY MOVEMENTS">
+      <data key="d8">9.0</data>
+      <data key="d9">The influencer's body movements add to the video's authenticity by reinforcing his genuine stance and reactions, making the content appear unscripted.</data>
+      <data key="d10">24b558d41f8cd017c8a8372409d44e00</data>
+      <data key="d11">bd564c136df84136acbd85f75868e8e3</data>
+      <data key="d12">984</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="MICROPHONE">
+      <data key="d8">8.0</data>
+      <data key="d9">The microphone is a crucial element in the high authentic video, ensuring high-quality audio delivery. Its presence underscores the importance of clear communication in the video's content.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">3e3dfe01632048ac81fd61911fe5ec34</data>
+      <data key="d12">1002</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="CAP">
+      <data key="d8">6.0</data>
+      <data key="d9">The cap worn by the male influencer is part of the high authentic video's visual elements, adding to the influencer's casual appearance and the video's relaxed atmosphere.</data>
+      <data key="d10">398c3a0379739d47c87943d71e123f5d</data>
+      <data key="d11">5a7d13ae40ae4f72aa116ecea8221e81</data>
+      <data key="d12">1010</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="WARM EARTHY COLORS">
+      <data key="d8">7.0</data>
+      <data key="d9">The warm earthy colors enhance the comfortable and relaxed atmosphere of the video, supporting the high authenticity rating by creating a genuine and relatable setting.</data>
+      <data key="d10">e7c8d289d8bcc1a6fb998afbac4121fe</data>
+      <data key="d11">968ecaa5deee41efb8222b12cfa2c250</data>
+      <data key="d12">1018</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="TIKTOK INTERFACE ELEMENTS">
+      <data key="d8">8.0</data>
+      <data key="d9">The TikTok interface elements indicate the platform and user, adding to the video's authenticity by providing context and source.</data>
+      <data key="d10">f66823b405d45f64b1b8d18f4cccd0ac</data>
+      <data key="d11">1963ef7b59d24a44aea85eaddaf8daab</data>
+      <data key="d12">1029</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="EXCELLENT AUDIO FILE">
+      <data key="d8">9.0</data>
+      <data key="d9">The excellent audio file contributes to the high authenticity rating of the video, as clear and natural audio is a key factor in perceived genuineness.</data>
+      <data key="d10">b5a5bb9683c2c2432ec2b2f215b5be96</data>
+      <data key="d11">0d103bb797814d30b485e6ff5cc99d8d</data>
+      <data key="d12">1036</data>
+      <data key="d13">2</data>
+    </edge>
+    <edge source="HIGH AUTHENTIC VIDEO" target="YOUTHFUL AUDIENCE">
+      <data key="d8">16.0</data>
+      <data key="d9">The video targets a youthful audience, which aligns with its high authenticity rating by presenting content that is genuine and appealing to this demographic.</data>
+      <data key="d10">f07e77dc48904172a457efe4aac0cbdb</data>
+      <data key="d11">be4f7ce78220432c91268ee97fce1136</data>
+      <data key="d12">1051</data>
+      <data key="d13">2</data>
+    </edge>
+  </graph>
+</graphml>
