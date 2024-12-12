@@ -100,10 +100,6 @@ class LLMType(str, Enum):
     OpenAIEmbedding = "openai_embedding"
     AzureOpenAIEmbedding = "azure_openai_embedding"
 
-    # Raw Completion
-    OpenAI = "openai"
-    AzureOpenAI = "azure_openai"
-
     # Chat Completion
     OpenAIChat = "openai_chat"
     AzureOpenAIChat = "azure_openai_chat"

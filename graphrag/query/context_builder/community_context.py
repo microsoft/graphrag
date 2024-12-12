@@ -10,7 +10,8 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.entity import Entity
 from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
@@ -253,7 +254,7 @@ def _convert_report_context_to_df(
 
     record_df = pd.DataFrame(
         context_records,
-        columns=cast(Any, header),
+        columns=cast("Any", header),
     )
     return _rank_report_context(
         report_df=record_df,

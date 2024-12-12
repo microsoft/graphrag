@@ -9,7 +9,8 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model import Relationship, TextUnit
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.llm.text_utils import num_tokens
 
 """
@@ -70,7 +71,7 @@ def build_text_unit_context(
 
     if len(all_context_records) > 1:
         record_df = pd.DataFrame(
-            all_context_records[1:], columns=cast(Any, all_context_records[0])
+            all_context_records[1:], columns=cast("Any", all_context_records[0])
         )
     else:
         record_df = pd.DataFrame()

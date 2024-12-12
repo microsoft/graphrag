@@ -12,18 +12,23 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
+from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.index.utils import clean_str
-from graphrag.llm import CompletionLLM
-
-from .prompts import CONTINUE_PROMPT, GRAPH_EXTRACTION_PROMPT, LOOP_PROMPT
+from graphrag.index.utils.string import clean_str
+from graphrag.prompts.index.entity_extraction import (
+    CONTINUE_PROMPT,
+    GRAPH_EXTRACTION_PROMPT,
+    LOOP_PROMPT,
+)
 
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_COMPLETION_DELIMITER = "<|COMPLETE|>"
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -37,7 +42,7 @@ class GraphExtractionResult:
 class GraphExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: CompletionLLM
+    _llm: ChatLLM
     _join_descriptions: bool
     _tuple_delimiter_key: str
     _record_delimiter_key: str
@@ -54,7 +59,7 @@ class GraphExtractor:
 
     def __init__(
         self,
-        llm_invoker: CompletionLLM,
+        llm_invoker: ChatLLM,
         tuple_delimiter_key: str | None = None,
         record_delimiter_key: str | None = None,
         input_text_key: str | None = None,
@@ -87,9 +92,9 @@ class GraphExtractor:
 
         # Construct the looping arguments
         encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
-        yes = encoding.encode("YES")
-        no = encoding.encode("NO")
-        self._loop_args = {"logit_bias": {yes[0]: 100, no[0]: 100}, "max_tokens": 1}
+        yes = f"{encoding.encode('YES')[0]}"
+        no = f"{encoding.encode('NO')[0]}"
+        self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
         self, texts: list[str], prompt_variables: dict[str, Any] | None = None
@@ -123,7 +128,7 @@ class GraphExtractor:
                 source_doc_map[doc_index] = text
                 all_records[doc_index] = result
             except Exception as e:
-                logging.exception("error extracting graph")
+                log.exception("error extracting graph")
                 self._on_error(
                     e,
                     traceback.format_exc(),
@@ -148,13 +153,12 @@ class GraphExtractor:
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
         response = await self._llm(
-            self._extraction_prompt,
-            variables={
+            self._extraction_prompt.format(**{
                 **prompt_variables,
                 self._input_text_key: text,
-            },
+            }),
         )
-        results = response.output or ""
+        results = response.output.content or ""
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
@@ -163,7 +167,7 @@ class GraphExtractor:
                 name=f"extract-continuation-{i}",
                 history=response.history,
             )
-            results += response.output or ""
+            results += response.output.content or ""
 
             # if this is the final glean, don't bother updating the continuation flag
             if i >= self._max_gleanings - 1:
@@ -227,8 +231,8 @@ class GraphExtractor:
                                 str(source_doc_id),
                             })
                         )
-                        node["entity_type"] = (
-                            entity_type if entity_type != "" else node["entity_type"]
+                        node["type"] = (
+                            entity_type if entity_type != "" else node["type"]
                         )
                     else:
                         graph.add_node(

@@ -3,16 +3,24 @@
 
 """Entity type generation module for fine-tuning."""
 
-from graphrag.llm.types.llm_types import CompletionLLM
-from graphrag.prompt_tune.generator.defaults import DEFAULT_TASK
+from fnllm import ChatLLM
+from pydantic import BaseModel
+
+from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.entity_types import (
     ENTITY_TYPE_GENERATION_JSON_PROMPT,
     ENTITY_TYPE_GENERATION_PROMPT,
 )
 
 
+class EntityTypesResponse(BaseModel):
+    """Entity types response model."""
+
+    entity_types: list[str]
+
+
 async def generate_entity_types(
-    llm: CompletionLLM,
+    llm: ChatLLM,
     domain: str,
     persona: str,
     docs: str | list[str],
@@ -37,9 +45,12 @@ async def generate_entity_types(
 
     history = [{"role": "system", "content": persona}]
 
-    response = await llm(entity_types_prompt, history=history, json=json_mode)
-
     if json_mode:
-        return (response.json or {}).get("entity_types", [])
+        response = await llm(
+            entity_types_prompt, history=history, json_model=EntityTypesResponse
+        )
+        model = response.parsed_json
+        return model.entity_types if model else []
 
-    return str(response.output)
+    response = await llm(entity_types_prompt, history=history, json=json_mode)
+    return str(response.output.content)

@@ -9,13 +9,11 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
-)
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
@@ -44,7 +42,7 @@ from graphrag.query.input.retrieval.text_units import get_candidate_text_units
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
 
@@ -74,7 +72,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
             text_units = []
         self.entities = {entity.id: entity for entity in entities}
         self.community_reports = {
-            community.id: community for community in community_reports
+            community.community_id: community for community in community_reports
         }
         self.text_units = {unit.id: unit for unit in text_units}
         self.relationships = {
@@ -256,7 +254,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         for community in selected_communities:
             if community.attributes is None:
                 community.attributes = {}
-            community.attributes["matches"] = community_matches[community.id]
+            community.attributes["matches"] = community_matches[community.community_id]
         selected_communities.sort(
             key=lambda x: (x.attributes["matches"], x.rank),  # type: ignore
             reverse=True,  # type: ignore
@@ -336,6 +334,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
                     num_relationships = count_relationships(
                         entity_relationships, selected_unit
                     )
+                    text_unit_ids_set.add(text_id)
                     unit_info_list.append((selected_unit, index, num_relationships))
 
         # sort by entity_order and the number of relationships desc

@@ -14,7 +14,7 @@ from typing import Any, Literal, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.index.utils import num_tokens_from_string
+from graphrag.index.utils.tokens import num_tokens_from_string
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -122,7 +122,7 @@ class TokenTextSplitter(TextSplitter):
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""
-        if cast(bool, pd.isna(text)) or text == "":
+        if cast("bool", pd.isna(text)) or text == "":
             return []
         if isinstance(text, list):
             text = " ".join(text)

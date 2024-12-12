@@ -11,10 +11,9 @@ from typing import Any
 import numpy as np
 import tiktoken
 
-from graphrag.llm.openai.utils import try_parse_json_object
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.llm.base import BaseLLM
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 
 log = logging.getLogger(__name__)
 

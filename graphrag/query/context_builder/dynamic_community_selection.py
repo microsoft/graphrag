@@ -12,7 +12,8 @@ from typing import Any
 
 import tiktoken
 
-from graphrag.model import Community, CommunityReport
+from graphrag.model.community import Community
+from graphrag.model.community_report import CommunityReport
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 from graphrag.query.llm.base import BaseLLM
@@ -72,11 +73,12 @@ class DynamicCommunitySelection:
         }
         # mapping from level to communities
         self.levels: dict[str, list[str]] = {}
+
         for community in communities:
             if community.level not in self.levels:
                 self.levels[community.level] = []
-            if community.id in self.reports:
-                self.levels[community.level].append(community.id)
+            if community.short_id in self.reports:
+                self.levels[community.level].append(community.short_id)
 
         # start from root communities (level 0)
         self.starting_communities = self.levels["0"]
@@ -99,6 +101,7 @@ class DynamicCommunitySelection:
             "output_tokens": 0,
         }
         relevant_communities = set()
+
         while queue:
             gather_results = await asyncio.gather(*[
                 rate_relevancy(

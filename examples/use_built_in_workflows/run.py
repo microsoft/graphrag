@@ -3,9 +3,10 @@
 import asyncio
 import os
 
-from graphrag.index import run_pipeline, run_pipeline_with_config
-from graphrag.index.config import PipelineCSVInputConfig, PipelineWorkflowReference
-from graphrag.index.input import load_input
+from graphrag.index.config.input import PipelineCSVInputConfig
+from graphrag.index.config.workflow import PipelineWorkflowReference
+from graphrag.index.input.factory import create_input
+from graphrag.index.run import run_pipeline, run_pipeline_with_config
 
 sample_data_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "../_sample_data/"
@@ -13,7 +14,7 @@ sample_data_dir = os.path.join(
 
 # Load our dataset once
 shared_dataset = asyncio.run(
-    load_input(
+    create_input(
         PipelineCSVInputConfig(
             file_pattern=".*\\.csv$",
             base_dir=sample_data_dir,

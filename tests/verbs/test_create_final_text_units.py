@@ -11,8 +11,8 @@ from .util import (
     compare_outputs,
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 
@@ -23,7 +23,7 @@ async def test_create_final_text_units():
         "workflow:create_final_relationships",
         "workflow:create_final_covariates",
     ])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -54,7 +54,7 @@ async def test_create_final_text_units_no_covariates():
         "workflow:create_final_relationships",
         "workflow:create_final_covariates",
     ])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -76,8 +76,10 @@ async def test_create_final_text_units_no_covariates():
     )
 
     # we're short a covariate_ids column
+    columns = list(expected.columns.values)
+    columns.remove("covariate_ids")
     compare_outputs(
         actual,
         expected,
-        ["id", "text", "n_tokens", "document_ids", "entity_ids", "relationship_ids"],
+        columns=columns,
     )

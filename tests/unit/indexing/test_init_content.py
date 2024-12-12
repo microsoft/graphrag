@@ -6,11 +6,9 @@ from typing import Any, cast
 
 import yaml
 
-from graphrag.config import (
-    GraphRagConfig,
-    create_graphrag_config,
-)
-from graphrag.index.init_content import INIT_YAML
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.init_content import INIT_YAML
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 def test_init_yaml():
@@ -24,7 +22,7 @@ def test_init_yaml_uncommented():
     lines = [line for line in lines if "##" not in line]
 
     def uncomment_line(line: str) -> str:
-        leading_whitespace = cast(Any, re.search(r"^(\s*)", line)).group(1)
+        leading_whitespace = cast("Any", re.search(r"^(\s*)", line)).group(1)
         return re.sub(r"^\s*# ", leading_whitespace, line, count=1)
 
     content = "\n".join([uncomment_line(line) for line in lines])

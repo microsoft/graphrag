@@ -29,13 +29,7 @@ nav:
       - Overview: "index/overview.md"
       - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
-      - Configuration:
-          - Overview: "config/overview.md"
-          - Init Command: "config/init.md"
-          - Using Env Vars: "config/env_vars.md"
-          - Using JSON or YAML: "config/json_yaml.md"
-          - Fully Custom: "config/custom.md"
-          - Template: "config/template.md"
+      - Outputs: "index/outputs.md"
   - Prompt Tuning:
       - Overview: "prompt_tuning/overview.md"
       - Auto Tuning: "prompt_tuning/auto_prompt_tuning.md"
@@ -51,9 +45,14 @@ nav:
           - Global Search: "examples_notebooks/global_search.ipynb"
           - Local Search: "examples_notebooks/local_search.ipynb"
           - DRIFT Search: "examples_notebooks/drift_search.ipynb"
-  - Microsoft Research Blog: "blog_posts.md"
+  - Configuration:
+      - Overview: "config/overview.md"
+      - Init Command: "config/init.md"
+      - Using YAML: "config/yaml.md"
+      - Using Env Vars: "config/env_vars.md"
+  - CLI: "cli.md"
   - Extras:
-      - CLI: "cli.md"
+      - Microsoft Research Blog: "blog_posts.md"
       - Visualization Guide: "visualization_guide.md"
       - Operation Dulce:
           - About: "data/operation_dulce/ABOUT.md"

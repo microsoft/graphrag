@@ -3,71 +3,58 @@
 
 """All the steps to transform final nodes."""
 
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.create_graph import create_graph
+from graphrag.index.operations.embed_graph import embed_graph
 from graphrag.index.operations.layout_graph import layout_graph
-from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.operations.unpack_graph import unpack_graph
-from graphrag.index.storage import PipelineStorage
 
 
-async def create_final_nodes(
-    entity_graph: pd.DataFrame,
+def create_final_nodes(
+    base_entity_nodes: pd.DataFrame,
+    base_relationship_edges: pd.DataFrame,
+    base_communities: pd.DataFrame,
     callbacks: VerbCallbacks,
-    storage: PipelineStorage,
     layout_strategy: dict[str, Any],
-    level_for_node_positions: int,
-    snapshot_top_level_nodes_enabled: bool = False,
+    embedding_strategy: dict[str, Any] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final nodes."""
-    laid_out_entity_graph = cast(
-        pd.DataFrame,
-        layout_graph(
-            entity_graph,
-            callbacks,
-            layout_strategy,
-            embeddings_column="embeddings",
-            graph_column="clustered_graph",
-            to="node_positions",
-            graph_to="positioned_graph",
-        ),
-    )
-
-    nodes = cast(
-        pd.DataFrame,
-        unpack_graph(
-            laid_out_entity_graph, callbacks, column="positioned_graph", type="nodes"
-        ),
-    )
-
-    nodes_without_positions = nodes.drop(columns=["x", "y"])
-
-    nodes = nodes[nodes["level"] == level_for_node_positions].reset_index(drop=True)
-    nodes = cast(pd.DataFrame, nodes[["id", "x", "y"]])
-
-    if snapshot_top_level_nodes_enabled:
-        await snapshot(
-            nodes,
-            name="top_level_nodes",
-            storage=storage,
-            formats=["json"],
+    graph = create_graph(base_relationship_edges)
+    graph_embeddings = None
+    if embedding_strategy:
+        graph_embeddings = embed_graph(
+            graph,
+            embedding_strategy,
         )
-
-    nodes.rename(columns={"id": "top_level_node_id"}, inplace=True)
-    nodes["top_level_node_id"] = nodes["top_level_node_id"].astype(str)
-
-    joined = nodes_without_positions.merge(
-        nodes,
-        left_on="id",
-        right_on="top_level_node_id",
-        how="inner",
+    layout = layout_graph(
+        graph,
+        callbacks,
+        layout_strategy,
+        embeddings=graph_embeddings,
     )
-    joined.rename(columns={"label": "title", "cluster": "community"}, inplace=True)
+    nodes = base_entity_nodes.merge(
+        layout, left_on="title", right_on="label", how="left"
+    )
 
-    # TODO: Find duplication source
-    return joined.drop_duplicates(subset=["title", "community"])
+    joined = nodes.merge(base_communities, on="title", how="left")
+    joined["level"] = joined["level"].fillna(0).astype(int)
+    joined["community"] = joined["community"].fillna(-1).astype(int)
+
+    return joined.loc[
+        :,
+        [
+            "id",
+            "human_readable_id",
+            "title",
+            "community",
+            "level",
+            "degree",
+            "x",
+            "y",
+        ],
+    ]

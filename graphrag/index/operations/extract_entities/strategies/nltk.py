@@ -8,9 +8,13 @@ import nltk
 from datashaper import VerbCallbacks
 from nltk.corpus import words
 
-from graphrag.index.cache import PipelineCache
-
-from .typing import Document, EntityExtractionResult, EntityTypes, StrategyConfig
+from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.index.operations.extract_entities.strategies.typing import (
+    Document,
+    EntityExtractionResult,
+    EntityTypes,
+    StrategyConfig,
+)
 
 # Need to do this cause we're potentially multithreading, and nltk doesn't like that
 words.ensure_loaded()
@@ -57,5 +61,6 @@ async def run(  # noqa RUF029 async is required for interface
             {"type": entity_type, "name": name}
             for name, entity_type in entity_map.items()
         ],
+        relationships=[],
         graph=graph,
     )

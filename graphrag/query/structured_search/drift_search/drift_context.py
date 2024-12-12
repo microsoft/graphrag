@@ -11,26 +11,24 @@ import numpy as np
 import pandas as pd
 import tiktoken
 
-from graphrag.config.models.drift_config import DRIFTSearchConfig
-from graphrag.model import (
-    CommunityReport,
-    Covariate,
-    Entity,
-    Relationship,
-    TextUnit,
+from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
+from graphrag.model.relationship import Relationship
+from graphrag.model.text_unit import TextUnit
+from graphrag.prompts.query.drift_search_system_prompt import (
+    DRIFT_LOCAL_SYSTEM_PROMPT,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.structured_search.base import DRIFTContextBuilder
 from graphrag.query.structured_search.drift_search.primer import PrimerQueryProcessor
-from graphrag.query.structured_search.drift_search.system_prompt import (
-    DRIFT_LOCAL_SYSTEM_PROMPT,
-)
 from graphrag.query.structured_search.local_search.mixed_context import (
     LocalSearchMixedContext,
 )
-from graphrag.vector_stores import BaseVectorStore
+from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +49,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         token_encoder: tiktoken.Encoding | None = None,
         embedding_vectorstore_key: str = EntityVectorStoreKey.ID,
         config: DRIFTSearchConfig | None = None,
-        local_system_prompt: str = DRIFT_LOCAL_SYSTEM_PROMPT,
+        local_system_prompt: str | None = None,
         local_mixed_context: LocalSearchMixedContext | None = None,
     ):
         """Initialize the DRIFT search context builder with necessary components."""
@@ -59,7 +57,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.chat_llm = chat_llm
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
-        self.local_system_prompt = local_system_prompt
+        self.local_system_prompt = local_system_prompt or DRIFT_LOCAL_SYSTEM_PROMPT
 
         self.entities = entities
         self.entity_text_embeddings = entity_text_embeddings

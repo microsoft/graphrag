@@ -3,10 +3,18 @@
 
 """Community summarization modules."""
 
-from .prepare_community_reports import prepare_community_reports
-from .restore_community_hierarchy import restore_community_hierarchy
-from .summarize_communities import summarize_communities
-from .typing import CreateCommunityReportsStrategyType
+from graphrag.index.operations.summarize_communities.prepare_community_reports import (
+    prepare_community_reports,
+)
+from graphrag.index.operations.summarize_communities.restore_community_hierarchy import (
+    restore_community_hierarchy,
+)
+from graphrag.index.operations.summarize_communities.summarize_communities import (
+    summarize_communities,
+)
+from graphrag.index.operations.summarize_communities.typing import (
+    CreateCommunityReportsStrategyType,
+)
 
 __all__ = [
     "CreateCommunityReportsStrategyType",

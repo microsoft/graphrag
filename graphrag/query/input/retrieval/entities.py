@@ -9,7 +9,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import Entity
+from graphrag.model.entity import Entity
 
 
 def get_entity_by_id(entities: dict[str, Entity], value: str) -> Entity | None:
@@ -89,7 +89,7 @@ def to_entity_dataframe(
             )
             new_record.append(field_value)
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))
 
 
 def is_valid_uuid(value: str) -> bool:

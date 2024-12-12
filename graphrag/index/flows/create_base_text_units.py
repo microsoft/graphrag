@@ -16,16 +16,14 @@ from datashaper import (
 
 from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.storage import PipelineStorage
-from graphrag.index.utils import gen_md5_hash
+from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
-    chunk_column_name: str,
-    n_tokens_column_name: str,
     chunk_by_columns: list[str],
     chunk_strategy: dict[str, Any] | None = None,
     snapshot_transient_enabled: bool = False,
@@ -61,24 +59,23 @@ async def create_base_text_units(
         strategy=chunk_strategy,
     )
 
-    chunked = cast(pd.DataFrame, chunked[[*chunk_by_columns, "chunks"]])
+    chunked = cast("pd.DataFrame", chunked[[*chunk_by_columns, "chunks"]])
     chunked = chunked.explode("chunks")
     chunked.rename(
         columns={
-            "chunks": chunk_column_name,
+            "chunks": "chunk",
         },
         inplace=True,
     )
-    chunked["chunk_id"] = chunked.apply(
-        lambda row: gen_md5_hash(row, [chunk_column_name]), axis=1
+    chunked["id"] = chunked.apply(lambda row: gen_sha512_hash(row, ["chunk"]), axis=1)
+    chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
+        chunked["chunk"].tolist(), index=chunked.index
     )
-    chunked[["document_ids", chunk_column_name, n_tokens_column_name]] = pd.DataFrame(
-        chunked[chunk_column_name].tolist(), index=chunked.index
-    )
-    chunked["id"] = chunked["chunk_id"]
+    # rename for downstream consumption
+    chunked.rename(columns={"chunk": "text"}, inplace=True)
 
     output = cast(
-        pd.DataFrame, chunked[chunked[chunk_column_name].notna()].reset_index(drop=True)
+        "pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True)
     )
 
     if snapshot_transient_enabled:
@@ -108,7 +105,7 @@ def _aggregate_df(
         output_grouped = input.groupby(lambda _x: True)
     else:
         output_grouped = input.groupby(groupby, sort=False)
-    output = cast(pd.DataFrame, output_grouped.agg(df_aggregations))
+    output = cast("pd.DataFrame", output_grouped.agg(df_aggregations))
     output.rename(
         columns={agg.column: agg.to for agg in aggregations_to_apply.values()},
         inplace=True,

@@ -6,8 +6,9 @@
 from enum import Enum
 from typing import ClassVar
 
-from .azure_ai_search import AzureAISearch
-from .lancedb import LanceDBVectorStore
+from graphrag.vector_stores.azure_ai_search import AzureAISearch
+from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 
 class VectorStoreType(str, Enum):
@@ -24,14 +25,14 @@ class VectorStoreFactory:
 
     @classmethod
     def register(cls, vector_store_type: str, vector_store: type):
-        """Register a vector store type."""
+        """Register a custom vector store implementation."""
         cls.vector_store_types[vector_store_type] = vector_store
 
     @classmethod
-    def get_vector_store(
+    def create_vector_store(
         cls, vector_store_type: VectorStoreType | str, kwargs: dict
-    ) -> LanceDBVectorStore | AzureAISearch:
-        """Get the vector store type from a string."""
+    ) -> BaseVectorStore:
+        """Create or get a vector store from the provided type."""
         match vector_store_type:
             case VectorStoreType.LanceDB:
                 return LanceDBVectorStore(**kwargs)

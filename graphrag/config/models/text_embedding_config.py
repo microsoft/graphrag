@@ -7,8 +7,7 @@ from pydantic import Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import TextEmbeddingTarget
-
-from .llm_config import LLMConfig
+from graphrag.config.models.llm_config import LLMConfig
 
 
 class TextEmbeddingConfig(LLMConfig):
@@ -27,7 +26,7 @@ class TextEmbeddingConfig(LLMConfig):
     )
     skip: list[str] = Field(description="The specific embeddings to skip.", default=[])
     vector_store: dict | None = Field(
-        description="The vector storage configuration", default=defs.VECTOR_STORE
+        description="The vector storage configuration", default=defs.VECTOR_STORE_DICT
     )
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None

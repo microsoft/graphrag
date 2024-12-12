@@ -3,6 +3,10 @@
 
 """The Indexing Engine text chunk package root."""
 
-from .chunk_text import ChunkStrategy, ChunkStrategyType, chunk_text
+from graphrag.index.operations.chunk_text.chunk_text import (
+    ChunkStrategy,
+    ChunkStrategyType,
+    chunk_text,
+)
 
 __all__ = ["ChunkStrategy", "ChunkStrategyType", "chunk_text"]

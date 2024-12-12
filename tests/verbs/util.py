@@ -7,12 +7,10 @@ import pandas as pd
 from datashaper import Workflow
 from pandas.testing import assert_series_equal
 
-from graphrag.config import create_graphrag_config
-from graphrag.index import (
-    PipelineWorkflowConfig,
-    create_pipeline_config,
-)
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.index.config.workflow import PipelineWorkflowConfig
 from graphrag.index.context import PipelineRunContext
+from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run.utils import create_run_context
 
 pd.set_option("display.max_columns", None)
@@ -23,12 +21,8 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     # stick all the inputs in a map - Workflow looks them up by name
     input_tables: dict[str, pd.DataFrame] = {}
 
-    # all workflows implicitly receive the `input` source, which is formatted as a dataframe after loading from storage
-    # we'll simulate that by just loading one of our output parquets and converting back to equivalent dataframe
-    # so we aren't dealing with storage vagaries (which would become an integration test)
-    source = pd.read_parquet("tests/verbs/data/create_final_documents.parquet")
-    source.rename(columns={"raw_content": "text"}, inplace=True)
-    input_tables["source"] = cast(pd.DataFrame, source[["id", "text", "title"]])
+    source = pd.read_parquet("tests/verbs/data/source_documents.parquet")
+    input_tables["source"] = source
 
     for input in inputs:
         # remove the workflow: prefix if it exists, because that is not part of the actual table filename
@@ -38,7 +32,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     return input_tables
 
 
-def load_expected(output: str) -> pd.DataFrame:
+def load_test_table(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
 
@@ -54,7 +48,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
 
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
 
-    return cast(PipelineWorkflowConfig, result.config)
+    return cast("PipelineWorkflowConfig", result.config)
 
 
 async def get_workflow_output(
@@ -75,7 +69,7 @@ async def get_workflow_output(
     await workflow.run(context=run_context)
 
     # if there's only one output, it is the default here, no name required
-    return cast(pd.DataFrame, workflow.output())
+    return cast("pd.DataFrame", workflow.output())
 
 
 def compare_outputs(
@@ -86,9 +80,9 @@ def compare_outputs(
     """
     cols = expected.columns if columns is None else columns
 
-    assert len(actual) == len(
-        expected
-    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    assert len(actual) == len(expected), (
+        f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    )
 
     for column in cols:
         assert column in actual.columns

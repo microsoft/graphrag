@@ -3,23 +3,23 @@
 
 """CLI entrypoint."""
 
-import asyncio
+import os
+import re
+from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
-from graphrag.api import DocSelectionType
-from graphrag.index.emit.types import TableEmitterType
-from graphrag.logging import ReporterType
-from graphrag.prompt_tune.generator import MAX_TOKEN_COUNT
-from graphrag.prompt_tune.loader import MIN_CHUNK_SIZE
-
-from .index import index_cli, update_cli
-from .initialize import initialize_project_at
-from .prompt_tune import prompt_tune
-from .query import run_drift_search, run_global_search, run_local_search
+from graphrag.logger.types import LoggerType
+from graphrag.prompt_tune.defaults import (
+    MAX_TOKEN_COUNT,
+    MIN_CHUNK_SIZE,
+    N_SUBSET_MAX,
+    K,
+)
+from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
 
@@ -27,6 +27,59 @@ app = typer.Typer(
     help="GraphRAG: A graph-based retrieval-augmented generation (RAG) system.",
     no_args_is_help=True,
 )
+
+
+# A workaround for typer's lack of support for proper autocompletion of file/directory paths
+# For more detail, watch
+#   https://github.com/fastapi/typer/discussions/682
+#   https://github.com/fastapi/typer/issues/951
+def path_autocomplete(
+    file_okay: bool = True,
+    dir_okay: bool = True,
+    readable: bool = True,
+    writable: bool = False,
+    match_wildcard: str | None = None,
+) -> Callable[[str], list[str]]:
+    """Autocomplete file and directory paths."""
+
+    def wildcard_match(string: str, pattern: str) -> bool:
+        regex = re.escape(pattern).replace(r"\?", ".").replace(r"\*", ".*")
+        return re.fullmatch(regex, string) is not None
+
+    from pathlib import Path
+
+    def completer(incomplete: str) -> list[str]:
+        # List items in the current directory as Path objects
+        items = Path().iterdir()
+        completions = []
+
+        for item in items:
+            # Filter based on file/directory properties
+            if not file_okay and item.is_file():
+                continue
+            if not dir_okay and item.is_dir():
+                continue
+            if readable and not os.access(item, os.R_OK):
+                continue
+            if writable and not os.access(item, os.W_OK):
+                continue
+
+            # Append the name of the matching item
+            completions.append(item.name)
+
+        # Apply wildcard matching if required
+        if match_wildcard:
+            completions = filter(
+                lambda i: wildcard_match(i, match_wildcard)
+                if match_wildcard
+                else False,
+                completions,
+            )
+
+        # Return completions that start with the given incomplete string
+        return [i for i in completions if i.startswith(incomplete)]
+
+    return completer
 
 
 class SearchType(Enum):
@@ -50,10 +103,15 @@ def _initialize_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ],
 ):
     """Generate a default configuration file."""
+    from graphrag.cli.initialize import initialize_project_at
+
     initialize_project_at(path=root)
 
 
@@ -73,6 +131,9 @@ def _index_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     verbose: Annotated[
@@ -84,12 +145,9 @@ def _index_cli(
     resume: Annotated[
         str | None, typer.Option(help="Resume a given indexing run")
     ] = None,
-    reporter: Annotated[
-        ReporterType, typer.Option(help="The progress reporter to use.")
-    ] = ReporterType.RICH,
-    emit: Annotated[
-        str, typer.Option(help="The data formats to emit, comma-separated.")
-    ] = TableEmitterType.Parquet.value,
+    logger: Annotated[
+        LoggerType, typer.Option(help="The progress logger to use.")
+    ] = LoggerType.RICH,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -114,15 +172,16 @@ def _index_cli(
     ] = None,
 ):
     """Build a knowledge graph index."""
+    from graphrag.cli.index import index_cli
+
     index_cli(
         root_dir=root,
         verbose=verbose,
         resume=resume,
         memprofile=memprofile,
         cache=cache,
-        reporter=ReporterType(reporter),
+        logger=LoggerType(logger),
         config_filepath=config,
-        emit=[TableEmitterType(value.strip()) for value in emit.split(",")],
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output,
@@ -153,12 +212,9 @@ def _update_cli(
     memprofile: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
-    reporter: Annotated[
-        ReporterType, typer.Option(help="The progress reporter to use.")
-    ] = ReporterType.RICH,
-    emit: Annotated[
-        str, typer.Option(help="The data formats to emit, comma-separated.")
-    ] = TableEmitterType.Parquet.value,
+    logger: Annotated[
+        LoggerType, typer.Option(help="The progress logger to use.")
+    ] = LoggerType.RICH,
     cache: Annotated[bool, typer.Option(help="Use LLM cache.")] = True,
     skip_validation: Annotated[
         bool,
@@ -181,14 +237,15 @@ def _update_cli(
 
     Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
+    from graphrag.cli.index import update_cli
+
     update_cli(
         root_dir=root,
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
-        reporter=ReporterType(reporter),
+        logger=LoggerType(logger),
         config_filepath=config,
-        emit=[TableEmitterType(value.strip()) for value in emit.split(",")],
         skip_validation=skip_validation,
         output_dir=output,
     )
@@ -204,12 +261,21 @@ def _prompt_tune_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, writable=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     config: Annotated[
         Path | None,
         typer.Option(
-            help="The configuration to use.", exists=True, file_okay=True, readable=True
+            help="The configuration to use.",
+            exists=True,
+            file_okay=True,
+            readable=True,
+            autocompletion=path_autocomplete(
+                file_okay=True, dir_okay=False, match_wildcard="*"
+            ),
         ),
     ] = None,
     domain: Annotated[
@@ -226,13 +292,13 @@ def _prompt_tune_cli(
         typer.Option(
             help="The number of text chunks to embed when --selection-method=auto."
         ),
-    ] = 300,
+    ] = N_SUBSET_MAX,
     k: Annotated[
         int,
         typer.Option(
             help="The maximum number of documents to select from each centroid when --selection-method=auto."
         ),
-    ] = 15,
+    ] = K,
     limit: Annotated[
         int,
         typer.Option(
@@ -271,6 +337,10 @@ def _prompt_tune_cli(
     ] = Path("prompts"),
 ):
     """Generate custom graphrag prompts with your own data (i.e. auto templating)."""
+    import asyncio
+
+    from graphrag.cli.prompt_tune import prompt_tune
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         prompt_tune(
@@ -298,7 +368,13 @@ def _query_cli(
     config: Annotated[
         Path | None,
         typer.Option(
-            help="The configuration to use.", exists=True, file_okay=True, readable=True
+            help="The configuration to use.",
+            exists=True,
+            file_okay=True,
+            readable=True,
+            autocompletion=path_autocomplete(
+                file_okay=True, dir_okay=False, match_wildcard="*"
+            ),
         ),
     ] = None,
     data: Annotated[
@@ -309,6 +385,9 @@ def _query_cli(
             dir_okay=True,
             readable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, match_wildcard="*"
+            ),
         ),
     ] = None,
     root: Annotated[
@@ -319,6 +398,9 @@ def _query_cli(
             dir_okay=True,
             writable=True,
             resolve_path=True,
+            autocompletion=path_autocomplete(
+                file_okay=False, dir_okay=True, match_wildcard="*"
+            ),
         ),
     ] = Path(),  # set default to current directory
     community_level: Annotated[
@@ -342,6 +424,8 @@ def _query_cli(
     ] = False,
 ):
     """Query a knowledge graph index."""
+    from graphrag.cli.query import run_drift_search, run_global_search, run_local_search
+
     match method:
         case SearchType.LOCAL:
             run_local_search(

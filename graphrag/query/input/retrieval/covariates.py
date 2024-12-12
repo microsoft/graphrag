@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import Covariate, Entity
+from graphrag.model.covariate import Covariate
+from graphrag.model.entity import Entity
 
 
 def get_candidate_covariates(
@@ -49,4 +50,4 @@ def to_covariate_dataframe(covariates: list[Covariate]) -> pd.DataFrame:
             )
             new_record.append(field_value)
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

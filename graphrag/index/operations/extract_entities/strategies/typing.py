@@ -10,9 +10,10 @@ from typing import Any
 import networkx as nx
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 
 ExtractedEntity = dict[str, Any]
+ExtractedRelationship = dict[str, Any]
 StrategyConfig = dict[str, Any]
 EntityTypes = list[str]
 
@@ -30,6 +31,7 @@ class EntityExtractionResult:
     """Entity extraction result class definition."""
 
     entities: list[ExtractedEntity]
+    relationships: list[ExtractedRelationship]
     graph: nx.Graph | None
 
 

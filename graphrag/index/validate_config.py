@@ -8,41 +8,37 @@ import sys
 
 from datashaper import NoopVerbCallbacks
 
-from graphrag.config.models import GraphRagConfig
-from graphrag.index.llm import load_llm, load_llm_embeddings
-from graphrag.logging import ProgressReporter
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
+from graphrag.logger.print_progress import ProgressLogger
 
 
-def validate_config_names(
-    reporter: ProgressReporter, parameters: GraphRagConfig
-) -> None:
+def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) -> None:
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     llm = load_llm(
         "test-llm",
-        parameters.llm.type,
-        NoopVerbCallbacks(),
-        None,
-        parameters.llm.model_dump(),
+        parameters.llm,
+        callbacks=NoopVerbCallbacks(),
+        cache=None,
     )
     try:
         asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
-        reporter.success("LLM Config Params Validated")
+        logger.success("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
-        reporter.error(f"LLM configuration error detected. Exiting...\n{e}")
+        logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)
 
     # Validate Embeddings LLM configs
     embed_llm = load_llm_embeddings(
         "test-embed-llm",
-        parameters.embeddings.llm.type,
-        NoopVerbCallbacks(),
-        None,
-        parameters.embeddings.llm.model_dump(),
+        parameters.embeddings.llm,
+        callbacks=NoopVerbCallbacks(),
+        cache=None,
     )
     try:
         asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
-        reporter.success("Embedding LLM Config Params Validated")
+        logger.success("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
-        reporter.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")
+        logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa
         sys.exit(1)

@@ -7,7 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model import CommunityReport, Entity
+from graphrag.model.community_report import CommunityReport
+from graphrag.model.entity import Entity
 
 
 def get_candidate_communities(
@@ -71,4 +72,4 @@ def to_community_report_dataframe(
         if include_community_rank:
             new_record.append(str(report.rank))
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

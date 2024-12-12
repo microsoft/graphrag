@@ -5,7 +5,8 @@
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from graphrag.config import GraphRagConfig, LLMType
+from graphrag.config.enums import LLMType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.query.llm.oai.typing import OpenaiApiType
@@ -13,10 +14,7 @@ from graphrag.query.llm.oai.typing import OpenaiApiType
 
 def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     """Get the LLM client."""
-    is_azure_client = (
-        config.llm.type == LLMType.AzureOpenAIChat
-        or config.llm.type == LLMType.AzureOpenAI
-    )
+    is_azure_client = config.llm.type == LLMType.AzureOpenAIChat
     debug_llm_key = config.llm.api_key or ""
     llm_debug_info = {
         **config.llm.model_dump(),

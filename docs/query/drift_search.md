@@ -23,13 +23,13 @@ Below are the key parameters of the [DRIFTSearch class](https://github.com/micro
 
 - `llm`: OpenAI model object to be used for response generation
 - `context_builder`: [context builder](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/drift_context.py) object to be used for preparing context data from community reports and query information
-- `config`: model to define the DRIFT Search hyperparameters. [DRIFT Config model](https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_config.py)
+- `config`: model to define the DRIFT Search hyperparameters. [DRIFT Config model](https://github.com/microsoft/graphrag/blob/main/graphrag/config/models/drift_search_config.py)
 - `token_encoder`: token encoder for tracking the budget for the algorithm.
 - `query_state`: a state object as defined in [Query State](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/state.py) that allows to track execution of a DRIFT Search instance, alongside follow ups and [DRIFT actions](https://github.com/microsoft/graphrag/blob/main/graphrag/query/structured_search/drift_search/action.py).
 
 ## How to Use
 
-An example of a global search scenario can be found in the following [notebook](../examples_notebooks/drift_search.ipynb).
+An example of a drift search scenario can be found in the following [notebook](../examples_notebooks/drift_search.ipynb).
 
 ## Learn More
 

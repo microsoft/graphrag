@@ -19,14 +19,18 @@ Backwards compatibility is not guaranteed at this time.
 
 from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 from pydantic import validate_call
 
-from graphrag.config import GraphRagConfig
-from graphrag.logging import PrintProgressReporter
-from graphrag.query.factories import (
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.config.embeddings import (
+    community_full_content_embedding,
+    entity_description_embedding,
+)
+from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.query.factory import (
     get_drift_search_engine,
     get_global_search_engine,
     get_local_search_engine,
@@ -40,12 +44,15 @@ from graphrag.query.indexer_adapters import (
     read_indexer_reports,
     read_indexer_text_units,
 )
-from graphrag.query.structured_search.base import SearchResult  # noqa: TCH001
 from graphrag.utils.cli import redact
-from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
+from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.factory import VectorStoreFactory
 
-reporter = PrintProgressReporter("")
+if TYPE_CHECKING:
+    from graphrag.query.structured_search.base import SearchResult
+
+logger = PrintProgressLogger("")
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -85,21 +92,32 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    _communities = read_indexer_communities(communities, nodes, community_reports)
+    communities_ = read_indexer_communities(communities, nodes, community_reports)
     reports = read_indexer_reports(
         community_reports,
         nodes,
         community_level=community_level,
         dynamic_community_selection=dynamic_community_selection,
     )
-    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
+    entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
+    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.reduce_prompt
+    )
+    knowledge_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.knowledge_prompt
+    )
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,
-        entities=_entities,
-        communities=_communities,
+        entities=entities_,
+        communities=communities_,
         response_type=response_type,
         dynamic_community_selection=dynamic_community_selection,
+        map_system_prompt=map_prompt,
+        reduce_system_prompt=reduce_prompt,
+        general_knowledge_inclusion_prompt=knowledge_prompt,
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
@@ -143,21 +161,32 @@ async def global_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    _communities = read_indexer_communities(communities, nodes, community_reports)
+    communities_ = read_indexer_communities(communities, nodes, community_reports)
     reports = read_indexer_reports(
         community_reports,
         nodes,
         community_level=community_level,
         dynamic_community_selection=dynamic_community_selection,
     )
-    _entities = read_indexer_entities(nodes, entities, community_level=community_level)
+    entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
+    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.reduce_prompt
+    )
+    knowledge_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.knowledge_prompt
+    )
+
     search_engine = get_global_search_engine(
         config,
         reports=reports,
-        entities=_entities,
-        communities=_communities,
+        entities=entities_,
+        communities=communities_,
         response_type=response_type,
         dynamic_community_selection=dynamic_community_selection,
+        map_system_prompt=map_prompt,
+        reduce_system_prompt=reduce_prompt,
+        general_knowledge_inclusion_prompt=knowledge_prompt,
     )
     search_result = search_engine.astream_search(query=query)
 
@@ -213,36 +242,28 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    config = _patch_vector_store(config, nodes, entities, community_level)
-
-    # TODO: update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+    entities_ = read_indexer_entities(nodes, entities, community_level)
+    covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
+    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, nodes, community_level),
         text_units=read_indexer_text_units(text_units),
-        entities=_entities,
+        entities=entities_,
         relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
+        covariates={"claims": covariates_},
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
+        system_prompt=prompt,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
@@ -287,36 +308,28 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    config = _patch_vector_store(config, nodes, entities, community_level)
-
-    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    _covariates = read_indexer_covariates(covariates) if covariates is not None else []
+    entities_ = read_indexer_entities(nodes, entities, community_level)
+    covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
+    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, nodes, community_level),
         text_units=read_indexer_text_units(text_units),
-        entities=_entities,
+        entities=entities_,
         relationships=read_indexer_relationships(relationships),
-        covariates={"claims": _covariates},
+        covariates={"claims": covariates_},
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
+        system_prompt=prompt,
     )
     search_result = search_engine.astream_search(query=query)
 
@@ -368,42 +381,31 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    config = _patch_vector_store(
-        config, nodes, entities, community_level, with_reports=community_reports
-    )
-
-    # TODO: update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store.get("type")  # type: ignore
     vector_store_args = config.embeddings.vector_store
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        vector_store_args["db_uri"] = str(lancedb_dir)  # type: ignore
-
-    reporter.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="entity-description",
+        embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = _get_embedding_store(
         config_args=vector_store_args,  # type: ignore
-        container_suffix="community-full_content",
+        embedding_name=community_full_content_embedding,
     )
 
-    _entities = read_indexer_entities(nodes, entities, community_level)
-    _reports = read_indexer_reports(community_reports, nodes, community_level)
-    read_indexer_report_embeddings(_reports, full_content_embedding_store)
-
+    entities_ = read_indexer_entities(nodes, entities, community_level)
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    read_indexer_report_embeddings(reports, full_content_embedding_store)
+    prompt = _load_search_prompt(config.root_dir, config.drift_search.prompt)
     search_engine = get_drift_search_engine(
         config=config,
-        reports=_reports,
+        reports=reports,
         text_units=read_indexer_text_units(text_units),
-        entities=_entities,
+        entities=entities_,
         relationships=read_indexer_relationships(relationships),
         description_embedding_store=description_embedding_store,  # type: ignore
+        local_system_prompt=prompt,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
@@ -421,94 +423,16 @@ async def drift_search(
             return response, context_data
 
 
-def _patch_vector_store(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_level: int,
-    with_reports: pd.DataFrame | None = None,
-) -> GraphRagConfig:
-    # TODO: remove the following patch that checks for a vector_store prior to v1 release
-    # TODO: this is a backwards compatibility patch that injects the default vector_store settings into the config if it is not present
-    # Only applicable in situations involving a local vector_store (lancedb). The general idea:
-    # if vector_store not in config:
-    #     1. assume user is running local if vector_store is not in config
-    #     2. insert default vector_store in config
-    #     3 .create lancedb vector_store instance
-    #     4. upload vector embeddings from the input dataframes to the vector_store
-    if not config.embeddings.vector_store:
-        from graphrag.query.input.loaders.dfs import (
-            store_entity_semantic_embeddings,
-        )
-        from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-        config.embeddings.vector_store = {
-            "type": "lancedb",
-            "db_uri": f"{Path(config.storage.base_dir)}/lancedb",
-            "container_name": "default",
-            "overwrite": True,
-        }
-        description_embedding_store = LanceDBVectorStore(
-            db_uri=config.embeddings.vector_store["db_uri"],
-            collection_name="default-entity-description",
-            overwrite=config.embeddings.vector_store["overwrite"],
-        )
-        description_embedding_store.connect(
-            db_uri=config.embeddings.vector_store["db_uri"]
-        )
-        # dump embeddings from the entities list to the description_embedding_store
-        _entities = read_indexer_entities(nodes, entities, community_level)
-        store_entity_semantic_embeddings(
-            entities=_entities, vectorstore=description_embedding_store
-        )
-
-        if with_reports is not None:
-            from graphrag.query.input.loaders.dfs import (
-                store_reports_semantic_embeddings,
-            )
-            from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
-            community_reports = with_reports
-            collection_name = (
-                config.embeddings.vector_store.get("container_name", "default")
-                if config.embeddings.vector_store
-                else "default"
-            )
-            # Store report embeddings
-            _reports = read_indexer_reports(
-                community_reports,
-                nodes,
-                community_level,
-                content_embedding_col="full_content_embedding",
-                config=config,
-            )
-
-            full_content_embedding_store = LanceDBVectorStore(
-                db_uri=config.embeddings.vector_store["db_uri"],
-                collection_name=f"{collection_name}-community-full_content",
-                overwrite=config.embeddings.vector_store["overwrite"],
-            )
-            full_content_embedding_store.connect(
-                db_uri=config.embeddings.vector_store["db_uri"]
-            )
-            # dump embeddings from the reports list to the full_content_embedding_store
-            store_reports_semantic_embeddings(
-                reports=_reports, vectorstore=full_content_embedding_store
-            )
-
-    return config
-
-
 def _get_embedding_store(
     config_args: dict,
-    container_suffix: str,
+    embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
     vector_store_type = config_args["type"]
-    collection_name = (
-        f"{config_args.get('container_name', 'default')}-{container_suffix}"
+    collection_name = create_collection_name(
+        config_args.get("container_name", "default"), embedding_name
     )
-    embedding_store = VectorStoreFactory.get_vector_store(
+    embedding_store = VectorStoreFactory().create_vector_store(
         vector_store_type=vector_store_type,
         kwargs={**config_args, "collection_name": collection_name},
     )
@@ -545,3 +469,17 @@ def _reformat_context_data(context_data: dict) -> dict:
             continue
         final_format[key] = records
     return final_format
+
+
+def _load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
+    """
+    Load the search prompt from disk if configured.
+
+    If not, leave it empty - the search functions will load their defaults.
+
+    """
+    if prompt_config:
+        prompt_file = Path(root_dir) / prompt_config
+        if prompt_file.exists():
+            return prompt_file.read_bytes().decode(encoding="utf-8")
+    return None

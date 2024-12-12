@@ -15,25 +15,32 @@ from datashaper import NoopVerbCallbacks
 from pydantic import PositiveInt, validate_call
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.llm import load_llm
-from graphrag.logging import PrintProgressReporter
-from graphrag.prompt_tune.generator import (
-    MAX_TOKEN_COUNT,
-    create_community_summarization_prompt,
-    create_entity_extraction_prompt,
-    create_entity_summarization_prompt,
-    detect_language,
+from graphrag.index.llm.load_llm import load_llm
+from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT
+from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
+)
+from graphrag.prompt_tune.generator.community_report_summarization import (
+    create_community_summarization_prompt,
+)
+from graphrag.prompt_tune.generator.community_reporter_role import (
     generate_community_reporter_role,
-    generate_domain,
+)
+from graphrag.prompt_tune.generator.domain import generate_domain
+from graphrag.prompt_tune.generator.entity_extraction_prompt import (
+    create_entity_extraction_prompt,
+)
+from graphrag.prompt_tune.generator.entity_relationship import (
     generate_entity_relationship_examples,
-    generate_entity_types,
-    generate_persona,
 )
-from graphrag.prompt_tune.loader import (
-    MIN_CHUNK_SIZE,
-    load_docs_in_chunks,
+from graphrag.prompt_tune.generator.entity_summarization_prompt import (
+    create_entity_summarization_prompt,
 )
+from graphrag.prompt_tune.generator.entity_types import generate_entity_types
+from graphrag.prompt_tune.generator.language import detect_language
+from graphrag.prompt_tune.generator.persona import generate_persona
+from graphrag.prompt_tune.loader.input import MIN_CHUNK_SIZE, load_docs_in_chunks
 from graphrag.prompt_tune.types import DocSelectionType
 
 
@@ -64,7 +71,7 @@ async def generate_indexing_prompts(
     - domain: The domain to map the input documents to.
     - language: The language to use for the prompts.
     - max_tokens: The maximum number of tokens to use on entity extraction prompts
-    - skip_entity_types: Skip generating entity types.
+    - discover_entity_types: Generate entity types.
     - min_examples_required: The minimum number of examples required for entity extraction prompts.
     - n_subset_max: The number of text chunks to embed when using auto selection method.
     - k: The number of documents to select when using auto selection method.
@@ -73,7 +80,7 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
-    reporter = PrintProgressReporter("")
+    logger = PrintProgressLogger("")
 
     # Retrieve documents
     doc_list = await load_docs_in_chunks(
@@ -81,7 +88,7 @@ async def generate_indexing_prompts(
         config=config,
         limit=limit,
         select_method=selection_method,
-        reporter=reporter,
+        logger=logger,
         chunk_size=chunk_size,
         n_subset_max=n_subset_max,
         k=k,
@@ -90,32 +97,31 @@ async def generate_indexing_prompts(
     # Create LLM from config
     llm = load_llm(
         "prompt_tuning",
-        config.llm.type,
-        NoopVerbCallbacks(),
-        None,
-        config.llm.model_dump(),
+        config.llm,
+        cache=None,
+        callbacks=NoopVerbCallbacks(),
     )
 
     if not domain:
-        reporter.info("Generating domain...")
+        logger.info("Generating domain...")
         domain = await generate_domain(llm, doc_list)
-        reporter.info(f"Generated domain: {domain}")
+        logger.info(f"Generated domain: {domain}")  # noqa
 
     if not language:
-        reporter.info("Detecting language...")
+        logger.info("Detecting language...")
         language = await detect_language(llm, doc_list)
 
-    reporter.info("Generating persona...")
+    logger.info("Generating persona...")
     persona = await generate_persona(llm, domain)
 
-    reporter.info("Generating community report ranking description...")
+    logger.info("Generating community report ranking description...")
     community_report_ranking = await generate_community_report_rating(
         llm, domain=domain, persona=persona, docs=doc_list
     )
 
     entity_types = None
     if discover_entity_types:
-        reporter.info("Generating entity types...")
+        logger.info("Generating entity types...")
         entity_types = await generate_entity_types(
             llm,
             domain=domain,
@@ -124,7 +130,7 @@ async def generate_indexing_prompts(
             json_mode=config.llm.model_supports_json or False,
         )
 
-    reporter.info("Generating entity relationship examples...")
+    logger.info("Generating entity relationship examples...")
     examples = await generate_entity_relationship_examples(
         llm,
         persona=persona,
@@ -134,7 +140,7 @@ async def generate_indexing_prompts(
         json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
     )
 
-    reporter.info("Generating entity extraction prompt...")
+    logger.info("Generating entity extraction prompt...")
     entity_extraction_prompt = create_entity_extraction_prompt(
         entity_types=entity_types,
         docs=doc_list,
@@ -146,18 +152,18 @@ async def generate_indexing_prompts(
         min_examples_required=min_examples_required,
     )
 
-    reporter.info("Generating entity summarization prompt...")
+    logger.info("Generating entity summarization prompt...")
     entity_summarization_prompt = create_entity_summarization_prompt(
         persona=persona,
         language=language,
     )
 
-    reporter.info("Generating community reporter role...")
+    logger.info("Generating community reporter role...")
     community_reporter_role = await generate_community_reporter_role(
         llm, domain=domain, persona=persona, docs=doc_list
     )
 
-    reporter.info("Generating community summarization prompt...")
+    logger.info("Generating community summarization prompt...")
     community_summarization_prompt = create_community_summarization_prompt(
         persona=persona,
         role=community_reporter_role,

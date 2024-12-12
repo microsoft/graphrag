@@ -15,8 +15,8 @@ from graphrag.index.workflows.v1.create_final_covariates import (
 from .util import (
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 MOCK_LLM_RESPONSES = [
@@ -30,7 +30,7 @@ MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONS
 
 async def test_create_final_covariates():
     input_tables = load_input_tables(["workflow:create_base_text_units"])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
@@ -59,13 +59,10 @@ async def test_create_final_covariates():
 
     # assert all of the columns that covariates copied from the input
     assert_series_equal(actual["text_unit_id"], input["id"], check_names=False)
-    assert_series_equal(actual["text_unit_id"], input["chunk_id"], check_names=False)
-    assert_series_equal(actual["document_ids"], input["document_ids"])
-    assert_series_equal(actual["n_tokens"], input["n_tokens"])
 
-    # make sure the human ids are incrementing and cast to strings
-    assert actual["human_readable_id"][0] == "1"
-    assert actual["human_readable_id"][1] == "2"
+    # make sure the human ids are incrementing
+    assert actual["human_readable_id"][0] == 1
+    assert actual["human_readable_id"][1] == 2
 
     # check that the mock data is parsed and inserted into the correct columns
     assert actual["covariate_type"][0] == "claim"

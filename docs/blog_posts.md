@@ -31,4 +31,17 @@
 
     By Julian Whiting, Senior Machine Learning Engineer; Zachary Hills , Senior Software Engineer; [Alonso Guevara Fernández](https://www.microsoft.com/en-us/research/people/alonsog/), Sr. Software Engineer; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist; Adam Bradley , Managing Partner, Strategic Research; [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
 
+- [:octicons-arrow-right-24: __GraphRAG: Improving global search via dynamic community selection__](https://www.microsoft.com/en-us/research/blog/graphrag-improving-global-search-via-dynamic-community-selection/)
+
+    ---
+    <h6>Published November 15, 2024
+
+    By Bryan Li, Research Intern; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist; [Darren Edge](https://www.microsoft.com/en-us/research/people/daedge/), Senior Director; [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
+
+- [:octicons-arrow-right-24: __LazyGraphRAG: Setting a new standard for quality and cost__](https://www.microsoft.com/en-us/research/blog/lazygraphrag-setting-a-new-standard-for-quality-and-cost/)
+
+    ---
+    <h6>Published November 25, 2024
+
+    By [Darren Edge](https://www.microsoft.com/en-us/research/people/daedge/), Senior Director; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist;  [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
 </div>
