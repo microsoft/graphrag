@@ -12,7 +12,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.operations.extract_covariates import (
     extract_covariates,
 )

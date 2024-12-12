@@ -8,54 +8,27 @@ from string import Template
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    WorkflowCallbacks,
-)
 
-from graphrag.callbacks.factories import create_pipeline_reporter
-from graphrag.index.cache.memory_pipeline_cache import InMemoryCache
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.memory_pipeline_cache import InMemoryCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineFileCacheConfig,
 )
-from graphrag.index.config.input import PipelineInputConfigTypes
 from graphrag.index.config.pipeline import PipelineConfig
 from graphrag.index.config.reporting import (
     PipelineBlobReportingConfig,
     PipelineFileReportingConfig,
-    PipelineReportingConfigTypes,
 )
 from graphrag.index.config.storage import (
     PipelineBlobStorageConfig,
     PipelineFileStorageConfig,
 )
 from graphrag.index.context import PipelineRunContext, PipelineRunStats
-from graphrag.index.input.load_input import load_input
-from graphrag.index.storage.memory_pipeline_storage import MemoryPipelineStorage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
-from graphrag.logging.base import ProgressReporter
+from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
-
-
-def _create_reporter(
-    config: PipelineReportingConfigTypes | None, root_dir: str
-) -> WorkflowCallbacks | None:
-    """Create the reporter for the pipeline."""
-    return create_pipeline_reporter(config, root_dir) if config else None
-
-
-async def _create_input(
-    config: PipelineInputConfigTypes | None,
-    progress_reporter: ProgressReporter | None,
-    root_dir: str,
-) -> pd.DataFrame | None:
-    """Load the input for the pipeline."""
-    if config is None:
-        return None
-
-    return await load_input(config, progress_reporter, root_dir)
 
 
 def _validate_dataset(dataset: Any):

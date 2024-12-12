@@ -6,7 +6,8 @@
 import asyncio
 import json
 
-from graphrag.llm.types.llm_types import CompletionLLM
+from fnllm import ChatLLM
+
 from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
@@ -17,7 +18,7 @@ MAX_EXAMPLES = 5
 
 
 async def generate_entity_relationship_examples(
-    llm: CompletionLLM,
+    llm: ChatLLM,
     persona: str,
     entity_types: str | list[str] | None,
     docs: str | list[str],
@@ -30,7 +31,7 @@ async def generate_entity_relationship_examples(
     on the json_mode parameter.
     """
     docs_list = [docs] if isinstance(docs, str) else docs
-    history = [{"role": "system", "content": persona}]
+    history = [{"content": persona, "role": "system"}]
 
     if entity_types:
         entity_types_str = (
@@ -62,6 +63,6 @@ async def generate_entity_relationship_examples(
     responses = await asyncio.gather(*tasks)
 
     return [
-        json.dumps(response.json or "") if json_mode else str(response.output)
+        json.dumps(response.json or "") if json_mode else str(response.output.content)
         for response in responses
     ]

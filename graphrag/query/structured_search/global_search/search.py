@@ -15,7 +15,6 @@ import pandas as pd
 import tiktoken
 
 from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
-from graphrag.llm.openai.utils import try_parse_json_object
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -31,7 +30,7 @@ from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
 from graphrag.query.llm.base import BaseLLM
-from graphrag.query.llm.text_utils import num_tokens
+from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
 DEFAULT_MAP_LLM_PARAMS = {
@@ -110,6 +109,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
     ) -> AsyncGenerator:
         """Stream the global search response."""
         context_result = await self.context_builder.build_context(
+            query=query,
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
@@ -277,8 +277,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         list[dict[str, Any]]
             A list of key points, each key point is a dictionary with "answer" and "score" keys
         """
-        search_response, _j = try_parse_json_object(search_response)
-        if _j == {}:
+        search_response, j = try_parse_json_object(search_response)
+        if j == {}:
             return [{"answer": "", "score": 0}]
 
         parsed_elements = json.loads(search_response).get("points")
@@ -354,10 +354,10 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             for point in filtered_key_points:
                 formatted_response_data = []
                 formatted_response_data.append(
-                    f'----Analyst {point["analyst"] + 1}----'
+                    f"----Analyst {point['analyst'] + 1}----"
                 )
                 formatted_response_data.append(
-                    f'Importance Score: {point["score"]}'  # type: ignore
+                    f"Importance Score: {point['score']}"  # type: ignore
                 )
                 formatted_response_data.append(point["answer"])  # type: ignore
                 formatted_response_text = "\n".join(formatted_response_data)
@@ -455,8 +455,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         total_tokens = 0
         for point in filtered_key_points:
             formatted_response_data = [
-                f'----Analyst {point["analyst"] + 1}----',
-                f'Importance Score: {point["score"]}',
+                f"----Analyst {point['analyst'] + 1}----",
+                f"Importance Score: {point['score']}",
                 point["answer"],
             ]
             formatted_response_text = "\n".join(formatted_response_data)

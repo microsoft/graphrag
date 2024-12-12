@@ -41,7 +41,7 @@ class GraphRagConfig(LLMConfig):
         return self.model_dump_json(indent=4)
 
     root_dir: str = Field(
-        description="The root directory for the configuration.", default=None
+        description="The root directory for the configuration.", default="."
     )
 
     reporting: ReportingConfig = Field(

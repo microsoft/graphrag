@@ -11,7 +11,7 @@ from datashaper import (
     VerbCallbacks,
 )
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -19,6 +19,7 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     CLAIM_STATUS,
     CLAIM_SUBJECT,
     CLAIM_TYPE,
+    COMMUNITY_ID,
     EDGE_DEGREE,
     EDGE_DESCRIPTION,
     EDGE_DETAILS,
@@ -83,13 +84,11 @@ async def create_final_community_reports(
 
     community_reports["community"] = community_reports["community"].astype(int)
     community_reports["human_readable_id"] = community_reports["community"]
-    community_reports["id"] = community_reports["community"].apply(
-        lambda _x: str(uuid4())
-    )
+    community_reports["id"] = [uuid4().hex for _ in range(len(community_reports))]
 
     # Merge with communities to add size and period
     merged = community_reports.merge(
-        communities.loc[:, ["community", "size", "period"]],
+        communities.loc[:, ["community", "parent", "size", "period"]],
         on="community",
         how="left",
         copy=False,
@@ -100,6 +99,7 @@ async def create_final_community_reports(
             "id",
             "human_readable_id",
             "community",
+            "parent",
             "level",
             "title",
             "summary",
@@ -115,45 +115,42 @@ async def create_final_community_reports(
 
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    # merge values of four columns into a map column
-    input[NODE_DETAILS] = input.apply(
-        lambda x: {
-            NODE_ID: x[NODE_ID],
-            NODE_NAME: x[NODE_NAME],
-            NODE_DESCRIPTION: x[NODE_DESCRIPTION],
-            NODE_DEGREE: x[NODE_DEGREE],
-        },
-        axis=1,
+    """Prepare nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
+    # Filter rows where community is not -1
+    input = input.loc[input.loc[:, COMMUNITY_ID] != -1]
+
+    # Fill missing values in NODE_DESCRIPTION
+    input.loc[:, NODE_DESCRIPTION] = input.loc[:, NODE_DESCRIPTION].fillna(
+        "No Description"
     )
+
+    # Create NODE_DETAILS column
+    input.loc[:, NODE_DETAILS] = input.loc[
+        :, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]
+    ].to_dict(orient="records")
+
     return input
 
 
 def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    input[EDGE_DETAILS] = input.apply(
-        lambda x: {
-            EDGE_ID: x[EDGE_ID],
-            EDGE_SOURCE: x[EDGE_SOURCE],
-            EDGE_TARGET: x[EDGE_TARGET],
-            EDGE_DESCRIPTION: x[EDGE_DESCRIPTION],
-            EDGE_DEGREE: x[EDGE_DEGREE],
-        },
-        axis=1,
-    )
+    # Fill missing NODE_DESCRIPTION
+    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+
+    # Create EDGE_DETAILS column
+    input.loc[:, EDGE_DETAILS] = input.loc[
+        :, [EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]
+    ].to_dict(orient="records")
+
     return input
 
 
 def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
-    input = input.fillna(value={NODE_DESCRIPTION: "No Description"})
-    input[CLAIM_DETAILS] = input.apply(
-        lambda x: {
-            CLAIM_ID: x[CLAIM_ID],
-            CLAIM_SUBJECT: x[CLAIM_SUBJECT],
-            CLAIM_TYPE: x[CLAIM_TYPE],
-            CLAIM_STATUS: x[CLAIM_STATUS],
-            CLAIM_DESCRIPTION: x[CLAIM_DESCRIPTION],
-        },
-        axis=1,
-    )
+    # Fill missing NODE_DESCRIPTION
+    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+
+    # Create CLAIM_DETAILS column
+    input.loc[:, CLAIM_DETAILS] = input.loc[
+        :, [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
+    ].to_dict(orient="records")
+
     return input

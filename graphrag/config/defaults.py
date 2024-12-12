@@ -20,9 +20,11 @@ from graphrag.vector_stores.factory import VectorStoreType
 
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
+AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 #
 # LLM Parameters
 #
+LLM_FREQUENCY_PENALTY = 0.0
 LLM_TYPE = LLMType.OpenAIChat
 LLM_MODEL = "gpt-4-turbo-preview"
 LLM_MAX_TOKENS = 4000
@@ -34,6 +36,7 @@ LLM_TOKENS_PER_MINUTE = 0
 LLM_REQUESTS_PER_MINUTE = 0
 LLM_MAX_RETRIES = 10
 LLM_MAX_RETRY_WAIT = 10.0
+LLM_PRESENCE_PENALTY = 0.0
 LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION = True
 LLM_CONCURRENT_REQUESTS = 25
 
@@ -79,8 +82,6 @@ NODE2VEC_RANDOM_SEED = 597832
 REPORTING_TYPE = ReportingType.file
 REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
-SNAPSHOTS_RAW_ENTITIES = False
-SNAPSHOTS_TOP_LEVEL_NODES = False
 SNAPSHOTS_EMBEDDINGS = False
 SNAPSHOTS_TRANSIENT = False
 STORAGE_BASE_DIR = "output"
@@ -95,6 +96,13 @@ VECTOR_STORE = f"""
     container_name: default
     overwrite: true\
 """
+
+VECTOR_STORE_DICT = {
+    "type": VectorStoreType.LanceDB.value,
+    "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
+    "container_name": "default",
+    "overwrite": True,
+}
 
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5

@@ -1,0 +1,46 @@
+{
+  "changes": [
+    {
+      "description": "Refactor graph creation.",
+      "type": "minor"
+    },
+    {
+      "description": "Dependency updates",
+      "type": "patch"
+    },
+    {
+      "description": "Fix Global Search with dynamic Community selection bug",
+      "type": "patch"
+    },
+    {
+      "description": "Fix question gen.",
+      "type": "patch"
+    },
+    {
+      "description": "Optimize Final Community Reports calculation and stabilize cache",
+      "type": "patch"
+    },
+    {
+      "description": "miscellaneous code cleanup and minor changes for better alignment of style across the codebase.",
+      "type": "patch"
+    },
+    {
+      "description": "replace llm package with fnllm",
+      "type": "patch"
+    },
+    {
+      "description": "replaced md5 hash with sha256",
+      "type": "patch"
+    },
+    {
+      "description": "replaced md5 hash with sha512",
+      "type": "patch"
+    },
+    {
+      "description": "update API and add a demonstration notebook",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-12-06T20:12:30+00:00",
+  "version": "0.9.0"
+}

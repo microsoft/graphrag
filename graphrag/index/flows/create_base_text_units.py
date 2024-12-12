@@ -16,8 +16,8 @@ from datashaper import (
 
 from graphrag.index.operations.chunk_text import chunk_text
 from graphrag.index.operations.snapshot import snapshot
-from graphrag.index.storage.pipeline_storage import PipelineStorage
-from graphrag.index.utils.hashing import gen_md5_hash
+from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 
 async def create_base_text_units(
@@ -59,7 +59,7 @@ async def create_base_text_units(
         strategy=chunk_strategy,
     )
 
-    chunked = cast(pd.DataFrame, chunked[[*chunk_by_columns, "chunks"]])
+    chunked = cast("pd.DataFrame", chunked[[*chunk_by_columns, "chunks"]])
     chunked = chunked.explode("chunks")
     chunked.rename(
         columns={
@@ -67,14 +67,16 @@ async def create_base_text_units(
         },
         inplace=True,
     )
-    chunked["id"] = chunked.apply(lambda row: gen_md5_hash(row, ["chunk"]), axis=1)
+    chunked["id"] = chunked.apply(lambda row: gen_sha512_hash(row, ["chunk"]), axis=1)
     chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
         chunked["chunk"].tolist(), index=chunked.index
     )
     # rename for downstream consumption
     chunked.rename(columns={"chunk": "text"}, inplace=True)
 
-    output = cast(pd.DataFrame, chunked[chunked["text"].notna()].reset_index(drop=True))
+    output = cast(
+        "pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True)
+    )
 
     if snapshot_transient_enabled:
         await snapshot(
@@ -103,7 +105,7 @@ def _aggregate_df(
         output_grouped = input.groupby(lambda _x: True)
     else:
         output_grouped = input.groupby(groupby, sort=False)
-    output = cast(pd.DataFrame, output_grouped.agg(df_aggregations))
+    output = cast("pd.DataFrame", output_grouped.agg(df_aggregations))
     output.rename(
         columns={agg.column: agg.to for agg in aggregations_to_apply.values()},
         inplace=True,

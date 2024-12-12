@@ -64,7 +64,7 @@ def create_graphrag_config(
     values = values or {}
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
-    _token_replace(cast(dict, values))
+    _token_replace(cast("dict", values))
     InputModelValidator.validate_python(values, strict=True)
 
     reader = EnvironmentReader(env)
@@ -409,9 +409,6 @@ def create_graphrag_config(
         ):
             snapshots_model = SnapshotsConfig(
                 graphml=reader.bool("graphml") or defs.SNAPSHOTS_GRAPHML,
-                raw_entities=reader.bool("raw_entities") or defs.SNAPSHOTS_RAW_ENTITIES,
-                top_level_nodes=reader.bool("top_level_nodes")
-                or defs.SNAPSHOTS_TOP_LEVEL_NODES,
                 embeddings=reader.bool("embeddings") or defs.SNAPSHOTS_EMBEDDINGS,
                 transient=reader.bool("transient") or defs.SNAPSHOTS_TRANSIENT,
             )
@@ -705,9 +702,7 @@ class Section(str, Enum):
 
 def _is_azure(llm_type: LLMType | None) -> bool:
     return (
-        llm_type == LLMType.AzureOpenAI
-        or llm_type == LLMType.AzureOpenAIChat
-        or llm_type == LLMType.AzureOpenAIEmbedding
+        llm_type == LLMType.AzureOpenAIChat or llm_type == LLMType.AzureOpenAIEmbedding
     )
 
 

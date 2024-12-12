@@ -3,14 +3,13 @@
 
 """Persona generating module for fine-tuning GraphRAG prompts."""
 
-from graphrag.llm.types.llm_types import CompletionLLM
+from fnllm import ChatLLM
+
 from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.persona import GENERATE_PERSONA_PROMPT
 
 
-async def generate_persona(
-    llm: CompletionLLM, domain: str, task: str = DEFAULT_TASK
-) -> str:
+async def generate_persona(llm: ChatLLM, domain: str, task: str = DEFAULT_TASK) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters
@@ -24,4 +23,4 @@ async def generate_persona(
 
     response = await llm(persona_prompt)
 
-    return str(response.output)
+    return str(response.output.content)
