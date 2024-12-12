@@ -6,7 +6,6 @@
 from typing import Any
 from uuid import uuid4
 
-import networkx as nx
 import pandas as pd
 from datashaper import (
     AsyncType,
@@ -14,7 +13,6 @@ from datashaper import (
 )
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
@@ -60,9 +58,7 @@ async def extract_graph(
 
     base_relationship_edges = _prep_edges(merged_relationships, relationship_summaries)
 
-    graph = create_graph(base_relationship_edges)
-
-    base_entity_nodes = _prep_nodes(merged_entities, entity_summaries, graph)
+    base_entity_nodes = _prep_nodes(merged_entities, entity_summaries)
 
     return (base_entity_nodes, base_relationship_edges)
 
@@ -85,12 +81,10 @@ def _merge_relationships(relationship_dfs) -> pd.DataFrame:
     )
 
 
-def _prep_nodes(entities, summaries, graph) -> pd.DataFrame:
-    degrees_df = _compute_degree(graph)
+def _prep_nodes(entities, summaries) -> pd.DataFrame:
     entities.drop(columns=["description"], inplace=True)
     nodes = (
         entities.merge(summaries, on="name", how="left")
-        .merge(degrees_df, on="name")
         .drop_duplicates(subset="name")
         .rename(columns={"name": "title", "source_id": "text_unit_ids"})
     )
@@ -110,10 +104,3 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
     edges["human_readable_id"] = edges.index
     edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
     return edges
-
-
-def _compute_degree(graph: nx.Graph) -> pd.DataFrame:
-    return pd.DataFrame([
-        {"name": node, "degree": int(degree)}
-        for node, degree in graph.degree  # type: ignore
-    ])

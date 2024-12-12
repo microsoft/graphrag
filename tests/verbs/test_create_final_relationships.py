@@ -16,10 +16,9 @@ from .util import (
 
 def test_create_final_relationships():
     edges = load_test_table("base_relationship_edges")
-    nodes = load_test_table("base_entity_nodes")
     expected = load_test_table(workflow_name)
 
-    actual = create_final_relationships(edges, nodes)
+    actual = create_final_relationships(edges)
 
     assert "id" in expected.columns
     columns = list(expected.columns.values)
