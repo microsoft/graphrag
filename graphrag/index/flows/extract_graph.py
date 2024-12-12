@@ -32,7 +32,7 @@ async def extract_graph(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
-    entity_dfs, relationship_dfs = await extract_entities(
+    entities, relationships = await extract_entities(
         text_units,
         callbacks,
         cache,
@@ -44,41 +44,20 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
-    merged_entities = _merge_entities(entity_dfs)
-    merged_relationships = _merge_relationships(relationship_dfs)
-
     entity_summaries, relationship_summaries = await summarize_descriptions(
-        merged_entities,
-        merged_relationships,
+        entities,
+        relationships,
         callbacks,
         cache,
         strategy=summarization_strategy,
         num_threads=summarization_num_threads,
     )
 
-    base_relationship_edges = _prep_edges(merged_relationships, relationship_summaries)
+    base_relationship_edges = _prep_edges(relationships, relationship_summaries)
 
-    base_entity_nodes = _prep_nodes(merged_entities, entity_summaries)
+    base_entity_nodes = _prep_nodes(entities, entity_summaries)
 
     return (base_entity_nodes, base_relationship_edges)
-
-
-def _merge_entities(entity_dfs) -> pd.DataFrame:
-    all_entities = pd.concat(entity_dfs, ignore_index=True)
-    return (
-        all_entities.groupby(["name", "type"], sort=False)
-        .agg({"description": list, "source_id": list})
-        .reset_index()
-    )
-
-
-def _merge_relationships(relationship_dfs) -> pd.DataFrame:
-    all_relationships = pd.concat(relationship_dfs, ignore_index=False)
-    return (
-        all_relationships.groupby(["source", "target"], sort=False)
-        .agg({"description": list, "source_id": list, "weight": "sum"})
-        .reset_index()
-    )
 
 
 def _prep_nodes(entities, summaries) -> pd.DataFrame:
