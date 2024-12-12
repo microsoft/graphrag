@@ -85,6 +85,7 @@ def create_graphrag_config(
             deployment_name = (
                 reader.str(Fragment.deployment_name) or base.deployment_name
             )
+            encoding_model = reader.str(Fragment.encoding_model) or base.encoding_model
 
             if api_key is None and not _is_azure(llm_type):
                 raise ApiKeyMissingError
@@ -106,6 +107,7 @@ def create_graphrag_config(
                 organization=reader.str("organization") or base.organization,
                 proxy=reader.str("proxy") or base.proxy,
                 model=reader.str("model") or base.model,
+                encoding_model=encoding_model,
                 max_tokens=reader.int(Fragment.max_tokens) or base.max_tokens,
                 temperature=reader.float(Fragment.temperature) or base.temperature,
                 top_p=reader.float(Fragment.top_p) or base.top_p,
@@ -155,6 +157,7 @@ def create_graphrag_config(
             api_proxy = reader.str("proxy") or base.proxy
             audience = reader.str(Fragment.audience) or base.audience
             deployment_name = reader.str(Fragment.deployment_name)
+            encoding_model = reader.str(Fragment.encoding_model) or base.encoding_model
 
             if api_key is None and not _is_azure(api_type):
                 raise ApiKeyMissingError(embedding=True)
@@ -176,6 +179,7 @@ def create_graphrag_config(
                 organization=api_organization,
                 proxy=api_proxy,
                 model=reader.str(Fragment.model) or defs.EMBEDDING_MODEL,
+                encoding_model=encoding_model,
                 request_timeout=reader.float(Fragment.request_timeout)
                 or defs.LLM_REQUEST_TIMEOUT,
                 audience=audience,
@@ -217,7 +221,8 @@ def create_graphrag_config(
         fallback_oai_base = reader.str(Fragment.api_base) or fallback_oai_base
         fallback_oai_version = reader.str(Fragment.api_version) or fallback_oai_version
         fallback_oai_proxy = reader.str(Fragment.api_proxy)
-
+        global_encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
+        
         with reader.envvar_prefix(Section.llm):
             with reader.use(values.get("llm")):
                 llm_type = reader.str(Fragment.type)
@@ -231,6 +236,7 @@ def create_graphrag_config(
                 api_proxy = reader.str(Fragment.api_proxy) or fallback_oai_proxy
                 audience = reader.str(Fragment.audience)
                 deployment_name = reader.str(Fragment.deployment_name)
+                encoding_model = reader.str(Fragment.encoding_model) or global_encoding_model
 
                 if api_key is None and not _is_azure(llm_type):
                     raise ApiKeyMissingError
@@ -252,6 +258,7 @@ def create_graphrag_config(
                     proxy=api_proxy,
                     type=llm_type,
                     model=reader.str(Fragment.model) or defs.LLM_MODEL,
+                    encoding_model=encoding_model,
                     max_tokens=reader.int(Fragment.max_tokens) or defs.LLM_MAX_TOKENS,
                     temperature=reader.float(Fragment.temperature)
                     or defs.LLM_TEMPERATURE,
@@ -603,9 +610,8 @@ def create_graphrag_config(
                 or defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS,
             )
 
-        encoding_model = reader.str(Fragment.encoding_model) or defs.ENCODING_MODEL
         skip_workflows = reader.list("skip_workflows") or []
-
+    
     return GraphRagConfig(
         root_dir=root_dir,
         llm=llm_model,
@@ -626,7 +632,7 @@ def create_graphrag_config(
         summarize_descriptions=summarize_descriptions_model,
         umap=umap_model,
         cluster_graph=cluster_graph_model,
-        encoding_model=encoding_model,
+        encoding_model=global_encoding_model,
         skip_workflows=skip_workflows,
         local_search=local_search_model,
         global_search=global_search_model,
