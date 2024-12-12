@@ -42,7 +42,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
         assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
-            entity["name"] for entity in results.entities
+            entity["title"] for entity in results.entities
         ])
 
     async def test_run_extract_entities_multiple_documents_correct_entities_returned(
@@ -81,7 +81,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
         assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
-            entity["name"] for entity in results.entities
+            entity["title"] for entity in results.entities
         ])
 
     async def test_run_extract_entities_multiple_documents_correct_edges_returned(self):

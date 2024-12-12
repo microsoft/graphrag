@@ -63,9 +63,9 @@ async def extract_graph(
 def _prep_nodes(entities, summaries) -> pd.DataFrame:
     entities.drop(columns=["description"], inplace=True)
     nodes = (
-        entities.merge(summaries, on="name", how="left")
-        .drop_duplicates(subset="name")
-        .rename(columns={"name": "title", "source_id": "text_unit_ids"})
+        entities.merge(summaries, on="title", how="left")
+        .drop_duplicates(subset="title")
+        .rename(columns={"source_id": "text_unit_ids"})
     )
     nodes = nodes.loc[nodes["title"].notna()].reset_index()
     nodes["human_readable_id"] = nodes.index
