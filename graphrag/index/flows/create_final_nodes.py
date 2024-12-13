@@ -11,8 +11,8 @@ from datashaper import (
 )
 
 from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.embed_graph import embed_graph
-from graphrag.index.operations.layout_graph import layout_graph
+from graphrag.index.operations.embed_graph.embed_graph import embed_graph
+from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
 def create_final_nodes(
