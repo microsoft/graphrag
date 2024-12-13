@@ -254,6 +254,11 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         query=query, enable_cross_partition_query=True
                 )
                 return len(list(queried_items)) > 0
+            item_names = [
+                item["id"]
+                for item in container_client.read_all_items()
+            ]
+            return key in item_names
         return False
 
     async def delete(self, key: str) -> None:
@@ -262,13 +267,16 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = self._database_client.get_container_client(
                 self.container_name
             )
-            prefix = self._get_prefix(key)
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
-            queried_items = container_client.query_items(
-                    query=query, enable_cross_partition_query=True
-            )
-            for item in queried_items:
-                container_client.delete_item(item=item["id"], partition_key=item["id"])
+            if ".parquet" in key:
+                prefix = self._get_prefix(key)
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
+                queried_items = container_client.query_items(
+                        query=query, enable_cross_partition_query=True
+                )
+                for item in queried_items:
+                    container_client.delete_item(item=item["id"], partition_key=item["id"])
+            else:
+                container_client.delete_item(item=key, partition_key=key)
 
     # Function currently deletes all items within the current container, then deletes the container itself.
     # TODO: Decide the granularity of deletion (e.g. delete all items within the current container, delete the current container, delete the current database)
