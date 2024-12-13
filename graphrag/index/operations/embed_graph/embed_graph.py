@@ -7,13 +7,13 @@ from typing import Any
 
 import networkx as nx
 
-from graphrag.index.graph.utils import stable_largest_connected_component
 from graphrag.index.operations.embed_graph.embed_node2vec import embed_node2vec
 from graphrag.index.operations.embed_graph.typing import (
     EmbedGraphStrategyType,
     NodeEmbeddings,
 )
 from graphrag.index.utils.load_graph import load_graph
+from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 
 def embed_graph(
