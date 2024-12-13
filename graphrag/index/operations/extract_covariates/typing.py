@@ -5,7 +5,6 @@
 
 from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any
 
 from datashaper import VerbCallbacks
@@ -49,13 +48,3 @@ CovariateExtractStrategy = Callable[
     ],
     Awaitable[CovariateExtractionResult],
 ]
-
-
-class ExtractClaimsStrategyType(str, Enum):
-    """ExtractClaimsStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'

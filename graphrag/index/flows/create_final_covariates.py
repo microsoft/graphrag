@@ -13,7 +13,7 @@ from datashaper import (
 )
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.operations.extract_covariates import (
+from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates,
 )
 
