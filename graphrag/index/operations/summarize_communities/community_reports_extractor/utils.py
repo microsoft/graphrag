@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-import graphrag.index.graph.extractors.community_reports.schemas as schemas
+import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
 
 
 def get_levels(df: pd.DataFrame, level_column: str = schemas.NODE_LEVEL) -> list[int]:

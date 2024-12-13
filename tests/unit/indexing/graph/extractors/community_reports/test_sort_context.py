@@ -3,7 +3,9 @@
 import math
 import platform
 
-from graphrag.index.graph.extractors.community_reports import sort_context
+from graphrag.index.operations.summarize_communities.community_reports_extractor import (
+    sort_context,
+)
 from graphrag.query.llm.text_utils import num_tokens
 
 nan = math.nan
