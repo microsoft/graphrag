@@ -247,12 +247,13 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = self._database_client.get_container_client(
                 self.container_name
             )
-            prefix = self._get_prefix(key)
-            query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
-            queried_items = container_client.query_items(
-                    query=query, enable_cross_partition_query=True
-            )
-            return len(list(queried_items)) > 0
+            if ".parquet" in key:
+                prefix = self._get_prefix(key)
+                query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
+                queried_items = container_client.query_items(
+                        query=query, enable_cross_partition_query=True
+                )
+                return len(list(queried_items)) > 0
         return False
 
     async def delete(self, key: str) -> None:
