@@ -4,7 +4,6 @@
 """A module containing entity_extract methods."""
 
 import logging
-from enum import Enum
 from typing import Any
 
 import pandas as pd
@@ -16,24 +15,13 @@ from datashaper import (
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.bootstrap import bootstrap
-from graphrag.index.operations.extract_entities.strategies.typing import (
+from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractStrategy,
+    ExtractEntityStrategyType,
 )
 
 log = logging.getLogger(__name__)
-
-
-class ExtractEntityStrategyType(str, Enum):
-    """ExtractEntityStrategyType class definition."""
-
-    graph_intelligence = "graph_intelligence"
-    graph_intelligence_json = "graph_intelligence_json"
-    nltk = "nltk"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
 
 
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
@@ -157,7 +145,7 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
     """Load strategy method definition."""
     match strategy_type:
         case ExtractEntityStrategyType.graph_intelligence:
-            from graphrag.index.operations.extract_entities.strategies.graph_intelligence import (
+            from graphrag.index.operations.extract_entities.graph_intelligence_strategy import (
                 run_graph_intelligence,
             )
 
@@ -166,7 +154,7 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
         case ExtractEntityStrategyType.nltk:
             bootstrap()
             # dynamically import nltk strategy to avoid dependency if not used
-            from graphrag.index.operations.extract_entities.strategies.nltk import (
+            from graphrag.index.operations.extract_entities.nltk_strategy import (
                 run as run_nltk,
             )
 

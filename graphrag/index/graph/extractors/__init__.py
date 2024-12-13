@@ -6,10 +6,7 @@
 from graphrag.index.graph.extractors.community_reports import (
     CommunityReportsExtractor,
 )
-from graphrag.index.graph.extractors.graph import GraphExtractionResult, GraphExtractor
 
 __all__ = [
     "CommunityReportsExtractor",
-    "GraphExtractionResult",
-    "GraphExtractor",
 ]
