@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 from datashaper import Progress
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -97,7 +97,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressReporter | None = None,
+        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -186,18 +186,18 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     items_list = list(queried_items)
                     for item in items_list:
                         item["id"] = item["id"].split(":")[1]
-                    
+
                     items_json_str = json.dumps(items_list)
 
                     items_df = pd.read_json(
                         StringIO(items_json_str), orient="records", lines=False
                     )
                     return items_df.to_parquet()
-                
+
                 item = container_client.read_item(item=key, partition_key=key)
                 item_body = item.get("body")
                 return json.dumps(item_body)
-            
+
         except Exception:
             log.exception("Error reading item %s", key)
             return None
@@ -224,7 +224,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         cosmosdb_item_list = json.loads(value_json)
                         for cosmosdb_item in cosmosdb_item_list:
                             # Append an additional prefix to the id to force a unique identifier for the create_final_nodes rows
-                            if (prefix == "create_final_nodes"):
+                            if prefix == "create_final_nodes":
                                 prefixed_id = f"{prefix}-community_{cosmosdb_item['community']}:{cosmosdb_item['id']}"
                             else:
                                 prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
@@ -250,7 +250,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             prefix = self._get_prefix(key)
             query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
             queried_items = container_client.query_items(
-                    query=query, enable_cross_partition_query=True
+                query=query, enable_cross_partition_query=True
             )
             return len(list(queried_items)) > 0
         return False
@@ -264,7 +264,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             prefix = self._get_prefix(key)
             query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
             queried_items = container_client.query_items(
-                    query=query, enable_cross_partition_query=True
+                query=query, enable_cross_partition_query=True
             )
             for item in queried_items:
                 container_client.delete_item(item=item["id"], partition_key=item["id"])
@@ -290,7 +290,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def child(self, name: str | None) -> PipelineStorage:
         """Create a child storage instance."""
         return self
-    
+
     def _get_prefix(self, key: str) -> str:
         """Get the prefix of the filename key."""
         return key.split(".")[0]

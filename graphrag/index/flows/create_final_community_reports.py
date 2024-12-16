@@ -62,7 +62,7 @@ async def create_final_community_reports(
         claims = _prep_claims(claims_input)
 
     community_hierarchy = restore_community_hierarchy(nodes)
-    
+
     local_contexts = prepare_community_reports(
         nodes,
         edges,

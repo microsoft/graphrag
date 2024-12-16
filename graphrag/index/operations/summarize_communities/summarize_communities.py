@@ -55,6 +55,7 @@ async def summarize_communities(
                 "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
             ),
         )
+
         async def run_generate(record):
             result = await _generate_report(
                 runner,

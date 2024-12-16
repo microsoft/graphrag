@@ -6,7 +6,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
-from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
