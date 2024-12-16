@@ -540,7 +540,7 @@ class TestDefaultConfig(unittest.TestCase):
     )
     def test_malformed_input_dict_throws(self):
         with pytest.raises(ValidationError):
-            create_graphrag_config(cast(Any, {"llm": 12}))
+            create_graphrag_config(cast("Any", {"llm": 12}))
 
     @mock.patch.dict(
         os.environ,
@@ -640,8 +640,6 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.reporting.type == ReportingType.blob
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
-        assert parameters.snapshots.raw_entities
-        assert parameters.snapshots.top_level_nodes
         assert parameters.snapshots.embeddings
         assert parameters.snapshots.transient
         assert parameters.storage.storage_account_blob_url == "storage_account_blob_url"
@@ -734,8 +732,6 @@ class TestDefaultConfig(unittest.TestCase):
                 ),
                 snapshots=SnapshotsConfigInput(
                     graphml=True,
-                    raw_entities=True,
-                    top_level_nodes=True,
                     embeddings=True,
                     transient=True,
                 ),
@@ -823,8 +819,6 @@ class TestDefaultConfig(unittest.TestCase):
         )
         assert parameters.skip_workflows == ["a", "b", "c"]
         assert parameters.snapshots.graphml
-        assert parameters.snapshots.raw_entities
-        assert parameters.snapshots.top_level_nodes
         assert parameters.snapshots.embeddings
         assert parameters.snapshots.transient
         assert parameters.storage.base_dir == "/some/storage/dir"
@@ -916,8 +910,6 @@ class TestDefaultConfig(unittest.TestCase):
         assert parameters.reporting.type == defs.REPORTING_TYPE
         assert parameters.reporting.base_dir == defs.REPORTING_BASE_DIR
         assert parameters.snapshots.graphml == defs.SNAPSHOTS_GRAPHML
-        assert parameters.snapshots.raw_entities == defs.SNAPSHOTS_RAW_ENTITIES
-        assert parameters.snapshots.top_level_nodes == defs.SNAPSHOTS_TOP_LEVEL_NODES
         assert parameters.snapshots.embeddings == defs.SNAPSHOTS_EMBEDDINGS
         assert parameters.snapshots.transient == defs.SNAPSHOTS_TRANSIENT
         assert parameters.storage.base_dir == defs.STORAGE_BASE_DIR

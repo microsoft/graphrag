@@ -2,6 +2,15 @@
     "input_path": "./tests/fixtures/text",
     "input_file_type": "text",
     "workflow_config": {
+        "compute_communities": {
+            "row_range": [
+                1,
+                2500
+            ],
+            "subworkflows": 1,
+            "max_runtime": 150,
+            "expected_artifacts": 0
+        },
         "create_base_text_units": {
             "row_range": [
                 1,
@@ -11,7 +20,7 @@
             "max_runtime": 150,
             "expected_artifacts": 0
         },
-        "create_base_entity_graph": {
+        "extract_graph": {
             "row_range": [
                 1,
                 2500

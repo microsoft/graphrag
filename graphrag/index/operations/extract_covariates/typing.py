@@ -10,7 +10,7 @@ from typing import Any
 
 from datashaper import VerbCallbacks
 
-from graphrag.index.cache.pipeline_cache import PipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
 
 
 @dataclass

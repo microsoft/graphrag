@@ -254,7 +254,7 @@ def _convert_report_context_to_df(
 
     record_df = pd.DataFrame(
         context_records,
-        columns=cast(Any, header),
+        columns=cast("Any", header),
     )
     return _rank_report_context(
         report_df=record_df,

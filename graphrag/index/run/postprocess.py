@@ -46,5 +46,5 @@ async def _run_post_process_steps(
             context=context,
             callbacks=callbacks,
         )
-        dataset = cast(pd.DataFrame, input_workflow.output())
+        dataset = cast("pd.DataFrame", input_workflow.output())
     return dataset

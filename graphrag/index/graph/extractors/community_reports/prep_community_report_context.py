@@ -13,7 +13,6 @@ from graphrag.index.graph.extractors.community_reports.build_mixed_context impor
     build_mixed_context,
 )
 from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
-from graphrag.index.graph.extractors.community_reports.utils import set_context_size
 from graphrag.index.utils.dataframes import (
     antijoin,
     drop_columns,
@@ -23,6 +22,7 @@ from graphrag.index.utils.dataframes import (
     union,
     where_column_equals,
 )
+from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def prep_community_report_context(
     report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
-    level: int | str,
+    level: int,
     max_tokens: int,
 ) -> pd.DataFrame:
     """
@@ -44,10 +44,18 @@ def prep_community_report_context(
     if report_df is None:
         report_df = pd.DataFrame()
 
-    level = int(level)
-    level_context_df = _at_level(level, local_context_df)
-    valid_context_df = _within_context(level_context_df)
-    invalid_context_df = _exceeding_context(level_context_df)
+    # Filter by community level
+    level_context_df = local_context_df.loc[
+        local_context_df.loc[:, schemas.COMMUNITY_LEVEL] == level
+    ]
+
+    # Filter valid and invalid contexts using boolean logic
+    valid_context_df = level_context_df.loc[
+        ~level_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG]
+    ]
+    invalid_context_df = level_context_df.loc[
+        level_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG]
+    ]
 
     # there is no report to substitute with, so we just trim the local context of the invalid context records
     # this case should only happen at the bottom level of the community hierarchy where there are no sub-communities
@@ -55,11 +63,13 @@ def prep_community_report_context(
         return valid_context_df
 
     if report_df.empty:
-        invalid_context_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
+        invalid_context_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
             invalid_context_df, max_tokens
         )
-        set_context_size(invalid_context_df)
-        invalid_context_df.loc[:, schemas.CONTEXT_EXCEED_FLAG] = 0
+        invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df.loc[
+            :, schemas.CONTEXT_STRING
+        ].map(num_tokens)
+        invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
         return union(valid_context_df, invalid_context_df)
 
     level_context_df = _antijoin_reports(level_context_df, report_df)
@@ -74,12 +84,13 @@ def prep_community_report_context(
     # handle any remaining invalid records that can't be subsituted with sub-community reports
     # this should be rare, but if it happens, we will just trim the local context to fit the limit
     remaining_df = _antijoin_reports(invalid_context_df, community_df)
-    remaining_df[schemas.CONTEXT_STRING] = _sort_and_trim_context(
+    remaining_df.loc[:, schemas.CONTEXT_STRING] = _sort_and_trim_context(
         remaining_df, max_tokens
     )
 
     result = union(valid_context_df, community_df, remaining_df)
-    set_context_size(result)
+    result[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(num_tokens)
+
     result[schemas.CONTEXT_EXCEED_FLAG] = 0
     return result
 
@@ -94,16 +105,6 @@ def _at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
     return where_column_equals(df, schemas.COMMUNITY_LEVEL, level)
 
 
-def _exceeding_context(df: pd.DataFrame) -> pd.DataFrame:
-    """Return records where the context exceeds the limit."""
-    return where_column_equals(df, schemas.CONTEXT_EXCEED_FLAG, 1)
-
-
-def _within_context(df: pd.DataFrame) -> pd.DataFrame:
-    """Return records where the context is within the limit."""
-    return where_column_equals(df, schemas.CONTEXT_EXCEED_FLAG, 0)
-
-
 def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
     """Return records in df that are not in reports."""
     return antijoin(df, reports, schemas.NODE_COMMUNITY)
@@ -111,13 +112,13 @@ def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
 
 def _sort_and_trim_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
     """Sort and trim context to fit the limit."""
-    series = cast(pd.Series, df[schemas.ALL_CONTEXT])
+    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(series, lambda x: sort_context(x, max_tokens=max_tokens))
 
 
 def _build_mixed_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
     """Sort and trim context to fit the limit."""
-    series = cast(pd.Series, df[schemas.ALL_CONTEXT])
+    series = cast("pd.Series", df[schemas.ALL_CONTEXT])
     return transform_series(
         series, lambda x: build_mixed_context(x, max_tokens=max_tokens)
     )

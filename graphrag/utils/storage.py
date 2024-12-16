@@ -5,49 +5,29 @@
 
 import logging
 from io import BytesIO
-from pathlib import Path
 
 import pandas as pd
 
-from graphrag.index.config.storage import (
-    PipelineFileStorageConfig,
-    PipelineStorageConfigTypes,
-)
-from graphrag.index.storage.load_storage import load_storage
-from graphrag.index.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
 
-def _create_storage(
-    config: PipelineStorageConfigTypes | None, root_dir: Path
-) -> PipelineStorage:
-    """Create the storage for the pipeline.
-
-    Parameters
-    ----------
-    config : PipelineStorageConfigTypes
-        The storage configuration.
-    root_dir : str
-        The root directory.
-
-    Returns
-    -------
-    PipelineStorage
-        The pipeline storage.
-    """
-    return load_storage(
-        config or PipelineFileStorageConfig(base_dir=str(root_dir / "output"))
-    )
-
-
-async def _load_table_from_storage(name: str, storage: PipelineStorage) -> pd.DataFrame:
+async def load_table_from_storage(name: str, storage: PipelineStorage) -> pd.DataFrame:
+    """Load a parquet from the storage instance."""
     if not await storage.has(name):
         msg = f"Could not find {name} in storage!"
         raise ValueError(msg)
     try:
-        log.info("read table from storage: %s", name)
+        log.info("reading table from storage: %s", name)
         return pd.read_parquet(BytesIO(await storage.get(name, as_bytes=True)))
     except Exception:
         log.exception("error loading table from storage: %s", name)
         raise
+
+
+async def write_table_to_storage(
+    table: pd.DataFrame, name: str, storage: PipelineStorage
+) -> None:
+    """Write a table to storage."""
+    await storage.set(name, table.to_parquet())

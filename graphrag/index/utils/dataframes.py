@@ -17,7 +17,7 @@ def drop_columns(df: pd.DataFrame, *column: str) -> pd.DataFrame:
 
 def where_column_equals(df: pd.DataFrame, column: str, value: Any) -> pd.DataFrame:
     """Return a filtered DataFrame where a column equals a value."""
-    return cast(pd.DataFrame, df[df[column] == value])
+    return cast("pd.DataFrame", df[df[column] == value])
 
 
 def antijoin(df: pd.DataFrame, exclude: pd.DataFrame, column: str) -> pd.DataFrame:
@@ -28,20 +28,12 @@ def antijoin(df: pd.DataFrame, exclude: pd.DataFrame, column: str) -> pd.DataFra
     * exclude: The DataFrame containing rows to remove.
     * column: The join-on column.
     """
-    result = df.merge(
-        exclude[[column]],
-        on=column,
-        how="outer",
-        indicator=True,
-    )
-    if "_merge" in result.columns:
-        result = result[result["_merge"] == "left_only"].drop("_merge", axis=1)
-    return cast(pd.DataFrame, result)
+    return df.loc[~df.loc[:, column].isin(exclude.loc[:, column])]
 
 
 def transform_series(series: pd.Series, fn: Callable[[Any], Any]) -> pd.Series:
     """Apply a transformation function to a series."""
-    return cast(pd.Series, series.apply(fn))
+    return cast("pd.Series", series.apply(fn))
 
 
 def join(
@@ -58,4 +50,4 @@ def union(*frames: pd.DataFrame) -> pd.DataFrame:
 
 def select(df: pd.DataFrame, *columns: str) -> pd.DataFrame:
     """Select columns from a dataframe."""
-    return cast(pd.DataFrame, df[list(columns)])
+    return cast("pd.DataFrame", df[list(columns)])

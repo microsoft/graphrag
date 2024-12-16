@@ -11,14 +11,14 @@ from .util import (
     compare_outputs,
     get_config_for_workflow,
     get_workflow_output,
-    load_expected,
     load_input_tables,
+    load_test_table,
 )
 
 
 async def test_create_base_text_units():
     input_tables = load_input_tables(inputs=[])
-    expected = load_expected(workflow_name)
+    expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
 
@@ -60,6 +60,6 @@ async def test_create_base_text_units_with_snapshot():
         context,
     )
 
-    assert context.storage.keys() == [
-        "create_base_text_units.parquet"
-    ], "Text unit snapshot keys differ"
+    assert context.storage.keys() == ["create_base_text_units.parquet"], (
+        "Text unit snapshot keys differ"
+    )

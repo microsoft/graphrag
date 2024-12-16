@@ -4,41 +4,13 @@
 """All the steps to transform final entities."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
-
-from graphrag.index.operations.unpack_graph import unpack_graph
 
 
 def create_final_entities(
-    entity_graph: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    base_entity_nodes: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
-    # Process nodes
-    nodes = (
-        unpack_graph(entity_graph, callbacks, "clustered_graph", "nodes")
-        .rename(columns={"label": "title"})
-        .loc[
-            :,
-            [
-                "id",
-                "title",
-                "type",
-                "description",
-                "human_readable_id",
-                "source_id",
-            ],
-        ]
-        .drop_duplicates(subset="id")
-    )
-
-    nodes = nodes.loc[nodes["title"].notna()]
-
-    nodes["text_unit_ids"] = nodes["source_id"].str.split(",")
-
-    return nodes.loc[
+    return base_entity_nodes.loc[
         :,
         [
             "id",

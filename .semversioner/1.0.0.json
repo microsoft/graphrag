@@ -1,0 +1,26 @@
+{
+  "changes": [
+    {
+      "description": "Add Parent id to communities data model",
+      "type": "patch"
+    },
+    {
+      "description": "Add migration notebook.",
+      "type": "patch"
+    },
+    {
+      "description": "Create separate community workflow, collapse subflows.",
+      "type": "patch"
+    },
+    {
+      "description": "Dependency Updates",
+      "type": "patch"
+    },
+    {
+      "description": "cleanup and refactor factory classes.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-12-11T21:41:49+00:00",
+  "version": "1.0.0"
+}

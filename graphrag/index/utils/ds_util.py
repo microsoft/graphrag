@@ -12,7 +12,7 @@ _NAMED_INPUTS_REQUIRED = "Named inputs are required"
 
 def get_required_input_table(input: VerbInput, name: str) -> TableContainer:
     """Get a required input table by name."""
-    return cast(TableContainer, get_named_input_table(input, name, required=True))
+    return cast("TableContainer", get_named_input_table(input, name, required=True))
 
 
 def get_named_input_table(

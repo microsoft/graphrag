@@ -32,7 +32,7 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
     return input_tables
 
 
-def load_expected(output: str) -> pd.DataFrame:
+def load_test_table(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
 
@@ -48,7 +48,7 @@ def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
 
     result = next(conf for conf in pipeline_config.workflows if conf.name == name)
 
-    return cast(PipelineWorkflowConfig, result.config)
+    return cast("PipelineWorkflowConfig", result.config)
 
 
 async def get_workflow_output(
@@ -69,7 +69,7 @@ async def get_workflow_output(
     await workflow.run(context=run_context)
 
     # if there's only one output, it is the default here, no name required
-    return cast(pd.DataFrame, workflow.output())
+    return cast("pd.DataFrame", workflow.output())
 
 
 def compare_outputs(
@@ -80,9 +80,9 @@ def compare_outputs(
     """
     cols = expected.columns if columns is None else columns
 
-    assert len(actual) == len(
-        expected
-    ), f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    assert len(actual) == len(expected), (
+        f"Expected: {len(expected)} rows, Actual: {len(actual)} rows"
+    )
 
     for column in cols:
         assert column in actual.columns

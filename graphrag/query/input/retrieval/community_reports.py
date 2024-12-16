@@ -72,4 +72,4 @@ def to_community_report_dataframe(
         if include_community_rank:
             new_record.append(str(report.rank))
         records.append(new_record)
-    return pd.DataFrame(records, columns=cast(Any, header))
+    return pd.DataFrame(records, columns=cast("Any", header))

@@ -52,7 +52,7 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
-    create_base_entity_graph,
+    compute_communities,
     create_base_text_units,
     create_final_communities,
     create_final_community_reports,
@@ -62,6 +62,7 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
+    extract_graph,
     generate_text_embeddings,
 )
 
@@ -216,11 +217,10 @@ def _get_embedding_settings(
 def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
-            name=create_base_entity_graph,
+            name=extract_graph,
             config={
                 "snapshot_graphml": settings.snapshots.graphml,
                 "snapshot_transient": settings.snapshots.transient,
-                "snapshot_raw_entities": settings.snapshots.raw_entities,
                 "entity_extract": {
                     **settings.entity_extraction.parallelization.model_dump(),
                     "async_mode": settings.entity_extraction.async_mode,
@@ -236,11 +236,15 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
                         settings.root_dir,
                     ),
                 },
-                "embed_graph_enabled": settings.embed_graph.enabled,
+            },
+        ),
+        PipelineWorkflowReference(
+            name=compute_communities,
+            config={
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()
                 },
-                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
+                "snapshot_transient": settings.snapshots.transient,
             },
         ),
         PipelineWorkflowReference(
@@ -255,7 +259,8 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
             name=create_final_nodes,
             config={
                 "layout_graph_enabled": settings.umap.enabled,
-                "snapshot_top_level_nodes": settings.snapshots.top_level_nodes,
+                "embed_graph_enabled": settings.embed_graph.enabled,
+                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
             },
         ),
     ]
