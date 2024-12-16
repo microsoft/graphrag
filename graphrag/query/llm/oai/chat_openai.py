@@ -15,7 +15,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
-from graphrag.logging.base import StatusLogger
+from graphrag.logger.base import StatusLogger
 from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.oai.base import OpenAILLMImpl
 from graphrag.query.llm.oai.typing import (
@@ -42,7 +42,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         max_retries: int = 10,
         request_timeout: float = 180.0,
         retry_error_types: tuple[type[BaseException]] = OPENAI_RETRY_ERROR_TYPES,  # type: ignore
-        reporter: StatusLogger | None = None,
+        logger: StatusLogger | None = None,
     ):
         OpenAILLMImpl.__init__(
             self=self,
@@ -55,7 +55,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
             organization=organization,
             max_retries=max_retries,
             request_timeout=request_timeout,
-            reporter=reporter,
+            logger=logger,
         )
         self.model = model
         self.retry_error_types = retry_error_types

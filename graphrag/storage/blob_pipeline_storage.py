@@ -13,7 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from datashaper import Progress
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class BlobPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressReporter | None = None,
+        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -179,7 +179,7 @@ class BlobPipelineStorage(PipelineStorage):
             blob_client = container_client.get_blob_client(key)
             blob_data = blob_client.download_blob().readall()
             if not as_bytes:
-                coding = encoding or "utf-8"
+                coding = encoding or self._encoding
                 blob_data = blob_data.decode(coding)
         except Exception:
             log.exception("Error getting key %s", key)

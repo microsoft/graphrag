@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
@@ -30,7 +31,7 @@ class CacheFactory:
 
     @classmethod
     def register(cls, cache_type: str, cache: type):
-        """Register a vector store type."""
+        """Register a custom cache implementation."""
         cls.cache_types[cache_type] = cache
 
     @classmethod

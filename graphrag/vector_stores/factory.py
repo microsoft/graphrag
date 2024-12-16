@@ -28,7 +28,7 @@ class VectorStoreFactory:
 
     @classmethod
     def register(cls, vector_store_type: str, vector_store: type):
-        """Register a vector store type."""
+        """Register a custom vector store implementation."""
         cls.vector_store_types[vector_store_type] = vector_store
 
     @classmethod

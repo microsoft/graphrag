@@ -8,8 +8,6 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from pathlib import Path
-
 from datashaper import WorkflowCallbacks
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
@@ -19,8 +17,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging.base import ProgressReporter
-from graphrag.vector_stores.factory import VectorStoreType
+from graphrag.logger.base import ProgressLogger
 
 
 async def build_index(
@@ -29,7 +26,7 @@ async def build_index(
     is_resume_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
-    progress_reporter: ProgressReporter | None = None,
+    progress_logger: ProgressLogger | None = None,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -45,8 +42,8 @@ async def build_index(
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
         A list of callbacks to register.
-    progress_reporter : ProgressReporter | None default=None
-        The progress reporter.
+    progress_logger : ProgressLogger | None default=None
+        The progress logger.
 
     Returns
     -------
@@ -59,16 +56,14 @@ async def build_index(
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
 
-    config = _patch_vector_config(config)
-
     pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
+    # create a pipeline reporter and add to any additional callbacks
     # TODO: remove the type ignore once the new config engine has been refactored
-    callbacks = (
-        [create_pipeline_reporter(config.reporting, None)] if config.reporting else None  # type: ignore
-    )  # type: ignore
+    callbacks = callbacks or []
+    callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
     async for output in run_pipeline_with_config(
         pipeline_config,
@@ -76,34 +71,15 @@ async def build_index(
         memory_profile=memory_profile,
         cache=pipeline_cache,
         callbacks=callbacks,
-        progress_reporter=progress_reporter,
+        logger=progress_logger,
         is_resume_run=is_resume_run,
         is_update_run=is_update_run,
     ):
         outputs.append(output)
-        if progress_reporter:
+        if progress_logger:
             if output.errors and len(output.errors) > 0:
-                progress_reporter.error(output.workflow)
+                progress_logger.error(output.workflow)
             else:
-                progress_reporter.success(output.workflow)
-            progress_reporter.info(str(output.result))
+                progress_logger.success(output.workflow)
+            progress_logger.info(str(output.result))
     return outputs
-
-
-def _patch_vector_config(config: GraphRagConfig):
-    """Back-compat patch to ensure a default vector store configuration."""
-    if not config.embeddings.vector_store:
-        config.embeddings.vector_store = {
-            "type": "lancedb",
-            "db_uri": "output/lancedb",
-            "container_name": "default",
-            "overwrite": True,
-        }
-    # TODO: must update filepath of lancedb (if used) until the new config engine has been implemented
-    # TODO: remove the type ignore annotations below once the new config engine has been refactored
-    vector_store_type = config.embeddings.vector_store["type"]  # type: ignore
-    if vector_store_type == VectorStoreType.LanceDB:
-        db_uri = config.embeddings.vector_store["db_uri"]  # type: ignore
-        lancedb_dir = Path(config.root_dir).resolve() / db_uri
-        config.embeddings.vector_store["db_uri"] = str(lancedb_dir)  # type: ignore
-    return config

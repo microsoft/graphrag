@@ -10,24 +10,24 @@ from datashaper.progress.types import Progress
 
 
 class StatusLogger(ABC):
-    """Provides a way to report status updates from the pipeline."""
+    """Provides a way to log status updates from the pipeline."""
 
     @abstractmethod
     def error(self, message: str, details: dict[str, Any] | None = None):
-        """Report an error."""
+        """Log an error."""
 
     @abstractmethod
     def warning(self, message: str, details: dict[str, Any] | None = None):
-        """Report a warning."""
+        """Log a warning."""
 
     @abstractmethod
     def log(self, message: str, details: dict[str, Any] | None = None):
         """Report a log."""
 
 
-class ProgressReporter(ABC):
+class ProgressLogger(ABC):
     """
-    Abstract base class for progress reporters.
+    Abstract base class for progress loggers.
 
     This is used to report workflow processing progress via mechanisms like progress-bars.
     """
@@ -38,10 +38,10 @@ class ProgressReporter(ABC):
 
     @abstractmethod
     def dispose(self):
-        """Dispose of the progress reporter."""
+        """Dispose of the progress logger."""
 
     @abstractmethod
-    def child(self, prefix: str, transient=True) -> "ProgressReporter":
+    def child(self, prefix: str, transient=True) -> "ProgressLogger":
         """Create a child progress bar."""
 
     @abstractmethod
@@ -50,20 +50,20 @@ class ProgressReporter(ABC):
 
     @abstractmethod
     def stop(self) -> None:
-        """Stop the progress reporter."""
+        """Stop the progress logger."""
 
     @abstractmethod
     def error(self, message: str) -> None:
-        """Report an error."""
+        """Log an error."""
 
     @abstractmethod
     def warning(self, message: str) -> None:
-        """Report a warning."""
+        """Log a warning."""
 
     @abstractmethod
     def info(self, message: str) -> None:
-        """Report information."""
+        """Log information."""
 
     @abstractmethod
     def success(self, message: str) -> None:
-        """Report success."""
+        """Log success."""

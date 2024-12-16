@@ -54,7 +54,7 @@ from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
 from graphrag.index.workflows.default_workflows import (
-    create_base_entity_graph,
+    compute_communities,
     create_base_text_units,
     create_final_communities,
     create_final_community_reports,
@@ -64,6 +64,7 @@ from graphrag.index.workflows.default_workflows import (
     create_final_nodes,
     create_final_relationships,
     create_final_text_units,
+    extract_graph,
     generate_text_embeddings,
 )
 
@@ -218,7 +219,7 @@ def _get_embedding_settings(
 def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
     return [
         PipelineWorkflowReference(
-            name=create_base_entity_graph,
+            name=extract_graph,
             config={
                 "snapshot_graphml": settings.snapshots.graphml,
                 "snapshot_transient": settings.snapshots.transient,
@@ -237,9 +238,15 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
                         settings.root_dir,
                     ),
                 },
+            },
+        ),
+        PipelineWorkflowReference(
+            name=compute_communities,
+            config={
                 "cluster_graph": {
                     "strategy": settings.cluster_graph.resolved_strategy()
                 },
+                "snapshot_transient": settings.snapshots.transient,
             },
         ),
         PipelineWorkflowReference(
