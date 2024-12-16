@@ -256,7 +256,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         return False
 
     async def delete(self, key: str) -> None:
-        """Delete all comsmosdb items belonging to the given filename key."""
+        """Delete all cosmosdb items belonging to the given filename key."""
         if self.container_name:
             container_client = self._database_client.get_container_client(
                 self.container_name
