@@ -20,7 +20,6 @@ if not sys.platform.startswith("win"):
 
 async def test_find():
     storage = CosmosDBPipelineStorage(
-        cosmosdb_account_url=WELL_KNOWN_COSMOS_ACCOUNT_URL,
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         database_name="testfind",
     )

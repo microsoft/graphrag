@@ -33,9 +33,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     def __init__(
         self,
-        cosmosdb_account_url: str | None,
-        connection_string: str | None,
         database_name: str,
+        cosmosdb_account_url: str | None = None,
+        connection_string: str | None = None,
         encoding: str = "utf-8",
         container_name: str | None = None,
     ):
