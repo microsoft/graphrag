@@ -52,9 +52,6 @@ from graphrag.vector_stores.factory import VectorStoreFactory
 if TYPE_CHECKING:
     from graphrag.query.structured_search.base import SearchResult
 
-if TYPE_CHECKING:
-    from graphrag.query.structured_search.base import SearchResult
-
 logger = PrintProgressLogger("")
 
 

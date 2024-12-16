@@ -45,6 +45,7 @@ async def summarize_communities(
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
     runner = load_strategy(strategy["type"])
+
     for level in levels:
         level_contexts = prep_community_report_context(
             pd.DataFrame(reports),

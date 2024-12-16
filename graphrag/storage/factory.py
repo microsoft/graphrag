@@ -27,7 +27,7 @@ class StorageFactory:
 
     @classmethod
     def register(cls, storage_type: str, storage: type):
-        """Register a vector store type."""
+        """Register a custom storage implementation."""
         cls.storage_types[storage_type] = storage
 
     @classmethod
