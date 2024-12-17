@@ -58,7 +58,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self._database_name = database_name
         self._connection_string = connection_string
         self._cosmosdb_account_url = cosmosdb_account_url
-        self.container_name = container_name
+        self._container_name = container_name
         self._cosmosdb_account_name = (
             cosmosdb_account_url.split("//")[1].split(".")[0]
             if cosmosdb_account_url
@@ -74,7 +74,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._database_name,
         )
         self._create_database()
-        if self.container_name:
+        if self._container_name:
             self._create_container()
 
     def _create_database(self) -> None:
@@ -117,7 +117,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
         log.info(
             "search container %s for documents matching %s",
-            self.container_name,
+            self._container_name,
             file_pattern.pattern,
         )
 
@@ -130,7 +130,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
         try:
             container_client = self._database_client.get_container_client(
-                str(self.container_name)
+                str(self._container_name)
             )
             query = "SELECT * FROM c WHERE RegexMatch(c.id, @pattern)"
             parameters: list[dict[str, Any]] = [
@@ -142,7 +142,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     parameters.append({"name": f"@{key}", "value": value})
             items = list(
                 container_client.query_items(
-                    query=query, parameters=parameters, enable_cross_partition_query=True
+                    query=query,
+                    parameters=parameters,
+                    enable_cross_partition_query=True,
                 )
             )
             num_loaded = 0
@@ -177,9 +179,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     ) -> Any:
         """Fetch all cosmosdb items belonging to the given filename key."""
         try:
-            if self.container_name:
+            if self._container_name:
                 container_client = self._database_client.get_container_client(
-                    self.container_name
+                    self._container_name
                 )
                 if as_bytes:
                     prefix = self._get_prefix(key)
@@ -211,9 +213,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Insert the contents of a file into cosmosdb for the given filename key. For optimization, the file is destructured such that each row is a unique cosmosdb item."""
         try:
-            if self.container_name:
+            if self._container_name:
                 container_client = self._database_client.get_container_client(
-                    self.container_name
+                    self._container_name
                 )
                 # Value represents a parquet file output
                 if isinstance(value, bytes):
@@ -247,39 +249,41 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Check if the contents of the given filename key exist in the cosmosdb storage."""
-        if self.container_name:
+        if self._container_name:
             container_client = self._database_client.get_container_client(
-                self.container_name
+                self._container_name
             )
             if ".parquet" in key:
                 prefix = self._get_prefix(key)
                 query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
                 queried_items = container_client.query_items(
-                        query=query, enable_cross_partition_query=True
+                    query=query, enable_cross_partition_query=True
                 )
                 return len(list(queried_items)) > 0
-            query = f"SELECT * FROM c WHERE c.id = '{key}'" # noqa: S608
+            query = f"SELECT * FROM c WHERE c.id = '{key}'"  # noqa: S608
             queried_items = container_client.query_items(
                 query=query, enable_cross_partition_query=True
             )
             return len(list(queried_items)) == 1
-        
+
         return False
 
     async def delete(self, key: str) -> None:
         """Delete all cosmosdb items belonging to the given filename key."""
-        if self.container_name:
+        if self._container_name:
             container_client = self._database_client.get_container_client(
-                self.container_name
+                self._container_name
             )
             if ".parquet" in key:
                 prefix = self._get_prefix(key)
                 query = f"SELECT * FROM c WHERE STARTSWITH(c.id, '{prefix}')"  # noqa: S608
                 queried_items = container_client.query_items(
-                        query=query, enable_cross_partition_query=True
+                    query=query, enable_cross_partition_query=True
                 )
                 for item in queried_items:
-                    container_client.delete_item(item=item["id"], partition_key=item["id"])
+                    container_client.delete_item(
+                        item=item["id"], partition_key=item["id"]
+                    )
             else:
                 container_client.delete_item(item=key, partition_key=key)
 
@@ -287,9 +291,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
     # TODO: Decide the granularity of deletion (e.g. delete all items within the current container, delete the current container, delete the current database)
     async def clear(self) -> None:
         """Clear the cosmosdb storage."""
-        if self.container_name:
+        if self._container_name:
             container_client = self._database_client.get_container_client(
-                self.container_name
+                self._container_name
             )
             for item in container_client.read_all_items():
                 item_id = item["id"]
@@ -311,24 +315,24 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
-        if self.container_name:
+        if self._container_name:
             partition_key = PartitionKey(path="/id", kind="Hash")
             self._database_client.create_container_if_not_exists(
-                id=self.container_name,
+                id=self._container_name,
                 partition_key=partition_key,
             )
 
     def _delete_container(self) -> None:
         """Delete the container with the current container name if it exists."""
-        if self._container_exists() and self.container_name:
-            self._database_client.delete_container(self.container_name)
+        if self._container_exists() and self._container_name:
+            self._database_client.delete_container(self._container_name)
 
     def _container_exists(self) -> bool:
         """Check if the container with the current container name exists."""
         container_names = [
             container["id"] for container in self._database_client.list_containers()
         ]
-        return self.container_name in container_names
+        return self._container_name in container_names
 
 
 # TODO remove this helper function and have the factory instantiate the class directly
