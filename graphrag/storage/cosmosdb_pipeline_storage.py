@@ -28,7 +28,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     _cosmosdb_account_url: str | None
     _connection_string: str | None
     _database_name: str
-    container_name: str | None
+    _container_name: str | None
     _encoding: str
 
     def __init__(
