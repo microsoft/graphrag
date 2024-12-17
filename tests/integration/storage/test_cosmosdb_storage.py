@@ -19,7 +19,6 @@ if not sys.platform.startswith("win"):
         "encountered windows-only tests -- will skip for now", allow_module_level=True
     )
 
-
 async def test_find():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
@@ -70,4 +69,15 @@ async def test_find():
 
 
 def test_child():
-    assert True
+    storage = CosmosDBPipelineStorage(
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="testchild",
+        container_name="testchildcontainer",
+    )
+    try:
+        child_storage = storage.child("child")
+        assert type(child_storage) is CosmosDBPipelineStorage
+        
+    finally:
+        storage._delete_container()  # noqa: SLF001
+        storage._delete_database()  # noqa: SLF001
