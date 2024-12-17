@@ -30,7 +30,7 @@ class CacheFactory:
 
     @classmethod
     def register(cls, cache_type: str, cache: type):
-        """Register a vector store type."""
+        """Register a custom cache implementation."""
         cls.cache_types[cache_type] = cache
 
     @classmethod

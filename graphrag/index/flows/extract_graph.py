@@ -3,7 +3,7 @@
 
 """All the steps to create the base entity graph."""
 
-from typing import Any, cast
+from typing import Any
 from uuid import uuid4
 
 import networkx as nx
@@ -14,7 +14,6 @@ from datashaper import (
 )
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.snapshot import snapshot
@@ -25,13 +24,11 @@ from graphrag.index.operations.summarize_descriptions import (
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-async def create_base_entity_graph(
+async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: VerbCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
-    runtime_storage: PipelineStorage,
-    clustering_strategy: dict[str, Any],
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,
     extraction_async_mode: AsyncType = AsyncType.AsyncIO,
@@ -40,7 +37,7 @@ async def create_base_entity_graph(
     summarization_num_threads: int = 4,
     snapshot_graphml_enabled: bool = False,
     snapshot_transient_enabled: bool = False,
-) -> None:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
     entity_dfs, relationship_dfs = await extract_entities(
@@ -73,17 +70,6 @@ async def create_base_entity_graph(
 
     base_entity_nodes = _prep_nodes(merged_entities, entity_summaries, graph)
 
-    communities = cluster_graph(
-        graph,
-        strategy=clustering_strategy,
-    )
-
-    base_communities = _prep_communities(communities)
-
-    await runtime_storage.set("base_entity_nodes", base_entity_nodes)
-    await runtime_storage.set("base_relationship_edges", base_relationship_edges)
-    await runtime_storage.set("base_communities", base_communities)
-
     if snapshot_graphml_enabled:
         # todo: extract graphs at each level, and add in meta like descriptions
         await snapshot_graphml(
@@ -105,12 +91,8 @@ async def create_base_entity_graph(
             storage=storage,
             formats=["parquet"],
         )
-        await snapshot(
-            base_communities,
-            name="base_communities",
-            storage=storage,
-            formats=["parquet"],
-        )
+
+    return (base_entity_nodes, base_relationship_edges)
 
 
 def _merge_entities(entity_dfs) -> pd.DataFrame:
@@ -156,15 +138,6 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
     edges["human_readable_id"] = edges.index
     edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
     return edges
-
-
-def _prep_communities(communities) -> pd.DataFrame:
-    base_communities = pd.DataFrame(
-        communities, columns=cast("Any", ["level", "community", "title"])
-    )
-    base_communities = base_communities.explode("title")
-    base_communities["community"] = base_communities["community"].astype(int)
-    return base_communities
 
 
 def _compute_degree(graph: nx.Graph) -> pd.DataFrame:

@@ -10,17 +10,17 @@ import pytest
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 
 # cspell:disable-next-line well-known-key
-WELL_KNOWN_COSMOS_ACCOUNT_URL = "https://localhost:8081"
-WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;"
+WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=http://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;"
 
 # the cosmosdb emulator is only available on windows runners at this time
 if not sys.platform.startswith("win"):
-    pytest.skip("encountered windows-only tests -- skipping", allow_module_level=True)
+    pytest.skip(
+        "encountered windows-only tests -- will skip for now", allow_module_level=True
+    )
 
 
 async def test_find():
     storage = CosmosDBPipelineStorage(
-        cosmosdb_account_url=WELL_KNOWN_COSMOS_ACCOUNT_URL,
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         database_name="testfind",
     )

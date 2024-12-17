@@ -21,9 +21,9 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.exporter import ParquetExporter
 from graphrag.index.run.profiling import _write_workflow_stats
 from graphrag.index.typing import PipelineRunResult
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.storage import _load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ async def _inject_workflow_data_dependencies(
     for id in deps:
         workflow_id = f"workflow:{id}"
         try:
-            table = await _load_table_from_storage(f"{id}.parquet", storage)
+            table = await load_table_from_storage(f"{id}.parquet", storage)
         except ValueError:
             # our workflows allow for transient tables, and we avoid putting those in storage
             # however, we need to keep the table in the dependency list for proper execution order.
@@ -68,7 +68,7 @@ async def _export_workflow_output(
 
 
 def _create_callback_chain(
-    callbacks: list[WorkflowCallbacks] | None, progress: ProgressReporter | None
+    callbacks: list[WorkflowCallbacks] | None, progress: ProgressLogger | None
 ) -> WorkflowCallbacks:
     """Create a callback manager that encompasses multiple callbacks."""
     manager = WorkflowCallbacksManager()

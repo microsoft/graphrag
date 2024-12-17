@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of query subcommand."""
+"""CLI implementation of the query subcommand."""
 
 import asyncio
 import sys
@@ -14,11 +14,11 @@ from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
-from graphrag.logging.print_progress import PrintProgressReporter
+from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
-from graphrag.utils.storage import _load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage
 
-reporter = PrintProgressReporter("")
+logger = PrintProgressLogger("")
 
 
 def run_global_search(
@@ -100,7 +100,7 @@ def run_global_search(
             query=query,
         )
     )
-    reporter.success(f"Global Search Response:\n{response}")
+    logger.success(f"Global Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -124,7 +124,6 @@ def run_local_search(
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
     resolve_paths(config)
 
-    # TODO remove optional create_final_entities_description_embeddings.parquet to delete backwards compatibility
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
@@ -192,7 +191,7 @@ def run_local_search(
             query=query,
         )
     )
-    reporter.success(f"Local Search Response:\n{response}")
+    logger.success(f"Local Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     return response, context_data
@@ -251,7 +250,7 @@ def run_drift_search(
             query=query,
         )
     )
-    reporter.success(f"DRIFT Search Response:\n{response}")
+    logger.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
     # TODO: Map/Reduce Drift Search answer to a single response
@@ -267,13 +266,13 @@ def _resolve_output_files(
     dataframe_dict = {}
     pipeline_config = create_pipeline_config(config)
     storage_config = pipeline_config.storage.model_dump()  # type: ignore
-    storage_obj = StorageFactory.create_storage(
+    storage_obj = StorageFactory().create_storage(
         storage_type=storage_config["type"], kwargs=storage_config
     )
     for output_file in output_list:
         df_key = output_file.split(".")[0]
         df_value = asyncio.run(
-            _load_table_from_storage(name=output_file, storage=storage_obj)
+            load_table_from_storage(name=output_file, storage=storage_obj)
         )
         dataframe_dict[df_key] = df_value
 
@@ -284,7 +283,7 @@ def _resolve_output_files(
             df_key = optional_file.split(".")[0]
             if file_exists:
                 df_value = asyncio.run(
-                    _load_table_from_storage(name=optional_file, storage=storage_obj)
+                    load_table_from_storage(name=optional_file, storage=storage_obj)
                 )
                 dataframe_dict[df_key] = df_value
             else:

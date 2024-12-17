@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 from datashaper import Progress
 
-from graphrag.logging.base import ProgressReporter
+from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
@@ -33,9 +33,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
 
     def __init__(
         self,
-        cosmosdb_account_url: str | None,
-        connection_string: str | None,
         database_name: str,
+        cosmosdb_account_url: str | None = None,
+        connection_string: str | None = None,
         encoding: str = "utf-8",
         container_name: str | None = None,
     ):
@@ -97,7 +97,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         self,
         file_pattern: re.Pattern[str],
         base_dir: str | None = None,
-        progress: ProgressReporter | None = None,
+        progress: ProgressLogger | None = None,
         file_filter: dict[str, Any] | None = None,
         max_count=-1,
     ) -> Iterator[tuple[str, dict[str, Any]]]:
@@ -186,18 +186,18 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     items_list = list(queried_items)
                     for item in items_list:
                         item["id"] = item["id"].split(":")[1]
-                    
+
                     items_json_str = json.dumps(items_list)
 
                     items_df = pd.read_json(
                         StringIO(items_json_str), orient="records", lines=False
                     )
                     return items_df.to_parquet()
-                
+
                 item = container_client.read_item(item=key, partition_key=key)
                 item_body = item.get("body")
                 return json.dumps(item_body)
-            
+
         except Exception:
             log.exception("Error reading item %s", key)
             return None
@@ -224,7 +224,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         cosmosdb_item_list = json.loads(value_json)
                         for cosmosdb_item in cosmosdb_item_list:
                             # Append an additional prefix to the id to force a unique identifier for the create_final_nodes rows
-                            if (prefix == "create_final_nodes"):
+                            if prefix == "create_final_nodes":
                                 prefixed_id = f"{prefix}-community_{cosmosdb_item['community']}:{cosmosdb_item['id']}"
                             else:
                                 prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
@@ -262,7 +262,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
         return False
 
     async def delete(self, key: str) -> None:
-        """Delete all comsmosdb items belonging to the given filename key."""
+        """Delete all cosmosdb items belonging to the given filename key."""
         if self.container_name:
             container_client = self._database_client.get_container_client(
                 self.container_name
@@ -299,7 +299,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def child(self, name: str | None) -> PipelineStorage:
         """Create a child storage instance."""
         return self
-    
+
     def _get_prefix(self, key: str) -> str:
         """Get the prefix of the filename key."""
         return key.split(".")[0]

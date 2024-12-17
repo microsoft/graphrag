@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""CLI implementation of index subcommand."""
+"""CLI implementation of the index subcommand."""
 
 import asyncio
 import logging
@@ -16,9 +16,8 @@ from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.validate_config import validate_config_names
-from graphrag.logging.base import ProgressReporter
-from graphrag.logging.factory import create_progress_reporter
-from graphrag.logging.types import ReporterType
+from graphrag.logger.base import ProgressLogger
+from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.utils.cli import redact
 
 # Ignore warnings from numba
@@ -27,35 +26,35 @@ warnings.filterwarnings("ignore", message=".*NumbaDeprecationWarning.*")
 log = logging.getLogger(__name__)
 
 
-def _logger(reporter: ProgressReporter):
+def _logger(logger: ProgressLogger):
     def info(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
-            reporter.info(msg)
+            logger.info(msg)
 
     def error(msg: str, verbose: bool = False):
         log.error(msg)
         if verbose:
-            reporter.error(msg)
+            logger.error(msg)
 
     def success(msg: str, verbose: bool = False):
         log.info(msg)
         if verbose:
-            reporter.success(msg)
+            logger.success(msg)
 
     return info, error, success
 
 
-def _register_signal_handlers(reporter: ProgressReporter):
+def _register_signal_handlers(logger: ProgressLogger):
     import signal
 
     def handle_signal(signum, _):
         # Handle the signal here
-        reporter.info(f"Received signal {signum}, exiting...")
-        reporter.dispose()
+        logger.info(f"Received signal {signum}, exiting...")  # noqa: G004
+        logger.dispose()
         for task in asyncio.all_tasks():
             task.cancel()
-        reporter.info("All tasks cancelled. Exiting...")
+        logger.info("All tasks cancelled. Exiting...")
 
     # Register signal handlers for SIGINT and SIGHUP
     signal.signal(signal.SIGINT, handle_signal)
@@ -70,7 +69,7 @@ def index_cli(
     resume: str | None,
     memprofile: bool,
     cache: bool,
-    reporter: ReporterType,
+    logger: LoggerType,
     config_filepath: Path | None,
     dry_run: bool,
     skip_validation: bool,
@@ -85,7 +84,7 @@ def index_cli(
         resume=resume,
         memprofile=memprofile,
         cache=cache,
-        reporter=reporter,
+        logger=logger,
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output_dir,
@@ -97,7 +96,7 @@ def update_cli(
     verbose: bool,
     memprofile: bool,
     cache: bool,
-    reporter: ReporterType,
+    logger: LoggerType,
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
@@ -121,7 +120,7 @@ def update_cli(
         resume=False,
         memprofile=memprofile,
         cache=cache,
-        reporter=reporter,
+        logger=logger,
         dry_run=False,
         skip_validation=skip_validation,
         output_dir=output_dir,
@@ -134,13 +133,13 @@ def _run_index(
     resume,
     memprofile,
     cache,
-    reporter,
+    logger,
     dry_run,
     skip_validation,
     output_dir,
 ):
-    progress_reporter = create_progress_reporter(reporter)
-    info, error, success = _logger(progress_reporter)
+    progress_logger = LoggerFactory().create_logger(logger)
+    info, error, success = _logger(progress_logger)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 
     config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
@@ -162,7 +161,7 @@ def _run_index(
         )
 
     if skip_validation:
-        validate_config_names(progress_reporter, config)
+        validate_config_names(progress_logger, config)
 
     info(f"Starting pipeline run for: {run_id}, {dry_run=}", verbose)
     info(
@@ -174,7 +173,7 @@ def _run_index(
         info("Dry run complete, exiting...", True)
         sys.exit(0)
 
-    _register_signal_handlers(progress_reporter)
+    _register_signal_handlers(progress_logger)
 
     outputs = asyncio.run(
         api.build_index(
@@ -182,14 +181,14 @@ def _run_index(
             run_id=run_id,
             is_resume_run=bool(resume),
             memory_profile=memprofile,
-            progress_reporter=progress_reporter,
+            progress_logger=progress_logger,
         )
     )
     encountered_errors = any(
         output.errors and len(output.errors) > 0 for output in outputs
     )
 
-    progress_reporter.stop()
+    progress_logger.stop()
     if encountered_errors:
         error(
             "Errors occurred during the pipeline run, see logs for more details.", True

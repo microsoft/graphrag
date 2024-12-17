@@ -19,7 +19,7 @@ workflows:
       # Just lump everything together
       chunk_by: []
 
-  - name: create_base_entity_graph
+  - name: extract_graph
     config:
       snapshot_graphml_enabled: True
       entity_extract:
@@ -44,6 +44,9 @@ workflows:
             type: static_response
             responses:
               - This is a MOCK response for the LLM. It is summarized!
+
+  - name: compute_communities
+    config:
       cluster_graph:
         strategy:
           type: leiden

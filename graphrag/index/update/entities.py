@@ -112,7 +112,7 @@ async def _run_entity_summarization(
         The updated entities dataframe with summarized descriptions.
     """
     summarize_config = _find_workflow_config(
-        config, "create_base_entity_graph", "summarize_descriptions"
+        config, "extract_graph", "summarize_descriptions"
     )
     strategy = summarize_config.get("strategy", {})
 
