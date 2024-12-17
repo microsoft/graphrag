@@ -122,7 +122,7 @@ class FilePipelineStorage(PipelineStorage):
     async def has(self, key: str) -> bool:
         """Has method definition."""
         return await exists(join_path(self._root_dir, key))
-
+    
     async def delete(self, key: str) -> None:
         """Delete method definition."""
         if await self.has(key):
@@ -145,7 +145,6 @@ class FilePipelineStorage(PipelineStorage):
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
         return [item.name for item in Path(self._root_dir).iterdir() if item.is_file()]
-
 
 def join_path(file_path: str, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""
