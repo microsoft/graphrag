@@ -254,11 +254,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         query=query, enable_cross_partition_query=True
                 )
                 return len(list(queried_items)) > 0
-            item_names = [
-                item["id"]
-                for item in container_client.read_all_items()
-            ]
-            return key in item_names
+            query = f"SELECT * FROM c WHERE c.id = '{key}'" # noqa: S608
+            queried_items = container_client.query_items(
+                query=query, enable_cross_partition_query=True
+            )
+            return len(list(queried_items)) == 1
+        
         return False
 
     async def delete(self, key: str) -> None:
