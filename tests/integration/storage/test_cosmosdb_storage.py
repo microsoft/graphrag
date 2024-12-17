@@ -2,6 +2,7 @@
 # Licensed under the MIT License
 """CosmosDB Storage Tests."""
 
+import json
 import re
 import sys
 
@@ -23,35 +24,49 @@ async def test_find():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         database_name="testfind",
+        container_name="testfindcontainer",
     )
     try:
         try:
             items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.txt$"))
+                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
             )
             items = [item[0] for item in items]
             assert items == []
 
-            await storage.set("christmas.txt", "Merry Christmas!", encoding="utf-8")
+            christmas_json = {
+                "content": "Merry Christmas!",
+            }
+            await storage.set("christmas.json", json.dumps(christmas_json), encoding="utf-8")
             items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.txt$"))
+                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
             )
             items = [item[0] for item in items]
-            assert items == ["christmas.txt"]
+            assert items == ["christmas.json"]
 
-            await storage.set("test.txt", "Hello, World!", encoding="utf-8")
-            items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
+            hello_world_json = {
+                "content": "Hello, World!",
+            }
+            await storage.set("test.json", json.dumps(hello_world_json), encoding="utf-8")
+            items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
-            assert items == ["christmas.txt", "test.txt"]
+            assert items == ["christmas.json", "test.json"]
 
-            output = await storage.get("test.txt")
-            assert output == "Hello, World!"
+            output = await storage.get("test.json")
+            output_json = json.loads(output)
+            assert output_json["content"] == "Hello, World!"
+
+            christmas_exists = await storage.has("christmas.json")
+            assert christmas_exists is True
+            easter_exists = await storage.has("easter.json")
+            assert easter_exists is False
         finally:
-            await storage.delete("test.txt")
-            output = await storage.get("test.txt")
+            await storage.delete("test.json")
+            output = await storage.get("test.json")
             assert output is None
     finally:
         storage._delete_container()  # noqa: SLF001
+        storage._delete_database()  # noqa: SLF001
 
 
 def test_child():

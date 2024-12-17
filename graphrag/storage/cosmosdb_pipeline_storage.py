@@ -132,7 +132,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             container_client = self._database_client.get_container_client(
                 str(self.container_name)
             )
-            query = "SELECT * FROM c WHERE CONTAINS(c.id, @pattern)"
+            query = "SELECT * FROM c WHERE RegexMatch(c.id, @pattern)"
             parameters: list[dict[str, Any]] = [
                 {"name": "@pattern", "value": file_pattern.pattern}
             ]
@@ -140,11 +140,15 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 for key, value in file_filter.items():
                     query += f" AND c.{key} = @{key}"
                     parameters.append({"name": f"@{key}", "value": value})
-            items = container_client.query_items(
-                query=query, parameters=parameters, enable_cross_partition_query=True
+            items = list(
+                container_client.query_items(
+                    query=query, parameters=parameters, enable_cross_partition_query=True
+                )
             )
             num_loaded = 0
-            num_total = len(list(items))
+            num_total = len(items)
+            if num_total == 0:
+                return
             num_filtered = 0
             for item in items:
                 match = file_pattern.match(item["id"])
