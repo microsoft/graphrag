@@ -32,7 +32,7 @@ class EntityExtractionConfig(LLMConfig):
         default=None, description="The encoding model to use."
     )
 
-    def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
+    def resolved_strategy(self, root_dir: str, encoding_model: str | None) -> dict:
         """Get the resolved entity extraction strategy."""
         from graphrag.index.operations.extract_entities import (
             ExtractEntityStrategyType,
@@ -49,6 +49,6 @@ class EntityExtractionConfig(LLMConfig):
             else None,
             "max_gleanings": self.max_gleanings,
             # It's prechunked in create_base_text_units
-            "encoding_name": self.encoding_model or encoding_model,
+            "encoding_name": encoding_model or self.encoding_model,
             "prechunked": True,
         }
