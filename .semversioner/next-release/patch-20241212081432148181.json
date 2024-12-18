@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Respect encoding_model option"
+}
