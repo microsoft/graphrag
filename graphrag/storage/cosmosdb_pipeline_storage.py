@@ -300,7 +300,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
         # This currently deletes the database, including all containers and data within it.
         # TODO: We should decide what granularity of deletion is the ideal behavior (e.g. delete all items within a container, delete the current container, delete the current database)
         """
-        self._delete_container()
         self._delete_database()
 
     def keys(self) -> list[str]:
