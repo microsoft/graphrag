@@ -17,7 +17,6 @@ class ChatLLMSingleton:
 
     def set_llm(self, name, llm):
         """Add an LLM to the dictionary."""
-        print(f"Setting LLM {name}")
         self.llm_dict[name] = llm
 
     def get_llm(self, name) -> ChatLLM | None:
@@ -34,7 +33,6 @@ class EmbeddingsLLMSingleton:
 
     def set_llm(self, name, llm):
         """Add an LLM to the dictionary."""
-        print(f"Setting LLM {name}")
         self.llm_dict[name] = llm
 
     def get_llm(self, name) -> EmbeddingsLLM | None:
