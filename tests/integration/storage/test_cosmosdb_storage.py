@@ -67,7 +67,7 @@ async def test_find():
         await storage.clear()
 
 
-def test_child():
+async def test_child():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
         database_name="testchild",
@@ -76,7 +76,38 @@ def test_child():
     try:
         child_storage = storage.child("child")
         assert type(child_storage) is CosmosDBPipelineStorage
-        
     finally:
-        storage._delete_container()  # noqa: SLF001
-        storage._delete_database()  # noqa: SLF001
+        await storage.clear()
+
+async def test_clear():
+    storage = CosmosDBPipelineStorage(
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="testclear",
+        container_name="testclearcontainer",
+    )
+    try:
+        christmas_json = {
+            "content": "Merry Christmas!",
+        }
+        await storage.set(
+            "christmas.json", json.dumps(christmas_json), encoding="utf-8"
+        )
+        easter_json = {
+            "content": "Happy Easter!",
+        }
+        await storage.set(
+            "easter.json", json.dumps(easter_json), encoding="utf-8"
+        )
+        await storage.clear()
+
+        items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
+        items = [item[0] for item in items]
+        assert items == []
+
+        output = await storage.get("easter.json")
+        assert output is None
+
+        assert storage._container_client is None  # noqa: SLF001
+        assert storage._database_client is None  # noqa: SLF001
+    finally:
+        await storage.clear()

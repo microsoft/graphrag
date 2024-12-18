@@ -87,6 +87,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._database_client = self._cosmos_client.delete_database(
                 self._database_client
             )
+        self._database_client = None
 
     def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
@@ -105,6 +106,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._container_client = self._database_client.delete_container(
                 self._container_client
             )
+        self._container_client = None
 
     def find(
         self,
