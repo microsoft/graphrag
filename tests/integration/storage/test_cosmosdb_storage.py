@@ -28,26 +28,26 @@ async def test_find():
     )
     try:
         try:
-            items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
-            )
+            items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == []
 
             christmas_json = {
                 "content": "Merry Christmas!",
             }
-            await storage.set("christmas.json", json.dumps(christmas_json), encoding="utf-8")
-            items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
+            await storage.set(
+                "christmas.json", json.dumps(christmas_json), encoding="utf-8"
             )
+            items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json"]
 
             hello_world_json = {
                 "content": "Hello, World!",
             }
-            await storage.set("test.json", json.dumps(hello_world_json), encoding="utf-8")
+            await storage.set(
+                "test.json", json.dumps(hello_world_json), encoding="utf-8"
+            )
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json", "test.json"]
@@ -65,8 +65,7 @@ async def test_find():
             output = await storage.get("test.json")
             assert output is None
     finally:
-        storage._delete_container()  # noqa: SLF001
-        storage._delete_database()  # noqa: SLF001
+        await storage.clear()
 
 
 def test_child():
