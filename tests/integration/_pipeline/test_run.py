@@ -73,4 +73,3 @@ class TestRun(unittest.IsolatedAsyncioTestCase):
             assert entity_text_units.issubset(
                 text_unit_ids
             ), f"Entity {entity_id} has text units {entity_text_units} that are not in the text unit set"
-
