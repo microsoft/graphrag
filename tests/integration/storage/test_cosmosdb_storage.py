@@ -19,6 +19,7 @@ if not sys.platform.startswith("win"):
         "encountered windows-only tests -- will skip for now", allow_module_level=True
     )
 
+
 async def test_find():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
@@ -79,6 +80,7 @@ async def test_child():
     finally:
         await storage.clear()
 
+
 async def test_clear():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
@@ -95,9 +97,7 @@ async def test_clear():
         easter_json = {
             "content": "Happy Easter!",
         }
-        await storage.set(
-            "easter.json", json.dumps(easter_json), encoding="utf-8"
-        )
+        await storage.set("easter.json", json.dumps(easter_json), encoding="utf-8")
         await storage.clear()
 
         items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
@@ -107,7 +107,7 @@ async def test_clear():
         output = await storage.get("easter.json")
         assert output is None
 
-        assert storage._container_client is None # noqa: SLF001
+        assert storage._container_client is None  # noqa: SLF001
         assert storage._database_client is None  # noqa: SLF001
     finally:
         await storage.clear()
