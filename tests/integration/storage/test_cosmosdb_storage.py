@@ -11,7 +11,7 @@ import pytest
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 
 # cspell:disable-next-line well-known-key
-WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=http://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
+WELL_KNOWN_COSMOS_CONNECTION_STRING = "https://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 
 # the cosmosdb emulator is only available on windows runners at this time
 if not sys.platform.startswith("win"):
@@ -107,7 +107,7 @@ async def test_clear():
         output = await storage.get("easter.json")
         assert output is None
 
-        assert storage._container_client is None  # noqa: SLF001
+        assert storage._container_client is None # noqa: SLF001
         assert storage._database_client is None  # noqa: SLF001
     finally:
         await storage.clear()
