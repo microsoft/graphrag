@@ -79,13 +79,13 @@ async def test_extract_graph():
     nodes_actual = await context.runtime_storage.get("base_entity_nodes")
     edges_actual = await context.runtime_storage.get("base_relationship_edges")
 
-    assert len(nodes_actual.columns) == len(
-        nodes_expected.columns
-    ), "Nodes dataframe columns differ"
+    assert len(nodes_actual.columns) == len(nodes_expected.columns), (
+        "Nodes dataframe columns differ"
+    )
 
-    assert len(edges_actual.columns) == len(
-        edges_expected.columns
-    ), "Edges dataframe columns differ"
+    assert len(edges_actual.columns) == len(edges_expected.columns), (
+        "Edges dataframe columns differ"
+    )
 
     # TODO: with the combined verb we can't force summarization
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized
