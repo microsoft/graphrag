@@ -1,0 +1,22 @@
+{
+  "changes": [
+    {
+      "description": "Fix encoding model config parsing",
+      "type": "patch"
+    },
+    {
+      "description": "Fix exception on error callbacks",
+      "type": "patch"
+    },
+    {
+      "description": "Manage llm instances inside a cached singleton. Check for empty dfs after entity/relationship extraction",
+      "type": "patch"
+    },
+    {
+      "description": "Respect encoding_model option",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2024-12-18T23:12:52+00:00",
+  "version": "1.0.1"
+}
