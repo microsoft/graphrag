@@ -11,7 +11,7 @@ import pytest
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
 
 # cspell:disable-next-line well-known-key
-WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=http://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;"
+WELL_KNOWN_COSMOS_CONNECTION_STRING = "AccountEndpoint=http://127.0.0.1:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=="
 
 # the cosmosdb emulator is only available on windows runners at this time
 if not sys.platform.startswith("win"):
@@ -27,26 +27,26 @@ async def test_find():
     )
     try:
         try:
-            items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
-            )
+            items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == []
 
             christmas_json = {
                 "content": "Merry Christmas!",
             }
-            await storage.set("christmas.json", json.dumps(christmas_json), encoding="utf-8")
-            items = list(
-                storage.find(base_dir="input", file_pattern=re.compile(r".*\.json$"))
+            await storage.set(
+                "christmas.json", json.dumps(christmas_json), encoding="utf-8"
             )
+            items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json"]
 
             hello_world_json = {
                 "content": "Hello, World!",
             }
-            await storage.set("test.json", json.dumps(hello_world_json), encoding="utf-8")
+            await storage.set(
+                "test.json", json.dumps(hello_world_json), encoding="utf-8"
+            )
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json", "test.json"]
@@ -64,8 +64,7 @@ async def test_find():
             output = await storage.get("test.json")
             assert output is None
     finally:
-        storage._delete_container()  # noqa: SLF001
-        storage._delete_database()  # noqa: SLF001
+        await storage.clear()
 
 
 def test_child():
