@@ -32,22 +32,20 @@ async def test_find():
             items = [item[0] for item in items]
             assert items == []
 
-            christmas_json = {
+            json_content = {
                 "content": "Merry Christmas!",
             }
             await storage.set(
-                "christmas.json", json.dumps(christmas_json), encoding="utf-8"
+                "christmas.json", json.dumps(json_content), encoding="utf-8"
             )
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json"]
 
-            hello_world_json = {
+            json_content = {
                 "content": "Hello, World!",
             }
-            await storage.set(
-                "test.json", json.dumps(hello_world_json), encoding="utf-8"
-            )
+            await storage.set("test.json", json.dumps(json_content), encoding="utf-8")
             items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
             items = [item[0] for item in items]
             assert items == ["christmas.json", "test.json"]
@@ -56,10 +54,10 @@ async def test_find():
             output_json = json.loads(output)
             assert output_json["content"] == "Hello, World!"
 
-            christmas_exists = await storage.has("christmas.json")
-            assert christmas_exists is True
-            easter_exists = await storage.has("easter.json")
-            assert easter_exists is False
+            json_exists = await storage.has("christmas.json")
+            assert json_exists is True
+            json_exists = await storage.has("easter.json")
+            assert json_exists is False
         finally:
             await storage.delete("test.json")
             output = await storage.get("test.json")
@@ -88,16 +86,14 @@ async def test_clear():
         container_name="testclearcontainer",
     )
     try:
-        christmas_json = {
+        json_exists = {
             "content": "Merry Christmas!",
         }
-        await storage.set(
-            "christmas.json", json.dumps(christmas_json), encoding="utf-8"
-        )
-        easter_json = {
+        await storage.set("christmas.json", json.dumps(json_exists), encoding="utf-8")
+        json_exists = {
             "content": "Happy Easter!",
         }
-        await storage.set("easter.json", json.dumps(easter_json), encoding="utf-8")
+        await storage.set("easter.json", json.dumps(json_exists), encoding="utf-8")
         await storage.clear()
 
         items = list(storage.find(file_pattern=re.compile(r".*\.json$")))
