@@ -25,6 +25,7 @@ from pydantic import TypeAdapter
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 
 from .mock_llm import MockChatLLM
 
@@ -35,44 +36,6 @@ if TYPE_CHECKING:
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)
-
-
-@cache
-class ChatLLMSingleton:
-    """A singleton class for the chat LLM instances."""
-
-    def __init__(self):
-        self.llm_dict = {}
-
-    def set_llm(self, name, llm):
-        """Add an LLM to the dictionary."""
-        self.llm_dict[name] = llm
-
-    def get_llm(self, name) -> ChatLLM | None:
-        """Get an LLM from the dictionary."""
-        return self.llm_dict.get(name)
-
-
-llm_singleton = ChatLLMSingleton()
-
-
-@cache
-class EmbeddingsLLMSingleton:
-    """A singleton class for the embeddings LLM instances."""
-
-    def __init__(self):
-        self.llm_dict = {}
-
-    def set_llm(self, name, llm):
-        """Add an LLM to the dictionary."""
-        self.llm_dict[name] = llm
-
-    def get_llm(self, name) -> EmbeddingsLLM | None:
-        """Get an LLM from the dictionary."""
-        return self.llm_dict.get(name)
-
-
-embeddings_llm_singleton = EmbeddingsLLMSingleton()
 
 
 class GraphRagLLMEvents(LLMEvents):
@@ -149,7 +112,7 @@ def load_llm(
     chat_only=False,
 ) -> ChatLLM:
     """Load the LLM for the entity extraction chain."""
-    singleton_llm = llm_singleton.get_llm(name)
+    singleton_llm = ChatLLMSingleton().get_llm(name)
     if singleton_llm is not None:
         return singleton_llm
 
@@ -163,7 +126,7 @@ def load_llm(
 
         loader = loaders[llm_type]
         llm_instance = loader["load"](on_error, create_cache(cache, name), config)
-        llm_singleton.set_llm(name, llm_instance)
+        ChatLLMSingleton().set_llm(name, llm_instance)
         return llm_instance
 
     msg = f"Unknown LLM type {llm_type}"
@@ -179,7 +142,7 @@ def load_llm_embeddings(
     chat_only=False,
 ) -> EmbeddingsLLM:
     """Load the LLM for the entity extraction chain."""
-    singleton_llm = embeddings_llm_singleton.get_llm(name)
+    singleton_llm = EmbeddingsLLMSingleton().get_llm(name)
     if singleton_llm is not None:
         return singleton_llm
 
@@ -192,7 +155,7 @@ def load_llm_embeddings(
         llm_instance = loaders[llm_type]["load"](
             on_error, create_cache(cache, name), llm_config or {}
         )
-        embeddings_llm_singleton.set_llm(name, llm_instance)
+        EmbeddingsLLMSingleton().set_llm(name, llm_instance)
         return llm_instance
 
     msg = f"Unknown LLM type {llm_type}"
