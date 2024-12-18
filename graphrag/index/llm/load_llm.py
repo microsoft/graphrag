@@ -24,6 +24,7 @@ from pydantic import TypeAdapter
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
 from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 
 from .mock_llm import MockChatLLM
 
@@ -110,6 +111,10 @@ def load_llm(
     chat_only=False,
 ) -> ChatLLM:
     """Load the LLM for the entity extraction chain."""
+    singleton_llm = ChatLLMSingleton().get_llm(name)
+    if singleton_llm is not None:
+        return singleton_llm
+
     on_error = _create_error_handler(callbacks)
     llm_type = config.type
 
@@ -119,7 +124,9 @@ def load_llm(
             raise ValueError(msg)
 
         loader = loaders[llm_type]
-        return loader["load"](on_error, create_cache(cache, name), config)
+        llm_instance = loader["load"](on_error, create_cache(cache, name), config)
+        ChatLLMSingleton().set_llm(name, llm_instance)
+        return llm_instance
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
@@ -134,15 +141,21 @@ def load_llm_embeddings(
     chat_only=False,
 ) -> EmbeddingsLLM:
     """Load the LLM for the entity extraction chain."""
+    singleton_llm = EmbeddingsLLMSingleton().get_llm(name)
+    if singleton_llm is not None:
+        return singleton_llm
+
     on_error = _create_error_handler(callbacks)
     llm_type = llm_config.type
     if llm_type in loaders:
         if chat_only and not loaders[llm_type]["chat"]:
             msg = f"LLM type {llm_type} does not support chat"
             raise ValueError(msg)
-        return loaders[llm_type]["load"](
+        llm_instance = loaders[llm_type]["load"](
             on_error, create_cache(cache, name), llm_config or {}
         )
+        EmbeddingsLLMSingleton().set_llm(name, llm_instance)
+        return llm_instance
 
     msg = f"Unknown LLM type {llm_type}"
     raise ValueError(msg)
@@ -198,6 +211,7 @@ def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
         n=config.n,
         temperature=config.temperature,
     )
+
     if azure:
         if config.api_base is None:
             msg = "Azure OpenAI Chat LLM requires an API base"
