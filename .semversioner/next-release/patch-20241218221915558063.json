@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Manage llm instances inside a cached singleton. Check for empty dfs after entity/relationship extraction"
-}
