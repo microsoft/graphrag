@@ -87,7 +87,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._database_client = self._cosmos_client.delete_database(
                 self._database_client
             )
-        self._database_client = None
+        self._container_client = None
 
     def _create_container(self) -> None:
         """Create a container for the current container name if it doesn't exist."""
@@ -106,7 +106,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
             self._container_client = self._database_client.delete_container(
                 self._container_client
             )
-        self._container_client = None
 
     def find(
         self,
@@ -300,7 +299,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
         # This currently deletes the database, including all containers and data within it.
         # TODO: We should decide what granularity of deletion is the ideal behavior (e.g. delete all items within a container, delete the current container, delete the current database)
         """
-        self._delete_container()
         self._delete_database()
 
     def keys(self) -> list[str]:
