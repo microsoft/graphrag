@@ -44,6 +44,18 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
+    if not _validate_data(entities):
+        error_msg = "Entity Extraction failed. No entities detected during extraction."
+        callbacks.error(error_msg)
+        raise ValueError(error_msg)
+
+    if not _validate_data(relationships):
+        error_msg = (
+            "Entity Extraction failed. No relationships detected during extraction."
+        )
+        callbacks.error(error_msg)
+        raise ValueError(error_msg)
+
     entity_summaries, relationship_summaries = await summarize_descriptions(
         entities,
         relationships,
@@ -80,3 +92,8 @@ def _prep_edges(relationships, summaries) -> pd.DataFrame:
     edges["human_readable_id"] = edges.index
     edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
     return edges
+
+
+def _validate_data(df: pd.DataFrame) -> bool:
+    """Validate that the dataframe has data."""
+    return len(df) > 0
