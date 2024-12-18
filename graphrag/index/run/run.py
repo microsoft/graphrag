@@ -276,7 +276,7 @@ async def run_pipeline(
         await _dump_stats(context.stats, context.storage)
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
-        cast("WorkflowCallbacks", callbacks).on_error(
+        cast("WorkflowCallbacks", callback_chain).on_error(
             "Error running pipeline!", e, traceback.format_exc()
         )
         yield PipelineRunResult(last_workflow, None, [e])
