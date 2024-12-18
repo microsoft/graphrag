@@ -27,7 +27,7 @@ class ChunkingConfig(BaseModel):
         default=None, description="The encoding model to use."
     )
 
-    def resolved_strategy(self, encoding_model: str) -> dict:
+    def resolved_strategy(self, encoding_model: str | None) -> dict:
         """Get the resolved chunking strategy."""
         from graphrag.index.operations.chunk_text import ChunkStrategyType
 
@@ -36,5 +36,5 @@ class ChunkingConfig(BaseModel):
             "chunk_size": self.size,
             "chunk_overlap": self.overlap,
             "group_by_columns": self.group_by_columns,
-            "encoding_name": self.encoding_model or encoding_model,
+            "encoding_name": encoding_model or self.encoding_model,
         }
