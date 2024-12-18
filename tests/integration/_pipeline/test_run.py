@@ -70,6 +70,7 @@ class TestRun(unittest.IsolatedAsyncioTestCase):
                 f"Text unit {text_unit_id} has entities {text_unit_entities} that are not in the entity set"
             )
         for entity_id, entity_text_units in entity_text_unit_map.items():
-            assert entity_text_units.issubset(text_unit_ids), (
-                f"Entity {entity_id} has text units {entity_text_units} that are not in the text unit set"
-            )
+            assert entity_text_units.issubset(
+                text_unit_ids
+            ), f"Entity {entity_id} has text units {entity_text_units} that are not in the text unit set"
+
