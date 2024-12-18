@@ -86,7 +86,8 @@ jobs:
 
       # For more information on installation/setup of Azure Cosmos DB Emulator
       # https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=docker-linux%2Cpython&pivots=api-nosql
-      # Note: the emulator is only available on Windows runners
+      # Note: the emulator is only available on Windows runners. It can take longer than the default to initially startup so we increase the default timeout.
+      # If a job fails due to timeout, restarting the cicd job usually resolves the problem.
       - name: Install Azure Cosmos DB Emulator
         if: runner.os == 'Windows'
         run: |
