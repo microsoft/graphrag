@@ -6,7 +6,6 @@
 from __future__ import annotations
 
 import logging
-from functools import cache
 from typing import TYPE_CHECKING, Any
 
 from fnllm import ChatLLM, EmbeddingsLLM, JsonStrategy, LLMEvents
