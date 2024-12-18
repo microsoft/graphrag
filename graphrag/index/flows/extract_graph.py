@@ -52,10 +52,8 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
-    entity_dfs = [pd.DataFrame(), pd.DataFrame()]
-
     if not _validate_data(entity_dfs):
-        error_msg = "Entity Extraction failed. No entitied detected during extraction."
+        error_msg = "Entity Extraction failed. No entities detected during extraction."
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
