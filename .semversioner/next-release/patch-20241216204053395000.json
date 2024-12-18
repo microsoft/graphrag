@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix exception on error callbacks"
-}

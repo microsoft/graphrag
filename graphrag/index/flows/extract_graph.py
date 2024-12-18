@@ -52,6 +52,18 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
+    if not _validate_data(entity_dfs):
+        error_msg = "Entity Extraction failed. No entities detected during extraction."
+        callbacks.error(error_msg)
+        raise ValueError(error_msg)
+
+    if not _validate_data(relationship_dfs):
+        error_msg = (
+            "Entity Extraction failed. No relationships detected during extraction."
+        )
+        callbacks.error(error_msg)
+        raise ValueError(error_msg)
+
     merged_entities = _merge_entities(entity_dfs)
     merged_relationships = _merge_relationships(relationship_dfs)
 
@@ -145,3 +157,10 @@ def _compute_degree(graph: nx.Graph) -> pd.DataFrame:
         {"name": node, "degree": int(degree)}
         for node, degree in graph.degree  # type: ignore
     ])
+
+
+def _validate_data(df_list: list[pd.DataFrame]) -> bool:
+    """Validate that the dataframe list is valid. At least one dataframe must contain data."""
+    return any(
+        len(df) > 0 for df in df_list
+    )  # Check for len, not .empty, as the dfs have schemas in some cases
