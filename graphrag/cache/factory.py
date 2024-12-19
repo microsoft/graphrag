@@ -49,7 +49,13 @@ class CacheFactory:
                     FilePipelineStorage(root_dir=root_dir).child(kwargs["base_dir"])
                 )
             case CacheType.blob:
-                return JsonPipelineCache(BlobPipelineStorage(**kwargs))
+                return JsonPipelineCache(
+                    BlobPipelineStorage(
+                        connection_string=kwargs['connection_string'],
+                        container_name=kwargs['container_name'],
+                        storage_account_blob_url=kwargs['storage_account_blob_url']
+                    ).child(kwargs["base_dir"])
+                )
             case _:
                 if cache_type in cls.cache_types:
                     return cls.cache_types[cache_type](**kwargs)
