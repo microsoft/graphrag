@@ -10,8 +10,8 @@ import networkx as nx
 import pandas as pd
 from datashaper import VerbCallbacks
 
-from graphrag.index.graph.visualization import GraphLayout
-from graphrag.index.operations.embed_graph import NodeEmbeddings
+from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
+from graphrag.index.operations.layout_graph.typing import GraphLayout
 
 
 class LayoutGraphStrategyType(str, Enum):
@@ -81,7 +81,7 @@ def _run_layout(
 ) -> GraphLayout:
     match strategy:
         case LayoutGraphStrategyType.umap:
-            from graphrag.index.operations.layout_graph.methods.umap import (
+            from graphrag.index.operations.layout_graph.umap import (
                 run as run_umap,
             )
 
@@ -92,7 +92,7 @@ def _run_layout(
                 lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
             )
         case LayoutGraphStrategyType.zero:
-            from graphrag.index.operations.layout_graph.methods.zero import (
+            from graphrag.index.operations.layout_graph.zero import (
                 run as run_zero,
             )
 
