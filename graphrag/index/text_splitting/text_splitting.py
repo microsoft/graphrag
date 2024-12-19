@@ -3,18 +3,14 @@
 
 """A module containing the 'Tokenizer', 'TextSplitter', 'NoopTextSplitter' and 'TokenTextSplitter' models."""
 
-import json
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any, Literal, cast
 
 import pandas as pd
 import tiktoken
-
-from graphrag.index.utils.tokens import num_tokens_from_string
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -122,10 +118,10 @@ class TokenTextSplitter(TextSplitter):
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""
-        if cast("bool", pd.isna(text)) or text == "":
-            return []
         if isinstance(text, list):
             text = " ".join(text)
+        elif cast("bool", pd.isna(text)) or text == "":
+            return []
         if not isinstance(text, str):
             msg = f"Attempting to split a non-string value, actual is {type(text)}"
             raise TypeError(msg)
@@ -138,95 +134,6 @@ class TokenTextSplitter(TextSplitter):
         )
 
         return split_text_on_tokens(text=text, tokenizer=tokenizer)
-
-
-class TextListSplitterType(str, Enum):
-    """Enum for the type of the TextListSplitter."""
-
-    DELIMITED_STRING = "delimited_string"
-    JSON = "json"
-
-
-class TextListSplitter(TextSplitter):
-    """Text list splitter class definition."""
-
-    def __init__(
-        self,
-        chunk_size: int,
-        splitter_type: TextListSplitterType = TextListSplitterType.JSON,
-        input_delimiter: str | None = None,
-        output_delimiter: str | None = None,
-        model_name: str | None = None,
-        encoding_name: str | None = None,
-    ):
-        """Initialize the TextListSplitter with a chunk size."""
-        # Set the chunk overlap to 0 as we use full strings
-        super().__init__(chunk_size, chunk_overlap=0)
-        self._type = splitter_type
-        self._input_delimiter = input_delimiter
-        self._output_delimiter = output_delimiter or "\n"
-        self._length_function = lambda x: num_tokens_from_string(
-            x, model=model_name, encoding_name=encoding_name
-        )
-
-    def split_text(self, text: str | list[str]) -> Iterable[str]:
-        """Split a string list into a list of strings for a given chunk size."""
-        if not text:
-            return []
-
-        result: list[str] = []
-        current_chunk: list[str] = []
-
-        # Add the brackets
-        current_length: int = self._length_function("[]")
-
-        # Input should be a string list joined by a delimiter
-        string_list = self._load_text_list(text)
-
-        if len(string_list) == 1:
-            return string_list
-
-        for item in string_list:
-            # Count the length of the item and add comma
-            item_length = self._length_function(f"{item},")
-
-            if current_length + item_length > self._chunk_size:
-                if current_chunk and len(current_chunk) > 0:
-                    # Add the current chunk to the result
-                    self._append_to_result(result, current_chunk)
-
-                    # Start a new chunk
-                    current_chunk = [item]
-                    # Add 2 for the brackets
-                    current_length = item_length
-            else:
-                # Add the item to the current chunk
-                current_chunk.append(item)
-                # Add 1 for the comma
-                current_length += item_length
-
-        # Add the last chunk to the result
-        self._append_to_result(result, current_chunk)
-
-        return result
-
-    def _load_text_list(self, text: str | list[str]):
-        """Load the text list based on the type."""
-        if isinstance(text, list):
-            string_list = text
-        elif self._type == TextListSplitterType.JSON:
-            string_list = json.loads(text)
-        else:
-            string_list = text.split(self._input_delimiter)
-        return string_list
-
-    def _append_to_result(self, chunk_list: list[str], new_chunk: list[str]):
-        """Append the current chunk to the result."""
-        if new_chunk and len(new_chunk) > 0:
-            if self._type == TextListSplitterType.JSON:
-                chunk_list.append(json.dumps(new_chunk, ensure_ascii=False))
-            else:
-                chunk_list.append(self._output_delimiter.join(new_chunk))
 
 
 def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> list[str]:
