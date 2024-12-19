@@ -2,10 +2,10 @@
 # Licensed under the MIT License
 import unittest
 
-from graphrag.index.operations.extract_entities.strategies.graph_intelligence import (
+from graphrag.index.operations.extract_entities.graph_intelligence_strategy import (
     run_extract_entities,
 )
-from graphrag.index.operations.extract_entities.strategies.typing import (
+from graphrag.index.operations.extract_entities.typing import (
     Document,
 )
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm

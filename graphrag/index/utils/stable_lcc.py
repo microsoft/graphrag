@@ -3,11 +3,10 @@
 
 """A module for producing a stable largest connected component, i.e. same input graph == same output lcc."""
 
+import html
 from typing import Any, cast
 
 import networkx as nx
-
-from graphrag.index.graph.utils.normalize_node_names import normalize_node_names
 
 
 def stable_largest_connected_component(graph: nx.Graph) -> nx.Graph:
@@ -60,3 +59,9 @@ def _stabilize_graph(graph: nx.Graph) -> nx.Graph:
 
     fixed_graph.add_edges_from(edges)
     return fixed_graph
+
+
+def normalize_node_names(graph: nx.Graph | nx.DiGraph) -> nx.Graph | nx.DiGraph:
+    """Normalize node names."""
+    node_mapping = {node: html.unescape(node.upper().strip()) for node in graph.nodes()}  # type: ignore
+    return nx.relabel_nodes(graph, node_mapping)

@@ -17,7 +17,7 @@ class NodeEmbeddings:
     embeddings: np.ndarray
 
 
-def embed_nod2vec(
+def embed_node2vec(
     graph: nx.Graph | nx.DiGraph,
     dimensions: int = 1536,
     num_walks: int = 10,

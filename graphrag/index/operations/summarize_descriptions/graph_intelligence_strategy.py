@@ -7,8 +7,10 @@ from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.graph.extractors.summarize import SummarizeExtractor
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
+    SummarizeExtractor,
+)
 from graphrag.index.operations.summarize_descriptions.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,

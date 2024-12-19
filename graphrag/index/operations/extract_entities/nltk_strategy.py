@@ -9,7 +9,7 @@ from datashaper import VerbCallbacks
 from nltk.corpus import words
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.operations.extract_entities.strategies.typing import (
+from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,

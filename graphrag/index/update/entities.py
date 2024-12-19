@@ -12,7 +12,7 @@ from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.index.config.pipeline import PipelineConfig
-from graphrag.index.operations.summarize_descriptions.strategies import (
+from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
 )
 from graphrag.index.run.workflow import _find_workflow_config

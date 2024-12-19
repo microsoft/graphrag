@@ -3,25 +3,17 @@
 
 """A module containing embed_graph and run_embeddings methods definition."""
 
-from enum import Enum
 from typing import Any
 
 import networkx as nx
 
-from graphrag.index.graph.embedding import embed_nod2vec
-from graphrag.index.graph.utils import stable_largest_connected_component
-from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
+from graphrag.index.operations.embed_graph.embed_node2vec import embed_node2vec
+from graphrag.index.operations.embed_graph.typing import (
+    EmbedGraphStrategyType,
+    NodeEmbeddings,
+)
 from graphrag.index.utils.load_graph import load_graph
-
-
-class EmbedGraphStrategyType(str, Enum):
-    """EmbedGraphStrategyType class definition."""
-
-    node2vec = "node2vec"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
+from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 
 def embed_graph(
@@ -81,7 +73,7 @@ def run_node_2_vec(graph: nx.Graph, args: dict[str, Any]) -> NodeEmbeddings:
         graph = stable_largest_connected_component(graph)
 
     # create graph embedding using node2vec
-    embeddings = embed_nod2vec(
+    embeddings = embed_node2vec(
         graph=graph,
         dimensions=args.get("dimensions", 1536),
         num_walks=args.get("num_walks", 10),
