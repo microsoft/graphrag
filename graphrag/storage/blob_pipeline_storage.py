@@ -65,11 +65,11 @@ class BlobPipelineStorage(PipelineStorage):
             self._container_name,
             self._path_prefix,
         )
-        self.create_container()
+        self._create_container()
 
-    def create_container(self) -> None:
+    def _create_container(self) -> None:
         """Create the container if it does not exist."""
-        if not self.container_exists():
+        if not self._container_exists():
             container_name = self._container_name
             container_names = [
                 container.name
@@ -78,12 +78,12 @@ class BlobPipelineStorage(PipelineStorage):
             if container_name not in container_names:
                 self._blob_service_client.create_container(container_name)
 
-    def delete_container(self) -> None:
+    def _delete_container(self) -> None:
         """Delete the container."""
-        if self.container_exists():
+        if self._container_exists():
             self._blob_service_client.delete_container(self._container_name)
 
-    def container_exists(self) -> bool:
+    def _container_exists(self) -> bool:
         """Check if the container exists."""
         container_name = self._container_name
         container_names = [
@@ -119,7 +119,7 @@ class BlobPipelineStorage(PipelineStorage):
             file_pattern.pattern,
         )
 
-        def blobname(blob_name: str) -> str:
+        def _blobname(blob_name: str) -> str:
             if blob_name.startswith(self._path_prefix):
                 blob_name = blob_name.replace(self._path_prefix, "", 1)
             if blob_name.startswith("/"):
@@ -146,7 +146,7 @@ class BlobPipelineStorage(PipelineStorage):
                 if match and blob.name.startswith(base_dir):
                     group = match.groupdict()
                     if item_filter(group):
-                        yield (blobname(blob.name), group)
+                        yield (_blobname(blob.name), group)
                         num_loaded += 1
                         if max_count > 0 and num_loaded >= max_count:
                             break
@@ -203,7 +203,7 @@ class BlobPipelineStorage(PipelineStorage):
         except Exception:
             log.exception("Error setting key %s: %s", key)
 
-    def set_df_json(self, key: str, dataframe: Any) -> None:
+    def _set_df_json(self, key: str, dataframe: Any) -> None:
         """Set a json dataframe."""
         if self._connection_string is None and self._storage_account_name:
             dataframe.to_json(
@@ -225,7 +225,7 @@ class BlobPipelineStorage(PipelineStorage):
                 force_ascii=False,
             )
 
-    def set_df_parquet(self, key: str, dataframe: Any) -> None:
+    def _set_df_parquet(self, key: str, dataframe: Any) -> None:
         """Set a parquet dataframe."""
         if self._connection_string is None and self._storage_account_name:
             dataframe.to_parquet(

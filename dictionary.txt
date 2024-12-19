@@ -28,6 +28,7 @@ ints
 
 # Azure
 abfs
+cosmosdb
 Hnsw
 odata
 

@@ -16,3 +16,4 @@ class StorageConfigInput(TypedDict):
     connection_string: NotRequired[str | None]
     container_name: NotRequired[str | None]
     storage_account_blob_url: NotRequired[str | None]
+    cosmosdb_account_url: NotRequired[str | None]
