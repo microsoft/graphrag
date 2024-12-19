@@ -8,6 +8,7 @@ from typing import ClassVar
 
 from graphrag.vector_stores.azure_ai_search import AzureAISearch
 from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.cosmosdb_vector_store import CosmosDBVectoreStore
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 
@@ -16,6 +17,7 @@ class VectorStoreType(str, Enum):
 
     LanceDB = "lancedb"
     AzureAISearch = "azure_ai_search"
+    CosmosDB = "cosmosdb"
 
 
 class VectorStoreFactory:
@@ -41,6 +43,8 @@ class VectorStoreFactory:
                 return LanceDBVectorStore(**kwargs)
             case VectorStoreType.AzureAISearch:
                 return AzureAISearch(**kwargs)
+            case VectorStoreType.CosmosDB:
+                return CosmosDBVectoreStore(**kwargs)
             case _:
                 if vector_store_type in cls.vector_store_types:
                     return cls.vector_store_types[vector_store_type](**kwargs)
