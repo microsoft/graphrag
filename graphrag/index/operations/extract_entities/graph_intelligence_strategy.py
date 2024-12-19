@@ -107,6 +107,7 @@ async def run_extract_entities(
 
     entities = [
         ({"title": item[0], **(item[1] or {})})
+        ({"name": item[0], **(item[1] or {})})
         for item in graph.nodes(data=True)
         if item is not None
     ]
