@@ -45,7 +45,6 @@ graphrag
 ├── config          # configuration management
 ├── index           # indexing engine
 |    └─ run/run.py  #  main entrypoint to build an index
-├── llm             # generic llm interfaces
 ├── logger          # logger module supporting several options
 │    └─ factory.py  #  └─ main entrypoint to create a logger
 ├── model           # data model definitions associated with the knowledge graph
