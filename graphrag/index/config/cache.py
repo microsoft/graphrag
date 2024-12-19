@@ -63,8 +63,8 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     container_name: str = Field(description="The container name for cache", default="")
     """The container name for cache"""
 
-    storage_account_blob_url: str = Field(
-        description="The storage account blob url for cache", default=""
+    storage_account_blob_url: str | None = Field(
+        description="The storage account blob url for cache", default=None
     )
     """The storage account blob url for cache"""
 
@@ -75,8 +75,8 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     type: Literal[CacheType.cosmosdb] = CacheType.cosmosdb
     """The type of cache."""
 
-    base_dir: str = Field(
-        description="The cosmosdb database name for the cache.", default=""
+    base_dir: str | None = Field(
+        description="The cosmosdb database name for the cache.", default=None
     )
     """The cosmosdb database name for the cache."""
 
@@ -88,8 +88,8 @@ class PipelineCosmosDBCacheConfig(PipelineCacheConfig[Literal[CacheType.cosmosdb
     )
     """The cosmosdb primary key for the cache."""
 
-    cosmosdb_account_url: str = Field(
-        description="The cosmosdb account url for cache", default=""
+    cosmosdb_account_url: str | None = Field(
+        description="The cosmosdb account url for cache", default=None
     )
     """The cosmosdb account url for cache"""
 

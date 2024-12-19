@@ -55,11 +55,13 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     )
     """The container name for storage."""
 
-    base_dir: str = Field(description="The base directory for the storage.", default="")
+    base_dir: str | None = Field(
+        description="The base directory for the storage.", default=None
+    )
     """The base directory for the storage."""
 
-    storage_account_blob_url: str = Field(
-        description="The storage account blob url.", default=""
+    storage_account_blob_url: str | None = Field(
+        description="The storage account blob url.", default=None
     )
     """The storage account blob url."""
 
@@ -82,11 +84,13 @@ class PipelineCosmosDBStorageConfig(
     )
     """The container name for storage."""
 
-    base_dir: str = Field(description="The base directory for the storage.", default="")
+    base_dir: str | None = Field(
+        description="The base directory for the storage.", default=None
+    )
     """The base directory for the storage."""
 
-    cosmosdb_account_url: str = Field(
-        description="The cosmosdb account url.", default=""
+    cosmosdb_account_url: str | None = Field(
+        description="The cosmosdb account url.", default=None
     )
     """The cosmosdb account url."""
 
