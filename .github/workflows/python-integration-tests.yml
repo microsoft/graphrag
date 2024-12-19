@@ -23,7 +23,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  # Only run the for the latest commit
+  # only run the for the latest commit
   cancel-in-progress: true
 
 env:
@@ -37,7 +37,7 @@ jobs:
       matrix:
         python-version: ["3.10"]
         os: [ubuntu-latest, windows-latest]
-      fail-fast: false # Continue running all jobs even if one fails
+      fail-fast: false # continue running all jobs even if one fails
     env:
       DEBUG: 1
 
@@ -83,6 +83,17 @@ jobs:
       - name: Install Azurite
         id: azuright
         uses: potatoqualitee/azuright@v1.1
+
+      # For more information on installation/setup of Azure Cosmos DB Emulator
+      # https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=docker-linux%2Cpython&pivots=api-nosql
+      # Note: the emulator is only available on Windows runners. It can take longer than the default to initially startup so we increase the default timeout.
+      # If a job fails due to timeout, restarting the cicd job usually resolves the problem.
+      - name: Install Azure Cosmos DB Emulator
+        if: runner.os == 'Windows'
+        run: |
+          Write-Host "Launching Cosmos DB Emulator"
+          Import-Module "$env:ProgramFiles\Azure Cosmos DB Emulator\PSModules\Microsoft.Azure.CosmosDB.Emulator"
+          Start-CosmosDbEmulator -Timeout 500
 
       - name: Integration Test
         run: |

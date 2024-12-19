@@ -44,7 +44,7 @@ async def test_find():
             output = await storage.get("test.txt")
             assert output is None
     finally:
-        storage.delete_container()
+        storage._delete_container()  # noqa: SLF001
 
 
 async def test_dotprefix():
@@ -59,7 +59,7 @@ async def test_dotprefix():
         items = [item[0] for item in items]
         assert items == ["input/christmas.txt"]
     finally:
-        storage.delete_container()
+        storage._delete_container()  # noqa: SLF001
 
 
 async def test_child():
@@ -93,4 +93,4 @@ async def test_child():
             has_test = await parent.has("input/test.txt")
             assert not has_test
     finally:
-        parent.delete_container()
+        parent._delete_container()  # noqa: SLF001
