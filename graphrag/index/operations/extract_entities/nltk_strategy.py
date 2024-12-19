@@ -58,7 +58,7 @@ async def run(  # noqa RUF029 async is required for interface
 
     return EntityExtractionResult(
         entities=[
-            {"type": entity_type, "name": name}
+            {"type": entity_type, "title": name}
             for name, entity_type in entity_map.items()
         ],
         relationships=[],
