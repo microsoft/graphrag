@@ -238,7 +238,7 @@ def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
         )
     return PublicOpenAIConfig(
         api_key=config.api_key,
-        base_url=config.proxy,
+        base_url=config.api_base,
         json_strategy=json_strategy,
         organization=config.organization,
         max_retries=config.max_retries,

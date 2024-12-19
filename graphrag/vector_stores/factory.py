@@ -19,7 +19,10 @@ class VectorStoreType(str, Enum):
 
 
 class VectorStoreFactory:
-    """A factory class for vector stores."""
+    """A factory for vector stores.
+
+    Includes a method for users to register a custom vector store implementation.
+    """
 
     vector_store_types: ClassVar[dict[str, type]] = {}
 
