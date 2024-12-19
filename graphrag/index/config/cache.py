@@ -52,7 +52,9 @@ class PipelineBlobCacheConfig(PipelineCacheConfig[Literal[CacheType.blob]]):
     type: Literal[CacheType.blob] = CacheType.blob
     """The type of cache."""
 
-    base_dir: str = Field(description="The base directory for the cache.", default="")
+    base_dir: str | None = Field(
+        description="The base directory for the cache.", default=None
+    )
     """The base directory for the cache."""
 
     connection_string: str | None = Field(
