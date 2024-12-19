@@ -100,8 +100,8 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
         container_name=input_container,
     )
     # Bounce the container if it exists to clear out old run data
-    input_storage.delete_container()
-    input_storage.create_container()
+    input_storage._delete_container()  # noqa: SLF001
+    input_storage._create_container()  # noqa: SLF001
 
     # Upload data files
     txt_files = list((root / "input").glob("*.txt"))
@@ -116,7 +116,7 @@ async def prepare_azurite_data(input_path: str, azure: dict) -> Callable[[], Non
         )
         await input_storage.set(file_path, text, encoding="utf-8")
 
-    return lambda: input_storage.delete_container()
+    return lambda: input_storage._delete_container()  # noqa: SLF001
 
 
 class TestIndexer:

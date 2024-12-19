@@ -63,7 +63,7 @@ chunks:
 ## connection_string and container_name must be provided
 
 cache:
-  type: {defs.CACHE_TYPE.value} # or blob
+  type: {defs.CACHE_TYPE.value} # one of [blob, cosmosdb, file]
   base_dir: "{defs.CACHE_BASE_DIR}"
 
 reporting:
@@ -71,7 +71,7 @@ reporting:
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 storage:
-  type: {defs.STORAGE_TYPE.value} # or blob
+  type: {defs.STORAGE_TYPE.value} # one of [blob, cosmosdb, file]
   base_dir: "{defs.STORAGE_BASE_DIR}"
 
 ## only turn this on if running `graphrag index` with custom settings

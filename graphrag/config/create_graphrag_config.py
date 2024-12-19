@@ -362,6 +362,7 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.CACHE_BASE_DIR,
+                cosmosdb_account_url=reader.str(Fragment.cosmosdb_account_url),
             )
         with (
             reader.envvar_prefix(Section.reporting),
@@ -383,6 +384,7 @@ def create_graphrag_config(
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),
                 base_dir=reader.str(Fragment.base_dir) or defs.STORAGE_BASE_DIR,
+                cosmosdb_account_url=reader.str(Fragment.cosmosdb_account_url),
             )
 
         with (
@@ -667,6 +669,7 @@ class Fragment(str, Enum):
     concurrent_requests = "CONCURRENT_REQUESTS"
     conn_string = "CONNECTION_STRING"
     container_name = "CONTAINER_NAME"
+    cosmosdb_account_url = "COSMOSDB_ACCOUNT_URL"
     deployment_name = "DEPLOYMENT_NAME"
     description = "DESCRIPTION"
     enabled = "ENABLED"

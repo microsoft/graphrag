@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'PipelineStorageConfig', 'PipelineFileStorageConfig' and 'PipelineMemoryStorageConfig' models."""
+"""A module containing 'PipelineStorageConfig', 'PipelineFileStorageConfig','PipelineMemoryStorageConfig', 'PipelineBlobStorageConfig', and 'PipelineCosmosDBStorageConfig' models."""
 
 from __future__ import annotations
 
@@ -66,6 +66,38 @@ class PipelineBlobStorageConfig(PipelineStorageConfig[Literal[StorageType.blob]]
     """The storage account blob url."""
 
 
+class PipelineCosmosDBStorageConfig(
+    PipelineStorageConfig[Literal[StorageType.cosmosdb]]
+):
+    """Represents the cosmosdb storage configuration for the pipeline."""
+
+    type: Literal[StorageType.cosmosdb] = StorageType.cosmosdb
+    """The type of storage."""
+
+    connection_string: str | None = Field(
+        description="The cosmosdb storage primary key for the storage.", default=None
+    )
+    """The cosmosdb storage primary key for the storage."""
+
+    container_name: str = Field(
+        description="The container name for storage", default=""
+    )
+    """The container name for storage."""
+
+    base_dir: str | None = Field(
+        description="The base directory for the storage.", default=None
+    )
+    """The base directory for the storage."""
+
+    cosmosdb_account_url: str | None = Field(
+        description="The cosmosdb account url.", default=None
+    )
+    """The cosmosdb account url."""
+
+
 PipelineStorageConfigTypes = (
-    PipelineFileStorageConfig | PipelineMemoryStorageConfig | PipelineBlobStorageConfig
+    PipelineFileStorageConfig
+    | PipelineMemoryStorageConfig
+    | PipelineBlobStorageConfig
+    | PipelineCosmosDBStorageConfig
 )

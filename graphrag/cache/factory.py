@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import CacheType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 if TYPE_CHECKING:
@@ -50,6 +51,8 @@ class CacheFactory:
                 )
             case CacheType.blob:
                 return JsonPipelineCache(BlobPipelineStorage(**kwargs))
+            case CacheType.cosmosdb:
+                return JsonPipelineCache(create_cosmosdb_storage(**kwargs))
             case _:
                 if cache_type in cls.cache_types:
                     return cls.cache_types[cache_type](**kwargs)

@@ -92,7 +92,7 @@ async def test_extract_graph():
     # we need to update the mocking to provide somewhat unique graphs so a true merge happens
     # the assertion should grab a node and ensure the description matches the mock description, not the original as we are doing below
 
-    assert nodes_actual["description"].values[0] == "Company_A is a test company"
+    assert nodes_actual["description"].to_numpy()[0] == "Company_A is a test company"
 
     assert len(context.storage.keys()) == 0, "Storage should be empty"
 
