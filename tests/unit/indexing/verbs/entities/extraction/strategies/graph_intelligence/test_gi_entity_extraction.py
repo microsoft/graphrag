@@ -2,10 +2,10 @@
 # Licensed under the MIT License
 import unittest
 
-from graphrag.index.operations.extract_entities.strategies.graph_intelligence import (
+from graphrag.index.operations.extract_entities.graph_intelligence_strategy import (
     run_extract_entities,
 )
-from graphrag.index.operations.extract_entities.strategies.typing import (
+from graphrag.index.operations.extract_entities.typing import (
     Document,
 )
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
@@ -42,7 +42,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
         assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
-            entity["name"] for entity in results.entities
+            entity["title"] for entity in results.entities
         ])
 
     async def test_run_extract_entities_multiple_documents_correct_entities_returned(
@@ -81,7 +81,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         # self.assertItemsEqual isn't available yet, or I am just silly
         # so we sort the lists and compare them
         assert sorted(["TEST_ENTITY_1", "TEST_ENTITY_2", "TEST_ENTITY_3"]) == sorted([
-            entity["name"] for entity in results.entities
+            entity["title"] for entity in results.entities
         ])
 
     async def test_run_extract_entities_multiple_documents_correct_edges_returned(self):

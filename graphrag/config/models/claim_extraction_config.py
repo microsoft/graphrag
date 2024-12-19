@@ -35,14 +35,9 @@ class ClaimExtractionConfig(LLMConfig):
         default=None, description="The encoding model to use."
     )
 
-    def resolved_strategy(self, root_dir: str, encoding_model: str) -> dict:
+    def resolved_strategy(self, root_dir: str, encoding_model: str | None) -> dict:
         """Get the resolved claim extraction strategy."""
-        from graphrag.index.operations.extract_covariates import (
-            ExtractClaimsStrategyType,
-        )
-
         return self.strategy or {
-            "type": ExtractClaimsStrategyType.graph_intelligence,
             "llm": self.llm.model_dump(),
             **self.parallelization.model_dump(),
             "extraction_prompt": (Path(root_dir) / self.prompt)
@@ -52,5 +47,5 @@ class ClaimExtractionConfig(LLMConfig):
             else None,
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
-            "encoding_name": self.encoding_model or encoding_model,
+            "encoding_name": encoding_model or self.encoding_model,
         }

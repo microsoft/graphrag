@@ -58,8 +58,8 @@
             ],
             "nan_allowed_columns": [
                 "description",
-                "community",
-                "level"
+                "x",
+                "y"
             ],
             "subworkflows": 1,
             "max_runtime": 150,

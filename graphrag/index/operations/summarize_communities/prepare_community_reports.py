@@ -11,11 +11,13 @@ from datashaper import (
     progress_iterable,
 )
 
-import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.graph.extractors.community_reports.sort_context import (
+import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
     parallel_sort_context_batch,
 )
-from graphrag.index.graph.extractors.community_reports.utils import get_levels
+from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
+    get_levels,
+)
 
 log = logging.getLogger(__name__)
 

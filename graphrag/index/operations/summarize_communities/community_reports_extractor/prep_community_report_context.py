@@ -8,11 +8,13 @@ from typing import cast
 
 import pandas as pd
 
-import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.graph.extractors.community_reports.build_mixed_context import (
+import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+from graphrag.index.operations.summarize_communities.community_reports_extractor.build_mixed_context import (
     build_mixed_context,
 )
-from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
+from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
+    sort_context,
+)
 from graphrag.index.utils.dataframes import (
     antijoin,
     drop_columns,

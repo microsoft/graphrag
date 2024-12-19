@@ -9,9 +9,9 @@ from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.graph.extractors import GraphExtractor
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
-from graphrag.index.operations.extract_entities.strategies.typing import (
+from graphrag.index.operations.extract_entities.graph_extractor import GraphExtractor
+from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,
@@ -106,7 +106,7 @@ async def run_extract_entities(
             )
 
     entities = [
-        ({"name": item[0], **(item[1] or {})})
+        ({"title": item[0], **(item[1] or {})})
         for item in graph.nodes(data=True)
         if item is not None
     ]

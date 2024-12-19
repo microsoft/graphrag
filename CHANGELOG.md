@@ -1,6 +1,13 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.0.1
+
+- patch: Fix encoding model config parsing
+- patch: Fix exception on error callbacks
+- patch: Manage llm instances inside a cached singleton. Check for empty dfs after entity/relationship extraction
+- patch: Respect encoding_model option
+
 ## 1.0.0
 
 - patch: Add Parent id to communities data model
