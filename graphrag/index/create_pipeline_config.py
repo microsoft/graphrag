@@ -379,7 +379,7 @@ def _get_reporting_config(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.reporting.base_dir,
-                storage_account_blob_url=storage_account_blob_url,  # type: ignore
+                storage_account_blob_url=storage_account_blob_url,
             )
         case ReportingType.console:
             return PipelineConsoleReportingConfig()
@@ -420,7 +420,7 @@ def _get_storage_config(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=storage_settings.base_dir,
-                storage_account_blob_url=storage_account_blob_url,  # type: ignore
+                storage_account_blob_url=storage_account_blob_url,
             )
         case StorageType.cosmosdb:
             cosmosdb_account_url = storage_settings.cosmosdb_account_url
@@ -477,7 +477,7 @@ def _get_cache_config(
                 connection_string=connection_string,
                 container_name=container_name,
                 base_dir=settings.cache.base_dir,
-                storage_account_blob_url=storage_account_blob_url,  # type: ignore
+                storage_account_blob_url=storage_account_blob_url,
             )
         case CacheType.cosmosdb:
             cosmosdb_account_url = settings.cache.cosmosdb_account_url
@@ -494,7 +494,7 @@ def _get_cache_config(
                 msg = "Connection string or cosmosDB account url must be provided for cosmosdb cache."
                 raise ValueError(msg)
             return PipelineCosmosDBCacheConfig(
-                cosmosdb_account_url=cosmosdb_account_url,  # type: ignore
+                cosmosdb_account_url=cosmosdb_account_url,
                 connection_string=connection_string,
                 base_dir=base_dir,
                 container_name=container_name,
