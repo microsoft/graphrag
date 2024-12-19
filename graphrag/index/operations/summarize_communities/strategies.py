@@ -10,10 +10,10 @@ from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.graph.extractors.community_reports import (
+from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
     CommunityReportsExtractor,
 )
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     Finding,

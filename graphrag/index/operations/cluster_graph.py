@@ -9,7 +9,7 @@ from typing import Any
 
 import networkx as nx
 
-from graphrag.index.graph.utils import stable_largest_connected_component
+from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 Communities = list[tuple[int, int, int, list[str]]]
 

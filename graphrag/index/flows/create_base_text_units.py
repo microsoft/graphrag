@@ -15,18 +15,14 @@ from datashaper import (
 )
 
 from graphrag.index.operations.chunk_text import chunk_text
-from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-async def create_base_text_units(
+def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: VerbCallbacks,
-    storage: PipelineStorage,
     chunk_by_columns: list[str],
     chunk_strategy: dict[str, Any] | None = None,
-    snapshot_transient_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -74,19 +70,7 @@ async def create_base_text_units(
     # rename for downstream consumption
     chunked.rename(columns={"chunk": "text"}, inplace=True)
 
-    output = cast(
-        "pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True)
-    )
-
-    if snapshot_transient_enabled:
-        await snapshot(
-            output,
-            name="create_base_text_units",
-            storage=storage,
-            formats=["parquet"],
-        )
-
-    return output
+    return cast("pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True))
 
 
 # TODO: would be nice to inline this completely in the main method with pandas

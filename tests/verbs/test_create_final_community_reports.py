@@ -6,7 +6,7 @@ import pytest
 from datashaper.errors import VerbParallelizationError
 
 from graphrag.config.enums import LLMType
-from graphrag.index.graph.extractors.community_reports.community_reports_extractor import (
+from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
     CommunityReportResponse,
     FindingModel,
 )

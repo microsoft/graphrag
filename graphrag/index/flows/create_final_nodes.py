@@ -10,9 +10,10 @@ from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.embed_graph import embed_graph
-from graphrag.index.operations.layout_graph import layout_graph
+from graphrag.index.operations.embed_graph.embed_graph import embed_graph
+from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
 def create_final_nodes(
@@ -37,15 +38,19 @@ def create_final_nodes(
         layout_strategy,
         embeddings=graph_embeddings,
     )
-    nodes = base_entity_nodes.merge(
-        layout, left_on="title", right_on="label", how="left"
+
+    degrees = compute_degree(graph)
+
+    nodes = (
+        base_entity_nodes.merge(layout, left_on="title", right_on="label", how="left")
+        .merge(degrees, on="title", how="left")
+        .merge(base_communities, on="title", how="left")
     )
-
-    joined = nodes.merge(base_communities, on="title", how="left")
-    joined["level"] = joined["level"].fillna(0).astype(int)
-    joined["community"] = joined["community"].fillna(-1).astype(int)
-
-    return joined.loc[
+    nodes["level"] = nodes["level"].fillna(0).astype(int)
+    nodes["community"] = nodes["community"].fillna(-1).astype(int)
+    # disconnected nodes and those with no community even at level 0 can be missing degree
+    nodes["degree"] = nodes["degree"].fillna(0).astype(int)
+    return nodes.loc[
         :,
         [
             "id",
