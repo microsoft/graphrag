@@ -132,6 +132,9 @@ global_search:
 
 drift_search:
   prompt: "prompts/drift_search_system_prompt.txt"
+
+basic_search:
+  prompt: "prompts/basic_search_system_prompt.txt"
 """
 
 INIT_DOTENV = """\
