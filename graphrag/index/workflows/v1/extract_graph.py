@@ -19,6 +19,9 @@ from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkf
 from graphrag.index.flows.extract_graph import (
     extract_graph,
 )
+from graphrag.index.operations.create_graph import create_graph
+from graphrag.index.operations.snapshot import snapshot
+from graphrag.index.operations.snapshot_graphml import snapshot_graphml
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 workflow_name = "extract_graph"
@@ -90,18 +93,38 @@ async def workflow(
         text_units,
         callbacks,
         cache,
-        storage,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extraction_num_threads,
         extraction_async_mode=extraction_async_mode,
         entity_types=entity_types,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
-        snapshot_graphml_enabled=snapshot_graphml_enabled,
-        snapshot_transient_enabled=snapshot_transient_enabled,
     )
 
     await runtime_storage.set("base_entity_nodes", base_entity_nodes)
     await runtime_storage.set("base_relationship_edges", base_relationship_edges)
+
+    if snapshot_graphml_enabled:
+        # todo: extract graphs at each level, and add in meta like descriptions
+        graph = create_graph(base_relationship_edges)
+        await snapshot_graphml(
+            graph,
+            name="graph",
+            storage=storage,
+        )
+
+    if snapshot_transient_enabled:
+        await snapshot(
+            base_entity_nodes,
+            name="base_entity_nodes",
+            storage=storage,
+            formats=["parquet"],
+        )
+        await snapshot(
+            base_relationship_edges,
+            name="base_relationship_edges",
+            storage=storage,
+            formats=["parquet"],
+        )
 
     return create_verb_result(cast("Table", pd.DataFrame()))

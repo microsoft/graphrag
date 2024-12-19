@@ -8,14 +8,11 @@ import traceback
 from typing import Any
 
 import networkx as nx
-import numpy as np
 
-from graphrag.index.graph.visualization import (
+from graphrag.index.operations.layout_graph.typing import (
     GraphLayout,
     NodePosition,
-    compute_umap_positions,
 )
-from graphrag.index.operations.embed_graph import NodeEmbeddings
 from graphrag.index.typing import ErrorHandlerFn
 
 # TODO: This could be handled more elegantly, like what columns to use
@@ -27,17 +24,14 @@ log = logging.getLogger(__name__)
 
 def run(
     graph: nx.Graph,
-    embeddings: NodeEmbeddings,
-    args: dict[str, Any],
+    _args: dict[str, Any],
     on_error: ErrorHandlerFn,
 ) -> GraphLayout:
     """Run method definition."""
     node_clusters = []
     node_sizes = []
 
-    embeddings = _filter_raw_embeddings(embeddings)
-    nodes = list(embeddings.keys())
-    embedding_vectors = [embeddings[node_id] for node_id in nodes]
+    nodes = list(graph.nodes)
 
     for node_id in nodes:
         node = graph.nodes[node_id]
@@ -53,15 +47,9 @@ def run(
         additional_args["node_sizes"] = node_sizes
 
     try:
-        return compute_umap_positions(
-            embedding_vectors=np.array(embedding_vectors),
-            node_labels=nodes,
-            **additional_args,
-            min_dist=args.get("min_dist", 0.75),
-            n_neighbors=args.get("n_neighbors", 5),
-        )
+        return get_zero_positions(node_labels=nodes, **additional_args)
     except Exception as e:
-        log.exception("Error running UMAP")
+        log.exception("Error running zero-position")
         on_error(e, traceback.format_exc(), None)
         # Umap may fail due to input sparseness or memory pressure.
         # For now, in these cases, we'll just return a layout with all nodes at (0, 0)
@@ -74,9 +62,37 @@ def run(
         return result
 
 
-def _filter_raw_embeddings(embeddings: NodeEmbeddings) -> NodeEmbeddings:
-    return {
-        node_id: embedding
-        for node_id, embedding in embeddings.items()
-        if embedding is not None
-    }
+def get_zero_positions(
+    node_labels: list[str],
+    node_categories: list[int] | None = None,
+    node_sizes: list[int] | None = None,
+    three_d: bool | None = False,
+) -> list[NodePosition]:
+    """Project embedding vectors down to 2D/3D using UMAP."""
+    embedding_position_data: list[NodePosition] = []
+    for index, node_name in enumerate(node_labels):
+        node_category = 1 if node_categories is None else node_categories[index]
+        node_size = 1 if node_sizes is None else node_sizes[index]
+
+        if not three_d:
+            embedding_position_data.append(
+                NodePosition(
+                    label=str(node_name),
+                    x=0,
+                    y=0,
+                    cluster=str(int(node_category)),
+                    size=int(node_size),
+                )
+            )
+        else:
+            embedding_position_data.append(
+                NodePosition(
+                    label=str(node_name),
+                    x=0,
+                    y=0,
+                    z=0,
+                    cluster=str(int(node_category)),
+                    size=int(node_size),
+                )
+            )
+    return embedding_position_data

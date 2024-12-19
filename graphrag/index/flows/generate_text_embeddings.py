@@ -129,9 +129,8 @@ async def _run_and_snapshot_embeddings(
             strategy=text_embed_config["strategy"],
         )
 
-        data = data.loc[:, ["id", "embedding"]]
-
         if snapshot_embeddings_enabled is True:
+            data = data.loc[:, ["id", "embedding"]]
             await snapshot(
                 data,
                 name=f"embeddings.{name}",

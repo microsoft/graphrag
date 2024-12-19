@@ -88,7 +88,7 @@ async def summarize_descriptions(
 
         node_futures = [
             do_summarize_descriptions(
-                str(row[1]["name"]),
+                str(row[1]["title"]),
                 sorted(set(row[1]["description"])),
                 ticker,
                 semaphore,
@@ -100,7 +100,7 @@ async def summarize_descriptions(
 
         node_descriptions = [
             {
-                "name": result.id,
+                "title": result.id,
                 "description": result.description,
             }
             for result in node_results
@@ -157,7 +157,7 @@ def load_strategy(strategy_type: SummarizeStrategyType) -> SummarizationStrategy
     """Load strategy method definition."""
     match strategy_type:
         case SummarizeStrategyType.graph_intelligence:
-            from graphrag.index.operations.summarize_descriptions.strategies import (
+            from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
                 run_graph_intelligence,
             )
 

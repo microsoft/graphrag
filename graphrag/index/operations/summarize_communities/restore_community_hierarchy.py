@@ -8,7 +8,7 @@ from itertools import pairwise
 
 import pandas as pd
 
-import graphrag.index.graph.extractors.community_reports.schemas as schemas
+import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
 
 log = logging.getLogger(__name__)
 

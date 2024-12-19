@@ -4,7 +4,7 @@ import unittest
 
 import networkx as nx
 
-from graphrag.index.graph.utils.stable_lcc import stable_largest_connected_component
+from graphrag.index.utils.stable_lcc import stable_largest_connected_component
 
 
 class TestStableLCC(unittest.TestCase):

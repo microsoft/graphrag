@@ -12,7 +12,12 @@ from datashaper import (
 )
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.graph.extractors.community_reports.schemas import (
+from graphrag.index.operations.summarize_communities import (
+    prepare_community_reports,
+    restore_community_hierarchy,
+    summarize_communities,
+)
+from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
     CLAIM_ID,
@@ -31,11 +36,6 @@ from graphrag.index.graph.extractors.community_reports.schemas import (
     NODE_DETAILS,
     NODE_ID,
     NODE_NAME,
-)
-from graphrag.index.operations.summarize_communities import (
-    prepare_community_reports,
-    restore_community_hierarchy,
-    summarize_communities,
 )
 
 

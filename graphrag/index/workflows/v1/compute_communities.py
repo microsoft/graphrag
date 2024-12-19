@@ -14,6 +14,7 @@ from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.compute_communities import compute_communities
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 workflow_name = "compute_communities"
@@ -62,13 +63,19 @@ async def workflow(
     """All the steps to create the base entity graph."""
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
 
-    base_communities = await compute_communities(
+    base_communities = compute_communities(
         base_relationship_edges,
-        storage,
         clustering_strategy=clustering_strategy,
-        snapshot_transient_enabled=snapshot_transient_enabled,
     )
 
     await runtime_storage.set("base_communities", base_communities)
+
+    if snapshot_transient_enabled:
+        await snapshot(
+            base_communities,
+            name="base_communities",
+            storage=storage,
+            formats=["parquet"],
+        )
 
     return create_verb_result(cast("Table", pd.DataFrame()))

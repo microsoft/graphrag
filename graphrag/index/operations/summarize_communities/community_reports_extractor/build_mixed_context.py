@@ -4,8 +4,10 @@
 
 import pandas as pd
 
-import graphrag.index.graph.extractors.community_reports.schemas as schemas
-from graphrag.index.graph.extractors.community_reports.sort_context import sort_context
+import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
+    sort_context,
+)
 from graphrag.query.llm.text_utils import num_tokens
 
 

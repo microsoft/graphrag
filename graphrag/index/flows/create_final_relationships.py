@@ -5,20 +5,25 @@
 
 import pandas as pd
 
+from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.compute_edge_combined_degree import (
     compute_edge_combined_degree,
 )
+from graphrag.index.operations.create_graph import create_graph
 
 
 def create_final_relationships(
     base_relationship_edges: pd.DataFrame,
-    base_entity_nodes: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
     relationships = base_relationship_edges
+
+    graph = create_graph(base_relationship_edges)
+    degrees = compute_degree(graph)
+
     relationships["combined_degree"] = compute_edge_combined_degree(
         relationships,
-        base_entity_nodes,
+        degrees,
         node_name_column="title",
         node_degree_column="degree",
         edge_source_column="source",

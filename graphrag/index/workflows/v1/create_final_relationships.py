@@ -53,8 +53,7 @@ async def workflow(
 ) -> VerbResult:
     """All the steps to transform final relationships."""
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
-    base_entity_nodes = await runtime_storage.get("base_entity_nodes")
 
-    output = create_final_relationships(base_relationship_edges, base_entity_nodes)
+    output = create_final_relationships(base_relationship_edges)
 
     return create_verb_result(cast("Table", output))
