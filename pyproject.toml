@@ -81,8 +81,9 @@ devtools = "^0.12.2"
 typing-extensions = "^4.12.2"
 
 #Azure
-azure-storage-blob = "^12.24.0"
+azure-cosmos = "^4.9.0"
 azure-identity = "^1.19.0"
+azure-storage-blob = "^12.24.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.15.1"
@@ -267,6 +268,7 @@ include = ["graphrag", "tests", "examples", "examples_notebooks"]
 exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
 timeout = 1000
 env_files = [".env"]
