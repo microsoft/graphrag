@@ -193,9 +193,9 @@ def test_split_single_text_on_tokens():
         " meaning t",
         "ing to be ",
         "o be taken",
-        "taken seri",
+        "taken seri",  # cspell:disable-line
         " seriously",
-        "ously by t",
+        "ously by t",  # cspell:disable-line
         " by this t",
         "his test o",
         "est only.",
@@ -229,23 +229,58 @@ def test_split_multiple_texts_on_tokens_no_tick():
         TextChunk(text_chunk=" meaning t", source_doc_indices=[0], n_tokens=10),
         TextChunk(text_chunk="ing to be ", source_doc_indices=[0], n_tokens=10),
         TextChunk(text_chunk="o be taken", source_doc_indices=[0], n_tokens=10),
-        TextChunk(text_chunk="taken seri", source_doc_indices=[0], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="taken seri",
+            source_doc_indices=[0],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk=" seriously", source_doc_indices=[0], n_tokens=10),
-        TextChunk(text_chunk="ously by t", source_doc_indices=[0], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="ously by t",
+            source_doc_indices=[0],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk=" by this t", source_doc_indices=[0], n_tokens=10),
-        TextChunk(text_chunk="his test o", source_doc_indices=[0], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="his test o",
+            source_doc_indices=[0],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk="est only.T", source_doc_indices=[0, 1], n_tokens=10),
         TextChunk(text_chunk="nly.This i", source_doc_indices=[0, 1], n_tokens=10),
         TextChunk(text_chunk="his is th ", source_doc_indices=[1], n_tokens=10),
-        TextChunk(text_chunk="s th secon", source_doc_indices=[1], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="s th secon",
+            source_doc_indices=[1],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk="second tex", source_doc_indices=[1], n_tokens=10),
         TextChunk(text_chunk="d text, me", source_doc_indices=[1], n_tokens=10),
         TextChunk(text_chunk="t, meaning", source_doc_indices=[1], n_tokens=10),
-        TextChunk(text_chunk="aning to b", source_doc_indices=[1], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="aning to b",
+            source_doc_indices=[1],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk=" to be tak", source_doc_indices=[1], n_tokens=10),
         TextChunk(text_chunk="e taken se", source_doc_indices=[1], n_tokens=10),
-        TextChunk(text_chunk="en serious", source_doc_indices=[1], n_tokens=10),
-        TextChunk(text_chunk="riously by", source_doc_indices=[1], n_tokens=10),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="en serious",
+            source_doc_indices=[1],
+            n_tokens=10,
+        ),
+        TextChunk(
+            # cspell:disable-next-line  # noqa: ERA001
+            text_chunk="riously by",
+            source_doc_indices=[1],
+            n_tokens=10,
+        ),
         TextChunk(text_chunk="ly by this", source_doc_indices=[1], n_tokens=10),
         TextChunk(text_chunk=" this test", source_doc_indices=[1], n_tokens=10),
         TextChunk(text_chunk=" test only", source_doc_indices=[1], n_tokens=10),
