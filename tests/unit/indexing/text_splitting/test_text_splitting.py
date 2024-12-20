@@ -205,6 +205,7 @@ def test_split_single_text_on_tokens():
     result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
     assert result == expected_splits
 
+
 def test_split_multiple_texts_on_tokens_no_tick():
     texts = [
         "This is a test text, meaning to be taken seriously by this test only.",

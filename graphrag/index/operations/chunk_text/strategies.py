@@ -46,6 +46,7 @@ def run_tokens(
         tick,
     )
 
+
 def run_sentences(
     input: list[str], _args: dict[str, Any], tick: ProgressTicker
 ) -> Iterable[TextChunk]:

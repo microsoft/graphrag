@@ -138,6 +138,7 @@ class TokenTextSplitter(TextSplitter):
 
         return split_single_text_on_tokens(text=text, tokenizer=tokenizer)
 
+
 def split_text_on_tokens(
     texts: str | list[str], tokenizer: Tokenizer, tick=None
 ) -> list[str] | list[TextChunk]:
