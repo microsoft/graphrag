@@ -7,10 +7,11 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
-from typing import Any, Literal, Union, cast
+from typing import Any, Literal, cast
 
 import pandas as pd
 import tiktoken
+from datashaper import ProgressTicker
 
 from graphrag.index.operations.chunk_text.typing import TextChunk
 
@@ -169,7 +170,7 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
 # Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
 # So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
-    texts: list[str], tokenizer: Tokenizer, tick=None
+    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker | None = None
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []

@@ -6,11 +6,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     Tokenizer,
     TokenTextSplitter,
+    split_multiple_texts_on_tokens,
     split_single_text_on_tokens,
+    split_text_on_tokens,
 )
 
 
@@ -136,7 +139,43 @@ def test_model_name_exception(mock_get_encoding, mock_encoding_for_model):
     mock_encoding_for_model.assert_called_once_with("mock_model")
 
 
-def test_split_text_on_tokens():
+@mock.patch(
+    "graphrag.index.text_splitting.text_splitting.split_multiple_texts_on_tokens"
+)
+def test_split_multiple_text_on_tokens_tick(mock_split):
+    text = ["This is a test text, meaning to be taken seriously by this test only."]
+    mock_split.return_value = ["chunk"] * 2
+    tokenizer = MagicMock()
+    progress_ticket = MagicMock()
+    result = split_text_on_tokens(text, tokenizer, progress_ticket)
+    assert len(result) == 2, "Large input was not split correctly"
+
+    mock_split.assert_called_once_with(text, tokenizer, progress_ticket)
+
+
+@mock.patch(
+    "graphrag.index.text_splitting.text_splitting.split_multiple_texts_on_tokens"
+)
+def test_split_multiple_text_on_tokens_no_tick(mock_split):
+    text = ["This is a test text, meaning to be taken seriously by this test only."]
+    mock_split.return_value = ["chunk"] * 2
+    tokenizer = MagicMock()
+    result = split_text_on_tokens(text, tokenizer)
+    assert len(result) == 2, "Large input was not split correctly"
+    mock_split.assert_called_once_with(text, tokenizer, None)
+
+
+@mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
+def test_split_single_text_on_tokens_no_tick(mock_split):
+    text = "This is a test text, meaning to be taken seriously by this test only."
+    mock_split.return_value = ["chunk"] * 2
+    tokenizer = MagicMock()
+    result = split_text_on_tokens(text, tokenizer)
+    assert len(result) == 2, "Large input was not split correctly"
+    mock_split.assert_called_once_with(text, tokenizer)
+
+
+def test_split_single_text_on_tokens():
     text = "This is a test text, meaning to be taken seriously by this test only."
     mocked_tokenizer = MockTokenizer()
     tokenizer = Tokenizer(
@@ -165,3 +204,70 @@ def test_split_text_on_tokens():
 
     result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
     assert result == expected_splits
+
+def test_split_multiple_texts_on_tokens_no_tick():
+    texts = [
+        "This is a test text, meaning to be taken seriously by this test only.",
+        "This is th second text, meaning to be taken seriously by this test only.",
+    ]
+
+    mocked_tokenizer = MockTokenizer()
+    tokenizer = Tokenizer(
+        chunk_overlap=5,
+        tokens_per_chunk=10,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+
+    result = split_multiple_texts_on_tokens(texts, tokenizer, tick=None)
+    assert result == [
+        TextChunk(text_chunk="This is a ", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="is a test ", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="test text,", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="text, mean", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk=" meaning t", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="ing to be ", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="o be taken", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="taken seri", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk=" seriously", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="ously by t", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk=" by this t", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="his test o", source_doc_indices=[0], n_tokens=10),
+        TextChunk(text_chunk="est only.T", source_doc_indices=[0, 1], n_tokens=10),
+        TextChunk(text_chunk="nly.This i", source_doc_indices=[0, 1], n_tokens=10),
+        TextChunk(text_chunk="his is th ", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="s th secon", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="second tex", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="d text, me", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="t, meaning", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="aning to b", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk=" to be tak", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="e taken se", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="en serious", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="riously by", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk="ly by this", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk=" this test", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk=" test only", source_doc_indices=[1], n_tokens=10),
+        TextChunk(text_chunk=" only.", source_doc_indices=[1], n_tokens=6),
+        TextChunk(text_chunk=".", source_doc_indices=[1], n_tokens=1),
+    ]
+    assert len(result) == 29, "Large input was not split correctly"
+
+
+def test_split_multiple_texts_on_tokens_tick():
+    texts = [
+        "This is a test text, meaning to be taken seriously by this test only.",
+        "This is th second text, meaning to be taken seriously by this test only.",
+    ]
+
+    mocked_tokenizer = MockTokenizer()
+    mock_tick = MagicMock()
+    tokenizer = Tokenizer(
+        chunk_overlap=5,
+        tokens_per_chunk=10,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+
+    split_multiple_texts_on_tokens(texts, tokenizer, tick=mock_tick)
+    mock_tick.assert_called()
