@@ -10,7 +10,7 @@ from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     Tokenizer,
     TokenTextSplitter,
-    split_text_on_tokens,
+    split_single_text_on_tokens,
 )
 
 
@@ -49,7 +49,7 @@ def test_split_text_str_int():
         splitter.split_text(123)  # type: ignore
 
 
-@mock.patch("graphrag.index.text_splitting.text_splitting.split_text_on_tokens")
+@mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
 def test_split_text_large_input(mock_split):
     large_text = "a" * 10_000
     mock_split.return_value = ["chunk"] * 2_000
@@ -61,7 +61,7 @@ def test_split_text_large_input(mock_split):
     mock_split.assert_called_once()
 
 
-@mock.patch("graphrag.index.text_splitting.text_splitting.split_text_on_tokens")
+@mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
 @mock.patch("graphrag.index.text_splitting.text_splitting.Tokenizer")
 @mock.patch("tiktoken.get_encoding")
 def test_token_text_splitter(mock_get_encoding, mock_tokenizer, mock_split_text):
@@ -163,5 +163,5 @@ def test_split_text_on_tokens():
         "nly.",
     ]
 
-    result = split_text_on_tokens(text=text, tokenizer=tokenizer)
+    result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
     assert result == expected_splits

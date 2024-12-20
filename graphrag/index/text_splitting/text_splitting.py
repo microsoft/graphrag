@@ -7,10 +7,12 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
-from typing import Any, Literal, cast
+from typing import Any, Literal, Union, cast
 
 import pandas as pd
 import tiktoken
+
+from graphrag.index.operations.chunk_text.typing import TextChunk
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -133,19 +135,66 @@ class TokenTextSplitter(TextSplitter):
             encode=lambda text: self.encode(text),
         )
 
-        return split_text_on_tokens(text=text, tokenizer=tokenizer)
+        return split_single_text_on_tokens(text=text, tokenizer=tokenizer)
+
+def split_text_on_tokens(
+    texts: str | list[str], tokenizer: Tokenizer, tick=None
+) -> list[str] | list[TextChunk]:
+    """Handle both single text and list of texts."""
+    if isinstance(texts, str):
+        return split_single_text_on_tokens(texts, tokenizer)
+
+    return split_multiple_texts_on_tokens(texts, tokenizer, tick)
 
 
-def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> list[str]:
-    """Split incoming text and return chunks using tokenizer."""
-    splits: list[str] = []
+def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
+    """Split a single text and return chunks using the tokenizer."""
+    result = []
     input_ids = tokenizer.encode(text)
+
     start_idx = 0
     cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
     chunk_ids = input_ids[start_idx:cur_idx]
+
     while start_idx < len(input_ids):
-        splits.append(tokenizer.decode(chunk_ids))
+        chunk_text = tokenizer.decode(list(chunk_ids))
+        result.append(chunk_text)  # Append chunked text as string
         start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
         cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
         chunk_ids = input_ids[start_idx:cur_idx]
-    return splits
+
+    return result
+
+
+# Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
+# So we could have better control over the chunking process
+def split_multiple_texts_on_tokens(
+    texts: list[str], tokenizer: Tokenizer, tick=None
+) -> list[TextChunk]:
+    """Split multiple texts and return chunks with metadata using the tokenizer."""
+    result = []
+    mapped_ids = []
+
+    for source_doc_idx, text in enumerate(texts):
+        encoded = tokenizer.encode(text)
+        if tick:
+            tick(1)  # Track progress if tick callback is provided
+        mapped_ids.append((source_doc_idx, encoded))
+
+    input_ids = [
+        (source_doc_idx, id) for source_doc_idx, ids in mapped_ids for id in ids
+    ]
+
+    start_idx = 0
+    cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
+    chunk_ids = input_ids[start_idx:cur_idx]
+
+    while start_idx < len(input_ids):
+        chunk_text = tokenizer.decode([id for _, id in chunk_ids])
+        doc_indices = list({doc_idx for doc_idx, _ in chunk_ids})
+        result.append(TextChunk(chunk_text, doc_indices, len(chunk_ids)))
+        start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
+        cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
+        chunk_ids = input_ids[start_idx:cur_idx]
+
+    return result
