@@ -95,8 +95,12 @@ async def _process_workflow(
         return None
 
     context.stats.workflows[workflow_name] = {"overall": 0.0}
+
     await _inject_workflow_data_dependencies(
-        workflow, workflow_dependencies, dataset, context.storage
+        workflow,
+        workflow_dependencies,
+        dataset,
+        context.storage,
     )
 
     workflow_start_time = time.time()
