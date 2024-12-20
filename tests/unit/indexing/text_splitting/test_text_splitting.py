@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 from unittest import mock
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
