@@ -90,7 +90,7 @@ typer = "^0.15.1"
 fnllm = "^0.0.10"
 
 tenacity = "^9.0.0"
-json-repair = "^0.30.3"
+json-repair = ">=0.30.3,<0.33.0"
 tqdm = "^4.67.1"
 httpx = "^0.28.1"
 
