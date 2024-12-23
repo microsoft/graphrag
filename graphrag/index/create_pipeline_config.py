@@ -243,9 +243,7 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
         PipelineWorkflowReference(
             name=compute_communities,
             config={
-                "cluster_graph": {
-                    "strategy": settings.cluster_graph.resolved_strategy()
-                },
+                "cluster_graph": settings.cluster_graph,
                 "snapshot_transient": settings.snapshots.transient,
             },
         ),

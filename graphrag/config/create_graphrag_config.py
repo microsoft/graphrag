@@ -522,8 +522,12 @@ def create_graphrag_config(
             )
 
         with reader.use(values.get("cluster_graph")):
+            use_lcc = reader.bool("use_lcc")
             cluster_graph_model = ClusterGraphConfig(
-                max_cluster_size=reader.int("max_cluster_size") or defs.MAX_CLUSTER_SIZE
+                max_cluster_size=reader.int("max_cluster_size")
+                or defs.MAX_CLUSTER_SIZE,
+                use_lcc=use_lcc if use_lcc is not None else defs.USE_LCC,
+                seed=reader.int("seed"),
             )
 
         with (
