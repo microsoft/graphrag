@@ -31,7 +31,7 @@ from graphrag.config.errors import (
 from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
 from graphrag.config.input_models.llm_config_input import LLMConfigInput
 from graphrag.config.models.cache_config import CacheConfig
-from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -412,12 +412,15 @@ def create_graphrag_config(
             encoding_model = (
                 reader.str(Fragment.encoding_model) or global_encoding_model
             )
-
+            strategy = reader.str("strategy")
             chunks_model = ChunkingConfig(
                 size=reader.int("size") or defs.CHUNK_SIZE,
                 overlap=reader.int("overlap") or defs.CHUNK_OVERLAP,
                 group_by_columns=group_by_columns,
                 encoding_model=encoding_model,
+                strategy=ChunkStrategyType(strategy)
+                if strategy
+                else ChunkStrategyType.tokens,
             )
         with (
             reader.envvar_prefix(Section.snapshot),

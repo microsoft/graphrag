@@ -176,13 +176,8 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=create_base_text_units,
             config={
+                "chunks": settings.chunks,
                 "snapshot_transient": settings.snapshots.transient,
-                "chunk_by": settings.chunks.group_by_columns,
-                "text_chunk": {
-                    "strategy": settings.chunks.resolved_strategy(
-                        settings.encoding_model
-                    )
-                },
             },
         ),
         PipelineWorkflowReference(
