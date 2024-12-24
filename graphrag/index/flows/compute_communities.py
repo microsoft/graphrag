@@ -13,7 +13,7 @@ def compute_communities(
     base_relationship_edges: pd.DataFrame,
     max_cluster_size: int,
     use_lcc: bool,
-    seed: int | None,
+    seed: int | None = None,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
     graph = create_graph(base_relationship_edges)
@@ -22,7 +22,7 @@ def compute_communities(
         graph,
         max_cluster_size,
         use_lcc,
-        seed,
+        seed=seed,
     )
 
     base_communities = pd.DataFrame(

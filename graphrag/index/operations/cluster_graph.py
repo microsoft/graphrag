@@ -19,16 +19,12 @@ def cluster_graph(
     graph: nx.Graph,
     max_cluster_size: int,
     use_lcc: bool,
-    seed: int | None,
+    seed: int | None = None,
 ) -> Communities:
     """Apply a hierarchical clustering algorithm to a graph."""
     if len(graph.nodes) == 0:
         log.warning("Graph has no nodes")
         return []
-
-    # fixing a seed for stability
-    if seed is None:
-        seed = 0xDEADBEEF
 
     node_id_to_community_map, parent_mapping = _compute_leiden_communities(
         graph=graph,
@@ -61,7 +57,7 @@ def _compute_leiden_communities(
     graph: nx.Graph | nx.DiGraph,
     max_cluster_size: int,
     use_lcc: bool,
-    seed: int,
+    seed: int | None = None,
 ) -> tuple[dict[int, dict[str, int]], dict[int, int]]:
     """Return Leiden root communities and their hierarchy mapping."""
     # NOTE: This import is done here to reduce the initial import time of the graphrag package

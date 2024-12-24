@@ -19,5 +19,6 @@ class ClusterGraphConfig(BaseModel):
         default=defs.USE_LCC,
     )
     seed: int | None = Field(
-        description="The seed to use for the clustering.", default=None
+        description="The seed to use for the clustering.",
+        default=defs.CLUSTER_GRAPH_SEED,
     )
