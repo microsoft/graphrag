@@ -318,13 +318,16 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.node2vec),
             reader.use(values.get("embed_graph")),
         ):
+            use_lcc = reader.bool("use_lcc")
             embed_graph_model = EmbedGraphConfig(
                 enabled=reader.bool(Fragment.enabled) or defs.NODE2VEC_ENABLED,
+                dimensions=reader.int("dimensions") or defs.NODE2VEC_DIMENSIONS,
                 num_walks=reader.int("num_walks") or defs.NODE2VEC_NUM_WALKS,
                 walk_length=reader.int("walk_length") or defs.NODE2VEC_WALK_LENGTH,
                 window_size=reader.int("window_size") or defs.NODE2VEC_WINDOW_SIZE,
                 iterations=reader.int("iterations") or defs.NODE2VEC_ITERATIONS,
                 random_seed=reader.int("random_seed") or defs.NODE2VEC_RANDOM_SEED,
+                use_lcc=use_lcc if use_lcc is not None else defs.USE_LCC,
             )
         with reader.envvar_prefix(Section.input), reader.use(values.get("input")):
             input_type = reader.str("type")

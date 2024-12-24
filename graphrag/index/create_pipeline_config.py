@@ -254,8 +254,7 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
             name=create_final_nodes,
             config={
                 "layout_graph_enabled": settings.umap.enabled,
-                "embed_graph_enabled": settings.embed_graph.enabled,
-                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
+                "embed_graph": settings.embed_graph,
             },
         ),
     ]
