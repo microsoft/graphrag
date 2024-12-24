@@ -3,8 +3,6 @@
 
 """All the steps to transform final nodes."""
 
-from typing import Any
-
 import pandas as pd
 from datashaper import (
     VerbCallbacks,
@@ -23,7 +21,7 @@ def create_final_nodes(
     base_communities: pd.DataFrame,
     callbacks: VerbCallbacks,
     embed_config: EmbedGraphConfig,
-    layout_strategy: dict[str, Any],
+    layout_enabled: bool,
 ) -> pd.DataFrame:
     """All the steps to transform final nodes."""
     graph = create_graph(base_relationship_edges)
@@ -36,7 +34,7 @@ def create_final_nodes(
     layout = layout_graph(
         graph,
         callbacks,
-        layout_strategy,
+        layout_enabled,
         embeddings=graph_embeddings,
     )
 

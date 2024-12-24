@@ -31,7 +31,7 @@ def test_create_final_nodes():
         base_communities=base_communities,
         callbacks=NoopVerbCallbacks(),
         embed_config=embed_config,
-        layout_strategy={"type": "zero"},
+        layout_enabled=False,
     )
 
     assert "id" in expected.columns
