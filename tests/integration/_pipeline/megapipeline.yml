@@ -12,12 +12,10 @@ cache:
 workflows:
   - name: create_base_text_units
     config:
-      text_chunk:
-        strategy:
-          type: sentence
-
-      # Just lump everything together
-      chunk_by: []
+      chunks:
+        strategy: sentence
+        # Just lump everything together
+        group_by_columns: []
 
   - name: extract_graph
     config:
