@@ -20,9 +20,14 @@ def test_compute_communities():
     expected = load_test_table("base_communities")
 
     config = get_config_for_workflow(workflow_name)
-    clustering_strategy = config["cluster_graph"]["strategy"]
+    cluster_config = config["cluster_graph"]
 
-    actual = compute_communities(edges, clustering_strategy=clustering_strategy)
+    actual = compute_communities(
+        edges,
+        cluster_config.max_cluster_size,
+        cluster_config.use_lcc,
+        cluster_config.seed,
+    )
 
     columns = list(expected.columns.values)
     compare_outputs(actual, expected, columns)

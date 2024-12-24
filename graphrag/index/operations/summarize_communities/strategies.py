@@ -21,8 +21,6 @@ from graphrag.index.operations.summarize_communities.typing import (
 )
 from graphrag.index.utils.rate_limiter import RateLimiter
 
-DEFAULT_CHUNK_SIZE = 3000
-
 log = logging.getLogger(__name__)
 
 

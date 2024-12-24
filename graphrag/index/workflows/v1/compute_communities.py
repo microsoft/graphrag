@@ -3,7 +3,7 @@
 
 """A module containing build_steps method definition."""
 
-from typing import Any, cast
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 from datashaper import (
@@ -17,6 +17,9 @@ from graphrag.index.flows.compute_communities import compute_communities
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
 
+if TYPE_CHECKING:
+    from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
+
 workflow_name = "compute_communities"
 
 
@@ -29,11 +32,10 @@ def build_steps(
     ## Dependencies
     * `workflow:extract_graph`
     """
-    clustering_config = config.get(
-        "cluster_graph",
-        {"strategy": {"type": "leiden"}},
-    )
-    clustering_strategy = clustering_config.get("strategy")
+    clustering_config = cast("ClusterGraphConfig", config.get("cluster_graph"))
+    max_cluster_size = clustering_config.max_cluster_size
+    use_lcc = clustering_config.use_lcc
+    seed = clustering_config.seed
 
     snapshot_transient = config.get("snapshot_transient", False) or False
 
@@ -41,7 +43,9 @@ def build_steps(
         {
             "verb": workflow_name,
             "args": {
-                "clustering_strategy": clustering_strategy,
+                "max_cluster_size": max_cluster_size,
+                "use_lcc": use_lcc,
+                "seed": seed,
                 "snapshot_transient_enabled": snapshot_transient,
             },
             "input": ({"source": "workflow:extract_graph"}),
@@ -56,7 +60,9 @@ def build_steps(
 async def workflow(
     storage: PipelineStorage,
     runtime_storage: PipelineStorage,
-    clustering_strategy: dict[str, Any],
+    max_cluster_size: int,
+    use_lcc: bool,
+    seed: int | None,
     snapshot_transient_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
@@ -65,7 +71,9 @@ async def workflow(
 
     base_communities = compute_communities(
         base_relationship_edges,
-        clustering_strategy=clustering_strategy,
+        max_cluster_size=max_cluster_size,
+        use_lcc=use_lcc,
+        seed=seed,
     )
 
     await runtime_storage.set("base_communities", base_communities)

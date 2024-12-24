@@ -18,7 +18,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity_types=["person"],
             callbacks=None,
             args={
-                "prechunked": True,
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
@@ -53,7 +52,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity_types=["person"],
             callbacks=None,
             args={
-                "prechunked": True,
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
@@ -90,7 +88,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity_types=["person"],
             callbacks=None,
             args={
-                "prechunked": True,
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
@@ -135,7 +132,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity_types=["person"],
             callbacks=None,
             args={
-                "prechunked": True,
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
@@ -185,7 +181,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity_types=["person"],
             callbacks=None,
             args={
-                "prechunked": True,
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },

@@ -7,7 +7,10 @@ import logging
 
 import tiktoken
 
-DEFAULT_ENCODING_NAME = "cl100k_base"
+import graphrag.config.defaults as defs
+
+DEFAULT_ENCODING_NAME = defs.ENCODING_MODEL
+
 log = logging.getLogger(__name__)
 
 

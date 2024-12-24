@@ -17,11 +17,6 @@ from graphrag.index.operations.extract_entities.typing import (
     EntityTypes,
     StrategyConfig,
 )
-from graphrag.index.text_splitting.text_splitting import (
-    NoopTextSplitter,
-    TextSplitter,
-    TokenTextSplitter,
-)
 
 
 async def run_graph_intelligence(
@@ -45,26 +40,12 @@ async def run_extract_entities(
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the entity extraction chain."""
-    encoding_name = args.get("encoding_name", "cl100k_base")
-
-    # Chunking Arguments
-    prechunked = args.get("prechunked", False)
-    chunk_size = args.get("chunk_size", defs.CHUNK_SIZE)
-    chunk_overlap = args.get("chunk_overlap", defs.CHUNK_OVERLAP)
-
-    # Extraction Arguments
     tuple_delimiter = args.get("tuple_delimiter", None)
     record_delimiter = args.get("record_delimiter", None)
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
     max_gleanings = args.get("max_gleanings", defs.ENTITY_EXTRACTION_MAX_GLEANINGS)
-
-    # note: We're not using UnipartiteGraphChain.from_params
-    # because we want to pass "timeout" to the llm_kwargs
-    text_splitter = _create_text_splitter(
-        prechunked, chunk_size, chunk_overlap, encoding_name
-    )
 
     extractor = GraphExtractor(
         llm_invoker=llm,
@@ -76,10 +57,6 @@ async def run_extract_entities(
         ),
     )
     text_list = [doc.text.strip() for doc in docs]
-
-    # If it's not pre-chunked, then re-chunk the input
-    if not prechunked:
-        text_list = text_splitter.split_text("\n".join(text_list))
 
     results = await extractor(
         list(text_list),
@@ -114,26 +91,3 @@ async def run_extract_entities(
     relationships = nx.to_pandas_edgelist(graph)
 
     return EntityExtractionResult(entities, relationships, graph)
-
-
-def _create_text_splitter(
-    prechunked: bool, chunk_size: int, chunk_overlap: int, encoding_name: str
-) -> TextSplitter:
-    """Create a text splitter for the extraction chain.
-
-    Args:
-        - prechunked - Whether the text is already chunked
-        - chunk_size - The size of each chunk
-        - chunk_overlap - The overlap between chunks
-        - encoding_name - The name of the encoding to use
-    Returns:
-        - output - A text splitter
-    """
-    if prechunked:
-        return NoopTextSplitter()
-
-    return TokenTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        encoding_name=encoding_name,
-    )

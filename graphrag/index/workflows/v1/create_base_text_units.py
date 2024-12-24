@@ -3,7 +3,7 @@
 
 """A module containing build_steps method definition."""
 
-from typing import Any, cast
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 from datashaper import (
@@ -15,12 +15,16 @@ from datashaper import (
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
+from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
 from graphrag.index.flows.create_base_text_units import (
     create_base_text_units,
 )
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
+
+if TYPE_CHECKING:
+    from graphrag.config.models.chunking_config import ChunkingConfig
 
 workflow_name = "create_base_text_units"
 
@@ -34,17 +38,23 @@ def build_steps(
     ## Dependencies
     (input dataframe)
     """
-    chunk_by_columns = config.get("chunk_by", []) or []
-    text_chunk_config = config.get("text_chunk", {})
-    chunk_strategy = text_chunk_config.get("strategy")
+    chunks = cast("ChunkingConfig", config.get("chunks"))
+    group_by_columns = chunks.group_by_columns
+    size = chunks.size
+    overlap = chunks.overlap
+    encoding_model = chunks.encoding_model
+    strategy = chunks.strategy
 
     snapshot_transient = config.get("snapshot_transient", False) or False
     return [
         {
             "verb": workflow_name,
             "args": {
-                "chunk_by_columns": chunk_by_columns,
-                "chunk_strategy": chunk_strategy,
+                "group_by_columns": group_by_columns,
+                "size": size,
+                "overlap": overlap,
+                "encoding_model": encoding_model,
+                "strategy": strategy,
                 "snapshot_transient_enabled": snapshot_transient,
             },
             "input": {"source": DEFAULT_INPUT_NAME},
@@ -58,8 +68,11 @@ async def workflow(
     callbacks: VerbCallbacks,
     storage: PipelineStorage,
     runtime_storage: PipelineStorage,
-    chunk_by_columns: list[str],
-    chunk_strategy: dict[str, Any] | None = None,
+    group_by_columns: list[str],
+    size: int,
+    overlap: int,
+    encoding_model: str,
+    strategy: ChunkStrategyType,
     snapshot_transient_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
@@ -69,8 +82,11 @@ async def workflow(
     output = create_base_text_units(
         source,
         callbacks,
-        chunk_by_columns,
-        chunk_strategy=chunk_strategy,
+        group_by_columns,
+        size,
+        overlap,
+        encoding_model,
+        strategy=strategy,
     )
 
     await runtime_storage.set("base_text_units", output)

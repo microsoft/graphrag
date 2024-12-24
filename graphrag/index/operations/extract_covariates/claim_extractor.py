@@ -87,7 +87,7 @@ class ClaimExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
+        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
         yes = f"{encoding.encode('YES')[0]}"
         no = f"{encoding.encode('NO')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}

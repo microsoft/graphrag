@@ -18,6 +18,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+import graphrag.config.defaults as defs
 from graphrag.logger.base import StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.base import OpenAILLMImpl
@@ -41,7 +42,7 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
         api_version: str | None = None,
         api_type: OpenaiApiType = OpenaiApiType.OpenAI,
         organization: str | None = None,
-        encoding_name: str = "cl100k_base",
+        encoding_name: str = defs.ENCODING_MODEL,
         max_tokens: int = 8191,
         max_retries: int = 10,
         request_timeout: float = 180.0,

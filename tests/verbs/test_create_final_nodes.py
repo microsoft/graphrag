@@ -3,6 +3,7 @@
 
 from datashaper import NoopVerbCallbacks
 
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.flows.create_final_nodes import (
     create_final_nodes,
 )
@@ -23,13 +24,14 @@ def test_create_final_nodes():
 
     expected = load_test_table(workflow_name)
 
+    embed_config = EmbedGraphConfig(enabled=False)
     actual = create_final_nodes(
         base_entity_nodes=base_entity_nodes,
         base_relationship_edges=base_relationship_edges,
         base_communities=base_communities,
         callbacks=NoopVerbCallbacks(),
-        layout_strategy={"type": "zero"},
-        embedding_strategy=None,
+        embed_config=embed_config,
+        layout_enabled=False,
     )
 
     assert "id" in expected.columns

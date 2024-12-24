@@ -14,7 +14,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input
 from graphrag.index.llm.load_llm import load_llm_embeddings
-from graphrag.index.operations.chunk_text import chunk_text
+from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.logger.base import ProgressLogger
 from graphrag.prompt_tune.defaults import (
     MIN_CHUNK_OVERLAP,
@@ -67,22 +67,21 @@ async def load_docs_in_chunks(
     dataset = await create_input(config.input, logger, root)
 
     # covert to text units
-    chunk_strategy = config.chunks.resolved_strategy(defs.ENCODING_MODEL)
+    chunk_config = config.chunks
 
     # Use smaller chunks, to avoid huge prompts
-    chunk_strategy["chunk_size"] = chunk_size
-    chunk_strategy["chunk_overlap"] = MIN_CHUNK_OVERLAP
-
-    dataset_chunks = chunk_text(
+    dataset["chunks"] = chunk_text(
         dataset,
         column="text",
-        to="chunks",
+        size=chunk_size,
+        overlap=MIN_CHUNK_OVERLAP,
+        encoding_model=defs.ENCODING_MODEL,
+        strategy=chunk_config.strategy,
         callbacks=NoopVerbCallbacks(),
-        strategy=chunk_strategy,
     )
 
     # Select chunks into a new df and explode it
-    chunks_df = pd.DataFrame(dataset_chunks["chunks"].explode())  # type: ignore
+    chunks_df = pd.DataFrame(dataset["chunks"].explode())  # type: ignore
 
     # Depending on the select method, build the dataset
     if limit <= 0 or limit > len(chunks_df):

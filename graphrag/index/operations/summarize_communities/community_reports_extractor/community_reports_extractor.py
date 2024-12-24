@@ -35,10 +35,6 @@ class CommunityReportResponse(BaseModel):
     rating: float = Field(description="The rating of the report.")
     rating_explanation: str = Field(description="An explanation of the rating.")
 
-    extra_attributes: dict[str, Any] = Field(
-        default_factory=dict, description="Extra attributes."
-    )
-
 
 @dataclass
 class CommunityReportsResult:

@@ -24,7 +24,7 @@ async def test_create_base_text_units():
 
     config = get_config_for_workflow(workflow_name)
     # test data was created with 4o, so we need to match the encoding for chunks to be identical
-    config["text_chunk"]["strategy"]["encoding_name"] = "o200k_base"
+    config["chunks"].encoding_model = "o200k_base"
 
     steps = build_steps(config)
 
@@ -47,7 +47,7 @@ async def test_create_base_text_units_with_snapshot():
 
     config = get_config_for_workflow(workflow_name)
     # test data was created with 4o, so we need to match the encoding for chunks to be identical
-    config["text_chunk"]["strategy"]["encoding_name"] = "o200k_base"
+    config["chunks"].encoding_model = "o200k_base"
     config["snapshot_transient"] = True
 
     steps = build_steps(config)

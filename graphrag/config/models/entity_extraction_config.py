@@ -48,7 +48,5 @@ class EntityExtractionConfig(LLMConfig):
             if self.prompt
             else None,
             "max_gleanings": self.max_gleanings,
-            # It's prechunked in create_base_text_units
             "encoding_name": encoding_model or self.encoding_model,
-            "prechunked": True,
         }

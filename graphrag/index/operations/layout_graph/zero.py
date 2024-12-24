@@ -5,7 +5,6 @@
 
 import logging
 import traceback
-from typing import Any
 
 import networkx as nx
 
@@ -24,7 +23,6 @@ log = logging.getLogger(__name__)
 
 def run(
     graph: nx.Graph,
-    _args: dict[str, Any],
     on_error: ErrorHandlerFn,
 ) -> GraphLayout:
     """Run method definition."""
