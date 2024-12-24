@@ -35,7 +35,6 @@ def chunk_text(
     ```yaml
     args:
         column: <column name> # The name of the column containing the text to chunk, this can either be a column with text, or a column with a list[tuple[doc_id, str]]
-        to: <column name> # The name of the column to output the chunks to
         strategy: <strategy config> # The strategy to use to chunk the text, see below for more details
     ```
 
@@ -45,21 +44,17 @@ def chunk_text(
     ### tokens
     This strategy uses the [tokens] library to chunk a piece of text. The strategy config is as follows:
 
-    > Note: In the future, this will likely be renamed to something more generic, like "openai_tokens".
-
     ```yaml
-    strategy:
-        type: tokens
-        chunk_size: 1200 # Optional, The chunk size to use, default: 1200
-        chunk_overlap: 100 # Optional, The chunk overlap to use, default: 100
+    strategy: tokens
+    size: 1200 # Optional, The chunk size to use, default: 1200
+    overlap: 100 # Optional, The chunk overlap to use, default: 100
     ```
 
     ### sentence
     This strategy uses the nltk library to chunk a piece of text into sentences. The strategy config is as follows:
 
     ```yaml
-    strategy:
-        type: sentence
+    strategy: sentence
     ```
     """
     strategy_exec = load_strategy(strategy)
