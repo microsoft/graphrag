@@ -53,7 +53,9 @@ class BasicSearchContext(BasicContextBuilder):
         # make a delimited table for the context; this imitates graphrag context building
         table = ["id|text"] + [f"{s['id']}|{s['text']}" for s in sources]
 
+        columns = pd.Index(["id", "text"])
+
         return ContextBuilderResult(
             context_chunks="\n\n".join(table),
-            context_records={"sources": pd.DataFrame(sources, columns=["id", "text"])},
+            context_records={"sources": pd.DataFrame(sources, columns=columns)},
         )
