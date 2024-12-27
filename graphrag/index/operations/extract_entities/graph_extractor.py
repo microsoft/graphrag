@@ -179,7 +179,8 @@ class GraphExtractor:
                 history=response.history,
                 model_parameters=self._loop_args,
             )
-            if response.output != "YES":
+
+            if response.output.content != "YES":
                 break
 
         return results
