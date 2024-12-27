@@ -283,35 +283,28 @@ def run_basic_search(
     print(streaming)  # noqa: T201
 
     # # call the Query API
-    # if streaming:
+    if streaming:
 
-    #     async def run_streaming_search():
-    #         full_response = ""
-    #         context_data = None
-    #         get_context_data = True
-    #         async for stream_chunk in api.local_search_streaming(
-    #             config=config,
-    #             nodes=final_nodes,
-    #             entities=final_entities,
-    #             community_reports=final_community_reports,
-    #             text_units=final_text_units,
-    #             relationships=final_relationships,
-    #             covariates=final_covariates,
-    #             community_level=community_level,
-    #             response_type=response_type,
-    #             query=query,
-    #         ):
-    #             if get_context_data:
-    #                 context_data = stream_chunk
-    #                 get_context_data = False
-    #             else:
-    #                 full_response += stream_chunk
-    #                 print(stream_chunk, end="")  # noqa: T201
-    #                 sys.stdout.flush()  # flush output buffer to display text immediately
-    #         print()  # noqa: T201
-    #         return full_response, context_data
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.basic_search_streaming(
+                config=config,
+                text_units=final_text_units,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
 
-    #     return asyncio.run(run_streaming_search())
+        return asyncio.run(run_streaming_search())
     # not streaming
     response, context_data = asyncio.run(
         api.basic_search(
