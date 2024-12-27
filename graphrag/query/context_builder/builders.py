@@ -61,6 +61,7 @@ class DRIFTContextBuilder(ABC):
     ) -> tuple[pd.DataFrame, dict[str, int]]:
         """Build the context for the primer search actions."""
 
+
 class BasicContextBuilder(ABC):
     """Base class for basic-search context builders."""
 

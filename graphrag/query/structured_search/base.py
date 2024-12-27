@@ -42,7 +42,13 @@ class SearchResult:
     output_tokens_categories: dict[str, int] | None = None
 
 
-T = TypeVar("T", GlobalContextBuilder, LocalContextBuilder, DRIFTContextBuilder, BasicContextBuilder)
+T = TypeVar(
+    "T",
+    GlobalContextBuilder,
+    LocalContextBuilder,
+    DRIFTContextBuilder,
+    BasicContextBuilder,
+)
 
 
 class BaseSearch(ABC, Generic[T]):

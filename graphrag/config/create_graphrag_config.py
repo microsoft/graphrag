@@ -675,7 +675,7 @@ def create_graphrag_config(
         local_search=local_search_model,
         global_search=global_search_model,
         drift_search=drift_search_model,
-        basic_search=basic_search_model
+        basic_search=basic_search_model,
     )
 
 

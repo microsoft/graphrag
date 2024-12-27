@@ -423,7 +423,8 @@ async def drift_search(
             return response, context_data
         case list():
             return response, context_data
-        
+
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def basic_search(
     config: GraphRagConfig,
@@ -471,6 +472,7 @@ async def basic_search(
     response = result.response
     context_data = _reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def basic_search_streaming(
@@ -524,6 +526,7 @@ async def basic_search_streaming(
             get_context_data = False
         else:
             yield stream_chunk
+
 
 def _get_embedding_store(
     config_args: dict,

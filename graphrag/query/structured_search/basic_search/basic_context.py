@@ -51,7 +51,7 @@ class BasicSearchContext(BasicContextBuilder):
             for r in search_results
         ]
         # make a delimited table for the context; this imitates graphrag context building
-        table = ["id|text"] + [f'{s["id"]}|{s["text"]}' for s in sources]
+        table = ["id|text"] + [f"{s['id']}|{s['text']}" for s in sources]
 
         return ContextBuilderResult(
             context_chunks="\n\n".join(table),

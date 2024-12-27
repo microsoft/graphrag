@@ -29,6 +29,7 @@ log = logging.getLogger(__name__)
 Implementation of a generic RAG algorithm (vector search on raw text chunks)
 """
 
+
 class BasicSearch(BaseSearch[BasicContextBuilder]):
     """Search orchestration for basic search mode."""
 
@@ -79,7 +80,8 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         log.info("GENERATE ANSWER: %s. QUERY: %s", start_time, query)
         try:
             search_prompt = self.system_prompt.format(
-                context_data=context_result.context_chunks, response_type=self.response_type
+                context_data=context_result.context_chunks,
+                response_type=self.response_type,
             )
             search_messages = [
                 {"role": "system", "content": search_prompt},
@@ -104,21 +106,21 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 completion_time=time.time() - start_time,
                 llm_calls=1,
                 prompt_tokens=num_tokens(search_prompt, self.token_encoder),
-                output_tokens=sum(output_tokens.values())
+                output_tokens=sum(output_tokens.values()),
             )
 
         except Exception:
             log.exception("Exception in _asearch")
             return SearchResult(
-                    response="",
-                    context_data=context_result.context_records,
-                    context_text=context_result.context_chunks,
-                    completion_time=time.time() - start_time,
-                    llm_calls=1,
-                    prompt_tokens=num_tokens(search_prompt, self.token_encoder),
-                    output_tokens=0,
-                )
-        
+                response="",
+                context_data=context_result.context_records,
+                context_text=context_result.context_chunks,
+                completion_time=time.time() - start_time,
+                llm_calls=1,
+                prompt_tokens=num_tokens(search_prompt, self.token_encoder),
+                output_tokens=0,
+            )
+
     def search(
         self,
         query: str,
