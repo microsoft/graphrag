@@ -14,10 +14,13 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_covariates import (
     create_final_covariates,
 )
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 workflow_name = "create_final_covariates"
@@ -78,3 +81,37 @@ async def workflow(
     )
 
     return create_verb_result(cast("Table", output))
+
+
+async def run_workflow(
+    config: GraphRagConfig,
+    context: PipelineRunContext,
+    callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to extract and format covariates."""
+    text_units = await context.runtime_storage.get("base_text_units")
+
+    extraction_strategy = config.claim_extraction.resolved_strategy(
+        config.root_dir, config.encoding_model
+    )
+
+    async_mode = config.claim_extraction.async_mode
+    num_threads = config.claim_extraction.parallelization.num_threads
+
+    output = await create_final_covariates(
+        text_units,
+        callbacks,
+        context.cache,
+        "claim",
+        extraction_strategy,
+        async_mode=async_mode,
+        entity_types=None,
+        num_threads=num_threads,
+    )
+
+    await snapshot(
+        output,
+        name="create_final_covariates",
+        storage=context.storage,
+        formats=["parquet"],
+    )

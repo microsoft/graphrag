@@ -13,10 +13,13 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_nodes import (
     create_final_nodes,
 )
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 workflow_name = "create_final_nodes"
@@ -73,4 +76,35 @@ async def workflow(
             "Table",
             output,
         )
+    )
+
+
+async def run_workflow(
+    config: GraphRagConfig,
+    context: PipelineRunContext,
+    callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to transform final nodes."""
+    base_entity_nodes = await context.runtime_storage.get("base_entity_nodes")
+    base_relationship_edges = await context.runtime_storage.get(
+        "base_relationship_edges"
+    )
+    base_communities = await context.runtime_storage.get("base_communities")
+
+    embed_config = config.embed_graph
+    layout_enabled = config.umap.enabled
+
+    output = create_final_nodes(
+        base_entity_nodes,
+        base_relationship_edges,
+        base_communities,
+        callbacks,
+        embed_config=embed_config,
+        layout_enabled=layout_enabled,
+    )
+    await snapshot(
+        output,
+        name="create_final_nodes",
+        storage=context.storage,
+        formats=["parquet"],
     )

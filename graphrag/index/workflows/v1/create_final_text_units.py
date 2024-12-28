@@ -7,18 +7,23 @@ from typing import TYPE_CHECKING, cast
 
 from datashaper import (
     Table,
+    VerbCallbacks,
     VerbInput,
     VerbResult,
     create_verb_result,
     verb,
 )
 
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units,
 )
+from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.storage import load_table_from_storage
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -84,3 +89,35 @@ async def workflow(
     )
 
     return create_verb_result(cast("Table", output))
+
+
+async def run_workflow(
+    _config: GraphRagConfig,
+    context: PipelineRunContext,
+    _callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to transform the text units."""
+    text_units = await context.runtime_storage.get("base_text_units")
+    final_entities = await load_table_from_storage(
+        "create_final_entities.parquet", context.storage
+    )
+    final_relationships = await load_table_from_storage(
+        "create_final_relationships.parquet", context.storage
+    )
+    final_covariates = await load_table_from_storage(
+        "create_final_covariates.parquet", context.storage
+    )
+
+    output = create_final_text_units(
+        text_units,
+        final_entities,
+        final_relationships,
+        final_covariates,
+    )
+
+    await snapshot(
+        output,
+        name="create_final_text_units",
+        storage=context.storage,
+        formats=["parquet"],
+    )

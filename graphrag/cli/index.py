@@ -182,6 +182,7 @@ def _run_index(
             is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_logger=progress_logger,
+            use_new_pipeline=True,
         )
     )
     encountered_errors = any(

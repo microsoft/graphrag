@@ -17,12 +17,16 @@ from datashaper import (
 )
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.generate_text_embeddings import (
     generate_text_embeddings,
 )
 from graphrag.index.utils.ds_util import get_required_input_table
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.storage import load_table_from_storage
 
 log = logging.getLogger(__name__)
 
@@ -108,3 +112,43 @@ async def workflow(
     )
 
     return create_verb_result(cast("Table", pd.DataFrame()))
+
+
+async def run_workflow(
+    config: GraphRagConfig,
+    context: PipelineRunContext,
+    callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to transform community reports."""
+    final_documents = await load_table_from_storage(
+        "create_final_documents.parquet", context.storage
+    )
+    final_relationships = await load_table_from_storage(
+        "create_final_relationships.parquet", context.storage
+    )
+    final_text_units = await load_table_from_storage(
+        "create_final_text_units.parquet", context.storage
+    )
+    final_entities = await load_table_from_storage(
+        "create_final_entities.parquet", context.storage
+    )
+    final_community_reports = await load_table_from_storage(
+        "create_final_community_reports.parquet", context.storage
+    )
+
+    embedded_fields = get_embedded_fields(config)
+    text_embed = get_embedding_settings(config.embeddings)
+
+    await generate_text_embeddings(
+        final_documents=final_documents,
+        final_relationships=final_relationships,
+        final_text_units=final_text_units,
+        final_entities=final_entities,
+        final_community_reports=final_community_reports,
+        callbacks=callbacks,
+        cache=context.cache,
+        storage=context.storage,
+        text_embed_config=text_embed,
+        embedded_fields=embedded_fields,
+        snapshot_embeddings_enabled=config.snapshots.embeddings,
+    )

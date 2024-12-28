@@ -16,6 +16,7 @@ from graphrag.config.enums import CacheType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run import run_pipeline_with_config
+from graphrag.index.run.run_workflows import run_workflows
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logger.base import ProgressLogger
 
@@ -27,6 +28,7 @@ async def build_index(
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
+    use_new_pipeline: bool = False,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -56,7 +58,6 @@ async def build_index(
         msg = "Cannot resume and update a run at the same time."
         raise ValueError(msg)
 
-    pipeline_config = create_pipeline_config(config)
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
@@ -65,21 +66,32 @@ async def build_index(
     callbacks = callbacks or []
     callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
-    async for output in run_pipeline_with_config(
-        pipeline_config,
-        run_id=run_id,
-        memory_profile=memory_profile,
-        cache=pipeline_cache,
-        callbacks=callbacks,
-        logger=progress_logger,
-        is_resume_run=is_resume_run,
-        is_update_run=is_update_run,
-    ):
-        outputs.append(output)
-        if progress_logger:
-            if output.errors and len(output.errors) > 0:
-                progress_logger.error(output.workflow)
-            else:
-                progress_logger.success(output.workflow)
-            progress_logger.info(str(output.result))
+
+    if use_new_pipeline:
+        await run_workflows(
+            config,
+            cache=pipeline_cache,
+            logger=progress_logger,
+            run_id=run_id,
+        )
+    else:
+        pipeline_config = create_pipeline_config(config)
+        async for output in run_pipeline_with_config(
+            pipeline_config,
+            run_id=run_id,
+            memory_profile=memory_profile,
+            cache=pipeline_cache,
+            callbacks=callbacks,
+            logger=progress_logger,
+            is_resume_run=is_resume_run,
+            is_update_run=is_update_run,
+        ):
+            outputs.append(output)
+            if progress_logger:
+                if output.errors and len(output.errors) > 0:
+                    progress_logger.error(output.workflow)
+                else:
+                    progress_logger.success(output.workflow)
+                progress_logger.info(str(output.result))
+
     return outputs

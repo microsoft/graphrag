@@ -8,11 +8,14 @@ from typing import TYPE_CHECKING, cast
 import pandas as pd
 from datashaper import (
     Table,
+    VerbCallbacks,
     verb,
 )
 from datashaper.table_store.types import VerbResult, create_verb_result
 
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.compute_communities import compute_communities
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -66,7 +69,7 @@ async def workflow(
     snapshot_transient_enabled: bool = False,
     **_kwargs: dict,
 ) -> VerbResult:
-    """All the steps to create the base entity graph."""
+    """All the steps to create the base communities."""
     base_relationship_edges = await runtime_storage.get("base_relationship_edges")
 
     base_communities = compute_communities(
@@ -87,3 +90,35 @@ async def workflow(
         )
 
     return create_verb_result(cast("Table", pd.DataFrame()))
+
+
+async def run_workflow(
+    config: GraphRagConfig,
+    context: PipelineRunContext,
+    _callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to create the base communities."""
+    base_relationship_edges = await context.runtime_storage.get(
+        "base_relationship_edges"
+    )
+
+    max_cluster_size = config.cluster_graph.max_cluster_size
+    use_lcc = config.cluster_graph.use_lcc
+    seed = config.cluster_graph.seed
+
+    base_communities = compute_communities(
+        base_relationship_edges,
+        max_cluster_size=max_cluster_size,
+        use_lcc=use_lcc,
+        seed=seed,
+    )
+
+    await context.runtime_storage.set("base_communities", base_communities)
+
+    if config.snapshots.transient:
+        await snapshot(
+            base_communities,
+            name="base_communities",
+            storage=context.storage,
+            formats=["parquet"],
+        )

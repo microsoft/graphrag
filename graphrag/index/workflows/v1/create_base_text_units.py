@@ -16,7 +16,9 @@ from datashaper import (
 from datashaper.table_store.types import VerbResult, create_verb_result
 
 from graphrag.config.models.chunking_config import ChunkStrategyType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.workflow import PipelineWorkflowConfig, PipelineWorkflowStep
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_base_text_units import (
     create_base_text_units,
 )
@@ -105,3 +107,34 @@ async def workflow(
             pd.DataFrame(),
         )
     )
+
+
+async def run_workflow(
+    config: GraphRagConfig,
+    context: PipelineRunContext,
+    callbacks: VerbCallbacks,
+) -> None:
+    """All the steps to transform base text_units."""
+    documents = await context.runtime_storage.get("input")
+
+    chunks = config.chunks
+
+    output = create_base_text_units(
+        documents,
+        callbacks,
+        chunks.group_by_columns,
+        chunks.size,
+        chunks.overlap,
+        chunks.encoding_model,
+        strategy=chunks.strategy,
+    )
+
+    await context.runtime_storage.set("base_text_units", output)
+
+    if config.snapshots.transient:
+        await snapshot(
+            output,
+            name="create_base_text_units",
+            storage=context.storage,
+            formats=["parquet"],
+        )
