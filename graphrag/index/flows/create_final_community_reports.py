@@ -6,12 +6,10 @@
 from uuid import uuid4
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    VerbCallbacks,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
     restore_community_hierarchy,

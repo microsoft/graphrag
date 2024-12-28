@@ -3,17 +3,16 @@
 
 import pytest
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.extract_graph import (
-    build_steps,
-    workflow_name,
+from graphrag.index.workflows.extract_graph import (
+    run_workflow,
 )
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
-    get_config_for_workflow,
-    get_workflow_output,
-    load_input_tables,
+    create_test_context,
     load_test_table,
 )
 
@@ -49,35 +48,34 @@ MOCK_LLM_SUMMARIZATION_CONFIG = {
 
 
 async def test_extract_graph():
-    input_tables = load_input_tables([
-        "workflow:create_base_text_units",
-    ])
-
     nodes_expected = load_test_table("base_entity_nodes")
     edges_expected = load_test_table("base_relationship_edges")
 
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+    context = await create_test_context(
+        storage=["create_base_text_units"],
     )
 
-    config = get_config_for_workflow(workflow_name)
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
+    config = create_graphrag_config()
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_ENTITY_CONFIG,
+    }
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
+    }
 
-    steps = build_steps(config)
-
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
     )
 
     # graph construction creates transient tables for nodes, edges, and communities
-    nodes_actual = await context.runtime_storage.get("base_entity_nodes")
-    edges_actual = await context.runtime_storage.get("base_relationship_edges")
+    nodes_actual = await load_table_from_storage("base_entity_nodes", context.storage)
+    edges_actual = await load_table_from_storage(
+        "base_relationship_edges", context.storage
+    )
 
     assert len(nodes_actual.columns) == len(nodes_expected.columns), (
         "Nodes dataframe columns differ"
@@ -91,69 +89,26 @@ async def test_extract_graph():
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized
     # we need to update the mocking to provide somewhat unique graphs so a true merge happens
     # the assertion should grab a node and ensure the description matches the mock description, not the original as we are doing below
-
     assert nodes_actual["description"].to_numpy()[0] == "Company_A is a test company"
-
-    assert len(context.storage.keys()) == 0, "Storage should be empty"
-
-
-async def test_extract_graph_with_snapshots():
-    input_tables = load_input_tables([
-        "workflow:create_base_text_units",
-    ])
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
-    )
-
-    config = get_config_for_workflow(workflow_name)
-
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
-    config["snapshot_graphml"] = True
-    config["snapshot_transient"] = True
-    config["embed_graph_enabled"] = True  # need this on in order to see the snapshot
-
-    steps = build_steps(config)
-
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
-
-    assert context.storage.keys() == [
-        "graph.graphml",
-        "base_entity_nodes.parquet",
-        "base_relationship_edges.parquet",
-    ], "Graph snapshot keys differ"
 
 
 async def test_extract_graph_missing_llm_throws():
-    input_tables = load_input_tables([
-        "workflow:create_base_text_units",
-    ])
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+    context = await create_test_context(
+        storage=["create_base_text_units"],
     )
 
-    config = get_config_for_workflow(workflow_name)
-
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    del config["summarize_descriptions"]["strategy"]["llm"]
-
-    steps = build_steps(config)
+    config = create_graphrag_config()
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_ENTITY_CONFIG,
+    }
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+    }
 
     with pytest.raises(ValueError):  # noqa PT011
-        await get_workflow_output(
-            input_tables,
-            {
-                "steps": steps,
-            },
-            context=context,
+        await run_workflow(
+            config,
+            context,
+            NoopVerbCallbacks(),
         )

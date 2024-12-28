@@ -4,10 +4,8 @@
 """All the steps to transform final nodes."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph

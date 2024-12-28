@@ -6,17 +6,13 @@
 import logging
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    NoopVerbCallbacks,
-    VerbCallbacks,
-    derive_from_rows,
-    progress_ticker,
-)
 
 import graphrag.config.defaults as defaults
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     prep_community_report_context,
 )
@@ -28,6 +24,8 @@ from graphrag.index.operations.summarize_communities.typing import (
     CommunityReportsStrategy,
     CreateCommunityReportsStrategyType,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.logger.progress import progress_ticker
 
 log = logging.getLogger(__name__)
 
@@ -77,7 +75,7 @@ async def summarize_communities(
             run_generate,
             callbacks=NoopVerbCallbacks(),
             num_threads=num_threads,
-            scheduling_type=async_mode,
+            async_type=async_mode,
         )
         reports.extend([lr for lr in local_reports if lr is not None])
 

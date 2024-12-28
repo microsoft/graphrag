@@ -7,10 +7,10 @@ import random
 from collections.abc import Iterable
 from typing import Any
 
-from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
-
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
+from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 
 async def run(  # noqa RUF029 async is required for interface

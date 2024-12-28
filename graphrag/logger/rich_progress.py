@@ -6,7 +6,6 @@
 # Print iterations progress
 import asyncio
 
-from datashaper import Progress as DSProgress
 from rich.console import Console, Group
 from rich.live import Live
 from rich.progress import Progress, TaskID, TimeElapsedColumn
@@ -14,6 +13,7 @@ from rich.spinner import Spinner
 from rich.tree import Tree
 
 from graphrag.logger.base import ProgressLogger
+from graphrag.logger.progress import Progress as GRProgress
 
 
 # https://stackoverflow.com/a/34325723
@@ -138,7 +138,7 @@ class RichProgressLogger(ProgressLogger):
         """Log information."""
         self._console.print(message)
 
-    def __call__(self, progress_update: DSProgress) -> None:
+    def __call__(self, progress_update: GRProgress) -> None:
         """Update progress."""
         if self._disposing:
             return

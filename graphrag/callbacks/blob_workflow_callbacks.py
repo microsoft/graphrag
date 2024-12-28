@@ -10,7 +10,8 @@ from typing import Any
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
-from datashaper import NoopWorkflowCallbacks
+
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 
 
 class BlobWorkflowCallbacks(NoopWorkflowCallbacks):

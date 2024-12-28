@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from datashaper.progress.types import Progress
+from graphrag.logger.progress import Progress
 
 
 class StatusLogger(ABC):
