@@ -3,13 +3,12 @@
 
 """All the steps to transform final nodes."""
 
-from typing import Any
-
 import pandas as pd
 from datashaper import (
     VerbCallbacks,
 )
 
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.embed_graph.embed_graph import embed_graph
@@ -21,21 +20,21 @@ def create_final_nodes(
     base_relationship_edges: pd.DataFrame,
     base_communities: pd.DataFrame,
     callbacks: VerbCallbacks,
-    layout_strategy: dict[str, Any],
-    embedding_strategy: dict[str, Any] | None = None,
+    embed_config: EmbedGraphConfig,
+    layout_enabled: bool,
 ) -> pd.DataFrame:
     """All the steps to transform final nodes."""
     graph = create_graph(base_relationship_edges)
     graph_embeddings = None
-    if embedding_strategy:
+    if embed_config.enabled:
         graph_embeddings = embed_graph(
             graph,
-            embedding_strategy,
+            embed_config,
         )
     layout = layout_graph(
         graph,
         callbacks,
-        layout_strategy,
+        layout_enabled,
         embeddings=graph_embeddings,
     )
 
