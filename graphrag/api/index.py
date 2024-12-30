@@ -8,6 +8,8 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
+import logging
+
 from datashaper import WorkflowCallbacks
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
@@ -20,6 +22,8 @@ from graphrag.index.run.run_workflows import run_workflows
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logger.base import ProgressLogger
 
+log = logging.getLogger(__name__)
+
 
 async def build_index(
     config: GraphRagConfig,
@@ -28,7 +32,7 @@ async def build_index(
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
-    use_new_pipeline: bool = False,
+    new_pipeline: bool = False,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -67,7 +71,8 @@ async def build_index(
     callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
 
-    if use_new_pipeline:
+    if new_pipeline:
+        log.info("RUNNING NEW WORKFLOWS WITHOUT DATASHAPER")
         async for output in run_workflows(
             config,
             cache=pipeline_cache,
@@ -83,6 +88,7 @@ async def build_index(
                     progress_logger.success(output.workflow)
                 progress_logger.info(str(output.result))
     else:
+        log.info("RUNNING ORIGINAL PIPELINE")
         pipeline_config = create_pipeline_config(config)
         async for output in run_pipeline_with_config(
             pipeline_config,

@@ -170,6 +170,7 @@ def _index_cli(
             resolve_path=True,
         ),
     ] = None,
+    new: Annotated[bool, typer.Option(help="Use the new pipeline.")] = False,
 ):
     """Build a knowledge graph index."""
     from graphrag.cli.index import index_cli
@@ -185,6 +186,7 @@ def _index_cli(
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output,
+        new_pipeline=new,
     )
 
 

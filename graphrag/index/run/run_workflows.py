@@ -58,7 +58,6 @@ async def run_workflows(
     run_id: str | None = None,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    log.info("RUNNING NEW WORKFLOWS WITHOUT DATASHAPER")
     start_time = time.time()
 
     run_id = run_id or time.strftime("%Y%m%d-%H%M%S")
