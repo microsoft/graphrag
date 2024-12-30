@@ -14,15 +14,19 @@ from datashaper import (
     aggregate_operation_mapping,
 )
 
-from graphrag.index.operations.chunk_text import chunk_text
+from graphrag.config.models.chunking_config import ChunkStrategyType
+from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.utils.hashing import gen_sha512_hash
 
 
 def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: VerbCallbacks,
-    chunk_by_columns: list[str],
-    chunk_strategy: dict[str, Any] | None = None,
+    group_by_columns: list[str],
+    size: int,
+    overlap: int,
+    encoding_model: str,
+    strategy: ChunkStrategyType,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -35,7 +39,7 @@ def create_base_text_units(
 
     aggregated = _aggregate_df(
         sort,
-        groupby=[*chunk_by_columns] if len(chunk_by_columns) > 0 else None,
+        groupby=[*group_by_columns] if len(group_by_columns) > 0 else None,
         aggregations=[
             {
                 "column": "text_with_ids",
@@ -47,30 +51,36 @@ def create_base_text_units(
 
     callbacks.progress(Progress(percent=1))
 
-    chunked = chunk_text(
+    aggregated["chunks"] = chunk_text(
         aggregated,
         column="texts",
-        to="chunks",
+        size=size,
+        overlap=overlap,
+        encoding_model=encoding_model,
+        strategy=strategy,
         callbacks=callbacks,
-        strategy=chunk_strategy,
     )
 
-    chunked = cast("pd.DataFrame", chunked[[*chunk_by_columns, "chunks"]])
-    chunked = chunked.explode("chunks")
-    chunked.rename(
+    aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
+    aggregated = aggregated.explode("chunks")
+    aggregated.rename(
         columns={
             "chunks": "chunk",
         },
         inplace=True,
     )
-    chunked["id"] = chunked.apply(lambda row: gen_sha512_hash(row, ["chunk"]), axis=1)
-    chunked[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
-        chunked["chunk"].tolist(), index=chunked.index
+    aggregated["id"] = aggregated.apply(
+        lambda row: gen_sha512_hash(row, ["chunk"]), axis=1
+    )
+    aggregated[["document_ids", "chunk", "n_tokens"]] = pd.DataFrame(
+        aggregated["chunk"].tolist(), index=aggregated.index
     )
     # rename for downstream consumption
-    chunked.rename(columns={"chunk": "text"}, inplace=True)
+    aggregated.rename(columns={"chunk": "text"}, inplace=True)
 
-    return cast("pd.DataFrame", chunked[chunked["text"].notna()].reset_index(drop=True))
+    return cast(
+        "pd.DataFrame", aggregated[aggregated["text"].notna()].reset_index(drop=True)
+    )
 
 
 # TODO: would be nice to inline this completely in the main method with pandas

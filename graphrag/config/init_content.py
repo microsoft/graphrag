@@ -12,7 +12,7 @@ INIT_YAML = f"""\
 ### LLM settings ###
 ## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
 
-encoding_model: cl100k_base # this needs to be matched to your model!
+encoding_model: {defs.ENCODING_MODEL} # this needs to be matched to your model!
 
 llm:
   api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
@@ -111,7 +111,7 @@ embed_graph:
   enabled: false # if true, will generate node2vec embeddings for nodes
 
 umap:
-  enabled: false # if true, will generate UMAP embeddings for nodes
+  enabled: false # if true, will generate UMAP embeddings for nodes (embed_graph must also be enabled)
 
 snapshots:
   graphml: false

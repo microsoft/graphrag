@@ -14,15 +14,11 @@ class ClusterGraphConfig(BaseModel):
     max_cluster_size: int = Field(
         description="The maximum cluster size to use.", default=defs.MAX_CLUSTER_SIZE
     )
-    strategy: dict | None = Field(
-        description="The cluster strategy to use.", default=None
+    use_lcc: bool = Field(
+        description="Whether to use the largest connected component.",
+        default=defs.USE_LCC,
     )
-
-    def resolved_strategy(self) -> dict:
-        """Get the resolved cluster strategy."""
-        from graphrag.index.operations.cluster_graph import GraphCommunityStrategyType
-
-        return self.strategy or {
-            "type": GraphCommunityStrategyType.leiden,
-            "max_cluster_size": self.max_cluster_size,
-        }
+    seed: int | None = Field(
+        description="The seed to use for the clustering.",
+        default=defs.CLUSTER_GRAPH_SEED,
+    )

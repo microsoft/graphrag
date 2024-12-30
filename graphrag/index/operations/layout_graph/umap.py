@@ -5,7 +5,6 @@
 
 import logging
 import traceback
-from typing import Any
 
 import networkx as nx
 import numpy as np
@@ -27,7 +26,6 @@ log = logging.getLogger(__name__)
 def run(
     graph: nx.Graph,
     embeddings: NodeEmbeddings,
-    args: dict[str, Any],
     on_error: ErrorHandlerFn,
 ) -> GraphLayout:
     """Run method definition."""
@@ -56,8 +54,6 @@ def run(
             embedding_vectors=np.array(embedding_vectors),
             node_labels=nodes,
             **additional_args,
-            min_dist=args.get("min_dist", 0.75),
-            n_neighbors=args.get("n_neighbors", 5),
         )
     except Exception as e:
         log.exception("Error running UMAP")
@@ -87,7 +83,7 @@ def compute_umap_positions(
     node_categories: list[int] | None = None,
     node_sizes: list[int] | None = None,
     min_dist: float = 0.75,
-    n_neighbors: int = 25,
+    n_neighbors: int = 5,
     spread: int = 1,
     metric: str = "euclidean",
     n_components: int = 2,
