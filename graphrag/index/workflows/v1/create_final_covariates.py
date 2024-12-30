@@ -5,6 +5,7 @@
 
 from typing import Any, cast
 
+import pandas as pd
 from datashaper import (
     AsyncType,
     Table,
@@ -87,7 +88,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to extract and format covariates."""
     text_units = await context.runtime_storage.get("base_text_units")
 
@@ -115,3 +116,5 @@ async def run_workflow(
         storage=context.storage,
         formats=["parquet"],
     )
+
+    return output

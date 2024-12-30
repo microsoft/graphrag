@@ -118,7 +118,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
     final_documents = await load_table_from_storage(
         "create_final_documents.parquet", context.storage

@@ -3,8 +3,9 @@
 
 """A module containing build_steps method definition."""
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
+import pandas as pd
 from datashaper import (
     Table,
     VerbCallbacks,
@@ -24,9 +25,6 @@ from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 workflow_name = "create_final_text_units"
 
@@ -95,7 +93,7 @@ async def run_workflow(
     _config: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform the text units."""
     text_units = await context.runtime_storage.get("base_text_units")
     final_entities = await load_table_from_storage(
@@ -121,3 +119,5 @@ async def run_workflow(
         storage=context.storage,
         formats=["parquet"],
     )
+
+    return output

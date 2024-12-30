@@ -113,7 +113,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform base text_units."""
     documents = await context.runtime_storage.get("input")
 
@@ -138,3 +138,5 @@ async def run_workflow(
             storage=context.storage,
             formats=["parquet"],
         )
+
+    return output

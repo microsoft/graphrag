@@ -67,7 +67,7 @@ async def _export_workflow_output(
     return output
 
 
-def _create_callback_chain(
+def create_callback_chain(
     callbacks: list[WorkflowCallbacks] | None, progress: ProgressLogger | None
 ) -> WorkflowCallbacks:
     """Create a callback manager that encompasses multiple callbacks."""

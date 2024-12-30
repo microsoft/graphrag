@@ -96,7 +96,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to create the base communities."""
     base_relationship_edges = await context.runtime_storage.get(
         "base_relationship_edges"
@@ -122,3 +122,5 @@ async def run_workflow(
             storage=context.storage,
             formats=["parquet"],
         )
+
+    return base_communities

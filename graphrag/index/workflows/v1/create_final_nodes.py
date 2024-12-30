@@ -5,6 +5,7 @@
 
 from typing import cast
 
+import pandas as pd
 from datashaper import (
     Table,
     VerbCallbacks,
@@ -83,7 +84,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform final nodes."""
     base_entity_nodes = await context.runtime_storage.get("base_entity_nodes")
     base_relationship_edges = await context.runtime_storage.get(
@@ -108,3 +109,5 @@ async def run_workflow(
         storage=context.storage,
         formats=["parquet"],
     )
+
+    return output

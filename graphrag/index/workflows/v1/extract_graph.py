@@ -136,7 +136,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
     text_units = await context.runtime_storage.get("base_text_units")
 

@@ -35,8 +35,8 @@ from graphrag.index.run.utils import (
     create_run_context,
 )
 from graphrag.index.run.workflow import (
-    _create_callback_chain,
     _process_workflow,
+    create_callback_chain,
 )
 from graphrag.index.typing import PipelineRunResult
 from graphrag.index.update.incremental_index import (
@@ -224,7 +224,7 @@ async def run_pipeline(
 
     progress_reporter = progress_logger or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
-    callback_chain = _create_callback_chain(callbacks, progress_reporter)
+    callback_chain = create_callback_chain(callbacks, progress_reporter)
     context = create_run_context(storage=storage, cache=cache, stats=None)
     exporter = ParquetExporter(
         context.storage,

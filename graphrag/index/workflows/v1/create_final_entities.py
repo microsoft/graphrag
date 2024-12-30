@@ -6,6 +6,7 @@
 import logging
 from typing import cast
 
+import pandas as pd
 from datashaper import (
     Table,
     VerbCallbacks,
@@ -64,7 +65,7 @@ async def run_workflow(
     _config: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform final entities."""
     base_entity_nodes = await context.runtime_storage.get("base_entity_nodes")
 
@@ -76,3 +77,5 @@ async def run_workflow(
         storage=context.storage,
         formats=["parquet"],
     )
+
+    return output

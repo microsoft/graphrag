@@ -68,12 +68,20 @@ async def build_index(
     outputs: list[PipelineRunResult] = []
 
     if use_new_pipeline:
-        await run_workflows(
+        async for output in run_workflows(
             config,
             cache=pipeline_cache,
+            callbacks=callbacks,
             logger=progress_logger,
             run_id=run_id,
-        )
+        ):
+            outputs.append(output)
+            if progress_logger:
+                if output.errors and len(output.errors) > 0:
+                    progress_logger.error(output.workflow)
+                else:
+                    progress_logger.success(output.workflow)
+                progress_logger.info(str(output.result))
     else:
         pipeline_config = create_pipeline_config(config)
         async for output in run_pipeline_with_config(

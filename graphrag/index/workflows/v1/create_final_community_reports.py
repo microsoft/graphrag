@@ -3,8 +3,9 @@
 
 """A module containing build_steps method definition."""
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
+import pandas as pd
 from datashaper import (
     AsyncType,
     Table,
@@ -24,9 +25,6 @@ from graphrag.index.flows.create_final_community_reports import (
 from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.utils.ds_util import get_named_input_table, get_required_input_table
 from graphrag.utils.storage import load_table_from_storage
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 workflow_name = "create_final_community_reports"
 
@@ -115,7 +113,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: VerbCallbacks,
-) -> None:
+) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
     nodes = await load_table_from_storage("create_final_nodes.parquet", context.storage)
     edges = await load_table_from_storage(
@@ -154,3 +152,5 @@ async def run_workflow(
         storage=context.storage,
         formats=["parquet"],
     )
+
+    return output
