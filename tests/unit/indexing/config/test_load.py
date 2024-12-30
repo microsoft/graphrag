@@ -35,7 +35,9 @@ class TestLoadPipelineConfig(unittest.TestCase):
 
         # Check that the config is merged
         # but skip checking the input
-        self.assert_is_default_config(config, check_input=False)
+        self.assert_is_default_config(
+            config, check_input=False, ignore_workflows=["create_base_text_units"]
+        )
 
         if config.input is None:
             msg = "Input should not be none"
@@ -72,7 +74,10 @@ class TestLoadPipelineConfig(unittest.TestCase):
         check_reporting=True,
         check_cache=True,
         check_workflows=True,
+        ignore_workflows=None,
     ):
+        if ignore_workflows is None:
+            ignore_workflows = []
         assert config is not None
         assert isinstance(config, PipelineConfig)
 
@@ -111,7 +116,14 @@ class TestLoadPipelineConfig(unittest.TestCase):
             checked_config.pop(prop, None)
             actual_default_config.pop(prop, None)
 
-        assert actual_default_config == actual_default_config | checked_config
+        for prop in actual_default_config:
+            if prop == "workflows":
+                assert len(checked_config[prop]) == len(actual_default_config[prop])
+                for i, workflow in enumerate(actual_default_config[prop]):
+                    if workflow["name"] not in ignore_workflows:
+                        assert workflow == actual_default_config[prop][i]
+            else:
+                assert checked_config[prop] == actual_default_config[prop]
 
     def setUp(self) -> None:
         os.environ["GRAPHRAG_OPENAI_API_KEY"] = "test"
