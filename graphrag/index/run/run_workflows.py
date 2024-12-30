@@ -6,7 +6,7 @@
 import logging
 import time
 
-from datashaper import VerbCallbacks
+from datashaper import NoopVerbCallbacks
 from datashaper.progress.types import Progress
 
 from graphrag.cache.factory import CacheFactory
@@ -46,9 +46,7 @@ async def run_workflows(
     run_id: str | None = None,
 ):
     """Run all workflows using a simplified pipeline."""
-    print("RUNNING NEW PIPELINE")
-    print(config)
-
+    log.info("RUNNING NEW WORKFLOWS WITHOUT DATASHAPER")
     start_time = time.time()
 
     run_id = run_id or time.strftime("%Y%m%d-%H%M%S")
@@ -65,7 +63,7 @@ async def run_workflows(
         root_dir=root_dir,
         kwargs=cache_config,
     )
-    
+
     context = create_run_context(storage=storage, cache=cache, stats=None)
 
     dataset = await create_input(config.input, progress_logger, root_dir)
@@ -75,41 +73,31 @@ async def run_workflows(
     await context.runtime_storage.set("input", dataset)
 
     for workflow in default_workflows:
-        print("RUNNING WORKFLOW", workflow)
         run_workflow = basic_workflows[workflow]
-        verb_callbacks = DelegatingCallbacks()
+        progress = progress_logger.child(workflow, transient=False)
+        verb_callbacks = DelegatingCallbacks(progress)
         work_time = time.time()
         await run_workflow(
             config,
             context,
             verb_callbacks,
         )
+        progress(Progress(percent=1))
         context.stats.workflows[workflow] = {"overall": time.time() - work_time}
 
     context.stats.total_runtime = time.time() - start_time
     await _dump_stats(context.stats, context.storage)
 
 
-class DelegatingCallbacks(VerbCallbacks):
-    """TEMP: this is all to wrap into DataShaper callbacks that the flows expect."""
+class DelegatingCallbacks(NoopVerbCallbacks):
+    """TEMP: this is to wrap into DataShaper callbacks that the flows expect, until we create our own callback system."""
+
+    _progress: ProgressLogger
+
+    def __init__(self, progress: ProgressLogger):
+        self._progress = progress
+        self._progress(Progress(percent=0))
 
     def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
-
-    def error(
-        self,
-        message: str,
-        cause: BaseException | None = None,
-        stack: str | None = None,
-        details: dict | None = None,
-    ) -> None:
-        """Handle when an error occurs."""
-
-    def warning(self, message: str, details: dict | None = None) -> None:
-        """Handle when a warning occurs."""
-
-    def log(self, message: str, details: dict | None = None) -> None:
-        """Handle when a log occurs."""
-
-    def measure(self, name: str, value: float, details: dict | None = None) -> None:
-        """Handle when a measurement occurs."""
+        self._progress(progress)
