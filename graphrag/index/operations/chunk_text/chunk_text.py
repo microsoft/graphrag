@@ -12,20 +12,22 @@ from datashaper import (
     progress_ticker,
 )
 
+from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.index.operations.chunk_text.typing import (
     ChunkInput,
     ChunkStrategy,
-    ChunkStrategyType,
 )
 
 
 def chunk_text(
     input: pd.DataFrame,
     column: str,
-    to: str,
+    size: int,
+    overlap: int,
+    encoding_model: str,
+    strategy: ChunkStrategyType,
     callbacks: VerbCallbacks,
-    strategy: dict[str, Any] | None = None,
-) -> pd.DataFrame:
+) -> pd.Series:
     """
     Chunk a piece of text into smaller pieces.
 
@@ -33,7 +35,6 @@ def chunk_text(
     ```yaml
     args:
         column: <column name> # The name of the column containing the text to chunk, this can either be a column with text, or a column with a list[tuple[doc_id, str]]
-        to: <column name> # The name of the column to output the chunks to
         strategy: <strategy config> # The strategy to use to chunk the text, see below for more details
     ```
 
@@ -43,52 +44,46 @@ def chunk_text(
     ### tokens
     This strategy uses the [tokens] library to chunk a piece of text. The strategy config is as follows:
 
-    > Note: In the future, this will likely be renamed to something more generic, like "openai_tokens".
-
     ```yaml
-    strategy:
-        type: tokens
-        chunk_size: 1200 # Optional, The chunk size to use, default: 1200
-        chunk_overlap: 100 # Optional, The chunk overlap to use, default: 100
+    strategy: tokens
+    size: 1200 # Optional, The chunk size to use, default: 1200
+    overlap: 100 # Optional, The chunk overlap to use, default: 100
     ```
 
     ### sentence
     This strategy uses the nltk library to chunk a piece of text into sentences. The strategy config is as follows:
 
     ```yaml
-    strategy:
-        type: sentence
+    strategy: sentence
     ```
     """
-    output = input
-    if strategy is None:
-        strategy = {}
-    strategy_name = strategy.get("type", ChunkStrategyType.tokens)
-    strategy_config = {**strategy}
-    strategy_exec = load_strategy(strategy_name)
+    strategy_exec = load_strategy(strategy)
 
-    num_total = _get_num_total(output, column)
+    num_total = _get_num_total(input, column)
     tick = progress_ticker(callbacks.progress, num_total)
-
-    output[to] = output.apply(
-        cast(
-            "Any",
-            lambda x: run_strategy(strategy_exec, x[column], strategy_config, tick),
+    # collapse the config back to a single object to support "polymorphic" function call
+    config = ChunkingConfig(size=size, overlap=overlap, encoding_model=encoding_model)
+    return cast(
+        "pd.Series",
+        input.apply(
+            cast(
+                "Any",
+                lambda x: run_strategy(strategy_exec, x[column], config, tick),
+            ),
+            axis=1,
         ),
-        axis=1,
     )
-    return output
 
 
 def run_strategy(
-    strategy: ChunkStrategy,
+    strategy_exec: ChunkStrategy,
     input: ChunkInput,
-    strategy_args: dict[str, Any],
+    config: ChunkingConfig,
     tick: ProgressTicker,
 ) -> list[str | tuple[list[str] | None, str, int]]:
     """Run strategy method definition."""
     if isinstance(input, str):
-        return [item.text_chunk for item in strategy([input], {**strategy_args}, tick)]
+        return [item.text_chunk for item in strategy_exec([input], config, tick)]
 
     # We can work with both just a list of text content
     # or a list of tuples of (document_id, text content)
@@ -100,7 +95,7 @@ def run_strategy(
         else:
             texts.append(item[1])
 
-    strategy_results = strategy(texts, {**strategy_args}, tick)
+    strategy_results = strategy_exec(texts, config, tick)
 
     results = []
     for strategy_result in strategy_results:

@@ -72,10 +72,7 @@ async def extract_entities(
         tuple_delimiter: "<|>" # Optional, the delimiter to use for the LLM to mark a tuple
         record_delimiter: "##" # Optional, the delimiter to use for the LLM to mark a record
 
-        prechunked: true | false # Optional, If the document is already chunked beforehand, otherwise this will chunk the document into smaller bits. default: false
-        encoding_name: cl100k_base # Optional, The encoding to use for the LLM, if not already prechunked, default: cl100k_base
-        chunk_size: 1000 # Optional ,The chunk size to use for the LLM, if not already prechunked, default: 1200
-        chunk_overlap: 100 # Optional, The chunk overlap to use for the LLM, if not already prechunked, default: 100
+        encoding_name: cl100k_base # Optional, The encoding to use for the LLM with gleanings
 
         llm: # The configuration for the LLM
             type: openai # the type of llm to use, available options are: openai, azure, openai_chat, azure_openai_chat.  The last two being chat based LLMs.

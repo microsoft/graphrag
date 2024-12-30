@@ -176,13 +176,8 @@ def _text_unit_workflows(
         PipelineWorkflowReference(
             name=create_base_text_units,
             config={
+                "chunks": settings.chunks,
                 "snapshot_transient": settings.snapshots.transient,
-                "chunk_by": settings.chunks.group_by_columns,
-                "text_chunk": {
-                    "strategy": settings.chunks.resolved_strategy(
-                        settings.encoding_model
-                    )
-                },
             },
         ),
         PipelineWorkflowReference(
@@ -243,9 +238,7 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
         PipelineWorkflowReference(
             name=compute_communities,
             config={
-                "cluster_graph": {
-                    "strategy": settings.cluster_graph.resolved_strategy()
-                },
+                "cluster_graph": settings.cluster_graph,
                 "snapshot_transient": settings.snapshots.transient,
             },
         ),
@@ -260,9 +253,8 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
         PipelineWorkflowReference(
             name=create_final_nodes,
             config={
-                "layout_graph_enabled": settings.umap.enabled,
-                "embed_graph_enabled": settings.embed_graph.enabled,
-                "embed_graph": {"strategy": settings.embed_graph.resolved_strategy()},
+                "layout_enabled": settings.umap.enabled,
+                "embed_graph": settings.embed_graph,
             },
         ),
     ]

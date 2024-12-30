@@ -31,7 +31,7 @@ from graphrag.config.errors import (
 from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
 from graphrag.config.input_models.llm_config_input import LLMConfigInput
 from graphrag.config.models.cache_config import CacheConfig
-from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
@@ -318,13 +318,16 @@ def create_graphrag_config(
             reader.envvar_prefix(Section.node2vec),
             reader.use(values.get("embed_graph")),
         ):
+            use_lcc = reader.bool("use_lcc")
             embed_graph_model = EmbedGraphConfig(
                 enabled=reader.bool(Fragment.enabled) or defs.NODE2VEC_ENABLED,
+                dimensions=reader.int("dimensions") or defs.NODE2VEC_DIMENSIONS,
                 num_walks=reader.int("num_walks") or defs.NODE2VEC_NUM_WALKS,
                 walk_length=reader.int("walk_length") or defs.NODE2VEC_WALK_LENGTH,
                 window_size=reader.int("window_size") or defs.NODE2VEC_WINDOW_SIZE,
                 iterations=reader.int("iterations") or defs.NODE2VEC_ITERATIONS,
                 random_seed=reader.int("random_seed") or defs.NODE2VEC_RANDOM_SEED,
+                use_lcc=use_lcc if use_lcc is not None else defs.USE_LCC,
             )
         with reader.envvar_prefix(Section.input), reader.use(values.get("input")):
             input_type = reader.str("type")
@@ -412,12 +415,15 @@ def create_graphrag_config(
             encoding_model = (
                 reader.str(Fragment.encoding_model) or global_encoding_model
             )
-
+            strategy = reader.str("strategy")
             chunks_model = ChunkingConfig(
                 size=reader.int("size") or defs.CHUNK_SIZE,
                 overlap=reader.int("overlap") or defs.CHUNK_OVERLAP,
                 group_by_columns=group_by_columns,
                 encoding_model=encoding_model,
+                strategy=ChunkStrategyType(strategy)
+                if strategy
+                else ChunkStrategyType.tokens,
             )
         with (
             reader.envvar_prefix(Section.snapshot),
@@ -522,8 +528,13 @@ def create_graphrag_config(
             )
 
         with reader.use(values.get("cluster_graph")):
+            use_lcc = reader.bool("use_lcc")
+            seed = reader.int("seed")
             cluster_graph_model = ClusterGraphConfig(
-                max_cluster_size=reader.int("max_cluster_size") or defs.MAX_CLUSTER_SIZE
+                max_cluster_size=reader.int("max_cluster_size")
+                or defs.MAX_CLUSTER_SIZE,
+                use_lcc=use_lcc if use_lcc is not None else defs.USE_LCC,
+                seed=seed if seed is not None else defs.CLUSTER_GRAPH_SEED,
             )
 
         with (
