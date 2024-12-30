@@ -1,4 +1,4 @@
 {
-  "type": "patch",
+  "type": "minor",
   "description": "Make gleanings independent of encoding"
 }
