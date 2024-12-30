@@ -44,4 +44,11 @@
     <h6>Published November 25, 2024
 
     By [Darren Edge](https://www.microsoft.com/en-us/research/people/daedge/), Senior Director; [Ha Trinh](https://www.microsoft.com/en-us/research/people/trinhha/), Senior Data Scientist;  [Jonathan Larson](https://www.microsoft.com/en-us/research/people/jolarso/), Senior Principal Data Architect</h6>
+
+- [:octicons-arrow-right-24: __Moving to GraphRAG 1.0 – Streamlining ergonomics for developers and users__](https://www.microsoft.com/en-us/research/blog/moving-to-graphrag-1-0-streamlining-ergonomics-for-developers-and-users)
+
+    ---
+    <h6>Published December 16, 2024
+
+    By [Nathan Evans](https://www.microsoft.com/en-us/research/people/naevans/), Principal Software Architect; [Alonso Guevara Fernández](https://www.microsoft.com/en-us/research/people/alonsog/), Senior Software Engineer; [Joshua Bradley](https://www.microsoft.com/en-us/research/people/joshbradley/), Senior Data Scientist</h6>
 </div>
