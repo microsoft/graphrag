@@ -3,8 +3,13 @@
 
 """A package containing default workflows definitions."""
 
-from typing import Any
+from collections.abc import Awaitable, Callable
 
+import pandas as pd
+from datashaper import VerbCallbacks
+
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.workflows.typing import WorkflowDefinitions
 from graphrag.index.workflows.v1.compute_communities import (
     build_steps as build_compute_communities_steps,
@@ -130,7 +135,13 @@ default_workflows: WorkflowDefinitions = {
     generate_text_embeddings: build_generate_text_embeddings_steps,
 }
 
-basic_workflows: dict[str, Any] = {
+basic_workflows: dict[
+    str,
+    Callable[
+        [GraphRagConfig, PipelineRunContext, VerbCallbacks],
+        Awaitable[pd.DataFrame | None],
+    ],
+] = {
     compute_communities: run_compute_communities,
     create_base_text_units: run_create_base_text_units,
     create_final_communities: run_create_final_communities,
