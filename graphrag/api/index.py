@@ -79,6 +79,7 @@ async def build_index(
         callbacks=callbacks,
         logger=progress_logger,
         run_id=run_id,
+        is_update_run=is_update_run,
     ):
         outputs.append(output)
         if progress_logger:

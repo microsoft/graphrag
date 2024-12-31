@@ -10,9 +10,9 @@ import pandas as pd
 from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.config.pipeline import PipelineConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
-from graphrag.index.run.workflow import _find_workflow_config
 from graphrag.index.update.communities import (
     _merge_and_resolve_nodes,
     _update_and_merge_communities,
@@ -82,7 +82,7 @@ async def update_dataframe_outputs(
     dataframe_dict: dict[str, pd.DataFrame],
     storage: PipelineStorage,
     update_storage: PipelineStorage,
-    config: PipelineConfig,
+    config: GraphRagConfig,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
     progress_logger: ProgressLogger,
@@ -145,13 +145,10 @@ async def update_dataframe_outputs(
         dataframe_dict, storage, update_storage, community_id_mapping
     )
 
-    # Extract the embeddings config
-    embeddings_config = _find_workflow_config(
-        config=config, workflow_name="generate_text_embeddings"
-    )
-
     # Generate text embeddings
     progress_logger.info("Updating Text Embeddings")
+    embedded_fields = get_embedded_fields(config)
+    text_embed = get_embedding_settings(config.embeddings)
     await generate_text_embeddings(
         final_documents=final_documents_df,
         final_relationships=merged_relationships_df,
@@ -161,9 +158,9 @@ async def update_dataframe_outputs(
         callbacks=callbacks,
         cache=cache,
         storage=update_storage,
-        text_embed_config=embeddings_config.get("text_embed", {}),
-        embedded_fields=embeddings_config.get("embedded_fields", {}),
-        snapshot_embeddings_enabled=embeddings_config.get("snapshot_embeddings", False),
+        text_embed_config=text_embed,
+        embedded_fields=embedded_fields,
+        snapshot_embeddings_enabled=config.snapshots.embeddings,
     )
 
 
