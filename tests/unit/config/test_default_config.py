@@ -251,7 +251,6 @@ class TestDefaultConfig(unittest.TestCase):
         repr_str = repr_str.replace("async_mode=<AsyncType.Threaded: 'threaded'>,", "")
         assert eval(repr_str) is not None
 
-
     @mock.patch.dict(os.environ, {}, clear=True)
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):

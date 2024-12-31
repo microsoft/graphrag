@@ -39,8 +39,3 @@ class PipelineRunContext:
     "Cache instance for reading previous LLM responses."
     runtime_storage: PipelineStorage
     "Runtime only storage for pipeline verbs to use. Items written here will only live in memory during the current run."
-
-
-# TODO: For now, just has the same props available to it
-VerbRunContext = PipelineRunContext
-"""Provides the context for the current verb run."""
