@@ -82,10 +82,6 @@ from graphrag.index.config.input import (
     PipelineInputConfig,
     PipelineTextInputConfig,
 )
-from graphrag.index.config.pipeline import (
-    PipelineConfig,
-    PipelineWorkflowReference,
-)
 from graphrag.index.config.reporting import PipelineFileReportingConfig
 from graphrag.index.config.storage import PipelineFileStorageConfig
 from graphrag.index.create_pipeline_config import create_pipeline_config
@@ -236,12 +232,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert SummarizeDescriptionsConfig is not None
         assert TextEmbeddingConfig is not None
         assert UmapConfig is not None
-        assert PipelineConfig is not None
         assert PipelineFileReportingConfig is not None
         assert PipelineFileStorageConfig is not None
         assert PipelineInputConfig is not None
         assert PipelineFileCacheConfig is not None
-        assert PipelineWorkflowReference is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
     def test_string_repr(self):

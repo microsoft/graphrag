@@ -7,10 +7,7 @@ import pandas as pd
 from datashaper import Workflow
 from pandas.testing import assert_series_equal
 
-from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.config.workflow import PipelineWorkflowConfig
 from graphrag.index.context import PipelineRunContext
-from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.index.run.utils import create_run_context
 
 pd.set_option("display.max_columns", None)
@@ -35,20 +32,6 @@ def load_input_tables(inputs: list[str]) -> dict[str, pd.DataFrame]:
 def load_test_table(output: str) -> pd.DataFrame:
     """Pass in the workflow output (generally the workflow name)"""
     return pd.read_parquet(f"tests/verbs/data/{output}.parquet")
-
-
-def get_config_for_workflow(name: str) -> PipelineWorkflowConfig:
-    """Instantiates the bare minimum config to get a default workflow config for testing."""
-    config = create_graphrag_config()
-
-    # this flag needs to be set before creating the pipeline config, or the entire covariate workflow will be excluded
-    config.claim_extraction.enabled = True
-
-    pipeline_config = create_pipeline_config(config)
-
-    result = next(conf for conf in pipeline_config.workflows if conf.name == name)
-
-    return cast("PipelineWorkflowConfig", result.config)
 
 
 async def get_workflow_output(

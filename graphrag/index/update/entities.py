@@ -100,7 +100,7 @@ async def _run_entity_summarization(
     ----------
     entities_df : pd.DataFrame
         The entities dataframe.
-    config : PipelineConfig
+    config : GraphRagConfig
         The pipeline configuration.
     cache : PipelineCache
         Pipeline cache used during the summarization process.
