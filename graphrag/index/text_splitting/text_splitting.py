@@ -13,6 +13,7 @@ import pandas as pd
 import tiktoken
 from datashaper import ProgressTicker
 
+import graphrag.config.defaults as defs
 from graphrag.index.operations.chunk_text.typing import TextChunk
 
 EncodedText = list[int]
@@ -87,7 +88,7 @@ class TokenTextSplitter(TextSplitter):
 
     def __init__(
         self,
-        encoding_name: str = "cl100k_base",
+        encoding_name: str = defs.ENCODING_MODEL,
         model_name: str | None = None,
         allowed_special: Literal["all"] | set[str] | None = None,
         disallowed_special: Literal["all"] | Collection[str] = "all",

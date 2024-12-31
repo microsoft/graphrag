@@ -4,13 +4,12 @@
 """A module containing chunk strategies."""
 
 from collections.abc import Iterable
-from typing import Any
 
 import nltk
 import tiktoken
 from datashaper import ProgressTicker
 
-import graphrag.config.defaults as defs
+from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
     Tokenizer,
@@ -19,12 +18,12 @@ from graphrag.index.text_splitting.text_splitting import (
 
 
 def run_tokens(
-    input: list[str], args: dict[str, Any], tick: ProgressTicker
+    input: list[str], config: ChunkingConfig, tick: ProgressTicker
 ) -> Iterable[TextChunk]:
     """Chunks text into chunks based on encoding tokens."""
-    tokens_per_chunk = args.get("chunk_size", defs.CHUNK_SIZE)
-    chunk_overlap = args.get("chunk_overlap", defs.CHUNK_OVERLAP)
-    encoding_name = args.get("encoding_name", defs.ENCODING_MODEL)
+    tokens_per_chunk = config.size
+    chunk_overlap = config.overlap
+    encoding_name = config.encoding_model
     enc = tiktoken.get_encoding(encoding_name)
 
     def encode(text: str) -> list[int]:
@@ -48,7 +47,7 @@ def run_tokens(
 
 
 def run_sentences(
-    input: list[str], _args: dict[str, Any], tick: ProgressTicker
+    input: list[str], _config: ChunkingConfig, tick: ProgressTicker
 ) -> Iterable[TextChunk]:
     """Chunks text into multiple parts by sentence."""
     for doc_idx, text in enumerate(input):

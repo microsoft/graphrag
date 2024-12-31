@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Fix gleanings loop check"
+}
