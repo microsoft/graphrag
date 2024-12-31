@@ -26,7 +26,7 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
-    text_units = await context.runtime_storage.get("base_text_units")
+    text_units = await context.runtime_storage.get("create_base_text_units")
 
     extraction_strategy = config.entity_extraction.resolved_strategy(
         config.root_dir, config.encoding_model

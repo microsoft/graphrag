@@ -31,7 +31,7 @@ async def test_create_base_text_units():
         NoopVerbCallbacks(),
     )
 
-    actual = await context.runtime_storage.get("base_text_units")
+    actual = await context.runtime_storage.get("create_base_text_units")
 
     compare_outputs(actual, expected)
 

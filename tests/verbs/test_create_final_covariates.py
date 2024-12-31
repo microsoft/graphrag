@@ -33,7 +33,7 @@ async def test_create_final_covariates():
     expected = load_test_table(workflow_name)
 
     context = create_run_context(None, None, None)
-    await context.runtime_storage.set("base_text_units", input)
+    await context.runtime_storage.set("create_base_text_units", input)
 
     config = create_graphrag_config()
 
@@ -84,7 +84,7 @@ async def test_create_final_covariates_missing_llm_throws():
     input = load_test_table("create_base_text_units")
 
     context = create_run_context(None, None, None)
-    await context.runtime_storage.set("base_text_units", input)
+    await context.runtime_storage.set("create_base_text_units", input)
 
     config = create_graphrag_config()
 

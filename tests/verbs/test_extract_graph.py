@@ -49,7 +49,7 @@ MOCK_LLM_SUMMARIZATION_CONFIG = {
 
 async def test_extract_graph():
     input_tables = load_input_tables([
-        "workflow:create_base_text_units",
+        "create_base_text_units",
     ])
 
     nodes_expected = load_test_table("base_entity_nodes")
@@ -57,7 +57,7 @@ async def test_extract_graph():
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+        "create_base_text_units", input_tables["create_base_text_units"]
     )
 
     config = create_graphrag_config()
@@ -101,12 +101,12 @@ async def test_extract_graph():
 
 async def test_extract_graph_with_snapshots():
     input_tables = load_input_tables([
-        "workflow:create_base_text_units",
+        "create_base_text_units",
     ])
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+        "create_base_text_units", input_tables["create_base_text_units"]
     )
 
     config = create_graphrag_config()
@@ -138,12 +138,12 @@ async def test_extract_graph_with_snapshots():
 
 async def test_extract_graph_missing_llm_throws():
     input_tables = load_input_tables([
-        "workflow:create_base_text_units",
+        "create_base_text_units",
     ])
 
     context = create_run_context(None, None, None)
     await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+        "create_base_text_units", input_tables["create_base_text_units"]
     )
 
     config = create_graphrag_config()

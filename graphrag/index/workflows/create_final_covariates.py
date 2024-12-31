@@ -24,7 +24,7 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to extract and format covariates."""
-    text_units = await context.runtime_storage.get("base_text_units")
+    text_units = await context.runtime_storage.get("create_base_text_units")
 
     extraction_strategy = config.claim_extraction.resolved_strategy(
         config.root_dir, config.encoding_model

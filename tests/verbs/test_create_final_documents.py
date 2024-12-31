@@ -26,7 +26,7 @@ async def test_create_final_documents():
     context = create_run_context(None, None, None)
 
     await context.runtime_storage.set("input", documents)
-    await context.runtime_storage.set("base_text_units", base_text_units)
+    await context.runtime_storage.set("create_base_text_units", base_text_units)
 
     await run_workflow(
         config,
@@ -50,7 +50,7 @@ async def test_create_final_documents_with_attribute_columns():
     config.input.document_attribute_columns = ["title"]
 
     await context.runtime_storage.set("input", documents)
-    await context.runtime_storage.set("base_text_units", base_text_units)
+    await context.runtime_storage.set("create_base_text_units", base_text_units)
 
     await run_workflow(
         config,

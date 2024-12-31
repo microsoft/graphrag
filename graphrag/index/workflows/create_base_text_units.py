@@ -38,7 +38,7 @@ async def run_workflow(
         strategy=chunks.strategy,
     )
 
-    await context.runtime_storage.set("base_text_units", output)
+    await context.runtime_storage.set("create_base_text_units", output)
 
     if config.snapshots.transient:
         await snapshot(

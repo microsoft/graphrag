@@ -33,7 +33,7 @@ async def test_create_final_text_units():
         await context.storage.set(f"{input}.parquet", table.to_parquet())
 
     await context.runtime_storage.set(
-        "base_text_units", load_test_table("create_base_text_units")
+        "create_base_text_units", load_test_table("create_base_text_units")
     )
 
     config = create_graphrag_config()
@@ -66,7 +66,7 @@ async def test_create_final_text_units_no_covariates():
         await context.storage.set(f"{input}.parquet", table.to_parquet())
 
     await context.runtime_storage.set(
-        "base_text_units", load_test_table("create_base_text_units")
+        "create_base_text_units", load_test_table("create_base_text_units")
     )
 
     config = create_graphrag_config()

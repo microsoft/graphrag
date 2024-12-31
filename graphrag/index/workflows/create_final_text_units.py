@@ -25,7 +25,7 @@ async def run_workflow(
     _callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform the text units."""
-    text_units = await context.runtime_storage.get("base_text_units")
+    text_units = await context.runtime_storage.get("create_base_text_units")
     final_entities = await load_table_from_storage(
         "create_final_entities.parquet", context.storage
     )

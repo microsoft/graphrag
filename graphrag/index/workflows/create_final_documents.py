@@ -25,7 +25,7 @@ async def run_workflow(
 ) -> pd.DataFrame | None:
     """All the steps to transform final documents."""
     documents = await context.runtime_storage.get("input")
-    text_units = await context.runtime_storage.get("base_text_units")
+    text_units = await context.runtime_storage.get("create_base_text_units")
 
     input = config.input
     output = create_final_documents(
