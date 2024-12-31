@@ -23,10 +23,9 @@ from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbac
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import create_input
 from graphrag.index.run.profiling import _dump_stats
-from graphrag.index.run.utils import create_run_context
-from graphrag.index.run.workflow import create_callback_chain
+from graphrag.index.run.utils import create_callback_chain, create_run_context
 from graphrag.index.typing import PipelineRunResult
-from graphrag.index.workflows.default_workflows import basic_workflows
+from graphrag.index.workflows.default_workflows import all_workflows
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.factory import StorageFactory
@@ -91,7 +90,7 @@ async def run_workflows(
 
         for workflow in default_workflows:
             last_workflow = workflow
-            run_workflow = basic_workflows[workflow]
+            run_workflow = all_workflows[workflow]
             progress = progress_logger.child(workflow, transient=False)
             callback_chain.on_workflow_start(workflow, None)
             # TEMP: this structure is required for DataShaper downstream compliance

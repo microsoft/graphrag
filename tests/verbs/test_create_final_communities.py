@@ -1,12 +1,15 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.index.flows.create_final_communities import (
-    create_final_communities,
-)
+from datashaper import NoopVerbCallbacks
+
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.v1.create_final_communities import (
+    run_workflow,
     workflow_name,
 )
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
@@ -14,18 +17,29 @@ from .util import (
 )
 
 
-def test_create_final_communities():
+async def test_create_final_communities():
     base_entity_nodes = load_test_table("base_entity_nodes")
     base_relationship_edges = load_test_table("base_relationship_edges")
     base_communities = load_test_table("base_communities")
 
     expected = load_test_table(workflow_name)
 
-    actual = create_final_communities(
-        base_entity_nodes=base_entity_nodes,
-        base_relationship_edges=base_relationship_edges,
-        base_communities=base_communities,
+    config = create_graphrag_config()
+    context = create_run_context(None, None, None)
+
+    await context.runtime_storage.set("base_entity_nodes", base_entity_nodes)
+    await context.runtime_storage.set(
+        "base_relationship_edges", base_relationship_edges
     )
+    await context.runtime_storage.set("base_communities", base_communities)
+
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
+    )
+
+    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
 
     assert "period" in expected.columns
     assert "id" in expected.columns

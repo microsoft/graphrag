@@ -74,7 +74,6 @@ def index_cli(
     dry_run: bool,
     skip_validation: bool,
     output_dir: Path | None,
-    new_pipeline: bool,
 ):
     """Run the pipeline with the given config."""
     config = load_config(root_dir, config_filepath)
@@ -89,7 +88,6 @@ def index_cli(
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output_dir,
-        new_pipeline=new_pipeline,
     )
 
 
@@ -126,7 +124,6 @@ def update_cli(
         dry_run=False,
         skip_validation=skip_validation,
         output_dir=output_dir,
-        new_pipeline=False,
     )
 
 
@@ -140,7 +137,6 @@ def _run_index(
     dry_run,
     skip_validation,
     output_dir,
-    new_pipeline,
 ):
     progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
@@ -186,7 +182,6 @@ def _run_index(
             is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_logger=progress_logger,
-            new_pipeline=new_pipeline,
         )
     )
     encountered_errors = any(

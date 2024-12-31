@@ -4,50 +4,49 @@
 from io import BytesIO
 
 import pandas as pd
+from datashaper import NoopVerbCallbacks
 
+from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.index.config.embeddings import (
     all_embeddings,
 )
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.v1.generate_text_embeddings import (
-    build_steps,
-    workflow_name,
+    run_workflow,
 )
 
 from .util import (
-    get_config_for_workflow,
-    get_workflow_output,
-    load_input_tables,
+    load_test_table,
 )
 
 
 async def test_generate_text_embeddings():
-    input_tables = load_input_tables(
-        inputs=[
-            "workflow:create_final_documents",
-            "workflow:create_final_relationships",
-            "workflow:create_final_text_units",
-            "workflow:create_final_entities",
-            "workflow:create_final_community_reports",
-        ]
-    )
+    inputs = [
+        "create_final_documents",
+        "create_final_relationships",
+        "create_final_text_units",
+        "create_final_entities",
+        "create_final_community_reports",
+    ]
+
     context = create_run_context(None, None, None)
+    config = create_graphrag_config()
 
-    config = get_config_for_workflow(workflow_name)
+    config.embeddings.strategy = {
+        "type": "mock",
+    }
+    config.embeddings.target = TextEmbeddingTarget.all
+    config.snapshots.embeddings = True
 
-    config["text_embed"]["strategy"]["type"] = "mock"
-    config["snapshot_embeddings"] = True
+    for input in inputs:
+        table = load_test_table(input)
+        await context.storage.set(f"{input}.parquet", table.to_parquet())
 
-    config["embedded_fields"] = all_embeddings
-
-    steps = build_steps(config)
-
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
+    await run_workflow(
+        config,
         context,
+        NoopVerbCallbacks(),
     )
 
     parquet_files = context.storage.keys()

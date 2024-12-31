@@ -2,17 +2,16 @@
 # Licensed under the MIT License
 
 import pytest
+from datashaper import NoopVerbCallbacks
 
+from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.v1.extract_graph import (
-    build_steps,
-    workflow_name,
+    run_workflow,
 )
 
 from .util import (
-    get_config_for_workflow,
-    get_workflow_output,
     load_input_tables,
     load_test_table,
 )
@@ -61,18 +60,21 @@ async def test_extract_graph():
         "base_text_units", input_tables["workflow:create_base_text_units"]
     )
 
-    config = get_config_for_workflow(workflow_name)
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
+    config = create_graphrag_config()
 
-    steps = build_steps(config)
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_ENTITY_CONFIG,
+    }
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
+    }
 
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
     )
 
     # graph construction creates transient tables for nodes, edges, and communities
@@ -107,22 +109,24 @@ async def test_extract_graph_with_snapshots():
         "base_text_units", input_tables["workflow:create_base_text_units"]
     )
 
-    config = get_config_for_workflow(workflow_name)
+    config = create_graphrag_config()
 
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    config["summarize_descriptions"]["strategy"]["llm"] = MOCK_LLM_SUMMARIZATION_CONFIG
-    config["snapshot_graphml"] = True
-    config["snapshot_transient"] = True
-    config["embed_graph_enabled"] = True  # need this on in order to see the snapshot
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_ENTITY_CONFIG,
+    }
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
+    }
 
-    steps = build_steps(config)
+    config.snapshots.graphml = True
+    config.snapshots.transient = True
 
-    await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
     )
 
     assert context.storage.keys() == [
@@ -142,18 +146,19 @@ async def test_extract_graph_missing_llm_throws():
         "base_text_units", input_tables["workflow:create_base_text_units"]
     )
 
-    config = get_config_for_workflow(workflow_name)
+    config = create_graphrag_config()
 
-    config["entity_extract"]["strategy"]["llm"] = MOCK_LLM_ENTITY_CONFIG
-    del config["summarize_descriptions"]["strategy"]["llm"]
-
-    steps = build_steps(config)
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_ENTITY_CONFIG,
+    }
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+    }
 
     with pytest.raises(ValueError):  # noqa PT011
-        await get_workflow_output(
-            input_tables,
-            {
-                "steps": steps,
-            },
-            context=context,
+        await run_workflow(
+            config,
+            context,
+            NoopVerbCallbacks(),
         )

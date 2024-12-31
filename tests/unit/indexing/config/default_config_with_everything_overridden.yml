@@ -13,8 +13,3 @@ cache:
 
 reporting:
   type: file
-
-workflows:
-  - name: TEST_WORKFLOW
-    steps:
-      - verb: TEST_VERB

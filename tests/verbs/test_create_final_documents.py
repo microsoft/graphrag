@@ -1,69 +1,64 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+from datashaper import NoopVerbCallbacks
+
+from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.v1.create_final_documents import (
-    build_steps,
+    run_workflow,
     workflow_name,
 )
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
-    get_config_for_workflow,
-    get_workflow_output,
-    load_input_tables,
     load_test_table,
 )
 
 
 async def test_create_final_documents():
-    input_tables = load_input_tables([
-        "workflow:create_base_text_units",
-    ])
+    documents = load_test_table("source_documents")
+    base_text_units = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 
+    config = create_graphrag_config()
     context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+
+    await context.runtime_storage.set("input", documents)
+    await context.runtime_storage.set("base_text_units", base_text_units)
+
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
     )
 
-    config = get_config_for_workflow(workflow_name)
-
-    steps = build_steps(config)
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
+    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
 
     compare_outputs(actual, expected)
 
 
 async def test_create_final_documents_with_attribute_columns():
-    input_tables = load_input_tables(["workflow:create_base_text_units"])
+    documents = load_test_table("source_documents")
+    base_text_units = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 
+    config = create_graphrag_config()
     context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+
+    config.input.document_attribute_columns = ["title"]
+
+    await context.runtime_storage.set("input", documents)
+    await context.runtime_storage.set("base_text_units", base_text_units)
+
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
     )
 
-    config = get_config_for_workflow(workflow_name)
-
-    config["document_attribute_columns"] = ["title"]
-
-    steps = build_steps(config)
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
-        context=context,
-    )
+    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
 
     # we should have dropped "title" and added "attributes"
     # our test dataframe does not have attributes, so we'll assert without it

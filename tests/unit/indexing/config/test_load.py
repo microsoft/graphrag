@@ -35,9 +35,7 @@ class TestLoadPipelineConfig(unittest.TestCase):
 
         # Check that the config is merged
         # but skip checking the input
-        self.assert_is_default_config(
-            config, check_input=False, ignore_workflows=["create_base_text_units"]
-        )
+        self.assert_is_default_config(config, check_input=False)
 
         if config.input is None:
             msg = "Input should not be none"
@@ -49,23 +47,6 @@ class TestLoadPipelineConfig(unittest.TestCase):
         assert config.input.base_dir == "/some/overridden/dir"
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
-    def test_loading_default_config_with_workflows_overridden(self):
-        config = load_pipeline_config(
-            str(Path(current_dir) / "default_config_with_overridden_workflows.yml")
-        )
-
-        # Check that the config is merged
-        # but skip checking the input
-        self.assert_is_default_config(config, check_workflows=False)
-
-        # Make sure the workflows are overridden
-        assert len(config.workflows) == 1
-        assert config.workflows[0].name == "TEST_WORKFLOW"
-        assert config.workflows[0].steps is not None
-        assert len(config.workflows[0].steps) == 1  # type: ignore
-        assert config.workflows[0].steps[0]["verb"] == "TEST_VERB"  # type: ignore
-
-    @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def assert_is_default_config(
         self,
         config: Any,
@@ -74,10 +55,7 @@ class TestLoadPipelineConfig(unittest.TestCase):
         check_reporting=True,
         check_cache=True,
         check_workflows=True,
-        ignore_workflows=None,
     ):
-        if ignore_workflows is None:
-            ignore_workflows = []
         assert config is not None
         assert isinstance(config, PipelineConfig)
 
@@ -117,13 +95,7 @@ class TestLoadPipelineConfig(unittest.TestCase):
             actual_default_config.pop(prop, None)
 
         for prop in actual_default_config:
-            if prop == "workflows":
-                assert len(checked_config[prop]) == len(actual_default_config[prop])
-                for i, workflow in enumerate(actual_default_config[prop]):
-                    if workflow["name"] not in ignore_workflows:
-                        assert workflow == actual_default_config[prop][i]
-            else:
-                assert checked_config[prop] == actual_default_config[prop]
+            assert checked_config[prop] == actual_default_config[prop]
 
     def setUp(self) -> None:
         os.environ["GRAPHRAG_OPENAI_API_KEY"] = "test"
