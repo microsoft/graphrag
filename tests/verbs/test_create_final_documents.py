@@ -32,7 +32,7 @@ async def test_create_final_documents():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     compare_outputs(actual, expected)
 
@@ -53,7 +53,7 @@ async def test_create_final_documents_with_attribute_columns():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     # we should have dropped "title" and added "attributes"
     # our test dataframe does not have attributes, so we'll assert without it

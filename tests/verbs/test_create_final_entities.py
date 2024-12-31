@@ -32,7 +32,7 @@ async def test_create_final_entities():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     compare_outputs(actual, expected)
     assert len(actual.columns) == len(expected.columns)

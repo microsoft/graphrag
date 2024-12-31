@@ -49,7 +49,7 @@ async def test_create_final_covariates():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data

@@ -40,7 +40,7 @@ async def test_create_final_text_units():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     compare_outputs(actual, expected)
 
@@ -68,7 +68,7 @@ async def test_create_final_text_units_no_covariates():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     # we're short a covariate_ids column
     columns = list(expected.columns.values)

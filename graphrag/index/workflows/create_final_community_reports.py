@@ -25,19 +25,13 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
-    nodes = await load_table_from_storage("create_final_nodes.parquet", context.storage)
-    edges = await load_table_from_storage(
-        "create_final_relationships.parquet", context.storage
-    )
-    entities = await load_table_from_storage(
-        "create_final_entities.parquet", context.storage
-    )
+    nodes = await load_table_from_storage("create_final_nodes", context.storage)
+    edges = await load_table_from_storage("create_final_relationships", context.storage)
+    entities = await load_table_from_storage("create_final_entities", context.storage)
     communities = await load_table_from_storage(
-        "create_final_communities.parquet", context.storage
+        "create_final_communities", context.storage
     )
-    claims = await load_table_from_storage(
-        "create_final_covariates.parquet", context.storage
-    )
+    claims = await load_table_from_storage("create_final_covariates", context.storage)
     async_mode = config.community_reports.async_mode
     num_threads = config.community_reports.parallelization.num_threads
     summarization_strategy = config.community_reports.resolved_strategy(config.root_dir)

@@ -27,13 +27,13 @@ async def run_workflow(
     """All the steps to transform the text units."""
     text_units = await context.runtime_storage.get("create_base_text_units")
     final_entities = await load_table_from_storage(
-        "create_final_entities.parquet", context.storage
+        "create_final_entities", context.storage
     )
     final_relationships = await load_table_from_storage(
-        "create_final_relationships.parquet", context.storage
+        "create_final_relationships", context.storage
     )
     final_covariates = await load_table_from_storage(
-        "create_final_covariates.parquet", context.storage
+        "create_final_covariates", context.storage
     )
 
     output = create_final_text_units(

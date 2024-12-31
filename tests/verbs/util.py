@@ -6,6 +6,7 @@ from pandas.testing import assert_series_equal
 
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.run.utils import create_run_context
+from graphrag.utils.storage import write_table_to_storage
 
 pd.set_option("display.max_columns", None)
 
@@ -18,14 +19,14 @@ async def create_test_context(
     context = create_run_context(None, None, None)
 
     # always set the input docs
-    input = pd.read_parquet("tests/verbs/data/source_documents.parquet")
+    input = load_test_table("source_documents")
     await context.runtime_storage.set("input", input)
 
     if storage:
         for name in storage:
             table = load_test_table(name)
             # normal storage interface insists on bytes
-            await context.storage.set(f"{name}.parquet", table.to_parquet())
+            await write_table_to_storage(table, name, context.storage)
 
     if runtime_storage:
         for name in runtime_storage:

@@ -73,7 +73,7 @@ async def test_create_final_community_reports():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert len(actual.columns) == len(expected.columns)
 

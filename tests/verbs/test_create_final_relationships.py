@@ -33,7 +33,7 @@ async def test_create_final_relationships():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert "id" in expected.columns
     columns = list(expected.columns.values)

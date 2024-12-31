@@ -36,7 +36,7 @@ async def test_create_final_communities():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage(f"{workflow_name}.parquet", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert "period" in expected.columns
     assert "id" in expected.columns
