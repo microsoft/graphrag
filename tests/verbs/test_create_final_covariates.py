@@ -9,7 +9,7 @@ from pandas.testing import assert_series_equal
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.create_final_covariates import (
+from graphrag.index.workflows.create_final_covariates import (
     run_workflow,
     workflow_name,
 )

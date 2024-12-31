@@ -13,7 +13,7 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     FindingModel,
 )
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.create_final_community_reports import (
+from graphrag.index.workflows.create_final_community_reports import (
     run_workflow,
     workflow_name,
 )

@@ -12,7 +12,7 @@ from graphrag.index.config.embeddings import (
     all_embeddings,
 )
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.generate_text_embeddings import (
+from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
 

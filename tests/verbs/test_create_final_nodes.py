@@ -5,7 +5,7 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.create_final_nodes import (
+from graphrag.index.workflows.create_final_nodes import (
     run_workflow,
     workflow_name,
 )

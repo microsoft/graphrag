@@ -7,7 +7,7 @@ from datashaper import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.extract_graph import (
+from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
 

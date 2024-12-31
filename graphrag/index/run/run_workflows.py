@@ -31,7 +31,7 @@ from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
 )
-from graphrag.index.workflows.default_workflows import all_workflows
+from graphrag.index.workflows import all_workflows
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.factory import StorageFactory
