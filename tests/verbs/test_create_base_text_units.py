@@ -4,26 +4,23 @@
 from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.create_base_text_units import run_workflow
 
 from .util import (
     compare_outputs,
+    create_test_context,
     load_test_table,
 )
 
 
 async def test_create_base_text_units():
-    documents = load_test_table("source_documents")
     expected = load_test_table("create_base_text_units")
 
-    config = create_graphrag_config()
-    context = create_run_context(None, None, None)
+    context = await create_test_context()
 
+    config = create_graphrag_config()
     # test data was created with 4o, so we need to match the encoding for chunks to be identical
     config.chunks.encoding_model = "o200k_base"
-
-    await context.runtime_storage.set("input", documents)
 
     await run_workflow(
         config,
@@ -37,16 +34,12 @@ async def test_create_base_text_units():
 
 
 async def test_create_base_text_units_with_snapshot():
-    documents = load_test_table("source_documents")
+    context = await create_test_context()
 
-    context = create_run_context(None, None, None)
     config = create_graphrag_config()
-
     # test data was created with 4o, so we need to match the encoding for chunks to be identical
     config.chunks.encoding_model = "o200k_base"
     config.snapshots.transient = True
-
-    await context.runtime_storage.set("input", documents)
 
     await run_workflow(
         config,

@@ -11,37 +11,32 @@ from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.index.config.embeddings import (
     all_embeddings,
 )
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
 
 from .util import (
-    load_test_table,
+    create_test_context,
 )
 
 
 async def test_generate_text_embeddings():
-    inputs = [
-        "create_final_documents",
-        "create_final_relationships",
-        "create_final_text_units",
-        "create_final_entities",
-        "create_final_community_reports",
-    ]
+    context = await create_test_context(
+        storage=[
+            "create_final_documents",
+            "create_final_relationships",
+            "create_final_text_units",
+            "create_final_entities",
+            "create_final_community_reports",
+        ]
+    )
 
-    context = create_run_context(None, None, None)
     config = create_graphrag_config()
-
     config.embeddings.strategy = {
         "type": "mock",
     }
     config.embeddings.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
-
-    for input in inputs:
-        table = load_test_table(input)
-        await context.storage.set(f"{input}.parquet", table.to_parquet())
 
     await run_workflow(
         config,

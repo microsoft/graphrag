@@ -5,7 +5,6 @@
 from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.create_final_relationships import (
     run_workflow,
     workflow_name,
@@ -14,18 +13,19 @@ from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
+    create_test_context,
     load_test_table,
 )
 
 
 async def test_create_final_relationships():
-    edges = load_test_table("base_relationship_edges")
     expected = load_test_table(workflow_name)
 
-    config = create_graphrag_config()
-    context = create_run_context(None, None, None)
+    context = await create_test_context(
+        runtime_storage=["base_relationship_edges"],
+    )
 
-    await context.runtime_storage.set("base_relationship_edges", edges)
+    config = create_graphrag_config()
 
     await run_workflow(
         config,

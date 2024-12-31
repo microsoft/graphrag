@@ -12,7 +12,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     CommunityReportResponse,
     FindingModel,
 )
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.create_final_community_reports import (
     run_workflow,
     workflow_name,
@@ -21,6 +20,7 @@ from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
+    create_test_context,
     load_test_table,
 )
 
@@ -49,27 +49,23 @@ MOCK_LLM_CONFIG = {
 
 
 async def test_create_final_community_reports():
-    inputs = [
-        "create_final_nodes",
-        "create_final_covariates",
-        "create_final_relationships",
-        "create_final_entities",
-        "create_final_communities",
-    ]
-
     expected = load_test_table(workflow_name)
 
-    config = create_graphrag_config()
-    context = create_run_context(None, None, None)
+    context = await create_test_context(
+        storage=[
+            "create_final_nodes",
+            "create_final_covariates",
+            "create_final_relationships",
+            "create_final_entities",
+            "create_final_communities",
+        ]
+    )
 
+    config = create_graphrag_config()
     config.community_reports.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_CONFIG,
     }
-
-    for input in inputs:
-        table = load_test_table(input)
-        await context.storage.set(f"{input}.parquet", table.to_parquet())
 
     await run_workflow(
         config,
@@ -90,24 +86,20 @@ async def test_create_final_community_reports():
 
 
 async def test_create_final_community_reports_missing_llm_throws():
-    inputs = [
-        "create_final_nodes",
-        "create_final_covariates",
-        "create_final_relationships",
-        "create_final_entities",
-        "create_final_communities",
-    ]
+    context = await create_test_context(
+        storage=[
+            "create_final_nodes",
+            "create_final_covariates",
+            "create_final_relationships",
+            "create_final_entities",
+            "create_final_communities",
+        ]
+    )
 
     config = create_graphrag_config()
-    context = create_run_context(None, None, None)
-
     config.community_reports.strategy = {
         "type": "graph_intelligence",
     }
-
-    for input in inputs:
-        table = load_test_table(input)
-        await context.storage.set(f"{input}.parquet", table.to_parquet())
 
     with pytest.raises(VerbParallelizationError):
         await run_workflow(

@@ -4,7 +4,6 @@
 from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.create_final_documents import (
     run_workflow,
     workflow_name,
@@ -13,20 +12,19 @@ from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
+    create_test_context,
     load_test_table,
 )
 
 
 async def test_create_final_documents():
-    documents = load_test_table("source_documents")
-    base_text_units = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 
-    config = create_graphrag_config()
-    context = create_run_context(None, None, None)
+    context = await create_test_context(
+        runtime_storage=["create_base_text_units"],
+    )
 
-    await context.runtime_storage.set("input", documents)
-    await context.runtime_storage.set("create_base_text_units", base_text_units)
+    config = create_graphrag_config()
 
     await run_workflow(
         config,
@@ -40,17 +38,14 @@ async def test_create_final_documents():
 
 
 async def test_create_final_documents_with_attribute_columns():
-    documents = load_test_table("source_documents")
-    base_text_units = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 
+    context = await create_test_context(
+        runtime_storage=["create_base_text_units"],
+    )
+
     config = create_graphrag_config()
-    context = create_run_context(None, None, None)
-
     config.input.document_attribute_columns = ["title"]
-
-    await context.runtime_storage.set("input", documents)
-    await context.runtime_storage.set("create_base_text_units", base_text_units)
 
     await run_workflow(
         config,

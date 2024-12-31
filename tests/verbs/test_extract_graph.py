@@ -6,13 +6,12 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.run.utils import create_run_context
 from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
 
 from .util import (
-    load_input_tables,
+    create_test_context,
     load_test_table,
 )
 
@@ -48,20 +47,14 @@ MOCK_LLM_SUMMARIZATION_CONFIG = {
 
 
 async def test_extract_graph():
-    input_tables = load_input_tables([
-        "create_base_text_units",
-    ])
-
     nodes_expected = load_test_table("base_entity_nodes")
     edges_expected = load_test_table("base_relationship_edges")
 
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "create_base_text_units", input_tables["create_base_text_units"]
+    context = await create_test_context(
+        runtime_storage=["create_base_text_units"],
     )
 
     config = create_graphrag_config()
-
     config.entity_extraction.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_ENTITY_CONFIG,
@@ -100,17 +93,11 @@ async def test_extract_graph():
 
 
 async def test_extract_graph_with_snapshots():
-    input_tables = load_input_tables([
-        "create_base_text_units",
-    ])
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "create_base_text_units", input_tables["create_base_text_units"]
+    context = await create_test_context(
+        runtime_storage=["create_base_text_units"],
     )
 
     config = create_graphrag_config()
-
     config.entity_extraction.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_ENTITY_CONFIG,
@@ -119,7 +106,6 @@ async def test_extract_graph_with_snapshots():
         "type": "graph_intelligence",
         "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
     }
-
     config.snapshots.graphml = True
     config.snapshots.transient = True
 
@@ -137,17 +123,11 @@ async def test_extract_graph_with_snapshots():
 
 
 async def test_extract_graph_missing_llm_throws():
-    input_tables = load_input_tables([
-        "create_base_text_units",
-    ])
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "create_base_text_units", input_tables["create_base_text_units"]
+    context = await create_test_context(
+        runtime_storage=["create_base_text_units"],
     )
 
     config = create_graphrag_config()
-
     config.entity_extraction.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_ENTITY_CONFIG,
