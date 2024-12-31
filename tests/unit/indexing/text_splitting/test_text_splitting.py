@@ -66,8 +66,7 @@ def test_split_text_large_input(mock_split):
 
 @mock.patch("graphrag.index.text_splitting.text_splitting.split_single_text_on_tokens")
 @mock.patch("graphrag.index.text_splitting.text_splitting.Tokenizer")
-@mock.patch("tiktoken.get_encoding")
-def test_token_text_splitter(mock_get_encoding, mock_tokenizer, mock_split_text):
+def test_token_text_splitter(mock_tokenizer, mock_split_text):
     text = "chunk1 chunk2 chunk3"
     expected_chunks = ["chunk1", "chunk2", "chunk3"]
 
@@ -75,57 +74,32 @@ def test_token_text_splitter(mock_get_encoding, mock_tokenizer, mock_split_text)
     mock_tokenizer.return_value = mocked_tokenizer
     mock_split_text.return_value = expected_chunks
 
-    mock_get_encoding.return_value = MagicMock(tokens_per_chunk=5, chunk_overlap=2)
-
-    splitter = TokenTextSplitter(
-        encoding_name="mock_encoding",
-    )
+    splitter = TokenTextSplitter()
 
     splitter.split_text(["chunk1", "chunk2", "chunk3"])
 
     mock_split_text.assert_called_once_with(text=text, tokenizer=mocked_tokenizer)
 
 
-@mock.patch("tiktoken.get_encoding")
-def test_encode_basic(mock_get_encoding):
-    mock_encoder = MagicMock()
-    mock_encoder.encode.return_value = [1, 2, 3]
-    mock_get_encoding.return_value = mock_encoder
-
-    splitter = TokenTextSplitter(encoding_name="mock_encoding")
+def test_encode_basic():
+    splitter = TokenTextSplitter()
     result = splitter.encode("abc def")
 
-    assert result == [1, 2, 3], "Encoding failed to return expected tokens"
-    mock_encoder.encode.assert_called_once_with(
-        "abc def", allowed_special=set(), disallowed_special="all"
-    )
+    assert result == [13997, 711], "Encoding failed to return expected tokens"
 
 
-@mock.patch("tiktoken.get_encoding")
-def test_num_tokens_empty_input(mock_get_encoding):
-    mock_encoder = MagicMock()
-    mock_encoder.encode.return_value = []
-    mock_get_encoding.return_value = mock_encoder
-
-    splitter = TokenTextSplitter(encoding_name="mock_encoding")
+def test_num_tokens_empty_input():
+    splitter = TokenTextSplitter()
     result = splitter.num_tokens("")
 
     assert result == 0, "Token count for empty input should be 0"
 
 
-@mock.patch("tiktoken.encoding_for_model")
-def test_model_name(mock_get_encoding):
-    mock_encoder = MagicMock()
-    mock_encoder.encode.return_value = [1, 2, 3]
-    mock_get_encoding.return_value = mock_encoder
-
-    splitter = TokenTextSplitter(model_name="mock_model")
+def test_model_name():
+    splitter = TokenTextSplitter(model_name="gpt-4o")
     result = splitter.encode("abc def")
 
-    assert result == [1, 2, 3], "Encoding failed to return expected tokens"
-    mock_encoder.encode.assert_called_once_with(
-        "abc def", allowed_special=set(), disallowed_special="all"
-    )
+    assert result == [26682, 1056], "Encoding failed to return expected tokens"
 
 
 @mock.patch("tiktoken.encoding_for_model", side_effect=KeyError)
