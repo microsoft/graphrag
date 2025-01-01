@@ -22,6 +22,7 @@ from graphrag.query.llm.oai.typing import (
     OPENAI_RETRY_ERROR_TYPES,
     OpenaiApiType,
 )
+import litellm
 
 _MODEL_REQUIRED_MSG = "model is required"
 
@@ -193,7 +194,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = self.sync_client.chat.completions.create(  # type: ignore
+        response = litellm.completion(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
             stream=streaming,
@@ -233,7 +234,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = self.sync_client.chat.completions.create(  # type: ignore
+        response = litellm.completion(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
             stream=True,
@@ -265,7 +266,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = await self.async_client.chat.completions.create(  # type: ignore
+        response = await litellm.acompletion(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
             stream=streaming,
@@ -306,7 +307,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = await self.async_client.chat.completions.create(  # type: ignore
+        response = await litellm.acompletion(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
             stream=True,
