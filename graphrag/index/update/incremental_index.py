@@ -239,7 +239,7 @@ async def _update_text_units(
     )
 
     await write_table_to_storage(
-        merged_text_units, "create_final_text+units", update_storage
+        merged_text_units, "create_final_text_units", update_storage
     )
 
     return merged_text_units
