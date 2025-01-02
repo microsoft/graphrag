@@ -257,6 +257,69 @@ def run_drift_search(
     return response, context_data
 
 
+def run_basic_search(
+    config_filepath: Path | None,
+    data_dir: Path | None,
+    root_dir: Path,
+    streaming: bool,
+    query: str,
+):
+    """Perform a basics search with a given query.
+
+    Loads index files required for basic search and calls the Query API.
+    """
+    root = root_dir.resolve()
+    config = load_config(root, config_filepath)
+    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
+    resolve_paths(config)
+
+    dataframe_dict = _resolve_output_files(
+        config=config,
+        output_list=[
+            "create_final_text_units.parquet",
+        ],
+    )
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+
+    print(streaming)  # noqa: T201
+
+    # # call the Query API
+    if streaming:
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.basic_search_streaming(
+                config=config,
+                text_units=final_text_units,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
+    # not streaming
+    response, context_data = asyncio.run(
+        api.basic_search(
+            config=config,
+            text_units=final_text_units,
+            query=query,
+        )
+    )
+    logger.success(f"Basic Search Response:\n{response}")
+    # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+    # External users should use the API directly to get the response and context data.
+    return response, context_data
+
+
 def _resolve_output_files(
     config: GraphRagConfig,
     output_list: list[str],

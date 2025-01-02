@@ -5,6 +5,9 @@
 
 from typing_extensions import NotRequired
 
+from graphrag.config.input_models.basic_search_config_input import (
+    BasicSearchConfigInput,
+)
 from graphrag.config.input_models.cache_config_input import CacheConfigInput
 from graphrag.config.input_models.chunking_config_input import ChunkingConfigInput
 from graphrag.config.input_models.claim_extraction_config_input import (
@@ -61,3 +64,4 @@ class GraphRagConfigInput(LLMConfigInput):
     skip_workflows: NotRequired[list[str] | str | None]
     local_search: NotRequired[LocalSearchConfigInput | None]
     global_search: NotRequired[GlobalSearchConfigInput | None]
+    basic_search: NotRequired[BasicSearchConfigInput | None]
