@@ -58,4 +58,4 @@ Output:"""
 
 
 CONTINUE_PROMPT = "MANY entities were missed in the last extraction.  Add them below using the same format:\n"
-LOOP_PROMPT = "It appears some entities may have still been missed.  Answer YES {tuple_delimiter} NO if there are still entities that need to be added.\n"
+LOOP_PROMPT = "It appears some entities may have still been missed.  Answer Y or N if there are still entities that need to be added.\n"
