@@ -34,6 +34,6 @@ async def run_workflow(
         documents, text_units, input.document_attribute_columns
     )
 
-    await write_table_to_storage(output, "create_final_documents", context.storage)
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output

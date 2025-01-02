@@ -30,6 +30,6 @@ async def run_workflow(
 
     output = create_final_entities(base_entity_nodes)
 
-    await write_table_to_storage(output, "create_final_entities", context.storage)
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output

@@ -40,6 +40,6 @@ async def run_workflow(
         base_communities,
     )
 
-    await write_table_to_storage(output, "create_final_communities", context.storage)
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output

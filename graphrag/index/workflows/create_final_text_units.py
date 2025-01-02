@@ -44,6 +44,6 @@ async def run_workflow(
         final_covariates,
     )
 
-    await write_table_to_storage(output, "create_final_text_units", context.storage)
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output

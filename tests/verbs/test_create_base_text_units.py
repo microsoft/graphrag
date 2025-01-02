@@ -4,7 +4,7 @@
 from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.workflows.create_base_text_units import run_workflow
+from graphrag.index.workflows.create_base_text_units import run_workflow, workflow_name
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
@@ -15,7 +15,7 @@ from .util import (
 
 
 async def test_create_base_text_units():
-    expected = load_test_table("create_base_text_units")
+    expected = load_test_table(workflow_name)
 
     context = await create_test_context()
 
@@ -29,6 +29,6 @@ async def test_create_base_text_units():
         NoopVerbCallbacks(),
     )
 
-    actual = await load_table_from_storage("create_base_text_units", context.storage)
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     compare_outputs(actual, expected)

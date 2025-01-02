@@ -46,6 +46,6 @@ async def run_workflow(
         layout_enabled=layout_enabled,
     )
 
-    await write_table_to_storage(output, "create_final_nodes", context.storage)
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output

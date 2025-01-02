@@ -48,8 +48,6 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await write_table_to_storage(
-        output, "create_final_community_reports", context.storage
-    )
+    await write_table_to_storage(output, workflow_name, context.storage)
 
     return output
