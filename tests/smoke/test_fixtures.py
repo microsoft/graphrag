@@ -291,7 +291,7 @@ class TestIndexer:
         if dispose is not None:
             dispose()
 
-        if not workflow_config.get("skip_assert", False):
+        if not workflow_config.get("skip_assert"):
             print("performing dataset assertions")
             self.__assert_indexer_outputs(root, workflow_config)
 
