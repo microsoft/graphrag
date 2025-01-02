@@ -8,12 +8,12 @@ from enum import Enum
 from pathlib import Path
 from typing import cast
 
-from datashaper import AsyncType
 from environs import Env
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import (
+    AsyncType,
     CacheType,
     InputFileType,
     InputType,

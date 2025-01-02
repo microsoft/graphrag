@@ -3,9 +3,9 @@
 
 """Parameterization settings for the default configuration."""
 
-from datashaper import AsyncType
 from typing_extensions import NotRequired, TypedDict
 
+from graphrag.config.enums import AsyncType
 from graphrag.config.input_models.llm_parameters_input import LLMParametersInput
 from graphrag.config.input_models.parallelization_parameters_input import (
     ParallelizationParametersInput,
