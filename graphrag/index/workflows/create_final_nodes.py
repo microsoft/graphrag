@@ -13,7 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_nodes import (
     create_final_nodes,
 )
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_nodes"
 
@@ -24,11 +24,15 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final nodes."""
-    base_entity_nodes = await context.runtime_storage.get("base_entity_nodes")
-    base_relationship_edges = await context.runtime_storage.get(
-        "base_relationship_edges"
+    base_entity_nodes = await load_table_from_storage(
+        "base_entity_nodes", context.storage
     )
-    base_communities = await context.runtime_storage.get("base_communities")
+    base_relationship_edges = await load_table_from_storage(
+        "base_relationship_edges", context.storage
+    )
+    base_communities = await load_table_from_storage(
+        "base_communities", context.storage
+    )
 
     embed_config = config.embed_graph
     layout_enabled = config.umap.enabled
@@ -41,11 +45,7 @@ async def run_workflow(
         embed_config=embed_config,
         layout_enabled=layout_enabled,
     )
-    await snapshot(
-        output,
-        name="create_final_nodes",
-        storage=context.storage,
-        formats=["parquet"],
-    )
+
+    await write_table_to_storage(output, "create_final_nodes", context.storage)
 
     return output

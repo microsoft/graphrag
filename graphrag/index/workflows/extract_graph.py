@@ -14,8 +14,8 @@ from graphrag.index.flows.extract_graph import (
     extract_graph,
 )
 from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.snapshot import snapshot
 from graphrag.index.operations.snapshot_graphml import snapshot_graphml
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "extract_graph"
 
@@ -26,7 +26,9 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
-    text_units = await context.runtime_storage.get("create_base_text_units")
+    text_units = await load_table_from_storage(
+        "create_base_text_units", context.storage
+    )
 
     extraction_strategy = config.entity_extraction.resolved_strategy(
         config.root_dir, config.encoding_model
@@ -54,9 +56,11 @@ async def run_workflow(
         summarization_num_threads=summarization_num_threads,
     )
 
-    await context.runtime_storage.set("base_entity_nodes", base_entity_nodes)
-    await context.runtime_storage.set(
-        "base_relationship_edges", base_relationship_edges
+    await write_table_to_storage(
+        base_entity_nodes, "base_entity_nodes", context.storage
+    )
+    await write_table_to_storage(
+        base_relationship_edges, "base_relationship_edges", context.storage
     )
 
     if config.snapshots.graphml:
@@ -66,18 +70,4 @@ async def run_workflow(
             graph,
             name="graph",
             storage=context.storage,
-        )
-
-    if config.snapshots.transient:
-        await snapshot(
-            base_entity_nodes,
-            name="base_entity_nodes",
-            storage=context.storage,
-            formats=["parquet"],
-        )
-        await snapshot(
-            base_relationship_edges,
-            name="base_relationship_edges",
-            storage=context.storage,
-            formats=["parquet"],
         )

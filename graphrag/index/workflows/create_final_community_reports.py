@@ -13,8 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports,
 )
-from graphrag.index.operations.snapshot import snapshot
-from graphrag.utils.storage import load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_community_reports"
 
@@ -49,11 +48,8 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await snapshot(
-        output,
-        name="create_final_community_reports",
-        storage=context.storage,
-        formats=["parquet"],
+    await write_table_to_storage(
+        output, "create_final_community_reports", context.storage
     )
 
     return output

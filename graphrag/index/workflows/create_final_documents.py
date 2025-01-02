@@ -13,7 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_documents import (
     create_final_documents,
 )
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_documents"
 
@@ -24,19 +24,16 @@ async def run_workflow(
     _callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final documents."""
-    documents = await context.runtime_storage.get("input")
-    text_units = await context.runtime_storage.get("create_base_text_units")
+    documents = await load_table_from_storage("input", context.storage)
+    text_units = await load_table_from_storage(
+        "create_base_text_units", context.storage
+    )
 
     input = config.input
     output = create_final_documents(
         documents, text_units, input.document_attribute_columns
     )
 
-    await snapshot(
-        output,
-        name="create_final_documents",
-        storage=context.storage,
-        formats=["parquet"],
-    )
+    await write_table_to_storage(output, "create_final_documents", context.storage)
 
     return output

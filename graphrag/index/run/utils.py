@@ -24,7 +24,6 @@ def create_run_context(
         stats=stats or PipelineRunStats(),
         cache=cache or InMemoryCache(),
         storage=storage or MemoryPipelineStorage(),
-        runtime_storage=MemoryPipelineStorage(),
     )
 
 

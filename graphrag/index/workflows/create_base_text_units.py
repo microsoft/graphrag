@@ -13,7 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_base_text_units import (
     create_base_text_units,
 )
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_base_text_units"
 
@@ -24,7 +24,7 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform base text_units."""
-    documents = await context.runtime_storage.get("input")
+    documents = await load_table_from_storage("input", context.storage)
 
     chunks = config.chunks
 
@@ -38,14 +38,6 @@ async def run_workflow(
         strategy=chunks.strategy,
     )
 
-    await context.runtime_storage.set("create_base_text_units", output)
-
-    if config.snapshots.transient:
-        await snapshot(
-            output,
-            name="create_base_text_units",
-            storage=context.storage,
-            formats=["parquet"],
-        )
+    await write_table_to_storage(output, "create_base_text_units", context.storage)
 
     return output

@@ -11,28 +11,19 @@ from graphrag.utils.storage import write_table_to_storage
 pd.set_option("display.max_columns", None)
 
 
-async def create_test_context(
-    storage: list[str] | None = None,
-    runtime_storage: list[str] | None = None,
-) -> PipelineRunContext:
-    """Create a test context with tables loaded into storage and runtime storage."""
+async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:
+    """Create a test context with tables loaded into storage storage."""
     context = create_run_context(None, None, None)
 
     # always set the input docs
     input = load_test_table("source_documents")
-    await context.runtime_storage.set("input", input)
+    await write_table_to_storage(input, "input", context.storage)
 
     if storage:
         for name in storage:
             table = load_test_table(name)
             # normal storage interface insists on bytes
             await write_table_to_storage(table, name, context.storage)
-
-    if runtime_storage:
-        for name in runtime_storage:
-            table = load_test_table(name)
-            # runtime storage doesn't care what is in there
-            await context.runtime_storage.set(name, table)
 
     return context
 

@@ -36,6 +36,7 @@ from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.storage import delete_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
 
@@ -53,6 +54,17 @@ default_workflows = [
     "create_final_text_units",
     "create_final_community_reports",
     "generate_text_embeddings",
+]
+
+# these are transient outputs written to storage for downstream workflow use
+# they are not required after indexing, so we'll clean them up at the end for clarity
+# (unless snapshots.transient is set!)
+transient_outputs = [
+    "input",
+    "base_communities",
+    "base_entity_nodes",
+    "base_relationship_edges",
+    "create_base_text_units",
 ]
 
 
@@ -158,7 +170,7 @@ async def _run_workflows(
 
     try:
         await _dump_stats(context.stats, context.storage)
-        await context.runtime_storage.set("input", dataset)
+        await write_table_to_storage(dataset, "input", context.storage)
 
         for workflow in default_workflows:
             last_workflow = workflow
@@ -194,6 +206,11 @@ async def _run_workflows(
 
         context.stats.total_runtime = time.time() - start_time
         await _dump_stats(context.stats, context.storage)
+
+        if not config.snapshots.transient:
+            for output in transient_outputs:
+                await delete_table_from_storage(output, context.storage)
+
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         cast("WorkflowCallbacks", callbacks).on_error(

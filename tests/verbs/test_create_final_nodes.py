@@ -21,7 +21,7 @@ async def test_create_final_nodes():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        runtime_storage=[
+        storage=[
             "base_entity_nodes",
             "base_relationship_edges",
             "base_communities",

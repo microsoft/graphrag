@@ -13,7 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_relationships import (
     create_final_relationships,
 )
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_relationships"
 
@@ -24,17 +24,12 @@ async def run_workflow(
     _callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final relationships."""
-    base_relationship_edges = await context.runtime_storage.get(
-        "base_relationship_edges"
+    base_relationship_edges = await load_table_from_storage(
+        "base_relationship_edges", context.storage
     )
 
     output = create_final_relationships(base_relationship_edges)
 
-    await snapshot(
-        output,
-        name="create_final_relationships",
-        storage=context.storage,
-        formats=["parquet"],
-    )
+    await write_table_to_storage(output, "create_final_relationships", context.storage)
 
     return output

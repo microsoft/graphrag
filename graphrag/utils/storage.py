@@ -34,6 +34,11 @@ async def write_table_to_storage(
     await storage.set(f"{name}.parquet", table.to_parquet())
 
 
+async def delete_table_from_storage(name: str, storage: PipelineStorage) -> None:
+    """Delete a table to storage."""
+    await storage.delete(f"{name}.parquet")
+
+
 async def storage_has_table(name: str, storage: PipelineStorage) -> bool:
     """Check if a table exists in storage."""
     return await storage.has(f"{name}.parquet")

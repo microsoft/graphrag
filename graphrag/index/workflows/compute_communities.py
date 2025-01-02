@@ -11,7 +11,7 @@ from datashaper import (
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.compute_communities import compute_communities
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "compute_communities"
 
@@ -22,8 +22,8 @@ async def run_workflow(
     _callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base communities."""
-    base_relationship_edges = await context.runtime_storage.get(
-        "base_relationship_edges"
+    base_relationship_edges = await load_table_from_storage(
+        "base_relationship_edges", context.storage
     )
 
     max_cluster_size = config.cluster_graph.max_cluster_size
@@ -37,14 +37,6 @@ async def run_workflow(
         seed=seed,
     )
 
-    await context.runtime_storage.set("base_communities", base_communities)
-
-    if config.snapshots.transient:
-        await snapshot(
-            base_communities,
-            name="base_communities",
-            storage=context.storage,
-            formats=["parquet"],
-        )
+    await write_table_to_storage(base_communities, "base_communities", context.storage)
 
     return base_communities

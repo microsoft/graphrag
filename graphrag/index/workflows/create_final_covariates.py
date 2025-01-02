@@ -13,7 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_covariates import (
     create_final_covariates,
 )
-from graphrag.index.operations.snapshot import snapshot
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_covariates"
 
@@ -24,7 +24,9 @@ async def run_workflow(
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to extract and format covariates."""
-    text_units = await context.runtime_storage.get("create_base_text_units")
+    text_units = await load_table_from_storage(
+        "create_base_text_units", context.storage
+    )
 
     extraction_strategy = config.claim_extraction.resolved_strategy(
         config.root_dir, config.encoding_model
@@ -44,11 +46,6 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await snapshot(
-        output,
-        name="create_final_covariates",
-        storage=context.storage,
-        formats=["parquet"],
-    )
+    await write_table_to_storage(output, "create_final_covariates", context.storage)
 
     return output

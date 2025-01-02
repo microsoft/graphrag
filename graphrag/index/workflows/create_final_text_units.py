@@ -13,8 +13,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units,
 )
-from graphrag.index.operations.snapshot import snapshot
-from graphrag.utils.storage import load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "create_final_text_units"
 
@@ -25,7 +24,9 @@ async def run_workflow(
     _callbacks: VerbCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform the text units."""
-    text_units = await context.runtime_storage.get("create_base_text_units")
+    text_units = await load_table_from_storage(
+        "create_base_text_units", context.storage
+    )
     final_entities = await load_table_from_storage(
         "create_final_entities", context.storage
     )
@@ -43,11 +44,6 @@ async def run_workflow(
         final_covariates,
     )
 
-    await snapshot(
-        output,
-        name="create_final_text_units",
-        storage=context.storage,
-        formats=["parquet"],
-    )
+    await write_table_to_storage(output, "create_final_text_units", context.storage)
 
     return output

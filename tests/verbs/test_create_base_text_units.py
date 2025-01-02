@@ -5,6 +5,7 @@ from datashaper import NoopVerbCallbacks
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.workflows.create_base_text_units import run_workflow
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
@@ -28,25 +29,6 @@ async def test_create_base_text_units():
         NoopVerbCallbacks(),
     )
 
-    actual = await context.runtime_storage.get("create_base_text_units")
+    actual = await load_table_from_storage("create_base_text_units", context.storage)
 
     compare_outputs(actual, expected)
-
-
-async def test_create_base_text_units_with_snapshot():
-    context = await create_test_context()
-
-    config = create_graphrag_config()
-    # test data was created with 4o, so we need to match the encoding for chunks to be identical
-    config.chunks.encoding_model = "o200k_base"
-    config.snapshots.transient = True
-
-    await run_workflow(
-        config,
-        context,
-        NoopVerbCallbacks(),
-    )
-
-    assert context.storage.keys() == ["create_base_text_units.parquet"], (
-        "Text unit snapshot keys differ"
-    )
