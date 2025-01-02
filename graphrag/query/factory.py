@@ -14,6 +14,10 @@ from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.get_client import get_llm, get_text_embedder
+from graphrag.query.structured_search.basic_search.basic_context import (
+    BasicSearchContext,
+)
+from graphrag.query.structured_search.basic_search.search import BasicSearch
 from graphrag.query.structured_search.drift_search.drift_context import (
     DRIFTSearchContextBuilder,
 )
@@ -190,4 +194,44 @@ def get_drift_search_engine(
             config=config.drift_search,
         ),
         token_encoder=token_encoder,
+    )
+
+
+def get_basic_search_engine(
+    text_units: list[TextUnit],
+    text_unit_embeddings: BaseVectorStore,
+    config: GraphRagConfig,
+    system_prompt: str | None = None,
+) -> BasicSearch:
+    """Create a basic search engine based on data + configuration."""
+    llm = get_llm(config)
+    text_embedder = get_text_embedder(config)
+    token_encoder = tiktoken.get_encoding(config.encoding_model)
+
+    ls_config = config.basic_search
+
+    return BasicSearch(
+        llm=llm,
+        system_prompt=system_prompt,
+        context_builder=BasicSearchContext(
+            text_embedder=text_embedder,
+            text_unit_embeddings=text_unit_embeddings,
+            text_units=text_units,
+            token_encoder=token_encoder,
+        ),
+        token_encoder=token_encoder,
+        llm_params={
+            "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
+            "temperature": ls_config.temperature,
+            "top_p": ls_config.top_p,
+            "n": ls_config.n,
+        },
+        context_builder_params={
+            "text_unit_prop": ls_config.text_unit_prop,
+            "conversation_history_max_turns": ls_config.conversation_history_max_turns,
+            "conversation_history_user_turns_only": True,
+            "return_candidate_context": False,
+            "embedding_vectorstore_key": "id",
+            "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
+        },
     )
