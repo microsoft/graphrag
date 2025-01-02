@@ -274,7 +274,7 @@ class TestIndexer:
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
-        if workflow_config.get("skip", False):
+        if workflow_config.get("skip"):
             print(f"skipping smoke test {input_path})")
             return
 
