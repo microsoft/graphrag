@@ -7,6 +7,7 @@ from devtools import pformat
 from pydantic import Field
 
 import graphrag.config.defaults as defs
+from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
@@ -145,6 +146,11 @@ class GraphRagConfig(LLMConfig):
         description="The drift search configuration.", default=DRIFTSearchConfig()
     )
     """The drift search configuration."""
+
+    basic_search: BasicSearchConfig = Field(
+        description="The basic search configuration.", default=BasicSearchConfig()
+    )
+    """The basic search configuration."""
 
     encoding_model: str = Field(
         description="The encoding model to use.", default=defs.ENCODING_MODEL

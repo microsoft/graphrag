@@ -60,3 +60,16 @@ class DRIFTContextBuilder(ABC):
         **kwargs,
     ) -> tuple[pd.DataFrame, dict[str, int]]:
         """Build the context for the primer search actions."""
+
+
+class BasicContextBuilder(ABC):
+    """Base class for basic-search context builders."""
+
+    @abstractmethod
+    def build_context(
+        self,
+        query: str,
+        conversation_history: ConversationHistory | None = None,
+        **kwargs,
+    ) -> ContextBuilderResult:
+        """Build the context for the basic search mode."""

@@ -54,6 +54,7 @@ from graphrag.config.input_models.text_embedding_config_input import (
     TextEmbeddingConfigInput,
 )
 from graphrag.config.input_models.umap_config_input import UmapConfigInput
+from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
@@ -229,6 +230,7 @@ class TestDefaultConfig(unittest.TestCase):
         assert InputConfig is not None
         assert LLMParameters is not None
         assert LocalSearchConfig is not None
+        assert BasicSearchConfig is not None
         assert ParallelizationParameters is not None
         assert ReportingConfig is not None
         assert SnapshotsConfig is not None

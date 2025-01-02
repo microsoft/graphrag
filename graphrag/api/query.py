@@ -28,9 +28,11 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
+    text_unit_text_embedding,
 )
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.query.factory import (
+    get_basic_search_engine,
     get_drift_search_engine,
     get_global_search_engine,
     get_local_search_engine,
@@ -421,6 +423,109 @@ async def drift_search(
             return response, context_data
         case list():
             return response, context_data
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def basic_search(
+    config: GraphRagConfig,
+    text_units: pd.DataFrame,
+    query: str,
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
+    """Perform a basic search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - response_type (str): The response type to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = config.embeddings.vector_store
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+
+    description_embedding_store = _get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=text_unit_text_embedding,
+    )
+
+    prompt = _load_search_prompt(config.root_dir, config.basic_search.prompt)
+
+    search_engine = get_basic_search_engine(
+        config=config,
+        text_units=read_indexer_text_units(text_units),
+        text_unit_embeddings=description_embedding_store,
+        system_prompt=prompt,
+    )
+
+    result: SearchResult = await search_engine.asearch(query=query)
+    response = result.response
+    context_data = _reformat_context_data(result.context_data)  # type: ignore
+    return response, context_data
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def basic_search_streaming(
+    config: GraphRagConfig,
+    text_units: pd.DataFrame,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a local search and return the context data and response via a generator.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = config.embeddings.vector_store
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+
+    description_embedding_store = _get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=text_unit_text_embedding,
+    )
+
+    prompt = _load_search_prompt(config.root_dir, config.basic_search.prompt)
+
+    search_engine = get_basic_search_engine(
+        config=config,
+        text_units=read_indexer_text_units(text_units),
+        text_unit_embeddings=description_embedding_store,
+        system_prompt=prompt,
+    )
+
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_chunk in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_chunk)  # type: ignore
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_chunk
 
 
 def _get_embedding_store(
