@@ -3,7 +3,7 @@
 
 import pytest
 
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.workflows.extract_graph import (
@@ -68,7 +68,7 @@ async def test_extract_graph():
     await run_workflow(
         config,
         context,
-        NoopVerbCallbacks(),
+        NoopWorkflowCallbacks(),
     )
 
     # graph construction creates transient tables for nodes, edges, and communities
@@ -110,5 +110,5 @@ async def test_extract_graph_missing_llm_throws():
         await run_workflow(
             config,
             context,
-            NoopVerbCallbacks(),
+            NoopWorkflowCallbacks(),
         )

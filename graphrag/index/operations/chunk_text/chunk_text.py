@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.index.operations.chunk_text.typing import (
     ChunkInput,
@@ -23,7 +23,7 @@ def chunk_text(
     overlap: int,
     encoding_model: str,
     strategy: ChunkStrategyType,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> pd.Series:
     """
     Chunk a piece of text into smaller pieces.

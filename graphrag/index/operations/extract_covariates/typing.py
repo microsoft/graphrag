@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 
 @dataclass
@@ -41,7 +41,7 @@ CovariateExtractStrategy = Callable[
         Iterable[str],
         list[str],
         dict[str, str],
-        VerbCallbacks,
+        WorkflowCallbacks,
         PipelineCache,
         dict[str, Any],
     ],

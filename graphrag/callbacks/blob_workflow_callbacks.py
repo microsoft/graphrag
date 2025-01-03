@@ -84,7 +84,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
         # update the blob's block count
         self._num_blocks += 1
 
-    def on_error(
+    def error(
         self,
         message: str,
         cause: BaseException | None = None,
@@ -100,10 +100,10 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
             "details": details,
         })
 
-    def on_warning(self, message: str, details: dict | None = None):
+    def warning(self, message: str, details: dict | None = None):
         """Report a warning."""
         self._write_log({"type": "warning", "data": message, "details": details})
 
-    def on_log(self, message: str, details: dict | None = None):
+    def log(self, message: str, details: dict | None = None):
         """Report a generic log message."""
         self._write_log({"type": "log", "data": message, "details": details})

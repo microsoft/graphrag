@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.index.config.embeddings import (
@@ -38,7 +38,7 @@ async def test_generate_text_embeddings():
     await run_workflow(
         config,
         context,
-        NoopVerbCallbacks(),
+        NoopWorkflowCallbacks(),
     )
 
     parquet_files = context.storage.keys()

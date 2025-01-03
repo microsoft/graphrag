@@ -6,7 +6,7 @@
 import asyncio
 import sys
 
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
 from graphrag.logger.print_progress import ProgressLogger
@@ -18,7 +18,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     llm = load_llm(
         "test-llm",
         parameters.llm,
-        callbacks=NoopVerbCallbacks(),
+        callbacks=NoopWorkflowCallbacks(),
         cache=None,
     )
     try:
@@ -32,7 +32,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embed_llm = load_llm_embeddings(
         "test-embed-llm",
         parameters.embeddings.llm,
-        callbacks=NoopVerbCallbacks(),
+        callbacks=NoopWorkflowCallbacks(),
         cache=None,
     )
     try:

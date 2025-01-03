@@ -8,7 +8,7 @@ from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_entities.graph_extractor import GraphExtractor
 from graphrag.index.operations.extract_entities.typing import (
@@ -22,7 +22,7 @@ from graphrag.index.operations.extract_entities.typing import (
 async def run_graph_intelligence(
     docs: list[Document],
     entity_types: EntityTypes,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
 ) -> EntityExtractionResult:
@@ -36,7 +36,7 @@ async def run_extract_entities(
     llm: ChatLLM,
     docs: list[Document],
     entity_types: EntityTypes,
-    callbacks: VerbCallbacks | None,
+    callbacks: WorkflowCallbacks | None,
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the entity extraction chain."""

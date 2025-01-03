@@ -30,7 +30,7 @@ from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
     from graphrag.cache.pipeline_cache import PipelineCache
-    from graphrag.callbacks.verb_callbacks import VerbCallbacks
+    from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)
@@ -105,7 +105,7 @@ def load_llm(
     name: str,
     config: LLMParameters,
     *,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache | None,
     chat_only=False,
 ) -> ChatLLM:
@@ -135,7 +135,7 @@ def load_llm_embeddings(
     name: str,
     llm_config: LLMParameters,
     *,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache | None,
     chat_only=False,
 ) -> EmbeddingsLLM:
@@ -160,7 +160,7 @@ def load_llm_embeddings(
     raise ValueError(msg)
 
 
-def _create_error_handler(callbacks: VerbCallbacks) -> ErrorHandlerFn:
+def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
     def on_error(
         error: BaseException | None = None,
         stack: str | None = None,

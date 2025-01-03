@@ -10,7 +10,7 @@ from typing import Any
 from typing_extensions import TypedDict
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 ExtractedEntity = dict[str, Any]
 StrategyConfig = dict[str, Any]
@@ -45,7 +45,7 @@ CommunityReportsStrategy = Callable[
         str | int,
         str,
         int,
-        VerbCallbacks,
+        WorkflowCallbacks,
         PipelineCache,
         StrategyConfig,
     ],

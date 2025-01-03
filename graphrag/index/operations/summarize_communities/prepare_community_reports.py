@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
     parallel_sort_context_batch,
 )
@@ -24,7 +24,7 @@ def prepare_community_reports(
     nodes,
     edges,
     claims,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     max_tokens: int = 16_000,
 ):
     """Prep communities for report generation."""

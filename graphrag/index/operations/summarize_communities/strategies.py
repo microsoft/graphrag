@@ -9,7 +9,7 @@ import traceback
 from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
     CommunityReportsExtractor,
@@ -28,7 +28,7 @@ async def run_graph_intelligence(
     community: str | int,
     input: str,
     level: int,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
 ) -> CommunityReport | None:
@@ -44,7 +44,7 @@ async def _run_extractor(
     input: str,
     level: int,
     args: StrategyConfig,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> CommunityReport | None:
     # RateLimiter
     rate_limiter = RateLimiter(rate=1, per=60)
