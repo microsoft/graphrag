@@ -15,6 +15,9 @@ class EmbedGraphConfig(BaseModel):
         description="A flag indicating whether to enable node2vec.",
         default=defs.NODE2VEC_ENABLED,
     )
+    dimensions: int = Field(
+        description="The node2vec vector dimensions.", default=defs.NODE2VEC_DIMENSIONS
+    )
     num_walks: int = Field(
         description="The node2vec number of walks.", default=defs.NODE2VEC_NUM_WALKS
     )
@@ -30,21 +33,7 @@ class EmbedGraphConfig(BaseModel):
     random_seed: int = Field(
         description="The node2vec random seed.", default=defs.NODE2VEC_RANDOM_SEED
     )
-    strategy: dict | None = Field(
-        description="The graph embedding strategy override.", default=None
+    use_lcc: bool = Field(
+        description="Whether to use the largest connected component.",
+        default=defs.USE_LCC,
     )
-
-    def resolved_strategy(self) -> dict:
-        """Get the resolved node2vec strategy."""
-        from graphrag.index.operations.embed_graph.typing import (
-            EmbedGraphStrategyType,
-        )
-
-        return self.strategy or {
-            "type": EmbedGraphStrategyType.node2vec,
-            "num_walks": self.num_walks,
-            "walk_length": self.walk_length,
-            "window_size": self.window_size,
-            "iterations": self.iterations,
-            "random_seed": self.iterations,
-        }

@@ -88,6 +88,7 @@ class SearchType(Enum):
     LOCAL = "local"
     GLOBAL = "global"
     DRIFT = "drift"
+    BASIC = "basic"
 
     def __str__(self):
         """Return the string representation of the enum value."""
@@ -424,7 +425,12 @@ def _query_cli(
     ] = False,
 ):
     """Query a knowledge graph index."""
-    from graphrag.cli.query import run_drift_search, run_global_search, run_local_search
+    from graphrag.cli.query import (
+        run_basic_search,
+        run_drift_search,
+        run_global_search,
+        run_local_search,
+    )
 
     match method:
         case SearchType.LOCAL:
@@ -455,6 +461,14 @@ def _query_cli(
                 root_dir=root,
                 community_level=community_level,
                 streaming=False,  # Drift search does not support streaming (yet)
+                query=query,
+            )
+        case SearchType.BASIC:
+            run_basic_search(
+                config_filepath=config,
+                data_dir=data,
+                root_dir=root,
+                streaming=streaming,
                 query=query,
             )
         case _:

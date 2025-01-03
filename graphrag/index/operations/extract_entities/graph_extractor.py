@@ -91,9 +91,9 @@ class GraphExtractor:
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or "cl100k_base")
-        yes = f"{encoding.encode('YES')[0]}"
-        no = f"{encoding.encode('NO')[0]}"
+        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
+        yes = f"{encoding.encode('Y')[0]}"
+        no = f"{encoding.encode('N')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
 
     async def __call__(
@@ -179,7 +179,8 @@ class GraphExtractor:
                 history=response.history,
                 model_parameters=self._loop_args,
             )
-            if response.output != "YES":
+
+            if response.output.content != "Y":
                 break
 
         return results

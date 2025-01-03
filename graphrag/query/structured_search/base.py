@@ -12,6 +12,7 @@ import pandas as pd
 import tiktoken
 
 from graphrag.query.context_builder.builders import (
+    BasicContextBuilder,
     DRIFTContextBuilder,
     GlobalContextBuilder,
     LocalContextBuilder,
@@ -41,7 +42,13 @@ class SearchResult:
     output_tokens_categories: dict[str, int] | None = None
 
 
-T = TypeVar("T", GlobalContextBuilder, LocalContextBuilder, DRIFTContextBuilder)
+T = TypeVar(
+    "T",
+    GlobalContextBuilder,
+    LocalContextBuilder,
+    DRIFTContextBuilder,
+    BasicContextBuilder,
+)
 
 
 class BaseSearch(ABC, Generic[T]):

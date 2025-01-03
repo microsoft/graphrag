@@ -3,9 +3,6 @@
 
 """A module containing layout_graph, _run_layout and _apply_layout_to_graph methods definition."""
 
-from enum import Enum
-from typing import Any
-
 import networkx as nx
 import pandas as pd
 from datashaper import VerbCallbacks
@@ -14,21 +11,10 @@ from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.operations.layout_graph.typing import GraphLayout
 
 
-class LayoutGraphStrategyType(str, Enum):
-    """LayoutGraphStrategyType class definition."""
-
-    umap = "umap"
-    zero = "zero"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
-
-
 def layout_graph(
     graph: nx.Graph,
     callbacks: VerbCallbacks,
-    strategy: dict[str, Any],
+    enabled: bool,
     embeddings: NodeEmbeddings | None,
 ):
     """
@@ -54,14 +40,10 @@ def layout_graph(
         min_dist: 0.75 # Optional, The min distance to use for the umap algorithm, default: 0.75
     ```
     """
-    strategy_type = strategy.get("type", LayoutGraphStrategyType.umap)
-    strategy_args = {**strategy}
-
     layout = _run_layout(
-        strategy_type,
         graph,
+        enabled,
         embeddings if embeddings is not None else {},
-        strategy_args,
         callbacks,
     )
 
@@ -73,34 +55,26 @@ def layout_graph(
 
 
 def _run_layout(
-    strategy: LayoutGraphStrategyType,
     graph: nx.Graph,
+    enabled: bool,
     embeddings: NodeEmbeddings,
-    args: dict[str, Any],
     callbacks: VerbCallbacks,
 ) -> GraphLayout:
-    match strategy:
-        case LayoutGraphStrategyType.umap:
-            from graphrag.index.operations.layout_graph.umap import (
-                run as run_umap,
-            )
+    if enabled:
+        from graphrag.index.operations.layout_graph.umap import (
+            run as run_umap,
+        )
 
-            return run_umap(
-                graph,
-                embeddings,
-                args,
-                lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
-            )
-        case LayoutGraphStrategyType.zero:
-            from graphrag.index.operations.layout_graph.zero import (
-                run as run_zero,
-            )
+        return run_umap(
+            graph,
+            embeddings,
+            lambda e, stack, d: callbacks.error("Error in Umap", e, stack, d),
+        )
+    from graphrag.index.operations.layout_graph.zero import (
+        run as run_zero,
+    )
 
-            return run_zero(
-                graph,
-                args,
-                lambda e, stack, d: callbacks.error("Error in Zero", e, stack, d),
-            )
-        case _:
-            msg = f"Unknown strategy {strategy}"
-            raise ValueError(msg)
+    return run_zero(
+        graph,
+        lambda e, stack, d: callbacks.error("Error in Zero", e, stack, d),
+    )
