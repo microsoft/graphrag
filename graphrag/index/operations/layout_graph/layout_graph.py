@@ -6,14 +6,14 @@
 import networkx as nx
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.operations.layout_graph.typing import GraphLayout
 
 
 def layout_graph(
     graph: nx.Graph,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     enabled: bool,
     embeddings: NodeEmbeddings | None,
 ):
@@ -58,7 +58,7 @@ def _run_layout(
     graph: nx.Graph,
     enabled: bool,
     embeddings: NodeEmbeddings,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> GraphLayout:
     if enabled:
         from graphrag.index.operations.layout_graph.umap import (

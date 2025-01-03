@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.extract_graph import (
@@ -21,7 +21,7 @@ workflow_name = "extract_graph"
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage(

@@ -9,7 +9,7 @@ from uuid import uuid4
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates,
@@ -18,7 +18,7 @@ from graphrag.index.operations.extract_covariates.extract_covariates import (
 
 async def create_final_covariates(
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     covariate_type: str,
     extraction_strategy: dict[str, Any] | None,

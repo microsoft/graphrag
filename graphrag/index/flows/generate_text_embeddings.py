@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
@@ -32,7 +32,7 @@ async def generate_text_embeddings(
     final_text_units: pd.DataFrame | None,
     final_entities: pd.DataFrame | None,
     final_community_reports: pd.DataFrame | None,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
     text_embed_config: dict,
@@ -110,7 +110,7 @@ async def _run_and_snapshot_embeddings(
     name: str,
     data: pd.DataFrame,
     embed_column: str,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     storage: PipelineStorage,
     text_embed_config: dict,

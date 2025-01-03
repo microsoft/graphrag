@@ -9,7 +9,7 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):
     """A logger that writes to a console."""
 
-    def on_error(
+    def error(
         self,
         message: str,
         cause: BaseException | None = None,
@@ -19,11 +19,11 @@ class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):
         """Handle when an error occurs."""
         print(message, str(cause), stack, details)  # noqa T201
 
-    def on_warning(self, message: str, details: dict | None = None):
+    def warning(self, message: str, details: dict | None = None):
         """Handle when a warning occurs."""
         _print_warning(message)
 
-    def on_log(self, message: str, details: dict | None = None):
+    def log(self, message: str, details: dict | None = None):
         """Handle when a log message is produced."""
         print(message, details)  # noqa T201
 

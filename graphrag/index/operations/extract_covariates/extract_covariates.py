@@ -12,7 +12,7 @@ import pandas as pd
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
@@ -30,7 +30,7 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_covariates(
     input: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     column: str,
     covariate_type: str,
@@ -78,7 +78,7 @@ async def run_claim_extraction(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:

@@ -7,7 +7,7 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.utils.hashing import gen_sha512_hash
@@ -16,7 +16,7 @@ from graphrag.logger.progress import Progress
 
 def create_base_text_units(
     documents: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     group_by_columns: list[str],
     size: int,
     overlap: int,

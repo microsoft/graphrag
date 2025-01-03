@@ -9,7 +9,7 @@ from enum import Enum
 from typing import Any, NamedTuple
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 StrategyConfig = dict[str, Any]
 
@@ -26,7 +26,7 @@ SummarizationStrategy = Callable[
     [
         str | tuple[str, str],
         list[str],
-        VerbCallbacks,
+        WorkflowCallbacks,
         PipelineCache,
         StrategyConfig,
     ],

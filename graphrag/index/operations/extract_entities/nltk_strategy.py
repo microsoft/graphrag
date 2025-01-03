@@ -8,7 +8,7 @@ import nltk
 from nltk.corpus import words
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractionResult,
@@ -23,7 +23,7 @@ words.ensure_loaded()
 async def run(  # noqa RUF029 async is required for interface
     docs: list[Document],
     entity_types: EntityTypes,
-    callbacks: VerbCallbacks,  # noqa ARG001
+    callbacks: WorkflowCallbacks,  # noqa ARG001
     cache: PipelineCache,  # noqa ARG001
     args: StrategyConfig,  # noqa ARG001
 ) -> EntityExtractionResult:

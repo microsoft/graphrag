@@ -9,7 +9,7 @@ from fnllm import ChatLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input
@@ -77,7 +77,7 @@ async def load_docs_in_chunks(
         overlap=MIN_CHUNK_OVERLAP,
         encoding_model=defs.ENCODING_MODEL,
         strategy=chunk_config.strategy,
-        callbacks=NoopVerbCallbacks(),
+        callbacks=NoopWorkflowCallbacks(),
     )
 
     # Select chunks into a new df and explode it
@@ -98,7 +98,7 @@ async def load_docs_in_chunks(
         embedding_llm = load_llm_embeddings(
             "prompt_tuning_embeddings",
             llm_config,
-            callbacks=NoopVerbCallbacks(),
+            callbacks=NoopWorkflowCallbacks(),
             cache=None,
         )
 

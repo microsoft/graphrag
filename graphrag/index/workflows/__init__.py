@@ -8,7 +8,7 @@ from collections.abc import Awaitable, Callable
 
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 
@@ -88,7 +88,7 @@ from .generate_text_embeddings import (
 all_workflows: dict[
     str,
     Callable[
-        [GraphRagConfig, PipelineRunContext, VerbCallbacks],
+        [GraphRagConfig, PipelineRunContext, WorkflowCallbacks],
         Awaitable[pd.DataFrame | None],
     ],
 ] = {
