@@ -6,6 +6,7 @@
 import logging
 from typing import Any
 
+import litellm
 from tenacity import (
     AsyncRetrying,
     RetryError,
@@ -117,7 +118,7 @@ class OpenAI(OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
-        response = self.sync_client.chat.completions.create(  # type: ignore
+        response = litellm.completion(  # type: ignore
             model=self.model,
             messages=messages,  # type: ignore
             stream=streaming,
@@ -155,7 +156,7 @@ class OpenAI(OpenAILLMImpl):
         callbacks: list[BaseLLMCallback] | None = None,
         **kwargs: Any,
     ) -> str:
-        response = await self.async_client.chat.completions.create(  # type: ignore
+        response = await litellm.acompletion(  # type: ignore
             model=self.model,
             messages=messages,  # type: ignore
             stream=streaming,
