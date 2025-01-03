@@ -67,8 +67,6 @@ async def build_index(
     callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
 
-    log.info("RUNNING NEW WORKFLOWS WITHOUT DATASHAPER")
-
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
