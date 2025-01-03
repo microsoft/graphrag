@@ -3,10 +3,12 @@
 
 """Different methods to run the pipeline."""
 
+import json
 import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
+from dataclasses import asdict
 from typing import cast
 
 import pandas as pd
@@ -18,8 +20,8 @@ from graphrag.callbacks.delegating_verb_callbacks import DelegatingVerbCallbacks
 from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.context import PipelineRunStats
 from graphrag.index.input.factory import create_input
-from graphrag.index.run.profiling import _dump_stats
 from graphrag.index.run.utils import create_callback_chain, create_run_context
 from graphrag.index.typing import PipelineRunResult
 from graphrag.index.update.incremental_index import (
@@ -199,3 +201,10 @@ async def _run_workflows(
             "Error running pipeline!", e, traceback.format_exc()
         )
         yield PipelineRunResult(last_workflow, None, [e])
+
+
+async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None:
+    """Dump the stats to the storage."""
+    await storage.set(
+        "stats.json", json.dumps(asdict(stats), indent=4, ensure_ascii=False)
+    )

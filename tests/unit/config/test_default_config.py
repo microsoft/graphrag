@@ -247,7 +247,7 @@ class TestDefaultConfig(unittest.TestCase):
 
         # __repr__ can be eval()'d
         repr_str = config.__repr__()
-        # TODO: add __repr__ to datashaper enum
+        # TODO: add __repr__ to enum
         repr_str = repr_str.replace("async_mode=<AsyncType.Threaded: 'threaded'>,", "")
         assert eval(repr_str) is not None
 
