@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Remove old pipeline runner."
+}

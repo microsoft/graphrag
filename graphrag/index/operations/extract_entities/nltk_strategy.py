@@ -5,10 +5,10 @@
 
 import networkx as nx
 import nltk
-from datashaper import VerbCallbacks
 from nltk.corpus import words
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractionResult,

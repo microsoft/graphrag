@@ -6,18 +6,16 @@
 import logging
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-    progress_iterable,
-)
 
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
     parallel_sort_context_batch,
 )
 from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
     get_levels,
 )
+from graphrag.logger.progress import progress_iterable
 
 log = logging.getLogger(__name__)
 

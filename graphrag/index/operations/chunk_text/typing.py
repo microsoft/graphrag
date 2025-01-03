@@ -6,9 +6,8 @@
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
-from datashaper import ProgressTicker
-
 from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.logger.progress import ProgressTicker
 
 
 @dataclass

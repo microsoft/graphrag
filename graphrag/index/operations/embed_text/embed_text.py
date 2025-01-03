@@ -9,9 +9,9 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
 from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument

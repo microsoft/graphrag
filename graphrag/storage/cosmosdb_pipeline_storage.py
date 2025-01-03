@@ -15,9 +15,9 @@ from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
-from datashaper import Progress
 
 from graphrag.logger.base import ProgressLogger
+from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)

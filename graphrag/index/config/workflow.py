@@ -9,9 +9,6 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-PipelineWorkflowStep = dict[str, Any]
-"""Represent a step in a workflow."""
-
 PipelineWorkflowConfig = dict[str, Any]
 """Represent a configuration for a workflow."""
 
@@ -21,11 +18,6 @@ class PipelineWorkflowReference(BaseModel):
 
     name: str | None = Field(description="Name of the workflow.", default=None)
     """Name of the workflow."""
-
-    steps: list[PipelineWorkflowStep] | None = Field(
-        description="The optional steps for the workflow.", default=None
-    )
-    """The optional steps for the workflow."""
 
     config: PipelineWorkflowConfig | None = Field(
         description="The optional configuration for the workflow.", default=None

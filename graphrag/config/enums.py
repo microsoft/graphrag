@@ -114,3 +114,10 @@ class LLMType(str, Enum):
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
+
+
+class AsyncType(str, Enum):
+    """Enum for the type of async to use."""
+
+    AsyncIO = "asyncio"
+    Threaded = "threaded"

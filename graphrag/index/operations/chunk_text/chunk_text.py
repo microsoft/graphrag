@@ -6,17 +6,14 @@
 from typing import Any, cast
 
 import pandas as pd
-from datashaper import (
-    ProgressTicker,
-    VerbCallbacks,
-    progress_ticker,
-)
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.index.operations.chunk_text.typing import (
     ChunkInput,
     ChunkStrategy,
 )
+from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 
 def chunk_text(

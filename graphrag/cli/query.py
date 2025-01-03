@@ -16,7 +16,7 @@ from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
-from graphrag.utils.storage import load_table_from_storage
+from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 logger = PrintProgressLogger("")
 
@@ -43,10 +43,10 @@ def run_global_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes.parquet",
-            "create_final_entities.parquet",
-            "create_final_communities.parquet",
-            "create_final_community_reports.parquet",
+            "create_final_nodes",
+            "create_final_entities",
+            "create_final_communities",
+            "create_final_community_reports",
         ],
         optional_list=[],
     )
@@ -127,14 +127,14 @@ def run_local_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes.parquet",
-            "create_final_community_reports.parquet",
-            "create_final_text_units.parquet",
-            "create_final_relationships.parquet",
-            "create_final_entities.parquet",
+            "create_final_nodes",
+            "create_final_community_reports",
+            "create_final_text_units",
+            "create_final_relationships",
+            "create_final_entities",
         ],
         optional_list=[
-            "create_final_covariates.parquet",
+            "create_final_covariates",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
@@ -217,11 +217,11 @@ def run_drift_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes.parquet",
-            "create_final_community_reports.parquet",
-            "create_final_text_units.parquet",
-            "create_final_relationships.parquet",
-            "create_final_entities.parquet",
+            "create_final_nodes",
+            "create_final_community_reports",
+            "create_final_text_units",
+            "create_final_relationships",
+            "create_final_entities",
         ],
     )
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
@@ -332,24 +332,20 @@ def _resolve_output_files(
     storage_obj = StorageFactory().create_storage(
         storage_type=storage_config["type"], kwargs=storage_config
     )
-    for output_file in output_list:
-        df_key = output_file.split(".")[0]
-        df_value = asyncio.run(
-            load_table_from_storage(name=output_file, storage=storage_obj)
-        )
-        dataframe_dict[df_key] = df_value
+    for name in output_list:
+        df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
+        dataframe_dict[name] = df_value
 
     # for optional output files, set the dict entry to None instead of erroring out if it does not exist
     if optional_list:
         for optional_file in optional_list:
-            file_exists = asyncio.run(storage_obj.has(optional_file))
-            df_key = optional_file.split(".")[0]
+            file_exists = asyncio.run(storage_has_table(optional_file, storage_obj))
             if file_exists:
                 df_value = asyncio.run(
                     load_table_from_storage(name=optional_file, storage=storage_obj)
                 )
-                dataframe_dict[df_key] = df_value
+                dataframe_dict[optional_file] = df_value
             else:
-                dataframe_dict[df_key] = None
+                dataframe_dict[optional_file] = None
 
     return dataframe_dict

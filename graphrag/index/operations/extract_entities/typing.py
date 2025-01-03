@@ -9,9 +9,9 @@ from enum import Enum
 from typing import Any
 
 import networkx as nx
-from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 
 ExtractedEntity = dict[str, Any]
 ExtractedRelationship = dict[str, Any]

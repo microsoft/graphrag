@@ -3,10 +3,10 @@
 
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
-from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,

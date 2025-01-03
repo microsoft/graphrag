@@ -3,10 +3,10 @@
 
 """Parameterization settings for the default configuration."""
 
-from datashaper import AsyncType
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
+from graphrag.config.enums import AsyncType
 from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.config.models.parallelization_parameters import ParallelizationParameters
 

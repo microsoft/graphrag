@@ -5,8 +5,8 @@
 
 import networkx as nx
 import pandas as pd
-from datashaper import VerbCallbacks
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.embed_graph.typing import NodeEmbeddings
 from graphrag.index.operations.layout_graph.typing import GraphLayout
 

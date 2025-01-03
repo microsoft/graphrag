@@ -11,9 +11,9 @@ WARNING: This API is under development and may undergo changes in future release
 Backwards compatibility is not guaranteed at this time.
 """
 
-from datashaper import NoopVerbCallbacks
 from pydantic import PositiveInt, validate_call
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.logger.print_progress import PrintProgressLogger

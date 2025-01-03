@@ -3,23 +3,24 @@
 
 
 import pytest
-from datashaper.errors import VerbParallelizationError
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
     CommunityReportResponse,
     FindingModel,
 )
-from graphrag.index.workflows.v1.create_final_community_reports import (
-    build_steps,
+from graphrag.index.run.derive_from_rows import ParallelizationError
+from graphrag.index.workflows.create_final_community_reports import (
+    run_workflow,
     workflow_name,
 )
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
     compare_outputs,
-    get_config_for_workflow,
-    get_workflow_output,
-    load_input_tables,
+    create_test_context,
     load_test_table,
 )
 
@@ -48,27 +49,31 @@ MOCK_LLM_CONFIG = {
 
 
 async def test_create_final_community_reports():
-    input_tables = load_input_tables([
-        "workflow:create_final_nodes",
-        "workflow:create_final_covariates",
-        "workflow:create_final_relationships",
-        "workflow:create_final_entities",
-        "workflow:create_final_communities",
-    ])
     expected = load_test_table(workflow_name)
 
-    config = get_config_for_workflow(workflow_name)
-
-    config["create_community_reports"]["strategy"]["llm"] = MOCK_LLM_CONFIG
-
-    steps = build_steps(config)
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
+    context = await create_test_context(
+        storage=[
+            "create_final_nodes",
+            "create_final_covariates",
+            "create_final_relationships",
+            "create_final_entities",
+            "create_final_communities",
+        ]
     )
+
+    config = create_graphrag_config()
+    config.community_reports.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_CONFIG,
+    }
+
+    await run_workflow(
+        config,
+        context,
+        NoopVerbCallbacks(),
+    )
+
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert len(actual.columns) == len(expected.columns)
 
@@ -81,25 +86,24 @@ async def test_create_final_community_reports():
 
 
 async def test_create_final_community_reports_missing_llm_throws():
-    input_tables = load_input_tables([
-        "workflow:create_final_nodes",
-        "workflow:create_final_covariates",
-        "workflow:create_final_relationships",
-        "workflow:create_final_entities",
-        "workflow:create_final_communities",
-    ])
+    context = await create_test_context(
+        storage=[
+            "create_final_nodes",
+            "create_final_covariates",
+            "create_final_relationships",
+            "create_final_entities",
+            "create_final_communities",
+        ]
+    )
 
-    config = get_config_for_workflow(workflow_name)
+    config = create_graphrag_config()
+    config.community_reports.strategy = {
+        "type": "graph_intelligence",
+    }
 
-    # deleting the llm config results in a default mock injection in run_graph_intelligence
-    del config["create_community_reports"]["strategy"]["llm"]
-
-    steps = build_steps(config)
-
-    with pytest.raises(VerbParallelizationError):
-        await get_workflow_output(
-            input_tables,
-            {
-                "steps": steps,
-            },
+    with pytest.raises(ParallelizationError):
+        await run_workflow(
+            config,
+            context,
+            NoopVerbCallbacks(),
         )
