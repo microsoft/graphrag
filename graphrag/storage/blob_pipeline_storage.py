@@ -290,13 +290,12 @@ class BlobPipelineStorage(PipelineStorage):
         return f"abfs://{path}"
 
 
-def create_blob_storage(
-    connection_string: str | None,
-    storage_account_blob_url: str | None,
-    container_name: str,
-    base_dir: str | None,
-) -> PipelineStorage:
+def create_blob_storage(**kwargs: Any) -> PipelineStorage:
     """Create a blob based storage."""
+    connection_string = kwargs.get("connection_string")
+    storage_account_blob_url = kwargs.get("storage_account_blob_url")
+    base_dir = kwargs.get("base_dir")
+    container_name = kwargs["container_name"]
     log.info("Creating blob storage at %s", container_name)
     if container_name is None:
         msg = "No container name provided for blob storage."
