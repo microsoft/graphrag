@@ -9,12 +9,10 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor

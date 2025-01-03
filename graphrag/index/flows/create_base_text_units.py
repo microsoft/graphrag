@@ -9,14 +9,14 @@ from typing import Any, cast
 import pandas as pd
 from datashaper import (
     FieldAggregateOperation,
-    Progress,
-    VerbCallbacks,
     aggregate_operation_mapping,
 )
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.utils.hashing import gen_sha512_hash
+from graphrag.logger.progress import Progress
 
 
 def create_base_text_units(

@@ -6,11 +6,10 @@
 from pathlib import Path
 from typing import cast
 
-from datashaper import WorkflowCallbacks
-
 from graphrag.callbacks.blob_workflow_callbacks import BlobWorkflowCallbacks
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.file_workflow_callbacks import FileWorkflowCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import ReportingType
 from graphrag.index.config.reporting import (
     PipelineBlobReportingConfig,

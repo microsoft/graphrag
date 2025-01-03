@@ -4,11 +4,11 @@
 """A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
-from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_entities.graph_extractor import GraphExtractor
 from graphrag.index.operations.extract_entities.typing import (

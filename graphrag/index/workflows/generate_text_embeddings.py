@@ -4,10 +4,8 @@
 """A module containing run_workflow method definition."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.context import PipelineRunContext

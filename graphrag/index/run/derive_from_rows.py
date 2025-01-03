@@ -11,10 +11,11 @@ from collections.abc import Awaitable, Callable, Coroutine, Hashable
 from typing import Any, TypeVar, cast
 
 import pandas as pd
-from datashaper import VerbCallbacks, progress_ticker
 from datashaper.errors import VerbParallelizationError
 
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.logger.progress import progress_ticker
 
 logger = logging.getLogger(__name__)
 ItemType = TypeVar("ItemType")

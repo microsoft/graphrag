@@ -2,10 +2,10 @@
 # Licensed under the MIT License
 
 import pytest
-from datashaper import NoopVerbCallbacks
 from datashaper.errors import VerbParallelizationError
 from pandas.testing import assert_series_equal
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.workflows.create_final_covariates import (

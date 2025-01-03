@@ -6,11 +6,9 @@
 import logging
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,

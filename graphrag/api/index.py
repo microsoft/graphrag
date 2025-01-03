@@ -10,10 +10,9 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
-from datashaper import WorkflowCallbacks
-
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.callbacks.factory import create_pipeline_reporter
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import CacheType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_workflows import run_workflows

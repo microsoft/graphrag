@@ -7,21 +7,16 @@ import logging
 import time
 import traceback
 from collections.abc import AsyncIterable
-from typing import Any, cast
+from typing import cast
 
 import pandas as pd
-from datashaper import (
-    DelegatingVerbCallbacks,
-    ExecutionNode,
-    NoopVerbCallbacks,
-    VerbDetails,
-    WorkflowCallbacks,
-)
-from datashaper.progress.types import Progress
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
+from graphrag.callbacks.delegating_verb_callbacks import DelegatingVerbCallbacks
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import create_input
 from graphrag.index.run.profiling import _dump_stats
@@ -34,6 +29,7 @@ from graphrag.index.update.incremental_index import (
 from graphrag.index.workflows import all_workflows
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
+from graphrag.logger.progress import Progress
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import delete_table_from_storage, write_table_to_storage
@@ -177,21 +173,7 @@ async def _run_workflows(
             run_workflow = all_workflows[workflow]
             progress = logger.child(workflow, transient=False)
             callbacks.on_workflow_start(workflow, None)
-            # TEMP: this structure is required for DataShaper downstream compliance
-            node = cast(
-                "Any",
-                ExecutionNode(
-                    node_id=workflow,
-                    has_explicit_id=True,
-                    verb=VerbDetails(
-                        name=workflow,
-                        func=lambda x: x,
-                        treats_input_tables_as_immutable=False,
-                    ),
-                    node_input="",
-                ),
-            )
-            verb_callbacks = DelegatingVerbCallbacks(node, callbacks)
+            verb_callbacks = DelegatingVerbCallbacks(workflow, callbacks)
             work_time = time.time()
             result = await run_workflow(
                 config,
@@ -199,7 +181,7 @@ async def _run_workflows(
                 verb_callbacks,
             )
             progress(Progress(percent=1))
-            callbacks.on_workflow_end(workflow, None)
+            callbacks.on_workflow_end(workflow, result)
             yield PipelineRunResult(workflow, result, None)
 
             context.stats.workflows[workflow] = {"overall": time.time() - work_time}

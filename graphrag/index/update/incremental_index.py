@@ -7,9 +7,9 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings

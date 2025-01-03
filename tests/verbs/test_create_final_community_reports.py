@@ -3,9 +3,9 @@
 
 
 import pytest
-from datashaper import NoopVerbCallbacks
 from datashaper.errors import VerbParallelizationError
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (

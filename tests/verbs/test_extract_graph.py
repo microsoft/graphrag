@@ -2,8 +2,8 @@
 # Licensed under the MIT License
 
 import pytest
-from datashaper import NoopVerbCallbacks
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.workflows.extract_graph import (

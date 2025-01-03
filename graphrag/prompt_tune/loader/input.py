@@ -5,11 +5,11 @@
 
 import numpy as np
 import pandas as pd
-from datashaper import NoopVerbCallbacks
 from fnllm import ChatLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input

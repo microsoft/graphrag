@@ -7,11 +7,9 @@ from typing import Any
 from uuid import uuid4
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates,

@@ -3,11 +3,11 @@
 
 """Utility functions for the GraphRAG run module."""
 
-from datashaper import WorkflowCallbacks, WorkflowCallbacksManager
-
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.callbacks.workflow_callbacks_manager import WorkflowCallbacksManager
 from graphrag.index.context import PipelineRunContext, PipelineRunStats
 from graphrag.logger.base import ProgressLogger
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage

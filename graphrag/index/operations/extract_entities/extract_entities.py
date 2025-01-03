@@ -7,11 +7,9 @@ import logging
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.extract_entities.typing import (

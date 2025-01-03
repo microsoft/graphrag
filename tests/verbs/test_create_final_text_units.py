@@ -1,8 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from datashaper import NoopVerbCallbacks
-
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.workflows.create_final_text_units import (
     run_workflow,
