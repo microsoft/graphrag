@@ -70,7 +70,9 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
+    workflows = _get_workflow_list(config)
     async for output in run_workflows(
+        workflows,
         config,
         cache=pipeline_cache,
         callbacks=callbacks,
@@ -87,3 +89,24 @@ async def build_index(
             progress_logger.info(str(output.result))
 
     return outputs
+
+
+# TODO: this is staging for being able to select a set of default workflows based on config and API params
+# right now the primary test we do is whether to include claim extraction or not.
+# this will eventually move into config as a list, populated via CLI params.
+def _get_workflow_list(config: GraphRagConfig) -> list[str]:
+    """Get the list of workflows from the config."""
+    return [
+        "create_base_text_units",
+        "create_final_documents",
+        "extract_graph",
+        "compute_communities",
+        "create_final_entities",
+        "create_final_relationships",
+        "create_final_nodes",
+        "create_final_communities",
+        *(["create_final_covariates"] if config.claim_extraction.enabled else []),
+        "create_final_text_units",
+        "create_final_community_reports",
+        "generate_text_embeddings",
+    ]

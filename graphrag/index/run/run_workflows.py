@@ -38,22 +38,6 @@ from graphrag.utils.storage import delete_table_from_storage, write_table_to_sto
 
 log = logging.getLogger(__name__)
 
-
-default_workflows = [
-    "create_base_text_units",
-    "create_final_documents",
-    "extract_graph",
-    "compute_communities",
-    "create_final_entities",
-    "create_final_relationships",
-    "create_final_nodes",
-    "create_final_communities",
-    "create_final_covariates",
-    "create_final_text_units",
-    "create_final_community_reports",
-    "generate_text_embeddings",
-]
-
 # these are transient outputs written to storage for downstream workflow use
 # they are not required after indexing, so we'll clean them up at the end for clarity
 # (unless snapshots.transient is set!)
@@ -67,6 +51,7 @@ transient_outputs = [
 
 
 async def run_workflows(
+    workflows: list[str],
     config: GraphRagConfig,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
@@ -115,6 +100,7 @@ async def run_workflows(
         # Run the pipeline on the new documents
         tables_dict = {}
         async for table in _run_workflows(
+            workflows=workflows,
             config=config,
             dataset=delta_dataset.new_inputs,
             cache=cache,
@@ -140,6 +126,7 @@ async def run_workflows(
         progress_logger.info("Running standard indexing.")
 
         async for table in _run_workflows(
+            workflows=workflows,
             config=config,
             dataset=dataset,
             cache=cache,
@@ -151,6 +138,7 @@ async def run_workflows(
 
 
 async def _run_workflows(
+    workflows: list[str],
     config: GraphRagConfig,
     dataset: pd.DataFrame,
     cache: PipelineCache,
@@ -170,7 +158,7 @@ async def _run_workflows(
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "input", context.storage)
 
-        for workflow in default_workflows:
+        for workflow in workflows:
             last_workflow = workflow
             run_workflow = all_workflows[workflow]
             progress = logger.child(workflow, transient=False)
