@@ -11,9 +11,9 @@ from typing import Any
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
-from datashaper import Progress
 
 from graphrag.logger.base import ProgressLogger
+from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)

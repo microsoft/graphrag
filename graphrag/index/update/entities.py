@@ -8,14 +8,13 @@ import itertools
 
 import numpy as np
 import pandas as pd
-from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.index.config.pipeline import PipelineConfig
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
 )
-from graphrag.index.run.workflow import _find_workflow_config
 
 
 def _group_and_resolve_entities(
@@ -91,7 +90,7 @@ def _group_and_resolve_entities(
 
 async def _run_entity_summarization(
     entities_df: pd.DataFrame,
-    config: PipelineConfig,
+    config: GraphRagConfig,
     cache: PipelineCache,
     callbacks: VerbCallbacks,
 ) -> pd.DataFrame:
@@ -101,7 +100,7 @@ async def _run_entity_summarization(
     ----------
     entities_df : pd.DataFrame
         The entities dataframe.
-    config : PipelineConfig
+    config : GraphRagConfig
         The pipeline configuration.
     cache : PipelineCache
         Pipeline cache used during the summarization process.
@@ -111,10 +110,9 @@ async def _run_entity_summarization(
     pd.DataFrame
         The updated entities dataframe with summarized descriptions.
     """
-    summarize_config = _find_workflow_config(
-        config, "extract_graph", "summarize_descriptions"
+    summarization_strategy = config.summarize_descriptions.resolved_strategy(
+        config.root_dir,
     )
-    strategy = summarize_config.get("strategy", {})
 
     # Prepare tasks for async summarization where needed
     async def process_row(row):
@@ -122,7 +120,7 @@ async def _run_entity_summarization(
         if isinstance(description, list) and len(description) > 1:
             # Run entity summarization asynchronously
             result = await run_entity_summarization(
-                row["title"], description, callbacks, cache, strategy
+                row["title"], description, callbacks, cache, summarization_strategy
             )
             return result.description
         # Handle case where description is a single-item list or not a list

@@ -9,20 +9,18 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    VerbCallbacks,
-    derive_from_rows,
-)
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +63,7 @@ async def extract_covariates(
         input,
         run_strategy,
         callbacks,
-        scheduling_type=async_mode,
+        async_type=async_mode,
         num_threads=num_threads,
     )
     return pd.DataFrame([item for row in results for item in row or []])

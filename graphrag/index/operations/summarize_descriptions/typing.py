@@ -8,9 +8,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, NamedTuple
 
-from datashaper import VerbCallbacks
-
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 
 StrategyConfig = dict[str, Any]
 
