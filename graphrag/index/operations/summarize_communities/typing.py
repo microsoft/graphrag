@@ -7,10 +7,10 @@ from collections.abc import Awaitable, Callable
 from enum import Enum
 from typing import Any
 
-from datashaper import VerbCallbacks
 from typing_extensions import TypedDict
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 
 ExtractedEntity = dict[str, Any]
 StrategyConfig = dict[str, Any]

@@ -29,9 +29,8 @@ from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
-    from datashaper import VerbCallbacks
-
     from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag.callbacks.verb_callbacks import VerbCallbacks
     from graphrag.index.typing import ErrorHandlerFn
 
 log = logging.getLogger(__name__)

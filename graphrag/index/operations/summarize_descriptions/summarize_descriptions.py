@@ -8,17 +8,14 @@ import logging
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    ProgressTicker,
-    VerbCallbacks,
-    progress_ticker,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,
 )
+from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 log = logging.getLogger(__name__)
 

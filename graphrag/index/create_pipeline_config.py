@@ -12,11 +12,9 @@ from graphrag.config.enums import (
     InputFileType,
     ReportingType,
     StorageType,
-    TextEmbeddingTarget,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.storage_config import StorageConfig
-from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.index.config.cache import (
     PipelineBlobCacheConfig,
     PipelineCacheConfigTypes,
@@ -25,10 +23,7 @@ from graphrag.index.config.cache import (
     PipelineMemoryCacheConfig,
     PipelineNoneCacheConfig,
 )
-from graphrag.index.config.embeddings import (
-    all_embeddings,
-    required_embeddings,
-)
+from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.config.input import (
     PipelineCSVInputConfig,
     PipelineInputConfigTypes,
@@ -53,7 +48,7 @@ from graphrag.index.config.storage import (
 from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
-from graphrag.index.workflows.default_workflows import (
+from graphrag.index.workflows import (
     compute_communities,
     create_base_text_units,
     create_final_communities,
@@ -92,7 +87,7 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
         _log_llm_settings(settings)
 
     skip_workflows = settings.skip_workflows
-    embedded_fields = _get_embedded_fields(settings)
+    embedded_fields = get_embedded_fields(settings)
     covariates_enabled = (
         settings.claim_extraction.enabled
         and create_final_covariates not in skip_workflows
@@ -121,19 +116,6 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
     log.info("skipping workflows %s", ",".join(skip_workflows))
     result.workflows = [w for w in result.workflows if w.name not in skip_workflows]
     return result
-
-
-def _get_embedded_fields(settings: GraphRagConfig) -> set[str]:
-    match settings.embeddings.target:
-        case TextEmbeddingTarget.all:
-            return all_embeddings.difference(settings.embeddings.skip)
-        case TextEmbeddingTarget.required:
-            return required_embeddings
-        case TextEmbeddingTarget.none:
-            return set()
-        case _:
-            msg = f"Unknown embeddings target: {settings.embeddings.target}"
-            raise ValueError(msg)
 
 
 def _log_llm_settings(settings: GraphRagConfig) -> None:
@@ -187,28 +169,6 @@ def _text_unit_workflows(
             },
         ),
     ]
-
-
-def _get_embedding_settings(
-    settings: TextEmbeddingConfig,
-    vector_store_params: dict | None = None,
-) -> dict:
-    vector_store_settings = settings.vector_store
-    if vector_store_settings is None:
-        return {"strategy": settings.resolved_strategy()}
-    #
-    # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
-    # settings.vector_store.base contains connection information, or may be undefined
-    # settings.vector_store.<vector_name> contains the specific settings for this embedding
-    #
-    strategy = settings.resolved_strategy()  # get the default strategy
-    strategy.update({
-        "vector_store": {**(vector_store_params or {}), **vector_store_settings}
-    })  # update the default strategy with the vector store settings
-    # This ensures the vector store config is part of the strategy and not the global config
-    return {
-        "strategy": strategy,
-    }
 
 
 def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
@@ -307,7 +267,7 @@ def _embeddings_workflows(
             name=generate_text_embeddings,
             config={
                 "snapshot_embeddings": settings.snapshots.embeddings,
-                "text_embed": _get_embedding_settings(settings.embeddings),
+                "text_embed": get_embedding_settings(settings.embeddings),
                 "embedded_fields": embedded_fields,
             },
         ),

@@ -2,20 +2,20 @@
 # Licensed under the MIT License
 
 import pytest
-from datashaper.errors import VerbParallelizationError
 from pandas.testing import assert_series_equal
 
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.run.utils import create_run_context
-from graphrag.index.workflows.v1.create_final_covariates import (
-    build_steps,
+from graphrag.index.run.derive_from_rows import ParallelizationError
+from graphrag.index.workflows.create_final_covariates import (
+    run_workflow,
     workflow_name,
 )
+from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
-    get_config_for_workflow,
-    get_workflow_output,
-    load_input_tables,
+    create_test_context,
     load_test_table,
 )
 
@@ -29,29 +29,27 @@ MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONS
 
 
 async def test_create_final_covariates():
-    input_tables = load_input_tables(["workflow:create_base_text_units"])
+    input = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+    context = await create_test_context(
+        storage=["create_base_text_units"],
     )
 
-    config = get_config_for_workflow(workflow_name)
+    config = create_graphrag_config()
+    config.claim_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": MOCK_LLM_CONFIG,
+        "claim_description": "description",
+    }
 
-    config["claim_extract"]["strategy"]["llm"] = MOCK_LLM_CONFIG
-
-    steps = build_steps(config)
-
-    actual = await get_workflow_output(
-        input_tables,
-        {
-            "steps": steps,
-        },
+    await run_workflow(
+        config,
         context,
+        NoopVerbCallbacks(),
     )
 
-    input = input_tables["workflow:create_base_text_units"]
+    actual = await load_table_from_storage(workflow_name, context.storage)
 
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
@@ -83,24 +81,19 @@ async def test_create_final_covariates():
 
 
 async def test_create_final_covariates_missing_llm_throws():
-    input_tables = load_input_tables(["workflow:create_base_text_units"])
-
-    context = create_run_context(None, None, None)
-    await context.runtime_storage.set(
-        "base_text_units", input_tables["workflow:create_base_text_units"]
+    context = await create_test_context(
+        storage=["create_base_text_units"],
     )
 
-    config = get_config_for_workflow(workflow_name)
+    config = create_graphrag_config()
+    config.claim_extraction.strategy = {
+        "type": "graph_intelligence",
+        "claim_description": "description",
+    }
 
-    del config["claim_extract"]["strategy"]["llm"]
-
-    steps = build_steps(config)
-
-    with pytest.raises(VerbParallelizationError):
-        await get_workflow_output(
-            input_tables,
-            {
-                "steps": steps,
-            },
+    with pytest.raises(ParallelizationError):
+        await run_workflow(
+            config,
             context,
+            NoopVerbCallbacks(),
         )

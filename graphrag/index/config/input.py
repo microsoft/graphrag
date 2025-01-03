@@ -10,7 +10,6 @@ from typing import Generic, Literal, TypeVar
 from pydantic import BaseModel, Field
 
 from graphrag.config.enums import InputFileType, InputType
-from graphrag.index.config.workflow import PipelineWorkflowStep
 
 T = TypeVar("T")
 
@@ -55,11 +54,6 @@ class PipelineInputConfig(BaseModel, Generic[T]):
         description="The optional file filter for the input files.", default=None
     )
     """The optional file filter for the input files."""
-
-    post_process: list[PipelineWorkflowStep] | None = Field(
-        description="The post processing steps for the input.", default=None
-    )
-    """The post processing steps for the input."""
 
     encoding: str | None = Field(
         description="The encoding for the input files.", default=None
