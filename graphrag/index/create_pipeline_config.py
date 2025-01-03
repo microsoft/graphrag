@@ -48,7 +48,7 @@ from graphrag.index.config.storage import (
 from graphrag.index.config.workflow import (
     PipelineWorkflowReference,
 )
-from graphrag.index.workflows.default_workflows import (
+from graphrag.index.workflows import (
     compute_communities,
     create_base_text_units,
     create_final_communities,

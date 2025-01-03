@@ -14,9 +14,9 @@ from typing import Any, cast
 import aiofiles
 from aiofiles.os import remove
 from aiofiles.ospath import exists
-from datashaper import Progress
 
 from graphrag.logger.base import ProgressLogger
+from graphrag.logger.progress import Progress
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)

@@ -3,7 +3,7 @@
 
 """A logger that emits updates from the indexing engine to the console."""
 
-from datashaper import NoopWorkflowCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 
 
 class ConsoleWorkflowCallbacks(NoopWorkflowCallbacks):

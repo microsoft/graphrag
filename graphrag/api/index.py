@@ -10,14 +10,11 @@ Backwards compatibility is not guaranteed at this time.
 
 import logging
 
-from datashaper import WorkflowCallbacks
-
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
 from graphrag.callbacks.factory import create_pipeline_reporter
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import CacheType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.create_pipeline_config import create_pipeline_config
-from graphrag.index.run import run_pipeline_with_config
 from graphrag.index.run.run_workflows import run_workflows
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logger.base import ProgressLogger
@@ -32,7 +29,6 @@ async def build_index(
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
-    new_pipeline: bool = False,
 ) -> list[PipelineRunResult]:
     """Run the pipeline with the given configuration.
 
@@ -71,41 +67,23 @@ async def build_index(
     callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
     outputs: list[PipelineRunResult] = []
 
-    if new_pipeline:
-        log.info("RUNNING NEW WORKFLOWS WITHOUT DATASHAPER")
-        async for output in run_workflows(
-            config,
-            cache=pipeline_cache,
-            callbacks=callbacks,
-            logger=progress_logger,
-            run_id=run_id,
-        ):
-            outputs.append(output)
-            if progress_logger:
-                if output.errors and len(output.errors) > 0:
-                    progress_logger.error(output.workflow)
-                else:
-                    progress_logger.success(output.workflow)
-                progress_logger.info(str(output.result))
-    else:
-        log.info("RUNNING ORIGINAL PIPELINE")
-        pipeline_config = create_pipeline_config(config)
-        async for output in run_pipeline_with_config(
-            pipeline_config,
-            run_id=run_id,
-            memory_profile=memory_profile,
-            cache=pipeline_cache,
-            callbacks=callbacks,
-            logger=progress_logger,
-            is_resume_run=is_resume_run,
-            is_update_run=is_update_run,
-        ):
-            outputs.append(output)
-            if progress_logger:
-                if output.errors and len(output.errors) > 0:
-                    progress_logger.error(output.workflow)
-                else:
-                    progress_logger.success(output.workflow)
-                progress_logger.info(str(output.result))
+    if memory_profile:
+        log.warning("New pipeline does not yet support memory profiling.")
+
+    async for output in run_workflows(
+        config,
+        cache=pipeline_cache,
+        callbacks=callbacks,
+        logger=progress_logger,
+        run_id=run_id,
+        is_update_run=is_update_run,
+    ):
+        outputs.append(output)
+        if progress_logger:
+            if output.errors and len(output.errors) > 0:
+                progress_logger.error(output.workflow)
+            else:
+                progress_logger.success(output.workflow)
+            progress_logger.info(str(output.result))
 
     return outputs

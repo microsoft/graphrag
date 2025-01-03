@@ -6,11 +6,9 @@
 import logging
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
@@ -22,8 +20,8 @@ from graphrag.index.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.index.operations.embed_text import embed_text
-from graphrag.index.operations.snapshot import snapshot
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.storage import write_table_to_storage
 
 log = logging.getLogger(__name__)
 
@@ -131,9 +129,4 @@ async def _run_and_snapshot_embeddings(
 
         if snapshot_embeddings_enabled is True:
             data = data.loc[:, ["id", "embedding"]]
-            await snapshot(
-                data,
-                name=f"embeddings.{name}",
-                storage=storage,
-                formats=["parquet"],
-            )
+            await write_table_to_storage(data, f"embeddings.{name}", storage)

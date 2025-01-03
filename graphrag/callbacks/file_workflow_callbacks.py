@@ -8,7 +8,7 @@ import logging
 from io import TextIOWrapper
 from pathlib import Path
 
-from datashaper import NoopWorkflowCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 
 log = logging.getLogger(__name__)
 

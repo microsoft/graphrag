@@ -6,8 +6,7 @@
 import asyncio
 import sys
 
-from datashaper import NoopVerbCallbacks
-
+from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
 from graphrag.logger.print_progress import ProgressLogger
