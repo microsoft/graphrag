@@ -2,12 +2,12 @@
 # Licensed under the MIT License
 
 import pytest
-from datashaper.errors import VerbParallelizationError
 from pandas.testing import assert_series_equal
 
 from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
+from graphrag.index.run.derive_from_rows import ParallelizationError
 from graphrag.index.workflows.create_final_covariates import (
     run_workflow,
     workflow_name,
@@ -91,7 +91,7 @@ async def test_create_final_covariates_missing_llm_throws():
         "claim_description": "description",
     }
 
-    with pytest.raises(VerbParallelizationError):
+    with pytest.raises(ParallelizationError):
         await run_workflow(
             config,
             context,

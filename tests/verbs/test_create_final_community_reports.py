@@ -3,7 +3,6 @@
 
 
 import pytest
-from datashaper.errors import VerbParallelizationError
 
 from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
@@ -12,6 +11,7 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     CommunityReportResponse,
     FindingModel,
 )
+from graphrag.index.run.derive_from_rows import ParallelizationError
 from graphrag.index.workflows.create_final_community_reports import (
     run_workflow,
     workflow_name,
@@ -101,7 +101,7 @@ async def test_create_final_community_reports_missing_llm_throws():
         "type": "graph_intelligence",
     }
 
-    with pytest.raises(VerbParallelizationError):
+    with pytest.raises(ParallelizationError):
         await run_workflow(
             config,
             context,

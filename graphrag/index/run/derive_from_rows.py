@@ -11,7 +11,6 @@ from collections.abc import Awaitable, Callable, Coroutine, Hashable
 from typing import Any, TypeVar, cast
 
 import pandas as pd
-from datashaper.errors import VerbParallelizationError
 
 from graphrag.callbacks.verb_callbacks import VerbCallbacks
 from graphrag.config.enums import AsyncType
@@ -19,6 +18,15 @@ from graphrag.logger.progress import progress_ticker
 
 logger = logging.getLogger(__name__)
 ItemType = TypeVar("ItemType")
+
+
+class ParallelizationError(ValueError):
+    """Exception for invalid parallel processing."""
+
+    def __init__(self, num_errors: int):
+        super().__init__(
+            f"{num_errors} Errors occurred while running parallel transformation, could not complete!"
+        )
 
 
 async def derive_from_rows(
@@ -145,6 +153,6 @@ async def _derive_from_rows_base(
         callbacks.error("parallel transformation error", error, stack)
 
     if len(errors) > 0:
-        raise VerbParallelizationError(len(errors))
+        raise ParallelizationError(len(errors))
 
     return result
