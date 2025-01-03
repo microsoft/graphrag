@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from graphrag.config.enums import CacheType
-from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
+from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
@@ -24,6 +24,9 @@ class CacheFactory:
     """A factory class for cache implementations.
 
     Includes a method for users to register a custom cache implementation.
+
+    Configuration arguments are passed to each cache implementation as kwargs (where possible)
+    for individual enforcement of required/optional arguments.
     """
 
     cache_types: ClassVar[dict[str, type]] = {}
@@ -50,7 +53,7 @@ class CacheFactory:
                     FilePipelineStorage(root_dir=root_dir).child(kwargs["base_dir"])
                 )
             case CacheType.blob:
-                return JsonPipelineCache(BlobPipelineStorage(**kwargs))
+                return JsonPipelineCache(create_blob_storage(**kwargs))
             case CacheType.cosmosdb:
                 return JsonPipelineCache(create_cosmosdb_storage(**kwargs))
             case _:
