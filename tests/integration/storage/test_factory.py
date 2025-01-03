@@ -33,8 +33,10 @@ def test_create_blob_storage():
     assert isinstance(storage, BlobPipelineStorage)
 
 
-# the cosmosdb emulator is only available on windows runners at this time
-@pytest.mark.skipif(not sys.platform.startswith("win"))
+@pytest.mark.skipif(
+    not sys.platform.startswith("win"),
+    reason="cosmosdb emulator is only available on windows runners at this time",
+)
 def test_create_cosmosdb_storage():
     kwargs = {
         "type": "cosmosdb",
