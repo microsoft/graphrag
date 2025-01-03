@@ -1,6 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-"""StorageFactory Tests."""
+"""StorageFactory Tests.
+
+These tests will test the StorageFactory class and the creation of each storage type that is natively supported.
+"""
+
+import sys
 
 import pytest
 
@@ -28,6 +33,8 @@ def test_create_blob_storage():
     assert isinstance(storage, BlobPipelineStorage)
 
 
+# the cosmosdb emulator is only available on windows runners at this time
+@pytest.mark.skipif(not sys.platform.startswith("win"))
 def test_create_cosmosdb_storage():
     kwargs = {
         "type": "cosmosdb",
