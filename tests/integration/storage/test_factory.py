@@ -40,7 +40,7 @@ def test_create_cosmosdb_storage():
 
 
 def test_create_file_storage():
-    kwargs = {"type": "file", "base_path": "/tmp/teststorage"}
+    kwargs = {"type": "file", "base_dir": "/tmp/teststorage"}
     storage = StorageFactory.create_storage(StorageType.file, kwargs)
     assert isinstance(storage, FilePipelineStorage)
 
