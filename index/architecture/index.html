@@ -628,27 +628,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#datashaper-workflows" class="md-nav__link">
+  <a href="#workflows" class="md-nav__link">
     <span class="md-ellipsis">
-      DataShaper Workflows
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#llm-based-workflow-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      LLM-based Workflow Steps
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-graphs" class="md-nav__link">
-    <span class="md-ellipsis">
-      Workflow Graphs
+      Workflows
     </span>
   </a>
   
@@ -1493,27 +1475,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#datashaper-workflows" class="md-nav__link">
+  <a href="#workflows" class="md-nav__link">
     <span class="md-ellipsis">
-      DataShaper Workflows
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#llm-based-workflow-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      LLM-based Workflow Steps
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-graphs" class="md-nav__link">
-    <span class="md-ellipsis">
-      Workflow Graphs
+      Workflows
     </span>
   </a>
   
@@ -1566,24 +1530,8 @@
 <p>In order to support the GraphRAG system, the outputs of the indexing engine (in the Default Configuration Mode) are aligned to a knowledge model we call the <em>GraphRAG Knowledge Model</em>.
 This model is designed to be an abstraction over the underlying data storage technology, and to provide a common interface for the GraphRAG system to interact with.
 In normal use-cases the outputs of the GraphRAG Indexer would be loaded into a database system, and the GraphRAG's Query Engine would interact with the database using the knowledge model data-store types.</p>
-<h3 id="datashaper-workflows">DataShaper Workflows</h3>
-<p>GraphRAG's Indexing Pipeline is built on top of our open-source library, <a href="https://github.com/microsoft/datashaper">DataShaper</a>.
-DataShaper is a data processing library that allows users to declaratively express data pipelines, schemas, and related assets using well-defined schemas.
-DataShaper has implementations in JavaScript and Python, and is designed to be extensible to other languages.</p>
-<p>One of the core resource types within DataShaper is a <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/WorkflowSchema.ts">Workflow</a>.
-Workflows are expressed as sequences of steps, which we call <a href="https://github.com/microsoft/datashaper/blob/main/javascript/schema/src/workflow/verbs.ts">verbs</a>.
-Each step has a verb name and a configuration object.
-In DataShaper, these verbs model relational concepts such as SELECT, DROP, JOIN, etc.. Each verb transforms an input data table, and that table is passed down the pipeline.</p>
-<pre class="mermaid"><code>---
-title: Sample Workflow
----
-flowchart LR
-    input[Input Table] --&gt; select[SELECT] --&gt; join[JOIN] --&gt; binarize[BINARIZE] --&gt; output[Output Table]</code></pre>
-<h3 id="llm-based-workflow-steps">LLM-based Workflow Steps</h3>
-<p>GraphRAG's Indexing Pipeline implements a handful of custom verbs on top of the standard, relational verbs that our DataShaper library provides. These verbs give us the ability to augment text documents with rich, structured data using the power of LLMs such as GPT-4. We utilize these verbs in our standard workflow to extract entities, relationships, claims, community structures, and community reports and summaries. This behavior is customizable and can be extended to support many kinds of AI-based data enrichment and extraction tasks.</p>
-<h3 id="workflow-graphs">Workflow Graphs</h3>
-<p>Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.
-In the GraphRAG Indexing Pipeline, each workflow may define dependencies on other workflows, effectively forming a directed acyclic graph (DAG) of workflows, which is then used to schedule processing.</p>
+<h3 id="workflows">Workflows</h3>
+<p>Because of the complexity of our data indexing tasks, we needed to be able to express our data pipeline as series of multiple, interdependent workflows.</p>
 <pre class="mermaid"><code>---
 title: Sample Workflow DAG
 ---
@@ -1599,7 +1547,7 @@ stateDiagram-v2
 <p>The primary unit of communication between workflows, and between workflow steps is an instance of <code>pandas.DataFrame</code>.
 Although side-effects are possible, our goal is to be <em>data-centric</em> and <em>table-centric</em> in our approach to data processing.
 This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
-Our underlying dataframe technology may change over time, but our primary goal is to support the DataShaper workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
+Our underlying dataframe technology may change over time, but our primary goal is to support the workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
 <h3 id="llm-caching">LLM Caching</h3>
 <p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
 Because of these potential error cases, we've added a cache layer around LLM interactions.
