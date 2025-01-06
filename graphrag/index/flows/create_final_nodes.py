@@ -4,10 +4,8 @@
 """All the steps to transform final nodes."""
 
 import pandas as pd
-from datashaper import (
-    VerbCallbacks,
-)
 
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
@@ -19,7 +17,7 @@ def create_final_nodes(
     base_entity_nodes: pd.DataFrame,
     base_relationship_edges: pd.DataFrame,
     base_communities: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     embed_config: EmbedGraphConfig,
     layout_enabled: bool,
 ) -> pd.DataFrame:

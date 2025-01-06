@@ -42,13 +42,7 @@ from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
 from graphrag.index.config.cache import PipelineFileCacheConfig
 from graphrag.index.config.input import (
-    PipelineCSVInputConfig,
     PipelineInputConfig,
-    PipelineTextInputConfig,
-)
-from graphrag.index.config.pipeline import (
-    PipelineConfig,
-    PipelineWorkflowReference,
 )
 from graphrag.index.config.reporting import PipelineFileReportingConfig
 from graphrag.index.config.storage import PipelineFileStorageConfig
@@ -201,12 +195,10 @@ class TestDefaultConfig(unittest.TestCase):
         assert SummarizeDescriptionsConfig is not None
         assert TextEmbeddingConfig is not None
         assert UmapConfig is not None
-        assert PipelineConfig is not None
         assert PipelineFileReportingConfig is not None
         assert PipelineFileStorageConfig is not None
         assert PipelineInputConfig is not None
         assert PipelineFileCacheConfig is not None
-        assert PipelineWorkflowReference is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
     def test_string_repr(self):
@@ -218,47 +210,31 @@ class TestDefaultConfig(unittest.TestCase):
 
         # __repr__ can be eval()'d
         repr_str = config.__repr__()
-        # TODO: add __repr__ to datashaper enum
+        # TODO: add __repr__ to enum
         repr_str = repr_str.replace("async_mode=<AsyncType.Threaded: 'threaded'>,", "")
-        assert eval(repr_str) is not None
-
-        # Pipeline config __str__ can be json loaded
-        pipeline_config = create_pipeline_config(config)
-        string_repr = str(pipeline_config)
-        assert string_repr is not None
-        assert json.loads(string_repr) is not None
-
-        # Pipeline config __repr__ can be eval()'d
-        repr_str = pipeline_config.__repr__()
-        # TODO: add __repr__ to datashaper enum
-        repr_str = repr_str.replace(
-            "'async_mode': <AsyncType.Threaded: 'threaded'>,", ""
-        )
         assert eval(repr_str) is not None
 
     @mock.patch.dict(os.environ, {}, clear=True)
     def test_default_config_with_no_env_vars_throws(self):
         with pytest.raises(ApiKeyMissingError):
             # This should throw an error because the API key is missing
-            create_pipeline_config(create_graphrag_config())
+            create_graphrag_config()
 
     @mock.patch.dict(os.environ, {"GRAPHRAG_API_KEY": "test"}, clear=True)
     def test_default_config_with_api_key_passes(self):
         # doesn't throw
-        config = create_pipeline_config(create_graphrag_config())
+        config = create_graphrag_config()
         assert config is not None
 
     @mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test"}, clear=True)
     def test_default_config_with_oai_key_passes_envvar(self):
         # doesn't throw
-        config = create_pipeline_config(create_graphrag_config())
+        config = create_graphrag_config()
         assert config is not None
 
     def test_default_config_with_oai_key_passes_obj(self):
         # doesn't throw
-        config = create_pipeline_config(
-            create_graphrag_config({"llm": {"api_key": "test"}})
-        )
+        config = create_graphrag_config({"llm": {"api_key": "test"}})
         assert config is not None
 
     @mock.patch.dict(
@@ -351,29 +327,6 @@ class TestDefaultConfig(unittest.TestCase):
     def test_throws_if_azure_is_used_without_embedding_deployment_name(self):
         with pytest.raises(AzureDeploymentNameMissingError):
             create_graphrag_config()
-
-    @mock.patch.dict(
-        os.environ,
-        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_FILE_TYPE": "csv"},
-        clear=True,
-    )
-    def test_csv_input_returns_correct_config(self):
-        config = create_pipeline_config(create_graphrag_config(root_dir="/some/root"))
-        assert config.root_dir == "/some/root"
-        # Make sure the input is a CSV input
-        assert isinstance(config.input, PipelineCSVInputConfig)
-        assert (config.input.file_pattern or "") == ".*\\.csv$"  # type: ignore
-
-    @mock.patch.dict(
-        os.environ,
-        {"GRAPHRAG_API_KEY": "test", "GRAPHRAG_INPUT_FILE_TYPE": "text"},
-        clear=True,
-    )
-    def test_text_input_returns_correct_config(self):
-        config = create_pipeline_config(create_graphrag_config(root_dir="."))
-        assert isinstance(config.input, PipelineTextInputConfig)
-        assert config.input is not None
-        assert (config.input.file_pattern or "") == ".*\\.txt$"  # type: ignore
 
     @mock.patch.dict(
         os.environ,

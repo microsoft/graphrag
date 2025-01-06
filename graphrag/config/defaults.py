@@ -5,9 +5,8 @@
 
 from pathlib import Path
 
-from datashaper import AsyncType
-
 from graphrag.config.enums import (
+    AsyncType,
     CacheType,
     InputFileType,
     InputType,

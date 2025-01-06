@@ -9,9 +9,9 @@ from enum import Enum
 from typing import Any
 
 import networkx as nx
-from datashaper import VerbCallbacks
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 ExtractedEntity = dict[str, Any]
 ExtractedRelationship = dict[str, Any]
@@ -40,7 +40,7 @@ EntityExtractStrategy = Callable[
     [
         list[Document],
         EntityTypes,
-        VerbCallbacks,
+        WorkflowCallbacks,
         PipelineCache,
         StrategyConfig,
     ],

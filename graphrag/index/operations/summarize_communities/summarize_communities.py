@@ -6,17 +6,13 @@
 import logging
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    NoopVerbCallbacks,
-    VerbCallbacks,
-    derive_from_rows,
-    progress_ticker,
-)
 
 import graphrag.config.defaults as defaults
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     prep_community_report_context,
 )
@@ -28,6 +24,8 @@ from graphrag.index.operations.summarize_communities.typing import (
     CommunityReportsStrategy,
     CreateCommunityReportsStrategyType,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.logger.progress import progress_ticker
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +34,7 @@ async def summarize_communities(
     local_contexts,
     nodes,
     community_hierarchy,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
     async_mode: AsyncType = AsyncType.AsyncIO,
@@ -75,9 +73,9 @@ async def summarize_communities(
         local_reports = await derive_from_rows(
             level_contexts,
             run_generate,
-            callbacks=NoopVerbCallbacks(),
+            callbacks=NoopWorkflowCallbacks(),
             num_threads=num_threads,
-            scheduling_type=async_mode,
+            async_type=async_mode,
         )
         reports.extend([lr for lr in local_reports if lr is not None])
 
@@ -86,7 +84,7 @@ async def summarize_communities(
 
 async def _generate_report(
     runner: CommunityReportsStrategy,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
     community_id: int,

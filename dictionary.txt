@@ -148,10 +148,6 @@ codebases
 # Microsoft
 MSRC
 
-# Broken Upstream
-# TODO FIX IN DATASHAPER
-Arrary
-
 # Prompt Inputs
 ABILA
 Abila

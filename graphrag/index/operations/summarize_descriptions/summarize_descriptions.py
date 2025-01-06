@@ -8,17 +8,14 @@ import logging
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    ProgressTicker,
-    VerbCallbacks,
-    progress_ticker,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,
 )
+from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +23,7 @@ log = logging.getLogger(__name__)
 async def summarize_descriptions(
     entities_df: pd.DataFrame,
     relationships_df: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict[str, Any] | None = None,
     num_threads: int = 4,

@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing snapshot method definition."""
+"""A module containing snapshot_graphml method definition."""
 
 import networkx as nx
 

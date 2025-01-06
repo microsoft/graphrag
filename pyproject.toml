@@ -47,7 +47,6 @@ format-jinja = """
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 environs = "^11.0.0"
-datashaper = "^0.0.49"
 
 # Vector Stores
 azure-search-documents = "^11.5.2"
@@ -252,7 +251,6 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S", "D", "ANN", "T201", "ASYNC", "ARG", "PTH", "TRY"]
-"examples/*" = ["S", "D", "ANN", "T201", "PTH", "TRY", "PERF"]
 "graphrag/index/config/*" = ["TCH"]
 "*.ipynb" = ["T201"]
 
@@ -264,7 +262,7 @@ convention = "numpy"
 
 # https://github.com/microsoft/pyright/blob/9f81564a4685ff5c55edd3959f9b39030f590b2f/docs/configuration.md#sample-pyprojecttoml-file
 [tool.pyright]
-include = ["graphrag", "tests", "examples", "examples_notebooks"]
+include = ["graphrag", "tests", "examples_notebooks"]
 exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.pytest.ini_options]
