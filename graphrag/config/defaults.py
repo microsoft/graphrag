@@ -96,6 +96,9 @@ VECTOR_STORE = f"""
     type: {VectorStoreType.LanceDB.value}
     db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
     container_name: default
+    # storage_options: # https://lancedb.github.io/lancedb/guides/storage/#azure-blob-storage
+    #   account_name: <azure_storage_account_name>
+    #   account_key: <azure_storage_account_key>
     overwrite: true\
 """
 
