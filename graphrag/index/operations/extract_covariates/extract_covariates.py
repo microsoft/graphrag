@@ -14,7 +14,8 @@ import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
@@ -34,6 +35,7 @@ async def extract_covariates(
     cache: PipelineCache,
     column: str,
     covariate_type: str,
+    config: GraphRagConfig,
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
@@ -52,7 +54,13 @@ async def extract_covariates(
     async def run_strategy(row):
         text = row[column]
         result = await run_claim_extraction(
-            text, entity_types, resolved_entities_map, callbacks, cache, strategy_config
+            input=text,
+            entity_types=entity_types,
+            resolved_entities_map=resolved_entities_map,
+            callbacks=callbacks,
+            cache=cache,
+            strategy_config=strategy_config,
+            config=config,
         )
         return [
             create_row_from_claim_data(row, item, covariate_type)
@@ -81,10 +89,18 @@ async def run_claim_extraction(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy_config: dict[str, Any],
+    config: GraphRagConfig,
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    llm_config = read_llm_params(strategy_config.get("llm", {}))
-    llm = load_llm("claim_extraction", llm_config, callbacks=callbacks, cache=cache)
+    claim_extraction_llm_settings = config.get_model_config(
+        config.claim_extraction.model_id
+    )
+    llm = load_llm(
+        "claim_extraction",
+        claim_extraction_llm_settings,
+        callbacks=callbacks,
+        cache=cache,
+    )
     extraction_prompt = strategy_config.get("extraction_prompt")
     max_gleanings = strategy_config.get("max_gleanings", defs.CLAIM_MAX_GLEANINGS)
     tuple_delimiter = strategy_config.get("tuple_delimiter")

@@ -4,7 +4,7 @@
 """Parameterization settings for the default configuration."""
 
 from devtools import pformat
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.models.basic_search_config import BasicSearchConfig
@@ -18,8 +18,8 @@ from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
-from graphrag.config.models.llm_config import LLMConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.model_config import ModelConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.storage_config import StorageConfig
@@ -30,7 +30,7 @@ from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
 
 
-class GraphRagConfig(LLMConfig):
+class GraphRagConfig(BaseModel):
     """Base class for the Default-Configuration parameterization settings."""
 
     def __repr__(self) -> str:
@@ -43,6 +43,10 @@ class GraphRagConfig(LLMConfig):
 
     root_dir: str = Field(
         description="The root directory for the configuration.", default="."
+    )
+
+    models: list[ModelConfig] = Field(
+        description="Available language model configurations.", default=[]
     )
 
     reporting: ReportingConfig = Field(
@@ -152,12 +156,31 @@ class GraphRagConfig(LLMConfig):
     )
     """The basic search configuration."""
 
-    encoding_model: str = Field(
-        description="The encoding model to use.", default=defs.ENCODING_MODEL
-    )
-    """The encoding model to use."""
-
     skip_workflows: list[str] = Field(
         description="The workflows to skip, usually for testing reasons.", default=[]
     )
     """The workflows to skip, usually for testing reasons."""
+
+    def get_model_config(self, model_id: str) -> ModelConfig:
+        """Get a model configuration by ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to get. Should match an ID in the models list.
+
+        Returns
+        -------
+        ModelConfig
+            The model configuration if found.
+
+        Raises
+        ------
+        ValueError
+            If the model ID is not found in the configuration.
+        """
+        for model in self.models:
+            if model.id == model_id:
+                return model
+        err_msg = f"Model ID {model_id} not found in configuration."
+        raise ValueError(err_msg)

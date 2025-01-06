@@ -11,6 +11,7 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
@@ -21,6 +22,7 @@ async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
+    config: GraphRagConfig,
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,
     extraction_async_mode: AsyncType = AsyncType.AsyncIO,
@@ -31,15 +33,16 @@ async def extract_graph(
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
     entities, relationships = await extract_entities(
-        text_units,
-        callbacks,
-        cache,
+        text_units=text_units,
+        callbacks=callbacks,
+        cache=cache,
         text_column="text",
         id_column="id",
         strategy=extraction_strategy,
         async_mode=extraction_async_mode,
         entity_types=entity_types,
         num_threads=extraction_num_threads,
+        config=config,
     )
 
     if not _validate_data(entities):
@@ -55,12 +58,13 @@ async def extract_graph(
         raise ValueError(error_msg)
 
     entity_summaries, relationship_summaries = await summarize_descriptions(
-        entities,
-        relationships,
-        callbacks,
-        cache,
+        entities_df=entities,
+        relationships_df=relationships,
+        callbacks=callbacks,
+        cache=cache,
         strategy=summarization_strategy,
         num_threads=summarization_num_threads,
+        config=config,
     )
 
     base_relationship_edges = _prep_edges(relationships, relationship_summaries)

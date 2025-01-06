@@ -9,6 +9,7 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
@@ -37,6 +38,7 @@ async def generate_text_embeddings(
     storage: PipelineStorage,
     text_embed_config: dict,
     embedded_fields: set[str],
+    config: GraphRagConfig,
     snapshot_embeddings_enabled: bool = False,
 ) -> None:
     """All the steps to generate all embeddings."""
@@ -102,6 +104,7 @@ async def generate_text_embeddings(
             storage=storage,
             text_embed_config=text_embed_config,
             snapshot_embeddings_enabled=snapshot_embeddings_enabled,
+            config=config,
             **embedding_param_map[field],
         )
 
@@ -115,16 +118,18 @@ async def _run_and_snapshot_embeddings(
     storage: PipelineStorage,
     text_embed_config: dict,
     snapshot_embeddings_enabled: bool,
+    config: GraphRagConfig,
 ) -> None:
     """All the steps to generate single embedding."""
     if text_embed_config:
         data["embedding"] = await embed_text(
-            data,
-            callbacks,
-            cache,
+            input=data,
+            callbacks=callbacks,
+            cache=cache,
             embed_column=embed_column,
             embedding_name=name,
             strategy=text_embed_config["strategy"],
+            config=config,
         )
 
         if snapshot_embeddings_enabled is True:

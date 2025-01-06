@@ -11,6 +11,7 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates,
 )
@@ -22,6 +23,7 @@ async def create_final_covariates(
     cache: PipelineCache,
     covariate_type: str,
     extraction_strategy: dict[str, Any] | None,
+    config: GraphRagConfig,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
     num_threads: int = 4,
@@ -31,15 +33,16 @@ async def create_final_covariates(
     # this also results in text_unit_id being copied to the output covariate table
     text_units["text_unit_id"] = text_units["id"]
     covariates = await extract_covariates(
-        text_units,
-        callbacks,
-        cache,
-        "text",
-        covariate_type,
-        extraction_strategy,
-        async_mode,
-        entity_types,
-        num_threads,
+        input=text_units,
+        callbacks=callbacks,
+        cache=cache,
+        column="text",
+        covariate_type=covariate_type,
+        strategy=extraction_strategy,
+        async_mode=async_mode,
+        entity_types=entity_types,
+        num_threads=num_threads,
+        config=config,
     )
     text_units.drop(columns=["text_unit_id"], inplace=True)  # don't pollute the global
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))

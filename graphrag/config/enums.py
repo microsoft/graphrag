@@ -116,6 +116,13 @@ class LLMType(str, Enum):
         return f'"{self.value}"'
 
 
+class AzureAuthType(str, Enum):
+    """AzureAuthType enum class definition."""
+
+    APIKey = "api_key"
+    ManagedIdentity = "managed_identity"
+
+
 class AsyncType(str, Enum):
     """Enum for the type of async to use."""
 

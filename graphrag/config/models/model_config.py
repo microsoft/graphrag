@@ -1,29 +1,40 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""LLM Parameters model."""
+"""Language model configuration."""
 
-from pydantic import BaseModel, ConfigDict, Field
+import tiktoken
+from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import LLMType
+from graphrag.config.enums import AsyncType, LLMType
 
 
-class LLMParameters(BaseModel):
-    """LLM Parameters model."""
+class ModelConfig(BaseModel):
+    """Language model configuration."""
 
-    model_config = ConfigDict(protected_namespaces=(), extra="allow")
+    id: str = Field(
+        description="A user friendly ID of the model used elsewhere in GraphRAGConfig for selecting models."
+    )
     api_key: str | None = Field(
         description="The API key to use for the LLM service.",
         default=None,
     )
-    type: LLMType = Field(
-        description="The type of LLM model to use.", default=defs.LLM_TYPE
-    )
-    encoding_model: str | None = Field(
-        description="The encoding model to use", default=defs.ENCODING_MODEL
-    )
-    model: str = Field(description="The LLM model to use.", default=defs.LLM_MODEL)
+    type: LLMType = Field(description="The type of LLM model to use.")
+    model: str = Field(description="The LLM model to use.")
+    encoding_model: str = Field(description="The encoding model to use", default="")
+
+    def _validate_encoding_model(self) -> None:
+        """Validate the encoding model.
+
+        Raises
+        ------
+        KeyError
+            If the model name is not recognized.
+        """
+        if self.encoding_model.strip() == "":
+            self.encoding_model = tiktoken.encoding_name_for_model(self.model)
+
     max_tokens: int | None = Field(
         description="The maximum number of tokens to generate.",
         default=defs.LLM_MAX_TOKENS,
@@ -57,6 +68,9 @@ class LLMParameters(BaseModel):
     api_version: str | None = Field(
         description="The version of the LLM API to use.", default=None
     )
+    deployment_name: str | None = Field(
+        description="The deployment name to use for the LLM service.", default=None
+    )
     organization: str | None = Field(
         description="The organization to use for the LLM service.", default=None
     )
@@ -66,9 +80,6 @@ class LLMParameters(BaseModel):
     audience: str | None = Field(
         description="Azure resource URI to use with managed identity for the llm connection.",
         default=None,
-    )
-    deployment_name: str | None = Field(
-        description="The deployment name to use for the LLM service.", default=None
     )
     model_supports_json: bool | None = Field(
         description="Whether the model supports JSON output mode.", default=None
@@ -100,3 +111,19 @@ class LLMParameters(BaseModel):
     responses: list[str | BaseModel] | None = Field(
         default=None, description="Static responses to use in mock mode."
     )
+    parallelization_stagger: float = Field(
+        description="The stagger to use for the LLM service.",
+        default=defs.PARALLELIZATION_STAGGER,
+    )
+    parallelization_num_threads: int = Field(
+        description="The number of threads to use for the LLM service.",
+        default=defs.PARALLELIZATION_NUM_THREADS,
+    )
+    async_mode: AsyncType = Field(
+        description="The async mode to use.", default=defs.ASYNC_MODE
+    )
+
+    @model_validator(mode="after")
+    def _validate_model(self):
+        self._validate_encoding_model()
+        return self

@@ -11,6 +11,7 @@ from typing_extensions import TypedDict
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 ExtractedEntity = dict[str, Any]
 StrategyConfig = dict[str, Any]
@@ -48,6 +49,7 @@ CommunityReportsStrategy = Callable[
         WorkflowCallbacks,
         PipelineCache,
         StrategyConfig,
+        GraphRagConfig,
     ],
     Awaitable[CommunityReport | None],
 ]

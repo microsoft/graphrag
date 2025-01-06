@@ -12,37 +12,37 @@ INIT_YAML = f"""\
 ### LLM settings ###
 ## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
 
-encoding_model: {defs.ENCODING_MODEL} # this needs to be matched to your model!
-
-llm:
-  api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
-  type: {defs.LLM_TYPE.value} # or azure_openai_chat
-  model: {defs.LLM_MODEL}
-  model_supports_json: true # recommended if this is available for your model.
-  # audience: "https://cognitiveservices.azure.com/.default"
-  # api_base: https://<instance>.openai.azure.com
-  # api_version: 2024-02-15-preview
-  # organization: <organization_id>
-  # deployment_name: <azure_model_deployment_name>
-
-parallelization:
-  stagger: {defs.PARALLELIZATION_STAGGER}
-  # num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-
-async_mode: {defs.ASYNC_MODE.value} # or asyncio
-
-embeddings:
-  async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  vector_store: {defs.VECTOR_STORE}
-  llm:
+models:
+  - id: {defs.DEFAULT_CHAT_MODEL_ID}
+    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
+    type: {defs.LLM_TYPE.value} # or azure_openai_chat
+    model: {defs.LLM_MODEL}
+    model_supports_json: true # recommended if this is available for your model.
+    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
+    parallelization_stagger: {defs.PARALLELIZATION_STAGGER}
+    async_mode: {defs.ASYNC_MODE.value} # or asyncio
+    # audience: "https://cognitiveservices.azure.com/.default"
+    # api_base: https://<instance>.openai.azure.com
+    # api_version: 2024-02-15-preview
+    # organization: <organization_id>
+    # deployment_name: <azure_model_deployment_name>
+  - id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
     model: {defs.EMBEDDING_MODEL}
+    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
+    parallelization_stagger: {defs.PARALLELIZATION_STAGGER}
+    async_mode: {defs.ASYNC_MODE.value} # or asyncio
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-02-15-preview
     # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
+
+embeddings:
+  async_mode: {defs.ASYNC_MODE.value} # or asyncio
+  vector_store: {defs.VECTOR_STORE}
+  model_id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
 
 ### Input settings ###
 
@@ -51,7 +51,7 @@ input:
   file_type: {defs.INPUT_FILE_TYPE.value} # or csv
   base_dir: "{defs.INPUT_BASE_DIR}"
   file_encoding: {defs.INPUT_FILE_ENCODING}
-  file_pattern: ".*\\\\.txt$"
+  file_pattern: ".*\\\\.txt$$"
 
 chunks:
   size: {defs.CHUNK_SIZE}
@@ -88,21 +88,25 @@ entity_extraction:
   prompt: "prompts/entity_extraction.txt"
   entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
   max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
+  model_id: {defs.ENTITY_EXTRACTION_MODEL_ID}
 
 summarize_descriptions:
   prompt: "prompts/summarize_descriptions.txt"
   max_length: {defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH}
+  model_id: {defs.SUMMARIZE_MODEL_ID}
 
 claim_extraction:
   enabled: false
   prompt: "prompts/claim_extraction.txt"
   description: "{defs.CLAIM_DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
+  model_id: {defs.CLAIM_EXTRACTION_MODEL_ID}
 
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: {defs.COMMUNITY_REPORT_MAX_LENGTH}
   max_input_length: {defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH}
+  model_id: {defs.COMMUNITY_REPORT_MODEL_ID}
 
 cluster_graph:
   max_cluster_size: {defs.MAX_CLUSTER_SIZE}

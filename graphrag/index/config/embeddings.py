@@ -5,7 +5,6 @@
 
 from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 
 entity_title_embedding = "entity.title"
 entity_description_embedding = "entity.description"
@@ -48,20 +47,25 @@ def get_embedded_fields(settings: GraphRagConfig) -> set[str]:
 
 
 def get_embedding_settings(
-    settings: TextEmbeddingConfig,
+    settings: GraphRagConfig,
     vector_store_params: dict | None = None,
 ) -> dict:
     """Transform GraphRAG config into settings for workflows."""
     # TEMP
-    vector_store_settings = settings.vector_store
+    embeddings_llm_settings = settings.get_model_config(settings.embeddings.model_id)
+    vector_store_settings = settings.embeddings.vector_store
     if vector_store_settings is None:
-        return {"strategy": settings.resolved_strategy()}
+        return {
+            "strategy": settings.embeddings.resolved_strategy(embeddings_llm_settings)
+        }
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
-    strategy = settings.resolved_strategy()  # get the default strategy
+    strategy = settings.embeddings.resolved_strategy(
+        embeddings_llm_settings
+    )  # get the default strategy
     strategy.update({
         "vector_store": {**(vector_store_params or {}), **vector_store_settings}
     })  # update the default strategy with the vector store settings

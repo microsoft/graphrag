@@ -10,6 +10,7 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
     restore_community_hierarchy,
@@ -46,6 +47,7 @@ async def create_final_community_reports(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     summarization_strategy: dict,
+    config: GraphRagConfig,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
 ) -> pd.DataFrame:
@@ -70,14 +72,15 @@ async def create_final_community_reports(
     )
 
     community_reports = await summarize_communities(
-        local_contexts,
-        nodes,
-        community_hierarchy,
-        callbacks,
-        cache,
-        summarization_strategy,
+        local_contexts=local_contexts,
+        nodes=nodes,
+        community_hierarchy=community_hierarchy,
+        callbacks=callbacks,
+        cache=cache,
+        strategy=summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
+        config=config,
     )
 
     community_reports["community"] = community_reports["community"].astype(int)

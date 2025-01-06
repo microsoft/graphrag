@@ -9,6 +9,7 @@ from nltk.corpus import words
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractionResult,
@@ -26,6 +27,7 @@ async def run(  # noqa RUF029 async is required for interface
     callbacks: WorkflowCallbacks,  # noqa ARG001
     cache: PipelineCache,  # noqa ARG001
     args: StrategyConfig,  # noqa ARG001
+    config: GraphRagConfig,  # noqa ARG001
 ) -> EntityExtractionResult:
     """Run method definition."""
     entity_map = {}

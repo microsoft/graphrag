@@ -9,6 +9,7 @@ from typing import Any
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
@@ -18,6 +19,7 @@ async def run(  # noqa RUF029 async is required for interface
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     _args: dict[str, Any],
+    _config: GraphRagConfig,
 ) -> TextEmbeddingResult:
     """Run the Claim extraction chain."""
     input = input if isinstance(input, Iterable) else [input]

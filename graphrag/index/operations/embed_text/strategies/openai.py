@@ -9,12 +9,11 @@ from typing import Any
 
 import numpy as np
 from fnllm import EmbeddingsLLM
-from pydantic import TypeAdapter
 
-import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.model_config import ModelConfig
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
@@ -29,16 +28,17 @@ async def run(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: dict[str, Any],
+    config: GraphRagConfig,
 ) -> TextEmbeddingResult:
     """Run the Claim extraction chain."""
     if is_null(input):
         return TextEmbeddingResult(embeddings=None)
 
-    llm_config = TypeAdapter(LLMParameters).validate_python(args.get("llm", {}))
     batch_size = args.get("batch_size", 16)
     batch_max_tokens = args.get("batch_max_tokens", 8191)
-    splitter = _get_splitter(llm_config, batch_max_tokens)
-    llm = _get_llm(llm_config, callbacks, cache)
+    embeddings_llm_settings = config.get_model_config(config.embeddings.model_id)
+    splitter = _get_splitter(embeddings_llm_settings, batch_max_tokens)
+    llm = _get_llm(embeddings_llm_settings, callbacks, cache)
     semaphore: asyncio.Semaphore = asyncio.Semaphore(args.get("num_threads", 4))
 
     # Break up the input texts. The sizes here indicate how many snippets are in each input text
@@ -66,15 +66,15 @@ async def run(
     return TextEmbeddingResult(embeddings=embeddings)
 
 
-def _get_splitter(config: LLMParameters, batch_max_tokens: int) -> TokenTextSplitter:
+def _get_splitter(config: ModelConfig, batch_max_tokens: int) -> TokenTextSplitter:
     return TokenTextSplitter(
-        encoding_name=config.encoding_model or defs.ENCODING_MODEL,
+        encoding_name=config.encoding_model,
         chunk_size=batch_max_tokens,
     )
 
 
 def _get_llm(
-    config: LLMParameters,
+    config: ModelConfig,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
 ) -> EmbeddingsLLM:

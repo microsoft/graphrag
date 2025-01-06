@@ -119,17 +119,21 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
 
 
 def _log_llm_settings(settings: GraphRagConfig) -> None:
+    entity_extraction_llm_settings = settings.get_model_config(
+        settings.entity_extraction.model_id
+    )
+    embeddings_llm_settings = settings.get_model_config(settings.embeddings.model_id)
     log.info(
         "Using LLM Config %s",
         json.dumps(
-            {**settings.entity_extraction.llm.model_dump(), "api_key": "*****"},
+            {**entity_extraction_llm_settings.model_dump(), "api_key": "*****"},
             indent=4,
         ),
     )
     log.info(
         "Using Embeddings Config %s",
         json.dumps(
-            {**settings.embeddings.llm.model_dump(), "api_key": "*****"}, indent=4
+            {**embeddings_llm_settings.model_dump(), "api_key": "*****"}, indent=4
         ),
     )
 
@@ -172,6 +176,12 @@ def _text_unit_workflows(
 
 
 def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
+    entity_extraction_llm_settings = settings.get_model_config(
+        settings.entity_extraction.model_id
+    )
+    summarize_descriptions_llm_settings = settings.get_model_config(
+        settings.summarize_descriptions.model_id
+    )
     return [
         PipelineWorkflowReference(
             name=extract_graph,
@@ -179,18 +189,20 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
                 "snapshot_graphml": settings.snapshots.graphml,
                 "snapshot_transient": settings.snapshots.transient,
                 "entity_extract": {
-                    **settings.entity_extraction.parallelization.model_dump(),
-                    "async_mode": settings.entity_extraction.async_mode,
+                    "stagger": entity_extraction_llm_settings.parallelization_stagger,
+                    "num_threads": entity_extraction_llm_settings.parallelization_num_threads,
+                    "async_mode": entity_extraction_llm_settings.async_mode,
                     "strategy": settings.entity_extraction.resolved_strategy(
-                        settings.root_dir, settings.encoding_model
+                        settings.root_dir, entity_extraction_llm_settings
                     ),
                     "entity_types": settings.entity_extraction.entity_types,
                 },
                 "summarize_descriptions": {
-                    **settings.summarize_descriptions.parallelization.model_dump(),
-                    "async_mode": settings.summarize_descriptions.async_mode,
+                    "stagger": summarize_descriptions_llm_settings.parallelization_stagger,
+                    "num_threads": summarize_descriptions_llm_settings.parallelization_num_threads,
+                    "async_mode": summarize_descriptions_llm_settings.async_mode,
                     "strategy": settings.summarize_descriptions.resolved_strategy(
-                        settings.root_dir,
+                        settings.root_dir, summarize_descriptions_llm_settings
                     ),
                 },
             },
@@ -223,6 +235,9 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
 def _community_workflows(
     settings: GraphRagConfig, covariates_enabled: bool
 ) -> list[PipelineWorkflowReference]:
+    community_reports_llm_settings = settings.get_model_config(
+        settings.community_reports.model_id
+    )
     return [
         PipelineWorkflowReference(name=create_final_communities),
         PipelineWorkflowReference(
@@ -230,10 +245,11 @@ def _community_workflows(
             config={
                 "covariates_enabled": covariates_enabled,
                 "create_community_reports": {
-                    **settings.community_reports.parallelization.model_dump(),
-                    "async_mode": settings.community_reports.async_mode,
+                    "stagger": community_reports_llm_settings.parallelization_stagger,
+                    "num_threads": community_reports_llm_settings.parallelization_num_threads,
+                    "async_mode": community_reports_llm_settings.async_mode,
                     "strategy": settings.community_reports.resolved_strategy(
-                        settings.root_dir
+                        settings.root_dir, community_reports_llm_settings
                     ),
                 },
             },
@@ -244,14 +260,18 @@ def _community_workflows(
 def _covariate_workflows(
     settings: GraphRagConfig,
 ) -> list[PipelineWorkflowReference]:
+    claim_extraction_llm_settings = settings.get_model_config(
+        settings.claim_extraction.model_id
+    )
     return [
         PipelineWorkflowReference(
             name=create_final_covariates,
             config={
                 "claim_extract": {
-                    **settings.claim_extraction.parallelization.model_dump(),
+                    "stagger": claim_extraction_llm_settings.parallelization_stagger,
+                    "num_threads": claim_extraction_llm_settings.parallelization_num_threads,
                     "strategy": settings.claim_extraction.resolved_strategy(
-                        settings.root_dir, settings.encoding_model
+                        settings.root_dir, claim_extraction_llm_settings
                     ),
                 },
             },
@@ -267,7 +287,7 @@ def _embeddings_workflows(
             name=generate_text_embeddings,
             config={
                 "snapshot_embeddings": settings.snapshots.embeddings,
-                "text_embed": get_embedding_settings(settings.embeddings),
+                "text_embed": get_embedding_settings(settings),
                 "embedded_fields": embedded_fields,
             },
         ),

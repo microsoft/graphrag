@@ -10,6 +10,7 @@ from typing import Any, NamedTuple
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 StrategyConfig = dict[str, Any]
 
@@ -29,6 +30,7 @@ SummarizationStrategy = Callable[
         WorkflowCallbacks,
         PipelineCache,
         StrategyConfig,
+        GraphRagConfig,
     ],
     Awaitable[SummarizedDescriptionResult],
 ]

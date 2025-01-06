@@ -40,7 +40,7 @@ async def run_workflow(
     )
 
     embedded_fields = get_embedded_fields(config)
-    text_embed = get_embedding_settings(config.embeddings)
+    text_embed = get_embedding_settings(config)
 
     await generate_text_embeddings(
         final_documents=final_documents,
@@ -54,4 +54,5 @@ async def run_workflow(
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
         snapshot_embeddings_enabled=config.snapshots.embeddings,
+        config=config,
     )

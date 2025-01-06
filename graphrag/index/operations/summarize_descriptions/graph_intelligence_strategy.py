@@ -7,7 +7,8 @@ from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,
 )
@@ -23,11 +24,17 @@ async def run_graph_intelligence(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
+    config: GraphRagConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = read_llm_params(args.get("llm", {}))
+    summarize_description_llm_settings = config.get_model_config(
+        config.summarize_descriptions.model_id
+    )
     llm = load_llm(
-        "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
+        "summarize_descriptions",
+        summarize_description_llm_settings,
+        callbacks=callbacks,
+        cache=cache,
     )
     return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
