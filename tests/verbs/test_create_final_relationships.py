@@ -2,7 +2,7 @@
 # Licensed under the MIT License
 
 
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.workflows.create_final_relationships import (
     run_workflow,
@@ -29,7 +29,7 @@ async def test_create_final_relationships():
     await run_workflow(
         config,
         context,
-        NoopVerbCallbacks(),
+        NoopWorkflowCallbacks(),
     )
 
     actual = await load_table_from_storage(workflow_name, context.storage)

@@ -9,7 +9,7 @@ from uuid import uuid4
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.summarize_descriptions import (
@@ -19,7 +19,7 @@ from graphrag.index.operations.summarize_descriptions import (
 
 async def extract_graph(
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     extraction_strategy: dict[str, Any] | None = None,
     extraction_num_threads: int = 4,

@@ -3,8 +3,6 @@
 
 """A workflow callback manager that emits updates."""
 
-from typing import Any
-
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
@@ -31,23 +29,14 @@ class ProgressWorkflowCallbacks(NoopWorkflowCallbacks):
     def _latest(self) -> ProgressLogger:
         return self._progress_stack[-1]
 
-    def on_workflow_start(self, name: str, instance: object) -> None:
+    def workflow_start(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow starts."""
         self._push(name)
 
-    def on_workflow_end(self, name: str, instance: object) -> None:
+    def workflow_end(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow ends."""
         self._pop()
 
-    def on_step_start(self, step_name: str) -> None:
-        """Execute this callback every time a step starts."""
-        self._push(f"Step {step_name}")
-        self._latest(Progress(percent=0))
-
-    def on_step_end(self, step_name: str, result: Any) -> None:
-        """Execute this callback every time a step ends."""
-        self._pop()
-
-    def on_step_progress(self, step_name: str, progress: Progress) -> None:
+    def progress(self, progress: Progress) -> None:
         """Handle when progress occurs."""
         self._latest(progress)

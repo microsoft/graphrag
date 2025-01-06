@@ -9,7 +9,7 @@ from typing import Any
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.extract_entities.typing import (
@@ -27,7 +27,7 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_entities(
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     text_column: str,
     id_column: str,

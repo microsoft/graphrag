@@ -25,7 +25,7 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
             Path(directory) / "logs.json", "a", encoding="utf-8", errors="strict"
         )
 
-    def on_error(
+    def error(
         self,
         message: str,
         cause: BaseException | None = None,
@@ -50,7 +50,7 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
         message = f"{message} details={details}"
         log.info(message)
 
-    def on_warning(self, message: str, details: dict | None = None):
+    def warning(self, message: str, details: dict | None = None):
         """Handle when a warning occurs."""
         self._out_stream.write(
             json.dumps(
@@ -61,7 +61,7 @@ class FileWorkflowCallbacks(NoopWorkflowCallbacks):
         )
         _print_warning(message)
 
-    def on_log(self, message: str, details: dict | None = None):
+    def log(self, message: str, details: dict | None = None):
         """Handle when a log message is produced."""
         self._out_stream.write(
             json.dumps(

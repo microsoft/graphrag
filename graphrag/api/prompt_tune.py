@@ -13,7 +13,7 @@ Backwards compatibility is not guaranteed at this time.
 
 from pydantic import PositiveInt, validate_call
 
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.logger.print_progress import PrintProgressLogger
@@ -99,7 +99,7 @@ async def generate_indexing_prompts(
         "prompt_tuning",
         config.llm,
         cache=None,
-        callbacks=NoopVerbCallbacks(),
+        callbacks=NoopWorkflowCallbacks(),
     )
 
     if not domain:

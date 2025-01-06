@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
@@ -86,7 +86,7 @@ async def update_dataframe_outputs(
     update_storage: PipelineStorage,
     config: GraphRagConfig,
     cache: PipelineCache,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     progress_logger: ProgressLogger,
 ) -> None:
     """Update the mergeable outputs.

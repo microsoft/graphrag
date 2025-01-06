@@ -9,15 +9,13 @@ import time
 import traceback
 from collections.abc import AsyncIterable
 from dataclasses import asdict
-from typing import cast
 
 import pandas as pd
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
-from graphrag.callbacks.delegating_verb_callbacks import DelegatingVerbCallbacks
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunStats
@@ -119,7 +117,7 @@ async def run_workflows(
             update_storage=update_index_storage,
             config=config,
             cache=cache,
-            callbacks=NoopVerbCallbacks(),
+            callbacks=NoopWorkflowCallbacks(),
             progress_logger=progress_logger,
         )
 
@@ -163,16 +161,15 @@ async def _run_workflows(
             last_workflow = workflow
             run_workflow = all_workflows[workflow]
             progress = logger.child(workflow, transient=False)
-            callbacks.on_workflow_start(workflow, None)
-            verb_callbacks = DelegatingVerbCallbacks(workflow, callbacks)
+            callbacks.workflow_start(workflow, None)
             work_time = time.time()
             result = await run_workflow(
                 config,
                 context,
-                verb_callbacks,
+                callbacks,
             )
             progress(Progress(percent=1))
-            callbacks.on_workflow_end(workflow, result)
+            callbacks.workflow_end(workflow, result)
             yield PipelineRunResult(workflow, result, None)
 
             context.stats.workflows[workflow] = {"overall": time.time() - work_time}
@@ -186,9 +183,7 @@ async def _run_workflows(
 
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
-        cast("WorkflowCallbacks", callbacks).on_error(
-            "Error running pipeline!", e, traceback.format_exc()
-        )
+        callbacks.error("Error running pipeline!", e, traceback.format_exc())
         yield PipelineRunResult(last_workflow, None, [e])
 
 

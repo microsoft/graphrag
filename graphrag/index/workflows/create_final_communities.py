@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_communities import (
@@ -19,7 +19,7 @@ workflow_name = "create_final_communities"
 async def run_workflow(
     _config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: VerbCallbacks,
+    _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final communities."""
     base_entity_nodes = await load_table_from_storage(

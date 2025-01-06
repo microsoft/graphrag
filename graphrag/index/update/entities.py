@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.verb_callbacks import VerbCallbacks
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
@@ -92,7 +92,7 @@ async def _run_entity_summarization(
     entities_df: pd.DataFrame,
     config: GraphRagConfig,
     cache: PipelineCache,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame:
     """Run entity summarization.
 
