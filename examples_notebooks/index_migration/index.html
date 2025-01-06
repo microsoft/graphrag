@@ -2325,7 +2325,7 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">graphrag.cache.factory</span> <span class="kn">import</span> <span class="n">create_cache</span>
-<span class="kn">from</span> <span class="nn">graphrag.callbacks.noop_verb_callbacks</span> <span class="kn">import</span> <span class="n">NoopVerbCallbacks</span>
+<span class="kn">from</span> <span class="nn">graphrag.callbacks.noop_workflow_callbacks</span> <span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
 <span class="kn">from</span> <span class="nn">graphrag.index.flows.generate_text_embeddings</span> <span class="kn">import</span> <span class="n">generate_text_embeddings</span>
 
 <span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
@@ -2337,7 +2337,7 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">config</span>
 <span class="n">text_embed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text_embed"</span><span class="p">,</span> <span class="p">{})</span>
 <span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedded_fields"</span><span class="p">,</span> <span class="p">{})</span>
-<span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopVerbCallbacks</span><span class="p">()</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopWorkflowCallbacks</span><span class="p">()</span>
 <span class="n">cache</span> <span class="o">=</span> <span class="n">create_cache</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">PROJECT_DIRECTORY</span><span class="p">)</span>
 
 <span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
@@ -2355,7 +2355,7 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
 <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import create_cache
-from graphrag.callbacks.noop_verb_callbacks import NoopVerbCallbacks
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
 
 # We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
@@ -2367,7 +2367,7 @@ workflow = next(
 config = workflow.config
 text_embed = config.get("text_embed", {})
 embedded_fields = config.get("embedded_fields", {})
-callbacks = NoopVerbCallbacks()
+callbacks = NoopWorkflowCallbacks()
 cache = create_cache(pipeline_config.cache, PROJECT_DIRECTORY)
 
 await generate_text_embeddings(
@@ -2399,7 +2399,7 @@ await generate_text_embeddings(
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[7], line 1</span>
 <span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">cache</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_cache
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_verb_callbacks</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopVerbCallbacks
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_workflow_callbacks</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'create_cache' from 'graphrag.cache.factory' (/home/runner/work/graphrag/graphrag/graphrag/cache/factory.py)</pre>
