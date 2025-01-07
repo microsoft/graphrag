@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Implement cosmosdb storage option for cache and output"
-}
