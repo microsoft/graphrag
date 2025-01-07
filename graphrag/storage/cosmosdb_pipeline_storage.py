@@ -34,6 +34,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
     _database_name: str
     _container_name: str
     _encoding: str
+    _no_id_prefixes: list[str]
 
     def __init__(
         self,
@@ -66,6 +67,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
             if cosmosdb_account_url
             else None
         )
+        self._no_id_prefixes = []
         log.info(
             "creating cosmosdb storage with account: %s and database: %s and container: %s",
             self._cosmosdb_account_name,
@@ -209,9 +211,9 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     StringIO(items_json_str), orient="records", lines=False
                 )
 
-                # Drop the "id" column from the base_communities dataframe, since the original dataframe does not include it
-                # TODO: Figure out a clean way to resolve the id key not existing in input dataframes, or force all dataframes to include id
-                if prefix == "base_communities":
+                # Drop the "id" column if the original dataframe does not include it
+                # TODO: Figure out optimal way to handle missing id keys in input dataframes
+                if prefix in self._no_id_prefixes:
                     items_df.drop(columns=["id"], axis=1, inplace=True)
 
                 return items_df.to_parquet()
@@ -244,9 +246,10 @@ class CosmosDBPipelineStorage(PipelineStorage):
                     cosmosdb_item_list = json.loads(value_json)
                     for index, cosmosdb_item in enumerate(cosmosdb_item_list):
                         # If the id key does not exist in the input dataframe json, create a unique id using the prefix and item index
-                        # TODO: Figure out a clean way to resolve the id key not existing in the input dataframe json
+                        # TODO: Figure out optimal way to handle missing id keys in input dataframes
                         if "id" not in cosmosdb_item:
                             prefixed_id = f"{prefix}:{index}"
+                            self._no_id_prefixes.append(prefix)
                         # Append an additional prefix to the id to force a unique identifier for the create_final_nodes rows
                         elif prefix == "create_final_nodes":
                             prefixed_id = f"{prefix}-community_{cosmosdb_item['community']}:{cosmosdb_item['id']}"
