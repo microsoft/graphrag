@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Move extractor code to co-locate with operations."
-}
