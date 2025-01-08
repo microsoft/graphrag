@@ -1045,13 +1045,13 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 
 [[package]]
 name = "fnllm"
-version = "0.0.10"
+version = "0.0.13"
 description = "A function-based LLM protocol and wrapper."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "fnllm-0.0.10-py3-none-any.whl", hash = "sha256:e676001d9b0ebbe194590393d427385760adaefcab6a456268e4f13a0e9d2cb6"},
-    {file = "fnllm-0.0.10.tar.gz", hash = "sha256:ece859432b83a462dc35db6483f36313ff935b79f437186daa44e3679f4f49cf"},
+    {file = "fnllm-0.0.13-py3-none-any.whl", hash = "sha256:f4871fab484c2832529f7a7b20b1d860419e91e78025d639ff6013c3b0e2fbac"},
+    {file = "fnllm-0.0.13.tar.gz", hash = "sha256:db09d89677a7f81ebd062061440a6db4aea2c44a8f6ebb9170f8dc244282e649"},
 ]
 
 [package.dependencies]
@@ -5258,4 +5258,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "1adafa89f86e853b424eb1d66d3434520596e6b1e782c975a497a1c857ceabb9"
+content-hash = "df12daa88102d3eaaa0dc1825f33694591bf7eee8c381a20f5cb2bec029fe86e"
