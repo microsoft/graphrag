@@ -1,6 +1,11 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.1.1
+
+- patch: Fix a bug on creating community hierarchy for dynamic search
+- patch: Increase LOCAL_SEARCH_COMMUNITY_PROP to 15%
+
 ## 1.1.0
 
 - minor: Make gleanings independent of encoding
