@@ -78,6 +78,12 @@ from .extract_graph import (
 from .extract_graph import (
     workflow_name as extract_graph,
 )
+from .extract_graph_nlp import (
+    run_workflow as run_extract_graph_nlp,
+)
+from .extract_graph_nlp import (
+    workflow_name as extract_graph_nlp,
+)
 from .generate_text_embeddings import (
     run_workflow as run_generate_text_embeddings,
 )
@@ -102,6 +108,7 @@ all_workflows: dict[
     create_final_nodes: run_create_final_nodes,
     create_final_relationships: run_create_final_relationships,
     create_final_text_units: run_create_final_text_units,
+    extract_graph_nlp: run_extract_graph_nlp,
     extract_graph: run_extract_graph,
     generate_text_embeddings: run_generate_text_embeddings,
 }

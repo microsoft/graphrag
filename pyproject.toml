@@ -93,6 +93,7 @@ json-repair = "^0.30.3"
 tqdm = "^4.67.1"
 httpx = "^0.28.1"
 
+textblob = "^0.18.0.post0"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.9"
 ipykernel = "^6.29.5"
