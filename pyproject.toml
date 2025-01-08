@@ -91,7 +91,7 @@ fnllm = "^0.0.10"
 tenacity = "^9.0.0"
 json-repair = "^0.30.3"
 tqdm = "^4.67.1"
-httpx = "^0.28.1"
+httpx = ">=0.27,<0.29"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.9"
