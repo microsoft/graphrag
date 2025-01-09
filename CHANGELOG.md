@@ -1,9 +1,9 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
-## 1.2.0
+## 1.1.2
 
-- minor: Basic Rag minor fix
+- patch: Basic Rag minor fix
 
 ## 1.1.1
 

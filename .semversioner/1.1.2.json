@@ -2,7 +2,7 @@
   "changes": [
     {
       "description": "Basic Rag minor fix",
-      "type": "minor"
+      "type": "patch"
     }
   ],
   "created_at": "2025-01-09T22:29:23+00:00",
