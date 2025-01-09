@@ -45,8 +45,8 @@ class GraphRagConfig(BaseModel):
         description="The root directory for the configuration.", default="."
     )
 
-    models: list[ModelConfig] = Field(
-        description="Available language model configurations.", default=[]
+    models: dict[str, ModelConfig] = Field(
+        description="Available language model configurations.", default={}
     )
 
     reporting: ReportingConfig = Field(
@@ -179,8 +179,7 @@ class GraphRagConfig(BaseModel):
         ValueError
             If the model ID is not found in the configuration.
         """
-        for model in self.models:
-            if model.id == model_id:
-                return model
-        err_msg = f"Model ID {model_id} not found in configuration."
-        raise ValueError(err_msg)
+        if model_id not in self.models:
+            err_msg = f"Model ID {model_id} not found in configuration."
+            raise ValueError(err_msg)
+        return self.models[model_id]

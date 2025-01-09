@@ -13,7 +13,7 @@ INIT_YAML = f"""\
 ## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
 
 models:
-  - id: {defs.DEFAULT_CHAT_MODEL_ID}
+  {defs.DEFAULT_CHAT_MODEL_ID}:
     api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
     type: {defs.LLM_TYPE.value} # or azure_openai_chat
     model: {defs.LLM_MODEL}
@@ -26,7 +26,7 @@ models:
     # api_version: 2024-02-15-preview
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
-  - id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
+  {defs.DEFAULT_EMBEDDING_MODEL_ID}:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
     model: {defs.EMBEDDING_MODEL}

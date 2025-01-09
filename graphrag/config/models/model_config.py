@@ -13,9 +13,6 @@ from graphrag.config.enums import AsyncType, LLMType
 class ModelConfig(BaseModel):
     """Language model configuration."""
 
-    id: str = Field(
-        description="A user friendly ID of the model used elsewhere in GraphRAGConfig for selecting models."
-    )
     api_key: str | None = Field(
         description="The API key to use for the LLM service.",
         default=None,
