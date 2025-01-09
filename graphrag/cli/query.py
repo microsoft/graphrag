@@ -276,7 +276,7 @@ def run_basic_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_text_units.parquet",
+            "create_final_text_units",
         ],
     )
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
