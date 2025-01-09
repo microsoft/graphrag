@@ -16,6 +16,7 @@ class ClaimExtractionConfig(BaseModel):
 
     enabled: bool = Field(
         description="Whether claim extraction is enabled.",
+        default=defs.CLAIM_EXTRACTION_ENABLED,
     )
     prompt: str | None = Field(
         description="The claim extraction prompt to use.", default=None

@@ -3,10 +3,13 @@
 
 """Parameterization settings for the default configuration."""
 
+from pathlib import Path
+
 from devtools import pformat
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
+from graphrag.config.errors import ModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
@@ -42,12 +45,39 @@ class GraphRagConfig(BaseModel):
         return self.model_dump_json(indent=4)
 
     root_dir: str = Field(
-        description="The root directory for the configuration.", default="."
+        description="The root directory for the configuration.", default=""
     )
+
+    def _validate_root_dir(self) -> None:
+        """Validate the root directory."""
+        if self.root_dir.strip() == "":
+            self.root_dir = str(Path.cwd().resolve())
+
+        if not Path(self.root_dir).is_dir():
+            msg = f"Invalid root directory: {self.root_dir} is not a directory."
+            raise FileNotFoundError(msg)
 
     models: dict[str, ModelConfig] = Field(
         description="Available language model configurations.", default={}
     )
+
+    def _validate_models(self) -> None:
+        """Validate the models configuration.
+
+        Ensure both a default chat model and default embedding model
+        have been defined. Other models may also be defined but
+        defaults are required for the time being as places of the
+        code fallback to default model configs instead
+        of specifying a specific model.
+
+        TODO: Don't fallback to default models elsewhere in the code.
+        Forcing code to specify a model to use and allowing for any
+        names for model configurations.
+        """
+        if defs.DEFAULT_CHAT_MODEL_ID not in self.models:
+            raise ModelConfigMissingError(defs.DEFAULT_CHAT_MODEL_ID)
+        if defs.DEFAULT_EMBEDDING_MODEL_ID not in self.models:
+            raise ModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
 
     reporting: ReportingConfig = Field(
         description="The reporting configuration.", default=ReportingConfig()
@@ -183,3 +213,10 @@ class GraphRagConfig(BaseModel):
             err_msg = f"Model ID {model_id} not found in configuration."
             raise ValueError(err_msg)
         return self.models[model_id]
+
+    @model_validator(mode="after")
+    def _validate_model(self):
+        """Validate the model configuration."""
+        self._validate_root_dir()
+        self._validate_models()
+        return self

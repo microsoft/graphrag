@@ -128,3 +128,14 @@ class AsyncType(str, Enum):
 
     AsyncIO = "asyncio"
     Threaded = "threaded"
+
+
+class ChunkStrategyType(str, Enum):
+    """ChunkStrategy class definition."""
+
+    tokens = "tokens"
+    sentence = "sentence"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'

@@ -8,6 +8,7 @@ from pathlib import Path
 from graphrag.config.enums import (
     AsyncType,
     CacheType,
+    ChunkStrategyType,
     InputFileType,
     InputType,
     LLMType,
@@ -56,6 +57,7 @@ CACHE_BASE_DIR = "cache"
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 100
 CHUNK_GROUP_BY_COLUMNS = ["id"]
+CHUNK_STRATEGY = ChunkStrategyType.tokens
 CLAIM_DESCRIPTION = (
     "Any claims or facts that could be relevant to information discovery."
 )

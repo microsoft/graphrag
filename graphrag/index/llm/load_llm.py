@@ -22,7 +22,7 @@ from fnllm.openai.types.chat.parameters import OpenAIChatParameters
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
-from graphrag.config.models.model_config import ModelConfig
+from graphrag.config.models.model_config import ModelConfig  # noqa: TC001
 from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 
 from .mock_llm import MockChatLLM

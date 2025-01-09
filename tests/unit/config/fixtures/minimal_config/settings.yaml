@@ -1,0 +1,9 @@
+models:
+  default_chat_model:
+    api_key: ${CUSTOM_API_KEY}
+    type: openai_chat
+    model: gpt-4-turbo-preview
+  default_embedding_model:
+    api_key: ${CUSTOM_API_KEY}
+    type: openai_embedding
+    model: text-embedding-3-small

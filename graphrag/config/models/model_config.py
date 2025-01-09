@@ -7,7 +7,13 @@ import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import AsyncType, LLMType
+from graphrag.config.enums import AsyncType, AzureAuthType, LLMType
+from graphrag.config.errors import (
+    ApiKeyMissingError,
+    AzureApiBaseMissingError,
+    AzureApiVersionMissingError,
+    AzureDeploymentNameMissingError,
+)
 
 
 class ModelConfig(BaseModel):
@@ -17,6 +23,33 @@ class ModelConfig(BaseModel):
         description="The API key to use for the LLM service.",
         default=None,
     )
+
+    def _validate_api_key(self) -> None:
+        """Validate the API key.
+
+        API Key is required when using OpenAI API
+        or when using Azure API with API Key authentication.
+
+        Raises
+        ------
+        ApiKeyMissingError
+            If the API key is missing and is required.
+        """
+        if (
+            self.type == LLMType.OpenAIEmbedding
+            or self.type == LLMType.OpenAIChat
+            or self.azure_auth_type == AzureAuthType.APIKey
+        ) and (self.api_key is None or self.api_key.strip() == ""):
+            raise ApiKeyMissingError(
+                self.type.value,
+                self.azure_auth_type.value if self.azure_auth_type else None,
+            )
+
+    azure_auth_type: AzureAuthType | None = Field(
+        description="The Azure authentication type to use when using AOI.",
+        default=None,
+    )
+
     type: LLMType = Field(description="The type of LLM model to use.")
     model: str = Field(description="The LLM model to use.")
     encoding_model: str = Field(description="The encoding model to use", default="")
@@ -62,12 +95,63 @@ class ModelConfig(BaseModel):
     api_base: str | None = Field(
         description="The base URL for the LLM API.", default=None
     )
+
+    def _validate_api_base(self) -> None:
+        """Validate the API base.
+
+        Required when using AOI.
+
+        Raises
+        ------
+        AzureApiBaseMissingError
+            If the API base is missing and is required.
+        """
+        if (
+            self.type == LLMType.AzureOpenAIChat
+            or self.type == LLMType.AzureOpenAIEmbedding
+        ) and (self.api_base is None or self.api_base.strip() == ""):
+            raise AzureApiBaseMissingError(self.type.value)
+
     api_version: str | None = Field(
         description="The version of the LLM API to use.", default=None
     )
+
+    def _validate_api_version(self) -> None:
+        """Validate the API version.
+
+        Required when using AOI.
+
+        Raises
+        ------
+        AzureApiBaseMissingError
+            If the API base is missing and is required.
+        """
+        if (
+            self.type == LLMType.AzureOpenAIChat
+            or self.type == LLMType.AzureOpenAIEmbedding
+        ) and (self.api_version is None or self.api_version.strip() == ""):
+            raise AzureApiVersionMissingError(self.type.value)
+
     deployment_name: str | None = Field(
         description="The deployment name to use for the LLM service.", default=None
     )
+
+    def _validate_deployment_name(self) -> None:
+        """Validate the deployment name.
+
+        Required when using AOI.
+
+        Raises
+        ------
+        AzureDeploymentNameMissingError
+            If the deployment name is missing and is required.
+        """
+        if (
+            self.type == LLMType.AzureOpenAIChat
+            or self.type == LLMType.AzureOpenAIEmbedding
+        ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
+            raise AzureDeploymentNameMissingError(self.type.value)
+
     organization: str | None = Field(
         description="The organization to use for the LLM service.", default=None
     )
@@ -120,7 +204,25 @@ class ModelConfig(BaseModel):
         description="The async mode to use.", default=defs.ASYNC_MODE
     )
 
+    def _validate_azure_settings(self) -> None:
+        """Validate the Azure settings.
+
+        Raises
+        ------
+        AzureApiBaseMissingError
+            If the API base is missing and is required.
+        AzureApiVersionMissingError
+            If the API version is missing and is required.
+        AzureDeploymentNameMissingError
+            If the deployment name is missing and is required.
+        """
+        self._validate_api_base()
+        self._validate_api_version()
+        self._validate_deployment_name()
+
     @model_validator(mode="after")
     def _validate_model(self):
+        self._validate_api_key()
+        self._validate_azure_settings()
         self._validate_encoding_model()
         return self

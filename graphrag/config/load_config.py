@@ -78,6 +78,11 @@ def _get_config_parser(file_extension: str) -> _ConfigTextParser:
     -------
     ConfigTextParser
         The configuration parser.
+
+    Raises
+    ------
+    ValueError
+        If the file extension is not supported.
     """
     match file_extension:
         case ".yaml" | ".yml":
@@ -131,6 +136,11 @@ def _parse_env_variables(text: str) -> str:
     -------
     str
         The configuration text with environment variables parsed.
+
+    Raises
+    ------
+    KeyError
+        If an environment variable is not found.
     """
     return Template(text).substitute(os.environ)
 
@@ -198,6 +208,17 @@ def load_config(
     -------
     GraphRagConfig
         The loaded configuration.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the config file is not found.
+    ValueError
+        If the config file extension is not supported.
+    KeyError
+        If config file references a non-existent environment variable.
+    ValidationError
+        If there are pydantic validation errors when instantiating the config.
     """
     root = root_dir.resolve()
     config_path = _get_config_path(root, config_filepath)
