@@ -16,8 +16,5 @@ def create_graphrag_config(
     values = values or {}
     if root_dir:
         root_path = Path(root_dir).resolve()
-        if not root_path.is_dir():
-            msg = f"Invalid root directory: {root_path} is not a directory"
-            raise FileNotFoundError(msg)
         values["root_dir"] = str(root_path)
     return GraphRagConfig(**values)
