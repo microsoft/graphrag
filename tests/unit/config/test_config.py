@@ -1,7 +1,9 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+import os
 from pathlib import Path
+from unittest import mock
 
 import pytest
 from pydantic import ValidationError
@@ -14,6 +16,7 @@ from tests.unit.config.utils import (
     DEFAULT_CHAT_MODEL_CONFIG,
     DEFAULT_EMBEDDING_MODEL_CONFIG,
     DEFAULT_MODEL_CONFIG,
+    FAKE_API_KEY,
     assert_graphrag_configs,
     get_default_graphrag_config,
 )
@@ -132,6 +135,7 @@ def test_default_config() -> None:
     assert_graphrag_configs(actual, expected)
 
 
+@mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
 def test_load_minimal_config() -> None:
     cwd = Path(__file__).parent
     root_dir = (cwd / "fixtures" / "minimal_config").resolve()
