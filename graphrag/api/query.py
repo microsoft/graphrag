@@ -357,6 +357,7 @@ async def drift_search(
     text_units: pd.DataFrame,
     relationships: pd.DataFrame,
     community_level: int,
+    response_type: str,
     query: str,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
@@ -400,6 +401,8 @@ async def drift_search(
     reports = read_indexer_reports(community_reports, nodes, community_level)
     read_indexer_report_embeddings(reports, full_content_embedding_store)
     prompt = _load_search_prompt(config.root_dir, config.drift_search.prompt)
+    reduce_prompt = _load_search_prompt(config.root_dir, config.drift_search.reduce_prompt)
+
     search_engine = get_drift_search_engine(
         config=config,
         reports=reports,
@@ -408,6 +411,8 @@ async def drift_search(
         relationships=read_indexer_relationships(relationships),
         description_embedding_store=description_embedding_store,  # type: ignore
         local_system_prompt=prompt,
+        reduce_system_prompt=reduce_prompt,
+        response_type=response_type,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)

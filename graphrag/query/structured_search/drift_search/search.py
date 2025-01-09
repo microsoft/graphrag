@@ -248,6 +248,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             include_context=True
         )
 
+        # Reduce response_state to a single comprehensive response
+        
+
         return SearchResult(
             response=response_state,
             context_data=context_data,

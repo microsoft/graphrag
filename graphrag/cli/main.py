@@ -461,6 +461,7 @@ def _query_cli(
                 root_dir=root,
                 community_level=community_level,
                 streaming=False,  # Drift search does not support streaming (yet)
+                response_type=response_type,
                 query=query,
             )
         case SearchType.BASIC:
