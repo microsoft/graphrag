@@ -36,6 +36,12 @@ from .create_final_community_reports import (
 from .create_final_community_reports import (
     workflow_name as create_final_community_reports,
 )
+from .create_final_community_reports_text import (
+    run_workflow as run_create_final_community_reports_text,
+)
+from .create_final_community_reports_text import (
+    workflow_name as create_final_community_reports_text,
+)
 from .create_final_covariates import (
     run_workflow as run_create_final_covariates,
 )
@@ -101,6 +107,7 @@ all_workflows: dict[
     compute_communities: run_compute_communities,
     create_base_text_units: run_create_base_text_units,
     create_final_communities: run_create_final_communities,
+    create_final_community_reports_text: run_create_final_community_reports_text,
     create_final_community_reports: run_create_final_community_reports,
     create_final_covariates: run_create_final_covariates,
     create_final_documents: run_create_final_documents,
