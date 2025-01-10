@@ -10,6 +10,7 @@ from graphrag.index.workflows.create_final_communities import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -27,7 +28,9 @@ async def test_create_final_communities():
         ],
     )
 
-    config = create_graphrag_config(skip_validation=True)
+    config = create_graphrag_config(
+        {"models": DEFAULT_MODEL_CONFIG}, skip_validation=True
+    )
 
     await run_workflow(
         config,
