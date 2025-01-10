@@ -1564,22 +1564,16 @@
 <li>embed entities into a graph vector space</li>
 <li>embed text chunks into a textual vector space</li>
 </ul>
-<p>The outputs of the pipeline can be stored in a variety of formats, including JSON and Parquet - or they can be handled manually via the Python API.</p>
+<p>The outputs of the pipeline are stored as Parquet tables by default, and embeddings are written to your configured vector store.</p>
 <h2 id="getting-started">Getting Started</h2>
 <h3 id="requirements">Requirements</h3>
 <p>See the <a href="../../developing/#requirements">requirements</a> section in <a href="../../get_started/">Get Started</a> for details on setting up a development environment.</p>
-<p>The Indexing Engine can be used in either a default configuration mode or with a custom pipeline.
-To configure GraphRAG, see the <a href="../../config/overview/">configuration</a> documentation.
+<p>To configure GraphRAG, see the <a href="../../config/overview/">configuration</a> documentation.
 After you have a config file you can run the pipeline using the CLI or the Python API.</p>
 <h2 id="usage">Usage</h2>
 <h3 id="cli">CLI</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Via Poetry</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>cli<span class="w"> </span>--root<span class="w"> </span>&lt;data_root&gt;<span class="w"> </span><span class="c1"># default config mode</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>cli<span class="w"> </span>--config<span class="w"> </span>your_pipeline.yml<span class="w"> </span><span class="c1"># custom config mode</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Via Node</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>yarn<span class="w"> </span>run:index<span class="w"> </span>--root<span class="w"> </span>&lt;data_root&gt;<span class="w"> </span><span class="c1"># default config mode</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>yarn<span class="w"> </span>run:index<span class="w"> </span>--config<span class="w"> </span>your_pipeline.yml<span class="w"> </span><span class="c1"># custom config mode</span>
 </code></pre></div>
 <h3 id="python-api">Python API</h3>
 <p>Please see the <a href="https://github.com/microsoft/graphrag/blob/main/examples/README.md">examples folder</a> for a handful of functional pipelines illustrating how to create and run via a custom settings.yml or through custom python scripts.</p>
