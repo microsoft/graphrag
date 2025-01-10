@@ -10,7 +10,7 @@ Indexing Pipelines are configurable. They are composed of workflows, standard an
 - embed entities into a graph vector space
 - embed text chunks into a textual vector space
 
-The outputs of the pipeline can be stored in a variety of formats, including JSON and Parquet - or they can be handled manually via the Python API.
+The outputs of the pipeline are stored as Parquet tables by default, and embeddings are written to your configured vector store.
 
 ## Getting Started
 
@@ -18,7 +18,6 @@ The outputs of the pipeline can be stored in a variety of formats, including JSO
 
 See the [requirements](../developing.md#requirements) section in [Get Started](../get_started.md) for details on setting up a development environment.
 
-The Indexing Engine can be used in either a default configuration mode or with a custom pipeline.
 To configure GraphRAG, see the [configuration](../config/overview.md) documentation.
 After you have a config file you can run the pipeline using the CLI or the Python API.
 
@@ -29,12 +28,6 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 ```bash
 # Via Poetry
 poetry run poe cli --root <data_root> # default config mode
-poetry run poe cli --config your_pipeline.yml # custom config mode
-
-# Via Node
-yarn run:index --root <data_root> # default config mode
-yarn run:index --config your_pipeline.yml # custom config mode
-
 ```
 
 ### Python API
