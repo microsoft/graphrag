@@ -36,7 +36,7 @@ async def test_create_final_covariates():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.claim_extraction.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_CONFIG,
@@ -85,7 +85,7 @@ async def test_create_final_covariates_missing_llm_throws():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.claim_extraction.strategy = {
         "type": "graph_intelligence",
         "claim_description": "description",

@@ -23,7 +23,7 @@ async def test_create_final_documents():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
 
     await run_workflow(
         config,
@@ -43,7 +43,7 @@ async def test_create_final_documents_with_attribute_columns():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.input.document_attribute_columns = ["title"]
 
     await run_workflow(

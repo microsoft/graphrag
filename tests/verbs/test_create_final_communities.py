@@ -27,7 +27,7 @@ async def test_create_final_communities():
         ],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
 
     await run_workflow(
         config,

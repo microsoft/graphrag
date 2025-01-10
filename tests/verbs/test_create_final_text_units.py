@@ -28,7 +28,7 @@ async def test_create_final_text_units():
         ],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.claim_extraction.enabled = True
 
     await run_workflow(
@@ -54,7 +54,7 @@ async def test_create_final_text_units_no_covariates():
         ],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.claim_extraction.enabled = False
 
     await run_workflow(

@@ -20,7 +20,7 @@ async def test_compute_communities():
         storage=["base_relationship_edges"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
 
     await run_workflow(
         config,

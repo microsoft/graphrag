@@ -28,7 +28,7 @@ async def test_generate_text_embeddings():
         ]
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.embeddings.strategy = {
         "type": "mock",
     }
