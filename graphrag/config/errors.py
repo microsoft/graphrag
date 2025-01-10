@@ -42,7 +42,7 @@ class AzureDeploymentNameMissingError(ValueError):
         super().__init__(msg)
 
 
-class ModelConfigMissingError(ValueError):
+class LanguageModelConfigMissingError(ValueError):
     """Missing model configuration error."""
 
     def __init__(self, key: str = "") -> None:

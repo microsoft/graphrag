@@ -9,7 +9,7 @@ from devtools import pformat
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.config.errors import ModelConfigMissingError
+from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
@@ -75,9 +75,9 @@ class GraphRagConfig(BaseModel):
         names for model configurations.
         """
         if defs.DEFAULT_CHAT_MODEL_ID not in self.models:
-            raise ModelConfigMissingError(defs.DEFAULT_CHAT_MODEL_ID)
+            raise LanguageModelConfigMissingError(defs.DEFAULT_CHAT_MODEL_ID)
         if defs.DEFAULT_EMBEDDING_MODEL_ID not in self.models:
-            raise ModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
+            raise LanguageModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
 
     reporting: ReportingConfig = Field(
         description="The reporting configuration.", default=ReportingConfig()
