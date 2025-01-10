@@ -11,7 +11,7 @@ import warnings
 from pathlib import Path
 
 import graphrag.api as api
-from graphrag.config.enums import CacheType
+from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
 from graphrag.config.resolve_path import resolve_paths
@@ -74,6 +74,7 @@ def index_cli(
     dry_run: bool,
     skip_validation: bool,
     output_dir: Path | None,
+    method: IndexingMethod,
 ):
     """Run the pipeline with the given config."""
     config = load_config(root_dir, config_filepath)
@@ -88,6 +89,7 @@ def index_cli(
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output_dir,
+        method=method,
     )
 
 
@@ -100,6 +102,7 @@ def update_cli(
     config_filepath: Path | None,
     skip_validation: bool,
     output_dir: Path | None,
+    method: IndexingMethod,
 ):
     """Run the pipeline with the given config."""
     config = load_config(root_dir, config_filepath)
@@ -124,6 +127,7 @@ def update_cli(
         dry_run=False,
         skip_validation=skip_validation,
         output_dir=output_dir,
+        method=method,
     )
 
 
@@ -137,6 +141,7 @@ def _run_index(
     dry_run,
     skip_validation,
     output_dir,
+    method: IndexingMethod,
 ):
     progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
@@ -182,6 +187,7 @@ def _run_index(
             is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_logger=progress_logger,
+            method=method,
         )
     )
     encountered_errors = any(

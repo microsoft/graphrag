@@ -121,3 +121,25 @@ class AsyncType(str, Enum):
 
     AsyncIO = "asyncio"
     Threaded = "threaded"
+
+
+class SearchMethod(Enum):
+    """The type of search to run."""
+
+    LOCAL = "local"
+    GLOBAL = "global"
+    DRIFT = "drift"
+    BASIC = "basic"
+
+    def __str__(self):
+        """Return the string representation of the enum value."""
+        return self.value
+
+
+class IndexingMethod(str, Enum):
+    """Enum for the type of indexing to perform."""
+
+    Standard = "standard"
+    """Traditional GraphRAG indexing, with all graph construction and summarization performed by a language model."""
+    Fast = "fast"
+    """Fast indexing, using NLP for graph construction and language model for summarization."""
