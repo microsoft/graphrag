@@ -80,6 +80,24 @@ def test_missing_azure_api_key() -> None:
     create_graphrag_config({"models": model_config_missing_api_key})
 
 
+def test_conflicting_azure_api_key() -> None:
+    model_config_conflicting_api_key = {
+        defs.DEFAULT_CHAT_MODEL_ID: {
+            "type": LLMType.AzureOpenAIChat,
+            "azure_auth_type": AzureAuthType.ManagedIdentity,
+            "model": defs.LLM_MODEL,
+            "api_base": "some_api_base",
+            "api_version": "some_api_version",
+            "deployment_name": "some_deployment_name",
+            "api_key": "THIS_SHOULD_NOT_BE_SET_WHEN_USING_MANAGED_IDENTITY",
+        },
+        defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
+    }
+
+    with pytest.raises(ValidationError):
+        create_graphrag_config({"models": model_config_conflicting_api_key})
+
+
 base_azure_model_config = {
     "type": LLMType.AzureOpenAIChat,
     "azure_auth_type": AzureAuthType.ManagedIdentity,

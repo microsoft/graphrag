@@ -49,3 +49,11 @@ class LanguageModelConfigMissingError(ValueError):
         """Init method definition."""
         msg = f'A {key} model configuration is required. Please set models["{key}"] in settings.yaml or rerun graphrag init'
         super().__init__(msg)
+
+
+class ConflictingSettingsError(ValueError):
+    """Missing model configuration error."""
+
+    def __init__(self, msg: str) -> None:
+        """Init method definition."""
+        super().__init__(msg)

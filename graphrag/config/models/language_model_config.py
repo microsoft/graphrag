@@ -13,6 +13,7 @@ from graphrag.config.errors import (
     AzureApiBaseMissingError,
     AzureApiVersionMissingError,
     AzureDeploymentNameMissingError,
+    ConflictingSettingsError,
 )
 
 
@@ -29,6 +30,10 @@ class LanguageModelConfig(BaseModel):
 
         API Key is required when using OpenAI API
         or when using Azure API with API Key authentication.
+        For the time being, this check is extra verbose for clarity.
+        It will also through an exception if an API Key is provided
+        when one is not expected such as the case of using Azure
+        Managed Identity.
 
         Raises
         ------
@@ -44,6 +49,12 @@ class LanguageModelConfig(BaseModel):
                 self.type.value,
                 self.azure_auth_type.value if self.azure_auth_type else None,
             )
+
+        if (self.azure_auth_type == AzureAuthType.ManagedIdentity) and (
+            self.api_key is not None and self.api_key.strip() != ""
+        ):
+            msg = "API Key should not be provided when using Azure Managed Identity."
+            raise ConflictingSettingsError(msg)
 
     azure_auth_type: AzureAuthType | None = Field(
         description="The Azure authentication type to use when using AOI.",
