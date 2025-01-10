@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.models.model_config import ModelConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
 class ClaimExtractionConfig(BaseModel):
@@ -40,7 +40,9 @@ class ClaimExtractionConfig(BaseModel):
         default=defs.CLAIM_EXTRACTION_MODEL_ID,
     )
 
-    def resolved_strategy(self, root_dir: str, model_config: ModelConfig) -> dict:
+    def resolved_strategy(
+        self, root_dir: str, model_config: LanguageModelConfig
+    ) -> dict:
         """Get the resolved claim extraction strategy."""
         return self.strategy or {
             "llm": model_config.model_dump(),

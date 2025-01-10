@@ -13,7 +13,7 @@ from fnllm import EmbeddingsLLM
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.model_config import ModelConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
@@ -36,7 +36,9 @@ async def run(
 
     batch_size = args.get("batch_size", 16)
     batch_max_tokens = args.get("batch_max_tokens", 8191)
-    embeddings_llm_settings = config.get_model_config(config.embeddings.model_id)
+    embeddings_llm_settings = config.get_language_model_config(
+        config.embeddings.model_id
+    )
     splitter = _get_splitter(embeddings_llm_settings, batch_max_tokens)
     llm = _get_llm(embeddings_llm_settings, callbacks, cache)
     semaphore: asyncio.Semaphore = asyncio.Semaphore(args.get("num_threads", 4))
@@ -66,7 +68,9 @@ async def run(
     return TextEmbeddingResult(embeddings=embeddings)
 
 
-def _get_splitter(config: ModelConfig, batch_max_tokens: int) -> TokenTextSplitter:
+def _get_splitter(
+    config: LanguageModelConfig, batch_max_tokens: int
+) -> TokenTextSplitter:
     return TokenTextSplitter(
         encoding_name=config.encoding_model,
         chunk_size=batch_max_tokens,
@@ -74,7 +78,7 @@ def _get_splitter(config: ModelConfig, batch_max_tokens: int) -> TokenTextSplitt
 
 
 def _get_llm(
-    config: ModelConfig,
+    config: LanguageModelConfig,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
 ) -> EmbeddingsLLM:

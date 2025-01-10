@@ -26,7 +26,7 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    claim_extraction_llm_settings = config.get_model_config(
+    claim_extraction_llm_settings = config.get_language_model_config(
         config.claim_extraction.model_id
     )
     extraction_strategy = config.claim_extraction.resolved_strategy(

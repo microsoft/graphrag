@@ -35,7 +35,7 @@ async def run_graph_intelligence(
     config: GraphRagConfig,
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
-    community_reports_llm_settings = config.get_model_config(
+    community_reports_llm_settings = config.get_language_model_config(
         config.community_reports.model_id
     )
     llm = load_llm(

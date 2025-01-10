@@ -14,7 +14,7 @@ from graphrag.query.llm.oai.typing import OpenaiApiType
 
 def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     """Get the LLM client."""
-    default_llm_settings = config.get_model_config("default_chat_model")
+    default_llm_settings = config.get_language_model_config("default_chat_model")
     is_azure_client = default_llm_settings.type == LLMType.AzureOpenAIChat
     debug_llm_key = default_llm_settings.api_key or ""
     llm_debug_info = {
@@ -47,7 +47,9 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
 
 def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     """Get the LLM client for embeddings."""
-    embeddings_llm_settings = config.get_model_config(config.embeddings.model_id)
+    embeddings_llm_settings = config.get_language_model_config(
+        config.embeddings.model_id
+    )
     is_azure_client = embeddings_llm_settings.type == LLMType.AzureOpenAIEmbedding
     debug_embedding_api_key = embeddings_llm_settings.api_key or ""
     llm_debug_info = {

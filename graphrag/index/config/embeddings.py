@@ -52,7 +52,9 @@ def get_embedding_settings(
 ) -> dict:
     """Transform GraphRAG config into settings for workflows."""
     # TEMP
-    embeddings_llm_settings = settings.get_model_config(settings.embeddings.model_id)
+    embeddings_llm_settings = settings.get_language_model_config(
+        settings.embeddings.model_id
+    )
     vector_store_settings = settings.embeddings.vector_store
     if vector_store_settings is None:
         return {

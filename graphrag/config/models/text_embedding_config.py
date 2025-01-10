@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import TextEmbeddingTarget
-from graphrag.config.models.model_config import ModelConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
 class TextEmbeddingConfig(BaseModel):
@@ -36,7 +36,7 @@ class TextEmbeddingConfig(BaseModel):
         default=defs.EMBEDDING_MODEL_ID,
     )
 
-    def resolved_strategy(self, model_config: ModelConfig) -> dict:
+    def resolved_strategy(self, model_config: LanguageModelConfig) -> dict:
         """Get the resolved text embedding strategy."""
         from graphrag.index.operations.embed_text import (
             TextEmbedStrategyType,

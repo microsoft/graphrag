@@ -119,10 +119,12 @@ def create_pipeline_config(settings: GraphRagConfig, verbose=False) -> PipelineC
 
 
 def _log_llm_settings(settings: GraphRagConfig) -> None:
-    entity_extraction_llm_settings = settings.get_model_config(
+    entity_extraction_llm_settings = settings.get_language_model_config(
         settings.entity_extraction.model_id
     )
-    embeddings_llm_settings = settings.get_model_config(settings.embeddings.model_id)
+    embeddings_llm_settings = settings.get_language_model_config(
+        settings.embeddings.model_id
+    )
     log.info(
         "Using LLM Config %s",
         json.dumps(
@@ -176,10 +178,10 @@ def _text_unit_workflows(
 
 
 def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference]:
-    entity_extraction_llm_settings = settings.get_model_config(
+    entity_extraction_llm_settings = settings.get_language_model_config(
         settings.entity_extraction.model_id
     )
-    summarize_descriptions_llm_settings = settings.get_model_config(
+    summarize_descriptions_llm_settings = settings.get_language_model_config(
         settings.summarize_descriptions.model_id
     )
     return [
@@ -235,7 +237,7 @@ def _graph_workflows(settings: GraphRagConfig) -> list[PipelineWorkflowReference
 def _community_workflows(
     settings: GraphRagConfig, covariates_enabled: bool
 ) -> list[PipelineWorkflowReference]:
-    community_reports_llm_settings = settings.get_model_config(
+    community_reports_llm_settings = settings.get_language_model_config(
         settings.community_reports.model_id
     )
     return [
@@ -260,7 +262,7 @@ def _community_workflows(
 def _covariate_workflows(
     settings: GraphRagConfig,
 ) -> list[PipelineWorkflowReference]:
-    claim_extraction_llm_settings = settings.get_model_config(
+    claim_extraction_llm_settings = settings.get_language_model_config(
         settings.claim_extraction.model_id
     )
     return [

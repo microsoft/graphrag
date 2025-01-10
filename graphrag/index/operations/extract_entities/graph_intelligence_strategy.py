@@ -29,7 +29,7 @@ async def run_graph_intelligence(
     config: GraphRagConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
-    entity_extraction_llm_settings = config.get_model_config(
+    entity_extraction_llm_settings = config.get_language_model_config(
         config.entity_extraction.model_id
     )
     llm = load_llm(

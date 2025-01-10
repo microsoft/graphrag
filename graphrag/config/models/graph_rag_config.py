@@ -21,8 +21,8 @@ from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
-from graphrag.config.models.model_config import ModelConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.storage_config import StorageConfig
@@ -57,7 +57,7 @@ class GraphRagConfig(BaseModel):
             msg = f"Invalid root directory: {self.root_dir} is not a directory."
             raise FileNotFoundError(msg)
 
-    models: dict[str, ModelConfig] = Field(
+    models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.", default={}
     )
 
@@ -191,7 +191,7 @@ class GraphRagConfig(BaseModel):
     )
     """The workflows to skip, usually for testing reasons."""
 
-    def get_model_config(self, model_id: str) -> ModelConfig:
+    def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
 
         Parameters
@@ -201,7 +201,7 @@ class GraphRagConfig(BaseModel):
 
         Returns
         -------
-        ModelConfig
+        LanguageModelConfig
             The model configuration if found.
 
         Raises

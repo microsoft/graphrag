@@ -16,8 +16,8 @@ from graphrag.config.models.entity_extraction_config import EntityExtractionConf
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.input_config import InputConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
-from graphrag.config.models.model_config import ModelConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.storage_config import StorageConfig
@@ -228,7 +228,9 @@ def get_default_graphrag_config() -> GraphRagConfig:
     return GraphRagConfig(**DEFAULT_GRAPHRAG_CONFIG_SETTINGS)
 
 
-def assert_model_configs(actual: ModelConfig, expected: ModelConfig) -> None:
+def assert_model_configs(
+    actual: LanguageModelConfig, expected: LanguageModelConfig
+) -> None:
     assert actual.api_key == expected.api_key
     assert actual.azure_auth_type == expected.azure_auth_type
     assert actual.type == expected.type

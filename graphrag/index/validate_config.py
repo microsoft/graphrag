@@ -16,7 +16,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     """Validate config file for LLM deployment name typos."""
     # Validate Chat LLM configs
     # TODO: Replace default_chat_model with a way to select the model
-    default_llm_settings = parameters.get_model_config("default_chat_model")
+    default_llm_settings = parameters.get_language_model_config("default_chat_model")
     llm = load_llm(
         name="test-llm",
         config=default_llm_settings,
@@ -31,7 +31,9 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
         sys.exit(1)
 
     # Validate Embeddings LLM configs
-    embedding_llm_settings = parameters.get_model_config(parameters.embeddings.model_id)
+    embedding_llm_settings = parameters.get_language_model_config(
+        parameters.embeddings.model_id
+    )
     embed_llm = load_llm_embeddings(
         name="test-embed-llm",
         llm_config=embedding_llm_settings,

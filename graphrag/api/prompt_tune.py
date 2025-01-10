@@ -96,7 +96,7 @@ async def generate_indexing_prompts(
 
     # Create LLM from config
     # TODO: Expose way to specify Prompt Tuning model ID through config
-    default_llm_settings = config.get_model_config(PROMPT_TUNING_MODEL_ID)
+    default_llm_settings = config.get_language_model_config(PROMPT_TUNING_MODEL_ID)
     llm = load_llm(
         "prompt_tuning",
         default_llm_settings,
@@ -122,7 +122,7 @@ async def generate_indexing_prompts(
     )
 
     entity_types = None
-    entity_extraction_llm_settings = config.get_model_config(
+    entity_extraction_llm_settings = config.get_language_model_config(
         config.entity_extraction.model_id
     )
     if discover_entity_types:

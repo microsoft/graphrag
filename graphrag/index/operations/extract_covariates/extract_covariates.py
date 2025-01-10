@@ -92,7 +92,7 @@ async def run_claim_extraction(
     config: GraphRagConfig,
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    claim_extraction_llm_settings = config.get_model_config(
+    claim_extraction_llm_settings = config.get_language_model_config(
         config.claim_extraction.model_id
     )
     llm = load_llm(

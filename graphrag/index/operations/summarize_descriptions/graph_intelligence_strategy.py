@@ -27,7 +27,7 @@ async def run_graph_intelligence(
     config: GraphRagConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    summarize_description_llm_settings = config.get_model_config(
+    summarize_description_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
     llm = load_llm(

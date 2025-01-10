@@ -16,7 +16,7 @@ from graphrag.config.errors import (
 )
 
 
-class ModelConfig(BaseModel):
+class LanguageModelConfig(BaseModel):
     """Language model configuration."""
 
     api_key: str | None = Field(

@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.models.model_config import ModelConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
 class EntityExtractionConfig(BaseModel):
@@ -36,7 +36,9 @@ class EntityExtractionConfig(BaseModel):
         default=defs.ENTITY_EXTRACTION_MODEL_ID,
     )
 
-    def resolved_strategy(self, root_dir: str, model_config: ModelConfig) -> dict:
+    def resolved_strategy(
+        self, root_dir: str, model_config: LanguageModelConfig
+    ) -> dict:
         """Get the resolved entity extraction strategy."""
         from graphrag.index.operations.extract_entities import (
             ExtractEntityStrategyType,

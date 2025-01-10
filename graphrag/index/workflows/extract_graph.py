@@ -28,7 +28,7 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    entity_extraction_llm_settings = config.get_model_config(
+    entity_extraction_llm_settings = config.get_language_model_config(
         config.entity_extraction.model_id
     )
     extraction_strategy = config.entity_extraction.resolved_strategy(
@@ -38,7 +38,7 @@ async def run_workflow(
     extraction_async_mode = entity_extraction_llm_settings.async_mode
     entity_types = config.entity_extraction.entity_types
 
-    summarization_llm_settings = config.get_model_config(
+    summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
     summarization_strategy = config.summarize_descriptions.resolved_strategy(

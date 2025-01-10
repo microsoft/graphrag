@@ -110,7 +110,7 @@ async def _run_entity_summarization(
     pd.DataFrame
         The updated entities dataframe with summarized descriptions.
     """
-    summarization_llm_settings = config.get_model_config(
+    summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
     summarization_strategy = config.summarize_descriptions.resolved_strategy(
