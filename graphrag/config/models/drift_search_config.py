@@ -39,7 +39,7 @@ class DRIFTSearchConfig(BaseModel):
     )
 
     reduce_max_tokens: int = Field(
-        description="The reduce llm maximum tokens.",
+        description="The reduce llm maximum tokens response to produce.",
         default=defs.DRIFT_SEARCH_REDUCE_MAX_TOKENS,
     )
 

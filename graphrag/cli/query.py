@@ -202,6 +202,7 @@ def run_drift_search(
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
+    response_type: str,
     streaming: bool,
     query: str,
 ):
@@ -247,6 +248,7 @@ def run_drift_search(
             text_units=final_text_units,
             relationships=final_relationships,
             community_level=community_level,
+            response_type=response_type,
             query=query,
         )
     )

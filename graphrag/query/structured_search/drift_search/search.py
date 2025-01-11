@@ -249,7 +249,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         )
 
         # Reduce response_state to a single comprehensive response
-        
+        reduce_llm_params = {
+            "max_tokens": self.config.reduce_max_tokens,
+            "temperature": self.config.reduce_temperature
+        }
+        reduced_response = await self._reduce_response(
+            map_responses=response_state, query=query, **reduce_llm_params
+        )
 
         return SearchResult(
             response=response_state,
@@ -300,3 +306,38 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         """
         error_msg = "Streaming DRIFT search is not implemented."
         raise NotImplementedError(error_msg)
+
+    async def _reduce_response(
+        self,
+        responses: str|dict[str, Any],
+        query: str,
+        **llm_kwargs,
+    ) -> str:
+        """Reduce the response to a single comprehensive response.
+        
+        Parameters
+        ----------
+        responses : str|dict[str, Any]
+            The responses to reduce.
+        query : str
+            The original query.
+        llm_kwargs : dict[str, Any]
+            Additional keyword arguments to pass to the LLM.
+            
+        Returns
+        -------
+        str
+            The reduced response.
+        """
+        context_buffer_size = self.config.reduce_max_tokens
+        reduce_responses = []
+
+        if isinstance(responses, str):
+            reduce_responses = [responses]
+        else:
+            for response in responses["nodes"]:
+                if num_tokens(response) < context_buffer_size:
+                    reduce_responses.append(response)
+                
+        
+        # Start adding responses by rank until content limit is reached
