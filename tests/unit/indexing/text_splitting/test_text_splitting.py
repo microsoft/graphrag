@@ -6,7 +6,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     Tokenizer,
