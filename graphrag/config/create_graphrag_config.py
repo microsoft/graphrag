@@ -6,14 +6,13 @@
 import os
 from enum import Enum
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
-from datashaper import AsyncType
 from environs import Env
-from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import (
+    AsyncType,
     CacheType,
     InputFileType,
     InputType,
@@ -28,8 +27,7 @@ from graphrag.config.errors import (
     AzureApiBaseMissingError,
     AzureDeploymentNameMissingError,
 )
-from graphrag.config.input_models.graphrag_config_input import GraphRagConfigInput
-from graphrag.config.input_models.llm_config_input import LLMConfigInput
+from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
 from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
@@ -54,27 +52,24 @@ from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
 from graphrag.config.read_dotenv import read_dotenv
 
-InputModelValidator = TypeAdapter(GraphRagConfigInput)
-
 
 def create_graphrag_config(
-    values: GraphRagConfigInput | None = None, root_dir: str | None = None
+    values: dict[str, Any] | None = None, root_dir: str | None = None
 ) -> GraphRagConfig:
     """Load Configuration Parameters from a dictionary."""
     values = values or {}
     root_dir = root_dir or str(Path.cwd())
     env = _make_env(root_dir)
     _token_replace(cast("dict", values))
-    InputModelValidator.validate_python(values, strict=True)
 
     reader = EnvironmentReader(env)
 
-    def hydrate_async_type(input: LLMConfigInput, base: AsyncType) -> AsyncType:
+    def hydrate_async_type(input: dict[str, Any], base: AsyncType) -> AsyncType:
         value = input.get(Fragment.async_mode)
         return AsyncType(value) if value else base
 
     def hydrate_llm_params(
-        config: LLMConfigInput, base: LLMParameters
+        config: dict[str, Any], base: LLMParameters
     ) -> LLMParameters:
         with reader.use(config.get("llm")):
             llm_type = reader.str(Fragment.type)
@@ -131,7 +126,7 @@ def create_graphrag_config(
             )
 
     def hydrate_embeddings_params(
-        config: LLMConfigInput, base: LLMParameters
+        config: dict[str, Any], base: LLMParameters
     ) -> LLMParameters:
         with reader.use(config.get("llm")):
             api_type = reader.str(Fragment.type) or defs.EMBEDDING_TYPE
@@ -197,7 +192,7 @@ def create_graphrag_config(
             )
 
     def hydrate_parallelization_params(
-        config: LLMConfigInput, base: ParallelizationParameters
+        config: dict[str, Any], base: ParallelizationParameters
     ) -> ParallelizationParameters:
         with reader.use(config.get("parallelization")):
             return ParallelizationParameters(
@@ -636,6 +631,28 @@ def create_graphrag_config(
                 or defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS,
             )
 
+        with (
+            reader.use(values.get("basic_search")),
+            reader.envvar_prefix(Section.basic_search),
+        ):
+            basic_search_model = BasicSearchConfig(
+                prompt=reader.str("prompt") or None,
+                text_unit_prop=reader.float("text_unit_prop")
+                or defs.BASIC_SEARCH_TEXT_UNIT_PROP,
+                conversation_history_max_turns=reader.int(
+                    "conversation_history_max_turns"
+                )
+                or defs.BASIC_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
+                temperature=reader.float("llm_temperature")
+                or defs.BASIC_SEARCH_LLM_TEMPERATURE,
+                top_p=reader.float("llm_top_p") or defs.BASIC_SEARCH_LLM_TOP_P,
+                n=reader.int("llm_n") or defs.BASIC_SEARCH_LLM_N,
+                max_tokens=reader.int(Fragment.max_tokens)
+                or defs.BASIC_SEARCH_MAX_TOKENS,
+                llm_max_tokens=reader.int("llm_max_tokens")
+                or defs.BASIC_SEARCH_LLM_MAX_TOKENS,
+            )
+
         skip_workflows = reader.list("skip_workflows") or []
 
     return GraphRagConfig(
@@ -663,6 +680,7 @@ def create_graphrag_config(
         local_search=local_search_model,
         global_search=global_search_model,
         drift_search=drift_search_model,
+        basic_search=basic_search_model,
     )
 
 
@@ -731,6 +749,7 @@ class Section(str, Enum):
     local_search = "LOCAL_SEARCH"
     global_search = "GLOBAL_SEARCH"
     drift_search = "DRIFT_SEARCH"
+    basic_search = "BASIC_SEARCH"
 
 
 def _is_azure(llm_type: LLMType | None) -> bool:

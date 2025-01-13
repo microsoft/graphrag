@@ -7,7 +7,6 @@ from collections.abc import Iterable
 
 import nltk
 import tiktoken
-from datashaper import ProgressTicker
 
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.index.operations.chunk_text.typing import TextChunk
@@ -15,6 +14,7 @@ from graphrag.index.text_splitting.text_splitting import (
     Tokenizer,
     split_multiple_texts_on_tokens,
 )
+from graphrag.logger.progress import ProgressTicker
 
 
 def run_tokens(

@@ -1,0 +1,58 @@
+{
+  "changes": [
+    {
+      "description": "Make gleanings independent of encoding",
+      "type": "minor"
+    },
+    {
+      "description": "Remove DataShaper (first steps).",
+      "type": "minor"
+    },
+    {
+      "description": "Remove old pipeline runner.",
+      "type": "minor"
+    },
+    {
+      "description": "new search implemented as a new option for the api",
+      "type": "minor"
+    },
+    {
+      "description": "Fix gleanings loop check",
+      "type": "patch"
+    },
+    {
+      "description": "Implement cosmosdb storage option for cache and output",
+      "type": "patch"
+    },
+    {
+      "description": "Move extractor code to co-locate with operations.",
+      "type": "patch"
+    },
+    {
+      "description": "Remove config input models.",
+      "type": "patch"
+    },
+    {
+      "description": "Ruff update",
+      "type": "patch"
+    },
+    {
+      "description": "Simplify and streamline internal config.",
+      "type": "patch"
+    },
+    {
+      "description": "Simplify callbacks model.",
+      "type": "patch"
+    },
+    {
+      "description": "Streamline flows.",
+      "type": "patch"
+    },
+    {
+      "description": "fix instantiation of storage classes.",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-01-07T20:25:57+00:00",
+  "version": "1.1.0"
+}

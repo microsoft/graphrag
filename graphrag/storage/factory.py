@@ -21,6 +21,9 @@ class StorageFactory:
     """A factory class for storage implementations.
 
     Includes a method for users to register a custom storage implementation.
+
+    Configuration arguments are passed to each storage implementation as kwargs
+    for individual enforcement of required/optional arguments.
     """
 
     storage_types: ClassVar[dict[str, type]] = {}

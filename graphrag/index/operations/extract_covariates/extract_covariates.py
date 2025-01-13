@@ -9,20 +9,18 @@ from dataclasses import asdict
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    VerbCallbacks,
-    derive_from_rows,
-)
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +30,7 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_covariates(
     input: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     column: str,
     covariate_type: str,
@@ -65,7 +63,7 @@ async def extract_covariates(
         input,
         run_strategy,
         callbacks,
-        scheduling_type=async_mode,
+        async_type=async_mode,
         num_threads=num_threads,
     )
     return pd.DataFrame([item for row in results for item in row or []])
@@ -80,7 +78,7 @@ async def run_claim_extraction(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:

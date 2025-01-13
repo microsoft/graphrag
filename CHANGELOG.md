@@ -1,6 +1,31 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 1.1.2
+
+- patch: Basic Rag minor fix
+
+## 1.1.1
+
+- patch: Fix a bug on creating community hierarchy for dynamic search
+- patch: Increase LOCAL_SEARCH_COMMUNITY_PROP to 15%
+
+## 1.1.0
+
+- minor: Make gleanings independent of encoding
+- minor: Remove DataShaper (first steps).
+- minor: Remove old pipeline runner.
+- minor: new search implemented as a new option for the api
+- patch: Fix gleanings loop check
+- patch: Implement cosmosdb storage option for cache and output
+- patch: Move extractor code to co-locate with operations.
+- patch: Remove config input models.
+- patch: Ruff update
+- patch: Simplify and streamline internal config.
+- patch: Simplify callbacks model.
+- patch: Streamline flows.
+- patch: fix instantiation of storage classes.
+
 ## 1.0.1
 
 - patch: Fix encoding model config parsing

@@ -3,10 +3,10 @@
 
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
-from datashaper import VerbCallbacks
 from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.llm.load_llm import load_llm, read_llm_params
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,
@@ -20,7 +20,7 @@ from graphrag.index.operations.summarize_descriptions.typing import (
 async def run_graph_intelligence(
     id: str | tuple[str, str],
     descriptions: list[str],
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
@@ -36,7 +36,7 @@ async def run_summarize_descriptions(
     llm: ChatLLM,
     id: str | tuple[str, str],
     descriptions: list[str],
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the entity extraction chain."""

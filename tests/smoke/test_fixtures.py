@@ -274,7 +274,7 @@ class TestIndexer:
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
     ):
-        if workflow_config.get("skip", False):
+        if workflow_config.get("skip"):
             print(f"skipping smoke test {input_path})")
             return
 
@@ -291,7 +291,7 @@ class TestIndexer:
         if dispose is not None:
             dispose()
 
-        if not workflow_config.get("skip_assert", False):
+        if not workflow_config.get("skip_assert"):
             print("performing dataset assertions")
             self.__assert_indexer_outputs(root, workflow_config)
 

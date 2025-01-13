@@ -6,9 +6,8 @@
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 
-from datashaper import VerbCallbacks
-
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 
 
 @dataclass
@@ -21,7 +20,7 @@ class TextEmbeddingResult:
 TextEmbeddingStrategy = Callable[
     [
         list[str],
-        VerbCallbacks,
+        WorkflowCallbacks,
         PipelineCache,
         dict,
     ],

@@ -8,24 +8,25 @@ import logging
 from typing import Any
 
 import numpy as np
-from datashaper import ProgressTicker, VerbCallbacks, progress_ticker
 from fnllm import EmbeddingsLLM
 from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
 from graphrag.index.utils.is_null import is_null
+from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 log = logging.getLogger(__name__)
 
 
 async def run(
     input: list[str],
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: dict[str, Any],
 ) -> TextEmbeddingResult:
@@ -74,7 +75,7 @@ def _get_splitter(config: LLMParameters, batch_max_tokens: int) -> TokenTextSpli
 
 def _get_llm(
     config: LLMParameters,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
 ) -> EmbeddingsLLM:
     return load_llm_embeddings(

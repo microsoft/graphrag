@@ -7,19 +7,17 @@ import logging
 from typing import Any
 
 import pandas as pd
-from datashaper import (
-    AsyncType,
-    VerbCallbacks,
-    derive_from_rows,
-)
 
 from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.enums import AsyncType
 from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.extract_entities.typing import (
     Document,
     EntityExtractStrategy,
     ExtractEntityStrategyType,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +27,7 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 async def extract_entities(
     text_units: pd.DataFrame,
-    callbacks: VerbCallbacks,
+    callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     text_column: str,
     id_column: str,
@@ -124,7 +122,7 @@ async def extract_entities(
         text_units,
         run_strategy,
         callbacks,
-        scheduling_type=async_mode,
+        async_type=async_mode,
         num_threads=num_threads,
     )
 
