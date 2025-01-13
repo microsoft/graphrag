@@ -3,19 +3,18 @@
 
 """A module containing the 'Tokenizer', 'TextSplitter', 'NoopTextSplitter' and 'TokenTextSplitter' models."""
 
-import json
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any, Literal, cast
 
 import pandas as pd
 import tiktoken
 
 import graphrag.config.defaults as defs
-from graphrag.index.utils.tokens import num_tokens_from_string
+from graphrag.index.operations.chunk_text.typing import TextChunk
+from graphrag.logger.progress import ProgressTicker
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -123,10 +122,10 @@ class TokenTextSplitter(TextSplitter):
 
     def split_text(self, text: str | list[str]) -> list[str]:
         """Split text method."""
-        if cast("bool", pd.isna(text)) or text == "":
-            return []
         if isinstance(text, list):
             text = " ".join(text)
+        elif cast("bool", pd.isna(text)) or text == "":
+            return []
         if not isinstance(text, str):
             msg = f"Attempting to split a non-string value, actual is {type(text)}"
             raise TypeError(msg)
@@ -138,108 +137,57 @@ class TokenTextSplitter(TextSplitter):
             encode=lambda text: self.encode(text),
         )
 
-        return split_text_on_tokens(text=text, tokenizer=tokenizer)
+        return split_single_text_on_tokens(text=text, tokenizer=tokenizer)
 
 
-class TextListSplitterType(str, Enum):
-    """Enum for the type of the TextListSplitter."""
-
-    DELIMITED_STRING = "delimited_string"
-    JSON = "json"
-
-
-class TextListSplitter(TextSplitter):
-    """Text list splitter class definition."""
-
-    def __init__(
-        self,
-        chunk_size: int,
-        splitter_type: TextListSplitterType = TextListSplitterType.JSON,
-        input_delimiter: str | None = None,
-        output_delimiter: str | None = None,
-        model_name: str | None = None,
-        encoding_name: str | None = None,
-    ):
-        """Initialize the TextListSplitter with a chunk size."""
-        # Set the chunk overlap to 0 as we use full strings
-        super().__init__(chunk_size, chunk_overlap=0)
-        self._type = splitter_type
-        self._input_delimiter = input_delimiter
-        self._output_delimiter = output_delimiter or "\n"
-        self._length_function = lambda x: num_tokens_from_string(
-            x, model=model_name, encoding_name=encoding_name
-        )
-
-    def split_text(self, text: str | list[str]) -> Iterable[str]:
-        """Split a string list into a list of strings for a given chunk size."""
-        if not text:
-            return []
-
-        result: list[str] = []
-        current_chunk: list[str] = []
-
-        # Add the brackets
-        current_length: int = self._length_function("[]")
-
-        # Input should be a string list joined by a delimiter
-        string_list = self._load_text_list(text)
-
-        if len(string_list) == 1:
-            return string_list
-
-        for item in string_list:
-            # Count the length of the item and add comma
-            item_length = self._length_function(f"{item},")
-
-            if current_length + item_length > self._chunk_size:
-                if current_chunk and len(current_chunk) > 0:
-                    # Add the current chunk to the result
-                    self._append_to_result(result, current_chunk)
-
-                    # Start a new chunk
-                    current_chunk = [item]
-                    # Add 2 for the brackets
-                    current_length = item_length
-            else:
-                # Add the item to the current chunk
-                current_chunk.append(item)
-                # Add 1 for the comma
-                current_length += item_length
-
-        # Add the last chunk to the result
-        self._append_to_result(result, current_chunk)
-
-        return result
-
-    def _load_text_list(self, text: str | list[str]):
-        """Load the text list based on the type."""
-        if isinstance(text, list):
-            string_list = text
-        elif self._type == TextListSplitterType.JSON:
-            string_list = json.loads(text)
-        else:
-            string_list = text.split(self._input_delimiter)
-        return string_list
-
-    def _append_to_result(self, chunk_list: list[str], new_chunk: list[str]):
-        """Append the current chunk to the result."""
-        if new_chunk and len(new_chunk) > 0:
-            if self._type == TextListSplitterType.JSON:
-                chunk_list.append(json.dumps(new_chunk, ensure_ascii=False))
-            else:
-                chunk_list.append(self._output_delimiter.join(new_chunk))
-
-
-def split_text_on_tokens(*, text: str, tokenizer: Tokenizer) -> list[str]:
-    """Split incoming text and return chunks using tokenizer."""
-    splits: list[str] = []
+def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
+    """Split a single text and return chunks using the tokenizer."""
+    result = []
     input_ids = tokenizer.encode(text)
+
     start_idx = 0
     cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
     chunk_ids = input_ids[start_idx:cur_idx]
+
     while start_idx < len(input_ids):
-        splits.append(tokenizer.decode(chunk_ids))
+        chunk_text = tokenizer.decode(list(chunk_ids))
+        result.append(chunk_text)  # Append chunked text as string
         start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
         cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
         chunk_ids = input_ids[start_idx:cur_idx]
-    return splits
+
+    return result
+
+
+# Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
+# So we could have better control over the chunking process
+def split_multiple_texts_on_tokens(
+    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker
+) -> list[TextChunk]:
+    """Split multiple texts and return chunks with metadata using the tokenizer."""
+    result = []
+    mapped_ids = []
+
+    for source_doc_idx, text in enumerate(texts):
+        encoded = tokenizer.encode(text)
+        if tick:
+            tick(1)  # Track progress if tick callback is provided
+        mapped_ids.append((source_doc_idx, encoded))
+
+    input_ids = [
+        (source_doc_idx, id) for source_doc_idx, ids in mapped_ids for id in ids
+    ]
+
+    start_idx = 0
+    cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
+    chunk_ids = input_ids[start_idx:cur_idx]
+
+    while start_idx < len(input_ids):
+        chunk_text = tokenizer.decode([id for _, id in chunk_ids])
+        doc_indices = list({doc_idx for doc_idx, _ in chunk_ids})
+        result.append(TextChunk(chunk_text, doc_indices, len(chunk_ids)))
+        start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
+        cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
+        chunk_ids = input_ids[start_idx:cur_idx]
+
+    return result
