@@ -31,18 +31,16 @@ class CosmosDBVectoreStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to CosmosDB vector storage."""
-        cosmosdb_account_url = kwargs.get("url")
+        url = kwargs["url"]
         connection_string = kwargs.get("connection_string")
         if connection_string:
             self._cosmos_client = CosmosClient.from_connection_string(connection_string)
         else:
-            if cosmosdb_account_url is None:
-                msg = (
-                    "Either connection_string or cosmosdb_account_url must be provided."
-                )
+            if url is None:
+                msg = "Either connection_string or url must be provided."
                 raise ValueError(msg)
             self._cosmos_client = CosmosClient(
-                url=cosmosdb_account_url, credential=DefaultAzureCredential()
+                url=url, credential=DefaultAzureCredential()
             )
 
         database_name = kwargs.get("database_name")
@@ -63,7 +61,9 @@ class CosmosDBVectoreStore(BaseVectorStore):
     def _create_database(self) -> None:
         """Create the database if it doesn't exist."""
         self._cosmos_client.create_database_if_not_exists(id=self._database_name)
-        self._database_client = self._cosmos_client.get_database_client(self._database_name)
+        self._database_client = self._cosmos_client.get_database_client(
+            self._database_name
+        )
 
     def _delete_database(self) -> None:
         """Delete the database if it exists."""
@@ -109,7 +109,9 @@ class CosmosDBVectoreStore(BaseVectorStore):
             indexing_policy=indexing_policy,
             vector_embedding_policy=vector_embedding_policy,
         )
-        self._container_client = self._database_client.get_container_client(self._container_name)
+        self._container_client = self._database_client.get_container_client(
+            self._container_name
+        )
 
     def _delete_container(self) -> None:
         """Delete the vector store container in the database if it exists."""
