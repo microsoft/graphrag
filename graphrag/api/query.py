@@ -137,11 +137,12 @@ async def multi_global_search(
     community_level: int | None,
     dynamic_community_selection: bool,
     response_type: str,
+    streaming: bool,
     query: str,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-]:
+] | AsyncGenerator:
     """Perform a global search and return the context data and response.
 
     Parameters
@@ -261,6 +262,20 @@ async def multi_global_search(
         communities_dfs, axis=0, ignore_index=True, sort=False
     )
 
+    # Call the streaming api function
+    if streaming:
+        return global_search_streaming(
+            config,
+            nodes=nodes_combined,
+            entities=entities_combined,
+            communities=communities_combined,
+            community_reports=community_reports_combined,
+            community_level=community_level,
+            dynamic_community_selection=dynamic_community_selection,
+            response_type=response_type,
+            query=query,
+        )
+    
     return await global_search(
         config,
         nodes=nodes_combined,
