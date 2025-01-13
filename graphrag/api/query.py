@@ -126,6 +126,55 @@ async def global_search(
     context_data = _reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
 
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_global_search(
+    config: GraphRagConfig,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    communities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    index_names: list[str],
+    community_level: int | None,
+    dynamic_community_selection: bool,
+    response_type: str,
+    query: str,
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
+    """Perform a global search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
+    - response_type (str): The type of response to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    return await global_search(
+        config,
+        nodes=nodes_list[0],
+        entities=entities_list[0],
+        communities=communities_list[0],
+        community_reports=community_reports_list[0],
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+        response_type=response_type,
+        query=query,
+    )
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search_streaming(
