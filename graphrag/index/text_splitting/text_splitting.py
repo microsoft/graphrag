@@ -11,10 +11,10 @@ from typing import Any, Literal, cast
 
 import pandas as pd
 import tiktoken
-from datashaper import ProgressTicker
 
 import graphrag.config.defaults as defs
 from graphrag.index.operations.chunk_text.typing import TextChunk
+from graphrag.logger.progress import ProgressTicker
 
 EncodedText = list[int]
 DecodeFn = Callable[[EncodedText], str]
@@ -140,16 +140,6 @@ class TokenTextSplitter(TextSplitter):
         return split_single_text_on_tokens(text=text, tokenizer=tokenizer)
 
 
-def split_text_on_tokens(
-    texts: str | list[str], tokenizer: Tokenizer, tick=None
-) -> list[str] | list[TextChunk]:
-    """Handle both single text and list of texts."""
-    if isinstance(texts, str):
-        return split_single_text_on_tokens(texts, tokenizer)
-
-    return split_multiple_texts_on_tokens(texts, tokenizer, tick)
-
-
 def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
     """Split a single text and return chunks using the tokenizer."""
     result = []
@@ -172,7 +162,7 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
 # Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
 # So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
-    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker | None = None
+    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []
