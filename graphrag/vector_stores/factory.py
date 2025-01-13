@@ -6,9 +6,9 @@
 from enum import Enum
 from typing import ClassVar
 
-from graphrag.vector_stores.azure_ai_search import AzureAISearch
+from graphrag.vector_stores.azure_ai_search import AzureAISearchVectorStore
 from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.cosmosdb_vector_store import CosmosDBVectoreStore
+from graphrag.vector_stores.cosmosdb import CosmosDBVectoreStore
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 
@@ -42,7 +42,7 @@ class VectorStoreFactory:
             case VectorStoreType.LanceDB:
                 return LanceDBVectorStore(**kwargs)
             case VectorStoreType.AzureAISearch:
-                return AzureAISearch(**kwargs)
+                return AzureAISearchVectorStore(**kwargs)
             case VectorStoreType.CosmosDB:
                 return CosmosDBVectoreStore(**kwargs)
             case _:
