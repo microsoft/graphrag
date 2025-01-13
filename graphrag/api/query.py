@@ -164,12 +164,109 @@ async def multi_global_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    links = {
+        "nodes": {},
+        "community": {},
+        "community_reports": {},
+        "entities": {},
+        "text_units": {},
+        "relationships": {},
+        "covariates": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community": -1,
+        "community_reports": -1,
+        "entities": -1,
+        "text_units": -1,
+        "relationships": -1,
+        "covariates": -1,
+    }
+
+    communities_dfs = []
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
+        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(int)
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        max_vals["community_reports"] = community_reports_df["community"].max()
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's communities dataframe for merging
+        communities_df = communities_list[idx]
+        communities_df["community"] = communities_df["community"].astype(int)
+        for i in communities_df["community"]:
+            links["community"][i + max_vals["community"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        communities_df["community"] += max_vals["community"] + 1
+        communities_df["human_readable_id"] += max_vals["community"] + 1
+        max_vals["community"] = communities_df["community"].max()
+        communities_dfs.append(communities_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x: x + f"-{index_name}"  # noqa: B023
+        )
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+        )
+        max_vals["entities"] = entities_df["human_readable_id"].max()
+        entities_dfs.append(entities_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
+    )
+    entities_combined = pd.concat(
+        entities_dfs, axis=0, ignore_index=True, sort=False
+    )
+    communities_combined = pd.concat(
+        communities_dfs, axis=0, ignore_index=True, sort=False
+    )
+
     return await global_search(
         config,
-        nodes=nodes_list[0],
-        entities=entities_list[0],
-        communities=communities_list[0],
-        community_reports=community_reports_list[0],
+        nodes=nodes_combined,
+        entities=entities_combined,
+        communities=communities_combined,
+        community_reports=community_reports_combined,
         community_level=community_level,
         dynamic_community_selection=dynamic_community_selection,
         response_type=response_type,
