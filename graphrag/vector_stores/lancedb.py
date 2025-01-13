@@ -26,7 +26,11 @@ class LanceDBVectorStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to the vector storage."""
-        self.db_connection = lancedb.connect(kwargs["db_uri"])
+        self.db_connection = lancedb.connect(
+            uri=kwargs.get("db_uri"), 
+            storage_options=kwargs.get("storage_options")
+        )
+        
         if (
             self.collection_name
             and self.collection_name in self.db_connection.table_names()
