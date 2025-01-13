@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "support vers 0.27 of httpx"
+}
