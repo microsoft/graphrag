@@ -51,6 +51,7 @@ Available scripts are:
 - `poetry run poe test_unit` - This will execute unit tests.
 - `poetry run poe test_integration` - This will execute integration tests.
 - `poetry run poe test_smoke` - This will execute smoke tests.
+- `poetry run poe test_verbs` - This will execute tests of the basic workflows.
 - `poetry run poe check` - This will perform a suite of static checks across the package, including:
   - formatting
   - documentation formatting
