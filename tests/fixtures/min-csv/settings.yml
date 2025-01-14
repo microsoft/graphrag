@@ -41,7 +41,7 @@ storage:
 
 reporting:
   type: file
-  base_dir: "output"
+  base_dir: "logs"
 
 snapshots:
   embeddings: True
