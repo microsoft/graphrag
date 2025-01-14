@@ -2356,70 +2356,101 @@ entity_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 5</span>
-<span class="ansi-green-intense-fg ansi-bold">      2</span> entity_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      3</span> entity_embedding_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_EMBEDDING_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-fg">----&gt; 5</span> entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">read_indexer_entities</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">entity_df</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">entity_embedding_df</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">COMMUNITY_LEVEL</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># load description embeddings to an in-memory lancedb vectorstore</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(95,135,135)"># to connect to a remote db, specify url and port values.</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span> description_embedding_store <span style="color: rgb(98,98,98)">=</span> LanceDBVectorStore(
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     collection_name<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">default-entity-description</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     11</span> )
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Entity count: 888
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/indexer_adapters.py:154</span>, in <span class="ansi-cyan-fg">read_indexer_entities</span><span class="ansi-blue-fg">(final_nodes, final_entities, community_level)</span>
-<span class="ansi-green-intense-fg ansi-bold">    149</span> final_df <span style="color: rgb(98,98,98)">=</span> nodes_df<span style="color: rgb(98,98,98)">.</span>merge(entities_df, on<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">id</span><span style="color: rgb(175,0,0)">"</span>, how<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">inner</span><span style="color: rgb(175,0,0)">"</span>)<span style="color: rgb(98,98,98)">.</span>drop_duplicates(
-<span class="ansi-green-intense-fg ansi-bold">    150</span>     subset<span style="color: rgb(98,98,98)">=</span>[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">id</span><span style="color: rgb(175,0,0)">"</span>]
-<span class="ansi-green-intense-fg ansi-bold">    151</span> )
-<span class="ansi-green-intense-fg ansi-bold">    153</span> <span style="color: rgb(95,135,135)"># read entity dataframe to knowledge model objects</span>
-<span class="ansi-green-fg">--&gt; 154</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">read_entities</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    155</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">df</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">final_df</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    156</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">id_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    157</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">title_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">title</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    158</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">type_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">type</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    159</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">short_id_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">human_readable_id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    160</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">description_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">description</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    161</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">community_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">community</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    162</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">rank_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">degree</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    163</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">name_embedding_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    164</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">description_embedding_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">description_embedding</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    165</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">text_unit_ids_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">text_unit_ids</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    166</span> <span class="ansi-yellow-bg">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/dfs.py:44</span>, in <span class="ansi-cyan-fg">read_entities</span><span class="ansi-blue-fg">(df, id_col, short_id_col, title_col, type_col, description_col, name_embedding_col, description_embedding_col, community_col, text_unit_ids_col, rank_col, attributes_cols)</span>
-<span class="ansi-green-intense-fg ansi-bold">     39</span> entities <span style="color: rgb(98,98,98)">=</span> []
-<span class="ansi-green-intense-fg ansi-bold">     40</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> idx, row <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> df<span style="color: rgb(98,98,98)">.</span>iterrows():
-<span class="ansi-green-intense-fg ansi-bold">     41</span>     entity <span style="color: rgb(98,98,98)">=</span> Entity(
-<span class="ansi-green-intense-fg ansi-bold">     42</span>         <span style="color: rgb(0,135,0)">id</span><span style="color: rgb(98,98,98)">=</span>to_str(row, id_col),
-<span class="ansi-green-intense-fg ansi-bold">     43</span>         short_id<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, short_id_col) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> short_id_col <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span style="color: rgb(0,135,0)">str</span>(idx),
-<span class="ansi-green-fg">---&gt; 44</span>         title<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">to_str</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">row</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">title_col</span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-intense-fg ansi-bold">     45</span>         <span style="color: rgb(0,135,0)">type</span><span style="color: rgb(98,98,98)">=</span>to_optional_str(row, type_col),
-<span class="ansi-green-intense-fg ansi-bold">     46</span>         description<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, description_col),
-<span class="ansi-green-intense-fg ansi-bold">     47</span>         name_embedding<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, name_embedding_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">float</span>),
-<span class="ansi-green-intense-fg ansi-bold">     48</span>         description_embedding<span style="color: rgb(98,98,98)">=</span>to_optional_list(
-<span class="ansi-green-intense-fg ansi-bold">     49</span>             row, description_embedding_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">float</span>
-<span class="ansi-green-intense-fg ansi-bold">     50</span>         ),
-<span class="ansi-green-intense-fg ansi-bold">     51</span>         community_ids<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, community_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">str</span>),
-<span class="ansi-green-intense-fg ansi-bold">     52</span>         text_unit_ids<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, text_unit_ids_col),
-<span class="ansi-green-intense-fg ansi-bold">     53</span>         rank<span style="color: rgb(98,98,98)">=</span>to_optional_int(row, rank_col),
-<span class="ansi-green-intense-fg ansi-bold">     54</span>         attributes<span style="color: rgb(98,98,98)">=</span>(
-<span class="ansi-green-intense-fg ansi-bold">     55</span>             {col: row<span style="color: rgb(98,98,98)">.</span>get(col) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> col <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> attributes_cols}
-<span class="ansi-green-intense-fg ansi-bold">     56</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> attributes_cols
-<span class="ansi-green-intense-fg ansi-bold">     57</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">     58</span>         ),
-<span class="ansi-green-intense-fg ansi-bold">     59</span>     )
-<span class="ansi-green-intense-fg ansi-bold">     60</span>     entities<span style="color: rgb(98,98,98)">.</span>append(entity)
-<span class="ansi-green-intense-fg ansi-bold">     61</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> entities
-
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/utils.py:19</span>, in <span class="ansi-cyan-fg">to_str</span><span class="ansi-blue-fg">(data, column_name)</span>
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">str</span>(data[column_name])
-<span class="ansi-green-intense-fg ansi-bold">     18</span> msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Column </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>column_name<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> not found in data</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">---&gt; 19</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(msg)
-
-<span class="ansi-red-fg">ValueError</span>: Column title not found in data</pre>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>human_readable_id</th>
+<th>title</th>
+<th>community</th>
+<th>level</th>
+<th>degree</th>
+<th>x</th>
+<th>y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>9a062709-56dd-4bf2-8b41-926124b7a6f7</td>
+<td>0</td>
+<td>JACOB COLLIER</td>
+<td>1</td>
+<td>0</td>
+<td>111</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>9a062709-56dd-4bf2-8b41-926124b7a6f7</td>
+<td>0</td>
+<td>JACOB COLLIER</td>
+<td>11</td>
+<td>1</td>
+<td>111</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>f8c54a6d-9d28-4332-a0d6-363796160430</td>
+<td>1</td>
+<td>KEVIN SCOTT</td>
+<td>6</td>
+<td>0</td>
+<td>23</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>f8c54a6d-9d28-4332-a0d6-363796160430</td>
+<td>1</td>
+<td>KEVIN SCOTT</td>
+<td>35</td>
+<td>1</td>
+<td>23</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>e97c00f8-6140-465f-beec-23c604331eae</td>
+<td>2</td>
+<td>MICROSOFT</td>
+<td>6</td>
+<td>0</td>
+<td>4</td>
+<td>0.0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2476,58 +2507,101 @@ relationship_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> relationship_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>RELATIONSHIP_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-fg">----&gt; 2</span> relationships <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">read_indexer_relationships</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">relationship_df</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Relationship count: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span style="color: rgb(0,135,0)">len</span>(relationship_df)<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      5</span> relationship_df<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Relationship count: 812
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/indexer_adapters.py:66</span>, in <span class="ansi-cyan-fg">read_indexer_relationships</span><span class="ansi-blue-fg">(final_relationships)</span>
-<span class="ansi-green-intense-fg ansi-bold">     64</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">read_indexer_relationships</span>(final_relationships: pd<span style="color: rgb(98,98,98)">.</span>DataFrame) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(0,135,0)">list</span>[Relationship]:
-<span class="ansi-green-intense-fg ansi-bold">     65</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""Read in the Relationships from the raw indexing outputs."""</span>
-<span class="ansi-green-fg">---&gt; 66</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">read_relationships</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">     67</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">df</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">final_relationships</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     68</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">short_id_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">human_readable_id</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     69</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">rank_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">combined_degree</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     70</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">description_embedding_col</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     71</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">attributes_cols</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">None</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">     72</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/dfs.py:91</span>, in <span class="ansi-cyan-fg">read_relationships</span><span class="ansi-blue-fg">(df, id_col, short_id_col, source_col, target_col, description_col, rank_col, description_embedding_col, weight_col, text_unit_ids_col, attributes_cols)</span>
-<span class="ansi-green-intense-fg ansi-bold">     78</span> relationships <span style="color: rgb(98,98,98)">=</span> []
-<span class="ansi-green-intense-fg ansi-bold">     79</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> idx, row <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> df<span style="color: rgb(98,98,98)">.</span>iterrows():
-<span class="ansi-green-intense-fg ansi-bold">     80</span>     rel <span style="color: rgb(98,98,98)">=</span> Relationship(
-<span class="ansi-green-intense-fg ansi-bold">     81</span>         <span style="color: rgb(0,135,0)">id</span><span style="color: rgb(98,98,98)">=</span>to_str(row, id_col),
-<span class="ansi-green-intense-fg ansi-bold">     82</span>         short_id<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, short_id_col) <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> short_id_col <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span style="color: rgb(0,135,0)">str</span>(idx),
-<span class="ansi-green-intense-fg ansi-bold">     83</span>         source<span style="color: rgb(98,98,98)">=</span>to_str(row, source_col),
-<span class="ansi-green-intense-fg ansi-bold">     84</span>         target<span style="color: rgb(98,98,98)">=</span>to_str(row, target_col),
-<span class="ansi-green-intense-fg ansi-bold">     85</span>         description<span style="color: rgb(98,98,98)">=</span>to_optional_str(row, description_col),
-<span class="ansi-green-intense-fg ansi-bold">     86</span>         description_embedding<span style="color: rgb(98,98,98)">=</span>to_optional_list(
-<span class="ansi-green-intense-fg ansi-bold">     87</span>             row, description_embedding_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">float</span>
-<span class="ansi-green-intense-fg ansi-bold">     88</span>         ),
-<span class="ansi-green-intense-fg ansi-bold">     89</span>         weight<span style="color: rgb(98,98,98)">=</span>to_optional_float(row, weight_col),
-<span class="ansi-green-intense-fg ansi-bold">     90</span>         text_unit_ids<span style="color: rgb(98,98,98)">=</span>to_optional_list(row, text_unit_ids_col, item_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">str</span>),
-<span class="ansi-green-fg">---&gt; 91</span>         rank<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">to_optional_int</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">row</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">rank_col</span><span class="ansi-yellow-bg">)</span>,
-<span class="ansi-green-intense-fg ansi-bold">     92</span>         attributes<span style="color: rgb(98,98,98)">=</span>(
-<span class="ansi-green-intense-fg ansi-bold">     93</span>             {col: row<span style="color: rgb(98,98,98)">.</span>get(col) <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> col <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> attributes_cols}
-<span class="ansi-green-intense-fg ansi-bold">     94</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> attributes_cols
-<span class="ansi-green-intense-fg ansi-bold">     95</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">else</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">     96</span>         ),
-<span class="ansi-green-intense-fg ansi-bold">     97</span>     )
-<span class="ansi-green-intense-fg ansi-bold">     98</span>     relationships<span style="color: rgb(98,98,98)">.</span>append(rel)
-<span class="ansi-green-intense-fg ansi-bold">     99</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> relationships
-
-File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/input/loaders/utils.py:135</span>, in <span class="ansi-cyan-fg">to_optional_int</span><span class="ansi-blue-fg">(data, column_name)</span>
-<span class="ansi-green-intense-fg ansi-bold">    133</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    134</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Column </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>column_name<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> not found in data</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">--&gt; 135</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(msg)
-<span class="ansi-green-intense-fg ansi-bold">    137</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">int</span>(value)
-
-<span class="ansi-red-fg">ValueError</span>: Column combined_degree not found in data</pre>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>human_readable_id</th>
+<th>source</th>
+<th>target</th>
+<th>description</th>
+<th>weight</th>
+<th>combined_degree</th>
+<th>text_unit_ids</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>9af066c8-031b-4c52-b93b-b37763f6f0f7</td>
+<td>0</td>
+<td>JACOB COLLIER</td>
+<td>BEN BLOOMBERG</td>
+<td>Jacob Collier and Ben Bloomberg collaborate on...</td>
+<td>81.0</td>
+<td>170</td>
+<td>[aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>5b155801-2560-4449-914a-80addd22ed6d</td>
+<td>1</td>
+<td>JACOB COLLIER</td>
+<td>GRAMMY AWARDS</td>
+<td>Jacob Collier is a multi-Grammy Award-winning ...</td>
+<td>1.0</td>
+<td>112</td>
+<td>[aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>07e7d26a-8823-4676-b210-e49a0e1a8788</td>
+<td>2</td>
+<td>JACOB COLLIER</td>
+<td>ALL I NEED</td>
+<td>Jacob Collier's song 'All I Need' is popular i...</td>
+<td>7.0</td>
+<td>112</td>
+<td>[aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8...</td>
+</tr>
+<tr>
+<th>3</th>
+<td>83f75ee8-c2ee-45c0-9886-d45f9aa5a105</td>
+<td>3</td>
+<td>JACOB COLLIER</td>
+<td>BEHIND THE TECH</td>
+<td>Jacob Collier is a guest on the podcast 'Behin...</td>
+<td>1.0</td>
+<td>116</td>
+<td>[aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8...</td>
+</tr>
+<tr>
+<th>4</th>
+<td>94ed887e-3d83-438b-a4a8-0b772ace3782</td>
+<td>4</td>
+<td>JACOB COLLIER</td>
+<td>LONDON</td>
+<td>Jacob Collier is based in London</td>
+<td>8.0</td>
+<td>112</td>
+<td>[aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8...</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2580,7 +2654,7 @@ covariates = {"claims": claims}</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Claim records: 156
+<pre>Claim records: 178
 </pre>
 </div>
 </div>
@@ -2639,7 +2713,7 @@ report_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Report records: 20
+<pre>Report records: 72
 </pre>
 </div>
 </div>
@@ -2664,83 +2738,107 @@ report_df.head()</div>
 <thead>
 <tr style="text-align: right;">
 <th></th>
+<th>id</th>
+<th>human_readable_id</th>
 <th>community</th>
-<th>full_content</th>
+<th>parent</th>
 <th>level</th>
-<th>rank</th>
 <th>title</th>
-<th>rank_explanation</th>
 <th>summary</th>
+<th>full_content</th>
+<th>rank</th>
+<th>rank_explanation</th>
 <th>findings</th>
 <th>full_content_json</th>
-<th>id</th>
+<th>period</th>
+<th>size</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th>0</th>
+<td>16949a5d17b740b2b4a6f787b0a637f1</td>
+<td>43</td>
+<td>43</td>
 <td>10</td>
-<td># Paranormal Military Squad at Dulce Base: Dec...</td>
-<td>1</td>
-<td>8.5</td>
-<td>Paranormal Military Squad at Dulce Base: Decod...</td>
+<td>2</td>
+<td>Ben Bloomberg and the Harmoniser Project</td>
+<td>The community centers around Ben Bloomberg, a ...</td>
+<td># Ben Bloomberg and the Harmoniser Project\n\n...</td>
+<td>7.5</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>The Paranormal Military Squad, stationed at Du...</td>
-<td>[{'explanation': 'Jordan is a central figure i...</td>
-<td>{\n    "title": "Paranormal Military Squad at ...</td>
-<td>1ba2d200-dd26-4693-affe-a5539d0a0e0d</td>
+<td>[{'explanation': 'Ben Bloomberg is a pivotal f...</td>
+<td>{\n    "title": "Ben Bloomberg and the Harmoni...</td>
+<td>2025-01-10</td>
+<td>35</td>
 </tr>
 <tr>
 <th>1</th>
-<td>11</td>
-<td># Dulce and Paranormal Military Squad Operatio...</td>
-<td>1</td>
-<td>8.5</td>
-<td>Dulce and Paranormal Military Squad Operations</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>The community centers around Dulce, a secretiv...</td>
-<td>[{'explanation': 'Dulce is described as a top-...</td>
-<td>{\n    "title": "Dulce and Paranormal Military...</td>
-<td>a8a530b0-ae6b-44ea-b11c-9f70d138298d</td>
+<td>4ff756b7041f4dcab6612e016af2b14d</td>
+<td>44</td>
+<td>44</td>
+<td>10</td>
+<td>2</td>
+<td>North Hampton and Influential Musicians</td>
+<td>The community centers around North Hampton, a ...</td>
+<td># North Hampton and Influential Musicians\n\nT...</td>
+<td>6.5</td>
+<td>The impact severity rating is moderately high ...</td>
+<td>[{'explanation': 'North Hampton serves as the ...</td>
+<td>{\n    "title": "North Hampton and Influential...</td>
+<td>2025-01-10</td>
+<td>4</td>
 </tr>
 <tr>
 <th>2</th>
-<td>12</td>
-<td># Paranormal Military Squad and Dulce Base Ope...</td>
-<td>1</td>
-<td>7.5</td>
-<td>Paranormal Military Squad and Dulce Base Opera...</td>
-<td>The impact severity rating is relatively high ...</td>
-<td>The community centers around the Paranormal Mi...</td>
-<td>[{'explanation': 'Taylor is a central figure w...</td>
-<td>{\n    "title": "Paranormal Military Squad and...</td>
-<td>0478975b-c805-4cc1-b746-82f3e689e2f3</td>
+<td>2d3df394272743a781606ad80ccb5312</td>
+<td>45</td>
+<td>45</td>
+<td>10</td>
+<td>2</td>
+<td>Prince of Monaco and Monaco</td>
+<td>The community revolves around the Prince of Mo...</td>
+<td># Prince of Monaco and Monaco\n\nThe community...</td>
+<td>4.0</td>
+<td>The impact severity rating is moderate due to ...</td>
+<td>[{'explanation': 'The Prince of Monaco is a ke...</td>
+<td>{\n    "title": "Prince of Monaco and Monaco",...</td>
+<td>2025-01-10</td>
+<td>2</td>
 </tr>
 <tr>
 <th>3</th>
-<td>13</td>
-<td># Mission Dynamics and Leadership: Cruz and Wa...</td>
-<td>1</td>
+<td>becbd958973f42b0bd53cca9250feaf1</td>
+<td>46</td>
+<td>46</td>
+<td>10</td>
+<td>2</td>
+<td>Robot Opera and Broadway</td>
+<td>The community revolves around the Robot Opera,...</td>
+<td># Robot Opera and Broadway\n\nThe community re...</td>
 <td>7.5</td>
-<td>Mission Dynamics and Leadership: Cruz and Wash...</td>
-<td>The impact severity rating is relatively high ...</td>
-<td>This report explores the intricate dynamics of...</td>
-<td>[{'explanation': 'Cruz is a central figure in ...</td>
-<td>{\n    "title": "Mission Dynamics and Leadersh...</td>
-<td>b56f6e68-3951-4f07-8760-63700944a375</td>
+<td>The impact severity rating is high due to the ...</td>
+<td>[{'explanation': 'The Robot Opera is a notable...</td>
+<td>{\n    "title": "Robot Opera and Broadway",\n ...</td>
+<td>2025-01-10</td>
+<td>2</td>
 </tr>
 <tr>
 <th>4</th>
-<td>14</td>
-<td># Dulce Base and Paranormal Military Squad: Br...</td>
-<td>1</td>
-<td>8.5</td>
-<td>Dulce Base and Paranormal Military Squad: Brid...</td>
+<td>f7d29921ae3e41a79ae7f88dae584892</td>
+<td>47</td>
+<td>47</td>
+<td>13</td>
+<td>2</td>
+<td>Ben and Jacob's Fusion of Art and Technology</td>
+<td>The community centers around Ben and Jacob, wh...</td>
+<td># Ben and Jacob's Fusion of Art and Technology...</td>
+<td>7.5</td>
 <td>The impact severity rating is high due to the ...</td>
-<td>The community centers around the Dulce Base, a...</td>
-<td>[{'explanation': 'Sam Rivera, a member of the ...</td>
-<td>{\n    "title": "Dulce Base and Paranormal Mil...</td>
-<td>736e7006-d050-4abb-a122-00febf3f540f</td>
+<td>[{'explanation': 'Ben and Jacob are key collab...</td>
+<td>{\n    "title": "Ben and Jacob's Fusion of Art...</td>
+<td>2025-01-10</td>
+<td>5</td>
 </tr>
 </tbody>
 </table>
@@ -2802,7 +2900,7 @@ text_unit_df.head()</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Text unit records: 50
+<pre>Text unit records: 38
 </pre>
 </div>
 </div>
@@ -2828,6 +2926,7 @@ text_unit_df.head()</div>
 <tr style="text-align: right;">
 <th></th>
 <th>id</th>
+<th>human_readable_id</th>
 <th>text</th>
 <th>n_tokens</th>
 <th>document_ids</th>
@@ -2839,53 +2938,58 @@ text_unit_df.head()</div>
 <tbody>
 <tr>
 <th>0</th>
-<td>06bdff339c02ab35c80fa49320d5da66</td>
-<td># Operation: Dulce\n\n## Chapter 1\n\nThe thru...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[439081a3-bfeb-4693-968a-0f6189d8fa50, 3399e3d...</td>
+<td>aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8a...</td>
+<td>1</td>
+<td>../\nJACOB COLLIER:  Honestly, I think mastery...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[9af066c8-031b-4c52-b93b-b37763f6f0f7, 5b15580...</td>
+<td>[f91209d1-0939-452e-b51b-be1763e2a27d, f2274c3...</td>
 </tr>
 <tr>
 <th>1</th>
-<td>28dc4aa41a3e99deb7f354682f3e9904</td>
-<td>'s authoritarian performance. _Protocols_, Jor...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[4119fd06010c494caa07f439b333f4c5, 077d2820ae1...</td>
-<td>[9a6f414210e14841a5b0e661aedc898d, db541b72609...</td>
-<td>[b09594cb-d4b7-4de4-a1af-97778300eb1b, f7c5ea4...</td>
+<td>7f0fb1d3bf517dc76dffa984eec7a25e851e44ead0df82...</td>
+<td>2</td>
+<td>OMBERG:  I grew up and started getting into al...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[c2ac3612-3aaf-440c-babd-e21f474e0366, 9aab0b4...</td>
+<td>[13c74c18-439b-4419-8427-4ba826503055, 7120179...</td>
 </tr>
 <tr>
 <th>2</th>
-<td>813db3138ef511c34be86f841f68aa8f</td>
-<td>, rehearsing the speech for their subordinates...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 077d2820ae1...</td>
-<td>[0467928aa65e4a4fba62bdb1467e3a54, 7cc3356d38d...</td>
-<td>[7642fe21-7cb9-4428-848b-d2e3f5ab10ca, 6fe3d6c...</td>
+<td>27b739ceeddfa100f7be3cf002fd3a27aea2228f1a02c4...</td>
+<td>3</td>
+<td>, you know, and it’s a very linear pathway too...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[9af066c8-031b-4c52-b93b-b37763f6f0f7, 5456bcb...</td>
+<td>[a67f1c21-32ab-4eaa-b063-c815e7f3ea9d]</td>
 </tr>
 <tr>
 <th>3</th>
-<td>d0afd106abf3a2966ff88a99eef710db</td>
-<td>, weighing his words carefully. "Our tech is t...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[b45241d70f0e43fca764df95b2b81f77, 4119fd06010...</td>
-<td>[148fffeb994541b2b4b6dcefda7001a8, 89c08e79329...</td>
-<td>[956e4c22-e343-4b5d-ad3c-d44ca3ce5fb5]</td>
+<td>d97017305e234cc51554d653447d73b58441e1ff0f99e4...</td>
+<td>4</td>
+<td>you know, we started taking a lot of parts an...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[bac3dd9b-f5c8-4966-9dc3-87f1f5976e36, 4f41be8...</td>
+<td>[695ac017-7c10-44ad-a681-3b4c1ae86a87]</td>
 </tr>
 <tr>
 <th>4</th>
-<td>f4c7c95d7bf621c6eb73d331cbf0b608</td>
-<td>stepping into their exchange. The authority i...</td>
-<td>600</td>
-<td>[958fdd043f17ade63cb13570b59df295]</td>
-<td>[077d2820ae1845bcbb1803379a3d1eae, 1fd3fa8bb5a...</td>
-<td>[478e4c72d8fb46dd8cc9f0691c9878fd, 82b0446e7c9...</td>
-<td>[a54eda4d-b5bf-471d-989f-370eb9aff961, 9f85274...</td>
+<td>2b6d29f8a74b16ea9a70423bce803a08a5b9ed4e6a946b...</td>
+<td>5</td>
+<td>only so much processing that my mind can do i...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[d225ff7b-ca47-4fab-8d9a-4f86111526f8, 3fddb40...</td>
+<td>[d8a7ad5c-a170-430e-9f9d-902047371ee2]</td>
 </tr>
 </tbody>
 </table>
@@ -2973,8 +3077,8 @@ text_embedder = OpenAIEmbedding(
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3017,35 +3121,6 @@ text_embedder = OpenAIEmbedding(
     text_embedder=text_embedder,
     token_encoder=token_encoder,
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 4</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> LocalSearchMixedContext(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     community_reports<span style="color: rgb(98,98,98)">=</span>reports,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
-<span class="ansi-green-fg">----&gt; 4</span>     entities<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">entities</span>,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span style="color: rgb(95,135,135)"># if you did not run covariates during indexing, set this to None</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     covariates<span style="color: rgb(98,98,98)">=</span>covariates,
-<span class="ansi-green-intense-fg ansi-bold">      8</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>description_embedding_store,
-<span class="ansi-green-intense-fg ansi-bold">      9</span>     embedding_vectorstore_key<span style="color: rgb(98,98,98)">=</span>EntityVectorStoreKey<span style="color: rgb(98,98,98)">.</span>ID,  <span style="color: rgb(95,135,135)"># if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span>     text_embedder<span style="color: rgb(98,98,98)">=</span>text_embedder,
-<span class="ansi-green-intense-fg ansi-bold">     11</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     12</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'entities' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3157,8 +3232,8 @@ llm_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3193,31 +3268,6 @@ llm_params = {
     context_builder_params=local_context_params,
     response_type="multiple paragraphs",  # free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[12], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> LocalSearch(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     llm_params<span style="color: rgb(98,98,98)">=</span>llm_params,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3268,15 +3318,29 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[13], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>## Overview of Agent Alex Mercer
 
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
+Agent Alex Mercer is a prominent figure within the Paranormal Military Squad, known for his leadership and strategic approach in handling extraordinary and supernatural threats. He plays a crucial role in guiding the team through their missions, including Operation: Dulce and their interstellar communication efforts. Mercer's balanced strategy for contact and leadership skills make him an integral part of the squad [Data: Entities (200); Relationships (290, 567, 289, 288, 310)].
+
+## Leadership and Mentorship
+
+Mercer is characterized by his resilience, responsibility, and strategic mind. He acts as a bridge between past and present, providing leadership and guidance during interstellar communication efforts. Known for his soldier's obedience, investigative instinct, and profound curiosity about the deeper mysteries of Dulce, Mercer works closely with Dr. Jordan Hayes, acknowledging her analytical skills, and stands on the front lines of the unknown. His authoritative demeanor and calm leadership are crucial in guiding the team through their mission [Data: Entities (200); Relationships (289, 288, 403, 348)].
+
+## Role in Interstellar Communication
+
+Alex Mercer is deeply involved in the mission to decode and respond to alien communication at Dulce Base. He is a key figure in the efforts to establish first contact with extraterrestrial intelligence, emphasizing the importance of cautious and curious approaches in their unprecedented scenario. Mercer's strategic thinking and recognition of the importance of human variables in their mission are highlighted throughout the operation [Data: Entities (200); Relationships (322, 586, 592, 171); Claims (101, 107, 112, 154)].
+
+## Internal Conflict and Skepticism
+
+Despite his leadership role, Mercer experiences internal conflict between his compliance with protocols and his natural inclination to question and investigate thoroughly. He exhibits doubt and skepticism about the mission and the Dulce base, questioning the narrative they had been sold and sensing the strangeness of the place. This skepticism is balanced by his determination to guide the team with a diplomatic approach to understanding extraterrestrial communications [Data: Claims (31, 55, 101)].
+
+## Collaboration and Team Dynamics
+
+Mercer collaborates closely with other team members, including Sam Rivera and Taylor Cruz, providing mentorship and emphasizing the importance of intuition and trust. His professional relationship with Taylor Cruz is marked by a competitive undercurrent, yet they collaborate effectively to balance leadership and realistic approaches to their mission. Mercer's mentorship extends to Sam Rivera, instilling belief and guidance in him, which is crucial to their mission [Data: Relationships (289, 310, 445, 442); Claims (147)].
+
+In summary, Agent Alex Mercer is a strategic leader and mentor within the Paranormal Military Squad, navigating the complexities of interstellar communication with a balanced approach. His internal conflict and skepticism add depth to his character, while his collaboration with team members highlights his role as a guiding force in their mission.
+</pre>
 </div>
 </div>
 </div>
@@ -3318,16 +3382,31 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[14], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Dr. Jordan Hayes</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 2</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(question)
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>## Overview of Dr. Jordan Hayes
 
-<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
+Dr. Jordan Hayes is a prominent figure within the Paranormal Military Squad stationed at Dulce Base, known for their expertise in decoding and interpreting alien signals. Their role is pivotal in the team's mission to understand extraterrestrial communications, as they manage the mainframe, align satellite data, and work on decryption algorithms to decipher alien codes and patterns [Data: Reports (52); Entities (202, 226)].
+
+## Role and Responsibilities
+
+Dr. Hayes is primarily responsible for decryption and understanding extraterrestrial thought patterns. Their work involves analyzing signal disruptions and celestial mechanics, showcasing their reflective and analytical nature. Known for their determination, skepticism, and empirical approach to data, Dr. Hayes plays a crucial role in the team's mission to decipher alien codes and respond effectively to extraterrestrial communications [Data: Entities (226, 202); Claims (51, 102, 175)].
+
+## Key Collaborations
+
+Dr. Hayes collaborates closely with other members of the Paranormal Military Squad, including Sam Rivera and Alex Mercer. With Sam Rivera, Dr. Hayes works on decoding alien messages, combining their decryption focus with Sam's technical expertise and optimism. Their teamwork is marked by mutual understanding and adaptability, essential for addressing the unknown challenges posed by alien communications [Data: Reports (52); Relationships (298, 352, 349, 417, +more)].
+
+Similarly, Dr. Hayes works with Alex Mercer, who provides guidance and leadership during the decoding process. Their collaboration extends to various aspects of the mission, including interstellar communication and the decryption of alien codes, with Alex often providing support and guidance to Dr. Hayes [Data: Relationships (314, 288, 348, 403, +more)].
+
+## Contributions and Achievements
+
+Dr. Hayes has made significant contributions to the understanding of alien signals, including identifying evolving signal patterns and interpreting them as potential invitations or warnings. They have isolated the signal's harmonics, describing it as more than a call, but a song, an interstellar siren’s call. This work has led to the hypothesis of cosmic diplomacy, suggesting that the alien signals may contain messages of a diplomatic nature [Data: Claims (51, 127, 131, 110, 117, +more); Reports (52)].
+
+## Challenges and Insights
+
+Throughout their mission, Dr. Hayes has faced numerous challenges, including the evolving nature of the alien signals and the lack of established protocols for such unprecedented encounters. Despite these challenges, Dr. Hayes remains focused on their mission, driven by a quest for understanding and the belief that knowledge is essential for survival. Their transformation from skepticism to proactive action underscores their importance to the team and the broader implications of their work [Data: Claims (40, 82, 85, 87, +more); Reports (52)].
+
+In summary, Dr. Jordan Hayes is a key figure in the Paranormal Military Squad's efforts to decode and respond to alien communications. Their analytical skills, collaborative efforts, and significant contributions to the understanding of extraterrestrial signals highlight their crucial role in the mission at Dulce Base.
+</pre>
 </div>
 </div>
 </div>
@@ -3374,16 +3453,78 @@ Cell <span class="ansi-green-fg">In[14], line 2</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[15], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">entities</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[15]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>entity</th>
+<th>description</th>
+<th>number of relationships</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>226</td>
+<td>DR. JORDAN HAYES</td>
+<td>Dr. Jordan Hayes is a distinguished member of ...</td>
+<td>17</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>202</td>
+<td>JORDAN HAYES</td>
+<td>Dr. Jordan Hayes is a dedicated and methodical...</td>
+<td>35</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>241</td>
+<td>DR. HAYES</td>
+<td></td>
+<td>5</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>232</td>
+<td>LAB</td>
+<td>The lab where Dr. Jordan Hayes works on alien ...</td>
+<td>2</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>230</td>
+<td>CRASH SITE</td>
+<td>The crash site is where alien technology was r...</td>
+<td>1</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3419,23 +3560,97 @@ Cell <span class="ansi-green-fg">In[15], line 1</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[16], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">relationships</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>source</th>
+<th>target</th>
+<th>description</th>
+<th>weight</th>
+<th>links</th>
+<th>in_context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>298</td>
+<td>JORDAN HAYES</td>
+<td>SAM RIVERA</td>
+<td>Jordan Hayes and Sam Rivera are both integral ...</td>
+<td>88.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>314</td>
+<td>JORDAN HAYES</td>
+<td>ALEX MERCER</td>
+<td>Jordan Hayes and Alex Mercer are integral memb...</td>
+<td>70.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>288</td>
+<td>ALEX MERCER</td>
+<td>JORDAN HAYES</td>
+<td>Alex Mercer and Jordan Hayes are both integral...</td>
+<td>147.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>352</td>
+<td>SAM RIVERA</td>
+<td>JORDAN HAYES</td>
+<td>Dr. Jordan Hayes and Sam Rivera are both integ...</td>
+<td>57.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>379</td>
+<td>JORDAN HAYES</td>
+<td>TAYLOR CRUZ</td>
+<td>Jordan Hayes and Taylor Cruz collaborate on de...</td>
+<td>69.0</td>
+<td>3</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3458,25 +3673,6 @@ Cell <span class="ansi-green-fg">In[16], line 1</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-17">if "reports" in result.context_data:
     result.context_data["reports"].head()</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[17], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data:
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     result<span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
-
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3512,16 +3708,55 @@ Cell <span class="ansi-green-fg">In[17], line 1</span>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[18], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">sources</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head()
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>25</td>
+<td>between scientific breakthrough and galactic ...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>21</td>
+<td>"It's like nothing I've ever seen before, but...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>29</td>
+<td>pulse with sentient curiosity, drawing them f...</td>
+</tr>
+<tr>
+<th>3</th>
+<td>32</td>
+<td>Our response will mark humanity’s readiness to...</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3561,15 +3796,21 @@ Cell <span class="ansi-green-fg">In[18], line 1</span>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[19], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">claims</span><span style="color: rgb(175,0,0)">"</span> <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data:
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">claims</span><span style="color: rgb(175,0,0)">"</span>]<span style="color: rgb(98,98,98)">.</span>head())
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>    id            entity                  object_id     status start_date  \
+0   51  DR. JORDAN HAYES                       NONE       TRUE       NONE   
+1  123  DR. JORDAN HAYES  PARANORMAL MILITARY SQUAD  SUSPECTED       NONE   
+2  127  DR. JORDAN HAYES                       NONE  SUSPECTED       NONE   
+3  131  DR. JORDAN HAYES                       NONE  SUSPECTED       NONE   
+4  158  DR. JORDAN HAYES                       NONE       TRUE       NONE   
 
-<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
+  end_date                                        description  in_context  
+0     NONE  Dr. Jordan Hayes was working on alien technolo...        True  
+1     NONE  Dr. Jordan Hayes, a member of the Paranormal M...        True  
+2     NONE  Dr. Jordan Hayes isolated the signal's harmoni...        True  
+3     NONE  Dr. Jordan Hayes noted that the signal's patte...        True  
+4     NONE  Dr. Jordan Hayes worked methodically, every ke...        True  
+</pre>
 </div>
 </div>
 </div>
@@ -3597,8 +3838,8 @@ Cell <span class="ansi-green-fg">In[19], line 1</span>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3631,30 +3872,6 @@ Cell <span class="ansi-green-fg">In[19], line 1</span>
     llm_params=llm_params,
     context_builder_params=local_context_params,
 )</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[20], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question_generator <span style="color: rgb(98,98,98)">=</span> LocalQuestionGen(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">      5</span>     llm_params<span style="color: rgb(98,98,98)">=</span>llm_params,
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3706,21 +3923,9 @@ print(candidate_questions.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[21], line 5</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question_history <span style="color: rgb(98,98,98)">=</span> [
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What happens in Dulce military base?</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">      4</span> ]
-<span class="ansi-green-fg">----&gt; 5</span> candidate_questions <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">question_generator</span><span style="color: rgb(98,98,98)">.</span>agenerate(
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     question_history<span style="color: rgb(98,98,98)">=</span>question_history, context_data<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, question_count<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">5</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(0,135,0)">print</span>(candidate_questions<span style="color: rgb(98,98,98)">.</span>response)
-
-<span class="ansi-red-fg">NameError</span>: name 'question_generator' is not defined</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>['- What is the role of Alex Mercer at Dulce Base?', '- How does the Paranormal Military Squad operate within Dulce Base?', '- What are the key responsibilities of Taylor Cruz at Dulce Base?', '- How does Dr. Jordan Hayes contribute to the mission at Dulce Base?', '- What is the significance of the alien communication project at Dulce Base?']
+</pre>
 </div>
 </div>
 </div>
