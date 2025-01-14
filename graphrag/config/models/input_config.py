@@ -40,9 +40,6 @@ class InputConfig(BaseModel):
     file_filter: dict[str, str] | None = Field(
         description="The optional file filter for the input files.", default=None
     )
-    timestamp_format: str | None = Field(
-        description="The input timestamp format to use.", default=None
-    )
     text_column: str = Field(
         description="The input text column to use.", default=defs.INPUT_TEXT_COLUMN
     )

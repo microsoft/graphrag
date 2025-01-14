@@ -341,7 +341,6 @@ def create_graphrag_config(
                     if file_type == InputFileType.text
                     else defs.INPUT_CSV_PATTERN
                 ),
-                timestamp_format=reader.str("timestamp_format"),
                 text_column=reader.str("text_column") or defs.INPUT_TEXT_COLUMN,
                 title_column=reader.str("title_column"),
                 document_attribute_columns=reader.list("document_attribute_columns")
