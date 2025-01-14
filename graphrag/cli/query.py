@@ -13,7 +13,6 @@ import graphrag.api as api
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.resolve_path import resolve_paths
-from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
@@ -327,8 +326,7 @@ def _resolve_output_files(
 ) -> dict[str, pd.DataFrame]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    pipeline_config = create_pipeline_config(config)
-    storage_config = pipeline_config.storage.model_dump()  # type: ignore
+    storage_config = config.storage.model_dump()  # type: ignore
     storage_obj = StorageFactory().create_storage(
         storage_type=storage_config["type"], kwargs=storage_config
     )
