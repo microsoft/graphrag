@@ -285,7 +285,6 @@ def _get_pipeline_input_config(
                 file_pattern=settings.input.file_pattern,
                 encoding=settings.input.encoding,
                 text_column=settings.input.text_column,
-                title_column=settings.input.title_column,
                 type=settings.input.type,
                 connection_string=settings.input.connection_string,
                 storage_account_blob_url=settings.input.storage_account_blob_url,

@@ -43,7 +43,6 @@ async def embed_text(
     strategy: dict,
     embedding_name: str,
     id_column: str = "id",
-    title_column: str | None = None,
 ):
     """
     Embed a piece of text into a vector space. The operation outputs a new column containing a mapping between doc_id and vector.
@@ -95,7 +94,6 @@ async def embed_text(
             vector_store,
             vector_store_workflow_config,
             id_column=id_column,
-            title_column=title_column,
         )
 
     return await _text_embed_in_memory(
@@ -133,7 +131,6 @@ async def _text_embed_with_vector_store(
     vector_store: BaseVectorStore,
     vector_store_config: dict,
     id_column: str = "id",
-    title_column: str | None = None,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
@@ -149,7 +146,7 @@ async def _text_embed_with_vector_store(
     if embed_column not in input.columns:
         msg = f"Column {embed_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
-    title = title_column or embed_column
+    title = embed_column
     if title not in input.columns:
         msg = (
             f"Column {title} not found in input dataframe with columns {input.columns}"

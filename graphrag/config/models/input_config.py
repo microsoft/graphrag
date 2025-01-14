@@ -43,9 +43,6 @@ class InputConfig(BaseModel):
     text_column: str = Field(
         description="The input text column to use.", default=defs.INPUT_TEXT_COLUMN
     )
-    title_column: str | None = Field(
-        description="The input title column to use.", default=None
-    )
     document_attribute_columns: list[str] = Field(
         description="The document attribute columns to use.", default=[]
     )

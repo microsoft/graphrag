@@ -102,7 +102,6 @@ ALL_ENV_VARS = {
     "GRAPHRAG_INPUT_FILE_PATTERN": ".*\\test\\.txt$",
     "GRAPHRAG_INPUT_TYPE": "blob",
     "GRAPHRAG_INPUT_TEXT_COLUMN": "test_text",
-    "GRAPHRAG_INPUT_TITLE_COLUMN": "test_title",
     "GRAPHRAG_INPUT_FILE_TYPE": "text",
     "GRAPHRAG_LLM_CONCURRENT_REQUESTS": "12",
     "GRAPHRAG_LLM_DEPLOYMENT_NAME": "model-deployment-name-x",

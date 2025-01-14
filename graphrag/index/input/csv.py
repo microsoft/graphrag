@@ -52,30 +52,6 @@ async def load(
                 )
             else:
                 data["text"] = data.apply(lambda x: x[csv_config.text_column], axis=1)
-        if csv_config.title_column is not None and "title" not in data.columns:
-            if csv_config.title_column not in data.columns:
-                log.warning(
-                    "title_column %s not found in csv file %s",
-                    csv_config.title_column,
-                    path,
-                )
-            else:
-                data["title"] = data.apply(lambda x: x[csv_config.title_column], axis=1)
-
-            # TODO: Theres probably a less gross way to do this
-            if "year" not in data.columns:
-                data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)
-            if "month" not in data.columns:
-                data["month"] = data.apply(lambda x: x["timestamp"].month, axis=1)
-            if "day" not in data.columns:
-                data["day"] = data.apply(lambda x: x["timestamp"].day, axis=1)
-            if "hour" not in data.columns:
-                data["hour"] = data.apply(lambda x: x["timestamp"].hour, axis=1)
-            if "minute" not in data.columns:
-                data["minute"] = data.apply(lambda x: x["timestamp"].minute, axis=1)
-            if "second" not in data.columns:
-                data["second"] = data.apply(lambda x: x["timestamp"].second, axis=1)
-
         return data
 
     file_pattern = (
