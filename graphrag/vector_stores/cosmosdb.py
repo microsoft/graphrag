@@ -31,12 +31,12 @@ class CosmosDBVectoreStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to CosmosDB vector storage."""
-        url = kwargs["url"]
         connection_string = kwargs.get("connection_string")
         if connection_string:
             self._cosmos_client = CosmosClient.from_connection_string(connection_string)
         else:
-            if url is None:
+            url = kwargs.get("url")
+            if not url:
                 msg = "Either connection_string or url must be provided."
                 raise ValueError(msg)
             self._cosmos_client = CosmosClient(

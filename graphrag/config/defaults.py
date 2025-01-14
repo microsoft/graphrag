@@ -93,16 +93,16 @@ UMAP_ENABLED = False
 UPDATE_STORAGE_BASE_DIR = "update_output"
 
 VECTOR_STORE = f"""
-    type: {VectorStoreType.LanceDB.value}
+    type: {VectorStoreType.LanceDB.value} # one of [lancedb, azure_ai_search, cosmosdb]
     db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    container_name: default
+    collection_name: default
     overwrite: true\
 """
 
 VECTOR_STORE_DICT = {
     "type": VectorStoreType.LanceDB.value,
     "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
-    "container_name": "default",
+    "collection_name": "default",
     "overwrite": True,
 }
 
