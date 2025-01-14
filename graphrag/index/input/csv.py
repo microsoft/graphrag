@@ -43,17 +43,6 @@ async def load(
             )
         if "id" not in data.columns:
             data["id"] = data.apply(lambda x: gen_sha512_hash(x, x.keys()), axis=1)
-        if csv_config.source_column is not None and "source" not in data.columns:
-            if csv_config.source_column not in data.columns:
-                log.warning(
-                    "source_column %s not found in csv file %s",
-                    csv_config.source_column,
-                    path,
-                )
-            else:
-                data["source"] = data.apply(
-                    lambda x: x[csv_config.source_column], axis=1
-                )
         if csv_config.text_column is not None and "text" not in data.columns:
             if csv_config.text_column not in data.columns:
                 log.warning(
