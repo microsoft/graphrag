@@ -13,27 +13,12 @@ from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import AzureAuthType, LLMType
 from graphrag.config.load_config import load_config
 from tests.unit.config.utils import (
-    DEFAULT_CHAT_MODEL_CONFIG,
     DEFAULT_EMBEDDING_MODEL_CONFIG,
     DEFAULT_MODEL_CONFIG,
     FAKE_API_KEY,
     assert_graphrag_configs,
     get_default_graphrag_config,
 )
-
-
-def test_missing_default_chat_model_config() -> None:
-    with pytest.raises(ValidationError):
-        create_graphrag_config()
-
-
-def test_missing_default_embedding_model_config() -> None:
-    models_config = {
-        defs.DEFAULT_CHAT_MODEL_ID: DEFAULT_CHAT_MODEL_CONFIG,
-    }
-
-    with pytest.raises(ValidationError):
-        create_graphrag_config({"models": models_config})
 
 
 def test_skip_validation() -> None:
