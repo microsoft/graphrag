@@ -9,16 +9,12 @@ embeddings:
     overwrite: True
 
 storage:
-  type: file # or blob
-  base_dir: "output/${timestamp}/artifacts"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
+  type: file
+  base_dir: "output"
 
 reporting:
-  type: file # or console, blob
-  base_dir: "output/${timestamp}/reports"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
+  type: file
+  base_dir: "output"
 
 snapshots:
   embeddings: True
