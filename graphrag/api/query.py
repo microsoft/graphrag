@@ -127,6 +127,83 @@ async def global_search(
     return response, context_data
 
 @validate_call(config={"arbitrary_types_allowed": True})
+async def global_search_streaming(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    communities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    community_level: int | None,
+    dynamic_community_selection: bool,
+    response_type: str,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a global search and return the context data and response via a generator.
+
+    Context data is returned as a dictionary of lists, with one list entry for each record.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
+    - response_type (str): The type of response to return.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    communities_ = read_indexer_communities(communities, nodes, community_reports)
+    reports = read_indexer_reports(
+        community_reports,
+        nodes,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+    )
+    entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
+    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.reduce_prompt
+    )
+    knowledge_prompt = _load_search_prompt(
+        config.root_dir, config.global_search.knowledge_prompt
+    )
+
+    search_engine = get_global_search_engine(
+        config,
+        reports=reports,
+        entities=entities_,
+        communities=communities_,
+        response_type=response_type,
+        dynamic_community_selection=dynamic_community_selection,
+        map_system_prompt=map_prompt,
+        reduce_system_prompt=reduce_prompt,
+        general_knowledge_inclusion_prompt=knowledge_prompt,
+    )
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_chunk in search_result:
+        if get_context_data:
+            context_data = _reformat_context_data(stream_chunk)  # type: ignore
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_chunk
+
+@validate_call(config={"arbitrary_types_allowed": True})
 async def multi_global_search(
     config: GraphRagConfig,
     nodes_list: list[pd.DataFrame],
@@ -287,84 +364,6 @@ async def multi_global_search(
         response_type=response_type,
         query=query,
     )
-
-@validate_call(config={"arbitrary_types_allowed": True})
-async def global_search_streaming(
-    config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    communities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    community_level: int | None,
-    dynamic_community_selection: bool,
-    response_type: str,
-    query: str,
-) -> AsyncGenerator:
-    """Perform a global search and return the context data and response via a generator.
-
-    Context data is returned as a dictionary of lists, with one list entry for each record.
-
-    Parameters
-    ----------
-    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - community_level (int): The community level to search at.
-    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
-    - response_type (str): The type of response to return.
-    - query (str): The user query to search for.
-
-    Returns
-    -------
-    TODO: Document the search response type and format.
-
-    Raises
-    ------
-    TODO: Document any exceptions to expect.
-    """
-    communities_ = read_indexer_communities(communities, nodes, community_reports)
-    reports = read_indexer_reports(
-        community_reports,
-        nodes,
-        community_level=community_level,
-        dynamic_community_selection=dynamic_community_selection,
-    )
-    entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
-    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
-    reduce_prompt = _load_search_prompt(
-        config.root_dir, config.global_search.reduce_prompt
-    )
-    knowledge_prompt = _load_search_prompt(
-        config.root_dir, config.global_search.knowledge_prompt
-    )
-
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=entities_,
-        communities=communities_,
-        response_type=response_type,
-        dynamic_community_selection=dynamic_community_selection,
-        map_system_prompt=map_prompt,
-        reduce_system_prompt=reduce_prompt,
-        general_knowledge_inclusion_prompt=knowledge_prompt,
-    )
-    search_result = search_engine.astream_search(query=query)
-
-    # when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = None
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
-
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
@@ -735,6 +734,26 @@ def _reformat_context_data(context_data: dict) -> dict:
             continue
         final_format[key] = records
     return final_format
+
+def _update_context_data(
+    context_data: str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    links: dict[str, Any],
+) -> str | list[pd.DataFrame] | dict[str, pd.DataFrame]:
+    """
+    Update context data with lthe links dict so that it contains both the index name and community id.
+
+    Parameters
+    ----------
+    - context_data (str | list[pd.DataFrame] | dict[str, pd.DataFrame]): The context data to update.
+    - links (dict[str, Any]): A dictionary of links to the original dataframes.
+
+    Returns
+    -------
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame]: The updated context data.
+    """
+    updated_context_data = {}
+
+    return updated_context_data
 
 
 def _load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
