@@ -300,12 +300,14 @@ async def multi_global_search(
         # Prepare each index's communities dataframe for merging
         communities_df = communities_list[idx]
         communities_df["community"] = communities_df["community"].astype(int)
+        communities_df["parent"] = communities_df["parent"].astype(int)
         for i in communities_df["community"]:
             links["community"][i + max_vals["community"] + 1] = {
                 "index_name": index_name,
                 "id": str(i),
             }
         communities_df["community"] += max_vals["community"] + 1
+        communities_df["parent"] = communities_df["parent"].apply(lambda x: x if x == -1 else x + max_vals["community"] + 1)
         communities_df["human_readable_id"] += max_vals["community"] + 1
         max_vals["community"] = communities_df["community"].max()
         communities_dfs.append(communities_df)
