@@ -353,7 +353,7 @@ async def multi_global_search(
             query=query,
         )
     
-    return await global_search(
+    result = await global_search(
         config,
         nodes=nodes_combined,
         entities=entities_combined,
@@ -364,6 +364,11 @@ async def multi_global_search(
         response_type=response_type,
         query=query,
     )
+
+    # Update the context data by linking index names and community ids
+    context = _update_context_data(result[1], links)
+
+    return (result[0], context)
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
@@ -736,9 +741,9 @@ def _reformat_context_data(context_data: dict) -> dict:
     return final_format
 
 def _update_context_data(
-    context_data: str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    context_data: Any,
     links: dict[str, Any],
-) -> str | list[pd.DataFrame] | dict[str, pd.DataFrame]:
+) -> Any:
     """
     Update context data with lthe links dict so that it contains both the index name and community id.
 
@@ -752,7 +757,47 @@ def _update_context_data(
     str | list[pd.DataFrame] | dict[str, pd.DataFrame]: The updated context data.
     """
     updated_context_data = {}
-
+    for key in context_data:
+        updated_entry = []
+        if key == "reports":
+            updated_entry = [
+                dict(
+                    {k: entry[k] for k in entry},
+                    index_name=links["community"][int(entry["id"])][
+                            "index_name"
+                        ], index_id=links["community"][int(entry["id"])]["id"],
+                )
+                for entry in context_data[key]
+            ]
+        if key == "entities":
+            updated_entry = [
+                dict(
+                    {k: entry[k] for k in entry},
+                    entity=entry["entity"].split("-")[0], index_name=links["entities"][int(entry["id"])]["index_name"], index_id=links["entities"][int(entry["id"])]["id"],
+                )
+                for entry in context_data[key]
+            ]
+        if key == "relationships":
+            updated_entry = [
+                dict(
+                    {k: entry[k] for k in entry},
+                    source=entry["source"].split("-")[0], target=entry["target"].split("-")[0], index_name=links["relationships"][int(entry["id"])][
+                            "index_name"
+                        ], index_id=links["relationships"][int(entry["id"])]["id"],
+                )
+                for entry in context_data[key]
+            ]
+        if key == "claims":
+            updated_entry = [
+                dict(
+                    {k: entry[k] for k in entry},
+                    index_name=links["claims"][int(entry["id"])]["index_name"], index_id=links["claims"][int(entry["id"])]["id"],
+                )
+                for entry in context_data[key]
+            ]
+        if key == "sources":
+            updated_entry = context_data[key]
+        updated_context_data[key] = updated_entry
     return updated_context_data
 
 
