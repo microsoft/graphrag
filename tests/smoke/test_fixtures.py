@@ -152,7 +152,6 @@ class TestIndexer:
     def __assert_indexer_outputs(
         self, root: Path, workflow_config: dict[str, dict[str, Any]]
     ):
-
         output_path = root / "output"
 
         assert output_path.exists(), "output folder does not exist"
