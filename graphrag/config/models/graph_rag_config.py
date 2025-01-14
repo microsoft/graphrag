@@ -58,7 +58,15 @@ class GraphRagConfig(BaseModel):
             raise FileNotFoundError(msg)
 
     models: dict[str, LanguageModelConfig] = Field(
-        description="Available language model configurations.", default={}
+        description="Available language model configurations.",
+        default={
+            defs.DEFAULT_CHAT_MODEL_ID: LanguageModelConfig.model_construct(
+                model=defs.LLM_MODEL, type=defs.LLM_TYPE
+            ),
+            defs.DEFAULT_EMBEDDING_MODEL_ID: LanguageModelConfig.model_construct(
+                model=defs.LLM_MODEL, type=defs.LLM_TYPE
+            ),
+        },
     )
 
     def _validate_models(self) -> None:
@@ -212,8 +220,8 @@ class GraphRagConfig(BaseModel):
         if model_id not in self.models:
             err_msg = f"Model ID {model_id} not found in configuration."
             raise ValueError(err_msg)
-        # TODO: shouldn't self.models be validated already?
-        return LanguageModelConfig.model_construct(**dict(self.models[model_id]))  # type: ignore
+
+        return LanguageModelConfig.model_construct(**dict(self.models[model_id]))
 
     @model_validator(mode="after")
     def _validate_model(self):

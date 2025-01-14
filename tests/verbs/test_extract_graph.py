@@ -10,7 +10,6 @@ from graphrag.index.workflows.extract_graph import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     create_test_context,
     load_test_table,
 )
@@ -54,9 +53,7 @@ async def test_extract_graph():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config(
-        {"models": DEFAULT_MODEL_CONFIG}, skip_validation=True
-    )
+    config = create_graphrag_config(skip_validation=True)
     config.entity_extraction.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_ENTITY_CONFIG,

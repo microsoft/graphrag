@@ -16,7 +16,6 @@ from graphrag.index.workflows.create_final_community_reports import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
-    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -59,7 +58,7 @@ async def test_create_final_community_reports():
         ]
     )
 
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config = create_graphrag_config()
     config.community_reports.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_CONFIG,
