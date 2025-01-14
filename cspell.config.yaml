@@ -23,6 +23,7 @@ ignorePaths:
   - package.json
   - tests/fixtures/
   - examples_notebooks/inputs/
+  - docs/examples_notebooks/inputs/
   - "*.csv"
   - "*.parquet"
   - "*.faiss"

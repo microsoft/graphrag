@@ -6,12 +6,12 @@ dist/
 .coverage
 coverage/
 licenses.txt
-examples_notebooks/*/lancedb
 examples_notebooks/*/data
 tests/fixtures/cache
 tests/fixtures/*/cache
 tests/fixtures/*/output
-lancedb/
+output/lancedb
+
 
 # Random
 .DS_Store

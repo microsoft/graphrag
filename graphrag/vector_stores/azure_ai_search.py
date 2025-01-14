@@ -33,7 +33,7 @@ from graphrag.vector_stores.base import (
 )
 
 
-class AzureAISearch(BaseVectorStore):
+class AzureAISearchVectorStore(BaseVectorStore):
     """Azure AI Search vector storage implementation."""
 
     index_client: SearchIndexClient
