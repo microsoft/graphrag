@@ -11,7 +11,6 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_descriptions.typing import (
     SummarizationStrategy,
     SummarizeStrategyType,
@@ -26,7 +25,6 @@ async def summarize_descriptions(
     relationships_df: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    config: GraphRagConfig,
     strategy: dict[str, Any] | None = None,
     num_threads: int = 4,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -138,7 +136,7 @@ async def summarize_descriptions(
     ):
         async with semaphore:
             results = await strategy_exec(
-                id, descriptions, callbacks, cache, strategy_config, config
+                id, descriptions, callbacks, cache, strategy_config
             )
             ticker(1)
         return results

@@ -1,13 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pytest
 from pandas.testing import assert_series_equal
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.run.derive_from_rows import ParallelizationError
 from graphrag.index.workflows.create_final_covariates import (
     run_workflow,
     workflow_name,
@@ -81,24 +79,3 @@ async def test_create_final_covariates():
         actual["source_text"][0]
         == "According to an article published on 2022/01/10, Company A was fined for bid rigging while participating in multiple public tenders published by Government Agency B."
     )
-
-
-async def test_create_final_covariates_missing_llm_throws():
-    context = await create_test_context(
-        storage=["create_base_text_units"],
-    )
-
-    config = create_graphrag_config(
-        {"models": DEFAULT_MODEL_CONFIG}, skip_validation=True
-    )
-    config.claim_extraction.strategy = {
-        "type": "graph_intelligence",
-        "claim_description": "description",
-    }
-
-    with pytest.raises(ParallelizationError):
-        await run_workflow(
-            config,
-            context,
-            NoopWorkflowCallbacks(),
-        )

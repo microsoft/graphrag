@@ -56,7 +56,6 @@ async def run_workflow(
         entity_types=entity_types,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
-        config=config,
     )
 
     await write_table_to_storage(

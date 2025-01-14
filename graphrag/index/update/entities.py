@@ -128,7 +128,6 @@ async def _run_entity_summarization(
                 callbacks,
                 cache,
                 summarization_strategy,
-                config,
             )
             return result.description
         # Handle case where description is a single-item list or not a list

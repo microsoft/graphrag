@@ -12,7 +12,6 @@ from fnllm import EmbeddingsLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
@@ -28,7 +27,6 @@ async def run(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: dict[str, Any],
-    config: GraphRagConfig,
 ) -> TextEmbeddingResult:
     """Run the Claim extraction chain."""
     if is_null(input):
@@ -36,11 +34,9 @@ async def run(
 
     batch_size = args.get("batch_size", 16)
     batch_max_tokens = args.get("batch_max_tokens", 8191)
-    embeddings_llm_settings = config.get_language_model_config(
-        config.embeddings.model_id
-    )
-    splitter = _get_splitter(embeddings_llm_settings, batch_max_tokens)
-    llm = _get_llm(embeddings_llm_settings, callbacks, cache)
+    llm_config = args["llm"]
+    splitter = _get_splitter(llm_config, batch_max_tokens)
+    llm = _get_llm(llm_config, callbacks, cache)
     semaphore: asyncio.Semaphore = asyncio.Semaphore(args.get("num_threads", 4))
 
     # Break up the input texts. The sizes here indicate how many snippets are in each input text

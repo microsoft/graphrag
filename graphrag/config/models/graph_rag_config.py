@@ -212,7 +212,8 @@ class GraphRagConfig(BaseModel):
         if model_id not in self.models:
             err_msg = f"Model ID {model_id} not found in configuration."
             raise ValueError(err_msg)
-        return self.models[model_id]
+        # TODO: shouldn't self.models be validated already?
+        return LanguageModelConfig.model_construct(**dict(self.models[model_id]))  # type: ignore
 
     @model_validator(mode="after")
     def _validate_model(self):

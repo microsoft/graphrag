@@ -8,7 +8,6 @@ from dataclasses import dataclass
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 
 
 @dataclass
@@ -24,7 +23,6 @@ TextEmbeddingStrategy = Callable[
         WorkflowCallbacks,
         PipelineCache,
         dict,
-        GraphRagConfig,
     ],
     Awaitable[TextEmbeddingResult],
 ]

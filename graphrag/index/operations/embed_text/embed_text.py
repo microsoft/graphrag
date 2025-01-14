@@ -12,7 +12,6 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
 from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
@@ -43,7 +42,6 @@ async def embed_text(
     embed_column: str,
     strategy: dict,
     embedding_name: str,
-    config: GraphRagConfig,
     id_column: str = "id",
     title_column: str | None = None,
 ):
@@ -98,7 +96,6 @@ async def embed_text(
             vector_store_config=vector_store_workflow_config,
             id_column=id_column,
             title_column=title_column,
-            config=config,
         )
 
     return await _text_embed_in_memory(
@@ -107,7 +104,6 @@ async def embed_text(
         cache=cache,
         embed_column=embed_column,
         strategy=strategy,
-        config=config,
     )
 
 
@@ -117,14 +113,13 @@ async def _text_embed_in_memory(
     cache: PipelineCache,
     embed_column: str,
     strategy: dict,
-    config: GraphRagConfig,
 ):
     strategy_type = strategy["type"]
     strategy_exec = load_strategy(strategy_type)
     strategy_args = {**strategy}
 
     texts: list[str] = input[embed_column].to_numpy().tolist()
-    result = await strategy_exec(texts, callbacks, cache, strategy_args, config)
+    result = await strategy_exec(texts, callbacks, cache, strategy_args)
 
     return result.embeddings
 
@@ -137,7 +132,6 @@ async def _text_embed_with_vector_store(
     strategy: dict[str, Any],
     vector_store: BaseVectorStore,
     vector_store_config: dict,
-    config: GraphRagConfig,
     id_column: str = "id",
     title_column: str | None = None,
 ):
@@ -182,7 +176,7 @@ async def _text_embed_with_vector_store(
         texts: list[str] = batch[embed_column].to_numpy().tolist()
         titles: list[str] = batch[title].to_numpy().tolist()
         ids: list[str] = batch[id_column].to_numpy().tolist()
-        result = await strategy_exec(texts, callbacks, cache, strategy_args, config)
+        result = await strategy_exec(texts, callbacks, cache, strategy_args)
         if result.embeddings:
             embeddings = [
                 embedding for embedding in result.embeddings if embedding is not None

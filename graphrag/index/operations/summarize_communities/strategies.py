@@ -10,7 +10,7 @@ from fnllm import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
     CommunityReportsExtractor,
@@ -32,15 +32,12 @@ async def run_graph_intelligence(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     args: StrategyConfig,
-    config: GraphRagConfig,
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
-    community_reports_llm_settings = config.get_language_model_config(
-        config.community_reports.model_id
-    )
+    llm_config = LanguageModelConfig.model_construct(**args["llm"])
     llm = load_llm(
         "community_reporting",
-        community_reports_llm_settings,
+        llm_config,
         callbacks=callbacks,
         cache=cache,
     )

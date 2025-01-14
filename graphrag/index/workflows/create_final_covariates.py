@@ -45,7 +45,6 @@ async def run_workflow(
         async_mode=async_mode,
         entity_types=None,
         num_threads=num_threads,
-        config=config,
     )
 
     await write_table_to_storage(output, workflow_name, context.storage)

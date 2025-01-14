@@ -33,6 +33,7 @@ async def run_workflow(
         claims = await load_table_from_storage(
             "create_final_covariates", context.storage
         )
+
     community_reports_llm_settings = config.get_language_model_config(
         config.community_reports.model_id
     )
@@ -53,7 +54,6 @@ async def run_workflow(
         summarization_strategy=summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
-        config=config,
     )
 
     await write_table_to_storage(output, workflow_name, context.storage)

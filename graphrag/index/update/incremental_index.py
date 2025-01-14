@@ -163,7 +163,6 @@ async def update_dataframe_outputs(
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
         snapshot_embeddings_enabled=config.snapshots.embeddings,
-        config=config,
     )
 
 

@@ -11,7 +11,6 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates,
 )
@@ -23,7 +22,6 @@ async def create_final_covariates(
     cache: PipelineCache,
     covariate_type: str,
     extraction_strategy: dict[str, Any] | None,
-    config: GraphRagConfig,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types: list[str] | None = None,
     num_threads: int = 4,
@@ -42,7 +40,6 @@ async def create_final_covariates(
         async_mode=async_mode,
         entity_types=entity_types,
         num_threads=num_threads,
-        config=config,
     )
     text_units.drop(columns=["text_unit_id"], inplace=True)  # don't pollute the global
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))

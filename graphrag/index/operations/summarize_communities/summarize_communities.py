@@ -13,7 +13,6 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     prep_community_report_context,
 )
@@ -38,7 +37,6 @@ async def summarize_communities(
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
-    config: GraphRagConfig,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
 ):
@@ -68,7 +66,6 @@ async def summarize_communities(
                 callbacks=callbacks,
                 cache=cache,
                 strategy=strategy,
-                config=config,
             )
             tick()
             return result
@@ -93,7 +90,6 @@ async def _generate_report(
     community_id: int,
     community_level: int,
     community_context: str,
-    config: GraphRagConfig,
 ) -> CommunityReport | None:
     """Generate a report for a single community."""
     return await runner(
@@ -103,7 +99,6 @@ async def _generate_report(
         callbacks,
         cache,
         strategy,
-        config,
     )
 
 

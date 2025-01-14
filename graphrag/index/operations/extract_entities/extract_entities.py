@@ -11,7 +11,6 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.extract_entities.typing import (
     Document,
@@ -32,7 +31,6 @@ async def extract_entities(
     cache: PipelineCache,
     text_column: str,
     id_column: str,
-    config: GraphRagConfig,
     strategy: dict[str, Any] | None,
     async_mode: AsyncType = AsyncType.AsyncIO,
     entity_types=DEFAULT_ENTITY_TYPES,
@@ -116,7 +114,6 @@ async def extract_entities(
             callbacks,
             cache,
             strategy_config,
-            config,
         )
         num_started += 1
         return [result.entities, result.relationships, result.graph]
