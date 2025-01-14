@@ -62,23 +62,6 @@ async def load(
             else:
                 data["title"] = data.apply(lambda x: x[csv_config.title_column], axis=1)
 
-        if csv_config.timestamp_column is not None:
-            fmt = csv_config.timestamp_format
-            if fmt is None:
-                msg = "Must specify timestamp_format if timestamp_column is specified"
-                raise ValueError(msg)
-
-            if csv_config.timestamp_column not in data.columns:
-                log.warning(
-                    "timestamp_column %s not found in csv file %s",
-                    csv_config.timestamp_column,
-                    path,
-                )
-            else:
-                data["timestamp"] = pd.to_datetime(
-                    data[csv_config.timestamp_column], format=fmt
-                )
-
             # TODO: Theres probably a less gross way to do this
             if "year" not in data.columns:
                 data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)

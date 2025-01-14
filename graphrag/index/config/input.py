@@ -66,11 +66,6 @@ class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputFileType.csv]]):
 
     file_type: Literal[InputFileType.csv] = InputFileType.csv
 
-    timestamp_column: str | None = Field(
-        description="The column to use as the timestamp of the document.", default=None
-    )
-    """The column to use as the timestamp of the document."""
-
     timestamp_format: str | None = Field(
         description="The format of the timestamp column, so it can be parsed correctly.",
         default=None,
