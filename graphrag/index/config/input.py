@@ -71,6 +71,7 @@ class PipelineCSVInputConfig(PipelineInputConfig[Literal[InputFileType.csv]]):
     )
     """The column to use as the text of the document."""
 
+
 class PipelineTextInputConfig(PipelineInputConfig[Literal[InputFileType.text]]):
     """Represent the configuration for a text input."""
 
