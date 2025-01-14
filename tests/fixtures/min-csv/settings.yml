@@ -27,7 +27,7 @@ models:
 
 input:
   file_type: csv
-  file_pattern: ".*\\.csv$"
+  file_pattern: ".*\\.csv$$"
 
 embeddings:
   vector_store:
