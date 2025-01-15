@@ -662,7 +662,14 @@ async def multi_local_search(
 
         # Prepare each index's text units dataframe for merging
         text_units_df = text_units_list[idx]
+        for i in text_units_df["human_readable_id"].astype(int):
+            links["text_units"][i + max_vals["text_units"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
         text_units_df["id"] = text_units_df["id"].apply(lambda x: f"{x}-{index_name}")  # noqa: B023
+        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"] + 1
+        max_vals["text_units"] = text_units_df["human_readable_id"].max()
         text_units_dfs.append(text_units_df)
 
     # Merge the dataframes
@@ -964,9 +971,9 @@ def _update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    index_name=links["community"][int(entry["id"])][
+                    index_name=links["community_reports"][int(entry["id"])][
                             "index_name"
-                        ], index_id=links["community"][int(entry["id"])]["id"],
+                        ], index_id=links["community_reports"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
@@ -997,7 +1004,13 @@ def _update_context_data(
                 for entry in context_data[key]
             ]
         if key == "sources":
-            updated_entry = context_data[key]
+            updated_entry = [
+                dict(
+                    {k: entry[k] for k in entry},
+                    index_name=links["text_units"][int(entry["id"])]["index_name"], index_id=links["text_units"][int(entry["id"])]["id"],
+                )
+                for entry in context_data[key]
+            ]
         updated_context_data[key] = updated_entry
     return updated_context_data
 
