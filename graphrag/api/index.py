@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 async def build_index(
     config: GraphRagConfig,
-    method: IndexingMethod,
+    method: IndexingMethod = IndexingMethod.Standard,
     run_id: str = "",
     is_resume_run: bool = False,
     memory_profile: bool = False,
