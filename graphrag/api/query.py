@@ -26,6 +26,7 @@ from pydantic import validate_call
 
 from graphrag.config.embeddings import (
     community_full_content_embedding,
+    create_collection_name,
     entity_description_embedding,
     text_unit_text_embedding,
 )
@@ -47,7 +48,6 @@ from graphrag.query.indexer_adapters import (
     read_indexer_text_units,
 )
 from graphrag.utils.cli import redact
-from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore
 from graphrag.vector_stores.factory import VectorStoreFactory
 

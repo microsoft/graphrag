@@ -12,8 +12,8 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.embeddings import create_collection_name
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingStrategy
-from graphrag.utils.embeddings import create_collection_name
 from graphrag.vector_stores.base import BaseVectorStore, VectorStoreDocument
 from graphrag.vector_stores.factory import VectorStoreFactory
 
