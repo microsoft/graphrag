@@ -61,7 +61,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
         self.local_system_prompt = local_system_prompt or DRIFT_LOCAL_SYSTEM_PROMPT
-        self.reduce_sytem_prompt = reduce_system_prompt or DRIFT_REDUCE_PROMPT
+        self.reduce_system_prompt = reduce_system_prompt or DRIFT_REDUCE_PROMPT
 
         self.entities = entities
         self.entity_text_embeddings = entity_text_embeddings

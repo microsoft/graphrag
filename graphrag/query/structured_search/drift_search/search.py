@@ -348,7 +348,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 # if num_tokens(response) < context_buffer_size:
                 #    reduce_responses.append(response)
 
-        search_prompt = self.context_builder.reduce_sytem_prompt.format(
+        search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
             response_type=self.context_builder.response_type,
         )
@@ -399,7 +399,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 # if num_tokens(response) < context_buffer_size:
                 #    reduce_responses.append(response)
 
-        search_prompt = self.context_builder.reduce_sytem_prompt.format(
+        search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
             response_type=self.context_builder.response_type,
         )
