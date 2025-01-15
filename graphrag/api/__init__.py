@@ -13,6 +13,7 @@ from graphrag.api.query import (
     basic_search,
     basic_search_streaming,
     drift_search,
+    drift_search_streaming,
     global_search,
     global_search_streaming,
     local_search,
@@ -29,6 +30,7 @@ __all__ = [  # noqa: RUF022
     "local_search",
     "local_search_streaming",
     "drift_search",
+    "drift_search_streaming",
     "basic_search",
     "basic_search_streaming",
     # prompt tuning API
