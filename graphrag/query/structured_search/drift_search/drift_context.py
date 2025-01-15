@@ -18,7 +18,8 @@ from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
 from graphrag.prompts.query.drift_search_system_prompt import (
-    DRIFT_LOCAL_SYSTEM_PROMPT, DRIFT_REDUCE_PROMPT
+    DRIFT_LOCAL_SYSTEM_PROMPT,
+    DRIFT_REDUCE_PROMPT,
 )
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.base import BaseTextEmbedding
@@ -52,7 +53,7 @@ class DRIFTSearchContextBuilder(DRIFTContextBuilder):
         local_system_prompt: str | None = None,
         local_mixed_context: LocalSearchMixedContext | None = None,
         reduce_system_prompt: str | None = None,
-        response_type: str | None = None
+        response_type: str | None = None,
     ):
         """Initialize the DRIFT search context builder with necessary components."""
         self.config = config or DRIFTSearchConfig()
