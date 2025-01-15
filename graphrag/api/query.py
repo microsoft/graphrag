@@ -695,11 +695,6 @@ async def multi_local_search(
     text_units_combined = pd.concat(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
-    
-    global _get_embedding_store
-    global _get_embedding_store_multi
-    _get_embedding_store_original = _get_embedding_store
-    _get_embedding_store = _get_embedding_store_multi
 
     config.embeddings.vector_store = vector_store_configs
 
@@ -730,8 +725,6 @@ async def multi_local_search(
         response_type=response_type,
         query=query,
     )
-
-    _get_embedding_store = _get_embedding_store_original
 
     # Update the context data by linking index names and community ids
     context = _update_context_data(result[1], links)
@@ -920,24 +913,42 @@ async def basic_search_streaming(
 
 
 def _get_embedding_store(
-    config_args: dict,
+    config_args: dict | list[dict],
     embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
-    vector_store_type = config_args["type"]
-    collection_name = create_collection_name(
-        config_args.get("container_name", "default"), embedding_name
-    )
-    embedding_store = VectorStoreFactory().create_vector_store(
-        vector_store_type=vector_store_type,
-        kwargs={**config_args, "collection_name": collection_name},
-    )
-    embedding_store.connect(**config_args)
-    return embedding_store
+    if type(config_args) == dict:
+        vector_store_type = config_args["type"]
+        collection_name = create_collection_name(
+            config_args.get("container_name", "default"), embedding_name
+        )
+        embedding_store = VectorStoreFactory().create_vector_store(
+            vector_store_type=vector_store_type,
+            kwargs={**config_args, "collection_name": collection_name},
+        )
+        embedding_store.connect(**config_args)
+        return embedding_store
+    else:
+        config_args_list = config_args
+        embedding_stores = []
+        index_names = []
+        for config_args in config_args_list:
+            vector_store_type = config_args["type"]
+            collection_name = create_collection_name(
+                config_args.get("container_name", "default"), embedding_name
+            )
+            embedding_store = VectorStoreFactory().create_vector_store(
+                vector_store_type=vector_store_type,
+                kwargs={**config_args, "collection_name": collection_name},
+            )
+            embedding_store.connect(**config_args)
+            embedding_stores.append(embedding_store)
+            index_names.append(config_args["index_name"])
+        return MultiVectorStore(embedding_stores, index_names)
 
 
 class MultiVectorStore(BaseVectorStore):
-    """Multi Vector Store implementation."""
+    """Multi Vector Store wrapper implementation."""
     def __init__(
         self,
         embedding_stores: list[BaseVectorStore],
@@ -989,28 +1000,6 @@ class MultiVectorStore(BaseVectorStore):
         return []
 
 
-def _get_embedding_store_multi(
-    config_args: list[dict],
-    embedding_name: str,
-) -> BaseVectorStore:
-    """Get the embedding description store."""
-    config_args_list = config_args
-    embedding_stores = []
-    index_names = []
-    for config_args in config_args_list:
-        vector_store_type = config_args["type"]
-        collection_name = create_collection_name(
-            config_args.get("container_name", "default"), embedding_name
-        )
-        embedding_store = VectorStoreFactory().create_vector_store(
-            vector_store_type=vector_store_type,
-            kwargs={**config_args, "collection_name": collection_name},
-        )
-        embedding_store.connect(**config_args)
-        embedding_stores.append(embedding_store)
-        index_names.append(config_args["index_name"])
-    return MultiVectorStore(embedding_stores, index_names)
-
 
 def _reformat_context_data(context_data: dict) -> dict:
     """
@@ -1041,6 +1030,7 @@ def _reformat_context_data(context_data: dict) -> dict:
             continue
         final_format[key] = records
     return final_format
+
 
 def _update_context_data(
     context_data: Any,
