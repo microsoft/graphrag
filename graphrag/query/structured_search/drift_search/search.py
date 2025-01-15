@@ -304,7 +304,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             query (str): The query to search for.
             conversation_history (ConversationHistory, optional): The conversation history.
         """
-
         result = await self.asearch(
             query=query, conversation_history=conversation_history, reduce=False
         )
@@ -345,8 +344,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             for response in responses.get("nodes", []):
                 if response.get("answer"):
                     reduce_responses.append(response["answer"])
-                # if num_tokens(response) < context_buffer_size:
-                #    reduce_responses.append(response)
 
         search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
@@ -357,14 +354,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        reduced_response = self.llm.generate(
+        return self.llm.generate(
             messages=search_messages,
             streaming=False,
             callbacks=None,
             **llm_kwargs,
         )
-
-        return reduced_response
 
     async def _reduce_response_streaming(
         self,
@@ -396,8 +391,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             for response in responses.get("nodes", []):
                 if response.get("answer"):
                     reduce_responses.append(response["answer"])
-                # if num_tokens(response) < context_buffer_size:
-                #    reduce_responses.append(response)
 
         search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
