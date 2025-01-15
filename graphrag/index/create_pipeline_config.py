@@ -379,8 +379,8 @@ def _get_storage_config(
             connection_string = storage_settings.connection_string
             base_dir = storage_settings.base_dir
             container_name = storage_settings.container_name
-            if cosmosdb_account_url is None:
-                msg = "CosmosDB account url must be provided for cosmosdb storage."
+            if connection_string is None and cosmosdb_account_url is None:
+                msg = "Connection string or cosmosDB account url must be provided for cosmosdb storage."
                 raise ValueError(msg)
             if base_dir is None:
                 msg = "Base directory must be provided for cosmosdb storage."
