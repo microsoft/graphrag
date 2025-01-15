@@ -225,13 +225,15 @@ async def multi_global_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - communities_list (list[pd.DataFrame]): A list of DataFrames containing the final communities (from create_final_communities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
     - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
     - response_type (str): The type of response to return.
+    - streaming (bool): Whether to stream the results or not.
     - query (str): The user query to search for.
 
     Returns
@@ -278,7 +280,7 @@ async def multi_global_search(
         if max_vals["nodes"] != -1:
             nodes_df["human_readable_id"] += max_vals["nodes"] + 1
         nodes_df["community"] = nodes_df["community"].apply(
-            lambda x: x + max_vals["community_reports"] + 1 if x else x
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
         nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
         max_vals["nodes"] = nodes_df["human_readable_id"].max()
@@ -511,6 +513,203 @@ async def local_search_streaming(
             get_context_data = False
         else:
             yield stream_chunk
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_local_search(
+    config: GraphRagConfig,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    text_units_list: list[pd.DataFrame],
+    relationships_list: list[pd.DataFrame],
+    covariates_list: list[pd.DataFrame | None],
+    index_names: list[str],
+    community_level: int,
+    response_type: str,
+    streaming: bool,
+    query: str,
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+] | AsyncGenerator:
+    """Perform a multi-index local search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - covariates_list (list[pd.DataFrame]): A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
+    - index_names (list[str]): A list of index names.
+    - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    links = {
+        "nodes": {},
+        "community": {},
+        "community_reports": {},
+        "entities": {},
+        "text_units": {},
+        "relationships": {},
+        "covariates": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community": -1,
+        "community_reports": -1,
+        "entities": -1,
+        "text_units": -1,
+        "relationships": -1,
+        "covariates": -1,
+    }
+
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+    relationships_dfs = []
+    text_units_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
+        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(int)
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        max_vals["community_reports"] = community_reports_df["community"].max()
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x: x + f"-{index_name}"  # noqa: B023
+        )
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+        )
+        max_vals["entities"] = entities_df["human_readable_id"].max()
+        entities_dfs.append(entities_df)
+
+        # Prepare each index's relationships dataframe for merging
+        relationships_df = relationships_list[idx]
+        for i in relationships_df["human_readable_id"].astype(int):
+            links["relationships"][i + max_vals["relationships"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["relationships"] != -1:
+            col = (
+                relationships_df["human_readable_id"].astype(int)
+                + max_vals["relationships"]
+                + 1
+            )
+            relationships_df["human_readable_id"] = col.astype(str)
+        relationships_df["source"] = relationships_df["source"].apply(
+            lambda x: x + f"-{index_name}"  # noqa: B023
+        )
+        relationships_df["target"] = relationships_df["target"].apply(
+            lambda x: x + f"-{index_name}"  # noqa: B023
+        )
+        relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
+            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+        )
+        max_vals["relationships"] = (
+            relationships_df["human_readable_id"].astype(int).max()
+        )
+        relationships_dfs.append(relationships_df)
+
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        text_units_df["id"] = text_units_df["id"].apply(lambda x: f"{x}-{index_name}")  # noqa: B023
+        text_units_dfs.append(text_units_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
+    )
+    entities_combined = pd.concat(
+        entities_dfs, axis=0, ignore_index=True, sort=False
+    )
+    relationships_combined = pd.concat(
+        relationships_dfs, axis=0, ignore_index=True, sort=False
+    )
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
+    )
+
+    # Call the streaming api function
+    if streaming:
+        return local_search_streaming(
+            config,
+            nodes=nodes_combined,
+            entities=entities_combined,
+            community_reports=community_reports_combined,
+            text_units=text_units_combined,
+            relationships=relationships_combined,
+            covariates=covariates_list[0],
+            community_level=community_level,
+            response_type=response_type,
+            query=query,
+        )
+
+    result = await local_search(
+        config,
+        nodes=nodes_combined,
+        entities=entities_combined,
+        community_reports=community_reports_combined,
+        text_units=text_units_combined,
+        relationships=relationships_combined,
+        covariates=covariates_list[0],
+        community_level=community_level,
+        response_type=response_type,
+        query=query,
+    )
+
+    # Update the context data by linking index names and community ids
+    context = _update_context_data(result[1], links)
+
+    return (result[0], context)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
