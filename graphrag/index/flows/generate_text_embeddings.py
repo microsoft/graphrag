@@ -9,7 +9,7 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
     community_title_embedding,

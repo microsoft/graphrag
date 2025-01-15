@@ -3,7 +3,7 @@
 
 """Utilities for working with embeddings stores."""
 
-from graphrag.index.config.embeddings import all_embeddings
+from graphrag.config.embeddings import all_embeddings
 
 
 def create_collection_name(

@@ -24,12 +24,12 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from pydantic import validate_call
 
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
     text_unit_text_embedding,
 )
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.query.factory import (
     get_basic_search_engine,

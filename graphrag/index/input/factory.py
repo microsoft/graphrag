@@ -12,7 +12,6 @@ import pandas as pd
 
 from graphrag.config.enums import InputType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.index.config.input import PipelineInputConfig
 from graphrag.index.input.csv import input_type as csv
 from graphrag.index.input.csv import load as load_csv
 from graphrag.index.input.text import input_type as text
@@ -30,7 +29,7 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 
 async def create_input(
-    config: PipelineInputConfig | InputConfig,
+    config: InputConfig,
     progress_reporter: ProgressLogger | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:

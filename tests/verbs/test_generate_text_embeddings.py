@@ -3,10 +3,10 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import TextEmbeddingTarget
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     all_embeddings,
 )
+from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
