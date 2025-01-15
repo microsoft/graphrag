@@ -15,6 +15,7 @@ from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
+from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -169,6 +170,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         query: str,
         conversation_history: Any = None,
+        reduce: bool = True,
         **kwargs,
     ) -> SearchResult:
         """
@@ -177,6 +179,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         Args:
             query (str): The query to search for.
             conversation_history (Any, optional): The conversation history, if any.
+            reduce (bool, optional): Whether to reduce the response to a single comprehensive response.
 
         Returns
         -------
@@ -248,8 +251,21 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             include_context=True
         )
 
+        reduced_response = response_state
+        if reduce:
+            # Reduce response_state to a single comprehensive response
+            reduced_response = await self._reduce_response(
+                responses=response_state,
+                query=query,
+                llm_calls=llm_calls,
+                prompt_tokens=prompt_tokens,
+                output_tokens=output_tokens,
+                max_tokens=self.config.reduce_max_tokens,
+                temperature=self.config.reduce_temperature,
+            )
+
         return SearchResult(
-            response=response_state,
+            response=reduced_response,
             context_data=context_data,
             context_text=context_text,
             completion_time=t_elapsed,
@@ -281,7 +297,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         error_msg = "Synchronous DRIFT is not implemented."
         raise NotImplementedError(error_msg)
 
-    def astream_search(
+    async def astream_search(
         self, query: str, conversation_history: ConversationHistory | None = None
     ) -> AsyncGenerator[str, None]:
         """
@@ -290,10 +306,127 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         Args:
             query (str): The query to search for.
             conversation_history (ConversationHistory, optional): The conversation history.
-
-        Raises
-        ------
-        NotImplementedError: Streaming DRIFT search is not implemented.
         """
-        error_msg = "Streaming DRIFT search is not implemented."
-        raise NotImplementedError(error_msg)
+        result = await self.asearch(
+            query=query, conversation_history=conversation_history, reduce=False
+        )
+
+        if isinstance(result.response, list):
+            result.response = result.response[0]
+
+        async for resp in self._reduce_response_streaming(
+            responses=result.response,
+            query=query,
+            max_tokens=self.config.reduce_max_tokens,
+            temperature=self.config.reduce_temperature,
+        ):
+            yield resp
+
+    async def _reduce_response(
+        self,
+        responses: str | dict[str, Any],
+        query: str,
+        llm_calls: dict[str, int],
+        prompt_tokens: dict[str, int],
+        output_tokens: dict[str, int],
+        **llm_kwargs,
+    ) -> str:
+        """Reduce the response to a single comprehensive response.
+
+        Parameters
+        ----------
+        responses : str|dict[str, Any]
+            The responses to reduce.
+        query : str
+            The original query.
+        llm_kwargs : dict[str, Any]
+            Additional keyword arguments to pass to the LLM.
+
+        Returns
+        -------
+        str
+            The reduced response.
+        """
+        reduce_responses = []
+
+        if isinstance(responses, str):
+            reduce_responses = [responses]
+        else:
+            reduce_responses = [
+                response["answer"]
+                for response in responses.get("nodes", [])
+                if response.get("answer")
+            ]
+
+        search_prompt = self.context_builder.reduce_system_prompt.format(
+            context_data=reduce_responses,
+            response_type=self.context_builder.response_type,
+        )
+        search_messages = [
+            {"role": "system", "content": search_prompt},
+            {"role": "user", "content": query},
+        ]
+
+        reduced_response = self.llm.generate(
+            messages=search_messages,
+            streaming=False,
+            callbacks=None,
+            **llm_kwargs,
+        )
+
+        llm_calls["reduce"] = 1
+        prompt_tokens["reduce"] = num_tokens(
+            search_prompt, self.token_encoder
+        ) + num_tokens(query, self.token_encoder)
+        output_tokens["reduce"] = num_tokens(reduced_response, self.token_encoder)
+
+        return reduced_response
+
+    async def _reduce_response_streaming(
+        self,
+        responses: str | dict[str, Any],
+        query: str,
+        **llm_kwargs,
+    ) -> AsyncGenerator[str, None]:
+        """Reduce the response to a single comprehensive response.
+
+        Parameters
+        ----------
+        responses : str|dict[str, Any]
+            The responses to reduce.
+        query : str
+            The original query.
+        llm_kwargs : dict[str, Any]
+            Additional keyword arguments to pass to the LLM.
+
+        Returns
+        -------
+        str
+            The reduced response.
+        """
+        reduce_responses = []
+
+        if isinstance(responses, str):
+            reduce_responses = [responses]
+        else:
+            reduce_responses = [
+                response["answer"]
+                for response in responses.get("nodes", [])
+                if response.get("answer")
+            ]
+
+        search_prompt = self.context_builder.reduce_system_prompt.format(
+            context_data=reduce_responses,
+            response_type=self.context_builder.response_type,
+        )
+        search_messages = [
+            {"role": "system", "content": search_prompt},
+            {"role": "user", "content": query},
+        ]
+
+        async for resp in self.llm.astream_generate(
+            search_messages,
+            callbacks=None,
+            **llm_kwargs,
+        ):
+            yield resp
