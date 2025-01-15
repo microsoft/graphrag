@@ -31,6 +31,7 @@ from graphrag.index.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.logger.print_progress import PrintProgressLogger
+from graphrag.model.types import TextEmbedder
 from graphrag.query.factory import (
     get_basic_search_engine,
     get_drift_search_engine,
@@ -48,7 +49,11 @@ from graphrag.query.indexer_adapters import (
 )
 from graphrag.utils.cli import redact
 from graphrag.utils.embeddings import create_collection_name
-from graphrag.vector_stores.base import BaseVectorStore
+from graphrag.vector_stores.base import (
+    BaseVectorStore,
+    VectorStoreDocument,
+    VectorStoreSearchResult,
+)
 from graphrag.vector_stores.factory import VectorStoreFactory
 
 if TYPE_CHECKING:
@@ -524,8 +529,8 @@ async def multi_local_search(
     community_reports_list: list[pd.DataFrame],
     text_units_list: list[pd.DataFrame],
     relationships_list: list[pd.DataFrame],
-    covariates_list: list[pd.DataFrame | None],
-    index_names: list[str],
+    covariates_list: list[pd.DataFrame | None] | None,
+    vector_store_configs: list[dict],
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -545,7 +550,7 @@ async def multi_local_search(
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
     - covariates_list (list[pd.DataFrame]): A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
-    - index_names (list[str]): A list of index names.
+    - vector_store_confgs (list[dict]): A list of the vector store configurations.
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
     - streaming (bool): Whether to stream the results or not.
@@ -584,6 +589,8 @@ async def multi_local_search(
     relationships_dfs = []
     text_units_dfs = []
 
+    index_names = [conf['index_name'] for conf in vector_store_configs]
+
     for idx, index_name in enumerate(index_names):
         # Prepare each index's nodes dataframe for merging
         nodes_df = nodes_list[idx]
@@ -599,6 +606,7 @@ async def multi_local_search(
             lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
         nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
+        nodes_df["id"] = nodes_df["id"].apply(lambda x: x + f"-{index_name}")
         max_vals["nodes"] = nodes_df["human_readable_id"].max()
         nodes_dfs.append(nodes_df)
 
@@ -626,6 +634,7 @@ async def multi_local_search(
         entities_df["title"] = entities_df["title"].apply(
             lambda x: x + f"-{index_name}"  # noqa: B023
         )
+        entities_df["id"] = entities_df["id"].apply(lambda x: x + f"-{index_name}")
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
             lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
         )
@@ -686,6 +695,13 @@ async def multi_local_search(
     text_units_combined = pd.concat(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
+    
+    global _get_embedding_store
+    global _get_embedding_store_multi
+    _get_embedding_store_original = _get_embedding_store
+    _get_embedding_store = _get_embedding_store_multi
+
+    config.embeddings.vector_store = vector_store_configs
 
     # Call the streaming api function
     if streaming:
@@ -696,7 +712,7 @@ async def multi_local_search(
             community_reports=community_reports_combined,
             text_units=text_units_combined,
             relationships=relationships_combined,
-            covariates=covariates_list[0],
+            covariates=None,
             community_level=community_level,
             response_type=response_type,
             query=query,
@@ -709,11 +725,13 @@ async def multi_local_search(
         community_reports=community_reports_combined,
         text_units=text_units_combined,
         relationships=relationships_combined,
-        covariates=covariates_list[0],
+        covariates=None,
         community_level=community_level,
         response_type=response_type,
         query=query,
     )
+
+    _get_embedding_store = _get_embedding_store_original
 
     # Update the context data by linking index names and community ids
     context = _update_context_data(result[1], links)
@@ -916,6 +934,82 @@ def _get_embedding_store(
     )
     embedding_store.connect(**config_args)
     return embedding_store
+
+
+class MultiVectorStore(BaseVectorStore):
+    """Multi Vector Store implementation."""
+    def __init__(
+        self,
+        embedding_stores: list[BaseVectorStore],
+        index_names: list[str],
+    ):
+        self.embedding_stores = embedding_stores
+        self.index_names = index_names
+
+    def load_documents(
+        self, documents: list[VectorStoreDocument], overwrite: bool = True
+    ) -> None:
+        raise NotImplementedError("load_documents() method not implemented")
+    
+    def connect(self, **kwargs: Any) -> Any:
+        raise NotImplementedError("connect() method not implemented")
+
+    def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
+        raise NotImplementedError("filter_by_id() method not implemented")
+    
+    def search_by_id(self, id: str) -> VectorStoreDocument:
+        raise NotImplementedError("search_by_id() method not implemented")
+
+    def similarity_search_by_vector(
+        self, query_embedding: list[float], k: int = 10, **kwargs: Any
+    ) -> list[VectorStoreSearchResult]:
+        """Perform a vector-based similarity search."""
+        all_results = []
+        for index_name, embedding_store in zip(self.index_names, self.embedding_stores):
+            results = embedding_store.similarity_search_by_vector(
+                query_embedding=query_embedding, k=k
+            )
+            mod_results = []
+            for r in results:
+                r.document.id = str(r.document.id) + f"-{index_name}"
+                mod_results += [r]
+            all_results += mod_results
+        sorted_results = sorted(all_results, key=lambda x: x.score, reverse=True)[:k]
+        return sorted_results
+
+    def similarity_search_by_text(
+        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
+    ) -> list[VectorStoreSearchResult]:
+        """Perform a text-based similarity search."""
+        query_embedding = text_embedder(text)
+        if query_embedding:
+            return self.similarity_search_by_vector(
+                query_embedding=query_embedding, k=k
+            )
+        return []
+
+
+def _get_embedding_store_multi(
+    config_args: list[dict],
+    embedding_name: str,
+) -> BaseVectorStore:
+    """Get the embedding description store."""
+    config_args_list = config_args
+    embedding_stores = []
+    index_names = []
+    for config_args in config_args_list:
+        vector_store_type = config_args["type"]
+        collection_name = create_collection_name(
+            config_args.get("container_name", "default"), embedding_name
+        )
+        embedding_store = VectorStoreFactory().create_vector_store(
+            vector_store_type=vector_store_type,
+            kwargs={**config_args, "collection_name": collection_name},
+        )
+        embedding_store.connect(**config_args)
+        embedding_stores.append(embedding_store)
+        index_names.append(config_args["index_name"])
+    return MultiVectorStore(embedding_stores, index_names)
 
 
 def _reformat_context_data(context_data: dict) -> dict:
