@@ -15,6 +15,7 @@ from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
+from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
 from graphrag.query.structured_search.drift_search.drift_context import (
@@ -318,6 +319,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         responses: str | dict[str, Any],
         query: str,
+        llm_calls: dict[str, int],
+        prompt_tokens: dict[str, int],
+        output_tokens: dict[str, int],
         **llm_kwargs,
     ) -> str:
         """Reduce the response to a single comprehensive response.
@@ -354,12 +358,20 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        return self.llm.generate(
+        reduced_response = self.llm.generate(
             messages=search_messages,
             streaming=False,
             callbacks=None,
             **llm_kwargs,
         )
+
+        llm_calls["reduce"] = 1
+        prompt_tokens["reduce"] = num_tokens(
+            search_prompt, self.token_encoder
+        ) + num_tokens(query, self.token_encoder)
+        output_tokens["reduce"] = num_tokens(reduced_response, self.token_encoder)
+
+        return reduced_response
 
     async def _reduce_response_streaming(
         self,
