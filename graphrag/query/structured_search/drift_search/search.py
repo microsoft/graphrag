@@ -254,12 +254,14 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = response_state
         if reduce:
             # Reduce response_state to a single comprehensive response
-            reduce_llm_params = {
-                "max_tokens": self.config.reduce_max_tokens,
-                "temperature": self.config.reduce_temperature,
-            }
             reduced_response = await self._reduce_response(
-                responses=response_state, query=query, **reduce_llm_params
+                responses=response_state,
+                query=query,
+                llm_calls=llm_calls,
+                prompt_tokens=prompt_tokens,
+                output_tokens=output_tokens,
+                max_tokens=self.config.reduce_max_tokens,
+                temperature=self.config.reduce_temperature,
             )
 
         return SearchResult(
@@ -312,7 +314,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         if isinstance(result.response, list):
             result.response = result.response[0]
 
-        async for resp in self._reduce_response_streaming(result.response, query):
+        async for resp in self._reduce_response_streaming(
+            responses=result.response,
+            query=query,
+            max_tokens=self.config.reduce_max_tokens,
+            temperature=self.config.reduce_temperature,
+        ):
             yield resp
 
     async def _reduce_response(
@@ -345,9 +352,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         if isinstance(responses, str):
             reduce_responses = [responses]
         else:
-            for response in responses.get("nodes", []):
-                if response.get("answer"):
-                    reduce_responses.append(response["answer"])
+            reduce_responses = [
+                response["answer"]
+                for response in responses.get("nodes", [])
+                if response.get("answer")
+            ]
 
         search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
@@ -400,9 +409,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         if isinstance(responses, str):
             reduce_responses = [responses]
         else:
-            for response in responses.get("nodes", []):
-                if response.get("answer"):
-                    reduce_responses.append(response["answer"])
+            reduce_responses = [
+                response["answer"]
+                for response in responses.get("nodes", [])
+                if response.get("answer")
+            ]
 
         search_prompt = self.context_builder.reduce_system_prompt.format(
             context_data=reduce_responses,
