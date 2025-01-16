@@ -505,7 +505,7 @@ def assert_basic_search_configs(
     assert actual.llm_max_tokens == expected.llm_max_tokens
 
 
-def pv(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
+def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
     assert actual.root_dir == expected.root_dir
 
     a_keys = sorted(actual.models.keys())
