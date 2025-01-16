@@ -35,7 +35,7 @@ async def run(
     batch_size = args.get("batch_size", 16)
     batch_max_tokens = args.get("batch_max_tokens", 8191)
     llm_config = args["llm"]
-    llm_config = LanguageModelConfig.model_construct(**args["llm"])
+    llm_config = LanguageModelConfig(**args["llm"])
     splitter = _get_splitter(llm_config, batch_max_tokens)
     llm = _get_llm(llm_config, callbacks, cache)
     semaphore: asyncio.Semaphore = asyncio.Semaphore(args.get("num_threads", 4))

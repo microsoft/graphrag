@@ -34,7 +34,7 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = LanguageModelConfig.model_construct(**args["llm"])
+    llm_config = LanguageModelConfig(**args["llm"])
     llm = load_llm(
         "community_reporting",
         llm_config,

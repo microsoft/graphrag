@@ -89,7 +89,7 @@ async def run_claim_extraction(
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    llm_config = LanguageModelConfig.model_construct(**strategy_config["llm"])
+    llm_config = LanguageModelConfig(**strategy_config["llm"])
     llm = load_llm(
         "claim_extraction",
         llm_config,
