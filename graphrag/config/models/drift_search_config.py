@@ -14,6 +14,9 @@ class DRIFTSearchConfig(BaseModel):
     prompt: str | None = Field(
         description="The drift search prompt to use.", default=None
     )
+    reduce_prompt: str | None = Field(
+        description="The drift search reduce prompt to use.", default=None
+    )
     temperature: float = Field(
         description="The temperature to use for token generation.",
         default=defs.DRIFT_SEARCH_LLM_TEMPERATURE,
@@ -33,6 +36,16 @@ class DRIFTSearchConfig(BaseModel):
     data_max_tokens: int = Field(
         description="The data llm maximum tokens.",
         default=defs.DRIFT_SEARCH_DATA_MAX_TOKENS,
+    )
+
+    reduce_max_tokens: int = Field(
+        description="The reduce llm maximum tokens response to produce.",
+        default=defs.DRIFT_SEARCH_REDUCE_MAX_TOKENS,
+    )
+
+    reduce_temperature: float = Field(
+        description="The temperature to use for token generation in reduce.",
+        default=defs.DRIFT_SEARCH_REDUCE_LLM_TEMPERATURE,
     )
 
     concurrency: int = Field(

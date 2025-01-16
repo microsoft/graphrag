@@ -738,6 +738,7 @@ async def drift_search(
     text_units: pd.DataFrame,
     relationships: pd.DataFrame,
     community_level: int,
+    response_type: str,
     query: str,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
@@ -789,21 +790,15 @@ async def drift_search(
         relationships=read_indexer_relationships(relationships),
         description_embedding_store=description_embedding_store,  # type: ignore
         local_system_prompt=prompt,
+        reduce_system_prompt=reduce_prompt,
+        response_type=response_type,
     )
 
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
     context_data = reformat_context_data(result.context_data)  # type: ignore
 
-    # TODO: Map/reduce the response to a single string with a comprehensive answer including all follow-ups
-    # For the time being, return highest scoring response (position 0) and context data
-    match response:
-        case dict():
-            return response["nodes"][0]["answer"], context_data  # type: ignore
-        case str():
-            return response, context_data
-        case list():
-            return response, context_data
+    return response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
