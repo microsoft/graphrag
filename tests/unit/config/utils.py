@@ -220,7 +220,6 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "max_tokens": defs.BASIC_SEARCH_MAX_TOKENS,
         "llm_max_tokens": defs.BASIC_SEARCH_LLM_MAX_TOKENS,
     },
-    "skip_workflows": [],
 }
 
 
@@ -549,4 +548,3 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_local_search_configs(actual.local_search, expected.local_search)
     assert_global_search_configs(actual.global_search, expected.global_search)
     assert_drift_search_configs(actual.drift_search, expected.drift_search)
-    assert actual.skip_workflows == expected.skip_workflows

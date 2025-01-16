@@ -82,8 +82,6 @@ update_index_storage:
 
 ### Workflow settings ###
 
-skip_workflows: []
-
 entity_extraction:
   prompt: "prompts/entity_extraction.txt"
   entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]

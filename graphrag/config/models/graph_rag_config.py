@@ -194,11 +194,6 @@ class GraphRagConfig(BaseModel):
     )
     """The basic search configuration."""
 
-    skip_workflows: list[str] = Field(
-        description="The workflows to skip, usually for testing reasons.", default=[]
-    )
-    """The workflows to skip, usually for testing reasons."""
-
     def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
 
