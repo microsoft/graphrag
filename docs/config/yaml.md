@@ -318,3 +318,19 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `local_search_top_p` **float** - The top-p value to use for token generation in local search.
 - `local_search_n` **int** - The number of completions to generate in local search.
 - `local_search_llm_max_gen_tokens` **int** - The maximum number of generated tokens for the LLM in local search.
+
+### basic_search
+
+#### Fields
+
+- `prompt` **str** - The prompt file to use.
+- `text_unit_prop` **float** - The text unit proportion. 
+- `community_prop` **float** - The community proportion.
+- `conversation_history_max_turns` **int** - The conversation history maximum turns.
+- `top_k_entities` **int** - The top k mapped entities.
+- `top_k_relationships` **int** - The top k mapped relations.
+- `temperature` **float | None** - The temperature to use for token generation.
+- `top_p` **float | None** - The top-p value to use for token generation.
+- `n` **int | None** - The number of completions to generate.
+- `max_tokens` **int** - The maximum tokens.
+- `llm_max_tokens` **int** - The LLM maximum tokens.
