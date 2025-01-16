@@ -1618,6 +1618,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                     processEnvironments: true
                 },
                 displayAlign: 'center',
+                messageStyle: 'none',
                 CommonHTML: {
                     linebreaks: {
                     automatic: true
@@ -1909,12 +1910,12 @@ PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">graphrag.config.load_config</span> <span class="kn">import</span> <span class="n">load_config</span>
-<span class="kn">from</span> <span class="nn">graphrag.config.resolve_path</span> <span class="kn">import</span> <span class="n">resolve_paths</span>
-<span class="kn">from</span> <span class="nn">graphrag.index.create_pipeline_config</span> <span class="kn">import</span> <span class="n">create_pipeline_config</span>
-<span class="kn">from</span> <span class="nn">graphrag.storage.factory</span> <span class="kn">import</span> <span class="n">create_storage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.load_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.resolve_path</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_paths</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.create_pipeline_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_pipeline_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.storage.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_storage</span>
 
 <span class="c1"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_DIRECTORY</span><span class="p">))</span>
@@ -1949,9 +1950,9 @@ storage = create_storage(pipeline_config.storage)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[3], line 6</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">resolve_path</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> resolve_paths
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_pipeline_config</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_pipeline_config
-<span class="ansi-green-fg">----&gt; 6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_storage
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">resolve_path</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> resolve_paths
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_pipeline_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_pipeline_config
+<span class="ansi-green-fg">----&gt; 6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_storage
 <span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(95,135,135)"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
 <span class="ansi-green-intense-fg ansi-bold">      9</span> config <span style="color: rgb(98,98,98)">=</span> load_config(Path(PROJECT_DIRECTORY))
 
@@ -1980,7 +1981,7 @@ Cell <span class="ansi-green-fg">In[3], line 6</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">remove_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">remove_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Remove columns from a DataFrame, suppressing errors."""</span>
     <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -2011,7 +2012,7 @@ Cell <span class="ansi-green-fg">In[3], line 6</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">get_community_parent</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_community_parent</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Compute the parent community using the node membership as a lookup."""</span>
     <span class="n">parent_mapping</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
     <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
@@ -2078,9 +2079,9 @@ Cell <span class="ansi-green-fg">In[3], line 6</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
 
-<span class="kn">from</span> <span class="nn">graphrag.utils.storage</span> <span class="kn">import</span> <span class="n">load_table_from_storage</span><span class="p">,</span> <span class="n">write_table_to_storage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.utils.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table_from_storage</span><span class="p">,</span> <span class="n">write_table_to_storage</span>
 
 <span class="c1"># First we'll go through any parquet files that had model changes and update them</span>
 <span class="c1"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
@@ -2288,7 +2289,7 @@ await write_table_to_storage(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[6], line 9</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">utils</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_table_from_storage, write_table_to_storage
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">utils</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_table_from_storage, write_table_to_storage
 <span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(95,135,135)"># First we'll go through any parquet files that had model changes and update them</span>
 <span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
 <span class="ansi-green-intense-fg ansi-bold">      8</span> final_documents <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(
@@ -2324,9 +2325,9 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">graphrag.cache.factory</span> <span class="kn">import</span> <span class="n">create_cache</span>
-<span class="kn">from</span> <span class="nn">graphrag.callbacks.noop_workflow_callbacks</span> <span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
-<span class="kn">from</span> <span class="nn">graphrag.index.flows.generate_text_embeddings</span> <span class="kn">import</span> <span class="n">generate_text_embeddings</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.flows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
 
 <span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
 <span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
@@ -2398,9 +2399,9 @@ await generate_text_embeddings(
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">cache</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_cache
-<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_workflow_callbacks</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span> <span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">cache</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_cache
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
 
 <span class="ansi-red-fg">ImportError</span>: cannot import name 'create_cache' from 'graphrag.cache.factory' (/home/runner/work/graphrag/graphrag/graphrag/cache/factory.py)</pre>
 </div>
