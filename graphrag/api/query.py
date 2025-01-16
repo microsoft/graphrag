@@ -693,7 +693,7 @@ async def multi_local_search(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
 
-    config.embeddings.vector_store = vector_store_configs
+    config.embeddings.vector_store = vector_store_configs[0]
 
     # Call the streaming api function
     if streaming:
@@ -782,6 +782,9 @@ async def drift_search(
     reports = read_indexer_reports(community_reports, nodes, community_level)
     read_indexer_report_embeddings(reports, full_content_embedding_store)
     prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
+    reduce_prompt = load_search_prompt(
+        config.root_dir, config.drift_search.reduce_prompt
+    )
     search_engine = get_drift_search_engine(
         config=config,
         reports=reports,
@@ -800,6 +803,85 @@ async def drift_search(
 
     return response, context_data
 
+@validate_call(config={"arbitrary_types_allowed": True})
+async def drift_search_streaming(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    text_units: pd.DataFrame,
+    relationships: pd.DataFrame,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a DRIFT search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - community_level (int): The community level to search at.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = config.embeddings.vector_store
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+
+    description_embedding_store = get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=entity_description_embedding,
+    )
+
+    full_content_embedding_store = get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=community_full_content_embedding,
+    )
+
+    entities_ = read_indexer_entities(nodes, entities, community_level)
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    read_indexer_report_embeddings(reports, full_content_embedding_store)
+    prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
+    reduce_prompt = load_search_prompt(
+        config.root_dir, config.drift_search.reduce_prompt
+    )
+
+    search_engine = get_drift_search_engine(
+        config=config,
+        reports=reports,
+        text_units=read_indexer_text_units(text_units),
+        entities=entities_,
+        relationships=read_indexer_relationships(relationships),
+        description_embedding_store=description_embedding_store,  # type: ignore
+        local_system_prompt=prompt,
+        reduce_system_prompt=reduce_prompt,
+        response_type=response_type,
+    )
+
+    search_result = search_engine.astream_search(query=query)
+
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_chunk in search_result:
+        if get_context_data:
+            context_data = reformat_context_data(stream_chunk)  # type: ignore
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_chunk
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def basic_search(
