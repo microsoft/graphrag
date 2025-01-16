@@ -102,7 +102,6 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "batch_size": defs.EMBEDDING_BATCH_SIZE,
         "batch_max_tokens": defs.EMBEDDING_BATCH_MAX_TOKENS,
         "target": defs.EMBEDDING_TARGET,
-        "skip": [],
         "vector_store": defs.VECTOR_STORE_DICT,
         "strategy": None,
         "model_id": defs.EMBEDDING_MODEL_ID,
@@ -337,7 +336,7 @@ def assert_text_embedding_configs(
     assert actual.batch_size == expected.batch_size
     assert actual.batch_max_tokens == expected.batch_max_tokens
     assert actual.target == expected.target
-    assert actual.skip == expected.skip
+    assert actual.names == expected.names
     assert actual.vector_store == expected.vector_store
     assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
@@ -506,7 +505,7 @@ def assert_basic_search_configs(
     assert actual.llm_max_tokens == expected.llm_max_tokens
 
 
-def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
+def pv(actual: GraphRagConfig, expected: GraphRagConfig) -> None:
     assert actual.root_dir == expected.root_dir
 
     a_keys = sorted(actual.models.keys())

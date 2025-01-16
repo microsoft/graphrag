@@ -90,6 +90,7 @@ class TextEmbeddingTarget(str, Enum):
 
     all = "all"
     required = "required"
+    selected = "selected"
     none = "none"
 
     def __repr__(self):

@@ -33,12 +33,14 @@ required_embeddings: set[str] = {
 
 
 def get_embedded_fields(settings: GraphRagConfig) -> set[str]:
-    """Get the fields to embed based on the enum or specifically skipped embeddings."""
+    """Get the fields to embed based on the enum or specifically selected embeddings."""
     match settings.embeddings.target:
         case TextEmbeddingTarget.all:
-            return all_embeddings.difference(settings.embeddings.skip)
+            return all_embeddings
         case TextEmbeddingTarget.required:
             return required_embeddings
+        case TextEmbeddingTarget.selected:
+            return set(settings.embeddings.names)
         case TextEmbeddingTarget.none:
             return set()
         case _:
