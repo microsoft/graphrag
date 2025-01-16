@@ -13,6 +13,7 @@ from graphrag.index.workflows.create_final_covariates import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
     load_test_table,
 )
@@ -34,12 +35,21 @@ async def test_create_final_covariates():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config(skip_validation=True)
-    config.claim_extraction.strategy = {
-        "type": "graph_intelligence",
-        "llm": MOCK_LLM_CONFIG,
-        "claim_description": "description",
-    }
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(config.claim_extraction.model_id)
+    base_strategy = config.claim_extraction.resolved_strategy(
+        config.root_dir, llm_settings
+    )
+    base_strategy["type"] = "graph_intelligence"
+    base_strategy["claim_description"] = "description"
+    base_strategy["llm"]["type"] = LLMType.StaticResponse
+    base_strategy["llm"]["responses"] = MOCK_LLM_RESPONSES
+    config.claim_extraction.strategy = base_strategy
+    # config.claim_extraction.strategy = {
+    #     "type": "graph_intelligence",
+    #     "llm": MOCK_LLM_CONFIG,
+    #     "claim_description": "description",
+    # }
 
     await run_workflow(
         config,

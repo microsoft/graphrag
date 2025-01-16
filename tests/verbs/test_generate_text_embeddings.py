@@ -13,6 +13,7 @@ from graphrag.index.workflows.generate_text_embeddings import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -28,10 +29,14 @@ async def test_generate_text_embeddings():
         ]
     )
 
-    config = create_graphrag_config(skip_validation=True)
-    config.embeddings.strategy = {
-        "type": "mock",
-    }
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(config.embeddings.model_id)
+    base_strategy = config.embeddings.resolved_strategy(llm_settings)
+    base_strategy["type"] = "mock"
+
+    # config.embeddings.strategy = {
+    #     "type": "mock",
+    # }
     config.embeddings.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
 
