@@ -35,7 +35,7 @@ async def load(
         if group is None:
             group = {}
         buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1")
+        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1", escapechar='\\', quotechar='"')
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
