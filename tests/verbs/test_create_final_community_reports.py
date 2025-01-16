@@ -58,7 +58,7 @@ async def test_create_final_community_reports():
         ]
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config(skip_validation=True)
     config.community_reports.strategy = {
         "type": "graph_intelligence",
         "llm": MOCK_LLM_CONFIG,
