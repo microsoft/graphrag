@@ -19,21 +19,37 @@ llm:
 
 ## Indexing
 
-### llm
+### models
 
-This is the base LLM configuration section. Other steps may override this configuration with their own LLM configuration.
+This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them differentially in the workflow steps.
+
+For example:
+```yml
+models:
+  default_chat_model:
+    api_key: ${GRAPHRAG_API_KEY}
+    type: openai_chat
+    model: gpt-4o
+    model_supports_json: true
+  default_embedding_model:
+    api_key: ${GRAPHRAG_API_KEY}
+    type: openai_embedding
+    model: text-embedding-ada-002
+```
 
 #### Fields
 
 - `api_key` **str** - The OpenAI API key to use.
 - `type` **openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding** - The type of LLM to use.
 - `model` **str** - The model name.
+- `encoding_model` **str** - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).
 - `max_tokens` **int** - The maximum number of output tokens.
 - `request_timeout` **float** - The per-request timeout.
 - `api_base` **str** - The API base url to use.
-- `api_version` **str** - The API version
+- `api_version` **str** - The API version.
 - `organization` **str** - The client organization.
 - `proxy` **str** - The proxy URL to use.
+- `azure_auth_type` **api_key|managed_identity** - if using Azure, please indicate how you want to authenticate requests.
 - `audience` **str** - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if `api_key` is not defined. Default=`https://cognitiveservices.azure.com/.default`
 - `deployment_name` **str** - The deployment name to use (Azure).
 - `model_supports_json` **bool** - Whether the model supports JSON-mode output.
@@ -46,29 +62,31 @@ This is the base LLM configuration section. Other steps may override this config
 - `temperature` **float** - The temperature to use.
 - `top_p` **float** - The top-p value to use.
 - `n` **int** - The number of completions to generate.
-
-### parallelization
-
-#### Fields
-
-- `stagger` **float** - The threading stagger value.
-- `num_threads` **int** - The maximum number of work threads.
-
-### async_mode
-
-**asyncio|threaded** The async mode to use. Either `asyncio` or `threaded.
+- `parallelization_stagger` **float** - The threading stagger value.
+- `parallelization_num_threads` **int** - The maximum number of work threads.
+- `async_mode` **asyncio|threaded** The async mode to use. Either `asyncio` or `threaded.
 
 ### embeddings
 
+By default, the GraphRAG indexer will only export embeddings required for our query methods. However, the model has embeddings defined for all plaintext fields, and these can be customized by setting the `target` and `names` fields.
+
+Supported embeddings names are:
+- `text_unit.text`
+- `document.text`
+- `entity.title`
+- `entity.description`
+- `relationship.description`
+- `community.title`
+- `community.summary`
+- `community.full_content`
+
 #### Fields
 
-- `llm` (see LLM top-level config)
-- `parallelization` (see Parallelization top-level config)
-- `async_mode` (see Async Mode top-level config)
+- `model_id` - Name of the model definition to use for text embedding.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
-- `target` **required|all|none** - Determines which set of embeddings to export.
-- `skip` **list[str]** - Which embeddings to skip. Only useful if target=all to customize the list.
+- `target` **required|all|selected|none** - Determines which set of embeddings to export.
+- `names` **list[str]** - If target=selected, this should be an explicit list of the embeddings names we support.
 - `vector_store` **dict** - The vector store to use. Configured for lancedb by default.
     - `type` **str** - `lancedb` or `azure_ai_search`. Default=`lancedb`
     - `db_uri` **str** (only for lancedb) - The database uri. Default=`storage.base_dir/lancedb`
@@ -77,9 +95,10 @@ This is the base LLM configuration section. Other steps may override this config
     - `audience` **str** (only for AI Search) - Audience for managed identity token if managed identity authentication is used.
     - `overwrite` **bool** (only used at index creation time) - Overwrite collection if it exist. Default=`True`
     - `container_name` **str** - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=`default`
-- `strategy` **dict** - Fully override the text-embedding strategy.
 
 ### input
+
+Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. In general, CSV-based data provides the most customizability. Each CSV should at least contain a `text` field. You can use the `metadata` list to specify additional columns from the CSV to include as headers in each text chunk, allowing you to repeat document content within each chunk for better LLM inclusion.
 
 #### Fields
 
@@ -92,24 +111,23 @@ This is the base LLM configuration section. Other steps may override this config
 - `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
 - `file_filter` **dict** - Key/value pairs to filter. Default is None.
-- `source_column` **str** - (CSV Mode Only) The source column name.
-- `timestamp_column` **str** - (CSV Mode Only) The timestamp column name.
-- `timestamp_format` **str** - (CSV Mode Only) The source format.
 - `text_column` **str** - (CSV Mode Only) The text column name.
-- `title_column` **str** - (CSV Mode Only) The title column name.
-- `document_attribute_columns` **list[str]** - (CSV Mode Only) The additional document attributes to include.
+- `metadata` **list[str]** - (CSV Mode Only) The additional document attributes to include.
 
 ### chunks
+
+These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the `metadata` setting in the input document config, which will replicate document metadata into each chunk.
 
 #### Fields
 
 - `size` **int** - The max chunk size in tokens.
 - `overlap` **int** - The chunk overlap in tokens.
 - `group_by_columns` **list[str]** - group documents by fields before chunking.
-- `encoding_model` **str** - The text encoding model to use. Default is to use the top-level encoding model.
-- `strategy` **dict** - Fully override the chunking strategy.
+- `encoding_model` **str** - The text encoding model to use for splitting on token boundaries.
 
 ### cache
+
+This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results.
 
 #### Fields
 
@@ -121,6 +139,8 @@ This is the base LLM configuration section. Other steps may override this config
 
 ### storage
 
+This section controls the storage mechanism used by the pipeline used for exporting output tables.
+
 #### Fields
 
 - `type` **file|memory|blob** - The storage type to use. Default=`file`
@@ -131,6 +151,8 @@ This is the base LLM configuration section. Other steps may override this config
 
 ### update_index_storage
 
+The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.
+
 #### Fields
 
 - `type` **file|memory|blob** - The storage type to use. Default=`file`
@@ -140,6 +162,8 @@ This is the base LLM configuration section. Other steps may override this config
 - `storage_account_blob_url` **str** - The storage account blob URL to use.
 
 ### reporting
+
+This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.
 
 #### Fields
 
@@ -153,60 +177,51 @@ This is the base LLM configuration section. Other steps may override this config
 
 #### Fields
 
-- `llm` (see LLM top-level config)
-- `parallelization` (see Parallelization top-level config)
-- `async_mode` (see Async Mode top-level config)
+- `model_id` - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
-- `encoding_model` **str** - The text encoding model to use. By default, this will use the top-level encoding model.
-- `strategy` **dict** - Fully override the entity extraction strategy.
 
 ### summarize_descriptions
 
 #### Fields
 
-- `llm` (see LLM top-level config)
-- `parallelization` (see Parallelization top-level config)
-- `async_mode` (see Async Mode top-level config)
+- `model_id` - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
-- `strategy` **dict** - Fully override the summarize description strategy.
 
 ### claim_extraction
 
 #### Fields
 
 - `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
-- `llm` (see LLM top-level config)
-- `parallelization` (see Parallelization top-level config)
-- `async_mode` (see Async Mode top-level config)
+- `model_id` - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
-- `encoding_model` **str** - The text encoding model to use. By default, this will use the top-level encoding model.
-- `strategy` **dict** - Fully override the claim extraction strategy.
 
 ### community_reports
 
 #### Fields
 
-- `llm` (see LLM top-level config)
-- `parallelization` (see Parallelization top-level config)
-- `async_mode` (see Async Mode top-level config)
+- `model_id` - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
-- `strategy` **dict** - Fully override the community reports strategy.
 
 ### cluster_graph
+
+These are the settings used for Leiden hierarchical clustering of the graph to create communities.
 
 #### Fields
 
 - `max_cluster_size` **int** - The maximum cluster size to export.
-- `strategy` **dict** - Fully override the cluster_graph strategy.
+- `use_lcc` **bool** - Whether to only use the largest connected component.
+- `seed` **int** - A randomization seed to provide if consistent run-to-run results are desired. We do provide a default in order to guarantee clustering stability.
 
 ### embed_graph
+
+We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default. However, if you do prefer to embed the graph for secondary analysis, you can turn this on and we will persist the embeddings to your configured vector store.
 
 #### Fields
 
@@ -220,6 +235,8 @@ This is the base LLM configuration section. Other steps may override this config
 
 ### umap
 
+Indicates whether we should run UMAP dimensionality reduction. This is used to provide an x/y coordinate to each graph node, suitable for visualization. If this is not enabled, nodes will receive a 0/0 x/y coordinate. If this is enabled, you *must* enable graph embedding as well.
+
 #### Fields
 
 - `enabled` **bool** - Whether to enable UMAP layouts.
@@ -231,14 +248,6 @@ This is the base LLM configuration section. Other steps may override this config
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
 - `graphml` **bool** - Export graph snapshots to GraphML.
 - `transient` **bool** - Export transient workflow tables snapshots to parquet.
-
-### encoding_model
-
-**str** - The text encoding model to use. Default=`cl100k_base`.
-
-### skip_workflows
-
-**list[str]** - Which workflow names to skip.
 
 ## Query
 
@@ -289,6 +298,7 @@ This is the base LLM configuration section. Other steps may override this config
 #### Fields
 
 - `prompt` **str** - The prompt file to use.
+- `reduce_prompt` **str** - The reducer prompt file to use.
 - `temperature` **float** - The temperature to use for token generation.",
 - `top_p` **float** - The top-p value to use for token generation.
 - `n` **int** - The number of completions to generate.
