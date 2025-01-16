@@ -287,7 +287,7 @@ async def multi_global_search(
         nodes_df["community"] = nodes_df["community"].apply(
             lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
-        nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
+        nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
         max_vals["nodes"] = nodes_df["human_readable_id"].max()
         nodes_dfs.append(nodes_df)
 
@@ -328,10 +328,10 @@ async def multi_global_search(
             }
         entities_df["human_readable_id"] += max_vals["entities"] + 1
         entities_df["title"] = entities_df["title"].apply(
-            lambda x: x + f"-{index_name}"  # noqa: B023
+            lambda x, index_name=index_name: x + f"-{index_name}"
         )
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
-            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
         max_vals["entities"] = entities_df["human_readable_id"].max()
         entities_dfs.append(entities_df)
@@ -605,8 +605,8 @@ async def multi_local_search(
         nodes_df["community"] = nodes_df["community"].apply(
             lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
-        nodes_df["title"] = nodes_df["title"].apply(lambda x: x + f"-{index_name}")  # noqa: B023
-        nodes_df["id"] = nodes_df["id"].apply(lambda x: x + f"-{index_name}")
+        nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        nodes_df["id"] = nodes_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
         max_vals["nodes"] = nodes_df["human_readable_id"].max()
         nodes_dfs.append(nodes_df)
 
@@ -632,11 +632,11 @@ async def multi_local_search(
             }
         entities_df["human_readable_id"] += max_vals["entities"] + 1
         entities_df["title"] = entities_df["title"].apply(
-            lambda x: x + f"-{index_name}"  # noqa: B023
+            lambda x, index_name=index_name: x + f"-{index_name}"
         )
-        entities_df["id"] = entities_df["id"].apply(lambda x: x + f"-{index_name}")
+        entities_df["id"] = entities_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
-            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
         max_vals["entities"] = entities_df["human_readable_id"].max()
         entities_dfs.append(entities_df)
@@ -656,13 +656,13 @@ async def multi_local_search(
             )
             relationships_df["human_readable_id"] = col.astype(str)
         relationships_df["source"] = relationships_df["source"].apply(
-            lambda x: x + f"-{index_name}"  # noqa: B023
+            lambda x, index_name=index_name: x + f"-{index_name}"
         )
         relationships_df["target"] = relationships_df["target"].apply(
-            lambda x: x + f"-{index_name}"  # noqa: B023
+            lambda x, index_name=index_name: x + f"-{index_name}"
         )
         relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
-            lambda x: [i + f"-{index_name}" for i in x]  # noqa: B023
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
         max_vals["relationships"] = (
             relationships_df["human_readable_id"].astype(int).max()
@@ -676,7 +676,7 @@ async def multi_local_search(
                 "index_name": index_name,
                 "id": i,
             }
-        text_units_df["id"] = text_units_df["id"].apply(lambda x: f"{x}-{index_name}")  # noqa: B023
+        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
         text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"] + 1
         max_vals["text_units"] = text_units_df["human_readable_id"].max()
         text_units_dfs.append(text_units_df)
