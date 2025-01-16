@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Adding escape and quote characters to the pandas read_csv logic used by the csv file loader."
+}
