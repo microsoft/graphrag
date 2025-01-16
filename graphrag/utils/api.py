@@ -191,7 +191,7 @@ def update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    index_name=links["claims"][int(entry["id"])]["index_name"], index_id=links["claims"][int(entry["id"])]["id"],
+                    entity=entry["entity"].split("-")[0], index_name=links["covariates"][int(entry["id"])]["index_name"], index_id=links["covariates"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]

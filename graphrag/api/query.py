@@ -563,7 +563,6 @@ async def multi_local_search(
     """
     links = {
         "nodes": {},
-        "community": {},
         "community_reports": {},
         "entities": {},
         "text_units": {},
@@ -572,12 +571,11 @@ async def multi_local_search(
     }
     max_vals = {
         "nodes": -1,
-        "community": -1,
         "community_reports": -1,
         "entities": -1,
-        "text_units": -1,
+        "text_units": 0,
         "relationships": -1,
-        "covariates": -1,
+        "covariates": 0,
     }
 
     community_reports_dfs = []
@@ -585,6 +583,7 @@ async def multi_local_search(
     nodes_dfs = []
     relationships_dfs = []
     text_units_dfs = []
+    covariates_dfs = []
 
     index_names = [conf['index_name'] for conf in vector_store_configs]
 
@@ -668,15 +667,29 @@ async def multi_local_search(
 
         # Prepare each index's text units dataframe for merging
         text_units_df = text_units_list[idx]
-        for i in text_units_df["human_readable_id"].astype(int):
-            links["text_units"][i + max_vals["text_units"] + 1] = {
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
                 "index_name": index_name,
                 "id": i,
             }
-        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
-        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"] + 1
-        max_vals["text_units"] = text_units_df["human_readable_id"].max()
+        text_units_df["id"] = text_units_df["id"].apply(lambda x: f"{x}-{index_name}")
+        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"]
+        max_vals["text_units"] += text_units_df.shape[0]#text_units_df["human_readable_id"].max()
         text_units_dfs.append(text_units_df)
+
+        if type(covariates_list) != type(None):
+            covariates_df = covariates_list[idx]
+            for i in covariates_df["human_readable_id"].astype(int):
+                links["covariates"][i + max_vals["covariates"]] = {
+                    "index_name": index_name,
+                    "id": i,
+                }
+            covariates_df["id"] = covariates_df["id"].apply(lambda x: f"{x}-{index_name}")
+            covariates_df["human_readable_id"] = covariates_df["human_readable_id"] + max_vals["covariates"]
+            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x: x + f"-{index_name}")
+            covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x: x + f"-{index_name}")
+            max_vals["covariates"] = covariates_df["human_readable_id"].max()
+            covariates_dfs.append(covariates_df)
 
     # Merge the dataframes
     nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
@@ -692,6 +705,9 @@ async def multi_local_search(
     text_units_combined = pd.concat(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
+    covariates_combined = pd.concat(
+        covariates_dfs, axis=0, ignore_index=True, sort=False
+    )
 
     config.embeddings.vector_store = vector_store_configs
 
@@ -704,7 +720,7 @@ async def multi_local_search(
             community_reports=community_reports_combined,
             text_units=text_units_combined,
             relationships=relationships_combined,
-            covariates=None,
+            covariates=covariates_combined,
             community_level=community_level,
             response_type=response_type,
             query=query,
@@ -717,7 +733,7 @@ async def multi_local_search(
         community_reports=community_reports_combined,
         text_units=text_units_combined,
         relationships=relationships_combined,
-        covariates=None,
+        covariates=covariates_combined,
         community_level=community_level,
         response_type=response_type,
         query=query,
