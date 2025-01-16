@@ -21,10 +21,6 @@ from tests.unit.config.utils import (
 )
 
 
-def test_skip_validation() -> None:
-    create_graphrag_config(skip_validation=True)
-
-
 def test_missing_openai_required_api_key() -> None:
     model_config_missing_api_key = {
         defs.DEFAULT_CHAT_MODEL_ID: {
