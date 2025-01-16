@@ -27,7 +27,7 @@ class TextEmbeddingConfig(BaseModel):
     names: list[str] = Field(
         description="The specific embeddings to perform.", default=[]
     )
-    vector_store: dict | None = Field(
+    vector_store: dict = Field(
         description="The vector storage configuration", default=defs.VECTOR_STORE_DICT
     )
     strategy: dict | None = Field(

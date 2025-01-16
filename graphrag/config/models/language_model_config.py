@@ -76,27 +76,27 @@ class LanguageModelConfig(BaseModel):
         if self.encoding_model.strip() == "":
             self.encoding_model = tiktoken.encoding_name_for_model(self.model)
 
-    max_tokens: int | None = Field(
+    max_tokens: int = Field(
         description="The maximum number of tokens to generate.",
         default=defs.LLM_MAX_TOKENS,
     )
-    temperature: float | None = Field(
+    temperature: float = Field(
         description="The temperature to use for token generation.",
         default=defs.LLM_TEMPERATURE,
     )
-    top_p: float | None = Field(
+    top_p: float = Field(
         description="The top-p value to use for token generation.",
         default=defs.LLM_TOP_P,
     )
-    n: int | None = Field(
+    n: int = Field(
         description="The number of completions to generate.",
         default=defs.LLM_N,
     )
-    frequency_penalty: float | None = Field(
+    frequency_penalty: float = Field(
         description="The frequency penalty to use for token generation.",
         default=defs.LLM_FREQUENCY_PENALTY,
     )
-    presence_penalty: float | None = Field(
+    presence_penalty: float = Field(
         description="The presence penalty to use for token generation.",
         default=defs.LLM_PRESENCE_PENALTY,
     )
