@@ -917,7 +917,7 @@ def _get_embedding_store(
     embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
-    if type(config_args) == dict:
+    if isinstance(config_args, dict):
         vector_store_type = config_args["type"]
         collection_name = create_collection_name(
             config_args.get("container_name", "default"), embedding_name
@@ -928,27 +928,27 @@ def _get_embedding_store(
         )
         embedding_store.connect(**config_args)
         return embedding_store
-    else:
-        config_args_list = config_args
-        embedding_stores = []
-        index_names = []
-        for config_args in config_args_list:
-            vector_store_type = config_args["type"]
-            collection_name = create_collection_name(
-                config_args.get("container_name", "default"), embedding_name
-            )
-            embedding_store = VectorStoreFactory().create_vector_store(
-                vector_store_type=vector_store_type,
-                kwargs={**config_args, "collection_name": collection_name},
-            )
-            embedding_store.connect(**config_args)
-            embedding_stores.append(embedding_store)
-            index_names.append(config_args["index_name"])
-        return MultiVectorStore(embedding_stores, index_names)
+    config_args_list = config_args
+    embedding_stores = []
+    index_names = []
+    for config_args in config_args_list:
+        vector_store_type = config_args["type"]
+        collection_name = create_collection_name(
+            config_args.get("container_name", "default"), embedding_name
+        )
+        embedding_store = VectorStoreFactory().create_vector_store(
+            vector_store_type=vector_store_type,
+            kwargs={**config_args, "collection_name": collection_name},
+        )
+        embedding_store.connect(**config_args)
+        embedding_stores.append(embedding_store)
+        index_names.append(config_args["index_name"])
+    return MultiVectorStore(embedding_stores, index_names)
 
 
 class MultiVectorStore(BaseVectorStore):
     """Multi Vector Store wrapper implementation."""
+
     def __init__(
         self,
         embedding_stores: list[BaseVectorStore],
@@ -960,23 +960,31 @@ class MultiVectorStore(BaseVectorStore):
     def load_documents(
         self, documents: list[VectorStoreDocument], overwrite: bool = True
     ) -> None:
-        raise NotImplementedError("load_documents() method not implemented")
+        """Load documents into the vector store."""
+        msg = "load_documents method not implemented"
+        raise NotImplementedError(msg)
     
     def connect(self, **kwargs: Any) -> Any:
-        raise NotImplementedError("connect() method not implemented")
+        """Connect to vector storage."""
+        msg = "connect method not implemented"
+        raise NotImplementedError(msg)
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
-        raise NotImplementedError("filter_by_id() method not implemented")
+        """Build a query filter to filter documents by id."""
+        msg = "filter_by_id method not implemented"
+        raise NotImplementedError(msg)
     
     def search_by_id(self, id: str) -> VectorStoreDocument:
-        raise NotImplementedError("search_by_id() method not implemented")
+        """Search for a document by id."""
+        msg = "search_by_id method not implemented"
+        raise NotImplementedError(msg)
 
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         all_results = []
-        for index_name, embedding_store in zip(self.index_names, self.embedding_stores):
+        for index_name, embedding_store in zip(self.index_names, self.embedding_stores, strict=False):
             results = embedding_store.similarity_search_by_vector(
                 query_embedding=query_embedding, k=k
             )
@@ -985,8 +993,7 @@ class MultiVectorStore(BaseVectorStore):
                 r.document.id = str(r.document.id) + f"-{index_name}"
                 mod_results += [r]
             all_results += mod_results
-        sorted_results = sorted(all_results, key=lambda x: x.score, reverse=True)[:k]
-        return sorted_results
+        return sorted(all_results, key=lambda x: x.score, reverse=True)[:k]
 
     def similarity_search_by_text(
         self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
