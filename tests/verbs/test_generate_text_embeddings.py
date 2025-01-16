@@ -30,13 +30,14 @@ async def test_generate_text_embeddings():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    llm_settings = config.get_language_model_config(config.embeddings.model_id)
-    base_strategy = config.embeddings.resolved_strategy(llm_settings)
-    base_strategy["type"] = "mock"
+    llm_settings = config.get_language_model_config(
+        config.embeddings.model_id
+    ).model_dump()
 
-    # config.embeddings.strategy = {
-    #     "type": "mock",
-    # }
+    config.embeddings.strategy = {
+        "type": "mock",
+        "llm": llm_settings,
+    }
     config.embeddings.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
 

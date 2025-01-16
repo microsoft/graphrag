@@ -57,32 +57,22 @@ async def test_extract_graph():
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     claim_extraction_llm_settings = config.get_language_model_config(
         config.entity_extraction.model_id
-    )
-    claim_extraction_strategy = config.entity_extraction.resolved_strategy(
-        config.root_dir, claim_extraction_llm_settings
-    )
-    claim_extraction_strategy["type"] = "graph_intelligence"
-    claim_extraction_strategy["llm"]["type"] = LLMType.StaticResponse
-    claim_extraction_strategy["llm"]["responses"] = MOCK_LLM_ENTITY_RESPONSES
-    config.claim_extraction.strategy = claim_extraction_strategy
-    # config.entity_extraction.strategy = {
-    #     "type": "graph_intelligence",
-    #     "llm": MOCK_LLM_ENTITY_CONFIG,
-    # }
+    ).model_dump()
+    claim_extraction_llm_settings["type"] = LLMType.StaticResponse
+    claim_extraction_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
+    config.entity_extraction.strategy = {
+        "type": "graph_intelligence",
+        "llm": claim_extraction_llm_settings,
+    }
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
-    )
-    summarize_strategy = config.summarize_descriptions.resolved_strategy(
-        config.root_dir, summarize_llm_settings
-    )
-    summarize_strategy["type"] = "graph_intelligence"
-    summarize_strategy["llm"]["type"] = LLMType.StaticResponse
-    summarize_strategy["llm"]["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
-    config.summarize_descriptions.strategy = summarize_strategy
-    # config.summarize_descriptions.strategy = {
-    #     "type": "graph_intelligence",
-    #     "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
-    # }
+    ).model_dump()
+    summarize_llm_settings["type"] = LLMType.StaticResponse
+    summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
+    config.summarize_descriptions.strategy = {
+        "type": "graph_intelligence",
+        "llm": summarize_llm_settings,
+    }
 
     await run_workflow(
         config,

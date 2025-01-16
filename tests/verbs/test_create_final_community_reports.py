@@ -60,20 +60,16 @@ async def test_create_final_community_reports():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    llm_settings = config.get_language_model_config(config.community_reports.model_id)
-    base_strategy = config.community_reports.resolved_strategy(
-        config.root_dir,
-        llm_settings,
-    )
-    base_strategy["type"] = "graph_intelligence"
-    base_strategy["llm"]["type"] = LLMType.StaticResponse
-    base_strategy["llm"]["responses"] = MOCK_RESPONSES
-    base_strategy["llm"]["parse_json"] = True
-    config.community_reports.strategy = base_strategy
-    # config.community_reports.strategy = {
-    #     "type": "graph_intelligence",
-    #     "llm": MOCK_LLM_CONFIG,
-    # }
+    llm_settings = config.get_language_model_config(
+        config.community_reports.model_id
+    ).model_dump()
+    llm_settings["type"] = LLMType.StaticResponse
+    llm_settings["responses"] = MOCK_RESPONSES
+    llm_settings["parse_json"] = True
+    config.community_reports.strategy = {
+        "type": "graph_intelligence",
+        "llm": llm_settings,
+    }
 
     await run_workflow(
         config,
