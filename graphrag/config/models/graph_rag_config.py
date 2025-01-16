@@ -59,14 +59,7 @@ class GraphRagConfig(BaseModel):
 
     models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.",
-        default={
-            defs.DEFAULT_CHAT_MODEL_ID: LanguageModelConfig.model_construct(
-                model=defs.LLM_MODEL, type=defs.LLM_TYPE
-            ),
-            defs.DEFAULT_EMBEDDING_MODEL_ID: LanguageModelConfig.model_construct(
-                model=defs.LLM_MODEL, type=defs.LLM_TYPE
-            ),
-        },
+        default={},
     )
 
     def _validate_models(self) -> None:
