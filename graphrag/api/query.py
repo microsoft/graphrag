@@ -693,7 +693,7 @@ async def multi_local_search(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
 
-    config.embeddings.vector_store = vector_store_configs[0]
+    config.embeddings.vector_store = vector_store_configs
 
     # Call the streaming api function
     if streaming:
