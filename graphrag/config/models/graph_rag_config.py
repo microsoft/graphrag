@@ -213,7 +213,7 @@ class GraphRagConfig(BaseModel):
             If the model ID is not found in the configuration.
         """
         if model_id not in self.models:
-            err_msg = f"Model ID {model_id} not found in configuration."
+            err_msg = f"Model ID {model_id} not found in configuration. Please rerun `graphrag init` and set the model configuration."
             raise ValueError(err_msg)
 
         return self.models[model_id]

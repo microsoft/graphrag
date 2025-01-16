@@ -11,7 +11,7 @@ class ApiKeyMissingError(ValueError):
         msg = f"API Key is required for {llm_type}"
         if azure_auth_type:
             msg += f" when using {azure_auth_type} authentication"
-        msg += ". Please set the API_KEY."
+        msg += ". Please rerun `graphrag init` and set the API_KEY."
         super().__init__(msg)
 
 
@@ -20,7 +20,7 @@ class AzureApiBaseMissingError(ValueError):
 
     def __init__(self, llm_type: str) -> None:
         """Init method definition."""
-        msg = f"API Base is required for {llm_type}. Please set the api_base."
+        msg = f"API Base is required for {llm_type}. Please rerun `graphrag init` and set the api_base."
         super().__init__(msg)
 
 
@@ -29,7 +29,7 @@ class AzureApiVersionMissingError(ValueError):
 
     def __init__(self, llm_type: str) -> None:
         """Init method definition."""
-        msg = f"API Version is required for {llm_type}. Please set the api_version."
+        msg = f"API Version is required for {llm_type}. Please rerun `graphrag init` and set the api_version."
         super().__init__(msg)
 
 
@@ -38,7 +38,7 @@ class AzureDeploymentNameMissingError(ValueError):
 
     def __init__(self, llm_type: str) -> None:
         """Init method definition."""
-        msg = f"Deployment name is required for {llm_type}. Please set the deployment_name."
+        msg = f"Deployment name is required for {llm_type}. Please rerun `graphrag init` set the deployment_name."
         super().__init__(msg)
 
 
@@ -47,7 +47,7 @@ class LanguageModelConfigMissingError(ValueError):
 
     def __init__(self, key: str = "") -> None:
         """Init method definition."""
-        msg = f'A {key} model configuration is required. Please set models["{key}"] in settings.yaml or rerun graphrag init'
+        msg = f'A {key} model configuration is required. Please rerun `graphrag init` and set models["{key}"] in settings.yaml.'
         super().__init__(msg)
 
 

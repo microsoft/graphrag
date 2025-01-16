@@ -53,7 +53,7 @@ class LanguageModelConfig(BaseModel):
         if (self.azure_auth_type == AzureAuthType.ManagedIdentity) and (
             self.api_key is not None and self.api_key.strip() != ""
         ):
-            msg = "API Key should not be provided when using Azure Managed Identity."
+            msg = "API Key should not be provided when using Azure Managed Identity. Please rerun `graphrag init` and remove the api_key when using Azure Managed Identity."
             raise ConflictingSettingsError(msg)
 
     azure_auth_type: AzureAuthType | None = Field(
