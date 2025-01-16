@@ -39,12 +39,6 @@ MOCK_RESPONSES = [
     )
 ]
 
-MOCK_LLM_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_RESPONSES,
-    "parse_json": True,
-}
-
 
 async def test_create_final_community_reports():
     expected = load_test_table(workflow_name)

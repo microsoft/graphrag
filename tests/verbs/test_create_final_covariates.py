@@ -24,8 +24,6 @@ MOCK_LLM_RESPONSES = [
     """.strip()
 ]
 
-MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONSES}
-
 
 async def test_create_final_covariates():
     input = load_test_table("create_base_text_units")

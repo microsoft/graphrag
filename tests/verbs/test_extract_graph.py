@@ -29,21 +29,11 @@ MOCK_LLM_ENTITY_RESPONSES = [
     """.strip()
 ]
 
-MOCK_LLM_ENTITY_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_ENTITY_RESPONSES,
-}
-
 MOCK_LLM_SUMMARIZATION_RESPONSES = [
     """
     This is a MOCK response for the LLM. It is summarized!
     """.strip()
 ]
-
-MOCK_LLM_SUMMARIZATION_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_SUMMARIZATION_RESPONSES,
-}
 
 
 async def test_extract_graph():
