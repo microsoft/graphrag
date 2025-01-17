@@ -251,18 +251,12 @@ async def multi_global_search(
         "community": {},
         "community_reports": {},
         "entities": {},
-        "text_units": {},
-        "relationships": {},
-        "covariates": {},
     }
     max_vals = {
         "nodes": -1,
         "community": -1,
         "community_reports": -1,
         "entities": -1,
-        "text_units": -1,
-        "relationships": -1,
-        "covariates": -1,
     }
 
     communities_dfs = []
@@ -585,7 +579,7 @@ async def multi_local_search(
     text_units_dfs = []
     covariates_dfs = []
 
-    index_names = [conf['index_name'] for conf in vector_store_configs]
+    index_names = [conf["index_name"] for conf in vector_store_configs]
 
     for idx, index_name in enumerate(index_names):
         # Prepare each index's nodes dataframe for merging
@@ -672,23 +666,23 @@ async def multi_local_search(
                 "index_name": index_name,
                 "id": i,
             }
-        text_units_df["id"] = text_units_df["id"].apply(lambda x: f"{x}-{index_name}")
+        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
         text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"]
-        max_vals["text_units"] += text_units_df.shape[0]#text_units_df["human_readable_id"].max()
+        max_vals["text_units"] += text_units_df.shape[0]
         text_units_dfs.append(text_units_df)
 
-        if type(covariates_list) != type(None):
+        # If presents, prepare each index's covariates dataframe for merging
+        if type(covariates_list) is not type(None):
             covariates_df = covariates_list[idx]
             for i in range(covariates_df.shape[0]):
                 links["covariates"][i + max_vals["covariates"]] = {
                     "index_name": index_name,
                     "id": i,
                 }
-            covariates_df["id"] = covariates_df["id"].apply(lambda x: f"{x}-{index_name}")
+            covariates_df["id"] = covariates_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
             covariates_df["human_readable_id"] = covariates_df["human_readable_id"] + max_vals["covariates"]
-            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x: x + f"-{index_name}")
-            covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x: x + f"-{index_name}")
-            #max_vals["covariates"] = covariates_df["human_readable_id"].max()
+            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+            covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
             max_vals["covariates"] += covariates_df.shape[0]
             covariates_dfs.append(covariates_df)
 
