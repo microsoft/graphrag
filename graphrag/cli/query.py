@@ -202,6 +202,7 @@ def run_drift_search(
     data_dir: Path | None,
     root_dir: Path,
     community_level: int,
+    response_type: str,
     streaming: bool,
     query: str,
 ):
@@ -234,8 +235,33 @@ def run_drift_search(
 
     # call the Query API
     if streaming:
-        error_msg = "Streaming is not supported yet for DRIFT search."
-        raise NotImplementedError(error_msg)
+
+        async def run_streaming_search():
+            full_response = ""
+            context_data = None
+            get_context_data = True
+            async for stream_chunk in api.drift_search_streaming(
+                config=config,
+                nodes=final_nodes,
+                entities=final_entities,
+                community_reports=final_community_reports,
+                text_units=final_text_units,
+                relationships=final_relationships,
+                community_level=community_level,
+                response_type=response_type,
+                query=query,
+            ):
+                if get_context_data:
+                    context_data = stream_chunk
+                    get_context_data = False
+                else:
+                    full_response += stream_chunk
+                    print(stream_chunk, end="")  # noqa: T201
+                    sys.stdout.flush()  # flush output buffer to display text immediately
+            print()  # noqa: T201
+            return full_response, context_data
+
+        return asyncio.run(run_streaming_search())
 
     # not streaming
     response, context_data = asyncio.run(
@@ -247,6 +273,7 @@ def run_drift_search(
             text_units=final_text_units,
             relationships=final_relationships,
             community_level=community_level,
+            response_type=response_type,
             query=query,
         )
     )
@@ -280,8 +307,6 @@ def run_basic_search(
         ],
     )
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-
-    print(streaming)  # noqa: T201
 
     # # call the Query API
     if streaming:

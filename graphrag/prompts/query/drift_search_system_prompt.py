@@ -106,7 +106,7 @@ If you decide to use general knowledge, you should add a delimiter stating that 
 
 ---Target response length and format---
 
-Multiple paragraphs
+{response_type}
 
 
 ---Goal---
@@ -132,8 +132,6 @@ If you decide to use general knowledge, you should add a delimiter stating that 
 "Person X is the owner of Company Y and subject to many allegations of wrongdoing. [Data: General Knowledge (href)]".
 
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown. Now answer the following query using the data above:
-
-{query}
 
 """
 

@@ -589,6 +589,7 @@ def create_graphrag_config(
         ):
             drift_search_model = DRIFTSearchConfig(
                 prompt=reader.str("prompt") or None,
+                reduce_prompt=reader.str("reduce_prompt") or None,
                 temperature=reader.float("llm_temperature")
                 or defs.DRIFT_SEARCH_LLM_TEMPERATURE,
                 top_p=reader.float("llm_top_p") or defs.DRIFT_SEARCH_LLM_TOP_P,
@@ -597,6 +598,10 @@ def create_graphrag_config(
                 or defs.DRIFT_SEARCH_MAX_TOKENS,
                 data_max_tokens=reader.int("data_max_tokens")
                 or defs.DRIFT_SEARCH_DATA_MAX_TOKENS,
+                reduce_max_tokens=reader.int("reduce_max_tokens")
+                or defs.DRIFT_SEARCH_REDUCE_MAX_TOKENS,
+                reduce_temperature=reader.float("reduce_temperature")
+                or defs.DRIFT_SEARCH_REDUCE_LLM_TEMPERATURE,
                 concurrency=reader.int("concurrency") or defs.DRIFT_SEARCH_CONCURRENCY,
                 drift_k_followups=reader.int("drift_k_followups")
                 or defs.DRIFT_SEARCH_K_FOLLOW_UPS,
