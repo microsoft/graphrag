@@ -23,9 +23,9 @@ from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.output_config import OutputConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
@@ -99,38 +99,38 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.reporting.base_dir).resolve()
             )
 
-    storage: StorageConfig = Field(
-        description="The storage configuration.", default=StorageConfig()
+    output: OutputConfig = Field(
+        description="The output configuration.", default=OutputConfig()
     )
-    """The storage configuration."""
+    """The output configuration."""
 
-    def _validate_storage_base_dir(self) -> None:
-        """Validate the storage base directory."""
-        if self.storage.type == defs.StorageType.file:
-            if self.storage.base_dir.strip() == "":
-                msg = "Storage base directory is required for file storage. Please rerun `graphrag init` and set the storage configuration."
+    def _validate_output_base_dir(self) -> None:
+        """Validate the output base directory."""
+        if self.output.type == defs.OutputType.file:
+            if self.output.base_dir.strip() == "":
+                msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
                 raise ValueError(msg)
-            self.storage.base_dir = str(
-                (Path(self.root_dir) / self.storage.base_dir).resolve()
+            self.output.base_dir = str(
+                (Path(self.root_dir) / self.output.base_dir).resolve()
             )
 
-    update_index_storage: StorageConfig | None = Field(
-        description="The storage configuration for the updated index.",
+    update_index_output: OutputConfig | None = Field(
+        description="The output configuration for the updated index.",
         default=None,
     )
-    """The storage configuration for the updated index."""
+    """The output configuration for the updated index."""
 
-    def _validate_update_index_storage_base_dir(self) -> None:
-        """Validate the update index storage base directory."""
+    def _validate_update_index_output_base_dir(self) -> None:
+        """Validate the update index output base directory."""
         if (
-            self.update_index_storage
-            and self.update_index_storage.type == defs.StorageType.file
+            self.update_index_output
+            and self.update_index_output.type == defs.OutputType.file
         ):
-            if self.update_index_storage.base_dir.strip() == "":
-                msg = "Update index storage base directory is required for file storage. Please rerun `graphrag init` and set the update index storage configuration."
+            if self.update_index_output.base_dir.strip() == "":
+                msg = "Update index output base directory is required for file output. Please rerun `graphrag init` and set the update index output configuration."
                 raise ValueError(msg)
-            self.update_index_storage.base_dir = str(
-                (Path(self.root_dir) / self.update_index_storage.base_dir).resolve()
+            self.update_index_output.base_dir = str(
+                (Path(self.root_dir) / self.update_index_output.base_dir).resolve()
             )
 
     cache: CacheConfig = Field(
@@ -269,7 +269,7 @@ class GraphRagConfig(BaseModel):
         self._validate_root_dir()
         self._validate_models()
         self._validate_reporting_base_dir()
-        self._validate_storage_base_dir()
-        self._validate_update_index_storage_base_dir()
+        self._validate_output_base_dir()
+        self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
         return self

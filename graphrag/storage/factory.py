@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from graphrag.config.enums import StorageType
+from graphrag.config.enums import OutputType
 from graphrag.storage.blob_pipeline_storage import create_blob_storage
 from graphrag.storage.cosmosdb_pipeline_storage import create_cosmosdb_storage
 from graphrag.storage.file_pipeline_storage import create_file_storage
@@ -35,17 +35,17 @@ class StorageFactory:
 
     @classmethod
     def create_storage(
-        cls, storage_type: StorageType | str, kwargs: dict
+        cls, storage_type: OutputType | str, kwargs: dict
     ) -> PipelineStorage:
         """Create or get a storage object from the provided type."""
         match storage_type:
-            case StorageType.blob:
+            case OutputType.blob:
                 return create_blob_storage(**kwargs)
-            case StorageType.cosmosdb:
+            case OutputType.cosmosdb:
                 return create_cosmosdb_storage(**kwargs)
-            case StorageType.file:
+            case OutputType.file:
                 return create_file_storage(**kwargs)
-            case StorageType.memory:
+            case OutputType.memory:
                 return MemoryPipelineStorage()
             case _:
                 if storage_type in cls.storage_types:

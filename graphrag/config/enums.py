@@ -53,17 +53,17 @@ class InputType(str, Enum):
         return f'"{self.value}"'
 
 
-class StorageType(str, Enum):
-    """The storage type for the pipeline."""
+class OutputType(str, Enum):
+    """The output type for the pipeline."""
 
     file = "file"
-    """The file storage type."""
+    """The file output type."""
     memory = "memory"
-    """The memory storage type."""
+    """The memory output type."""
     blob = "blob"
-    """The blob storage type."""
+    """The blob output type."""
     cosmosdb = "cosmosdb"
-    """The cosmosdb storage type"""
+    """The cosmosdb output type"""
 
     def __repr__(self):
         """Get a string representation."""

@@ -165,7 +165,7 @@ def _index_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -226,7 +226,7 @@ def _update_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -236,7 +236,7 @@ def _update_cli(
     """
     Update an existing knowledge graph index.
 
-    Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
+    Applies a default output configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
     from graphrag.cli.index import update_cli
 

@@ -77,7 +77,7 @@ def index_cli(
     """Run the pipeline with the given config."""
     cli_overrides = {}
     if output_dir:
-        cli_overrides["storage.base_dir"] = str(output_dir)
+        cli_overrides["output.base_dir"] = str(output_dir)
         cli_overrides["reporting.base_dir"] = str(output_dir)
     config = load_config(root_dir, config_filepath, cli_overrides)
 
@@ -106,18 +106,18 @@ def update_cli(
     """Run the pipeline with the given config."""
     cli_overrides = {}
     if output_dir:
-        cli_overrides["storage.base_dir"] = str(output_dir)
+        cli_overrides["output.base_dir"] = str(output_dir)
         cli_overrides["reporting.base_dir"] = str(output_dir)
     config = load_config(root_dir, config_filepath, cli_overrides)
 
-    # Check if update storage exist, if not configure it with default values
-    if not config.update_index_storage:
-        from graphrag.config.defaults import STORAGE_TYPE, UPDATE_STORAGE_BASE_DIR
-        from graphrag.config.models.storage_config import StorageConfig
+    # Check if update output exist, if not configure it with default values
+    if not config.update_index_output:
+        from graphrag.config.defaults import OUTPUT_TYPE, UPDATE_OUTPUT_BASE_DIR
+        from graphrag.config.models.output_config import OutputConfig
 
-        config.update_index_storage = StorageConfig(
-            type=STORAGE_TYPE,
-            base_dir=UPDATE_STORAGE_BASE_DIR,
+        config.update_index_output = OutputConfig(
+            type=OUTPUT_TYPE,
+            base_dir=UPDATE_OUTPUT_BASE_DIR,
         )
 
     _run_index(

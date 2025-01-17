@@ -6,18 +6,18 @@
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import StorageType
+from graphrag.config.enums import OutputType
 
 
-class StorageConfig(BaseModel):
-    """The default configuration section for Storage."""
+class OutputConfig(BaseModel):
+    """The default configuration section for Output."""
 
-    type: StorageType = Field(
-        description="The storage type to use.", default=defs.STORAGE_TYPE
+    type: OutputType = Field(
+        description="The output type to use.", default=defs.OUTPUT_TYPE
     )
     base_dir: str = Field(
-        description="The base directory for the storage.",
-        default=defs.STORAGE_BASE_DIR,
+        description="The base directory for the output.",
+        default=defs.OUTPUT_BASE_DIR,
     )
     connection_string: str | None = Field(
         description="The storage connection string to use.", default=None

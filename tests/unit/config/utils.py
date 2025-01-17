@@ -18,9 +18,9 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
+from graphrag.config.models.output_config import OutputConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
-from graphrag.config.models.storage_config import StorageConfig
 from graphrag.config.models.summarize_descriptions_config import (
     SummarizeDescriptionsConfig,
 )
@@ -65,14 +65,14 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "container_name": None,
         "storage_account_blob_url": None,
     },
-    "storage": {
-        "type": defs.STORAGE_TYPE,
-        "base_dir": defs.STORAGE_BASE_DIR,
+    "output": {
+        "type": defs.OUTPUT_TYPE,
+        "base_dir": defs.OUTPUT_BASE_DIR,
         "connection_string": None,
         "container_name": None,
         "storage_account_blob_url": None,
     },
-    "update_index_storage": None,
+    "update_index_output": None,
     "cache": {
         "type": defs.CACHE_TYPE,
         "base_dir": defs.CACHE_BASE_DIR,
@@ -303,7 +303,7 @@ def assert_reporting_configs(
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
 
 
-def assert_storage_configs(actual: StorageConfig, expected: StorageConfig) -> None:
+def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
     assert expected.type == actual.type
     assert expected.base_dir == actual.base_dir
     assert expected.connection_string == actual.connection_string
@@ -538,15 +538,13 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
-    assert_storage_configs(actual.storage, expected.storage)
+    assert_output_configs(actual.output, expected.output)
 
-    if actual.update_index_storage is not None:
-        assert expected.update_index_storage is not None
-        assert_storage_configs(
-            actual.update_index_storage, expected.update_index_storage
-        )
+    if actual.update_index_output is not None:
+        assert expected.update_index_output is not None
+        assert_output_configs(actual.update_index_output, expected.update_index_output)
     else:
-        assert expected.update_index_storage is None
+        assert expected.update_index_output is None
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)

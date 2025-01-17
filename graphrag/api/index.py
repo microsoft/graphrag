@@ -52,7 +52,7 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    is_update_run = bool(config.update_index_storage)
+    is_update_run = bool(config.update_index_output)
 
     if is_resume_run and is_update_run:
         msg = "Cannot resume and update a run at the same time."

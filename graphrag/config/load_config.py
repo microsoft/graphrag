@@ -159,7 +159,7 @@ def load_config(
         If None, searches for config file in root.
     cli_overrides : dict[str, Any] | None
         A flat dictionary of cli overrides.
-        Example: {'storage.base_dir': 'override_value'}
+        Example: {'output.base_dir': 'override_value'}
 
     Returns
     -------
