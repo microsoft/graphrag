@@ -12,7 +12,8 @@ class VectorStoreConfig(BaseModel):
     """The default configuration section for Vector Store."""
 
     type: str = Field(
-        description="The vector store type to use.", default=defs.VECTOR_STORE_TYPE
+        description="The vector store type to use.",
+        default=defs.VECTOR_STORE_TYPE.value,
     )
 
     db_uri: str = Field(
