@@ -40,7 +40,7 @@ models:
     # deployment_name: <azure_model_deployment_name>
 
 vector_store:
-    type: {defs.VECTOR_STORE_TYPE.value}
+    type: {defs.VECTOR_STORE_TYPE}
     db_uri: {defs.VECTOR_STORE_DB_URI}
     container_name: {defs.VECTOR_STORE_CONTAINER_NAME}
     overwrite: {defs.VECTOR_STORE_OVERWRITE}

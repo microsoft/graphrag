@@ -102,7 +102,7 @@ UMAP_ENABLED = False
 UPDATE_STORAGE_BASE_DIR = "update_output"
 
 
-VECTOR_STORE_TYPE = VectorStoreType.LanceDB
+VECTOR_STORE_TYPE = VectorStoreType.LanceDB.value
 VECTOR_STORE_DB_URI = str(Path(STORAGE_BASE_DIR) / "lancedb")
 VECTOR_STORE_CONTAINER_NAME = "default"
 VECTOR_STORE_OVERWRITE = True
