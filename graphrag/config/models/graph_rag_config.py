@@ -232,7 +232,7 @@ class GraphRagConfig(BaseModel):
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
         if self.vector_store.type == VectorStoreType.LanceDB.value:
-            if self.vector_store.db_uri.strip == "":
+            if not self.vector_store.db_uri or self.vector_store.db_uri.strip == "":
                 msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
                 raise ValueError(msg)
             self.vector_store.db_uri = str(

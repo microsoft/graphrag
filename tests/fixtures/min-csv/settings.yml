@@ -25,16 +25,18 @@ models:
     parallelization_stagger: 0.3
     async_mode: threaded
 
+vector_store:
+  type: "lancedb"
+  db_uri: "./tests/fixtures/min-csv/lancedb"
+  container_name: "lancedb_ci"
+  overwrite: True
+
 input:
   file_type: csv
   file_pattern: ".*\\.csv$$"
 
 embeddings:
-  vector_store:
-    type: "lancedb"
-    db_uri: "./tests/fixtures/min-csv/lancedb"
-    container_name: "lancedb_ci"
-    overwrite: True
+  model_id: "default_embedding_model"
 
 storage:
   type: file

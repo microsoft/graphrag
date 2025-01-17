@@ -42,7 +42,7 @@ models:
 vector_store:
     type: {defs.VECTOR_STORE_TYPE.value}
     db_uri: {defs.VECTOR_STORE_DB_URI}
-    collection_name: {defs.VECTOR_STORE_COLLECTION_NAME}
+    container_name: {defs.VECTOR_STORE_CONTAINER_NAME}
     overwrite: {defs.VECTOR_STORE_OVERWRITE}
 
 embeddings:

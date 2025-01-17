@@ -52,8 +52,11 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "vector_store": {
         "type": defs.VECTOR_STORE_TYPE,
         "db_uri": defs.VECTOR_STORE_DB_URI,
-        "collection_name": defs.VECTOR_STORE_COLLECTION_NAME,
+        "container_name": defs.VECTOR_STORE_CONTAINER_NAME,
         "overwrite": defs.VECTOR_STORE_OVERWRITE,
+        "url": None,
+        "api_key": None,
+        "audience": None,
     },
     "reporting": {
         "type": defs.REPORTING_TYPE,
@@ -283,8 +286,11 @@ def assert_language_model_configs(
 def assert_vector_store_configs(actual: VectorStoreConfig, expected: VectorStoreConfig):
     assert actual.type == expected.type
     assert actual.db_uri == expected.db_uri
-    assert actual.collection_name == expected.collection_name
+    assert actual.container_name == expected.container_name
     assert actual.overwrite == expected.overwrite
+    assert actual.url == expected.url
+    assert actual.api_key == expected.api_key
+    assert actual.audience == expected.audience
 
 
 def assert_reporting_configs(
