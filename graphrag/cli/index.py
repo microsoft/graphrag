@@ -75,7 +75,11 @@ def index_cli(
     output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    config = load_config(root_dir, config_filepath)
+    cli_overrides = {}
+    if output_dir:
+        cli_overrides["storage.base_dir"] = str(output_dir)
+        cli_overrides["reporting.base_dir"] = str(output_dir)
+    config = load_config(root_dir, config_filepath, cli_overrides)
 
     _run_index(
         config=config,
@@ -86,7 +90,6 @@ def index_cli(
         logger=logger,
         dry_run=dry_run,
         skip_validation=skip_validation,
-        output_dir=output_dir,
     )
 
 
@@ -101,7 +104,11 @@ def update_cli(
     output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    config = load_config(root_dir, config_filepath)
+    cli_overrides = {}
+    if output_dir:
+        cli_overrides["storage.base_dir"] = str(output_dir)
+        cli_overrides["reporting.base_dir"] = str(output_dir)
+    config = load_config(root_dir, config_filepath, cli_overrides)
 
     # Check if update storage exist, if not configure it with default values
     if not config.update_index_storage:
@@ -122,7 +129,6 @@ def update_cli(
         logger=logger,
         dry_run=False,
         skip_validation=skip_validation,
-        output_dir=output_dir,
     )
 
 
@@ -135,16 +141,10 @@ def _run_index(
     logger,
     dry_run,
     skip_validation,
-    output_dir,
 ):
     progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
     run_id = resume or time.strftime("%Y%m%d-%H%M%S")
-
-    config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
-    config.reporting.base_dir = (
-        str(output_dir) if output_dir else config.reporting.base_dir
-    )
 
     if not cache:
         config.cache.type = CacheType.none

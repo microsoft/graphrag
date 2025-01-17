@@ -147,6 +147,20 @@ def test_load_minimal_config() -> None:
     assert_graphrag_configs(actual, expected)
 
 
+@mock.patch.dict(os.environ, {"CUSTOM_API_KEY": FAKE_API_KEY}, clear=True)
+def test_load_config_with_cli_overrides() -> None:
+    cwd = Path(__file__).parent
+    root_dir = (cwd / "fixtures" / "minimal_config").resolve()
+    output_dir = "some_output_dir"
+    expected_storage_base_dir = root_dir / output_dir
+    expected = get_default_graphrag_config(str(root_dir))
+    expected.storage.base_dir = str(expected_storage_base_dir)
+    actual = load_config(
+        root_dir=root_dir, cli_overrides={"storage.base_dir": output_dir}
+    )
+    assert_graphrag_configs(actual, expected)
+
+
 def test_load_config_missing_env_vars() -> None:
     cwd = Path(__file__).parent
     root_dir = (cwd / "fixtures" / "minimal_config_missing_env_var").resolve()
