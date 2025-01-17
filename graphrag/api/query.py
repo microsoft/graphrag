@@ -520,7 +520,7 @@ async def multi_local_search(
     community_reports_list: list[pd.DataFrame],
     text_units_list: list[pd.DataFrame],
     relationships_list: list[pd.DataFrame],
-    covariates_list: list[pd.DataFrame | None],
+    covariates_list: list[pd.DataFrame] | None,
     vector_store_configs: list[dict],
     community_level: int,
     response_type: str,
@@ -540,7 +540,7 @@ async def multi_local_search(
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
-    - covariates_list (list[pd.DataFrame]): A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
+    - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
     - vector_store_confgs (list[dict]): A list of the vector store configurations.
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
@@ -672,7 +672,7 @@ async def multi_local_search(
         text_units_dfs.append(text_units_df)
 
         # If presents, prepare each index's covariates dataframe for merging
-        if type(covariates_list) is not type(None):
+        if covariates_list is not None:
             covariates_df = covariates_list[idx]
             for i in range(covariates_df.shape[0]):
                 links["covariates"][i + max_vals["covariates"]] = {
