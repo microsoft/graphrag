@@ -706,9 +706,11 @@ async def multi_local_search(
     text_units_combined = pd.concat(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
-    covariates_combined = pd.concat(
-        covariates_dfs, axis=0, ignore_index=True, sort=False
-    )
+    covariates_combined = None
+    if len(covariates_dfs) > 0:
+        covariates_combined = pd.concat(
+            covariates_dfs, axis=0, ignore_index=True, sort=False
+        )
 
     config.embeddings.vector_store = vector_store_configs
 
