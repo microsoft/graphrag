@@ -12,9 +12,9 @@ from graphrag.vector_stores.factory import VectorStoreType
 class VectorStoreConfig(BaseModel):
     """The default configuration section for Vector Store."""
 
-    type: str = Field(
+    type: VectorStoreType = Field(
         description="The vector store type to use.",
-        default=defs.VECTOR_STORE_TYPE.value,
+        default=defs.VECTOR_STORE_TYPE,
     )
 
     db_uri: str | None = Field(description="The database URI to use.", default=None)
