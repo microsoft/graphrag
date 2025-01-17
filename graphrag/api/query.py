@@ -521,7 +521,7 @@ async def multi_local_search(
     text_units_list: list[pd.DataFrame],
     relationships_list: list[pd.DataFrame],
     covariates_list: list[pd.DataFrame] | None,
-    vector_store_configs: list[dict],
+    index_names: list[str],
     community_level: int,
     response_type: str,
     streaming: bool,
@@ -534,6 +534,7 @@ async def multi_local_search(
 
     Parameters
     ----------
+    ----------D
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
     - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
@@ -541,7 +542,7 @@ async def multi_local_search(
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
     - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
-    - vector_store_confgs (list[dict]): A list of the vector store configurations.
+    - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
     - streaming (bool): Whether to stream the results or not.
@@ -578,8 +579,6 @@ async def multi_local_search(
     relationships_dfs = []
     text_units_dfs = []
     covariates_dfs = []
-
-    index_names = [conf["index_name"] for conf in vector_store_configs]
 
     for idx, index_name in enumerate(index_names):
         # Prepare each index's nodes dataframe for merging
@@ -705,8 +704,6 @@ async def multi_local_search(
         covariates_combined = pd.concat(
             covariates_dfs, axis=0, ignore_index=True, sort=False
         )
-
-    config.embeddings.vector_store = vector_store_configs
 
     # Call the streaming api function
     if streaming:
