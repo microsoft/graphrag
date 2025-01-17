@@ -526,7 +526,7 @@ async def multi_local_search(
     community_reports_list: list[pd.DataFrame],
     text_units_list: list[pd.DataFrame],
     relationships_list: list[pd.DataFrame],
-    covariates_list: list[pd.DataFrame | None] | None,
+    covariates_list: list[pd.DataFrame | None],
     vector_store_configs: list[dict],
     community_level: int,
     response_type: str,
@@ -679,7 +679,7 @@ async def multi_local_search(
 
         if type(covariates_list) != type(None):
             covariates_df = covariates_list[idx]
-            for i in covariates_df["human_readable_id"].astype(int):
+            for i in range(covariates_df.shape[0]):
                 links["covariates"][i + max_vals["covariates"]] = {
                     "index_name": index_name,
                     "id": i,
@@ -688,7 +688,8 @@ async def multi_local_search(
             covariates_df["human_readable_id"] = covariates_df["human_readable_id"] + max_vals["covariates"]
             covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x: x + f"-{index_name}")
             covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x: x + f"-{index_name}")
-            max_vals["covariates"] = covariates_df["human_readable_id"].max()
+            #max_vals["covariates"] = covariates_df["human_readable_id"].max()
+            max_vals["covariates"] += covariates_df.shape[0]
             covariates_dfs.append(covariates_df)
 
     # Merge the dataframes
