@@ -26,6 +26,7 @@ from graphrag.config.models.summarize_descriptions_config import (
 )
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
+from graphrag.config.models.vector_store_config import VectorStoreConfig
 
 FAKE_API_KEY = "NOT_AN_API_KEY"
 
@@ -48,6 +49,12 @@ DEFAULT_MODEL_CONFIG = {
 
 DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "models": DEFAULT_MODEL_CONFIG,
+    "vector_store": {
+        "type": defs.VECTOR_STORE_TYPE,
+        "db_uri": defs.VECTOR_STORE_DB_URI,
+        "collection_name": defs.VECTOR_STORE_COLLECTION_NAME,
+        "overwrite": defs.VECTOR_STORE_OVERWRITE,
+    },
     "reporting": {
         "type": defs.REPORTING_TYPE,
         "base_dir": defs.REPORTING_BASE_DIR,
@@ -102,7 +109,6 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "batch_size": defs.EMBEDDING_BATCH_SIZE,
         "batch_max_tokens": defs.EMBEDDING_BATCH_MAX_TOKENS,
         "target": defs.EMBEDDING_TARGET,
-        "vector_store": defs.VECTOR_STORE_DICT,
         "strategy": None,
         "model_id": defs.EMBEDDING_MODEL_ID,
     },
@@ -222,11 +228,14 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
 }
 
 
-def get_default_graphrag_config() -> GraphRagConfig:
+def get_default_graphrag_config(root_dir: str | None = None) -> GraphRagConfig:
+    if root_dir is not None and root_dir.strip() != "":
+        DEFAULT_GRAPHRAG_CONFIG_SETTINGS["root_dir"] = root_dir
+
     return GraphRagConfig(**DEFAULT_GRAPHRAG_CONFIG_SETTINGS)
 
 
-def assert_model_configs(
+def assert_language_model_configs(
     actual: LanguageModelConfig, expected: LanguageModelConfig
 ) -> None:
     assert actual.api_key == expected.api_key
@@ -269,6 +278,13 @@ def assert_model_configs(
             assert e.model_dump() == a.model_dump()
     else:
         assert expected.responses is None
+
+
+def assert_vector_store_configs(actual: VectorStoreConfig, expected: VectorStoreConfig):
+    assert actual.type == expected.type
+    assert actual.db_uri == expected.db_uri
+    assert actual.collection_name == expected.collection_name
+    assert actual.overwrite == expected.overwrite
 
 
 def assert_reporting_configs(
@@ -337,7 +353,6 @@ def assert_text_embedding_configs(
     assert actual.batch_max_tokens == expected.batch_max_tokens
     assert actual.target == expected.target
     assert actual.names == expected.names
-    assert actual.vector_store == expected.vector_store
     assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
 
@@ -513,8 +528,9 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert len(a_keys) == len(e_keys)
     for a, e in zip(a_keys, e_keys, strict=False):
         assert a == e
-        assert_model_configs(actual.models[a], expected.models[e])
+        assert_language_model_configs(actual.models[a], expected.models[e])
 
+    assert_vector_store_configs(actual.vector_store, expected.vector_store)
     assert_reporting_configs(actual.reporting, expected.reporting)
     assert_storage_configs(actual.storage, expected.storage)
 

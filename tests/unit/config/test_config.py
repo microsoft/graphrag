@@ -142,8 +142,7 @@ def test_default_config() -> None:
 def test_load_minimal_config() -> None:
     cwd = Path(__file__).parent
     root_dir = (cwd / "fixtures" / "minimal_config").resolve()
-    expected = get_default_graphrag_config()
-    expected.root_dir = str(root_dir)
+    expected = get_default_graphrag_config(str(root_dir))
     actual = load_config(root_dir=root_dir)
     assert_graphrag_configs(actual, expected)
 

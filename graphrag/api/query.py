@@ -244,7 +244,7 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
@@ -310,7 +310,7 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
@@ -381,7 +381,7 @@ async def drift_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
@@ -465,7 +465,7 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
@@ -531,7 +531,7 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(
@@ -576,7 +576,7 @@ async def basic_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = _get_embedding_store(

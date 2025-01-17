@@ -101,19 +101,11 @@ SUMMARIZE_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 UMAP_ENABLED = False
 UPDATE_STORAGE_BASE_DIR = "update_output"
 
-VECTOR_STORE = f"""
-    type: {VectorStoreType.LanceDB.value} # one of [lancedb, azure_ai_search, cosmosdb]
-    db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    collection_name: default
-    overwrite: true\
-"""
 
-VECTOR_STORE_DICT = {
-    "type": VectorStoreType.LanceDB.value,
-    "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
-    "collection_name": "default",
-    "overwrite": True,
-}
+VECTOR_STORE_TYPE = VectorStoreType.LanceDB
+VECTOR_STORE_DB_URI = str(Path(STORAGE_BASE_DIR) / "lancedb")
+VECTOR_STORE_COLLECTION_NAME = "default"
+VECTOR_STORE_OVERWRITE = True
 
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5

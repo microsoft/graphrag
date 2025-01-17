@@ -39,9 +39,13 @@ models:
     # organization: <organization_id>
     # deployment_name: <azure_model_deployment_name>
 
+vector_store:
+    type: {defs.VECTOR_STORE_TYPE.value}
+    db_uri: {defs.VECTOR_STORE_DB_URI}
+    collection_name: {defs.VECTOR_STORE_COLLECTION_NAME}
+    overwrite: {defs.VECTOR_STORE_OVERWRITE}
+
 embeddings:
-  async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  vector_store: {defs.VECTOR_STORE}
   model_id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
 
 ### Input settings ###
@@ -83,28 +87,28 @@ update_index_storage:
 ### Workflow settings ###
 
 entity_extraction:
+  model_id: {defs.ENTITY_EXTRACTION_MODEL_ID}
   prompt: "prompts/entity_extraction.txt"
   entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
   max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
-  model_id: {defs.ENTITY_EXTRACTION_MODEL_ID}
 
 summarize_descriptions:
+  model_id: {defs.SUMMARIZE_MODEL_ID}
   prompt: "prompts/summarize_descriptions.txt"
   max_length: {defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH}
-  model_id: {defs.SUMMARIZE_MODEL_ID}
 
 claim_extraction:
   enabled: false
+  model_id: {defs.CLAIM_EXTRACTION_MODEL_ID}
   prompt: "prompts/claim_extraction.txt"
   description: "{defs.CLAIM_DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
-  model_id: {defs.CLAIM_EXTRACTION_MODEL_ID}
 
 community_reports:
+  model_id: {defs.COMMUNITY_REPORT_MODEL_ID}
   prompt: "prompts/community_report.txt"
   max_length: {defs.COMMUNITY_REPORT_MAX_LENGTH}
   max_input_length: {defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH}
-  model_id: {defs.COMMUNITY_REPORT_MODEL_ID}
 
 cluster_graph:
   max_cluster_size: {defs.MAX_CLUSTER_SIZE}

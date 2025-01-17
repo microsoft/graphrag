@@ -12,7 +12,6 @@ import pandas as pd
 import graphrag.api as api
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_path import resolve_paths
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
@@ -37,7 +36,6 @@ def run_global_search(
     root = root_dir.resolve()
     config = load_config(root, config_filepath)
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -121,7 +119,6 @@ def run_local_search(
     root = root_dir.resolve()
     config = load_config(root, config_filepath)
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -212,7 +209,6 @@ def run_drift_search(
     root = root_dir.resolve()
     config = load_config(root, config_filepath)
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -297,7 +293,6 @@ def run_basic_search(
     root = root_dir.resolve()
     config = load_config(root, config_filepath)
     config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
 
     dataframe_dict = _resolve_output_files(
         config=config,

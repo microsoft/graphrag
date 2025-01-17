@@ -57,7 +57,7 @@ def get_embedding_settings(
     embeddings_llm_settings = settings.get_language_model_config(
         settings.embeddings.model_id
     )
-    vector_store_settings = settings.embeddings.vector_store
+    vector_store_settings = settings.vector_store
     if vector_store_settings is None:
         return {
             "strategy": settings.embeddings.resolved_strategy(embeddings_llm_settings)
@@ -71,7 +71,10 @@ def get_embedding_settings(
         embeddings_llm_settings
     )  # get the default strategy
     strategy.update({
-        "vector_store": {**(vector_store_params or {}), **vector_store_settings}
+        "vector_store": {
+            **(vector_store_params or {}),
+            **(vector_store_settings.model_dump()),
+        }
     })  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {

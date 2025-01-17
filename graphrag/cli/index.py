@@ -14,7 +14,6 @@ import graphrag.api as api
 from graphrag.config.enums import CacheType
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
-from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.validate_config import validate_config_names
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.factory import LoggerFactory, LoggerType
@@ -146,7 +145,6 @@ def _run_index(
     config.reporting.base_dir = (
         str(output_dir) if output_dir else config.reporting.base_dir
     )
-    resolve_paths(config, run_id)
 
     if not cache:
         config.cache.type = CacheType.none

@@ -31,6 +31,8 @@ from graphrag.config.models.summarize_descriptions_config import (
 )
 from graphrag.config.models.text_embedding_config import TextEmbeddingConfig
 from graphrag.config.models.umap_config import UmapConfig
+from graphrag.config.models.vector_store_config import VectorStoreConfig
+from graphrag.vector_stores.factory import VectorStoreType
 
 
 class GraphRagConfig(BaseModel):
@@ -51,11 +53,13 @@ class GraphRagConfig(BaseModel):
     def _validate_root_dir(self) -> None:
         """Validate the root directory."""
         if self.root_dir.strip() == "":
-            self.root_dir = str(Path.cwd().resolve())
+            self.root_dir = str(Path.cwd())
 
-        if not Path(self.root_dir).is_dir():
+        root_dir = Path(self.root_dir).resolve()
+        if not root_dir.is_dir():
             msg = f"Invalid root directory: {self.root_dir} is not a directory."
             raise FileNotFoundError(msg)
+        self.root_dir = str(root_dir)
 
     models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.",
@@ -85,16 +89,49 @@ class GraphRagConfig(BaseModel):
     )
     """The reporting configuration."""
 
+    def _validate_reporting_base_dir(self) -> None:
+        """Validate the reporting base directory."""
+        if self.reporting.type == defs.ReportingType.file:
+            if self.reporting.base_dir.strip() == "":
+                msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
+                raise ValueError(msg)
+            self.reporting.base_dir = str(
+                (Path(self.root_dir) / self.reporting.base_dir).resolve()
+            )
+
     storage: StorageConfig = Field(
         description="The storage configuration.", default=StorageConfig()
     )
     """The storage configuration."""
+
+    def _validate_storage_base_dir(self) -> None:
+        """Validate the storage base directory."""
+        if self.storage.type == defs.StorageType.file:
+            if self.storage.base_dir.strip() == "":
+                msg = "Storage base directory is required for file storage. Please rerun `graphrag init` and set the storage configuration."
+                raise ValueError(msg)
+            self.storage.base_dir = str(
+                (Path(self.root_dir) / self.storage.base_dir).resolve()
+            )
 
     update_index_storage: StorageConfig | None = Field(
         description="The storage configuration for the updated index.",
         default=None,
     )
     """The storage configuration for the updated index."""
+
+    def _validate_update_index_storage_base_dir(self) -> None:
+        """Validate the update index storage base directory."""
+        if (
+            self.update_index_storage
+            and self.update_index_storage.type == defs.StorageType.file
+        ):
+            if self.update_index_storage.base_dir.strip() == "":
+                msg = "Update index storage base directory is required for file storage. Please rerun `graphrag init` and set the update index storage configuration."
+                raise ValueError(msg)
+            self.update_index_storage.base_dir = str(
+                (Path(self.root_dir) / self.update_index_storage.base_dir).resolve()
+            )
 
     cache: CacheConfig = Field(
         description="The cache configuration.", default=CacheConfig()
@@ -187,6 +224,21 @@ class GraphRagConfig(BaseModel):
     )
     """The basic search configuration."""
 
+    vector_store: VectorStoreConfig = Field(
+        description="The vector store configuration.", default=VectorStoreConfig()
+    )
+    """The vector store configuration."""
+
+    def _validate_vector_store_db_uri(self) -> None:
+        """Validate the vector store configuration."""
+        if self.vector_store.type == VectorStoreType.LanceDB.value:
+            if self.vector_store.db_uri.strip == "":
+                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
+                raise ValueError(msg)
+            self.vector_store.db_uri = str(
+                (Path(self.root_dir) / self.vector_store.db_uri).resolve()
+            )
+
     def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
 
@@ -216,4 +268,8 @@ class GraphRagConfig(BaseModel):
         """Validate the model configuration."""
         self._validate_root_dir()
         self._validate_models()
+        self._validate_reporting_base_dir()
+        self._validate_storage_base_dir()
+        self._validate_update_index_storage_base_dir()
+        self._validate_vector_store_db_uri()
         return self
