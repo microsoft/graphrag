@@ -33,7 +33,7 @@ All of the breaking changes listed below are accounted for in the four steps abo
 
 ### Migration
 
-- Run a new index, leveraging existing cache.
+- Run the migration notebook (some recent changes may invalidate existing caches, so migrating the format it cheaper than re-indexing).
 
 ## New required Embeddings
 
@@ -53,7 +53,7 @@ All of the breaking changes listed below are accounted for in the four steps abo
 
 ### Migration
 
-- Run graphrag init command to generate a new settings.yaml file with the vector store configuration.
+- Run `graphrag init` command to generate a new settings.yaml file with the vector store configuration.
 - Run a new index, leveraging existing cache.
 
 ## Deprecate timestamp paths
