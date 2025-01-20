@@ -34,7 +34,7 @@ async def load(
     ) -> dict[str, Any]:
         if group is None:
             group = {}
-        text = await storage.get(path, encoding="utf-8")
+        text = await storage.get(path, encoding=config.encoding)
         new_item = {**group, "text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
