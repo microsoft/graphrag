@@ -30,7 +30,7 @@ class InputConfig(BaseModel):
     container_name: str | None = Field(
         description="The azure blob storage container name to use.", default=None
     )
-    encoding: str | None = Field(
+    encoding: str = Field(
         description="The input file encoding to use.",
         default=defs.INPUT_FILE_ENCODING,
     )

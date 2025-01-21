@@ -109,11 +109,15 @@ def _initialize_cli(
             ),
         ),
     ],
+    force: Annotated[
+        bool,
+        typer.Option(help="Force initialization even if the project already exists."),
+    ] = False,
 ):
     """Generate a default configuration file."""
     from graphrag.cli.initialize import initialize_project_at
 
-    initialize_project_at(path=root)
+    initialize_project_at(path=root, force=force)
 
 
 @app.command("index")
@@ -143,9 +147,6 @@ def _index_cli(
     memprofile: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
-    resume: Annotated[
-        str | None, typer.Option(help="Resume a given indexing run")
-    ] = None,
     logger: Annotated[
         LoggerType, typer.Option(help="The progress logger to use.")
     ] = LoggerType.RICH,
@@ -165,7 +166,7 @@ def _index_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -178,7 +179,6 @@ def _index_cli(
     index_cli(
         root_dir=root,
         verbose=verbose,
-        resume=resume,
         memprofile=memprofile,
         cache=cache,
         logger=LoggerType(logger),
@@ -226,7 +226,7 @@ def _update_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -236,7 +236,7 @@ def _update_cli(
     """
     Update an existing knowledge graph index.
 
-    Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
+    Applies a default output configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
     from graphrag.cli.index import update_cli
 

@@ -136,11 +136,7 @@ async def summarize_descriptions(
     ):
         async with semaphore:
             results = await strategy_exec(
-                id,
-                descriptions,
-                callbacks,
-                cache,
-                strategy_config,
+                id, descriptions, callbacks, cache, strategy_config
             )
             ticker(1)
         return results

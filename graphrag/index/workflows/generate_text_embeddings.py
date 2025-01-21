@@ -6,8 +6,8 @@
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.generate_text_embeddings import (
     generate_text_embeddings,
@@ -40,7 +40,7 @@ async def run_workflow(
     )
 
     embedded_fields = get_embedded_fields(config)
-    text_embed = get_embedding_settings(config.embeddings)
+    text_embed = get_embedding_settings(config)
 
     await generate_text_embeddings(
         final_documents=final_documents,

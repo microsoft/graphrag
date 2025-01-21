@@ -6,12 +6,10 @@
 import numpy as np
 import pandas as pd
 from fnllm import ChatLLM
-from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.models.llm_parameters import LLMParameters
 from graphrag.index.input.factory import create_input
 from graphrag.index.llm.load_llm import load_llm_embeddings
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
@@ -60,8 +58,8 @@ async def load_docs_in_chunks(
     k: int = K,
 ) -> list[str]:
     """Load docs into chunks for generating prompts."""
-    llm_config = TypeAdapter(LLMParameters).validate_python(
-        config.embeddings.resolved_strategy()["llm"]
+    embeddings_llm_settings = config.get_language_model_config(
+        config.embeddings.model_id
     )
 
     dataset = await create_input(config.input, logger, root)
@@ -96,8 +94,8 @@ async def load_docs_in_chunks(
             msg = "k must be an integer > 0"
             raise ValueError(msg)
         embedding_llm = load_llm_embeddings(
-            "prompt_tuning_embeddings",
-            llm_config,
+            name="prompt_tuning_embeddings",
+            llm_config=embeddings_llm_settings,
             callbacks=NoopWorkflowCallbacks(),
             cache=None,
         )

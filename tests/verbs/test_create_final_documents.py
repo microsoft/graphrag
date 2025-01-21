@@ -10,6 +10,7 @@ from graphrag.index.workflows.create_final_documents import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -23,7 +24,7 @@ async def test_create_final_documents():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
 
     await run_workflow(
         config,
@@ -43,7 +44,7 @@ async def test_create_final_documents_with_attribute_columns():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     config.input.document_attribute_columns = ["title"]
 
     await run_workflow(

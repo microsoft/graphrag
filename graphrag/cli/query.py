@@ -12,8 +12,6 @@ import pandas as pd
 import graphrag.api as api
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.config.resolve_path import resolve_paths
-from graphrag.index.create_pipeline_config import create_pipeline_config
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
@@ -36,9 +34,10 @@ def run_global_search(
     Loads index files required for global search and calls the Query API.
     """
     root = root_dir.resolve()
-    config = load_config(root, config_filepath)
-    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
+    cli_overrides = {}
+    if data_dir:
+        cli_overrides["output.base_dir"] = str(data_dir)
+    config = load_config(root, config_filepath, cli_overrides)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -120,9 +119,10 @@ def run_local_search(
     Loads index files required for local search and calls the Query API.
     """
     root = root_dir.resolve()
-    config = load_config(root, config_filepath)
-    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
+    cli_overrides = {}
+    if data_dir:
+        cli_overrides["output.base_dir"] = str(data_dir)
+    config = load_config(root, config_filepath, cli_overrides)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -211,9 +211,10 @@ def run_drift_search(
     Loads index files required for local search and calls the Query API.
     """
     root = root_dir.resolve()
-    config = load_config(root, config_filepath)
-    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
+    cli_overrides = {}
+    if data_dir:
+        cli_overrides["output.base_dir"] = str(data_dir)
+    config = load_config(root, config_filepath, cli_overrides)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -296,9 +297,10 @@ def run_basic_search(
     Loads index files required for basic search and calls the Query API.
     """
     root = root_dir.resolve()
-    config = load_config(root, config_filepath)
-    config.storage.base_dir = str(data_dir) if data_dir else config.storage.base_dir
-    resolve_paths(config)
+    cli_overrides = {}
+    if data_dir:
+        cli_overrides["output.base_dir"] = str(data_dir)
+    config = load_config(root, config_filepath, cli_overrides)
 
     dataframe_dict = _resolve_output_files(
         config=config,
@@ -352,10 +354,9 @@ def _resolve_output_files(
 ) -> dict[str, pd.DataFrame]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    pipeline_config = create_pipeline_config(config)
-    storage_config = pipeline_config.storage.model_dump()  # type: ignore
+    output_config = config.output.model_dump()  # type: ignore
     storage_obj = StorageFactory().create_storage(
-        storage_type=storage_config["type"], kwargs=storage_config
+        storage_type=output_config["type"], kwargs=output_config
     )
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))

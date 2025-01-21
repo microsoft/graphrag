@@ -93,7 +93,12 @@ async def _generate_report(
 ) -> CommunityReport | None:
     """Generate a report for a single community."""
     return await runner(
-        community_id, community_context, community_level, callbacks, cache, strategy
+        community_id,
+        community_context,
+        community_level,
+        callbacks,
+        cache,
+        strategy,
     )
 
 

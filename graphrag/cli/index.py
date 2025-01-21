@@ -6,7 +6,6 @@
 import asyncio
 import logging
 import sys
-import time
 import warnings
 from pathlib import Path
 
@@ -14,7 +13,6 @@ import graphrag.api as api
 from graphrag.config.enums import CacheType
 from graphrag.config.load_config import load_config
 from graphrag.config.logging import enable_logging_with_config
-from graphrag.config.resolve_path import resolve_paths
 from graphrag.index.validate_config import validate_config_names
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.factory import LoggerFactory, LoggerType
@@ -66,7 +64,6 @@ def _register_signal_handlers(logger: ProgressLogger):
 def index_cli(
     root_dir: Path,
     verbose: bool,
-    resume: str | None,
     memprofile: bool,
     cache: bool,
     logger: LoggerType,
@@ -76,18 +73,20 @@ def index_cli(
     output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    config = load_config(root_dir, config_filepath)
+    cli_overrides = {}
+    if output_dir:
+        cli_overrides["output.base_dir"] = str(output_dir)
+        cli_overrides["reporting.base_dir"] = str(output_dir)
+    config = load_config(root_dir, config_filepath, cli_overrides)
 
     _run_index(
         config=config,
         verbose=verbose,
-        resume=resume,
         memprofile=memprofile,
         cache=cache,
         logger=logger,
         dry_run=dry_run,
         skip_validation=skip_validation,
-        output_dir=output_dir,
     )
 
 
@@ -102,51 +101,44 @@ def update_cli(
     output_dir: Path | None,
 ):
     """Run the pipeline with the given config."""
-    config = load_config(root_dir, config_filepath)
+    cli_overrides = {}
+    if output_dir:
+        cli_overrides["output.base_dir"] = str(output_dir)
+        cli_overrides["reporting.base_dir"] = str(output_dir)
+    config = load_config(root_dir, config_filepath, cli_overrides)
 
-    # Check if update storage exist, if not configure it with default values
-    if not config.update_index_storage:
-        from graphrag.config.defaults import STORAGE_TYPE, UPDATE_STORAGE_BASE_DIR
-        from graphrag.config.models.storage_config import StorageConfig
+    # Check if update output exist, if not configure it with default values
+    if not config.update_index_output:
+        from graphrag.config.defaults import OUTPUT_TYPE, UPDATE_OUTPUT_BASE_DIR
+        from graphrag.config.models.output_config import OutputConfig
 
-        config.update_index_storage = StorageConfig(
-            type=STORAGE_TYPE,
-            base_dir=UPDATE_STORAGE_BASE_DIR,
+        config.update_index_output = OutputConfig(
+            type=OUTPUT_TYPE,
+            base_dir=UPDATE_OUTPUT_BASE_DIR,
         )
 
     _run_index(
         config=config,
         verbose=verbose,
-        resume=False,
         memprofile=memprofile,
         cache=cache,
         logger=logger,
         dry_run=False,
         skip_validation=skip_validation,
-        output_dir=output_dir,
     )
 
 
 def _run_index(
     config,
     verbose,
-    resume,
     memprofile,
     cache,
     logger,
     dry_run,
     skip_validation,
-    output_dir,
 ):
     progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
-    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
-
-    config.storage.base_dir = str(output_dir) if output_dir else config.storage.base_dir
-    config.reporting.base_dir = (
-        str(output_dir) if output_dir else config.reporting.base_dir
-    )
-    resolve_paths(config, run_id)
 
     if not cache:
         config.cache.type = CacheType.none
@@ -163,7 +155,7 @@ def _run_index(
     if skip_validation:
         validate_config_names(progress_logger, config)
 
-    info(f"Starting pipeline run for: {run_id}, {dry_run=}", verbose)
+    info(f"Starting pipeline run. {dry_run=}", verbose)
     info(
         f"Using default configuration: {redact(config.model_dump())}",
         verbose,
@@ -178,8 +170,6 @@ def _run_index(
     outputs = asyncio.run(
         api.build_index(
             config=config,
-            run_id=run_id,
-            is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_logger=progress_logger,
         )

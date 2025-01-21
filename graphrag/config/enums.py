@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing 'PipelineCacheConfig', 'PipelineFileCacheConfig' and 'PipelineMemoryCacheConfig' models."""
+"""A module containing config enums."""
 
 from __future__ import annotations
 
@@ -53,17 +53,17 @@ class InputType(str, Enum):
         return f'"{self.value}"'
 
 
-class StorageType(str, Enum):
-    """The storage type for the pipeline."""
+class OutputType(str, Enum):
+    """The output type for the pipeline."""
 
     file = "file"
-    """The file storage type."""
+    """The file output type."""
     memory = "memory"
-    """The memory storage type."""
+    """The memory output type."""
     blob = "blob"
-    """The blob storage type."""
+    """The blob output type."""
     cosmosdb = "cosmosdb"
-    """The cosmosdb storage type"""
+    """The cosmosdb output type"""
 
     def __repr__(self):
         """Get a string representation."""
@@ -90,6 +90,7 @@ class TextEmbeddingTarget(str, Enum):
 
     all = "all"
     required = "required"
+    selected = "selected"
     none = "none"
 
     def __repr__(self):
@@ -116,8 +117,26 @@ class LLMType(str, Enum):
         return f'"{self.value}"'
 
 
+class AzureAuthType(str, Enum):
+    """AzureAuthType enum class definition."""
+
+    APIKey = "api_key"
+    ManagedIdentity = "managed_identity"
+
+
 class AsyncType(str, Enum):
     """Enum for the type of async to use."""
 
     AsyncIO = "asyncio"
     Threaded = "threaded"
+
+
+class ChunkStrategyType(str, Enum):
+    """ChunkStrategy class definition."""
+
+    tokens = "tokens"
+    sentence = "sentence"
+
+    def __repr__(self):
+        """Get a string representation."""
+        return f'"{self.value}"'

@@ -70,12 +70,12 @@ async def create_final_community_reports(
     )
 
     community_reports = await summarize_communities(
-        local_contexts,
-        nodes,
-        community_hierarchy,
-        callbacks,
-        cache,
-        summarization_strategy,
+        local_contexts=local_contexts,
+        nodes=nodes,
+        community_hierarchy=community_hierarchy,
+        callbacks=callbacks,
+        cache=cache,
+        strategy=summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
     )
