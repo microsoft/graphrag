@@ -141,10 +141,7 @@ def _document_workflows(
         PipelineWorkflowReference(
             name=create_final_documents,
             config={
-                "document_attribute_columns": list(
-                    {*(settings.input.document_attribute_columns)}
-                    - builtin_document_attributes
-                ),
+                "metadata": settings.input.metadata,
             },
         ),
     ]

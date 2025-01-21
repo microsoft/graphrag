@@ -342,8 +342,7 @@ def create_graphrag_config(
                     else defs.INPUT_CSV_PATTERN
                 ),
                 text_column=reader.str("text_column") or defs.INPUT_TEXT_COLUMN,
-                document_attribute_columns=reader.list("document_attribute_columns")
-                or [],
+                metadata=reader.list("metadata") or [],
                 connection_string=reader.str(Fragment.conn_string),
                 storage_account_blob_url=reader.str(Fragment.storage_account_blob_url),
                 container_name=reader.str(Fragment.container_name),

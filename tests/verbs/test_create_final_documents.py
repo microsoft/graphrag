@@ -44,7 +44,7 @@ async def test_create_final_documents_with_attribute_columns():
     )
 
     config = create_graphrag_config()
-    config.input.document_attribute_columns = ["title"]
+    config.input.metadata = ["title"]
 
     await run_workflow(
         config,

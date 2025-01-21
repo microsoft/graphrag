@@ -5,6 +5,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+import tiktoken
 
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
@@ -109,6 +110,46 @@ def test_model_name_exception(mock_get_encoding, mock_encoding_for_model):
 
     mock_get_encoding.assert_called_once_with("mock_encoding")
     mock_encoding_for_model.assert_called_once_with("mock_model")
+
+
+def test_split_single_text_on_tokens_no_overlap():
+    text = "This is a test text, meaning to be taken seriously by this test only."
+    enc = tiktoken.get_encoding("cl100k_base")
+
+    def encode(text: str) -> list[int]:
+        if not isinstance(text, str):
+            text = f"{text}"
+        return enc.encode(text)
+
+    def decode(tokens: list[int]) -> str:
+        return enc.decode(tokens)
+
+    tokenizer = Tokenizer(
+        chunk_overlap=1,
+        tokens_per_chunk=2,
+        decode=decode,
+        encode=lambda text: encode(text),
+    )
+
+    expected_splits = [
+        "This is a ",
+        "is a test ",
+        "test text,",
+        "text, mean",
+        " meaning t",
+        "ing to be ",
+        "o be taken",
+        "taken seri",  # cspell:disable-line
+        " seriously",
+        "ously by t",  # cspell:disable-line
+        " by this t",
+        "his test o",
+        "est only.",
+        "nly.",
+    ]
+
+    result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
+    assert result == expected_splits
 
 
 def test_split_single_text_on_tokens():
