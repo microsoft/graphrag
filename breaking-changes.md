@@ -10,7 +10,7 @@ There are five surface areas that may be impacted on any given release. They are
 - [settings.yml](https://microsoft.github.io/graphrag/config/yaml/) - The settings.yml file may have changes made to it as we adjust configurability. **Changes that affect the settings.yml will result in a minor version bump**. `graphrag init` will always emit compatible starter config, so we recommend always running the command when updating GraphRAG between minor versions, and copying your endpoint information or other customizations over to the new file.
 - [Data model](https://microsoft.github.io/graphrag/index/outputs/) - The output data model may change over time as we adjust our approach. **Changes to the data model will conform to standard semver.** Any changes to the output tables will be shimmed for backwards compatibility between major releases, and we'll provide a migration notebook for folks to upgrade without requiring a re-index.
 
-> TL;DR: Always run `graphrag init` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets.
+> TL;DR: Always run `graphrag init --path [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary.
 
 # v1
 
