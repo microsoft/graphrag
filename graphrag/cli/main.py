@@ -109,11 +109,15 @@ def _initialize_cli(
             ),
         ),
     ],
+    force: Annotated[
+        bool,
+        typer.Option(help="Force initialization even if the project already exists."),
+    ] = False,
 ):
     """Generate a default configuration file."""
     from graphrag.cli.initialize import initialize_project_at
 
-    initialize_project_at(path=root)
+    initialize_project_at(path=root, force=force)
 
 
 @app.command("index")
