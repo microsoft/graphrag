@@ -173,7 +173,9 @@ def get_drift_search_engine(
     entities: list[Entity],
     relationships: list[Relationship],
     description_embedding_store: BaseVectorStore,
+    response_type: str,
     local_system_prompt: str | None = None,
+    reduce_system_prompt: str | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     llm = get_llm(config)
@@ -191,7 +193,9 @@ def get_drift_search_engine(
             entity_text_embeddings=description_embedding_store,
             text_units=text_units,
             local_system_prompt=local_system_prompt,
+            reduce_system_prompt=reduce_system_prompt,
             config=config.drift_search,
+            response_type=response_type,
         ),
         token_encoder=token_encoder,
     )

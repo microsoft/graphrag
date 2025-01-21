@@ -93,16 +93,16 @@ UMAP_ENABLED = False
 UPDATE_STORAGE_BASE_DIR = "update_output"
 
 VECTOR_STORE = f"""
-    type: {VectorStoreType.LanceDB.value}
+    type: {VectorStoreType.LanceDB.value} # one of [lancedb, azure_ai_search, cosmosdb]
     db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    container_name: default
+    collection_name: default
     overwrite: true\
 """
 
 VECTOR_STORE_DICT = {
     "type": VectorStoreType.LanceDB.value,
     "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
-    "container_name": "default",
+    "collection_name": "default",
     "overwrite": True,
 }
 
@@ -148,6 +148,9 @@ DRIFT_SEARCH_CONCURRENCY = 32
 DRIFT_SEARCH_K_FOLLOW_UPS = 20
 DRIFT_SEARCH_PRIMER_FOLDS = 5
 DRIFT_SEARCH_PRIMER_MAX_TOKENS = 12_000
+
+DRIFT_SEARCH_REDUCE_LLM_TEMPERATURE = 0
+DRIFT_SEARCH_REDUCE_MAX_TOKENS = 2_000
 
 DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP = 0.9
 DRIFT_LOCAL_SEARCH_COMMUNITY_PROP = 0.1

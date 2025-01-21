@@ -1,7 +1,15 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
-## 1.1.2
+## 1.2.0
+
+- minor: Add Drift Reduce response and streaming endpoint
+- minor: add cosmosdb vector store
+- patch: Fix example notebooks
+- patch: Set default rate limits.
+- patch: unit tests for text_splitting
+
+## 1.2.0
 
 - patch: Basic Rag minor fix
 

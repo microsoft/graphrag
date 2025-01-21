@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "graphrag"
 # Maintainers: do not change the version here manually, use ./scripts/release.sh
-version = "1.1.2"
+version = "1.2.0"
 description = "GraphRAG: A graph-based retrieval-augmented generation (RAG) system."
 authors = [
     "Alonso Guevara Fernández <alonsog@microsoft.com>",
@@ -65,13 +65,11 @@ numpy = "^1.25.2"
 graspologic = "^3.4.1"
 networkx = "^3.4.2"
 pandas = "^2.2.3"
-matplotlib = "^3.9.3"
 pyarrow = "^15.0.0"
 umap-learn = "^0.5.6"
 
 # Configuration
 pyyaml = "^6.0.2"
-pyaml-env = "^1.2.1"
 python-dotenv = "^1.0.1"
 
 pydantic = "^2.10.3"
