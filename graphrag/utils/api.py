@@ -34,7 +34,7 @@ class MultiVectorStore(BaseVectorStore):
         """Load documents into the vector store."""
         msg = "load_documents method not implemented"
         raise NotImplementedError(msg)
-    
+
     def connect(self, **kwargs: Any) -> Any:
         """Connect to vector storage."""
         msg = "connect method not implemented"
@@ -44,7 +44,7 @@ class MultiVectorStore(BaseVectorStore):
         """Build a query filter to filter documents by id."""
         msg = "filter_by_id method not implemented"
         raise NotImplementedError(msg)
-    
+
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
         msg = "search_by_id method not implemented"
@@ -55,7 +55,9 @@ class MultiVectorStore(BaseVectorStore):
     ) -> list[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         all_results = []
-        for index_name, embedding_store in zip(self.index_names, self.embedding_stores, strict=False):
+        for index_name, embedding_store in zip(
+            self.index_names, self.embedding_stores, strict=False
+        ):
             results = embedding_store.similarity_search_by_vector(
                 query_embedding=query_embedding, k=k
             )
@@ -76,7 +78,8 @@ class MultiVectorStore(BaseVectorStore):
                 query_embedding=query_embedding, k=k
             )
         return []
-    
+
+
 def get_embedding_store(
     config_args: dict | list[dict],
     embedding_name: str,
@@ -110,6 +113,7 @@ def get_embedding_store(
         index_names.append(config_args["index_name"])
     return MultiVectorStore(embedding_stores, index_names)
 
+
 def reformat_context_data(context_data: dict) -> dict:
     """
     Reformats context_data for all query responses.
@@ -140,6 +144,7 @@ def reformat_context_data(context_data: dict) -> dict:
         final_format[key] = records
     return final_format
 
+
 def update_context_data(
     context_data: Any,
     links: dict[str, Any],
@@ -164,8 +169,9 @@ def update_context_data(
                 dict(
                     {k: entry[k] for k in entry},
                     index_name=links["community_reports"][int(entry["id"])][
-                            "index_name"
-                        ], index_id=links["community_reports"][int(entry["id"])]["id"],
+                        "index_name"
+                    ],
+                    index_id=links["community_reports"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
@@ -173,7 +179,9 @@ def update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    entity=entry["entity"].split("-")[0], index_name=links["entities"][int(entry["id"])]["index_name"], index_id=links["entities"][int(entry["id"])]["id"],
+                    entity=entry["entity"].split("-")[0],
+                    index_name=links["entities"][int(entry["id"])]["index_name"],
+                    index_id=links["entities"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
@@ -181,9 +189,10 @@ def update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    source=entry["source"].split("-")[0], target=entry["target"].split("-")[0], index_name=links["relationships"][int(entry["id"])][
-                            "index_name"
-                        ], index_id=links["relationships"][int(entry["id"])]["id"],
+                    source=entry["source"].split("-")[0],
+                    target=entry["target"].split("-")[0],
+                    index_name=links["relationships"][int(entry["id"])]["index_name"],
+                    index_id=links["relationships"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
@@ -191,7 +200,9 @@ def update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    entity=entry["entity"].split("-")[0], index_name=links["covariates"][int(entry["id"])]["index_name"], index_id=links["covariates"][int(entry["id"])]["id"],
+                    entity=entry["entity"].split("-")[0],
+                    index_name=links["covariates"][int(entry["id"])]["index_name"],
+                    index_id=links["covariates"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
@@ -199,12 +210,14 @@ def update_context_data(
             updated_entry = [
                 dict(
                     {k: entry[k] for k in entry},
-                    index_name=links["text_units"][int(entry["id"])]["index_name"], index_id=links["text_units"][int(entry["id"])]["id"],
+                    index_name=links["text_units"][int(entry["id"])]["index_name"],
+                    index_id=links["text_units"][int(entry["id"])]["id"],
                 )
                 for entry in context_data[key]
             ]
         updated_context_data[key] = updated_entry
     return updated_context_data
+
 
 def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
     """
@@ -218,6 +231,7 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
         if prompt_file.exists():
             return prompt_file.read_bytes().decode(encoding="utf-8")
     return None
+
 
 def get_workflows_list(config: GraphRagConfig) -> list[str]:
     """Return a list of workflows for the indexing pipeline."""
