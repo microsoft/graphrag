@@ -27,7 +27,7 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 
 ```bash
 # Via Poetry
-poetry run poe cli --root <data_root> # default config mode
+poetry run poe index --root <data_root> # default config mode
 ```
 
 ### Python API
