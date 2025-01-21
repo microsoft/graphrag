@@ -286,7 +286,7 @@ async def multi_global_search(
         nodes_df["title"] = nodes_df["title"].apply(
             lambda x, index_name=index_name: x + f"-{index_name}"
         )
-        max_vals["nodes"] = nodes_df["human_readable_id"].astype(int).max()
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
         nodes_dfs.append(nodes_df)
 
         # Prepare each index's community reports dataframe for merging
