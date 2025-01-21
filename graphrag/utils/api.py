@@ -53,7 +53,8 @@ class MultiVectorStore(BaseVectorStore):
             if index_name == search_index_name:
                 return embedding_store.search_by_id(search_index_id)
         else:
-            raise ValueError(f"Index {search_index_name} not found.")
+            message = f"Index {search_index_name} not found."
+            raise ValueError(message)
 
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any

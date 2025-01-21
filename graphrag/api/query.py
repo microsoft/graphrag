@@ -350,7 +350,8 @@ async def multi_global_search(
 
     # Call the streaming api function
     if streaming:
-        raise NotImplementedError("Streaming not yet implemented for multi-global-search")
+        message = "Streaming not yet implemented for multi_global_search"
+        raise NotImplementedError(message)
     
     result = await global_search(
         config,
@@ -726,7 +727,8 @@ async def multi_local_search(
 
     # Call the streaming api function
     if streaming:
-        raise NotImplementedError("Streaming not yet implemented for multi-local-search")
+        message = "Streaming not yet implemented for multi_local_search"
+        raise NotImplementedError(message)
     
     result = await local_search(
         config,
@@ -982,7 +984,7 @@ async def multi_drift_search(
         )
         nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
         nodes_df["id"] = nodes_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
         nodes_dfs.append(nodes_df)
 
         # Prepare each index's community reports dataframe for merging
@@ -996,7 +998,7 @@ async def multi_drift_search(
         community_reports_df["community"] += max_vals["community_reports"] + 1
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
         community_reports_df["id"] = community_reports_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-        max_vals["community_reports"] = community_reports_df["community"].max()
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
         community_reports_dfs.append(community_reports_df)
 
         # Prepare each index's entities dataframe for merging
@@ -1014,7 +1016,7 @@ async def multi_drift_search(
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["entities"] = entities_df["human_readable_id"].max()
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
         entities_dfs.append(entities_df)
 
         # Prepare each index's relationships dataframe for merging
@@ -1040,7 +1042,7 @@ async def multi_drift_search(
         relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["relationships"] = relationships_df["human_readable_id"].astype(int).max()
+        max_vals["relationships"] = int(relationships_df["human_readable_id"].astype(int).max())
         
         relationships_dfs.append(relationships_df)
 
@@ -1073,7 +1075,8 @@ async def multi_drift_search(
 
     # Call the streaming api function
     if streaming:
-        raise NotImplementedError("Streaming not yet implemented for multi-drift-search")
+        message = "Streaming not yet implemented for multi_drift_search"
+        raise NotImplementedError(message)
 
     result = await drift_search(
         config,
@@ -1254,13 +1257,11 @@ async def multi_basic_search(
 
     # Call the streaming api function
     if streaming:
-        raise NotImplementedError("Streaming not yet implemented for multi-basic-search")
+        message = "Streaming not yet implemented for multi_basic_search"
+        raise NotImplementedError(message)
 
-    result = await basic_search(
+    return await basic_search(
         config,
         text_units=text_units_combined,
         query=query,
     )
-
-    # Provenance links not needed for index search. Raw text returned with context and ids are created on the fly.
-    return result
