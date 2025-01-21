@@ -301,7 +301,9 @@ async def multi_global_search(
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
-        max_vals["community_reports"] = community_reports_df["community"].astype(int).max()
+        max_vals["community_reports"] = (
+            community_reports_df["community"].astype(int).max()
+        )
         community_reports_dfs.append(community_reports_df)
 
         # Prepare each index's communities dataframe for merging
@@ -629,7 +631,9 @@ async def multi_local_search(
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
-        max_vals["community_reports"] = community_reports_df["community"].astype(int).max()
+        max_vals["community_reports"] = (
+            community_reports_df["community"].astype(int).max()
+        )
         community_reports_dfs.append(community_reports_df)
 
         # Prepare each index's entities dataframe for merging
