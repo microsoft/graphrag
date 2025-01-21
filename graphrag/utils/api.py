@@ -49,7 +49,9 @@ class MultiVectorStore(BaseVectorStore):
         """Search for a document by id."""
         search_index_id = id.split("-")[0]
         search_index_name = id.split("-")[1]
-        for index_name, embedding_store in zip(self.index_names, self.embedding_stores, strict=False):
+        for index_name, embedding_store in zip(
+            self.index_names, self.embedding_stores, strict=False
+        ):
             if index_name == search_index_name:
                 return embedding_store.search_by_id(search_index_id)
         else:
