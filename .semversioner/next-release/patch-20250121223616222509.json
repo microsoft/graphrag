@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "fix chunk overlap bug that wasn't considering a 0 value"
+}
