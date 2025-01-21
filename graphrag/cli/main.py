@@ -147,9 +147,6 @@ def _index_cli(
     memprofile: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
-    resume: Annotated[
-        str | None, typer.Option(help="Resume a given indexing run")
-    ] = None,
     logger: Annotated[
         LoggerType, typer.Option(help="The progress logger to use.")
     ] = LoggerType.RICH,
@@ -182,7 +179,6 @@ def _index_cli(
     index_cli(
         root_dir=root,
         verbose=verbose,
-        resume=resume,
         memprofile=memprofile,
         cache=cache,
         logger=LoggerType(logger),

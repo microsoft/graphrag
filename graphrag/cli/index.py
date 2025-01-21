@@ -65,7 +65,6 @@ def _register_signal_handlers(logger: ProgressLogger):
 def index_cli(
     root_dir: Path,
     verbose: bool,
-    resume: str | None,
     memprofile: bool,
     cache: bool,
     logger: LoggerType,
@@ -84,7 +83,6 @@ def index_cli(
     _run_index(
         config=config,
         verbose=verbose,
-        resume=resume,
         memprofile=memprofile,
         cache=cache,
         logger=logger,
@@ -123,7 +121,6 @@ def update_cli(
     _run_index(
         config=config,
         verbose=verbose,
-        resume=False,
         memprofile=memprofile,
         cache=cache,
         logger=logger,
@@ -135,7 +132,6 @@ def update_cli(
 def _run_index(
     config,
     verbose,
-    resume,
     memprofile,
     cache,
     logger,
@@ -144,7 +140,6 @@ def _run_index(
 ):
     progress_logger = LoggerFactory().create_logger(logger)
     info, error, success = _logger(progress_logger)
-    run_id = resume or time.strftime("%Y%m%d-%H%M%S")
 
     if not cache:
         config.cache.type = CacheType.none
@@ -161,7 +156,7 @@ def _run_index(
     if skip_validation:
         validate_config_names(progress_logger, config)
 
-    info(f"Starting pipeline run for: {run_id}, {dry_run=}", verbose)
+    info(f"Starting pipeline run. {dry_run=}", verbose)
     info(
         f"Using default configuration: {redact(config.model_dump())}",
         verbose,
@@ -176,8 +171,6 @@ def _run_index(
     outputs = asyncio.run(
         api.build_index(
             config=config,
-            run_id=run_id,
-            is_resume_run=bool(resume),
             memory_profile=memprofile,
             progress_logger=progress_logger,
         )

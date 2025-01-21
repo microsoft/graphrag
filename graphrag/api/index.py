@@ -24,8 +24,6 @@ log = logging.getLogger(__name__)
 
 async def build_index(
     config: GraphRagConfig,
-    run_id: str = "",
-    is_resume_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
@@ -36,10 +34,6 @@ async def build_index(
     ----------
     config : GraphRagConfig
         The configuration.
-    run_id : str
-        The run id. Creates a output directory with this name.
-    is_resume_run : bool default=False
-        Whether to resume a previous index run.
     memory_profile : bool
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
@@ -53,10 +47,6 @@ async def build_index(
         The list of pipeline run results
     """
     is_update_run = bool(config.update_index_output)
-
-    if is_resume_run and is_update_run:
-        msg = "Cannot resume and update a run at the same time."
-        raise ValueError(msg)
 
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
@@ -78,7 +68,6 @@ async def build_index(
         cache=pipeline_cache,
         callbacks=callbacks,
         logger=progress_logger,
-        run_id=run_id,
         is_update_run=is_update_run,
     ):
         outputs.append(output)

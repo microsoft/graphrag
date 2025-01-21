@@ -55,11 +55,9 @@ async def run_workflows(
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
     logger: ProgressLogger | None = None,
-    run_id: str | None = None,
     is_update_run: bool = False,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    run_id = run_id or time.strftime("%Y%m%d-%H%M%S")
     root_dir = config.root_dir
     progress_logger = logger or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
