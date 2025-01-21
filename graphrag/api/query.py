@@ -1092,9 +1092,11 @@ async def multi_drift_search(
 
     # Update the context data by linking index names and community ids
     context = {}
-    for key in result[1]:
-        context[key] = update_context_data(result[1][key], links)
-
+    if type(result[1]) == dict:
+        for key in result[1]:
+            context[key] = update_context_data(result[1][key], links)
+    else:
+        context = result[1]
     return (result[0], context)
 
 @validate_call(config={"arbitrary_types_allowed": True})
