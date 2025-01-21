@@ -3,7 +3,7 @@
 
 """Parameterization settings for the default configuration."""
 
-from devtools import pformat
+from pprint import pformat
 from pydantic import Field
 
 import graphrag.config.defaults as defs

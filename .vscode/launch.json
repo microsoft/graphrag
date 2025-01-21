@@ -3,37 +3,26 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Indexer",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "poetry",
-			"args": [
-				"poe", "index",
-				"--root", "<path_to_ragtest_root_demo>"
+            "name": "Graphrag init",
+            "type": "python",
+            "request": "launch",
+            "module": "graphrag",
+            "args": [
+				"init",
+				"--root", "${workspaceFolder}/workdir"
 			],
-		},
+            "console": "integratedTerminal"
+        },
 		{
-			"name": "Query",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "poetry",
-			"args": [
-				"poe", "query",
-				"--root", "<path_to_ragtest_root_demo>",
-				"--method", "global",
-				"--query", "What are the top themes in this story",
-			]
-		},
-		{
-			"name": "Prompt Tuning",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "poetry",
-			"args": [
-				"poe", "prompt-tune",
-				"--config",
-				"<path_to_ragtest_root_demo>/settings.yaml",
-			]
-		}
+            "name": "Graphrag index",
+            "type": "python",
+            "request": "launch",
+            "module": "graphrag",
+            "args": [
+				"index",
+				"--root", "${workspaceFolder}/workdir"
+			],
+            "console": "integratedTerminal"
+        }
 	]
 }
