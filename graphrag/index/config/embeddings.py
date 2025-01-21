@@ -54,11 +54,11 @@ def get_embedding_settings(
     """Transform GraphRAG config into settings for workflows."""
     # TEMP
     vector_store_settings = settings.vector_store
+    if vector_store_settings is None:
+        return {"strategy": settings.resolved_strategy()}
     if not isinstance(vector_store_settings, dict):
         msg = f"vector_store_settings needs to be a single dict for indexing, got {type(vector_store_settings)}"
         raise TypeError(msg)
-    if vector_store_settings is None:
-        return {"strategy": settings.resolved_strategy()}
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
