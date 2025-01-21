@@ -1092,7 +1092,7 @@ async def multi_drift_search(
 
     # Update the context data by linking index names and community ids
     context = {}
-    if type(result[1]) == dict:
+    if type(result[1]) is dict:
         for key in result[1]:
             context[key] = update_context_data(result[1][key], links)
     else:
