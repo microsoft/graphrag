@@ -47,8 +47,13 @@ class MultiVectorStore(BaseVectorStore):
     
     def search_by_id(self, id: str) -> VectorStoreDocument:
         """Search for a document by id."""
-        msg = "search_by_id method not implemented"
-        raise NotImplementedError(msg)
+        search_index_id = id.split("-")[0]
+        search_index_name = id.split("-")[1]
+        for index_name, embedding_store in zip(self.index_names, self.embedding_stores, strict=False):
+            if index_name == search_index_name:
+                return embedding_store.search_by_id(search_index_id)
+        else:
+            raise ValueError(f"Index {search_index_name} not found.")
 
     def similarity_search_by_vector(
         self, query_embedding: list[float], k: int = 10, **kwargs: Any

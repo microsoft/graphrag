@@ -341,17 +341,7 @@ async def multi_global_search(
 
     # Call the streaming api function
     if streaming:
-        return global_search_streaming(
-            config,
-            nodes=nodes_combined,
-            entities=entities_combined,
-            communities=communities_combined,
-            community_reports=community_reports_combined,
-            community_level=community_level,
-            dynamic_community_selection=dynamic_community_selection,
-            response_type=response_type,
-            query=query,
-        )
+        raise NotImplementedError("Streaming not yet implemented for multi-global-search")
     
     result = await global_search(
         config,
@@ -534,7 +524,6 @@ async def multi_local_search(
 
     Parameters
     ----------
-    ----------D
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
     - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
@@ -653,9 +642,8 @@ async def multi_local_search(
         relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["relationships"] = (
-            relationships_df["human_readable_id"].astype(int).max()
-        )
+        max_vals["relationships"] = relationships_df["human_readable_id"].astype(int).max()
+
         relationships_dfs.append(relationships_df)
 
         # Prepare each index's text units dataframe for merging
@@ -707,19 +695,8 @@ async def multi_local_search(
 
     # Call the streaming api function
     if streaming:
-        return local_search_streaming(
-            config,
-            nodes=nodes_combined,
-            entities=entities_combined,
-            community_reports=community_reports_combined,
-            text_units=text_units_combined,
-            relationships=relationships_combined,
-            covariates=covariates_combined,
-            community_level=community_level,
-            response_type=response_type,
-            query=query,
-        )
-
+        raise NotImplementedError("Streaming not yet implemented for multi-local-search")
+    
     result = await local_search(
         config,
         nodes=nodes_combined,
@@ -809,7 +786,9 @@ async def drift_search(
 
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
-    context_data = reformat_context_data(result.context_data)  # type: ignore
+    context_data = {}
+    for key in result.context_data:
+        context_data[key] = reformat_context_data(result.context_data[key]) # type: ignore
 
     return response, context_data
 
@@ -894,6 +873,196 @@ async def drift_search_streaming(
             yield stream_chunk
 
 @validate_call(config={"arbitrary_types_allowed": True})
+async def multi_drift_search(
+    config: GraphRagConfig,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    text_units_list: list[pd.DataFrame],
+    relationships_list: list[pd.DataFrame],
+    index_names: list[str],
+    community_level: int,
+    response_type: str,
+    streaming: bool,
+    query: str,
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+] | AsyncGenerator:
+    """Perform a multi-index local search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - index_names (list[str]): A list of index names.
+    - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    links = {
+        "nodes": {},
+        "community_reports": {},
+        "entities": {},
+        "text_units": {},
+        "relationships": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community_reports": -1,
+        "entities": -1,
+        "text_units": 0,
+        "relationships": -1,
+    }
+
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+    relationships_dfs = []
+    text_units_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        nodes_df["id"] = nodes_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(int)
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        community_reports_df["id"] = community_reports_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        max_vals["community_reports"] = community_reports_df["community"].max()
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["id"] = entities_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["entities"] = entities_df["human_readable_id"].max()
+        entities_dfs.append(entities_df)
+
+        # Prepare each index's relationships dataframe for merging
+        relationships_df = relationships_list[idx]
+        for i in relationships_df["human_readable_id"].astype(int):
+            links["relationships"][i + max_vals["relationships"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["relationships"] != -1:
+            col = (
+                relationships_df["human_readable_id"].astype(int)
+                + max_vals["relationships"]
+                + 1
+            )
+            relationships_df["human_readable_id"] = col.astype(str)
+        relationships_df["source"] = relationships_df["source"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["target"] = relationships_df["target"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["relationships"] = relationships_df["human_readable_id"].astype(int).max()
+        
+        relationships_dfs.append(relationships_df)
+
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
+        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"]
+        max_vals["text_units"] += text_units_df.shape[0]
+        text_units_dfs.append(text_units_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
+    )
+    entities_combined = pd.concat(
+        entities_dfs, axis=0, ignore_index=True, sort=False
+    )
+    relationships_combined = pd.concat(
+        relationships_dfs, axis=0, ignore_index=True, sort=False
+    )
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
+    )
+
+    # Call the streaming api function
+    if streaming:
+        raise NotImplementedError("Streaming not yet implemented for multi-drift-search")
+
+    result = await drift_search(
+        config,
+        nodes=nodes_combined,
+        entities=entities_combined,
+        community_reports=community_reports_combined,
+        text_units=text_units_combined,
+        relationships=relationships_combined,
+        community_level=community_level,
+        response_type=response_type,
+        query=query,
+    )
+
+    # Update the context data by linking index names and community ids
+    context = {}
+    for key in result[1]:
+        context[key] = update_context_data(result[1][key], links)
+
+    return (result[0], context)
+
+@validate_call(config={"arbitrary_types_allowed": True})
 async def basic_search(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
@@ -908,7 +1077,6 @@ async def basic_search(
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - response_type (str): The response type to return.
     - query (str): The user query to search for.
 
     Returns
@@ -994,3 +1162,73 @@ async def basic_search_streaming(
             get_context_data = False
         else:
             yield stream_chunk
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_basic_search(
+    config: GraphRagConfig,
+    text_units_list: list[pd.DataFrame],
+    index_names: list[str],
+    streaming: bool,
+    query: str,
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+] | AsyncGenerator:
+    """Perform a multi-index local search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - index_names (list[str]): A list of index names.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    links = {
+        "text_units": {},
+
+    }
+    max_vals = {
+        "text_units": 0,
+    }
+
+    text_units_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
+        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"]
+        max_vals["text_units"] += text_units_df.shape[0]
+        text_units_dfs.append(text_units_df)
+
+    # Merge the dataframes
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
+    )
+
+    # Call the streaming api function
+    if streaming:
+        raise NotImplementedError("Streaming not yet implemented for multi-basic-search")
+
+    result = await basic_search(
+        config,
+        text_units=text_units_combined,
+        query=query,
+    )
+
+    # Provenance links not needed for index search. Raw text returned with context and ids are created on the fly.
+    return result
