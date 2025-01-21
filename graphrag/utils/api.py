@@ -150,7 +150,7 @@ def update_context_data(
     links: dict[str, Any],
 ) -> Any:
     """
-    Update context data with lthe links dict so that it contains both the index name and community id.
+    Update context data with the links dict so that it contains both the index name and community id.
 
     Parameters
     ----------
