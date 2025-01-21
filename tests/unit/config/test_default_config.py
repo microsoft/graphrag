@@ -351,6 +351,33 @@ class TestDefaultConfig(unittest.TestCase):
         parameters = create_graphrag_config()
         assert parameters.chunks.group_by_columns == []
 
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_CHUNK_OVERLAP": "0", "GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_can_set_chunk_zero_overlap(self):
+        parameters = create_graphrag_config()
+        assert parameters.chunks.overlap == 0
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_can_set_chunk_none_overlap(self):
+        parameters = create_graphrag_config()
+        assert parameters.chunks.overlap == 100
+
+    @mock.patch.dict(
+        os.environ,
+        {"GRAPHRAG_CHUNK_OVERLAP": "42", "GRAPHRAG_API_KEY": "test"},
+        clear=True,
+    )
+    def test_can_set_chunk_value_overlap(self):
+        parameters = create_graphrag_config()
+        assert parameters.chunks.overlap == 42
+
     def test_all_env_vars_is_accurate(self):
         env_var_docs_path = Path("docs/config/env_vars.md")
 
@@ -533,6 +560,9 @@ llm:
   requests_per_minute: 900
   thread_count: 50
   concurrent_requests: 25
+
+chunks:
+  overlap: 0
 """
     )
     # create default configuration pipeline parameters from the custom settings
@@ -544,6 +574,7 @@ llm:
     assert parameters.llm.api_base == "http://test"
     assert parameters.llm.api_version == "v1"
     assert parameters.llm.deployment_name == "test"
+    assert parameters.chunks.overlap == 0
 
     # generate the pipeline from the default parameters
     pipeline_config = create_pipeline_config(parameters, True)
