@@ -128,6 +128,7 @@ async def global_search(
     context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
 
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def global_search_streaming(
     config: GraphRagConfig,
@@ -205,6 +206,7 @@ async def global_search_streaming(
         else:
             yield stream_chunk
 
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def multi_global_search(
     config: GraphRagConfig,
@@ -218,10 +220,13 @@ async def multi_global_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> tuple[
-    str | dict[str, Any] | list[dict[str, Any]],
-    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-] | AsyncGenerator:
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
     """Perform a global search and return the context data and response.
 
     Parameters
@@ -278,13 +283,17 @@ async def multi_global_search(
         nodes_df["community"] = nodes_df["community"].apply(
             lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
-        nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        nodes_df["title"] = nodes_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
         nodes_dfs.append(nodes_df)
 
         # Prepare each index's community reports dataframe for merging
         community_reports_df = community_reports_list[idx]
-        community_reports_df["community"] = community_reports_df["community"].astype(int)
+        community_reports_df["community"] = community_reports_df["community"].astype(
+            int
+        )
         for i in community_reports_df["community"]:
             links["community_reports"][i + max_vals["community_reports"] + 1] = {
                 "index_name": index_name,
@@ -292,7 +301,7 @@ async def multi_global_search(
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
-        max_vals["community_reports"] = community_reports_df["community"].max()
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
         community_reports_dfs.append(community_reports_df)
 
         # Prepare each index's communities dataframe for merging
@@ -305,9 +314,11 @@ async def multi_global_search(
                 "id": str(i),
             }
         communities_df["community"] += max_vals["community"] + 1
-        communities_df["parent"] = communities_df["parent"].apply(lambda x: x if x == -1 else x + max_vals["community"] + 1)
+        communities_df["parent"] = communities_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["community"] + 1
+        )
         communities_df["human_readable_id"] += max_vals["community"] + 1
-        max_vals["community"] = communities_df["community"].max()
+        max_vals["community"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
         # Prepare each index's entities dataframe for merging
@@ -324,7 +335,7 @@ async def multi_global_search(
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["entities"] = entities_df["human_readable_id"].max()
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
         entities_dfs.append(entities_df)
 
     # Merge the dataframes
@@ -332,9 +343,7 @@ async def multi_global_search(
     community_reports_combined = pd.concat(
         community_reports_dfs, axis=0, ignore_index=True, sort=False
     )
-    entities_combined = pd.concat(
-        entities_dfs, axis=0, ignore_index=True, sort=False
-    )
+    entities_combined = pd.concat(entities_dfs, axis=0, ignore_index=True, sort=False)
     communities_combined = pd.concat(
         communities_dfs, axis=0, ignore_index=True, sort=False
     )
@@ -359,6 +368,7 @@ async def multi_global_search(
     context = update_context_data(result[1], links)
 
     return (result[0], context)
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def local_search(
@@ -502,6 +512,7 @@ async def local_search_streaming(
         else:
             yield stream_chunk
 
+
 @validate_call(config={"arbitrary_types_allowed": True})
 async def multi_local_search(
     config: GraphRagConfig,
@@ -516,10 +527,13 @@ async def multi_local_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> tuple[
-    str | dict[str, Any] | list[dict[str, Any]],
-    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-] | AsyncGenerator:
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
     """Perform a multi-index local search and return the context data and response.
 
     Parameters
@@ -583,14 +597,20 @@ async def multi_local_search(
         nodes_df["community"] = nodes_df["community"].apply(
             lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
         )
-        nodes_df["title"] = nodes_df["title"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-        nodes_df["id"] = nodes_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-        max_vals["nodes"] = nodes_df["human_readable_id"].max()
+        nodes_df["title"] = nodes_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        nodes_df["id"] = nodes_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
         nodes_dfs.append(nodes_df)
 
         # Prepare each index's community reports dataframe for merging
         community_reports_df = community_reports_list[idx]
-        community_reports_df["community"] = community_reports_df["community"].astype(int)
+        community_reports_df["community"] = community_reports_df["community"].astype(
+            int
+        )
         for i in community_reports_df["community"]:
             links["community_reports"][i + max_vals["community_reports"] + 1] = {
                 "index_name": index_name,
@@ -598,7 +618,7 @@ async def multi_local_search(
             }
         community_reports_df["community"] += max_vals["community_reports"] + 1
         community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
-        max_vals["community_reports"] = community_reports_df["community"].max()
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
         community_reports_dfs.append(community_reports_df)
 
         # Prepare each index's entities dataframe for merging
@@ -612,11 +632,13 @@ async def multi_local_search(
         entities_df["title"] = entities_df["title"].apply(
             lambda x, index_name=index_name: x + f"-{index_name}"
         )
-        entities_df["id"] = entities_df["id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
+        entities_df["id"] = entities_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
         entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["entities"] = entities_df["human_readable_id"].max()
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
         entities_dfs.append(entities_df)
 
         # Prepare each index's relationships dataframe for merging
@@ -642,8 +664,7 @@ async def multi_local_search(
         relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
             lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
         )
-        max_vals["relationships"] = relationships_df["human_readable_id"].astype(int).max()
-
+        max_vals["relationships"] = int(relationships_df["human_readable_id"].max())
         relationships_dfs.append(relationships_df)
 
         # Prepare each index's text units dataframe for merging
@@ -653,8 +674,12 @@ async def multi_local_search(
                 "index_name": index_name,
                 "id": i,
             }
-        text_units_df["id"] = text_units_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
-        text_units_df["human_readable_id"] = text_units_df["human_readable_id"] + max_vals["text_units"]
+        text_units_df["id"] = text_units_df["id"].apply(
+            lambda x, index_name=index_name: f"{x}-{index_name}"
+        )
+        text_units_df["human_readable_id"] = (
+            text_units_df["human_readable_id"] + max_vals["text_units"]
+        )
         max_vals["text_units"] += text_units_df.shape[0]
         text_units_dfs.append(text_units_df)
 
@@ -666,11 +691,19 @@ async def multi_local_search(
                     "index_name": index_name,
                     "id": i,
                 }
-            covariates_df["id"] = covariates_df["id"].apply(lambda x, index_name=index_name: f"{x}-{index_name}")
-            covariates_df["human_readable_id"] = covariates_df["human_readable_id"] + max_vals["covariates"]
-            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-            covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-            max_vals["covariates"] = covariates_df["human_readable_id"].max()
+            covariates_df["id"] = covariates_df["id"].apply(
+                lambda x, index_name=index_name: f"{x}-{index_name}"
+            )
+            covariates_df["human_readable_id"] = (
+                covariates_df["human_readable_id"] + max_vals["covariates"]
+            )
+            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(
+                lambda x, index_name=index_name: x + f"-{index_name}"
+            )
+            covariates_df["subject_id"] = covariates_df["subject_id"].apply(
+                lambda x, index_name=index_name: x + f"-{index_name}"
+            )
+            max_vals["covariates"] += covariates_df.shape[0]
             covariates_dfs.append(covariates_df)
 
     # Merge the dataframes
@@ -678,9 +711,7 @@ async def multi_local_search(
     community_reports_combined = pd.concat(
         community_reports_dfs, axis=0, ignore_index=True, sort=False
     )
-    entities_combined = pd.concat(
-        entities_dfs, axis=0, ignore_index=True, sort=False
-    )
+    entities_combined = pd.concat(entities_dfs, axis=0, ignore_index=True, sort=False)
     relationships_combined = pd.concat(
         relationships_dfs, axis=0, ignore_index=True, sort=False
     )
@@ -791,6 +822,7 @@ async def drift_search(
         context_data[key] = reformat_context_data(result.context_data[key]) # type: ignore
 
     return response, context_data
+
 
 @validate_call(config={"arbitrary_types_allowed": True})
 async def drift_search_streaming(

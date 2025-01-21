@@ -56,6 +56,9 @@ def get_embedding_settings(
     vector_store_settings = settings.vector_store
     if vector_store_settings is None:
         return {"strategy": settings.resolved_strategy()}
+    if not isinstance(vector_store_settings, dict):
+        msg = f"vector_store_settings needs to be a single dict for indexing, got {type(vector_store_settings)}"
+        raise TypeError(msg)
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
@@ -63,7 +66,12 @@ def get_embedding_settings(
     #
     strategy = settings.resolved_strategy()  # get the default strategy
     strategy.update({
-        "vector_store": {**(vector_store_params or {}), **vector_store_settings}
+        "vector_store": {
+            **(vector_store_params or {}),
+            **(
+                vector_store_settings if isinstance(vector_store_settings, dict) else {}
+            ),
+        }
     })  # update the default strategy with the vector store settings
     # This ensures the vector store config is part of the strategy and not the global config
     return {
