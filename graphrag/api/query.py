@@ -616,7 +616,7 @@ async def multi_local_search(
         nodes_df["id"] = nodes_df["id"].apply(
             lambda x, index_name=index_name: x + f"-{index_name}"
         )
-        max_vals["nodes"] = nodes_df["human_readable_id"].astype(int).max()
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].astype(int).max())
         nodes_dfs.append(nodes_df)
 
         # Prepare each index's community reports dataframe for merging
