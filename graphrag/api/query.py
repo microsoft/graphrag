@@ -673,7 +673,7 @@ async def multi_local_search(
         # If presents, prepare each index's covariates dataframe for merging
         if covariates_list is not None:
             covariates_df = covariates_list[idx]
-            for i in range(covariates_df.shape[0]):
+            for i in covariates_df["human_readable_id"].astype(int):
                 links["covariates"][i + max_vals["covariates"]] = {
                     "index_name": index_name,
                     "id": i,
@@ -682,7 +682,7 @@ async def multi_local_search(
             covariates_df["human_readable_id"] = covariates_df["human_readable_id"] + max_vals["covariates"]
             covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
             covariates_df["subject_id"] = covariates_df["subject_id"].apply(lambda x, index_name=index_name: x + f"-{index_name}")
-            max_vals["covariates"] += covariates_df.shape[0]
+            max_vals["covariates"] = covariates_df["human_readable_id"].max()
             covariates_dfs.append(covariates_df)
 
     # Merge the dataframes
