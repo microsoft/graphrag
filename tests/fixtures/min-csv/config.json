@@ -134,6 +134,10 @@
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
             "method": "global"
+        },
+        {
+            "query": "Who is Jordan Hayes?",
+            "method": "basic"
         }
     ],
     "slow": false
