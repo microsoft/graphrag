@@ -35,6 +35,8 @@ async def build_index(
     ----------
     config : GraphRagConfig
         The configuration.
+    method : IndexingMethod default=IndexingMethod.Standard
+        Styling of indexing to perform (full LLM, NLP + LLM, etc.).
     memory_profile : bool
         Whether to enable memory profiling.
     callbacks : list[WorkflowCallbacks] | None default=None
@@ -86,6 +88,8 @@ async def build_index(
 
 def _get_workflows_list(config: GraphRagConfig, method: IndexingMethod) -> list[str]:
     log.info("Getting workflow list for indexing method: %s", method)
+    if config.workflows:
+        return config.workflows
     match method:
         case IndexingMethod.Standard:
             return [

@@ -229,6 +229,12 @@ class GraphRagConfig(BaseModel):
     )
     """The vector store configuration."""
 
+    workflows: list[str] | None = Field(
+        description="List of workflows to run, in execution order. This always overrides any built-in workflow methods.",
+        default=None,
+    )
+    """List of workflows to run, in execution order."""
+
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
         if self.vector_store.type == VectorStoreType.LanceDB:
