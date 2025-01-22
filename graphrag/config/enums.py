@@ -141,6 +141,7 @@ class ChunkStrategyType(str, Enum):
         """Get a string representation."""
         return f'"{self.value}"'
 
+
 class SearchMethod(Enum):
     """The type of search to run."""
 

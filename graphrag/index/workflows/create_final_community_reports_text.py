@@ -32,9 +32,14 @@ async def run_workflow(
         "create_final_text_units", context.storage
     )
 
-    async_mode = config.community_reports.async_mode
-    num_threads = config.community_reports.parallelization.num_threads
-    summarization_strategy = config.community_reports.resolved_strategy(config.root_dir)
+    community_reports_llm_settings = config.get_language_model_config(
+        config.community_reports.model_id
+    )
+    async_mode = community_reports_llm_settings.async_mode
+    num_threads = community_reports_llm_settings.parallelization_num_threads
+    summarization_strategy = config.community_reports.resolved_strategy(
+        config.root_dir, community_reports_llm_settings
+    )
 
     output = await create_final_community_reports_text(
         nodes,
