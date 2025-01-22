@@ -283,14 +283,33 @@ def assert_language_model_configs(
         assert expected.responses is None
 
 
-def assert_vector_store_configs(actual: VectorStoreConfig, expected: VectorStoreConfig):
-    assert actual.type == expected.type
-    assert actual.db_uri == expected.db_uri
-    assert actual.container_name == expected.container_name
-    assert actual.overwrite == expected.overwrite
-    assert actual.url == expected.url
-    assert actual.api_key == expected.api_key
-    assert actual.audience == expected.audience
+def assert_vector_store_configs(
+    actual: VectorStoreConfig | list[VectorStoreConfig],
+    expected: VectorStoreConfig | list[VectorStoreConfig],
+):
+    assert type(actual) is type(expected)
+    if isinstance(actual, VectorStoreConfig) and isinstance(
+        expected, VectorStoreConfig
+    ):
+        assert actual.type == expected.type
+        assert actual.db_uri == expected.db_uri
+        assert actual.container_name == expected.container_name
+        assert actual.overwrite == expected.overwrite
+        assert actual.url == expected.url
+        assert actual.api_key == expected.api_key
+        assert actual.audience == expected.audience
+    elif isinstance(actual, list) and isinstance(expected, list):
+        assert len(actual) == len(expected)
+        for a, e in zip(actual, expected, strict=True):
+            assert isinstance(a, VectorStoreConfig)
+            assert isinstance(e, VectorStoreConfig)
+            assert a.type == e.type
+            assert a.db_uri == e.db_uri
+            assert a.container_name == e.container_name
+            assert a.overwrite == e.overwrite
+            assert a.url == e.url
+            assert a.api_key == e.api_key
+            assert a.audience == e.audience
 
 
 def assert_reporting_configs(

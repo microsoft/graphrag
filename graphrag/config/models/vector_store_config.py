@@ -71,7 +71,8 @@ class VectorStoreConfig(BaseModel):
     )
 
     index_name: str = Field(
-        description="The name of the index that the vector store belongs to.", default=defs.VECTOR_STORE_INDEX_NAME
+        description="The name of the index that the vector store belongs to.",
+        default=defs.VECTOR_STORE_INDEX_NAME,
     )
 
     @model_validator(mode="after")
