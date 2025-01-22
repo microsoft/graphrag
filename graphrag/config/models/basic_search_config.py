@@ -22,15 +22,15 @@ class BasicSearchConfig(BaseModel):
         description="The conversation history maximum turns.",
         default=defs.BASIC_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
     )
-    temperature: float | None = Field(
+    temperature: float = Field(
         description="The temperature to use for token generation.",
         default=defs.BASIC_SEARCH_LLM_TEMPERATURE,
     )
-    top_p: float | None = Field(
+    top_p: float = Field(
         description="The top-p value to use for token generation.",
         default=defs.BASIC_SEARCH_LLM_TOP_P,
     )
-    n: int | None = Field(
+    n: int = Field(
         description="The number of completions to generate.",
         default=defs.BASIC_SEARCH_LLM_N,
     )

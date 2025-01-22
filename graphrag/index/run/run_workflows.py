@@ -55,16 +55,14 @@ async def run_workflows(
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
     logger: ProgressLogger | None = None,
-    run_id: str | None = None,
     is_update_run: bool = False,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
-    run_id = run_id or time.strftime("%Y%m%d-%H%M%S")
-    root_dir = config.root_dir or ""
+    root_dir = config.root_dir
     progress_logger = logger or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
     callback_chain = create_callback_chain(callbacks, progress_logger)
-    storage_config = config.storage.model_dump()  # type: ignore
+    storage_config = config.output.model_dump()  # type: ignore
     storage = StorageFactory().create_storage(
         storage_type=storage_config["type"],  # type: ignore
         kwargs=storage_config,
@@ -81,7 +79,7 @@ async def run_workflows(
     if is_update_run:
         progress_logger.info("Running incremental indexing.")
 
-        update_storage_config = config.update_index_storage.model_dump()  # type: ignore
+        update_storage_config = config.update_index_output.model_dump()  # type: ignore
         update_index_storage = StorageFactory().create_storage(
             storage_type=update_storage_config["type"],  # type: ignore
             kwargs=update_storage_config,

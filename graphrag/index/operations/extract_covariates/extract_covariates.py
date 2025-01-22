@@ -14,7 +14,8 @@ import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
@@ -52,7 +53,12 @@ async def extract_covariates(
     async def run_strategy(row):
         text = row[column]
         result = await run_claim_extraction(
-            text, entity_types, resolved_entities_map, callbacks, cache, strategy_config
+            input=text,
+            entity_types=entity_types,
+            resolved_entities_map=resolved_entities_map,
+            callbacks=callbacks,
+            cache=cache,
+            strategy_config=strategy_config,
         )
         return [
             create_row_from_claim_data(row, item, covariate_type)
@@ -83,8 +89,13 @@ async def run_claim_extraction(
     strategy_config: dict[str, Any],
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
-    llm_config = read_llm_params(strategy_config.get("llm", {}))
-    llm = load_llm("claim_extraction", llm_config, callbacks=callbacks, cache=cache)
+    llm_config = LanguageModelConfig(**strategy_config["llm"])
+    llm = load_llm(
+        "claim_extraction",
+        llm_config,
+        callbacks=callbacks,
+        cache=cache,
+    )
     extraction_prompt = strategy_config.get("extraction_prompt")
     max_gleanings = strategy_config.get("max_gleanings", defs.CLAIM_MAX_GLEANINGS)
     tuple_delimiter = strategy_config.get("tuple_delimiter")

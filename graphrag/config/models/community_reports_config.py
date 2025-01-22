@@ -5,13 +5,13 @@
 
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.models.llm_config import LLMConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
-class CommunityReportsConfig(LLMConfig):
+class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
 
     prompt: str | None = Field(
@@ -28,8 +28,14 @@ class CommunityReportsConfig(LLMConfig):
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+    model_id: str = Field(
+        description="The model ID to use for community reports.",
+        default=defs.COMMUNITY_REPORT_MODEL_ID,
+    )
 
-    def resolved_strategy(self, root_dir) -> dict:
+    def resolved_strategy(
+        self, root_dir: str, model_config: LanguageModelConfig
+    ) -> dict:
         """Get the resolved community report extraction strategy."""
         from graphrag.index.operations.summarize_communities import (
             CreateCommunityReportsStrategyType,
@@ -37,11 +43,12 @@ class CommunityReportsConfig(LLMConfig):
 
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
-            "llm": self.llm.model_dump(),
-            **self.parallelization.model_dump(),
-            "extraction_prompt": (Path(root_dir) / self.prompt)
-            .read_bytes()
-            .decode(encoding="utf-8")
+            "llm": model_config.model_dump(),
+            "stagger": model_config.parallelization_stagger,
+            "num_threads": model_config.parallelization_num_threads,
+            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
+                encoding="utf-8"
+            )
             if self.prompt
             else None,
             "max_report_length": self.max_length,

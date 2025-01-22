@@ -23,12 +23,12 @@ from typing import TYPE_CHECKING, Any
 import pandas as pd
 from pydantic import validate_call
 
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
     text_unit_text_embedding,
 )
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.query.factory import (
     get_basic_search_engine,
@@ -410,7 +410,9 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store
+    if type(config.vector_store) is not list:
+        vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -476,7 +478,7 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -785,7 +787,7 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -859,7 +861,7 @@ async def drift_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -1143,7 +1145,7 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -1188,7 +1190,7 @@ async def basic_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.embeddings.vector_store
+    vector_store_args = config.vector_store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(

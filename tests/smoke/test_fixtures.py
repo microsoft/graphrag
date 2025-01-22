@@ -152,24 +152,12 @@ class TestIndexer:
     def __assert_indexer_outputs(
         self, root: Path, workflow_config: dict[str, dict[str, Any]]
     ):
-        outputs_path = root / "output"
-        output_entries = list(outputs_path.iterdir())
-        # Sort the output folders by creation time, most recent
-        output_entries.sort(key=lambda entry: entry.stat().st_ctime, reverse=True)
+        output_path = root / "output"
 
-        if not debug:
-            assert len(output_entries) == 1, (
-                f"Expected one output folder, found {len(output_entries)}"
-            )
-
-        output_path = output_entries[0]
         assert output_path.exists(), "output folder does not exist"
 
-        artifacts = output_path / "artifacts"
-        assert artifacts.exists(), "artifact folder does not exist"
-
         # Check stats for all workflow
-        stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
+        stats = json.loads((output_path / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
         expected_artifacts = 0
@@ -193,7 +181,7 @@ class TestIndexer:
                 )
 
         # Check artifacts
-        artifact_files = os.listdir(artifacts)
+        artifact_files = os.listdir(output_path)
 
         # check that the number of workflows matches the number of artifacts
         assert len(artifact_files) == (expected_artifacts + 3), (
@@ -202,7 +190,7 @@ class TestIndexer:
 
         for artifact in artifact_files:
             if artifact.endswith(".parquet"):
-                output_df = pd.read_parquet(artifacts / artifact)
+                output_df = pd.read_parquet(output_path / artifact)
                 artifact_name = artifact.split(".")[0]
 
                 try:

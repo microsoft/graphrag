@@ -8,7 +8,7 @@ from typing import Any
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.model.types import TextEmbedder
-from graphrag.utils.embeddings import create_collection_name
+from graphrag.config.embeddings import create_collection_name
 from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,

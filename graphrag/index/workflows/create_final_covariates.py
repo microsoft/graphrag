@@ -26,12 +26,15 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
+    claim_extraction_llm_settings = config.get_language_model_config(
+        config.claim_extraction.model_id
+    )
     extraction_strategy = config.claim_extraction.resolved_strategy(
-        config.root_dir, config.encoding_model
+        config.root_dir, claim_extraction_llm_settings
     )
 
-    async_mode = config.claim_extraction.async_mode
-    num_threads = config.claim_extraction.parallelization.num_threads
+    async_mode = claim_extraction_llm_settings.async_mode
+    num_threads = claim_extraction_llm_settings.parallelization_num_threads
 
     output = await create_final_covariates(
         text_units,

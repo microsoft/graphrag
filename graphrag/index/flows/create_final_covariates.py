@@ -31,15 +31,15 @@ async def create_final_covariates(
     # this also results in text_unit_id being copied to the output covariate table
     text_units["text_unit_id"] = text_units["id"]
     covariates = await extract_covariates(
-        text_units,
-        callbacks,
-        cache,
-        "text",
-        covariate_type,
-        extraction_strategy,
-        async_mode,
-        entity_types,
-        num_threads,
+        input=text_units,
+        callbacks=callbacks,
+        cache=cache,
+        column="text",
+        covariate_type=covariate_type,
+        strategy=extraction_strategy,
+        async_mode=async_mode,
+        entity_types=entity_types,
+        num_threads=num_threads,
     )
     text_units.drop(columns=["text_unit_id"], inplace=True)  # don't pollute the global
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
