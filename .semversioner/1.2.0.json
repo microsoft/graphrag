@@ -1,0 +1,26 @@
+{
+  "changes": [
+    {
+      "description": "Add Drift Reduce response and streaming endpoint",
+      "type": "minor"
+    },
+    {
+      "description": "add cosmosdb vector store",
+      "type": "minor"
+    },
+    {
+      "description": "Fix example notebooks",
+      "type": "patch"
+    },
+    {
+      "description": "Set default rate limits.",
+      "type": "patch"
+    },
+    {
+      "description": "unit tests for text_splitting",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-01-15T20:32:00+00:00",
+  "version": "1.2.0"
+}

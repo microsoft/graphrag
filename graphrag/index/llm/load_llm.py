@@ -19,11 +19,12 @@ from fnllm.openai import (
     create_openai_embeddings_llm,
 )
 from fnllm.openai.types.chat.parameters import OpenAIChatParameters
-from pydantic import TypeAdapter
 
 import graphrag.config.defaults as defs
 from graphrag.config.enums import LLMType
-from graphrag.config.models.llm_parameters import LLMParameters
+from graphrag.config.models.language_model_config import (
+    LanguageModelConfig,  # noqa: TC001
+)
 from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 
 from .mock_llm import MockChatLLM
@@ -93,17 +94,9 @@ def create_cache(cache: PipelineCache | None, name: str) -> LLMCache | None:
     return GraphRagLLMCache(cache).child(name)
 
 
-def read_llm_params(llm_args: dict[str, Any]) -> LLMParameters:
-    """Read the LLM parameters from the arguments."""
-    if llm_args == {}:
-        msg = "LLM arguments are required"
-        raise ValueError(msg)
-    return TypeAdapter(LLMParameters).validate_python(llm_args)
-
-
 def load_llm(
     name: str,
-    config: LLMParameters,
+    config: LanguageModelConfig,
     *,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache | None,
@@ -133,7 +126,7 @@ def load_llm(
 
 def load_llm_embeddings(
     name: str,
-    llm_config: LLMParameters,
+    llm_config: LanguageModelConfig,
     *,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache | None,
@@ -174,7 +167,7 @@ def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
 def _load_openai_chat_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: LLMParameters,
+    config: LanguageModelConfig,
     azure=False,
 ):
     return _create_openai_chat_llm(
@@ -187,7 +180,7 @@ def _load_openai_chat_llm(
 def _load_openai_embeddings_llm(
     on_error: ErrorHandlerFn,
     cache: LLMCache,
-    config: LLMParameters,
+    config: LanguageModelConfig,
     azure=False,
 ):
     return _create_openai_embeddings_llm(
@@ -197,8 +190,8 @@ def _load_openai_embeddings_llm(
     )
 
 
-def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
-    encoding_model = config.encoding_model or defs.ENCODING_MODEL
+def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAIConfig:
+    encoding_model = config.encoding_model
     json_strategy = (
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
     )
@@ -253,19 +246,19 @@ def _create_openai_config(config: LLMParameters, azure: bool) -> OpenAIConfig:
 
 
 def _load_azure_openai_chat_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LanguageModelConfig
 ):
     return _load_openai_chat_llm(on_error, cache, config, True)
 
 
 def _load_azure_openai_embeddings_llm(
-    on_error: ErrorHandlerFn, cache: LLMCache, config: LLMParameters
+    on_error: ErrorHandlerFn, cache: LLMCache, config: LanguageModelConfig
 ):
     return _load_openai_embeddings_llm(on_error, cache, config, True)
 
 
 def _load_static_response(
-    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: LLMParameters
+    _on_error: ErrorHandlerFn, _cache: PipelineCache, config: LanguageModelConfig
 ) -> ChatLLM:
     if config.responses is None:
         msg = "Static response LLM requires responses"

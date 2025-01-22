@@ -8,15 +8,18 @@ from pathlib import Path
 from graphrag.config.enums import (
     AsyncType,
     CacheType,
+    ChunkStrategyType,
     InputFileType,
     InputType,
     LLMType,
+    OutputType,
     ReportingType,
-    StorageType,
     TextEmbeddingTarget,
 )
 from graphrag.vector_stores.factory import VectorStoreType
 
+DEFAULT_CHAT_MODEL_ID = "default_chat_model"
+DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
 AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
@@ -47,24 +50,29 @@ EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_BATCH_SIZE = 16
 EMBEDDING_BATCH_MAX_TOKENS = 8191
 EMBEDDING_TARGET = TextEmbeddingTarget.required
+EMBEDDING_MODEL_ID = DEFAULT_EMBEDDING_MODEL_ID
 
 CACHE_TYPE = CacheType.file
 CACHE_BASE_DIR = "cache"
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 100
 CHUNK_GROUP_BY_COLUMNS = ["id"]
+CHUNK_STRATEGY = ChunkStrategyType.tokens
 CLAIM_DESCRIPTION = (
     "Any claims or facts that could be relevant to information discovery."
 )
 CLAIM_MAX_GLEANINGS = 1
 CLAIM_EXTRACTION_ENABLED = False
+CLAIM_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 MAX_CLUSTER_SIZE = 10
 USE_LCC = True
 CLUSTER_GRAPH_SEED = 0xDEADBEEF
 COMMUNITY_REPORT_MAX_LENGTH = 2000
 COMMUNITY_REPORT_MAX_INPUT_LENGTH = 8000
+COMMUNITY_REPORT_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 ENTITY_EXTRACTION_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 ENTITY_EXTRACTION_MAX_GLEANINGS = 1
+ENTITY_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 INPUT_FILE_TYPE = InputFileType.text
 INPUT_TYPE = InputType.file
 INPUT_BASE_DIR = "input"
@@ -86,25 +94,18 @@ REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_EMBEDDINGS = False
 SNAPSHOTS_TRANSIENT = False
-STORAGE_BASE_DIR = "output"
-STORAGE_TYPE = StorageType.file
+OUTPUT_BASE_DIR = "output"
+OUTPUT_TYPE = OutputType.file
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
+SUMMARIZE_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 UMAP_ENABLED = False
-UPDATE_STORAGE_BASE_DIR = "update_output"
+UPDATE_OUTPUT_BASE_DIR = "update_output"
 
-VECTOR_STORE = f"""
-    type: {VectorStoreType.LanceDB.value} # one of [lancedb, azure_ai_search, cosmosdb]
-    db_uri: '{(Path(STORAGE_BASE_DIR) / "lancedb")!s}'
-    collection_name: default
-    overwrite: true\
-"""
 
-VECTOR_STORE_DICT = {
-    "type": VectorStoreType.LanceDB.value,
-    "db_uri": str(Path(STORAGE_BASE_DIR) / "lancedb"),
-    "collection_name": "default",
-    "overwrite": True,
-}
+VECTOR_STORE_TYPE = VectorStoreType.LanceDB.value
+VECTOR_STORE_DB_URI = str(Path(OUTPUT_BASE_DIR) / "lancedb")
+VECTOR_STORE_CONTAINER_NAME = "default"
+VECTOR_STORE_OVERWRITE = True
 
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5

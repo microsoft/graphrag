@@ -1,12 +1,41 @@
+models:
+  default_chat_model:
+    type: ${GRAPHRAG_LLM_TYPE}
+    api_key: ${GRAPHRAG_API_KEY}
+    api_base: ${GRAPHRAG_API_BASE}
+    api_version: ${GRAPHRAG_API_VERSION}
+    deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
+    model: ${GRAPHRAG_LLM_MODEL}
+    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
+    requests_per_minute: ${GRAPHRAG_LLM_RPM}
+    model_supports_json: true
+    parallelization_num_threads: 50
+    parallelization_stagger: 0.3
+    async_mode: threaded
+  default_embedding_model:
+    type: ${GRAPHRAG_EMBEDDING_TYPE}
+    api_key: ${GRAPHRAG_API_KEY}
+    api_base: ${GRAPHRAG_API_BASE}
+    api_version: ${GRAPHRAG_API_VERSION}
+    deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
+    model: ${GRAPHRAG_EMBEDDING_MODEL}
+    tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
+    requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
+    parallelization_num_threads: 50
+    parallelization_stagger: 0.3
+    async_mode: threaded
+
+vector_store:
+  type: "azure_ai_search"
+  url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+  api_key: ${AZURE_AI_SEARCH_API_KEY}
+  container_name: "simple_text_ci"
+
 claim_extraction:
   enabled: true
 
 embeddings:
-  vector_store:
-    type: "azure_ai_search"
-    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-    api_key: ${AZURE_AI_SEARCH_API_KEY}
-    container_name: "simple_text_ci"
+  model_id: "default_embedding_model"
 
 community_reports:
   prompt: "prompts/community_report.txt"
@@ -15,16 +44,12 @@ community_reports:
 
 
 storage:
-  type: file # or blob
-  base_dir: "output/${timestamp}/artifacts"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
+  type: file
+  base_dir: "output"
 
 reporting:
-  type: file # or console, blob
-  base_dir: "output/${timestamp}/reports"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
+  type: file
+  base_dir: "logs"
 
 snapshots:
   embeddings: True

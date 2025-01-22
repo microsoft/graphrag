@@ -1,13 +1,11 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pytest
 from pandas.testing import assert_series_equal
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.run.derive_from_rows import ParallelizationError
 from graphrag.index.workflows.create_final_covariates import (
     run_workflow,
     workflow_name,
@@ -15,6 +13,7 @@ from graphrag.index.workflows.create_final_covariates import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
     load_test_table,
 )
@@ -25,8 +24,6 @@ MOCK_LLM_RESPONSES = [
     """.strip()
 ]
 
-MOCK_LLM_CONFIG = {"type": LLMType.StaticResponse, "responses": MOCK_LLM_RESPONSES}
-
 
 async def test_create_final_covariates():
     input = load_test_table("create_base_text_units")
@@ -36,10 +33,15 @@ async def test_create_final_covariates():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(
+        config.claim_extraction.model_id
+    ).model_dump()
+    llm_settings["type"] = LLMType.StaticResponse
+    llm_settings["responses"] = MOCK_LLM_RESPONSES
     config.claim_extraction.strategy = {
         "type": "graph_intelligence",
-        "llm": MOCK_LLM_CONFIG,
+        "llm": llm_settings,
         "claim_description": "description",
     }
 
@@ -78,22 +80,3 @@ async def test_create_final_covariates():
         actual["source_text"][0]
         == "According to an article published on 2022/01/10, Company A was fined for bid rigging while participating in multiple public tenders published by Government Agency B."
     )
-
-
-async def test_create_final_covariates_missing_llm_throws():
-    context = await create_test_context(
-        storage=["create_base_text_units"],
-    )
-
-    config = create_graphrag_config()
-    config.claim_extraction.strategy = {
-        "type": "graph_intelligence",
-        "claim_description": "description",
-    }
-
-    with pytest.raises(ParallelizationError):
-        await run_workflow(
-            config,
-            context,
-            NoopWorkflowCallbacks(),
-        )

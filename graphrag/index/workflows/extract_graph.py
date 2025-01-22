@@ -28,24 +28,28 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    extraction_strategy = config.entity_extraction.resolved_strategy(
-        config.root_dir, config.encoding_model
+    entity_extraction_llm_settings = config.get_language_model_config(
+        config.entity_extraction.model_id
     )
-    extraction_num_threads = config.entity_extraction.parallelization.num_threads
-    extraction_async_mode = config.entity_extraction.async_mode
+    extraction_strategy = config.entity_extraction.resolved_strategy(
+        config.root_dir, entity_extraction_llm_settings
+    )
+    extraction_num_threads = entity_extraction_llm_settings.parallelization_num_threads
+    extraction_async_mode = entity_extraction_llm_settings.async_mode
     entity_types = config.entity_extraction.entity_types
 
+    summarization_llm_settings = config.get_language_model_config(
+        config.summarize_descriptions.model_id
+    )
     summarization_strategy = config.summarize_descriptions.resolved_strategy(
-        config.root_dir,
+        config.root_dir, summarization_llm_settings
     )
-    summarization_num_threads = (
-        config.summarize_descriptions.parallelization.num_threads
-    )
+    summarization_num_threads = summarization_llm_settings.parallelization_num_threads
 
     base_entity_nodes, base_relationship_edges = await extract_graph(
-        text_units,
-        callbacks,
-        context.cache,
+        text_units=text_units,
+        callbacks=callbacks,
+        cache=context.cache,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extraction_num_threads,
         extraction_async_mode=extraction_async_mode,

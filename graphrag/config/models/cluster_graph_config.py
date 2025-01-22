@@ -18,7 +18,7 @@ class ClusterGraphConfig(BaseModel):
         description="Whether to use the largest connected component.",
         default=defs.USE_LCC,
     )
-    seed: int | None = Field(
+    seed: int = Field(
         description="The seed to use for the clustering.",
         default=defs.CLUSTER_GRAPH_SEED,
     )
