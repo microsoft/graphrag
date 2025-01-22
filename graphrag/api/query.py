@@ -424,7 +424,6 @@ async def local_search(
         config_args=vector_store_args,  # type: ignore
         embedding_name=entity_description_embedding,
     )
-
     entities_ = read_indexer_entities(nodes, entities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
     prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
