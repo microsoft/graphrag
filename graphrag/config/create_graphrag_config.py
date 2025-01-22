@@ -40,5 +40,4 @@ def create_graphrag_config(
     if root_dir:
         root_path = Path(root_dir).resolve()
         values["root_dir"] = str(root_path)
-    print(values)
     return GraphRagConfig(**values)

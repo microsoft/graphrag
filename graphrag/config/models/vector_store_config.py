@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field, model_validator
 import graphrag.config.defaults as defs
 from graphrag.vector_stores.factory import VectorStoreType
 
+
 class VectorStoreConfig(BaseModel):
     """The default configuration section for Vector Store."""
 
@@ -75,6 +76,3 @@ class VectorStoreConfig(BaseModel):
         self._validate_db_uri()
         self._validate_url()
         return self
-
-#class VectorStoreConfig(BaseModel):
-#    stores: list[VectorStoreConfigBase] | VectorStoreConfigBase
