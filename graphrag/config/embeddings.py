@@ -5,6 +5,7 @@
 
 from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.config.models.vector_store_config import VectorStoreConfig
 
 entity_title_embedding = "entity.title"
 entity_description_embedding = "entity.description"
@@ -57,7 +58,13 @@ def get_embedding_settings(
     embeddings_llm_settings = settings.get_language_model_config(
         settings.embeddings.model_id
     )
-    vector_store_settings = settings.vector_store.model_dump()
+    if isinstance(settings.vector_store, VectorStoreConfig):
+        vector_store_settings = settings.vector_store.model_dump()
+    else:
+        # If vector_store is not type VectorStoreConfig, it is type list[VectorStoreConfig].
+        # But type list[VectorStoreConfig] should only be used for multi-index query
+        vector_store_settings = None
+
     if vector_store_settings is None:
         return {
             "strategy": settings.embeddings.resolved_strategy(embeddings_llm_settings)
