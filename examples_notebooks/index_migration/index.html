@@ -1914,27 +1914,29 @@ PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.load_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.resolve_path</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_paths</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.create_pipeline_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_pipeline_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.storage.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_storage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.storage.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">StorageFactory</span>
 
 <span class="c1"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
 <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_DIRECTORY</span><span class="p">))</span>
 <span class="n">resolve_paths</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">create_pipeline_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">storage</span> <span class="o">=</span> <span class="n">create_storage</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
+<span class="n">storage_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">StorageFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_storage</span><span class="p">(</span>
+    <span class="n">storage_type</span><span class="o">=</span><span class="n">storage_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">storage_config</span>
+<span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">from pathlib import Path
 
 from graphrag.config.load_config import load_config
 from graphrag.config.resolve_path import resolve_paths
-from graphrag.index.create_pipeline_config import create_pipeline_config
-from graphrag.storage.factory import create_storage
+from graphrag.storage.factory import StorageFactory
 
 # This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow
 config = load_config(Path(PROJECT_DIRECTORY))
 resolve_paths(config)
-pipeline_config = create_pipeline_config(config)
-storage = create_storage(pipeline_config.storage)</div>
+storage_config = config.storage.model_dump()  # type: ignore
+storage = StorageFactory().create_storage(
+    storage_type=storage_config["type"], kwargs=storage_config
+)</div>
 </div>
 </div>
 </div>
@@ -1948,15 +1950,15 @@ storage = create_storage(pipeline_config.storage)</div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[3], line 6</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">resolve_path</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> resolve_paths
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_pipeline_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_pipeline_config
-<span class="ansi-green-fg">----&gt; 6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_storage
-<span class="ansi-green-intense-fg ansi-bold">      8</span> <span style="color: rgb(95,135,135)"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
-<span class="ansi-green-intense-fg ansi-bold">      9</span> config <span style="color: rgb(98,98,98)">=</span> load_config(Path(PROJECT_DIRECTORY))
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[3], line 4</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pathlib</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> Path
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">load_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
+<span class="ansi-green-fg">----&gt; 4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">resolve_path</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> resolve_paths
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># This first block does some config loading, path resolution, and translation that is normally done by the CLI/API when running a full workflow</span>
 
-<span class="ansi-red-fg">ImportError</span>: cannot import name 'create_storage' from 'graphrag.storage.factory' (/home/runner/work/graphrag/graphrag/graphrag/storage/factory.py)</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.config.resolve_path'</pre>
 </div>
 </div>
 </div>
@@ -2086,22 +2088,16 @@ Cell <span class="ansi-green-fg">In[3], line 6</span>
 <span class="c1"># First we'll go through any parquet files that had model changes and update them</span>
 <span class="c1"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
 
-<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_documents.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_text_units.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
 <span class="n">final_relationships</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_relationships.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+    <span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
-<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_communities.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
 <span class="n">final_community_reports</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
-    <span class="s2">"create_final_community_reports.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+    <span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
 
 
@@ -2161,20 +2157,14 @@ Cell <span class="ansi-green-fg">In[3], line 6</span>
         <span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
     <span class="p">)</span>
 
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"create_final_documents.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_text_units</span><span class="p">,</span> <span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_entities</span><span class="p">,</span> <span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">,</span> <span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_relationships</span><span class="p">,</span> <span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_communities</span><span class="p">,</span> <span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
 <span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
-    <span class="n">final_text_units</span><span class="p">,</span> <span class="s2">"create_final_text_units.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_entities</span><span class="p">,</span> <span class="s2">"create_final_entities.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">,</span> <span class="s2">"create_final_nodes.parquet"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
-    <span class="n">final_relationships</span><span class="p">,</span> <span class="s2">"create_final_relationships.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
-    <span class="n">final_communities</span><span class="p">,</span> <span class="s2">"create_final_communities.parquet"</span><span class="p">,</span> <span class="n">storage</span>
-<span class="p">)</span>
-<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
-    <span class="n">final_community_reports</span><span class="p">,</span> <span class="s2">"create_final_community_reports.parquet"</span><span class="p">,</span> <span class="n">storage</span>
+    <span class="n">final_community_reports</span><span class="p">,</span> <span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6">from uuid import uuid4
@@ -2184,22 +2174,16 @@ from graphrag.utils.storage import load_table_from_storage, write_table_to_stora
 # First we'll go through any parquet files that had model changes and update them
 # The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility
 
-final_documents = await load_table_from_storage(
-    "create_final_documents.parquet", storage
-)
-final_text_units = await load_table_from_storage(
-    "create_final_text_units.parquet", storage
-)
-final_entities = await load_table_from_storage("create_final_entities.parquet", storage)
-final_nodes = await load_table_from_storage("create_final_nodes.parquet", storage)
+final_documents = await load_table_from_storage("create_final_documents", storage)
+final_text_units = await load_table_from_storage("create_final_text_units", storage)
+final_entities = await load_table_from_storage("create_final_entities", storage)
+final_nodes = await load_table_from_storage("create_final_nodes", storage)
 final_relationships = await load_table_from_storage(
-    "create_final_relationships.parquet", storage
+    "create_final_relationships", storage
 )
-final_communities = await load_table_from_storage(
-    "create_final_communities.parquet", storage
-)
+final_communities = await load_table_from_storage("create_final_communities", storage)
 final_community_reports = await load_table_from_storage(
-    "create_final_community_reports.parquet", storage
+    "create_final_community_reports", storage
 )
 
 
@@ -2259,20 +2243,14 @@ if "parent" not in final_community_reports.columns:
         parent_df, on="community", how="left"
     )
 
-await write_table_to_storage(final_documents, "create_final_documents.parquet", storage)
+await write_table_to_storage(final_documents, "create_final_documents", storage)
+await write_table_to_storage(final_text_units, "create_final_text_units", storage)
+await write_table_to_storage(final_entities, "create_final_entities", storage)
+await write_table_to_storage(final_nodes, "create_final_nodes", storage)
+await write_table_to_storage(final_relationships, "create_final_relationships", storage)
+await write_table_to_storage(final_communities, "create_final_communities", storage)
 await write_table_to_storage(
-    final_text_units, "create_final_text_units.parquet", storage
-)
-await write_table_to_storage(final_entities, "create_final_entities.parquet", storage)
-await write_table_to_storage(final_nodes, "create_final_nodes.parquet", storage)
-await write_table_to_storage(
-    final_relationships, "create_final_relationships.parquet", storage
-)
-await write_table_to_storage(
-    final_communities, "create_final_communities.parquet", storage
-)
-await write_table_to_storage(
-    final_community_reports, "create_final_community_reports.parquet", storage
+    final_community_reports, "create_final_community_reports", storage
 )</div>
 </div>
 </div>
@@ -2288,17 +2266,13 @@ await write_table_to_storage(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 9</span>
+Cell <span class="ansi-green-fg">In[6], line 8</span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">utils</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_table_from_storage, write_table_to_storage
 <span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(95,135,135)"># First we'll go through any parquet files that had model changes and update them</span>
 <span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
-<span class="ansi-green-intense-fg ansi-bold">      8</span> final_documents <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(
-<span class="ansi-green-fg">----&gt; 9</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_documents.parquet</span><span style="color: rgb(175,0,0)">"</span>, <span class="ansi-yellow-bg">storage</span>
-<span class="ansi-green-intense-fg ansi-bold">     10</span> )
-<span class="ansi-green-intense-fg ansi-bold">     11</span> final_text_units <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_text_units.parquet</span><span style="color: rgb(175,0,0)">"</span>, storage
-<span class="ansi-green-intense-fg ansi-bold">     13</span> )
-<span class="ansi-green-intense-fg ansi-bold">     14</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_entities.parquet</span><span style="color: rgb(175,0,0)">"</span>, storage)
+<span class="ansi-green-fg">----&gt; 8</span> final_documents <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_documents</span><span style="color: rgb(175,0,0)">"</span>, <span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-green-intense-fg ansi-bold">      9</span> final_text_units <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_text_units</span><span style="color: rgb(175,0,0)">"</span>, storage)
+<span class="ansi-green-intense-fg ansi-bold">     10</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_entities</span><span style="color: rgb(175,0,0)">"</span>, storage)
 
 <span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>
@@ -2325,21 +2299,24 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_cache</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheFactory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.config.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_embedded_fields</span><span class="p">,</span> <span class="n">get_embedding_settings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.flows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
 
 <span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
 <span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
 
-<span class="n">workflow</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-    <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pipeline_config</span><span class="o">.</span><span class="n">workflows</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"generate_text_embeddings"</span><span class="p">),</span> <span class="kc">None</span>
-<span class="p">)</span>
-<span class="n">config</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">config</span>
-<span class="n">text_embed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text_embed"</span><span class="p">,</span> <span class="p">{})</span>
-<span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embedded_fields"</span><span class="p">,</span> <span class="p">{})</span>
+
+<span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">get_embedded_fields</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">text_embed</span> <span class="o">=</span> <span class="n">get_embedding_settings</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 <span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopWorkflowCallbacks</span><span class="p">()</span>
-<span class="n">cache</span> <span class="o">=</span> <span class="n">create_cache</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">PROJECT_DIRECTORY</span><span class="p">)</span>
+<span class="n">cache_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">CacheFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span>
+    <span class="n">cache_type</span><span class="o">=</span><span class="n">cache_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+    <span class="n">root_dir</span><span class="o">=</span><span class="n">PROJECT_DIRECTORY</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="n">cache_config</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
     <span class="n">final_documents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -2355,21 +2332,24 @@ Cell <span class="ansi-green-fg">In[6], line 9</span>
     <span class="n">snapshot_embeddings_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import create_cache
+<div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import CacheFactory
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.index.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
 
 # We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
 # We'll construct the context and run this function flow directly to avoid everything else
 
-workflow = next(
-    (x for x in pipeline_config.workflows if x.name == "generate_text_embeddings"), None
-)
-config = workflow.config
-text_embed = config.get("text_embed", {})
-embedded_fields = config.get("embedded_fields", {})
+
+embedded_fields = get_embedded_fields(config)
+text_embed = get_embedding_settings(config)
 callbacks = NoopWorkflowCallbacks()
-cache = create_cache(pipeline_config.cache, PROJECT_DIRECTORY)
+cache_config = config.cache.model_dump()  # type: ignore
+cache = CacheFactory().create_cache(
+    cache_type=cache_config["type"],  # type: ignore
+    root_dir=PROJECT_DIRECTORY,
+    kwargs=cache_config,
+)
 
 await generate_text_embeddings(
     final_documents=None,
@@ -2397,13 +2377,16 @@ await generate_text_embeddings(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ImportError</span>                               Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">cache</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_cache
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[7], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">cache</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> CacheFactory
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-green-fg">----&gt; 3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> get_embedded_fields, get_embedding_settings
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># We'll construct the context and run this function flow directly to avoid everything else</span>
 
-<span class="ansi-red-fg">ImportError</span>: cannot import name 'create_cache' from 'graphrag.cache.factory' (/home/runner/work/graphrag/graphrag/graphrag/cache/factory.py)</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.index.config'</pre>
 </div>
 </div>
 </div>
