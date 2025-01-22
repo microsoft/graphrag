@@ -15,6 +15,7 @@ from tenacity import (
     wait_exponential_jitter,
 )
 
+from graphrag.llm.others.factories import is_valid_llm_type, use_chat_llm
 from graphrag.logger.base import StatusLogger
 from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.oai.base import OpenAILLMImpl
@@ -193,6 +194,23 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
+
+        llm_type, *models = model.split(".")
+        if is_valid_llm_type(llm_type):
+            llm_type, *models = model.split(".")
+            chat_llm = use_chat_llm(llm_type, model=".".join(models))
+            if streaming:
+                return "".join([
+                    str(chunk.content) for chunk in chat_llm.stream(messages, **kwargs)
+                ])
+            response = chat_llm.invoke(messages, **kwargs)
+            if isinstance(response.content, str):
+                return response.content
+            try:
+                return str(response.content)
+            except AttributeError:
+                return ""
+
         response = self.sync_client.chat.completions.create(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
@@ -233,27 +251,38 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = self.sync_client.chat.completions.create(  # type: ignore
-            model=model,
-            messages=messages,  # type: ignore
-            stream=True,
-            **kwargs,
-        )
-        for chunk in response:
-            if not chunk or not chunk.choices:
-                continue
+        llm_type, *models = model.split(".")
+        if is_valid_llm_type(llm_type):
+            chat_llm = use_chat_llm(llm_type, model=".".join(models))
+            for chunk in chat_llm.stream(messages, **kwargs):
+                delta = chunk.content if isinstance(chunk.content, str) else ""
+                yield delta
+                if callbacks:
+                    for callback in callbacks:
+                        callback.on_llm_new_token(delta)
 
-            delta = (
-                chunk.choices[0].delta.content
-                if chunk.choices[0].delta and chunk.choices[0].delta.content
-                else ""
+        else:
+            response = self.sync_client.chat.completions.create(  # type: ignore
+                model=model,
+                messages=messages,  # type: ignore
+                stream=True,
+                **kwargs,
             )
+            for chunk in response:
+                if not chunk or not chunk.choices:
+                    continue
 
-            yield delta
+                delta = (
+                    chunk.choices[0].delta.content
+                    if chunk.choices[0].delta and chunk.choices[0].delta.content
+                    else ""
+                )
 
-            if callbacks:
-                for callback in callbacks:
-                    callback.on_llm_new_token(delta)
+                yield delta
+
+                if callbacks:
+                    for callback in callbacks:
+                        callback.on_llm_new_token(delta)
 
     async def _agenerate(
         self,
@@ -265,6 +294,23 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
+
+        llm_type, *models = model.split(".")
+        if is_valid_llm_type(llm_type):
+            llm_type, *models = model.split(".")
+            chat_llm = use_chat_llm(llm_type, model=".".join(models))
+            if streaming:
+                return "".join([
+                    str(chunk.content) for chunk in chat_llm.stream(messages, **kwargs)
+                ])
+            response = chat_llm.invoke(messages, **kwargs)
+            if isinstance(response.content, str):
+                return response.content
+            try:
+                return str(response.content)
+            except AttributeError:
+                return ""
+
         response = await self.async_client.chat.completions.create(  # type: ignore
             model=model,
             messages=messages,  # type: ignore
@@ -306,24 +352,38 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
         model = self.model
         if not model:
             raise ValueError(_MODEL_REQUIRED_MSG)
-        response = await self.async_client.chat.completions.create(  # type: ignore
-            model=model,
-            messages=messages,  # type: ignore
-            stream=True,
-            **kwargs,
-        )
-        async for chunk in response:
-            if not chunk or not chunk.choices:
-                continue
+        llm_type, *models = model.split(".")
+        if is_valid_llm_type(llm_type):
+            chat_llm = use_chat_llm(llm_type, model=".".join(models))
+            async for chunk in chat_llm.astream(messages, **kwargs):
+                delta = (
+                    chunk.content
+                    if isinstance(chunk.content, str)
+                    else str(chunk.content)
+                )
+                yield delta
+                if callbacks:
+                    for callback in callbacks:
+                        callback.on_llm_new_token(delta)
+        else:
+            response = await self.async_client.chat.completions.create(  # type: ignore
+                model=model,
+                messages=messages,  # type: ignore
+                stream=True,
+                **kwargs,
+            )
+            async for chunk in response:
+                if not chunk or not chunk.choices:
+                    continue
 
-            delta = (
-                chunk.choices[0].delta.content
-                if chunk.choices[0].delta and chunk.choices[0].delta.content
-                else ""
-            )  # type: ignore
+                delta = (
+                    chunk.choices[0].delta.content
+                    if chunk.choices[0].delta and chunk.choices[0].delta.content
+                    else ""
+                )  # type: ignore
 
-            yield delta
+                yield delta
 
-            if callbacks:
-                for callback in callbacks:
-                    callback.on_llm_new_token(delta)
+                if callbacks:
+                    for callback in callbacks:
+                        callback.on_llm_new_token(delta)

@@ -19,6 +19,7 @@ from tenacity import (
 )
 
 import graphrag.config.defaults as defs
+from graphrag.llm.others.factories import is_valid_llm_type, use_embeddings
 from graphrag.logger.base import StatusLogger
 from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.oai.base import OpenAILLMImpl
@@ -122,6 +123,11 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
     def _embed_with_retry(
         self, text: str | tuple, **kwargs: Any
     ) -> tuple[list[float], int]:
+        embeddings = None
+        llm_type, *models = self.model.split(".")
+        if is_valid_llm_type(llm_type):
+            args = {**kwargs, "model": ".".join(models)}
+            embeddings = use_embeddings(llm_type, **args)
         try:
             retryer = Retrying(
                 stop=stop_after_attempt(self.max_retries),
@@ -131,6 +137,10 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             for attempt in retryer:
                 with attempt:
+                    if embeddings:
+                        if isinstance(text, tuple):
+                            text = self.token_encoder.decode(text)
+                        return embeddings.embed_query(text), len(text)
                     embedding = (
                         self.sync_client.embeddings.create(  # type: ignore
                             input=text,
@@ -155,6 +165,11 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
     async def _aembed_with_retry(
         self, text: str | tuple, **kwargs: Any
     ) -> tuple[list[float], int]:
+        embeddings = None
+        llm_type, *models = self.model.split(".")
+        if is_valid_llm_type(llm_type):
+            args = {**kwargs, "model": ".".join(models)}
+            embeddings = use_embeddings(llm_type, **args)
         try:
             retryer = AsyncRetrying(
                 stop=stop_after_attempt(self.max_retries),
@@ -164,6 +179,10 @@ class OpenAIEmbedding(BaseTextEmbedding, OpenAILLMImpl):
             )
             async for attempt in retryer:
                 with attempt:
+                    if embeddings is not None:
+                        if isinstance(text, tuple):
+                            text = self.token_encoder.decode(text)
+                        return await embeddings.aembed_query(text), len(text)
                     embedding = (
                         await self.async_client.embeddings.create(  # type: ignore
                             input=text,

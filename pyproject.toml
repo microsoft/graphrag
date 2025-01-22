@@ -90,6 +90,7 @@ tenacity = "^9.0.0"
 json-repair = "^0.30.3"
 tqdm = "^4.67.1"
 httpx = "^0.28.1"
+langchain-ollama = "^0.2.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.9"
