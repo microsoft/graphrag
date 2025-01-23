@@ -24,6 +24,7 @@ from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.output_config import OutputConfig
+from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
@@ -192,6 +193,12 @@ class GraphRagConfig(BaseModel):
         ),
     )
     """The claim extraction configuration to use."""
+
+    prune_graph: PruneGraphConfig = Field(
+        description="The graph pruning configuration to use.",
+        default=PruneGraphConfig(),
+    )
+    """The graph pruning configuration to use."""
 
     cluster_graph: ClusterGraphConfig = Field(
         description="The cluster graph configuration to use.",

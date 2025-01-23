@@ -19,10 +19,10 @@ def prune_graph(
     graph: nx.Graph,
     min_node_freq: int = 1,
     max_node_freq_std: float | None = None,
-    min_edge_weight: int = 1,
     min_node_degree: int = 1,
-    remove_ego_nodes: bool = False,
     max_node_degree_std: float | None = None,
+    min_edge_weight: int = 1,
+    remove_ego_nodes: bool = False,
     lcc_only: bool = False,
 ) -> nx.Graph:
     """Prune graph by removing nodes that are out of frequency/degree ranges and edges with low weights."""
