@@ -162,3 +162,14 @@ class IndexingMethod(str, Enum):
     """Traditional GraphRAG indexing, with all graph construction and summarization performed by a language model."""
     Fast = "fast"
     """Fast indexing, using NLP for graph construction and language model for summarization."""
+
+
+class NounPhraseExtractorType(str, Enum):
+    """Enum for the noun phrase extractor options."""
+
+    RegexEnglish = "regex_english"
+    """Standard extractor using regex. Fastest, but limited to English."""
+    Syntactic = "syntactic_parser"
+    """Noun phrase extractor based on dependency parsing and NER using SpaCy."""
+    CFG = "cfg"
+    """Noun phrase extractor combining CFG-based noun-chunk extraction and NER."""

@@ -4,55 +4,30 @@
 """Graph extraction using NLP."""
 
 import math
-import re
-from typing import TYPE_CHECKING, cast
 
-import nltk
 import pandas as pd
-from textblob import TextBlob
 
-if TYPE_CHECKING:
-    from textblob.blob import WordList
+from graphrag.index.operations.build_noun_graph.np_extractors.base import (
+    BaseNounPhraseExtractor,
+)
 
 
 def build_noun_graph(
     text_unit_df: pd.DataFrame,
-    max_word_length: int,
+    text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
-    _download_dependencies()
-
     text_units = text_unit_df.loc[:, ["id", "text"]]
-    nodes_df = _extract_nodes(text_units, max_word_length)
+    nodes_df = _extract_nodes(text_units, text_analyzer)
     edges_df = _extract_edges(nodes_df, normalize_edge_weights=normalize_edge_weights)
 
     return (nodes_df, edges_df)
 
 
-def _extract_noun_phrases(
-    text: str,
-    max_word_length: int = 20,
-) -> list[str]:
-    """Extract all noun phrases from a text chunk."""
-    noun_phrases = cast("WordList", TextBlob(text).noun_phrases)
-    filtered_noun_phrases = set()
-    for noun_phrase in noun_phrases:
-        parts = [p for p in re.split(r"[\s]+", noun_phrase) if len(p) > 0]
-        if len(parts) == 0:
-            continue
-        if (
-            (len(parts) > 1 or "-" in parts[0])
-            and all(re.match(r"^[a-zA-Z0-9\-]+\n?$", part) for part in parts)
-            and all(len(y) < max_word_length for y in parts)
-        ):
-            filtered_noun_phrases.add(noun_phrase.replace("\n", "").upper())
-    return list(filtered_noun_phrases)
-
-
 def _extract_nodes(
     text_unit_df: pd.DataFrame,
-    max_word_length: int = 20,
+    text_analyzer: BaseNounPhraseExtractor,
 ) -> pd.DataFrame:
     """
     Extract initial nodes and edges from text units.
@@ -61,19 +36,20 @@ def _extract_nodes(
     Returns a dataframe with schema [id, title, freq, text_unit_ids].
     """
     text_unit_df["noun_phrases"] = text_unit_df["text"].apply(
-        lambda x: _extract_noun_phrases(x, max_word_length)
+        lambda text: text_analyzer.extract(text)
     )
-
     noun_node_df = text_unit_df.explode("noun_phrases")
     noun_node_df = noun_node_df.rename(
-        columns={"noun_phrases": "title"}
+        columns={"noun_phrases": "title", "id": "text_unit_id"}
     ).drop_duplicates()
 
-    # group by title, count the number of text units and collect their ids
+    # group by title and count the number of text units
     grouped_node_df = (
-        noun_node_df.groupby("title").agg(text_unit_ids=("id", list)).reset_index()
+        noun_node_df.groupby("title").agg({"text_unit_id": list}).reset_index()
     )
+    grouped_node_df = grouped_node_df.rename(columns={"text_unit_id": "text_unit_ids"})
     grouped_node_df["freq"] = grouped_node_df["text_unit_ids"].apply(len)
+    grouped_node_df = grouped_node_df[["title", "freq", "text_unit_ids"]]
     return grouped_node_df.loc[:, ["title", "freq", "text_unit_ids"]]
 
 
@@ -193,49 +169,3 @@ def _calculate_pmi_edge_weights(
         axis=1,
     )
     return edges_df.drop(columns=["prop_weight", "source_prop", "target_prop"])
-
-
-def _download_dependencies():
-    # download corpora
-    _download_if_not_exists("brown")
-    _download_if_not_exists("treebank")
-
-    # download tokenizers
-    _download_if_not_exists("punkt")
-    _download_if_not_exists("punkt_tab")
-
-    # Preload the corpora to avoid lazy loading issues due to
-    # race conditions when running multi-threaded jobs.
-    nltk.corpus.brown.ensure_loaded()
-    nltk.corpus.treebank.ensure_loaded()
-
-
-def _download_if_not_exists(resource_name) -> bool:
-    # look under all possible categories
-    root_categories = [
-        "corpora",
-        "tokenizers",
-        "taggers",
-        "chunkers",
-        "classifiers",
-        "stemmers",
-        "stopwords",
-        "languages",
-        "frequent",
-        "gate",
-        "models",
-        "mt",
-        "sentiment",
-        "similarity",
-    ]
-    for category in root_categories:
-        try:
-            # if found, stop looking and avoids downloading
-            nltk.find(f"{category}/{resource_name}")
-            return True  # noqa: TRY300
-        except LookupError:
-            continue
-
-    # is not found, download
-    nltk.download(resource_name)
-    return False

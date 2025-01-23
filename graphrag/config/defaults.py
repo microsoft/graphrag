@@ -12,6 +12,7 @@ from graphrag.config.enums import (
     InputFileType,
     InputType,
     LLMType,
+    NounPhraseExtractorType,
     OutputType,
     ReportingType,
     TextEmbeddingTarget,
@@ -89,8 +90,23 @@ ENTITY_EXTRACTION_MAX_GLEANINGS = 1
 ENTITY_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
 # Graph extraction via NLP
-EXTRACT_GRAPH_NLP_MAX_WORD_LENGTH = 20
-EXTRACT_GRAPH_NLP_NORMALIZE_EDGE_WEIGHTS = True
+NLP_NORMALIZE_EDGE_WEIGHTS = True
+NLP_EXTRACTOR_TYPE = NounPhraseExtractorType.RegexEnglish
+NLP_MAX_WORD_LENGTH = 15
+NLP_MODEL_NAME = "en_core_web_md"
+NLP_EXCLUDE_NOUNS = None
+NLP_WORD_DELIMITER = " "
+NLP_INCLUDE_NAMED_ENTITIES = True
+NLP_EXCLUDE_ENTITY_TAGS = ["DATE"]
+NLP_EXCLUDE_POS_TAGS = ["DET", "PRON", "INTJ", "X"]
+NLP_NOUN_PHRASE_TAGS = ["PROPN", "NOUNS"]
+NLP_NOUN_PHRASE_CFG = {
+    "PROPN,PROPN": "PROPN",
+    "NOUN,NOUN": "NOUNS",
+    "NOUNS,NOUN": "NOUNS",
+    "ADJ,ADJ": "ADJ",
+    "ADJ,NOUN": "NOUNS",
+}
 
 # Input file params
 INPUT_FILE_TYPE = InputFileType.text
