@@ -3,6 +3,7 @@
 
 """Graph extraction using NLP."""
 
+import math
 import re
 from typing import TYPE_CHECKING, cast
 
@@ -16,14 +17,15 @@ if TYPE_CHECKING:
 
 def build_noun_graph(
     text_unit_df: pd.DataFrame,
-    max_word_length: int = 20,
+    max_word_length: int,
+    normalize_edge_weights: bool,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     _download_dependencies()
 
     text_units = text_unit_df.loc[:, ["id", "text"]]
     nodes_df = _extract_nodes(text_units, max_word_length)
-    edges_df = _extract_edges(nodes_df)
+    edges_df = _extract_edges(nodes_df, normalize_edge_weights=normalize_edge_weights)
 
     return (nodes_df, edges_df)
 
@@ -77,6 +79,7 @@ def _extract_nodes(
 
 def _extract_edges(
     nodes_df: pd.DataFrame,
+    normalize_edge_weights: bool = True,
 ) -> pd.DataFrame:
     """
     Extract edges from nodes.
@@ -121,7 +124,16 @@ def _extract_edges(
     )
     grouped_edge_df = grouped_edge_df.rename(columns={"text_unit_id": "text_unit_ids"})
     grouped_edge_df["weight"] = grouped_edge_df["text_unit_ids"].apply(len)
-    return grouped_edge_df.loc[:, ["source", "target", "weight", "text_unit_ids"]]
+
+    grouped_edge_df = grouped_edge_df.loc[
+        :, ["source", "target", "weight", "text_unit_ids"]
+    ]
+
+    if normalize_edge_weights:
+        # use PMI weight instead of raw weight
+        grouped_edge_df = _calculate_pmi_edge_weights(nodes_df, grouped_edge_df)
+
+    return grouped_edge_df
 
 
 def _create_relationships(
@@ -134,6 +146,53 @@ def _create_relationships(
             for j in range(i + 1, len(noun_phrases)):
                 relationships.extend([(noun_phrases[i], noun_phrases[j])])
     return relationships
+
+
+def _calculate_pmi_edge_weights(
+    nodes_df: pd.DataFrame,
+    edges_df: pd.DataFrame,
+    node_name_col="title",
+    node_freq_col="freq",
+    edge_weight_col="weight",
+    edge_source_col="source",
+    edge_target_col="target",
+) -> pd.DataFrame:
+    """
+    Calculate pointwise mutual information (PMI) edge weights.
+
+    pmi(x,y) = log2(p(x,y) / (p(x)p(y)))
+    p(x,y) = edge_weight(x,y) / total_edge_weights
+    p(x) = freq_occurrence(x) / total_freq_occurrences
+    """
+    copied_nodes_df = nodes_df[[node_name_col, node_freq_col]]
+
+    total_edge_weights = edges_df[edge_weight_col].sum()
+    total_freq_occurrences = nodes_df[node_freq_col].sum()
+    copied_nodes_df["prop_occurrence"] = (
+        copied_nodes_df[node_freq_col] / total_freq_occurrences
+    )
+    copied_nodes_df = copied_nodes_df.loc[:, [node_name_col, "prop_occurrence"]]
+
+    edges_df["prop_weight"] = edges_df[edge_weight_col] / total_edge_weights
+    edges_df = (
+        edges_df.merge(
+            copied_nodes_df, left_on=edge_source_col, right_on=node_name_col, how="left"
+        )
+        .drop(columns=[node_name_col])
+        .rename(columns={"prop_occurrence": "source_prop"})
+    )
+    edges_df = (
+        edges_df.merge(
+            copied_nodes_df, left_on=edge_target_col, right_on=node_name_col, how="left"
+        )
+        .drop(columns=[node_name_col])
+        .rename(columns={"prop_occurrence": "target_prop"})
+    )
+    edges_df[edge_weight_col] = edges_df.apply(
+        lambda x: math.log2(x["prop_weight"] / (x["source_prop"] * x["target_prop"])),
+        axis=1,
+    )
+    return edges_df.drop(columns=["prop_weight", "source_prop", "target_prop"])
 
 
 def _download_dependencies():

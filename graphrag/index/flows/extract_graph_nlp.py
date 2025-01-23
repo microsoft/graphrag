@@ -7,6 +7,7 @@ from uuid import uuid4
 
 import pandas as pd
 
+from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
 from graphrag.index.operations.create_graph import create_graph
@@ -16,10 +17,15 @@ from graphrag.index.operations.prune_graph import prune_graph
 
 def extract_graph_nlp(
     text_units: pd.DataFrame,
+    extraction_config: ExtractGraphNLPConfig,
     pruning_config: PruneGraphConfig,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
-    extracted_nodes, extracted_edges = build_noun_graph(text_units)
+    extracted_nodes, extracted_edges = build_noun_graph(
+        text_units,
+        max_word_length=extraction_config.max_word_length,
+        normalize_edge_weights=extraction_config.normalize_edge_weights,
+    )
 
     # create a temporary graph to prune, then turn it back into dataframes
     graph = create_graph(extracted_edges, edge_attr=["weight"], nodes=extracted_nodes)

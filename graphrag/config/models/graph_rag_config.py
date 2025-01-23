@@ -19,6 +19,7 @@ from graphrag.config.models.community_reports_config import CommunityReportsConf
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
@@ -173,6 +174,12 @@ class GraphRagConfig(BaseModel):
         default=EntityExtractionConfig(),
     )
     """The entity extraction configuration to use."""
+
+    extract_graph_nlp: ExtractGraphNLPConfig = Field(
+        description="The NLP-based graph extraction configuration to use.",
+        default=ExtractGraphNLPConfig(),
+    )
+    """The NLP-based graph extraction configuration to use."""
 
     summarize_descriptions: SummarizeDescriptionsConfig = Field(
         description="The description summarization configuration to use.",
