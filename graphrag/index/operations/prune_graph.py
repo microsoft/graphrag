@@ -21,7 +21,7 @@ def prune_graph(
     max_node_freq_std: float | None = None,
     min_node_degree: int = 1,
     max_node_degree_std: float | None = None,
-    min_edge_weight: int = 1,
+    min_edge_weight_pct: float = 0,
     remove_ego_nodes: bool = False,
     lcc_only: bool = False,
 ) -> nx.Graph:
@@ -64,13 +64,18 @@ def prune_graph(
         ])
 
     # remove edges by min weight
-    graph.remove_edges_from([
-        (source, target)
-        for source, target, data in graph.edges(data=True)
-        if source in graph.nodes()
-        and target in graph.nodes()
-        and data[schema.EDGE_WEIGHT] < min_edge_weight
-    ])
+    if min_edge_weight_pct > 0:
+        min_edge_weight = np.percentile(
+            [data[schema.EDGE_WEIGHT] for _, _, data in graph.edges(data=True)],
+            min_edge_weight_pct,
+        )
+        graph.remove_edges_from([
+            (source, target)
+            for source, target, data in graph.edges(data=True)
+            if source in graph.nodes()
+            and target in graph.nodes()
+            and data[schema.EDGE_WEIGHT] < min_edge_weight
+        ])
 
     if lcc_only:
         return glc.utils.largest_connected_component(graph)  # type: ignore

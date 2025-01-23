@@ -29,7 +29,7 @@ def extract_graph_nlp(
         max_node_freq_std=pruning_config.max_node_freq_std,
         min_node_degree=pruning_config.min_node_degree,
         max_node_degree_std=pruning_config.max_node_degree_std,
-        min_edge_weight=pruning_config.min_edge_weight,
+        min_edge_weight_pct=pruning_config.min_edge_weight_pct,
         remove_ego_nodes=pruning_config.remove_ego_nodes,
         lcc_only=pruning_config.lcc_only,
     )
