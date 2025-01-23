@@ -3,7 +3,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-            "name": "Graphrag init",
+            "name": "Debug Graphrag init",
             "type": "python",
             "request": "launch",
             "module": "graphrag",
@@ -14,7 +14,7 @@
             "console": "integratedTerminal"
         },
 		{
-            "name": "Graphrag index",
+            "name": "Debug Graphrag index",
             "type": "python",
             "request": "launch",
             "module": "graphrag",
@@ -22,7 +22,48 @@
 				"index",
 				"--root", "${workspaceFolder}/workdir"
 			],
+            "justMyCode": false,  // 设置为 false 以调试第三方库
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Run Graphrag index",
+            "type": "python",
+            "request": "launch",
+            "module": "graphrag",
+            "args": [
+				"index",
+				"--root", "${workspaceFolder}/workdir"
+			],
+            "justMyCode": false,  // 设置为 false 以调试第三方库
+            "console": "integratedTerminal",
+            "noDebug": true
+        },
+        {
+            "name": "Debug Graphrag prompt-tune",
+            "type": "python",
+            "request": "launch",
+            "module": "graphrag",
+            "args": [
+				"prompt-tune",
+				"--root", "${workspaceFolder}/workdir",
+                "--config", "${workspaceFolder}/workdir/settings.yaml",
+                "--discover-entity-types"
+			],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Run Graphrag prompt-tune",
+            "type": "python",
+            "request": "launch",
+            "module": "graphrag",
+            "args": [
+				"prompt-tune",
+				"--root", "${workspaceFolder}/workdir",
+                "--config", "${workspaceFolder}/workdir/settings.yaml",
+                "--discover-entity-types"
+			],
+            "console": "integratedTerminal",
+            "noDebug": true
         }
 	]
 }

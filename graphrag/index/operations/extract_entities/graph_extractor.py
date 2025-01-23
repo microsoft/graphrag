@@ -8,6 +8,7 @@ import re
 import traceback
 from collections.abc import Mapping
 from dataclasses import dataclass
+from string import Formatter
 from typing import Any
 
 import networkx as nx
@@ -30,7 +31,58 @@ DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 log = logging.getLogger(__name__)
 
+class SafeFormatter(Formatter):
+    def __init__(self):
+        # 匹配嵌套结构占位符的正则表达式
+        self.nested_pattern = re.compile(r"{([^{}]+)}")
+        # 匹配未成对的单独花括号
+        self.unpaired_pattern = re.compile(r"(?:{[^{}]*$|^[^{}]*}|{[^{}]*}|})")
 
+
+    def format(self, format_string, *args, **kwargs):
+        # 替换未成对的花括号
+        format_string = self._replace_unpaired_braces(format_string)
+        # 替换嵌套结构占位符
+        format_string = self._replace_nested(format_string)
+        # 使用父类的 format 方法处理非嵌套占位符
+        return super().format(format_string, *args, **kwargs)
+    
+    def get_value(self, key, args, kwargs) -> Any:
+        # 仅处理字符串键,如果 key 不存在于 kwargs，则保留原样占位符
+        if isinstance(key, str) and key in kwargs:
+            return kwargs[key]
+        return f"{{{key}}}"
+    
+    def _replace_unpaired_braces(self, format_string):
+        """
+        替换未成对的花括号为普通字符 '{' 或 '}'。
+        """
+        # 替换未成对的 `{` 或 `}` 为普通字符
+        def replace_unpaired(match):
+            unmatched = match.group(0)
+            # 如果是未闭合的 `{` 或单独的 `}`, 替换为普通字符
+            if unmatched.startswith("{") and unmatched.endswith("}"):
+                return unmatched  # 保留合法的占位符
+            elif unmatched.startswith("{"):
+                return "{{"  # 替换未闭合的 `{` 为普通字符
+            elif unmatched.endswith("}"):
+                return "}}"  # 替换单独的 `}` 为普通字符
+            return unmatched
+        return self.unpaired_pattern.sub(replace_unpaired, format_string)
+    
+    def _replace_nested(self, format_string):
+        """
+        替换嵌套结构为普通文本{{}}
+        """
+        def replace_nested(match):
+                key = match.group(1)
+                # # 如果是嵌套结构（检测到 "[" 或 "."），转义为 {{...}}
+                if "[" in key or "." in key:
+                    return f"{{{{{key}}}}}" # 双括号转义，避免解析
+                return match.group(0)  # 保留原始内容
+        return self.nested_pattern.sub(replace_nested, format_string)
+
+    
 @dataclass
 class GraphExtractionResult:
     """Unipartite graph extraction result class definition."""
@@ -152,11 +204,14 @@ class GraphExtractor:
     async def _process_document(
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
+        formatter = SafeFormatter()
+        kwargs = {
+            **prompt_variables,
+            self._input_text_key: text
+        }
+        formated_prompt = formatter.format(self._extraction_prompt, **kwargs)
         response = await self._llm(
-            self._extraction_prompt.format(**{
-                **prompt_variables,
-                self._input_text_key: text,
-            }),
+            formated_prompt
         )
         results = response.output.content or ""
 
