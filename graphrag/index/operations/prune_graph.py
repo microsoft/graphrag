@@ -72,16 +72,6 @@ def prune_graph(
         and data[schema.EDGE_WEIGHT] < min_edge_weight
     ])
 
-    # add degree to nodes
-    for node, data in graph.nodes(data=True):
-        data[schema.NODE_DEGREE] = degree(node)
-
-    # add combined degree to edges
-    # todo: this actually happens later in the normal pipeline, so we'll defer it
-    # however, we may be able to streamline that generally if we update the llm based one as well and just make it an extraction output requirement
-    for source, target, data in graph.edges(data=True):
-        data[schema.EDGE_DEGREE] = degree(source) + degree(target)  # type: ignore
-
     if lcc_only:
         return glc.utils.largest_connected_component(graph)  # type: ignore
 
