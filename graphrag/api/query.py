@@ -256,7 +256,7 @@ async def multi_index_global_search(
     if streaming:
         message = "Streaming not yet implemented for multi_global_search"
         raise NotImplementedError(message)
-    
+
     links = {
         "nodes": {},
         "community": {},
@@ -578,7 +578,7 @@ async def multi_index_local_search(
     if streaming:
         message = "Streaming not yet implemented for multi_index_local_search"
         raise NotImplementedError(message)
-    
+
     links = {
         "nodes": {},
         "community_reports": {},
@@ -983,7 +983,7 @@ async def multi_index_drift_search(
     if streaming:
         message = "Streaming not yet implemented for multi_drift_search"
         raise NotImplementedError(message)
-    
+
     links = {
         "nodes": {},
         "community_reports": {},
@@ -1298,7 +1298,7 @@ async def multi_index_basic_search(
     if streaming:
         message = "Streaming not yet implemented for multi_basic_search"
         raise NotImplementedError(message)
-    
+
     links = {
         "text_units": {},
     }
