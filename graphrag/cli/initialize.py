@@ -29,8 +29,22 @@ from graphrag.prompts.query.local_search_system_prompt import LOCAL_SEARCH_SYSTE
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
 
 
-def initialize_project_at(path: Path) -> None:
-    """Initialize the project at the given path."""
+def initialize_project_at(path: Path, force: bool) -> None:
+    """
+    Initialize the project at the given path.
+
+    Parameters
+    ----------
+    path : Path
+        The path at which to initialize the project.
+    force : bool
+        Whether to force initialization even if the project already exists.
+
+    Raises
+    ------
+    ValueError
+        If the project already exists and force is False.
+    """
     progress_logger = LoggerFactory().create_logger(LoggerType.RICH)
     progress_logger.info(f"Initializing project at {path}")  # noqa: G004
     root = Path(path)
@@ -38,7 +52,7 @@ def initialize_project_at(path: Path) -> None:
         root.mkdir(parents=True, exist_ok=True)
 
     settings_yaml = root / "settings.yaml"
-    if settings_yaml.exists():
+    if settings_yaml.exists() and not force:
         msg = f"Project already initialized at {root}"
         raise ValueError(msg)
 
@@ -46,7 +60,7 @@ def initialize_project_at(path: Path) -> None:
         file.write(INIT_YAML.encode(encoding="utf-8", errors="strict"))
 
     dotenv = root / ".env"
-    if not dotenv.exists():
+    if not dotenv.exists() or force:
         with dotenv.open("wb") as file:
             file.write(INIT_DOTENV.encode(encoding="utf-8", errors="strict"))
 
@@ -71,6 +85,6 @@ def initialize_project_at(path: Path) -> None:
 
     for name, content in prompts.items():
         prompt_file = prompts_dir / f"{name}.txt"
-        if not prompt_file.exists():
+        if not prompt_file.exists() or force:
             with prompt_file.open("wb") as file:
                 file.write(content.encode(encoding="utf-8", errors="strict"))

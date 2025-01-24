@@ -111,6 +111,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
                         name="vector",
                         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                         searchable=True,
+                        hidden=False,  # DRIFT needs to return the vector for client-side similarity
                         vector_search_dimensions=self.vector_size,
                         vector_search_profile_name=self.vector_search_profile_name,
                     ),

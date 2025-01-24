@@ -9,7 +9,8 @@ from fnllm import ChatLLM
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.config.models.language_model_config import LanguageModelConfig
+from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_entities.graph_extractor import GraphExtractor
 from graphrag.index.operations.extract_entities.typing import (
     Document,
@@ -27,8 +28,13 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = read_llm_params(args.get("llm", {}))
-    llm = load_llm("entity_extraction", llm_config, callbacks=callbacks, cache=cache)
+    llm_config = LanguageModelConfig(**args["llm"])
+    llm = load_llm(
+        "entity_extraction",
+        llm_config,
+        callbacks=callbacks,
+        cache=cache,
+    )
     return await run_extract_entities(llm, docs, entity_types, callbacks, args)
 
 

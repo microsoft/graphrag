@@ -5,13 +5,13 @@
 
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.models.llm_config import LLMConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
-class SummarizeDescriptionsConfig(LLMConfig):
+class SummarizeDescriptionsConfig(BaseModel):
     """Configuration section for description summarization."""
 
     prompt: str | None = Field(
@@ -24,8 +24,14 @@ class SummarizeDescriptionsConfig(LLMConfig):
     strategy: dict | None = Field(
         description="The override strategy to use.", default=None
     )
+    model_id: str = Field(
+        description="The model ID to use for summarization.",
+        default=defs.SUMMARIZE_MODEL_ID,
+    )
 
-    def resolved_strategy(self, root_dir: str) -> dict:
+    def resolved_strategy(
+        self, root_dir: str, model_config: LanguageModelConfig
+    ) -> dict:
         """Get the resolved description summarization strategy."""
         from graphrag.index.operations.summarize_descriptions import (
             SummarizeStrategyType,
@@ -33,11 +39,12 @@ class SummarizeDescriptionsConfig(LLMConfig):
 
         return self.strategy or {
             "type": SummarizeStrategyType.graph_intelligence,
-            "llm": self.llm.model_dump(),
-            **self.parallelization.model_dump(),
-            "summarize_prompt": (Path(root_dir) / self.prompt)
-            .read_bytes()
-            .decode(encoding="utf-8")
+            "llm": model_config.model_dump(),
+            "stagger": model_config.parallelization_stagger,
+            "num_threads": model_config.parallelization_num_threads,
+            "summarize_prompt": (Path(root_dir) / self.prompt).read_text(
+                encoding="utf-8"
+            )
             if self.prompt
             else None,
             "max_summary_length": self.max_length,

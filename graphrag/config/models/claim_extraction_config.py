@@ -5,17 +5,18 @@
 
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-from graphrag.config.models.llm_config import LLMConfig
+from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
-class ClaimExtractionConfig(LLMConfig):
+class ClaimExtractionConfig(BaseModel):
     """Configuration section for claim extraction."""
 
     enabled: bool = Field(
         description="Whether claim extraction is enabled.",
+        default=defs.CLAIM_EXTRACTION_ENABLED,
     )
     prompt: str | None = Field(
         description="The claim extraction prompt to use.", default=None
@@ -34,18 +35,25 @@ class ClaimExtractionConfig(LLMConfig):
     encoding_model: str | None = Field(
         default=None, description="The encoding model to use."
     )
+    model_id: str = Field(
+        description="The model ID to use for claim extraction.",
+        default=defs.CLAIM_EXTRACTION_MODEL_ID,
+    )
 
-    def resolved_strategy(self, root_dir: str, encoding_model: str | None) -> dict:
+    def resolved_strategy(
+        self, root_dir: str, model_config: LanguageModelConfig
+    ) -> dict:
         """Get the resolved claim extraction strategy."""
         return self.strategy or {
-            "llm": self.llm.model_dump(),
-            **self.parallelization.model_dump(),
-            "extraction_prompt": (Path(root_dir) / self.prompt)
-            .read_bytes()
-            .decode(encoding="utf-8")
+            "llm": model_config.model_dump(),
+            "stagger": model_config.parallelization_stagger,
+            "num_threads": model_config.parallelization_num_threads,
+            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
+                encoding="utf-8"
+            )
             if self.prompt
             else None,
             "claim_description": self.description,
             "max_gleanings": self.max_gleanings,
-            "encoding_name": encoding_model or self.encoding_model,
+            "encoding_name": model_config.encoding_model,
         }

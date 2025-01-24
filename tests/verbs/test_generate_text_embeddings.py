@@ -3,16 +3,17 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import TextEmbeddingTarget
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     all_embeddings,
 )
+from graphrag.config.enums import TextEmbeddingTarget
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -28,9 +29,14 @@ async def test_generate_text_embeddings():
         ]
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(
+        config.embeddings.model_id
+    ).model_dump()
+
     config.embeddings.strategy = {
         "type": "mock",
+        "llm": llm_settings,
     }
     config.embeddings.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True

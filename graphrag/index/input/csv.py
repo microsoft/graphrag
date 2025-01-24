@@ -6,11 +6,10 @@
 import logging
 import re
 from io import BytesIO
-from typing import cast
 
 import pandas as pd
 
-from graphrag.index.config.input import PipelineCSVInputConfig, PipelineInputConfig
+from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -23,19 +22,18 @@ input_type = "csv"
 
 
 async def load(
-    config: PipelineInputConfig,
+    config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""
-    csv_config = cast("PipelineCSVInputConfig", config)
-    log.info("Loading csv files from %s", csv_config.base_dir)
+    log.info("Loading csv files from %s", config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
             group = {}
         buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1")
+        data = pd.read_csv(buffer, encoding=config.encoding)
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
@@ -43,15 +41,15 @@ async def load(
             )
         if "id" not in data.columns:
             data["id"] = data.apply(lambda x: gen_sha512_hash(x, x.keys()), axis=1)
-        if csv_config.text_column is not None and "text" not in data.columns:
-            if csv_config.text_column not in data.columns:
+        if config.text_column is not None and "text" not in data.columns:
+            if config.text_column not in data.columns:
                 log.warning(
                     "text_column %s not found in csv file %s",
-                    csv_config.text_column,
+                    config.text_column,
                     path,
                 )
             else:
-                data["text"] = data.apply(lambda x: x[csv_config.text_column], axis=1)
+                data["text"] = data.apply(lambda x: x[config.text_column], axis=1)
         return data
 
     file_pattern = (

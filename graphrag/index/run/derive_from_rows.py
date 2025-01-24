@@ -23,10 +23,11 @@ ItemType = TypeVar("ItemType")
 class ParallelizationError(ValueError):
     """Exception for invalid parallel processing."""
 
-    def __init__(self, num_errors: int):
-        super().__init__(
-            f"{num_errors} Errors occurred while running parallel transformation, could not complete!"
-        )
+    def __init__(self, num_errors: int, example: str | None = None):
+        msg = f"{num_errors} Errors occurred while running parallel transformation, could not complete!"
+        if example:
+            msg += f"\nExample error: {example}"
+        super().__init__(msg)
 
 
 async def derive_from_rows(
@@ -153,6 +154,6 @@ async def _derive_from_rows_base(
         callbacks.error("parallel transformation error", error, stack)
 
     if len(errors) > 0:
-        raise ParallelizationError(len(errors))
+        raise ParallelizationError(len(errors), errors[0][1])
 
     return result

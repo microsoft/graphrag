@@ -2,8 +2,6 @@
 # Licensed under the MIT License
 
 
-import pytest
-
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
@@ -11,7 +9,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     CommunityReportResponse,
     FindingModel,
 )
-from graphrag.index.run.derive_from_rows import ParallelizationError
 from graphrag.index.workflows.create_final_community_reports import (
     run_workflow,
     workflow_name,
@@ -19,6 +16,7 @@ from graphrag.index.workflows.create_final_community_reports import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -41,12 +39,6 @@ MOCK_RESPONSES = [
     )
 ]
 
-MOCK_LLM_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_RESPONSES,
-    "parse_json": True,
-}
-
 
 async def test_create_final_community_reports():
     expected = load_test_table(workflow_name)
@@ -61,10 +53,16 @@ async def test_create_final_community_reports():
         ]
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(
+        config.community_reports.model_id
+    ).model_dump()
+    llm_settings["type"] = LLMType.StaticResponse
+    llm_settings["responses"] = MOCK_RESPONSES
+    llm_settings["parse_json"] = True
     config.community_reports.strategy = {
         "type": "graph_intelligence",
-        "llm": MOCK_LLM_CONFIG,
+        "llm": llm_settings,
     }
 
     await run_workflow(
@@ -83,27 +81,3 @@ async def test_create_final_community_reports():
     # assert a handful of mock data items to confirm they get put in the right spot
     assert actual["rank"][:1][0] == 2
     assert actual["rank_explanation"][:1][0] == "<rating_explanation>"
-
-
-async def test_create_final_community_reports_missing_llm_throws():
-    context = await create_test_context(
-        storage=[
-            "create_final_nodes",
-            "create_final_covariates",
-            "create_final_relationships",
-            "create_final_entities",
-            "create_final_communities",
-        ]
-    )
-
-    config = create_graphrag_config()
-    config.community_reports.strategy = {
-        "type": "graph_intelligence",
-    }
-
-    with pytest.raises(ParallelizationError):
-        await run_workflow(
-            config,
-            context,
-            NoopWorkflowCallbacks(),
-        )

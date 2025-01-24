@@ -9,7 +9,7 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     community_full_content_embedding,
     community_summary_embedding,
     community_title_embedding,
@@ -119,9 +119,9 @@ async def _run_and_snapshot_embeddings(
     """All the steps to generate single embedding."""
     if text_embed_config:
         data["embedding"] = await embed_text(
-            data,
-            callbacks,
-            cache,
+            input=data,
+            callbacks=callbacks,
+            cache=cache,
             embed_column=embed_column,
             embedding_name=name,
             strategy=text_embed_config["strategy"],
