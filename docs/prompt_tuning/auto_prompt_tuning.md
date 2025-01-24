@@ -33,7 +33,7 @@ graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selec
 
 - `--domain` (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.
 
-- `--method` (optional): The method to select documents. Options are all, random, auto or top. Default is random.
+- `--selection-method` (optional): The method to select documents. Options are all, random, auto or top. Default is random.
 
 - `--limit` (optional): The limit of text units to load when using random or top selection. Default is 15.
 
@@ -57,7 +57,7 @@ graphrag prompt-tune [--root ROOT] [--config CONFIG] [--domain DOMAIN]  [--selec
 
 ```bash
 python -m graphrag prompt-tune --root /path/to/project --config /path/to/settings.yaml --domain "environmental news" \
---method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 \
+--selection-method random --limit 10 --language English --max-tokens 2048 --chunk-size 256 --min-examples-required 3 \
 --no-entity-types --output /path/to/output
 ```
 
