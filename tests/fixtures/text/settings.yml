@@ -26,10 +26,11 @@ models:
     async_mode: threaded
 
 vector_store:
-  type: "azure_ai_search"
-  url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-  api_key: ${AZURE_AI_SEARCH_API_KEY}
-  container_name: "simple_text_ci"
+  output:
+    type: "azure_ai_search"
+    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+    api_key: ${AZURE_AI_SEARCH_API_KEY}
+    container_name: "simple_text_ci"
 
 claim_extraction:
   enabled: true
