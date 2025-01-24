@@ -289,7 +289,9 @@ def assert_vector_store_configs(
 ):
     assert type(actual) is type(expected)
     assert len(actual) == len(expected)
-    for (index_a, store_a), (index_e, store_e) in zip(actual.items(), expected.items(), strict=True):
+    for (index_a, store_a), (index_e, store_e) in zip(
+        actual.items(), expected.items(), strict=True
+    ):
         assert index_a == index_e
         assert store_a.type == store_e.type
         assert store_a.db_uri == store_e.db_uri
@@ -298,6 +300,7 @@ def assert_vector_store_configs(
         assert store_a.audience == store_e.audience
         assert store_a.container_name == store_e.container_name
         assert store_a.overwrite == store_e.overwrite
+
 
 def assert_reporting_configs(
     actual: ReportingConfig, expected: ReportingConfig

@@ -225,7 +225,8 @@ class GraphRagConfig(BaseModel):
     """The basic search configuration."""
 
     vector_store: dict[str, VectorStoreConfig] = Field(
-        description="The vector store configuration.", default={"default": VectorStoreConfig()}
+        description="The vector store configuration.",
+        default={"default": VectorStoreConfig()},
     )
     """The vector store configuration."""
 
