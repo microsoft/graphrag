@@ -142,6 +142,10 @@
             "method": "global"
         },
         {
+            "query": "What is the main theme of the story?",
+            "method": "drift"
+        },
+        {
             "query": "Who is Jordan Hayes?",
             "method": "basic"
         }
