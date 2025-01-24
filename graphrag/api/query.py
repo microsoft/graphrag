@@ -209,7 +209,7 @@ async def global_search_streaming(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def multi_global_search(
+async def multi_index_global_search(
     config: GraphRagConfig,
     nodes_list: list[pd.DataFrame],
     entities_list: list[pd.DataFrame],
@@ -228,7 +228,7 @@ async def multi_global_search(
     ]
     | AsyncGenerator
 ):
-    """Perform a global search and return the context data and response.
+    """Perform a global search across multiple indexes and return the context data and response.
 
     Parameters
     ----------
@@ -252,6 +252,11 @@ async def multi_global_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_global_search"
+        raise NotImplementedError(message)
+    
     links = {
         "nodes": {},
         "community": {},
@@ -348,11 +353,6 @@ async def multi_global_search(
     communities_combined = pd.concat(
         communities_dfs, axis=0, ignore_index=True, sort=False
     )
-
-    # Call the streaming api function
-    if streaming:
-        message = "Streaming not yet implemented for multi_global_search"
-        raise NotImplementedError(message)
 
     result = await global_search(
         config,
@@ -529,7 +529,7 @@ async def local_search_streaming(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def multi_local_search(
+async def multi_index_local_search(
     config: GraphRagConfig,
     nodes_list: list[pd.DataFrame],
     entities_list: list[pd.DataFrame],
@@ -549,7 +549,7 @@ async def multi_local_search(
     ]
     | AsyncGenerator
 ):
-    """Perform a multi-index local search and return the context data and response.
+    """Perform a local search across multiple indexes and return the context data and response.
 
     Parameters
     ----------
@@ -574,6 +574,11 @@ async def multi_local_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_index_local_search"
+        raise NotImplementedError(message)
+    
     links = {
         "nodes": {},
         "community_reports": {},
@@ -738,11 +743,6 @@ async def multi_local_search(
         covariates_combined = pd.concat(
             covariates_dfs, axis=0, ignore_index=True, sort=False
         )
-
-    # Call the streaming api function
-    if streaming:
-        message = "Streaming not yet implemented for multi_local_search"
-        raise NotImplementedError(message)
 
     result = await local_search(
         config,
@@ -936,7 +936,7 @@ async def drift_search_streaming(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def multi_drift_search(
+async def multi_index_drift_search(
     config: GraphRagConfig,
     nodes_list: list[pd.DataFrame],
     entities_list: list[pd.DataFrame],
@@ -955,7 +955,7 @@ async def multi_drift_search(
     ]
     | AsyncGenerator
 ):
-    """Perform a multi-index local search and return the context data and response.
+    """Perform a DRIFT search across multiple indexes and return the context data and response.
 
     Parameters
     ----------
@@ -979,6 +979,11 @@ async def multi_drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_drift_search"
+        raise NotImplementedError(message)
+    
     links = {
         "nodes": {},
         "community_reports": {},
@@ -1119,11 +1124,6 @@ async def multi_drift_search(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
 
-    # Call the streaming api function
-    if streaming:
-        message = "Streaming not yet implemented for multi_drift_search"
-        raise NotImplementedError(message)
-
     result = await drift_search(
         config,
         nodes=nodes_combined,
@@ -1263,7 +1263,7 @@ async def basic_search_streaming(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def multi_basic_search(
+async def multi_index_basic_search(
     config: GraphRagConfig,
     text_units_list: list[pd.DataFrame],
     index_names: list[str],
@@ -1276,7 +1276,7 @@ async def multi_basic_search(
     ]
     | AsyncGenerator
 ):
-    """Perform a multi-index local search and return the context data and response.
+    """Perform a basic search across multiple indexes and return the context data and response.
 
     Parameters
     ----------
@@ -1294,6 +1294,11 @@ async def multi_basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_basic_search"
+        raise NotImplementedError(message)
+    
     links = {
         "text_units": {},
     }
@@ -1324,11 +1329,6 @@ async def multi_basic_search(
     text_units_combined = pd.concat(
         text_units_dfs, axis=0, ignore_index=True, sort=False
     )
-
-    # Call the streaming api function
-    if streaming:
-        message = "Streaming not yet implemented for multi_basic_search"
-        raise NotImplementedError(message)
 
     return await basic_search(
         config,
