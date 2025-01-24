@@ -373,3 +373,7 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 - `n` **int | None** - The number of completions to generate.
 - `max_tokens` **int** - The maximum tokens.
 - `llm_max_tokens` **int** - The LLM maximum tokens.
+
+### workflows
+
+**str** - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.
