@@ -82,7 +82,7 @@ Supported embeddings names are:
 
 #### Fields
 
-- `model_id` - Name of the model definition to use for text embedding.
+- `model_id` **str** - Name of the model definition to use for text embedding.
 - `batch_size` **int** - The maximum batch size to use.
 - `batch_max_tokens` **int** - The maximum batch # of tokens.
 - `target` **required|all|selected|none** - Determines which set of embeddings to export.
@@ -177,7 +177,7 @@ This section controls the reporting mechanism used by the pipeline, for common e
 
 #### Fields
 
-- `model_id` - Name of the model definition to use for API calls.
+- `model_id` **str** - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `entity_types` **list[str]** - The entity types to identify.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -186,16 +186,35 @@ This section controls the reporting mechanism used by the pipeline, for common e
 
 #### Fields
 
-- `model_id` - Name of the model definition to use for API calls.
+- `model_id` **str** - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per summarization.
+
+### extract_graph_nlp
+
+Defines settings for NLP-based graph extraction methods.
+
+#### Fields
+
+- `normalize_edge_weights` **bool** - Whether to normalize the edge weights during graph construction. Default=`True`.
+- `text_analyzer` **dict** - Parameters for the NLP model.
+  - extractor_type **regex_english|syntactic_parser|cfg** - Default=`regex_english`.
+  - model_name **str** - Name of NLP model (for SpaCy-based models)
+  - max_word_length **int** - Longest word to allow. Default=`15`.
+  - word_delimiter **str** - Delimiter to split words. Default ' '.
+  - include_named_entities **bool** - Whether to include named entities in noun phrases. Default=`True`.
+  - exclude_nouns **list[str] | None** - List of nouns to exclude. If `None`, we use an internal stopword list.
+  - exclude_entity_tags **list[str]** - List of entity tags to ignore.
+  - exclude_pos_tags **list[str]** - List of part-of-speech tags to ignore.
+  - noun_phrase_tags **list[str]** - List of noun phrase tags to ignore.
+  - noun_phrase_grammars **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
 
 ### claim_extraction
 
 #### Fields
 
 - `enabled` **bool** - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.
-- `model_id` - Name of the model definition to use for API calls.
+- `model_id` **str** - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `description` **str** - Describes the types of claims we want to extract.
 - `max_gleanings` **int** - The maximum number of gleaning cycles to use.
@@ -204,10 +223,24 @@ This section controls the reporting mechanism used by the pipeline, for common e
 
 #### Fields
 
-- `model_id` - Name of the model definition to use for API calls.
+- `model_id` **str** - Name of the model definition to use for API calls.
 - `prompt` **str** - The prompt file to use.
 - `max_length` **int** - The maximum number of output tokens per report.
 - `max_input_length` **int** - The maximum number of input tokens to use when generating reports.
+
+### prune_graph
+
+Parameters for manual graph pruning. This can be used to optimize the modularity of your graph clusters, by removing overly-connected or rare nodes.
+
+#### Fields
+
+- min_node_freq **int** - The minimum node frequency to allow.
+- max_node_freq_std **float | None** - The maximum standard deviation of node frequency to allow.
+- min_node_degree **int** - The minimum node degree to allow.
+- max_node_degree_std **float | None** - The maximum standard deviation of node degree to allow.
+- min_edge_weight_pct **int** - The minimum edge weight percentile to allow.
+- remove_ego_nodes **bool** - Remove ego nodes.
+- lcc_only **bool** - Only use largest connected component.
 
 ### cluster_graph
 
