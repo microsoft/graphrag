@@ -70,11 +70,6 @@ class VectorStoreConfig(BaseModel):
         description="Overwrite the existing data.", default=defs.VECTOR_STORE_OVERWRITE
     )
 
-    index_name: str = Field(
-        description="The name of the index that the vector store belongs to.",
-        default=defs.VECTOR_STORE_INDEX_NAME,
-    )
-
     @model_validator(mode="after")
     def _validate_model(self):
         """Validate the model."""

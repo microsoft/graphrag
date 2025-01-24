@@ -89,36 +89,28 @@ class MultiVectorStore(BaseVectorStore):
 
 
 def get_embedding_store(
-    config_args: dict | list[dict],
+    config_args: dict[str, dict],
     embedding_name: str,
 ) -> BaseVectorStore:
     """Get the embedding description store."""
-    if isinstance(config_args, dict):
-        vector_store_type = config_args["type"]
-        collection_name = create_collection_name(
-            config_args.get("container_name", "default"), embedding_name
-        )
-        embedding_store = VectorStoreFactory().create_vector_store(
-            vector_store_type=vector_store_type,
-            kwargs={**config_args, "collection_name": collection_name},
-        )
-        embedding_store.connect(**config_args)
-        return embedding_store
-    config_args_list = config_args
+    num_indexes = len(config_args)
     embedding_stores = []
     index_names = []
-    for config_args in config_args_list:
-        vector_store_type = config_args["type"]
+    for index, store in config_args.items():
+        vector_store_type = store["type"]
         collection_name = create_collection_name(
-            config_args.get("container_name", "default"), embedding_name
+            store.get("container_name", "default"), embedding_name
         )
         embedding_store = VectorStoreFactory().create_vector_store(
             vector_store_type=vector_store_type,
-            kwargs={**config_args, "collection_name": collection_name},
+            kwargs={**store, "collection_name": collection_name},
         )
-        embedding_store.connect(**config_args)
+        embedding_store.connect(**store)
+        # If there is only a single index, return the embedding store directly
+        if num_indexes == 1:
+            return embedding_store
         embedding_stores.append(embedding_store)
-        index_names.append(config_args["index_name"])
+        index_names.append(index)
     return MultiVectorStore(embedding_stores, index_names)
 
 
