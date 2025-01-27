@@ -44,7 +44,7 @@ class VectorStoreConfig(BaseModel):
         ):
             msg = "vector_store.url is required when vector_store.type == azure_ai_search. Please rerun `graphrag init` and select the correct vector store type."
             raise ValueError(msg)
-        
+
         if self.type == VectorStoreType.CosmosDB and (
             self.url is None or self.url.strip() == ""
         ):
