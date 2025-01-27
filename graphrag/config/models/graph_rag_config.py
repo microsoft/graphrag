@@ -226,7 +226,7 @@ class GraphRagConfig(BaseModel):
 
     vector_store: dict[str, VectorStoreConfig] = Field(
         description="The vector store configuration.",
-        default={"output": VectorStoreConfig()},
+        default={defs.VECTOR_STORE_DEFAULT_ID: VectorStoreConfig()},
     )
     """The vector store configuration."""
 
@@ -262,6 +262,30 @@ class GraphRagConfig(BaseModel):
             raise ValueError(err_msg)
 
         return self.models[model_id]
+
+    def get_vector_store_config(self, vector_store_id: str) -> VectorStoreConfig:
+        """Get a vector store configuration by ID.
+
+        Parameters
+        ----------
+        vector_store_id : str
+            The ID of the vector store to get. Should match an ID in the vector_store list.
+
+        Returns
+        -------
+        VectorStoreConfig
+            The vector store configuration if found.
+
+        Raises
+        ------
+        ValueError
+            If the vector store ID is not found in the configuration.
+        """
+        if vector_store_id not in self.vector_store:
+            err_msg = f"Vector Store ID {vector_store_id} not found in configuration. Please rerun `graphrag init` and set the vector store configuration."
+            raise ValueError(err_msg)
+
+        return self.vector_store[vector_store_id]
 
     @model_validator(mode="after")
     def _validate_model(self):

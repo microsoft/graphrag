@@ -40,7 +40,7 @@ models:
     # deployment_name: <azure_model_deployment_name>
 
 vector_store:
-  {defs.VECTOR_STORE_INDEX_NAME}:
+  {defs.VECTOR_STORE_DEFAULT_ID}:
     type: {defs.VECTOR_STORE_TYPE}
     db_uri: {defs.VECTOR_STORE_DB_URI}
     container_name: {defs.VECTOR_STORE_CONTAINER_NAME}
@@ -48,6 +48,7 @@ vector_store:
 
 embeddings:
   model_id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
+  vector_store_id: {defs.VECTOR_STORE_DEFAULT_ID}
 
 ### Input settings ###
 

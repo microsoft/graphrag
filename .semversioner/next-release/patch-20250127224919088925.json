@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add vector store id reference to embeddings config."
+}

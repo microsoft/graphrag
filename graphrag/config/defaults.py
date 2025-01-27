@@ -106,7 +106,7 @@ VECTOR_STORE_TYPE = VectorStoreType.LanceDB.value
 VECTOR_STORE_DB_URI = str(Path(OUTPUT_BASE_DIR) / "lancedb")
 VECTOR_STORE_CONTAINER_NAME = "default"
 VECTOR_STORE_OVERWRITE = True
-VECTOR_STORE_INDEX_NAME = "output"
+VECTOR_STORE_DEFAULT_ID = "default_vector_store"
 
 # Local Search
 LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5
