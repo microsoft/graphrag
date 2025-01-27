@@ -1560,7 +1560,7 @@ Figure 1: Auto Tuning Conceptual Diagram.
 <p><code>--domain</code> (optional): The domain related to your input data, such as 'space science', 'microbiology', or 'environmental news'. If left empty, the domain will be inferred from the input data.</p>
 </li>
 <li>
-<p><code>--method</code> (optional): The method to select documents. Options are all, random, auto or top. Default is random.</p>
+<p><code>--selection-method</code> (optional): The method to select documents. Options are all, random, auto or top. Default is random.</p>
 </li>
 <li>
 <p><code>--limit</code> (optional): The limit of text units to load when using random or top selection. Default is 15.</p>
@@ -1592,7 +1592,7 @@ Figure 1: Auto Tuning Conceptual Diagram.
 </ul>
 <h2 id="example-usage">Example Usage</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>graphrag<span class="w"> </span>prompt-tune<span class="w"> </span>--root<span class="w"> </span>/path/to/project<span class="w"> </span>--config<span class="w"> </span>/path/to/settings.yaml<span class="w"> </span>--domain<span class="w"> </span><span class="s2">&quot;environmental news&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--method<span class="w"> </span>random<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--language<span class="w"> </span>English<span class="w"> </span>--max-tokens<span class="w"> </span><span class="m">2048</span><span class="w"> </span>--chunk-size<span class="w"> </span><span class="m">256</span><span class="w"> </span>--min-examples-required<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--selection-method<span class="w"> </span>random<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--language<span class="w"> </span>English<span class="w"> </span>--max-tokens<span class="w"> </span><span class="m">2048</span><span class="w"> </span>--chunk-size<span class="w"> </span><span class="m">256</span><span class="w"> </span>--min-examples-required<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>--no-entity-types<span class="w"> </span>--output<span class="w"> </span>/path/to/output
 </code></pre></div>
 <p>or, with minimal configuration (suggested):</p>
