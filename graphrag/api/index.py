@@ -18,6 +18,7 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_workflows import run_workflows
 from graphrag.index.typing import PipelineRunResult
 from graphrag.logger.base import ProgressLogger
+from graphrag.utils.api import get_workflows_list
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    workflows = _get_workflows_list(config)
+    workflows = get_workflows_list(config)
 
     async for output in run_workflows(
         workflows,
@@ -79,20 +80,3 @@ async def build_index(
             progress_logger.info(str(output.result))
 
     return outputs
-
-
-def _get_workflows_list(config: GraphRagConfig) -> list[str]:
-    return [
-        "create_base_text_units",
-        "create_final_documents",
-        "extract_graph",
-        "compute_communities",
-        "create_final_entities",
-        "create_final_relationships",
-        "create_final_nodes",
-        "create_final_communities",
-        *(["create_final_covariates"] if config.claim_extraction.enabled else []),
-        "create_final_text_units",
-        "create_final_community_reports",
-        "generate_text_embeddings",
-    ]

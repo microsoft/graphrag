@@ -224,20 +224,20 @@ class GraphRagConfig(BaseModel):
     )
     """The basic search configuration."""
 
-    vector_store: VectorStoreConfig = Field(
-        description="The vector store configuration.", default=VectorStoreConfig()
+    vector_store: dict[str, VectorStoreConfig] = Field(
+        description="The vector store configuration.",
+        default={"output": VectorStoreConfig()},
     )
     """The vector store configuration."""
 
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
-        if self.vector_store.type == VectorStoreType.LanceDB:
-            if not self.vector_store.db_uri or self.vector_store.db_uri.strip == "":
-                msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
-                raise ValueError(msg)
-            self.vector_store.db_uri = str(
-                (Path(self.root_dir) / self.vector_store.db_uri).resolve()
-            )
+        for store in self.vector_store.values():
+            if store.type == VectorStoreType.LanceDB:
+                if not store.db_uri or store.db_uri.strip == "":
+                    msg = "Vector store URI is required for LanceDB. Please rerun `graphrag init` and set the vector store configuration."
+                    raise ValueError(msg)
+                store.db_uri = str((Path(self.root_dir) / store.db_uri).resolve())
 
     def get_language_model_config(self, model_id: str) -> LanguageModelConfig:
         """Get a model configuration by ID.
