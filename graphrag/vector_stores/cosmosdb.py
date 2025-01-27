@@ -31,7 +31,6 @@ class CosmosDBVectoreStore(BaseVectorStore):
 
     def connect(self, **kwargs: Any) -> Any:
         """Connect to CosmosDB vector storage."""
-        print(kwargs)
         connection_string = kwargs.get("connection_string")
         if connection_string:
             self._cosmos_client = CosmosClient.from_connection_string(connection_string)
