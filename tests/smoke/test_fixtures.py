@@ -288,13 +288,6 @@ class TestIndexer:
             result = self.__run_query(root, query)
             print(f"Query: {query}\nResponse: {result.stdout}")
 
-            # Check stderr because lancedb logs path creating as WARN which leads to false negatives
-            stderror = (
-                result.stderr if "No existing dataset at" not in result.stderr else ""
-            )
-
-            assert stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS, (
-                f"Query failed with error: {stderror}"
-            )
+            assert result.returncode == 0, "Query failed"
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"
