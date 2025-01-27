@@ -50,7 +50,7 @@ DEFAULT_MODEL_CONFIG = {
 DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "models": DEFAULT_MODEL_CONFIG,
     "vector_store": {
-        "default": {
+        "output": {
             "type": defs.VECTOR_STORE_TYPE,
             "db_uri": defs.VECTOR_STORE_DB_URI,
             "container_name": defs.VECTOR_STORE_CONTAINER_NAME,
