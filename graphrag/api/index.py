@@ -64,7 +64,7 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    workflows = get_workflows_list(config)
+    workflows = get_workflows_list(config, method)
 
     async for output in run_workflows(
         workflows,

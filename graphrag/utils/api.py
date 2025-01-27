@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from graphrag.config.embeddings import create_collection_name
+from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.model.types import TextEmbedder
 from graphrag.vector_stores.base import (
@@ -233,19 +234,42 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
     return None
 
 
-def get_workflows_list(config: GraphRagConfig) -> list[str]:
+def get_workflows_list(
+    config: GraphRagConfig, method: IndexingMethod = IndexingMethod.Standard
+) -> list[str]:
     """Return a list of workflows for the indexing pipeline."""
-    return [
-        "create_base_text_units",
-        "create_final_documents",
-        "extract_graph",
-        "compute_communities",
-        "create_final_entities",
-        "create_final_relationships",
-        "create_final_nodes",
-        "create_final_communities",
-        *(["create_final_covariates"] if config.claim_extraction.enabled else []),
-        "create_final_text_units",
-        "create_final_community_reports",
-        "generate_text_embeddings",
-    ]
+    if config.workflows:
+        return config.workflows
+    match method:
+        case IndexingMethod.Standard:
+            return [
+                "create_base_text_units",
+                "create_final_documents",
+                "extract_graph",
+                "compute_communities",
+                "create_final_entities",
+                "create_final_relationships",
+                "create_final_nodes",
+                "create_final_communities",
+                *(
+                    ["create_final_covariates"]
+                    if config.claim_extraction.enabled
+                    else []
+                ),
+                "create_final_text_units",
+                "create_final_community_reports",
+                "generate_text_embeddings",
+            ]
+        case IndexingMethod.Fast:
+            return [
+                "create_base_text_units",
+                "create_final_documents",
+                "extract_graph_nlp",
+                "compute_communities",
+                "create_final_entities",
+                "create_final_relationships",
+                "create_final_nodes",
+                "create_final_communities",
+                "create_final_text_units",
+                "create_final_community_reports_text",
+            ]
