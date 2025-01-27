@@ -67,7 +67,7 @@ class VectorStoreConfig(BaseModel):
         default=None,
     )
 
-    container_name: str | list[str] = Field(
+    container_name: str = Field(
         description="The container name to use.",
         default=defs.VECTOR_STORE_CONTAINER_NAME,
     )
@@ -76,7 +76,7 @@ class VectorStoreConfig(BaseModel):
         description="The database name to use when type == cosmos_db.", default=None
     )
 
-    overwrite: bool | list[str] = Field(
+    overwrite: bool = Field(
         description="Overwrite the existing data.", default=defs.VECTOR_STORE_OVERWRITE
     )
 
