@@ -50,13 +50,16 @@ DEFAULT_MODEL_CONFIG = {
 DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "models": DEFAULT_MODEL_CONFIG,
     "vector_store": {
-        "type": defs.VECTOR_STORE_TYPE,
-        "db_uri": defs.VECTOR_STORE_DB_URI,
-        "container_name": defs.VECTOR_STORE_CONTAINER_NAME,
-        "overwrite": defs.VECTOR_STORE_OVERWRITE,
-        "url": None,
-        "api_key": None,
-        "audience": None,
+        "output": {
+            "type": defs.VECTOR_STORE_TYPE,
+            "db_uri": defs.VECTOR_STORE_DB_URI,
+            "container_name": defs.VECTOR_STORE_CONTAINER_NAME,
+            "overwrite": defs.VECTOR_STORE_OVERWRITE,
+            "url": None,
+            "api_key": None,
+            "audience": None,
+            "database_name": None,
+        },
     },
     "reporting": {
         "type": defs.REPORTING_TYPE,
@@ -283,14 +286,24 @@ def assert_language_model_configs(
         assert expected.responses is None
 
 
-def assert_vector_store_configs(actual: VectorStoreConfig, expected: VectorStoreConfig):
-    assert actual.type == expected.type
-    assert actual.db_uri == expected.db_uri
-    assert actual.container_name == expected.container_name
-    assert actual.overwrite == expected.overwrite
-    assert actual.url == expected.url
-    assert actual.api_key == expected.api_key
-    assert actual.audience == expected.audience
+def assert_vector_store_configs(
+    actual: dict[str, VectorStoreConfig],
+    expected: dict[str, VectorStoreConfig],
+):
+    assert type(actual) is type(expected)
+    assert len(actual) == len(expected)
+    for (index_a, store_a), (index_e, store_e) in zip(
+        actual.items(), expected.items(), strict=True
+    ):
+        assert index_a == index_e
+        assert store_a.type == store_e.type
+        assert store_a.db_uri == store_e.db_uri
+        assert store_a.url == store_e.url
+        assert store_a.api_key == store_e.api_key
+        assert store_a.audience == store_e.audience
+        assert store_a.container_name == store_e.container_name
+        assert store_a.overwrite == store_e.overwrite
+        assert store_a.database_name == store_e.database_name
 
 
 def assert_reporting_configs(
