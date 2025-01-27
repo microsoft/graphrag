@@ -58,6 +58,7 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
             "url": None,
             "api_key": None,
             "audience": None,
+            "database_name": None,
         },
     },
     "reporting": {
@@ -302,6 +303,7 @@ def assert_vector_store_configs(
         assert store_a.audience == store_e.audience
         assert store_a.container_name == store_e.container_name
         assert store_a.overwrite == store_e.overwrite
+        assert store_a.database_name == store_e.database_name
 
 
 def assert_reporting_configs(
