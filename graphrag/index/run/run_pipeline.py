@@ -21,12 +21,11 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunStats
 from graphrag.index.input.factory import create_input
 from graphrag.index.run.utils import create_callback_chain, create_run_context
-from graphrag.index.typing import PipelineRunResult
+from graphrag.index.typing import Pipeline, PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
 )
-from graphrag.index.workflows import all_workflows
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.logger.progress import Progress
@@ -49,8 +48,8 @@ transient_outputs = [
 ]
 
 
-async def run_workflows(
-    workflows: list[str],
+async def run_pipeline(
+    pipeline: Pipeline,
     config: GraphRagConfig,
     cache: PipelineCache | None = None,
     callbacks: list[WorkflowCallbacks] | None = None,
@@ -96,8 +95,8 @@ async def run_workflows(
 
         # Run the pipeline on the new documents
         tables_dict = {}
-        async for table in _run_workflows(
-            workflows=workflows,
+        async for table in _run_pipeline(
+            pipeline=pipeline,
             config=config,
             dataset=delta_dataset.new_inputs,
             cache=cache,
@@ -122,8 +121,8 @@ async def run_workflows(
     else:
         progress_logger.info("Running standard indexing.")
 
-        async for table in _run_workflows(
-            workflows=workflows,
+        async for table in _run_pipeline(
+            pipeline=pipeline,
             config=config,
             dataset=dataset,
             cache=cache,
@@ -134,8 +133,8 @@ async def run_workflows(
             yield table
 
 
-async def _run_workflows(
-    workflows: list[str],
+async def _run_pipeline(
+    pipeline: Pipeline,
     config: GraphRagConfig,
     dataset: pd.DataFrame,
     cache: PipelineCache,
@@ -155,22 +154,21 @@ async def _run_workflows(
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "input", context.storage)
 
-        for workflow in workflows:
-            last_workflow = workflow
-            run_workflow = all_workflows[workflow]
-            progress = logger.child(workflow, transient=False)
-            callbacks.workflow_start(workflow, None)
+        for name, fn in pipeline:
+            last_workflow = name
+            progress = logger.child(name, transient=False)
+            callbacks.workflow_start(name, None)
             work_time = time.time()
-            result = await run_workflow(
+            result = await fn(
                 config,
                 context,
                 callbacks,
             )
             progress(Progress(percent=1))
-            callbacks.workflow_end(workflow, result)
-            yield PipelineRunResult(workflow, result, None)
+            callbacks.workflow_end(name, result)
+            yield PipelineRunResult(name, result, None)
 
-            context.stats.workflows[workflow] = {"overall": time.time() - work_time}
+            context.stats.workflows[name] = {"overall": time.time() - work_time}
 
         context.stats.total_runtime = time.time() - start_time
         await _dump_stats(context.stats, context.storage)

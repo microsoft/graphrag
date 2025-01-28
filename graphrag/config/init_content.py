@@ -69,21 +69,21 @@ chunks:
 ## connection_string and container_name must be provided
 
 cache:
-  type: {defs.CACHE_TYPE.value} # one of [blob, cosmosdb, file]
+  type: {defs.CACHE_TYPE.value} # [file, blob, cosmosdb]
   base_dir: "{defs.CACHE_BASE_DIR}"
 
 reporting:
-  type: {defs.REPORTING_TYPE.value} # or console, blob
+  type: {defs.REPORTING_TYPE.value} # [file, blob, cosmosdb]
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 output:
-  type: {defs.OUTPUT_TYPE.value} # one of [blob, cosmosdb, file]
+  type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
   base_dir: "{defs.OUTPUT_BASE_DIR}"
 
 ## only turn this on if running `graphrag index` with custom settings
 ## we normally use `graphrag update` with the defaults
 update_index_output:
-  # type: {defs.OUTPUT_TYPE.value} # or blob
+  # type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
   # base_dir: "{defs.UPDATE_OUTPUT_BASE_DIR}"
 
 ### Workflow settings ###
@@ -98,6 +98,10 @@ summarize_descriptions:
   model_id: {defs.SUMMARIZE_MODEL_ID}
   prompt: "prompts/summarize_descriptions.txt"
   max_length: {defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH}
+
+extract_graph_nlp:
+  text_analyzer:
+    extractor_type: {defs.NLP_EXTRACTOR_TYPE.value} # [regex_english, syntactic_parser, cfg]
 
 claim_extraction:
   enabled: false

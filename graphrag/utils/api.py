@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 from graphrag.config.embeddings import create_collection_name
-from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     BaseVectorStore,
@@ -231,21 +230,3 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
         if prompt_file.exists():
             return prompt_file.read_bytes().decode(encoding="utf-8")
     return None
-
-
-def get_workflows_list(config: GraphRagConfig) -> list[str]:
-    """Return a list of workflows for the indexing pipeline."""
-    return [
-        "create_base_text_units",
-        "create_final_documents",
-        "extract_graph",
-        "compute_communities",
-        "create_final_entities",
-        "create_final_relationships",
-        "create_final_nodes",
-        "create_final_communities",
-        *(["create_final_covariates"] if config.claim_extraction.enabled else []),
-        "create_final_text_units",
-        "create_final_community_reports",
-        "generate_text_embeddings",
-    ]
