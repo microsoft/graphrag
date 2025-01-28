@@ -34,6 +34,10 @@ class TextEmbeddingConfig(BaseModel):
         description="The model ID to use for text embeddings.",
         default=defs.EMBEDDING_MODEL_ID,
     )
+    vector_store_id: str = Field(
+        description="The vector store ID to use for text embeddings.",
+        default=defs.VECTOR_STORE_DEFAULT_ID,
+    )
 
     def resolved_strategy(self, model_config: LanguageModelConfig) -> dict:
         """Get the resolved text embedding strategy."""
