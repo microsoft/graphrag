@@ -4,13 +4,7 @@
 
 """A package containing all built-in workflow definitions."""
 
-from collections.abc import Awaitable, Callable
-
-import pandas as pd
-
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
+from graphrag.index.typing import WorkflowFunction
 
 from .compute_communities import (
     run_workflow as run_compute_communities,
@@ -99,10 +93,7 @@ from .generate_text_embeddings import (
 
 all_workflows: dict[
     str,
-    Callable[
-        [GraphRagConfig, PipelineRunContext, WorkflowCallbacks],
-        Awaitable[pd.DataFrame | None],
-    ],
+    WorkflowFunction,
 ] = {
     compute_communities: run_compute_communities,
     create_base_text_units: run_create_base_text_units,

@@ -15,10 +15,10 @@ from graphrag.callbacks.reporting import create_pipeline_reporter
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.run_workflows import run_workflows
+from graphrag.index.run.run_pipeline import run_pipeline
 from graphrag.index.typing import PipelineRunResult
+from graphrag.index.workflows.factory import create_pipeline
 from graphrag.logger.base import ProgressLogger
-from graphrag.utils.api import get_workflows_list
 
 log = logging.getLogger(__name__)
 
@@ -64,10 +64,10 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    workflows = get_workflows_list(config, method)
+    pipeline = create_pipeline(config, method)
 
-    async for output in run_workflows(
-        workflows,
+    async for output in run_pipeline(
+        pipeline,
         config,
         cache=pipeline_cache,
         callbacks=callbacks,
