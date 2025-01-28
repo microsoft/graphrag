@@ -12,6 +12,7 @@ from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
     AzureApiVersionMissingError,
+    AzureAuthTypeMissingError,
     AzureDeploymentNameMissingError,
     ConflictingSettingsError,
 )
@@ -60,6 +61,23 @@ class LanguageModelConfig(BaseModel):
         description="The Azure authentication type to use when using AOI.",
         default=None,
     )
+
+    def _validate_azure_auth_type(self) -> None:
+        """Validate the Azure authentication type.
+
+        azure_auth_type is required when using Azure OpenAI
+        and explicitly defines the authentication type to use.
+
+        Raises
+        ------
+        AzureAuthTypeMissingError
+            If the Azure authentication type is missing when required.
+        """
+        if (
+            self.type == LLMType.AzureOpenAIChat
+            or self.type == LLMType.AzureOpenAIEmbedding
+        ) and self.azure_auth_type is None:
+            raise AzureAuthTypeMissingError(self.type.value)
 
     type: LLMType = Field(description="The type of LLM model to use.")
     model: str = Field(description="The LLM model to use.")
@@ -220,6 +238,8 @@ class LanguageModelConfig(BaseModel):
 
         Raises
         ------
+        AzureAuthTypeMissingError
+            If the Azure authentication type is missing and is required.
         AzureApiBaseMissingError
             If the API base is missing and is required.
         AzureApiVersionMissingError
@@ -227,6 +247,7 @@ class LanguageModelConfig(BaseModel):
         AzureDeploymentNameMissingError
             If the deployment name is missing and is required.
         """
+        self._validate_azure_auth_type()
         self._validate_api_base()
         self._validate_api_version()
         self._validate_deployment_name()
