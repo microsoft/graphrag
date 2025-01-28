@@ -27,8 +27,8 @@ class PruneGraphConfig(BaseModel):
         description="The maximum standard deviation of node degree to allow.",
         default=defs.PRUNE_MAX_NODE_DEGREE_STD,
     )
-    min_edge_weight_pct: int = Field(
-        description="The minimum edge weight percentile to allow.",
+    min_edge_weight_pct: float = Field(
+        description="The minimum edge weight percentile to allow. Use e.g, `40` for 40%.",
         default=defs.PRUNE_MIN_EDGE_WEIGHT_PCT,
     )
     remove_ego_nodes: bool = Field(
