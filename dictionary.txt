@@ -33,11 +33,17 @@ cosmosdb
 Hnsw
 odata
 
-# NLTK Terms
+# NLP Terms
 chunker
 wordnet
 maxent
 punkt
+punct
+lemmatizer
+PROPN
+Syntatic
+ents
+INTJ
 
 # Libraries
 Langchain

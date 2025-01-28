@@ -19,11 +19,13 @@ from graphrag.config.models.community_reports_config import CommunityReportsConf
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.output_config import OutputConfig
+from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
@@ -173,6 +175,12 @@ class GraphRagConfig(BaseModel):
     )
     """The entity extraction configuration to use."""
 
+    extract_graph_nlp: ExtractGraphNLPConfig = Field(
+        description="The NLP-based graph extraction configuration to use.",
+        default=ExtractGraphNLPConfig(),
+    )
+    """The NLP-based graph extraction configuration to use."""
+
     summarize_descriptions: SummarizeDescriptionsConfig = Field(
         description="The description summarization configuration to use.",
         default=SummarizeDescriptionsConfig(),
@@ -192,6 +200,12 @@ class GraphRagConfig(BaseModel):
         ),
     )
     """The claim extraction configuration to use."""
+
+    prune_graph: PruneGraphConfig = Field(
+        description="The graph pruning configuration to use.",
+        default=PruneGraphConfig(),
+    )
+    """The graph pruning configuration to use."""
 
     cluster_graph: ClusterGraphConfig = Field(
         description="The cluster graph configuration to use.",
@@ -229,6 +243,12 @@ class GraphRagConfig(BaseModel):
         default={defs.VECTOR_STORE_DEFAULT_ID: VectorStoreConfig()},
     )
     """The vector store configuration."""
+
+    workflows: list[str] | None = Field(
+        description="List of workflows to run, in execution order. This always overrides any built-in workflow methods.",
+        default=None,
+    )
+    """List of workflows to run, in execution order."""
 
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""

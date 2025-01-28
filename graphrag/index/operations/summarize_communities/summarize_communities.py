@@ -7,18 +7,11 @@ import logging
 
 import pandas as pd
 
-import graphrag.config.defaults as defaults
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.operations.summarize_communities.community_reports_extractor import (
-    prep_community_report_context,
-)
-from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
-    get_levels,
-)
 from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     CommunityReportsStrategy,
@@ -32,8 +25,7 @@ log = logging.getLogger(__name__)
 
 async def summarize_communities(
     local_contexts,
-    nodes,
-    community_hierarchy,
+    level_contexts,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
@@ -41,21 +33,11 @@ async def summarize_communities(
     num_threads: int = 4,
 ):
     """Generate community summaries."""
-    levels = get_levels(nodes)
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
     runner = load_strategy(strategy["type"])
 
-    for level in levels:
-        level_contexts = prep_community_report_context(
-            pd.DataFrame(reports),
-            local_context_df=local_contexts,
-            community_hierarchy_df=community_hierarchy,
-            level=level,
-            max_tokens=strategy.get(
-                "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
-            ),
-        )
+    for level_context in level_contexts:
 
         async def run_generate(record):
             result = await _generate_report(
@@ -71,7 +53,7 @@ async def summarize_communities(
             return result
 
         local_reports = await derive_from_rows(
-            level_contexts,
+            level_context,
             run_generate,
             callbacks=NoopWorkflowCallbacks(),
             num_threads=num_threads,
