@@ -57,18 +57,10 @@ def get_embedding_settings(
     embeddings_llm_settings = settings.get_language_model_config(
         settings.embeddings.model_id
     )
-    num_entries = len(settings.vector_store)
-    if num_entries == 1:
-        store = next(iter(settings.vector_store.values()))
-        vector_store_settings = store.model_dump()
-    else:
-        # The vector_store dict should only have more than one entry for multi-index query
-        vector_store_settings = None
+    vector_store_settings = settings.get_vector_store_config(
+        settings.embeddings.vector_store_id
+    ).model_dump()
 
-    if vector_store_settings is None:
-        return {
-            "strategy": settings.embeddings.resolved_strategy(embeddings_llm_settings)
-        }
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
