@@ -294,15 +294,45 @@ def run_drift_search(
             "create_final_entities",
         ],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+
+    # Call the Multi-Index Drift Search API
+    if dataframe_dict["num_indexes"] > 1:
+        final_nodes_list = dataframe_dict["create_final_nodes"]
+        final_entities_list = dataframe_dict["create_final_entities"]
+        final_community_reports_list = dataframe_dict["create_final_community_reports"]
+        final_text_units_list = dataframe_dict["create_final_text_units"]
+        final_relationships_list = dataframe_dict["create_final_relationships"]
+        index_names = dataframe_dict["index_names"]
+
+        response, context_data = asyncio.run(
+            api.multi_index_drift_search(
+                config=config,
+                nodes_list=final_nodes_list,
+                entities_list=final_entities_list,
+                community_reports_list=final_community_reports_list,
+                text_units_list=final_text_units_list,
+                relationships_list=final_relationships_list,
+                index_names=index_names,
+                community_level=community_level,
+                response_type=response_type,
+                streaming=streaming,
+                query=query,
+            )
+        )
+        logger.success(f"DRIFT Search Response:\n{response}")
+        # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+        # External users should use the API directly to get the response and context data.
+        return response, context_data
+    
+    # Otherwise, call the Single-Index Drift Search API
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    ][0]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"][0]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
 
-    # call the Query API
     if streaming:
 
         async def run_streaming_search():
@@ -376,9 +406,29 @@ def run_basic_search(
             "create_final_text_units",
         ],
     )
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
 
-    # # call the Query API
+    # Call the Multi-Index Basic Search API
+    if dataframe_dict["num_indexes"] > 1:
+        final_text_units_list = dataframe_dict["create_final_text_units"]
+        index_names = dataframe_dict["index_names"]
+
+        response, context_data = asyncio.run(
+            api.multi_index_basic_search(
+                config=config,
+                text_units_list=final_text_units_list,
+                index_names=index_names,
+                streaming=streaming,
+                query=query,
+            )
+        )
+        logger.success(f"Basic Search Response:\n{response}")
+        # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+        # External users should use the API directly to get the response and context data.
+        return response, context_data
+    
+    # Otherwise, call the Single-Index Basic Search API
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
+
     if streaming:
 
         async def run_streaming_search():
