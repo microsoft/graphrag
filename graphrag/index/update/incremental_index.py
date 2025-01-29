@@ -64,7 +64,7 @@ async def get_delta_docs(
     InputDelta
         The input delta. With new inputs and deleted inputs.
     """
-    final_docs = await load_table_from_storage("create_final_documents", storage)
+    final_docs = await load_table_from_storage("documents", storage)
 
     # Select distinct title from final docs and from dataset
     previous_docs: list[str] = final_docs["title"].unique().tolist()
@@ -99,7 +99,7 @@ async def update_dataframe_outputs(
     """
     progress_logger.info("Updating Documents")
     final_documents_df = await _concat_dataframes(
-        "create_final_documents", dataframe_dict, storage, update_storage
+        "documents", dataframe_dict, storage, update_storage
     )
 
     # Update entities and merge them

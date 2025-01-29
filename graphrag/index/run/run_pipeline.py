@@ -39,9 +39,7 @@ log = logging.getLogger(__name__)
 # these are transient outputs written to storage for downstream workflow use
 # they are not required after indexing, so we'll clean them up at the end for clarity
 # (unless snapshots.transient is set!)
-transient_outputs = [
-    "input",
-]
+transient_outputs = []
 
 
 async def run_pipeline(
@@ -144,11 +142,11 @@ async def _run_pipeline(
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
-    last_workflow = "input"
+    last_workflow = "starting documents"
 
     try:
         await _dump_stats(context.stats, context.storage)
-        await write_table_to_storage(dataset, "input", context.storage)
+        await write_table_to_storage(dataset, "documents", context.storage)
 
         for name, fn in pipeline:
             last_workflow = name

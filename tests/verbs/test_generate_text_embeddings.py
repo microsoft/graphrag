@@ -21,7 +21,7 @@ from .util import (
 async def test_generate_text_embeddings():
     context = await create_test_context(
         storage=[
-            "create_final_documents",
+            "documents",
             "relationships",
             "text_units",
             "entities",

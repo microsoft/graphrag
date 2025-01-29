@@ -23,9 +23,7 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
-    final_documents = await load_table_from_storage(
-        "create_final_documents", context.storage
-    )
+    final_documents = await load_table_from_storage("documents", context.storage)
     final_relationships = await load_table_from_storage(
         "relationships", context.storage
     )

@@ -36,8 +36,8 @@ async def create_test_context(storage: list[str] | None = None) -> PipelineRunCo
     context = create_run_context(None, None, None)
 
     # always set the input docs
-    input = load_test_table("source_documents")
-    await write_table_to_storage(input, "input", context.storage)
+    input = load_test_table("documents")
+    await write_table_to_storage(input, "documents", context.storage)
 
     if storage:
         for name in storage:
