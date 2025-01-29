@@ -35,11 +35,9 @@ async def run_workflow(
     )
     final_covariates = None
     if config.claim_extraction.enabled and await storage_has_table(
-        "create_final_covariates", context.storage
+        "covariates", context.storage
     ):
-        final_covariates = await load_table_from_storage(
-            "create_final_covariates", context.storage
-        )
+        final_covariates = await load_table_from_storage("covariates", context.storage)
 
     output = create_final_text_units(
         text_units,

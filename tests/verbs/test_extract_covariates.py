@@ -6,7 +6,7 @@ from pandas.testing import assert_series_equal
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.workflows.create_final_covariates import (
+from graphrag.index.workflows.extract_covariates import (
     run_workflow,
     workflow_name,
 )
@@ -25,7 +25,7 @@ MOCK_LLM_RESPONSES = [
 ]
 
 
-async def test_create_final_covariates():
+async def test_extract_covariates():
     input = load_test_table("create_base_text_units")
     expected = load_test_table(workflow_name)
 

@@ -130,7 +130,7 @@ def run_local_search(
             "entities",
         ],
         optional_list=[
-            "create_final_covariates",
+            "covariates",
         ],
     )
     final_communities: pd.DataFrame = dataframe_dict["communities"]
@@ -140,7 +140,7 @@ def run_local_search(
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
-    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
 
     # call the Query API
     if streaming:

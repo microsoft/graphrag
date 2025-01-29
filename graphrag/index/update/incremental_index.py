@@ -97,45 +97,45 @@ async def update_dataframe_outputs(
     storage : PipelineStorage
         The storage used to store the dataframes.
     """
-    progress_logger.info("Updating Final Documents")
+    progress_logger.info("Updating Documents")
     final_documents_df = await _concat_dataframes(
         "create_final_documents", dataframe_dict, storage, update_storage
     )
 
     # Update entities and merge them
-    progress_logger.info("Updating Final Entities")
+    progress_logger.info("Updating Entities")
     merged_entities_df, entity_id_mapping = await _update_entities(
         dataframe_dict, storage, update_storage, config, cache, callbacks
     )
 
     # Update relationships with the entities id mapping
-    progress_logger.info("Updating Final Relationships")
+    progress_logger.info("Updating Relationships")
     merged_relationships_df = await _update_relationships(
         dataframe_dict, storage, update_storage
     )
 
     # Update and merge final text units
-    progress_logger.info("Updating Final Text Units")
+    progress_logger.info("Updating Text Units")
     merged_text_units = await _update_text_units(
         dataframe_dict, storage, update_storage, entity_id_mapping
     )
 
     # Merge final covariates
     if (
-        await storage_has_table("create_final_covariates", storage)
-        and "create_final_covariates" in dataframe_dict
+        await storage_has_table("covariates", storage)
+        and "covariates" in dataframe_dict
     ):
-        progress_logger.info("Updating Final Covariates")
+        progress_logger.info("Updating Covariates")
         await _update_covariates(dataframe_dict, storage, update_storage)
 
     # Merge final communities
-    progress_logger.info("Updating Final Communities")
+    progress_logger.info("Updating Communities")
     community_id_mapping = await _update_communities(
         dataframe_dict, storage, update_storage
     )
 
     # Merge community reports
-    progress_logger.info("Updating Final Community Reports")
+    progress_logger.info("Updating Community Reports")
     merged_community_reports = await _update_community_reports(
         dataframe_dict, storage, update_storage, community_id_mapping
     )
@@ -194,14 +194,12 @@ async def _update_communities(dataframe_dict, storage, update_storage):
 
 async def _update_covariates(dataframe_dict, storage, update_storage):
     """Update the covariates output."""
-    old_covariates = await load_table_from_storage("create_final_covariates", storage)
-    delta_covariates = dataframe_dict["create_final_covariates"]
+    old_covariates = await load_table_from_storage("covariates", storage)
+    delta_covariates = dataframe_dict["covariates"]
 
     merged_covariates = _merge_covariates(old_covariates, delta_covariates)
 
-    await write_table_to_storage(
-        merged_covariates, "create_final_covariates", update_storage
-    )
+    await write_table_to_storage(merged_covariates, "covariates", update_storage)
 
 
 async def _update_text_units(

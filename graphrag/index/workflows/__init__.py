@@ -30,12 +30,6 @@ from .create_final_community_reports_text import (
 from .create_final_community_reports_text import (
     workflow_name as create_final_community_reports_text,
 )
-from .create_final_covariates import (
-    run_workflow as run_create_final_covariates,
-)
-from .create_final_covariates import (
-    workflow_name as create_final_covariates,
-)
 from .create_final_documents import (
     run_workflow as run_create_final_documents,
 )
@@ -59,6 +53,12 @@ from .create_final_text_units import (
 )
 from .create_final_text_units import (
     workflow_name as create_final_text_units,
+)
+from .extract_covariates import (
+    run_workflow as run_extract_covariates,
+)
+from .extract_covariates import (
+    workflow_name as extract_covariates,
 )
 from .extract_graph import (
     run_workflow as run_extract_graph,
@@ -87,7 +87,7 @@ all_workflows: dict[
     create_communities: run_create_communities,
     create_final_community_reports_text: run_create_final_community_reports_text,
     create_final_community_reports: run_create_final_community_reports,
-    create_final_covariates: run_create_final_covariates,
+    extract_covariates: run_extract_covariates,
     create_final_documents: run_create_final_documents,
     create_final_entities: run_create_final_entities,
     create_final_relationships: run_create_final_relationships,

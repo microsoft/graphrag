@@ -25,7 +25,7 @@ async def test_create_final_text_units():
             "create_base_text_units",
             "entities",
             "relationships",
-            "create_final_covariates",
+            "covariates",
         ],
     )
 
@@ -51,7 +51,7 @@ async def test_create_final_text_units_no_covariates():
             "create_base_text_units",
             "entities",
             "relationships",
-            "create_final_covariates",
+            "covariates",
         ],
     )
 

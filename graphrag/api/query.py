@@ -371,7 +371,7 @@ async def local_search(
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
-    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
+    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from covariates.parquet)
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
     - query (str): The user query to search for.
@@ -437,7 +437,7 @@ async def local_search_streaming(
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
-    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
+    - covariates (pd.DataFrame): A DataFrame containing the final covariates (from covariates.parquet)
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
     - query (str): The user query to search for.
@@ -520,7 +520,7 @@ async def multi_index_local_search(
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from relationships.parquet)
-    - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
+    - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from covariates.parquet)
     - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.

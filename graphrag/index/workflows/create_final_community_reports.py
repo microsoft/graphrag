@@ -31,11 +31,9 @@ async def run_workflow(
     communities = await load_table_from_storage("communities", context.storage)
     claims = None
     if config.claim_extraction.enabled and await storage_has_table(
-        "create_final_covariates", context.storage
+        "covariates", context.storage
     ):
-        claims = await load_table_from_storage(
-            "create_final_covariates", context.storage
-        )
+        claims = await load_table_from_storage("covariates", context.storage)
 
     community_reports_llm_settings = config.get_language_model_config(
         config.community_reports.model_id

@@ -8,12 +8,12 @@ import pandas as pd
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
-from graphrag.index.flows.create_final_covariates import (
-    create_final_covariates,
+from graphrag.index.flows.extract_covariates import (
+    extract_covariates,
 )
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "create_final_covariates"
+workflow_name = "extract_covariates"
 
 
 async def run_workflow(
@@ -36,7 +36,7 @@ async def run_workflow(
     async_mode = claim_extraction_llm_settings.async_mode
     num_threads = claim_extraction_llm_settings.parallelization_num_threads
 
-    output = await create_final_covariates(
+    output = await extract_covariates(
         text_units,
         callbacks,
         context.cache,
@@ -47,6 +47,6 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "covariates", context.storage)
 
     return output
