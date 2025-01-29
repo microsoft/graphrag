@@ -70,7 +70,6 @@ async def test_extract_graph():
         NoopWorkflowCallbacks(),
     )
 
-    # graph construction creates transient tables for nodes, edges, and communities
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
 

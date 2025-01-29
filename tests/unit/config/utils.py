@@ -128,7 +128,6 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "snapshots": {
         "embeddings": defs.SNAPSHOTS_EMBEDDINGS,
         "graphml": defs.SNAPSHOTS_GRAPHML,
-        "transient": defs.SNAPSHOTS_TRANSIENT,
     },
     "entity_extraction": {
         "prompt": None,
@@ -389,7 +388,6 @@ def assert_snapshots_configs(
 ) -> None:
     assert actual.embeddings == expected.embeddings
     assert actual.graphml == expected.graphml
-    assert actual.transient == expected.transient
 
 
 def assert_entity_extraction_configs(
