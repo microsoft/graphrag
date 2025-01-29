@@ -168,16 +168,53 @@ def run_local_search(
             "create_final_covariates",
         ],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+
+    # Call the Multi-Index Local Search API
+    if dataframe_dict["num_indexes"] > 1:
+        final_nodes_list = dataframe_dict["create_final_nodes"]
+        final_entities_list = dataframe_dict["create_final_entities"]
+        final_community_reports_list = dataframe_dict["create_final_community_reports"]
+        final_text_units_list = dataframe_dict["create_final_text_units"]
+        final_relationships_list = dataframe_dict["create_final_relationships"]
+        index_names = dataframe_dict["index_names"]
+
+        # If any indexes don't have covariates, set the covariates list to None
+        if None in dataframe_dict["create_final_covariates"]:
+            final_covariates_list = None
+        else:
+            final_covariates_list = dataframe_dict["create_final_covariates"]
+
+        response, context_data = asyncio.run(
+            api.multi_index_local_search(
+                config=config,
+                nodes_list=final_nodes_list,
+                entities_list=final_entities_list,
+                community_reports_list=final_community_reports_list,
+                text_units_list=final_text_units_list,
+                relationships_list=final_relationships_list,
+                covariates_list=final_covariates_list,
+                index_names=index_names,
+                community_level=community_level,
+                response_type=response_type,
+                streaming=streaming,
+                query=query,
+            )
+        )
+        logger.success(f"Local Search Response:\n{response}")
+        # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+        # External users should use the API directly to get the response and context data.
+        return response, context_data
+
+    # Otherwise, call the Single-Index Local Search API
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
-    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
+    ][0]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"][0]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
+    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"][0]
 
-    # call the Query API
     if streaming:
 
         async def run_streaming_search():
