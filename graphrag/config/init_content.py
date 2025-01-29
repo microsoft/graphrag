@@ -16,6 +16,7 @@ models:
   {defs.DEFAULT_CHAT_MODEL_ID}:
     api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
     type: {defs.LLM_TYPE.value} # or azure_openai_chat
+    auth_type: {defs.AUTH_TYPE.value} # or azure_managed_identity
     model: {defs.LLM_MODEL}
     model_supports_json: true # recommended if this is available for your model.
     parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
@@ -29,6 +30,7 @@ models:
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
     api_key: ${{GRAPHRAG_API_KEY}}
     type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
+    auth_type: {defs.AUTH_TYPE.value} # or azure_managed_identity
     model: {defs.EMBEDDING_MODEL}
     parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
     parallelization_stagger: {defs.PARALLELIZATION_STAGGER}
