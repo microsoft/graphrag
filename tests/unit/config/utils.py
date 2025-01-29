@@ -245,7 +245,7 @@ def assert_language_model_configs(
     actual: LanguageModelConfig, expected: LanguageModelConfig
 ) -> None:
     assert actual.api_key == expected.api_key
-    assert actual.azure_auth_type == expected.azure_auth_type
+    assert actual.auth_type == expected.auth_type
     assert actual.type == expected.type
     assert actual.model == expected.model
     assert actual.encoding_model == expected.encoding_model
