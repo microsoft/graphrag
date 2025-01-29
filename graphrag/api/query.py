@@ -225,7 +225,6 @@ async def multi_index_global_search(
         str | dict[str, Any] | list[dict[str, Any]],
         str | list[pd.DataFrame] | dict[str, pd.DataFrame],
     ]
-    | AsyncGenerator
 ):
     """Perform a global search across multiple indexes and return the context data and response.
 
@@ -536,7 +535,6 @@ async def multi_index_local_search(
         str | dict[str, Any] | list[dict[str, Any]],
         str | list[pd.DataFrame] | dict[str, pd.DataFrame],
     ]
-    | AsyncGenerator
 ):
     """Perform a local search across multiple indexes and return the context data and response.
 
@@ -932,7 +930,6 @@ async def multi_index_drift_search(
         str | dict[str, Any] | list[dict[str, Any]],
         str | list[pd.DataFrame] | dict[str, pd.DataFrame],
     ]
-    | AsyncGenerator
 ):
     """Perform a DRIFT search across multiple indexes and return the context data and response.
 
@@ -1245,7 +1242,6 @@ async def multi_index_basic_search(
         str | dict[str, Any] | list[dict[str, Any]],
         str | list[pd.DataFrame] | dict[str, pd.DataFrame],
     ]
-    | AsyncGenerator
 ):
     """Perform a basic search across multiple indexes and return the context data and response.
 

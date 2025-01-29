@@ -6,8 +6,7 @@
 import asyncio
 import sys
 from pathlib import Path
-
-import pandas as pd
+from typing import TYPE_CHECKING, Any
 
 import graphrag.api as api
 from graphrag.config.load_config import load_config
@@ -15,6 +14,9 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.storage.factory import StorageFactory
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 logger = PrintProgressLogger("")
 
@@ -49,14 +51,43 @@ def run_global_search(
         ],
         optional_list=[],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
+
+    # Call the Multi-Index Global Search API
+    if dataframe_dict["num_indexes"] > 1:
+        final_nodes_list = dataframe_dict["create_final_nodes"]
+        final_entities_list = dataframe_dict["create_final_entities"]
+        final_communities_list = dataframe_dict["create_final_communities"]
+        final_community_reports_list = dataframe_dict["create_final_community_reports"]
+        index_names = dataframe_dict["index_names"]
+
+        response, context_data = asyncio.run(
+            api.multi_index_global_search(
+                config=config,
+                nodes_list=final_nodes_list,
+                entities_list=final_entities_list,
+                communities_list=final_communities_list,
+                community_reports_list=final_community_reports_list,
+                index_names=index_names,
+                community_level=community_level,
+                dynamic_community_selection=dynamic_community_selection,
+                response_type=response_type,
+                streaming=streaming,
+                query=query,
+            )
+        )
+        logger.success(f"Global Search Response:\n{response}")
+        # NOTE: we return the response and context data here purely as a complete demonstration of the API.
+        # External users should use the API directly to get the response and context data.
+        return response, context_data
+    
+    # Otherwise, call the Single-Index Global Search API
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"][0]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ]
+    ][0]
 
-    # call the Query API
     if streaming:
 
         async def run_streaming_search():
@@ -351,27 +382,34 @@ def _resolve_output_files(
     config: GraphRagConfig,
     output_list: list[str],
     optional_list: list[str] | None = None,
-) -> dict[str, pd.DataFrame]:
+) -> dict[str, Any]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    output_config = config.output.model_dump()  # type: ignore
-    storage_obj = StorageFactory().create_storage(
-        storage_type=output_config["type"], kwargs=output_config
-    )
-    for name in output_list:
-        df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
-        dataframe_dict[name] = df_value
+    dataframe_dict["num_indexes"] = len(config.output)
+    dataframe_dict["index_names"] = list(config.output.keys())
+    for output in config.output.values():
+        output_config = output.model_dump()
+        storage_obj = StorageFactory().create_storage(
+            storage_type=output_config["type"], kwargs=output_config
+        )
+        for name in output_list:
+            if name not in dataframe_dict:
+                dataframe_dict[name] = []
+            df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
+            dataframe_dict[name].append(df_value)
 
-    # for optional output files, set the dict entry to None instead of erroring out if it does not exist
-    if optional_list:
-        for optional_file in optional_list:
-            file_exists = asyncio.run(storage_has_table(optional_file, storage_obj))
-            if file_exists:
-                df_value = asyncio.run(
-                    load_table_from_storage(name=optional_file, storage=storage_obj)
-                )
-                dataframe_dict[optional_file] = df_value
-            else:
-                dataframe_dict[optional_file] = None
+        # for optional output files, set the dict entry to None instead of erroring out if it does not exist
+        if optional_list:
+            for optional_file in optional_list:
+                if optional_file not in dataframe_dict:
+                    dataframe_dict[optional_file] = []
+                file_exists = asyncio.run(storage_has_table(optional_file, storage_obj))
+                if file_exists:
+                    df_value = asyncio.run(
+                        load_table_from_storage(name=optional_file, storage=storage_obj)
+                    )
+                    dataframe_dict[optional_file].append(df_value)
+                else:
+                    dataframe_dict[optional_file].append(None)
 
     return dataframe_dict
