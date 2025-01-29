@@ -60,15 +60,15 @@ class LanguageModelConfig(BaseModel):
     )
 
     def _validate_auth_type(self) -> None:
-        """Validate the Azure authentication type.
+        """Validate the authentication type.
 
-        azure_auth_type is required when using Azure OpenAI
-        and explicitly defines the authentication type to use.
+        auth_type must be api_key when using OpenAI and
+        can be either api_key or azure_managed_identity when using AOI.
 
         Raises
         ------
-        AzureAuthTypeMissingError
-            If the Azure authentication type is missing when required.
+        ConflictingSettingsError
+            If the Azure authentication type conflicts with the model being used.
         """
         if self.auth_type == AuthType.AzureManagedIdentity and (
             self.type == LLMType.OpenAIChat or self.type == LLMType.OpenAIEmbedding
