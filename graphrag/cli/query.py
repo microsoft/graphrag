@@ -126,7 +126,7 @@ def run_local_search(
             "create_final_communities",
             "create_final_community_reports",
             "create_final_text_units",
-            "create_final_relationships",
+            "relationships",
             "entities",
         ],
         optional_list=[
@@ -138,7 +138,7 @@ def run_local_search(
         "create_final_community_reports"
     ]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
 
@@ -218,7 +218,7 @@ def run_drift_search(
             "create_final_communities",
             "create_final_community_reports",
             "create_final_text_units",
-            "create_final_relationships",
+            "relationships",
             "entities",
         ],
     )
@@ -227,7 +227,7 @@ def run_drift_search(
         "create_final_community_reports"
     ]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
 
     # call the Query API

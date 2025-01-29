@@ -24,7 +24,7 @@ async def test_create_final_text_units():
         storage=[
             "create_base_text_units",
             "entities",
-            "create_final_relationships",
+            "relationships",
             "create_final_covariates",
         ],
     )
@@ -50,7 +50,7 @@ async def test_create_final_text_units_no_covariates():
         storage=[
             "create_base_text_units",
             "entities",
-            "create_final_relationships",
+            "relationships",
             "create_final_covariates",
         ],
     )

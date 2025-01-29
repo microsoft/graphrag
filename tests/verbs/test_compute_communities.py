@@ -18,7 +18,7 @@ async def test_compute_communities():
     expected = load_test_table("base_communities")
 
     context = await create_test_context(
-        storage=["base_relationship_edges"],
+        storage=["relationships"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

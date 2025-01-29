@@ -16,14 +16,14 @@ from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
 def create_final_entities(
-    base_entities: pd.DataFrame,
-    base_relationship_edges: pd.DataFrame,
+    entities: pd.DataFrame,
+    relationships: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     embed_config: EmbedGraphConfig,
     layout_enabled: bool,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
-    graph = create_graph(base_relationship_edges)
+    graph = create_graph(relationships)
     graph_embeddings = None
     if embed_config.enabled:
         graph_embeddings = embed_graph(
@@ -37,15 +37,20 @@ def create_final_entities(
         embeddings=graph_embeddings,
     )
     degrees = compute_degree(graph)
-    entities = base_entities.merge(
-        layout, left_on="title", right_on="label", how="left"
-    ).merge(degrees, on="title", how="left")
+    final_entities = (
+        entities.merge(layout, left_on="title", right_on="label", how="left")
+        .merge(degrees, on="title", how="left")
+        .drop_duplicates(subset="title")
+    )
+    final_entities = final_entities.loc[entities["title"].notna()].reset_index()
     # disconnected nodes and those with no community even at level 0 can be missing degree
-    entities["degree"] = entities["degree"].fillna(0).astype(int)
-    entities.reset_index(inplace=True)
-    entities["human_readable_id"] = entities.index
-    entities["id"] = entities["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return entities.loc[
+    final_entities["degree"] = final_entities["degree"].fillna(0).astype(int)
+    final_entities.reset_index(inplace=True)
+    final_entities["human_readable_id"] = final_entities.index
+    final_entities["id"] = final_entities["human_readable_id"].apply(
+        lambda _x: str(uuid4())
+    )
+    return final_entities.loc[
         :,
         [
             "id",

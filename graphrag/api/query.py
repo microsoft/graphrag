@@ -370,7 +370,7 @@ async def local_search(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
     - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
@@ -436,7 +436,7 @@ async def local_search_streaming(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
     - covariates (pd.DataFrame): A DataFrame containing the final covariates (from create_final_covariates.parquet)
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.
@@ -519,7 +519,7 @@ async def multi_index_local_search(
     - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
-    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from relationships.parquet)
     - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
     - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
@@ -738,7 +738,7 @@ async def drift_search(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
     - community_level (int): The community level to search at.
     - query (str): The user query to search for.
 
@@ -813,7 +813,7 @@ async def drift_search_streaming(
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from relationships.parquet)
     - community_level (int): The community level to search at.
     - query (str): The user query to search for.
 
@@ -903,7 +903,7 @@ async def multi_index_drift_search(
     - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
-    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from relationships.parquet)
     - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
     - response_type (str): The response type to return.

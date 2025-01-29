@@ -3,6 +3,8 @@
 
 """All the steps to transform final relationships."""
 
+from uuid import uuid4
+
 import pandas as pd
 
 from graphrag.index.operations.compute_degree import compute_degree
@@ -13,16 +15,15 @@ from graphrag.index.operations.create_graph import create_graph
 
 
 def create_final_relationships(
-    base_relationship_edges: pd.DataFrame,
+    relationships: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""
-    relationships = base_relationship_edges
-
-    graph = create_graph(base_relationship_edges)
+    graph = create_graph(relationships)
     degrees = compute_degree(graph)
 
-    relationships["combined_degree"] = compute_edge_combined_degree(
-        relationships,
+    final_relationships = relationships.drop_duplicates(subset=["source", "target"])
+    final_relationships["combined_degree"] = compute_edge_combined_degree(
+        final_relationships,
         degrees,
         node_name_column="title",
         node_degree_column="degree",
@@ -30,7 +31,13 @@ def create_final_relationships(
         edge_target_column="target",
     )
 
-    return relationships.loc[
+    final_relationships.reset_index(inplace=True)
+    final_relationships["human_readable_id"] = final_relationships.index
+    final_relationships["id"] = final_relationships["human_readable_id"].apply(
+        lambda _x: str(uuid4())
+    )
+
+    return final_relationships.loc[
         :,
         [
             "id",

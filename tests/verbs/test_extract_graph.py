@@ -38,7 +38,7 @@ MOCK_LLM_SUMMARIZATION_RESPONSES = [
 
 async def test_extract_graph():
     nodes_expected = load_test_table("entities")
-    edges_expected = load_test_table("base_relationship_edges")
+    edges_expected = load_test_table("relationships")
 
     context = await create_test_context(
         storage=["create_base_text_units"],
@@ -72,9 +72,7 @@ async def test_extract_graph():
 
     # graph construction creates transient tables for nodes, edges, and communities
     nodes_actual = await load_table_from_storage("entities", context.storage)
-    edges_actual = await load_table_from_storage(
-        "base_relationship_edges", context.storage
-    )
+    edges_actual = await load_table_from_storage("relationships", context.storage)
 
     assert len(nodes_actual.columns) == len(nodes_expected.columns), (
         "Nodes dataframe columns differ"

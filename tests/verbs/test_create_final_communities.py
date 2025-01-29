@@ -23,7 +23,7 @@ async def test_create_final_communities():
     context = await create_test_context(
         storage=[
             "entities",
-            "base_relationship_edges",
+            "relationships",
             "base_communities",
         ],
     )

@@ -10,13 +10,13 @@ from graphrag.index.operations.create_graph import create_graph
 
 
 def compute_communities(
-    base_relationship_edges: pd.DataFrame,
+    relationships: pd.DataFrame,
     max_cluster_size: int,
     use_lcc: bool,
     seed: int | None = None,
 ) -> pd.DataFrame:
     """All the steps to create the base entity graph."""
-    graph = create_graph(base_relationship_edges)
+    graph = create_graph(relationships)
 
     communities = cluster_graph(
         graph,

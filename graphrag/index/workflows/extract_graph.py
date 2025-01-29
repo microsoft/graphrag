@@ -46,7 +46,7 @@ async def run_workflow(
     )
     summarization_num_threads = summarization_llm_settings.parallelization_num_threads
 
-    entities, base_relationship_edges = await extract_graph(
+    entities, relationships = await extract_graph(
         text_units=text_units,
         callbacks=callbacks,
         cache=context.cache,
@@ -59,13 +59,11 @@ async def run_workflow(
     )
 
     await write_table_to_storage(entities, "entities", context.storage)
-    await write_table_to_storage(
-        base_relationship_edges, "base_relationship_edges", context.storage
-    )
+    await write_table_to_storage(relationships, "relationships", context.storage)
 
     if config.snapshots.graphml:
         # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(base_relationship_edges)
+        graph = create_graph(relationships)
         await snapshot_graphml(
             graph,
             name="graph",

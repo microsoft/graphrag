@@ -22,12 +22,10 @@ async def run_workflow(
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final relationships."""
-    base_relationship_edges = await load_table_from_storage(
-        "base_relationship_edges", context.storage
-    )
+    relationships = await load_table_from_storage("relationships", context.storage)
 
-    output = create_final_relationships(base_relationship_edges)
+    output = create_final_relationships(relationships)
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "relationships", context.storage)
 
     return output

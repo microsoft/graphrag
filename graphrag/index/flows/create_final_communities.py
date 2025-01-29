@@ -11,7 +11,7 @@ import pandas as pd
 
 def create_final_communities(
     entities: pd.DataFrame,
-    base_relationship_edges: pd.DataFrame,
+    relationships: pd.DataFrame,
     base_communities: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final communities."""
@@ -29,7 +29,7 @@ def create_final_communities(
     )
     for level in range(max_level + 1):
         communities_at_level = base_communities.loc[base_communities["level"] == level]
-        sources = base_relationship_edges.merge(
+        sources = relationships.merge(
             communities_at_level, left_on="source", right_on="title", how="inner"
         )
         targets = sources.merge(

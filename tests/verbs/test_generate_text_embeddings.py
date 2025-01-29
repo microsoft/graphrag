@@ -22,7 +22,7 @@ async def test_generate_text_embeddings():
     context = await create_test_context(
         storage=[
             "create_final_documents",
-            "create_final_relationships",
+            "relationships",
             "create_final_text_units",
             "entities",
             "create_final_community_reports",

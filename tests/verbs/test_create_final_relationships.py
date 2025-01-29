@@ -22,7 +22,7 @@ async def test_create_final_relationships():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        storage=["base_relationship_edges"],
+        storage=["relationships"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

@@ -27,7 +27,7 @@ async def run_workflow(
         "create_final_documents", context.storage
     )
     final_relationships = await load_table_from_storage(
-        "create_final_relationships", context.storage
+        "relationships", context.storage
     )
     final_text_units = await load_table_from_storage(
         "create_final_text_units", context.storage

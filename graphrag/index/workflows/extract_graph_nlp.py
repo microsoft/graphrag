@@ -28,20 +28,18 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    entities, base_relationship_edges = extract_graph_nlp(
+    entities, relationships = extract_graph_nlp(
         text_units,
         extraction_config=config.extract_graph_nlp,
         pruning_config=config.prune_graph,
     )
 
     await write_table_to_storage(entities, "entities", context.storage)
-    await write_table_to_storage(
-        base_relationship_edges, "base_relationship_edges", context.storage
-    )
+    await write_table_to_storage(relationships, "relationships", context.storage)
 
     if config.snapshots.graphml:
         # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(base_relationship_edges)
+        graph = create_graph(relationships)
         await snapshot_graphml(
             graph,
             name="graph",

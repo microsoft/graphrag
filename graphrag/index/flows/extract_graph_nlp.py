@@ -3,8 +3,6 @@
 
 """All the steps to create the base entity graph."""
 
-from uuid import uuid4
-
 import pandas as pd
 
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
@@ -59,15 +57,6 @@ def extract_graph_nlp(
     joined_nodes["type"] = "NOUN PHRASE"
     joined_nodes["description"] = ""
 
-    base_relationship_edges = _prep_edges(joined_edges)
+    joined_edges["description"] = ""
 
-    return (joined_nodes, base_relationship_edges)
-
-
-def _prep_edges(edges) -> pd.DataFrame:
-    edges = edges.drop_duplicates(subset=["source", "target"])
-    edges.reset_index(inplace=True)
-    edges["description"] = ""
-    edges["human_readable_id"] = edges.index
-    edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return edges
+    return (joined_nodes, joined_edges)

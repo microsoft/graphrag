@@ -20,16 +20,14 @@ async def run_workflow(
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base communities."""
-    base_relationship_edges = await load_table_from_storage(
-        "base_relationship_edges", context.storage
-    )
+    relationships = await load_table_from_storage("relationships", context.storage)
 
     max_cluster_size = config.cluster_graph.max_cluster_size
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
 
     base_communities = compute_communities(
-        base_relationship_edges,
+        relationships,
         max_cluster_size=max_cluster_size,
         use_lcc=use_lcc,
         seed=seed,

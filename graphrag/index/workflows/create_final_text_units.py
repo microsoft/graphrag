@@ -31,7 +31,7 @@ async def run_workflow(
     )
     final_entities = await load_table_from_storage("entities", context.storage)
     final_relationships = await load_table_from_storage(
-        "create_final_relationships", context.storage
+        "relationships", context.storage
     )
     final_covariates = None
     if config.claim_extraction.enabled and await storage_has_table(

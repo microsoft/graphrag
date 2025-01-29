@@ -42,7 +42,6 @@ log = logging.getLogger(__name__)
 transient_outputs = [
     "input",
     "base_communities",
-    "base_relationship_edges",
     "create_base_text_units",
 ]
 

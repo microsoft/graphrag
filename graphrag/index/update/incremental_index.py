@@ -226,17 +226,15 @@ async def _update_text_units(
 
 async def _update_relationships(dataframe_dict, storage, update_storage):
     """Update the relationships output."""
-    old_relationships = await load_table_from_storage(
-        "create_final_relationships", storage
-    )
-    delta_relationships = dataframe_dict["create_final_relationships"]
+    old_relationships = await load_table_from_storage("relationships", storage)
+    delta_relationships = dataframe_dict["relationships"]
     merged_relationships_df = _update_and_merge_relationships(
         old_relationships,
         delta_relationships,
     )
 
     await write_table_to_storage(
-        merged_relationships_df, "create_final_relationships", update_storage
+        merged_relationships_df, "relationships", update_storage
     )
 
     return merged_relationships_df
