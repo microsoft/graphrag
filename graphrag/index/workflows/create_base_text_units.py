@@ -36,6 +36,6 @@ async def run_workflow(
         strategy=chunks.strategy,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "text_units", context.storage)
 
     return output

@@ -21,7 +21,7 @@ async def test_create_final_documents():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        storage=["create_base_text_units"],
+        storage=["text_units"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
@@ -41,7 +41,7 @@ async def test_create_final_documents_with_attribute_columns():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        storage=["create_base_text_units"],
+        storage=["text_units"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

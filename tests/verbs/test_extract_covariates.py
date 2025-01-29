@@ -26,11 +26,11 @@ MOCK_LLM_RESPONSES = [
 
 
 async def test_extract_covariates():
-    input = load_test_table("create_base_text_units")
+    input = load_test_table("text_units")
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        storage=["create_base_text_units"],
+        storage=["text_units"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

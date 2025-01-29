@@ -23,7 +23,7 @@ async def test_generate_text_embeddings():
         storage=[
             "create_final_documents",
             "relationships",
-            "create_final_text_units",
+            "text_units",
             "entities",
             "community_reports",
         ]

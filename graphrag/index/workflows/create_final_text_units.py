@@ -26,9 +26,7 @@ async def run_workflow(
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform the text units."""
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
     final_entities = await load_table_from_storage("entities", context.storage)
     final_relationships = await load_table_from_storage(
         "relationships", context.storage
@@ -46,6 +44,6 @@ async def run_workflow(
         final_covariates,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "text_units", context.storage)
 
     return output

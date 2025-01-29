@@ -123,7 +123,7 @@ def run_local_search(
         output_list=[
             "communities",
             "community_reports",
-            "create_final_text_units",
+            "text_units",
             "relationships",
             "entities",
         ],
@@ -133,7 +133,7 @@ def run_local_search(
     )
     final_communities: pd.DataFrame = dataframe_dict["communities"]
     final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
@@ -213,14 +213,14 @@ def run_drift_search(
         output_list=[
             "communities",
             "community_reports",
-            "create_final_text_units",
+            "text_units",
             "relationships",
             "entities",
         ],
     )
     final_communities: pd.DataFrame = dataframe_dict["communities"]
     final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
 
@@ -295,10 +295,10 @@ def run_basic_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_text_units",
+            "text_units",
         ],
     )
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
 
     # # call the Query API
     if streaming:

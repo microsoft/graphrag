@@ -24,9 +24,7 @@ async def run_workflow(
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
 
     entities, relationships = extract_graph_nlp(
         text_units,

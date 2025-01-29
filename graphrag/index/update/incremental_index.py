@@ -204,16 +204,14 @@ async def _update_text_units(
     dataframe_dict, storage, update_storage, entity_id_mapping
 ):
     """Update the text units output."""
-    old_text_units = await load_table_from_storage("create_final_text_units", storage)
-    delta_text_units = dataframe_dict["create_final_text_units"]
+    old_text_units = await load_table_from_storage("text_units", storage)
+    delta_text_units = dataframe_dict["text_units"]
 
     merged_text_units = _update_and_merge_text_units(
         old_text_units, delta_text_units, entity_id_mapping
     )
 
-    await write_table_to_storage(
-        merged_text_units, "create_final_text_units", update_storage
-    )
+    await write_table_to_storage(merged_text_units, "text_units", update_storage)
 
     return merged_text_units
 

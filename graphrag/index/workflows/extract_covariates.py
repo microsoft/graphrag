@@ -22,9 +22,7 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to extract and format covariates."""
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
 
     claim_extraction_llm_settings = config.get_language_model_config(
         config.claim_extraction.model_id

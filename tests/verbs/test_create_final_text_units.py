@@ -22,7 +22,7 @@ async def test_create_final_text_units():
 
     context = await create_test_context(
         storage=[
-            "create_base_text_units",
+            "text_units",
             "entities",
             "relationships",
             "covariates",
@@ -48,7 +48,7 @@ async def test_create_final_text_units_no_covariates():
 
     context = await create_test_context(
         storage=[
-            "create_base_text_units",
+            "text_units",
             "entities",
             "relationships",
             "covariates",

@@ -25,9 +25,7 @@ async def run_workflow(
     entities = await load_table_from_storage("entities", context.storage)
     communities = await load_table_from_storage("communities", context.storage)
 
-    text_units = await load_table_from_storage(
-        "create_final_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
 
     community_reports_llm_settings = config.get_language_model_config(
         config.community_reports.model_id
