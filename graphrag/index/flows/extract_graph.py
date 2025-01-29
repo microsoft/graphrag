@@ -65,9 +65,9 @@ async def extract_graph(
 
     base_relationship_edges = _prep_edges(relationships, relationship_summaries)
 
-    base_entity_nodes = _prep_nodes(entities, entity_summaries)
+    base_entities = _prep_nodes(entities, entity_summaries)
 
-    return (base_entity_nodes, base_relationship_edges)
+    return (base_entities, base_relationship_edges)
 
 
 def _prep_nodes(entities, summaries) -> pd.DataFrame:

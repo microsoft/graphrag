@@ -14,7 +14,7 @@ from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
 def create_final_entities(
-    base_entity_nodes: pd.DataFrame,
+    base_entities: pd.DataFrame,
     base_relationship_edges: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     embed_config: EmbedGraphConfig,
@@ -35,7 +35,7 @@ def create_final_entities(
         embeddings=graph_embeddings,
     )
     degrees = compute_degree(graph)
-    entities = base_entity_nodes.merge(
+    entities = base_entities.merge(
         layout, left_on="title", right_on="label", how="left"
     ).merge(degrees, on="title", how="left")
     # disconnected nodes and those with no community even at level 0 can be missing degree

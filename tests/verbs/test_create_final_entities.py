@@ -21,7 +21,7 @@ async def test_create_final_entities():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(
-        storage=["base_entity_nodes"],
+        storage=["entities"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})

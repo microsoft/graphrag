@@ -47,7 +47,7 @@ async def test_create_final_community_reports():
         storage=[
             "create_final_covariates",
             "create_final_relationships",
-            "create_final_entities",
+            "entities",
             "create_final_communities",
         ]
     )

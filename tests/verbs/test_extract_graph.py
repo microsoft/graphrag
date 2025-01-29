@@ -37,7 +37,7 @@ MOCK_LLM_SUMMARIZATION_RESPONSES = [
 
 
 async def test_extract_graph():
-    nodes_expected = load_test_table("base_entity_nodes")
+    nodes_expected = load_test_table("entities")
     edges_expected = load_test_table("base_relationship_edges")
 
     context = await create_test_context(
@@ -71,7 +71,7 @@ async def test_extract_graph():
     )
 
     # graph construction creates transient tables for nodes, edges, and communities
-    nodes_actual = await load_table_from_storage("base_entity_nodes", context.storage)
+    nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage(
         "base_relationship_edges", context.storage
     )

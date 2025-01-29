@@ -42,13 +42,13 @@ def run_global_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_entities",
+            "entities",
             "create_final_communities",
             "create_final_community_reports",
         ],
         optional_list=[],
     )
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
@@ -127,7 +127,7 @@ def run_local_search(
             "create_final_community_reports",
             "create_final_text_units",
             "create_final_relationships",
-            "create_final_entities",
+            "entities",
         ],
         optional_list=[
             "create_final_covariates",
@@ -139,7 +139,7 @@ def run_local_search(
     ]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
 
     # call the Query API
@@ -219,7 +219,7 @@ def run_drift_search(
             "create_final_community_reports",
             "create_final_text_units",
             "create_final_relationships",
-            "create_final_entities",
+            "entities",
         ],
     )
     final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
@@ -228,7 +228,7 @@ def run_drift_search(
     ]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
 
     # call the Query API
     if streaming:

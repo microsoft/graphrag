@@ -246,8 +246,8 @@ async def _update_entities(
     dataframe_dict, storage, update_storage, config, cache, callbacks
 ):
     """Update Final Entities output."""
-    old_entities = await load_table_from_storage("create_final_entities", storage)
-    delta_entities = dataframe_dict["create_final_entities"]
+    old_entities = await load_table_from_storage("entities", storage)
+    delta_entities = dataframe_dict["entities"]
 
     merged_entities_df, entity_id_mapping = _group_and_resolve_entities(
         old_entities, delta_entities
@@ -262,9 +262,7 @@ async def _update_entities(
     )
 
     # Save the updated entities back to storage
-    await write_table_to_storage(
-        merged_entities_df, "create_final_entities", update_storage
-    )
+    await write_table_to_storage(merged_entities_df, "entities", update_storage)
 
     return merged_entities_df, entity_id_mapping
 

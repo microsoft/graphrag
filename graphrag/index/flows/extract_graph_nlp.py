@@ -56,10 +56,10 @@ def extract_graph_nlp(
     )
 
     # add in any other columns required by downstream workflows
-    base_entity_nodes = _prep_nodes(joined_nodes)
+    base_entities = _prep_nodes(joined_nodes)
     base_relationship_edges = _prep_edges(joined_edges)
 
-    return (base_entity_nodes, base_relationship_edges)
+    return (base_entities, base_relationship_edges)
 
 
 def _prep_nodes(nodes) -> pd.DataFrame:

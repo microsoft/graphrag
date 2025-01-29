@@ -22,21 +22,19 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final entities."""
-    base_entity_nodes = await load_table_from_storage(
-        "base_entity_nodes", context.storage
-    )
+    base_entities = await load_table_from_storage("entities", context.storage)
     base_relationship_edges = await load_table_from_storage(
         "base_relationship_edges", context.storage
     )
 
     output = create_final_entities(
-        base_entity_nodes,
+        base_entities,
         base_relationship_edges,
         callbacks,
         embed_config=config.embed_graph,
         layout_enabled=config.umap.enabled,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "entities", context.storage)
 
     return output

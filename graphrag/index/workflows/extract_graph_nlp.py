@@ -28,15 +28,13 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    base_entity_nodes, base_relationship_edges = extract_graph_nlp(
+    entities, base_relationship_edges = extract_graph_nlp(
         text_units,
         extraction_config=config.extract_graph_nlp,
         pruning_config=config.prune_graph,
     )
 
-    await write_table_to_storage(
-        base_entity_nodes, "base_entity_nodes", context.storage
-    )
+    await write_table_to_storage(entities, "entities", context.storage)
     await write_table_to_storage(
         base_relationship_edges, "base_relationship_edges", context.storage
     )

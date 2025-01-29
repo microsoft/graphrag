@@ -46,7 +46,7 @@ async def run_workflow(
     )
     summarization_num_threads = summarization_llm_settings.parallelization_num_threads
 
-    base_entity_nodes, base_relationship_edges = await extract_graph(
+    entities, base_relationship_edges = await extract_graph(
         text_units=text_units,
         callbacks=callbacks,
         cache=context.cache,
@@ -58,9 +58,7 @@ async def run_workflow(
         summarization_num_threads=summarization_num_threads,
     )
 
-    await write_table_to_storage(
-        base_entity_nodes, "base_entity_nodes", context.storage
-    )
+    await write_table_to_storage(entities, "entities", context.storage)
     await write_table_to_storage(
         base_relationship_edges, "base_relationship_edges", context.storage
     )

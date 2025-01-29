@@ -78,7 +78,7 @@ async def global_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
@@ -148,7 +148,7 @@ async def global_search_streaming(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
@@ -232,7 +232,7 @@ async def multi_index_global_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
     - communities_list (list[pd.DataFrame]): A list of DataFrames containing the final communities (from create_final_communities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - index_names (list[str]): A list of index names.
@@ -367,7 +367,7 @@ async def local_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
@@ -433,7 +433,7 @@ async def local_search_streaming(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
@@ -516,7 +516,7 @@ async def multi_index_local_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
@@ -735,7 +735,7 @@ async def drift_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
@@ -810,7 +810,7 @@ async def drift_search_streaming(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
     - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
@@ -900,7 +900,7 @@ async def multi_index_drift_search(
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
     - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)

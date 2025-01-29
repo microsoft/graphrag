@@ -10,13 +10,13 @@ import pandas as pd
 
 
 def create_final_communities(
-    base_entity_nodes: pd.DataFrame,
+    entities: pd.DataFrame,
     base_relationship_edges: pd.DataFrame,
     base_communities: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final communities."""
     # aggregate entity ids for each community
-    entity_ids = base_communities.merge(base_entity_nodes, on="title", how="inner")
+    entity_ids = base_communities.merge(entities, on="title", how="inner")
     entity_ids = (
         entity_ids.groupby("community").agg(entity_ids=("id", list)).reset_index()
     )
