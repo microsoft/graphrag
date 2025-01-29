@@ -56,19 +56,12 @@ def extract_graph_nlp(
     )
 
     # add in any other columns required by downstream workflows
-    base_entities = _prep_nodes(joined_nodes)
+    joined_nodes["type"] = "NOUN PHRASE"
+    joined_nodes["description"] = ""
+
     base_relationship_edges = _prep_edges(joined_edges)
 
-    return (base_entities, base_relationship_edges)
-
-
-def _prep_nodes(nodes) -> pd.DataFrame:
-    nodes.reset_index(inplace=True)
-    nodes["type"] = "NOUN PHRASE"
-    nodes["description"] = ""
-    nodes["human_readable_id"] = nodes.index
-    nodes["id"] = nodes["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return nodes
+    return (joined_nodes, base_relationship_edges)
 
 
 def _prep_edges(edges) -> pd.DataFrame:

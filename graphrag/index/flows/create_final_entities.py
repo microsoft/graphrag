@@ -3,6 +3,8 @@
 
 """All the steps to transform final entities."""
 
+from uuid import uuid4
+
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -40,6 +42,9 @@ def create_final_entities(
     ).merge(degrees, on="title", how="left")
     # disconnected nodes and those with no community even at level 0 can be missing degree
     entities["degree"] = entities["degree"].fillna(0).astype(int)
+    entities.reset_index(inplace=True)
+    entities["human_readable_id"] = entities.index
+    entities["id"] = entities["human_readable_id"].apply(lambda _x: str(uuid4()))
     return entities.loc[
         :,
         [

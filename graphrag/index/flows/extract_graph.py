@@ -30,7 +30,7 @@ async def extract_graph(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
-    entities, relationships = await extract_entities(
+    extracted_entities, relationships = await extract_entities(
         text_units=text_units,
         callbacks=callbacks,
         cache=cache,
@@ -42,7 +42,7 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
-    if not _validate_data(entities):
+    if not _validate_data(extracted_entities):
         error_msg = "Entity Extraction failed. No entities detected during extraction."
         callbacks.error(error_msg)
         raise ValueError(error_msg)
@@ -55,7 +55,7 @@ async def extract_graph(
         raise ValueError(error_msg)
 
     entity_summaries, relationship_summaries = await summarize_descriptions(
-        entities_df=entities,
+        entities_df=extracted_entities,
         relationships_df=relationships,
         callbacks=callbacks,
         cache=cache,
@@ -65,20 +65,13 @@ async def extract_graph(
 
     base_relationship_edges = _prep_edges(relationships, relationship_summaries)
 
-    base_entities = _prep_nodes(entities, entity_summaries)
+    extracted_entities.drop(columns=["description"], inplace=True)
+    entities = extracted_entities.merge(
+        entity_summaries, on="title", how="left"
+    ).drop_duplicates(subset="title")
+    entities = entities.loc[entities["title"].notna()].reset_index()
 
-    return (base_entities, base_relationship_edges)
-
-
-def _prep_nodes(entities, summaries) -> pd.DataFrame:
-    entities.drop(columns=["description"], inplace=True)
-    nodes = entities.merge(summaries, on="title", how="left").drop_duplicates(
-        subset="title"
-    )
-    nodes = nodes.loc[nodes["title"].notna()].reset_index()
-    nodes["human_readable_id"] = nodes.index
-    nodes["id"] = nodes["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return nodes
+    return (entities, base_relationship_edges)
 
 
 def _prep_edges(relationships, summaries) -> pd.DataFrame:
