@@ -235,8 +235,6 @@ class LanguageModelConfig(BaseModel):
 
         Raises
         ------
-        AzureAuthTypeMissingError
-            If the Azure authentication type is missing and is required.
         AzureApiBaseMissingError
             If the API base is missing and is required.
         AzureApiVersionMissingError
