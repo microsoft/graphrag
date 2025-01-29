@@ -15,15 +15,6 @@ class ApiKeyMissingError(ValueError):
         super().__init__(msg)
 
 
-class AzureAuthTypeMissingError(ValueError):
-    """Azure Auth type missing error."""
-
-    def __init__(self, llm_type: str) -> None:
-        """Init method definition."""
-        msg = f"azure_auth_type is required for {llm_type}. Please rerun `graphrag init` and set the azure_auth_type."
-        super().__init__(msg)
-
-
 class AzureApiBaseMissingError(ValueError):
     """Azure API Base missing error."""
 
