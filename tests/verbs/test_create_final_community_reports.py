@@ -9,7 +9,7 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     CommunityReportResponse,
     FindingModel,
 )
-from graphrag.index.workflows.create_final_community_reports import (
+from graphrag.index.workflows.create_community_reports import (
     run_workflow,
     workflow_name,
 )
@@ -40,7 +40,7 @@ MOCK_RESPONSES = [
 ]
 
 
-async def test_create_final_community_reports():
+async def test_create_community_reports():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(

@@ -30,7 +30,7 @@ from graphrag.index.operations.summarize_communities_text.prompts import (
 log = logging.getLogger(__name__)
 
 
-async def create_final_community_reports_text(
+async def create_community_reports_text(
     entities: pd.DataFrame,
     communities: pd.DataFrame,
     text_units: pd.DataFrame,

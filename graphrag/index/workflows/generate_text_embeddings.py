@@ -34,7 +34,7 @@ async def run_workflow(
     )
     final_entities = await load_table_from_storage("entities", context.storage)
     final_community_reports = await load_table_from_storage(
-        "create_final_community_reports", context.storage
+        "community_reports", context.storage
     )
 
     embedded_fields = get_embedded_fields(config)

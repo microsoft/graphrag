@@ -44,15 +44,13 @@ def run_global_search(
         output_list=[
             "entities",
             "communities",
-            "create_final_community_reports",
+            "community_reports",
         ],
         optional_list=[],
     )
     final_entities: pd.DataFrame = dataframe_dict["entities"]
     final_communities: pd.DataFrame = dataframe_dict["communities"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
 
     # call the Query API
     if streaming:
@@ -124,7 +122,7 @@ def run_local_search(
         config=config,
         output_list=[
             "communities",
-            "create_final_community_reports",
+            "community_reports",
             "create_final_text_units",
             "relationships",
             "entities",
@@ -134,9 +132,7 @@ def run_local_search(
         ],
     )
     final_communities: pd.DataFrame = dataframe_dict["communities"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]
@@ -216,16 +212,14 @@ def run_drift_search(
         config=config,
         output_list=[
             "communities",
-            "create_final_community_reports",
+            "community_reports",
             "create_final_text_units",
             "relationships",
             "entities",
         ],
     )
     final_communities: pd.DataFrame = dataframe_dict["communities"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
     final_relationships: pd.DataFrame = dataframe_dict["relationships"]
     final_entities: pd.DataFrame = dataframe_dict["entities"]

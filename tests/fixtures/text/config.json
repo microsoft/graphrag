@@ -63,7 +63,7 @@
             "max_runtime": 150,
             "expected_artifacts": 1
         },
-        "create_final_community_reports": {
+        "create_community_reports": {
             "row_range": [
                 1,
                 2500

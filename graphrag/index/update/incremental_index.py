@@ -163,17 +163,15 @@ async def _update_community_reports(
     dataframe_dict, storage, update_storage, community_id_mapping
 ):
     """Update the community reports output."""
-    old_community_reports = await load_table_from_storage(
-        "create_final_community_reports", storage
-    )
-    delta_community_reports = dataframe_dict["create_final_community_reports"]
+    old_community_reports = await load_table_from_storage("community_reports", storage)
+    delta_community_reports = dataframe_dict["community_reports"]
 
     merged_community_reports = _update_and_merge_community_reports(
         old_community_reports, delta_community_reports, community_id_mapping
     )
 
     await write_table_to_storage(
-        merged_community_reports, "create_final_community_reports", update_storage
+        merged_community_reports, "community_reports", update_storage
     )
 
     return merged_community_reports

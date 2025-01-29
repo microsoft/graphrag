@@ -25,7 +25,7 @@ async def test_generate_text_embeddings():
             "relationships",
             "create_final_text_units",
             "entities",
-            "create_final_community_reports",
+            "community_reports",
         ]
     )
 

@@ -8,12 +8,12 @@ import pandas as pd
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
-from graphrag.index.flows.create_final_community_reports_text import (
-    create_final_community_reports_text,
+from graphrag.index.flows.create_community_reports_text import (
+    create_community_reports_text,
 )
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "create_final_community_reports_text"
+workflow_name = "create_community_reports_text"
 
 
 async def run_workflow(
@@ -38,7 +38,7 @@ async def run_workflow(
         config.root_dir, community_reports_llm_settings
     )
 
-    output = await create_final_community_reports_text(
+    output = await create_community_reports_text(
         entities,
         communities,
         text_units,
@@ -49,8 +49,6 @@ async def run_workflow(
         num_threads=num_threads,
     )
 
-    await write_table_to_storage(
-        output, "create_final_community_reports", context.storage
-    )
+    await write_table_to_storage(output, "community_reports", context.storage)
 
     return output

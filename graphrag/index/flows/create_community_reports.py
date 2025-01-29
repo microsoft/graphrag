@@ -44,7 +44,7 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
 )
 
 
-async def create_final_community_reports(
+async def create_community_reports(
     edges_input: pd.DataFrame,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
