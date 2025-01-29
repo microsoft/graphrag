@@ -15,7 +15,7 @@ from .util import (
 
 
 async def test_compute_communities():
-    expected = load_test_table("base_communities")
+    expected = load_test_table("communities")
 
     context = await create_test_context(
         storage=["relationships"],
@@ -29,7 +29,7 @@ async def test_compute_communities():
         NoopWorkflowCallbacks(),
     )
 
-    actual = await load_table_from_storage("base_communities", context.storage)
+    actual = await load_table_from_storage("communities", context.storage)
 
     columns = list(expected.columns.values)
     compare_outputs(actual, expected, columns)

@@ -28,9 +28,7 @@ async def run_workflow(
     """All the steps to transform community reports."""
     edges = await load_table_from_storage("relationships", context.storage)
     entities = await load_table_from_storage("entities", context.storage)
-    communities = await load_table_from_storage(
-        "create_final_communities", context.storage
-    )
+    communities = await load_table_from_storage("communities", context.storage)
     claims = None
     if config.claim_extraction.enabled and await storage_has_table(
         "create_final_covariates", context.storage

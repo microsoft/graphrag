@@ -24,7 +24,7 @@ async def test_create_final_communities():
         storage=[
             "entities",
             "relationships",
-            "base_communities",
+            "communities",
         ],
     )
 

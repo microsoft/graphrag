@@ -48,7 +48,7 @@ async def test_create_final_community_reports():
             "create_final_covariates",
             "create_final_relationships",
             "entities",
-            "create_final_communities",
+            "communities",
         ]
     )
 

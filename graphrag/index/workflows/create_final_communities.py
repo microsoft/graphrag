@@ -24,16 +24,14 @@ async def run_workflow(
     """All the steps to transform final communities."""
     entities = await load_table_from_storage("entities", context.storage)
     relationships = await load_table_from_storage("relationships", context.storage)
-    base_communities = await load_table_from_storage(
-        "base_communities", context.storage
-    )
+    communities = await load_table_from_storage("communities", context.storage)
 
     output = create_final_communities(
         entities,
         relationships,
-        base_communities,
+        communities,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "communities", context.storage)
 
     return output

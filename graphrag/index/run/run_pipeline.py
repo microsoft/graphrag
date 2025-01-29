@@ -41,7 +41,6 @@ log = logging.getLogger(__name__)
 # (unless snapshots.transient is set!)
 transient_outputs = [
     "input",
-    "base_communities",
     "create_base_text_units",
 ]
 

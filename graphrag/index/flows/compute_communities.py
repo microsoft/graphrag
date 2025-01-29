@@ -18,16 +18,16 @@ def compute_communities(
     """All the steps to create the base entity graph."""
     graph = create_graph(relationships)
 
-    communities = cluster_graph(
+    clusters = cluster_graph(
         graph,
         max_cluster_size,
         use_lcc,
         seed=seed,
     )
 
-    base_communities = pd.DataFrame(
-        communities, columns=pd.Index(["level", "community", "parent", "title"])
+    communities = pd.DataFrame(
+        clusters, columns=pd.Index(["level", "community", "parent", "title"])
     ).explode("title")
-    base_communities["community"] = base_communities["community"].astype(int)
+    communities["community"] = communities["community"].astype(int)
 
-    return base_communities
+    return communities

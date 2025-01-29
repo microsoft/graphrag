@@ -43,13 +43,13 @@ def run_global_search(
         config=config,
         output_list=[
             "entities",
-            "create_final_communities",
+            "communities",
             "create_final_community_reports",
         ],
         optional_list=[],
     )
     final_entities: pd.DataFrame = dataframe_dict["entities"]
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -123,7 +123,7 @@ def run_local_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_communities",
+            "communities",
             "create_final_community_reports",
             "create_final_text_units",
             "relationships",
@@ -133,7 +133,7 @@ def run_local_search(
             "create_final_covariates",
         ],
     )
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -215,14 +215,14 @@ def run_drift_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_communities",
+            "communities",
             "create_final_community_reports",
             "create_final_text_units",
             "relationships",
             "entities",
         ],
     )
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]

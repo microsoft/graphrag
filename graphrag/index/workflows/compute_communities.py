@@ -26,13 +26,13 @@ async def run_workflow(
     use_lcc = config.cluster_graph.use_lcc
     seed = config.cluster_graph.seed
 
-    base_communities = compute_communities(
+    communities = compute_communities(
         relationships,
         max_cluster_size=max_cluster_size,
         use_lcc=use_lcc,
         seed=seed,
     )
 
-    await write_table_to_storage(base_communities, "base_communities", context.storage)
+    await write_table_to_storage(communities, "communities", context.storage)
 
-    return base_communities
+    return communities

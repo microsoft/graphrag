@@ -79,7 +79,7 @@ async def global_search(
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
-    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
     - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
@@ -149,7 +149,7 @@ async def global_search_streaming(
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
-    - communities (pd.DataFrame): A DataFrame containing the final communities (from create_final_communities.parquet)
+    - communities (pd.DataFrame): A DataFrame containing the final communities (from communities.parquet)
     - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
     - community_level (int): The community level to search at.
     - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
@@ -233,7 +233,7 @@ async def multi_index_global_search(
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from entities.parquet)
-    - communities_list (list[pd.DataFrame]): A list of DataFrames containing the final communities (from create_final_communities.parquet)
+    - communities_list (list[pd.DataFrame]): A list of DataFrames containing the final communities (from communities.parquet)
     - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
     - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
