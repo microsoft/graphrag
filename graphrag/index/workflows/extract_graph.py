@@ -54,6 +54,8 @@ async def run_workflow(
         entity_types=entity_types,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
+        embed_config=config.embed_graph,
+        layout_enabled=config.umap.enabled,
     )
 
     await write_table_to_storage(entities, "entities", context.storage)

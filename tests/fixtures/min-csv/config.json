@@ -18,18 +18,6 @@
             "max_runtime": 300,
             "expected_artifacts": 0
         },
-        "create_final_entities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "type",
-                "description"
-            ],
-            "max_runtime": 300,
-            "expected_artifacts": 1
-        },
         "create_final_relationships": {
             "row_range": [
                 1,

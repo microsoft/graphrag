@@ -10,7 +10,9 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.operations.extract_entities import extract_entities
+from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
@@ -26,6 +28,8 @@ async def extract_graph(
     entity_types: list[str] | None = None,
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
+    embed_config: EmbedGraphConfig | None = None,
+    layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
@@ -69,7 +73,10 @@ async def extract_graph(
     extracted_entities.drop(columns=["description"], inplace=True)
     entities = extracted_entities.merge(entity_summaries, on="title", how="left")
 
-    return (entities, relationships)
+    final_entities = finalize_entities(
+        entities, relationships, callbacks, embed_config, layout_enabled
+    )
+    return (final_entities, relationships)
 
 
 def _validate_data(df: pd.DataFrame) -> bool:

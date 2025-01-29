@@ -5,6 +5,8 @@
 
 import pandas as pd
 
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
@@ -12,14 +14,18 @@ from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
     create_noun_phrase_extractor,
 )
 from graphrag.index.operations.create_graph import create_graph
+from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph
 
 
 def extract_graph_nlp(
     text_units: pd.DataFrame,
+    callbacks: WorkflowCallbacks,
     extraction_config: ExtractGraphNLPConfig,
     pruning_config: PruneGraphConfig,
+    embed_config: EmbedGraphConfig | None = None,
+    layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     text_analyzer_config = extraction_config.text_analyzer
@@ -59,4 +65,8 @@ def extract_graph_nlp(
 
     joined_edges["description"] = ""
 
-    return (joined_nodes, joined_edges)
+    final_entities = finalize_entities(
+        joined_nodes, joined_edges, callbacks, embed_config, layout_enabled
+    )
+
+    return (final_entities, joined_edges)

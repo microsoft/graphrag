@@ -15,17 +15,17 @@ from graphrag.index.operations.embed_graph.embed_graph import embed_graph
 from graphrag.index.operations.layout_graph.layout_graph import layout_graph
 
 
-def create_final_entities(
+def finalize_entities(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
     callbacks: WorkflowCallbacks,
-    embed_config: EmbedGraphConfig,
-    layout_enabled: bool,
+    embed_config: EmbedGraphConfig | None = None,
+    layout_enabled: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform final entities."""
     graph = create_graph(relationships)
     graph_embeddings = None
-    if embed_config.enabled:
+    if embed_config is not None and embed_config.enabled:
         graph_embeddings = embed_graph(
             graph,
             embed_config,
