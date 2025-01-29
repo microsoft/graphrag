@@ -5,7 +5,7 @@
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from graphrag.config.enums import AzureAuthType, LLMType
+from graphrag.config.enums import AuthType, LLMType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
@@ -32,7 +32,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         azure_ad_token_provider=(
             get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client
-            and default_llm_settings.azure_auth_type == AzureAuthType.ManagedIdentity
+            and default_llm_settings.auth_type == AuthType.AzureManagedIdentity
             else None
         ),
         api_base=default_llm_settings.api_base,
@@ -67,7 +67,7 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
         azure_ad_token_provider=(
             get_bearer_token_provider(DefaultAzureCredential(), audience)
             if is_azure_client
-            and embeddings_llm_settings.azure_auth_type == AzureAuthType.ManagedIdentity
+            and embeddings_llm_settings.auth_type == AuthType.AzureManagedIdentity
             else None
         ),
         api_base=embeddings_llm_settings.api_base,
