@@ -36,12 +36,6 @@ from .create_final_documents import (
 from .create_final_documents import (
     workflow_name as create_final_documents,
 )
-from .create_final_relationships import (
-    run_workflow as run_create_final_relationships,
-)
-from .create_final_relationships import (
-    workflow_name as create_final_relationships,
-)
 from .create_final_text_units import (
     run_workflow as run_create_final_text_units,
 )
@@ -83,7 +77,6 @@ all_workflows: dict[
     create_community_reports: run_create_community_reports,
     extract_covariates: run_extract_covariates,
     create_final_documents: run_create_final_documents,
-    create_final_relationships: run_create_final_relationships,
     create_final_text_units: run_create_final_text_units,
     extract_graph_nlp: run_extract_graph_nlp,
     extract_graph: run_extract_graph,

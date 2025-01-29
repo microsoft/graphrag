@@ -45,8 +45,8 @@ async def test_create_community_reports():
 
     context = await create_test_context(
         storage=[
-            "extract_covariates",
-            "create_final_relationships",
+            "covariates",
+            "relationships",
             "entities",
             "communities",
         ]

@@ -14,7 +14,7 @@ from graphrag.index.operations.compute_edge_combined_degree import (
 from graphrag.index.operations.create_graph import create_graph
 
 
-def create_final_relationships(
+def finalize_relationships(
     relationships: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final relationships."""

@@ -30,7 +30,6 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph",
-                "create_final_relationships",
                 "create_communities",
                 *(["extract_covariates"] if config.claim_extraction.enabled else []),
                 "create_final_text_units",
@@ -42,8 +41,8 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph_nlp",
-                "create_final_relationships",
                 "create_communities",
                 "create_final_text_units",
                 "create_community_reports_text",
+                "generate_text_embeddings",
             ]

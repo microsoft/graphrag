@@ -13,6 +13,7 @@ from graphrag.config.enums import AsyncType
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.index.operations.extract_entities import extract_entities
 from graphrag.index.operations.finalize_entities import finalize_entities
+from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
@@ -76,7 +77,8 @@ async def extract_graph(
     final_entities = finalize_entities(
         entities, relationships, callbacks, embed_config, layout_enabled
     )
-    return (final_entities, relationships)
+    final_relationships = finalize_relationships(relationships)
+    return (final_entities, final_relationships)
 
 
 def _validate_data(df: pd.DataFrame) -> bool:

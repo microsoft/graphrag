@@ -18,14 +18,6 @@
             "max_runtime": 300,
             "expected_artifacts": 0
         },
-        "create_final_relationships": {
-            "row_range": [
-                1,
-                6000
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
         "create_communities": {
             "row_range": [
                 1,

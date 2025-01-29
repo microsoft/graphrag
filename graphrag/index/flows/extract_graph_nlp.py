@@ -15,6 +15,7 @@ from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
 )
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.finalize_entities import finalize_entities
+from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph
 
@@ -68,5 +69,5 @@ def extract_graph_nlp(
     final_entities = finalize_entities(
         joined_nodes, joined_edges, callbacks, embed_config, layout_enabled
     )
-
-    return (final_entities, joined_edges)
+    final_relationships = finalize_relationships(joined_edges)
+    return (final_entities, final_relationships)
