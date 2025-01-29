@@ -45,10 +45,16 @@ class VectorStoreConfig(BaseModel):
             msg = "vector_store.url is required when vector_store.type == azure_ai_search. Please rerun `graphrag init` and select the correct vector store type."
             raise ValueError(msg)
 
-        if self.type != VectorStoreType.AzureAISearch and (
+        if self.type == VectorStoreType.CosmosDB and (
+            self.url is None or self.url.strip() == ""
+        ):
+            msg = "vector_store.url is required when vector_store.type == cosmos_db. Please rerun `graphrag init` and select the correct vector store type."
+            raise ValueError(msg)
+
+        if self.type == VectorStoreType.LanceDB and (
             self.url is not None and self.url.strip() != ""
         ):
-            msg = "vector_store.url is only used when vector_store.type == azure_ai_search. Please rerun `graphrag init` and select the correct vector store type."
+            msg = "vector_store.url is only used when vector_store.type == azure_ai_search or vector_store.type == cosmos_db. Please rerun `graphrag init` and select the correct vector store type."
             raise ValueError(msg)
 
     api_key: str | None = Field(
@@ -62,8 +68,12 @@ class VectorStoreConfig(BaseModel):
     )
 
     container_name: str = Field(
-        description="The database name to use.",
+        description="The container name to use.",
         default=defs.VECTOR_STORE_CONTAINER_NAME,
+    )
+
+    database_name: str | None = Field(
+        description="The database name to use when type == cosmos_db.", default=None
     )
 
     overwrite: bool = Field(

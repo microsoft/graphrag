@@ -18,7 +18,6 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from collections.abc import AsyncGenerator
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -26,7 +25,6 @@ from pydantic import validate_call
 
 from graphrag.config.embeddings import (
     community_full_content_embedding,
-    create_collection_name,
     entity_description_embedding,
     text_unit_text_embedding,
 )
@@ -47,9 +45,13 @@ from graphrag.query.indexer_adapters import (
     read_indexer_reports,
     read_indexer_text_units,
 )
+from graphrag.utils.api import (
+    get_embedding_store,
+    load_search_prompt,
+    reformat_context_data,
+    update_context_data,
+)
 from graphrag.utils.cli import redact
-from graphrag.vector_stores.base import BaseVectorStore
-from graphrag.vector_stores.factory import VectorStoreFactory
 
 if TYPE_CHECKING:
     from graphrag.query.structured_search.base import SearchResult
@@ -102,11 +104,11 @@ async def global_search(
         dynamic_community_selection=dynamic_community_selection,
     )
     entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
-    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
-    reduce_prompt = _load_search_prompt(
+    map_prompt = load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = load_search_prompt(
         config.root_dir, config.global_search.reduce_prompt
     )
-    knowledge_prompt = _load_search_prompt(
+    knowledge_prompt = load_search_prompt(
         config.root_dir, config.global_search.knowledge_prompt
     )
 
@@ -123,7 +125,7 @@ async def global_search(
     )
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
-    context_data = _reformat_context_data(result.context_data)  # type: ignore
+    context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
 
 
@@ -171,11 +173,11 @@ async def global_search_streaming(
         dynamic_community_selection=dynamic_community_selection,
     )
     entities_ = read_indexer_entities(nodes, entities, community_level=community_level)
-    map_prompt = _load_search_prompt(config.root_dir, config.global_search.map_prompt)
-    reduce_prompt = _load_search_prompt(
+    map_prompt = load_search_prompt(config.root_dir, config.global_search.map_prompt)
+    reduce_prompt = load_search_prompt(
         config.root_dir, config.global_search.reduce_prompt
     )
-    knowledge_prompt = _load_search_prompt(
+    knowledge_prompt = load_search_prompt(
         config.root_dir, config.global_search.knowledge_prompt
     )
 
@@ -198,11 +200,175 @@ async def global_search_streaming(
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)  # type: ignore
+            context_data = reformat_context_data(stream_chunk)  # type: ignore
             yield context_data
             get_context_data = False
         else:
             yield stream_chunk
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_index_global_search(
+    config: GraphRagConfig,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    communities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    index_names: list[str],
+    community_level: int | None,
+    dynamic_community_selection: bool,
+    response_type: str,
+    streaming: bool,
+    query: str,
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
+    """Perform a global search across multiple indexes and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - communities_list (list[pd.DataFrame]): A list of DataFrames containing the final communities (from create_final_communities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - index_names (list[str]): A list of index names.
+    - community_level (int): The community level to search at.
+    - dynamic_community_selection (bool): Enable dynamic community selection instead of using all community reports at a fixed level. Note that you can still provide community_level cap the maximum level to search.
+    - response_type (str): The type of response to return.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_global_search"
+        raise NotImplementedError(message)
+
+    links = {
+        "nodes": {},
+        "community": {},
+        "community_reports": {},
+        "entities": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community": -1,
+        "community_reports": -1,
+        "entities": -1,
+    }
+
+    communities_dfs = []
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(
+            int
+        )
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's communities dataframe for merging
+        communities_df = communities_list[idx]
+        communities_df["community"] = communities_df["community"].astype(int)
+        communities_df["parent"] = communities_df["parent"].astype(int)
+        for i in communities_df["community"]:
+            links["community"][i + max_vals["community"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        communities_df["community"] += max_vals["community"] + 1
+        communities_df["parent"] = communities_df["parent"].apply(
+            lambda x: x if x == -1 else x + max_vals["community"] + 1
+        )
+        communities_df["human_readable_id"] += max_vals["community"] + 1
+        max_vals["community"] = int(communities_df["community"].max())
+        communities_dfs.append(communities_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
+        entities_dfs.append(entities_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
+    )
+    entities_combined = pd.concat(entities_dfs, axis=0, ignore_index=True, sort=False)
+    communities_combined = pd.concat(
+        communities_dfs, axis=0, ignore_index=True, sort=False
+    )
+
+    result = await global_search(
+        config,
+        nodes=nodes_combined,
+        entities=entities_combined,
+        communities=communities_combined,
+        community_reports=community_reports_combined,
+        community_level=community_level,
+        dynamic_community_selection=dynamic_community_selection,
+        response_type=response_type,
+        query=query,
+    )
+
+    # Update the context data by linking index names and community ids
+    context = update_context_data(result[1], links)
+
+    return (result[0], context)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -244,17 +410,18 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
-    description_embedding_store = _get_embedding_store(
+    description_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=entity_description_embedding,
     )
-
     entities_ = read_indexer_entities(nodes, entities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
-    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
+    prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
@@ -270,7 +437,7 @@ async def local_search(
 
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
-    context_data = _reformat_context_data(result.context_data)  # type: ignore
+    context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
 
 
@@ -310,17 +477,19 @@ async def local_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
-    description_embedding_store = _get_embedding_store(
+    description_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=entity_description_embedding,
     )
 
     entities_ = read_indexer_entities(nodes, entities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
-    prompt = _load_search_prompt(config.root_dir, config.local_search.prompt)
+    prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
 
     search_engine = get_local_search_engine(
         config=config,
@@ -341,7 +510,7 @@ async def local_search_streaming(
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)  # type: ignore
+            context_data = reformat_context_data(stream_chunk)  # type: ignore
             yield context_data
             get_context_data = False
         else:
@@ -349,28 +518,41 @@ async def local_search_streaming(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def drift_search_streaming(
+async def multi_index_local_search(
     config: GraphRagConfig,
-    nodes: pd.DataFrame,
-    entities: pd.DataFrame,
-    community_reports: pd.DataFrame,
-    text_units: pd.DataFrame,
-    relationships: pd.DataFrame,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    text_units_list: list[pd.DataFrame],
+    relationships_list: list[pd.DataFrame],
+    covariates_list: list[pd.DataFrame] | None,
+    index_names: list[str],
     community_level: int,
     response_type: str,
+    streaming: bool,
     query: str,
-) -> AsyncGenerator:
-    """Perform a DRIFT search and return the context data and response.
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
+    """Perform a local search across multiple indexes and return the context data and response.
 
     Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
-    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
-    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
-    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
-    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - covariates_list (list[pd.DataFrame]): [Optional] A list of DataFrames containing the final covariates (from create_final_covariates.parquet)
+    - index_names (list[str]): A list of index names.
     - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - streaming (bool): Whether to stream the results or not.
     - query (str): The user query to search for.
 
     Returns
@@ -381,52 +563,193 @@ async def drift_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_index_local_search"
+        raise NotImplementedError(message)
 
-    description_embedding_store = _get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=entity_description_embedding,
+    links = {
+        "nodes": {},
+        "community_reports": {},
+        "entities": {},
+        "text_units": {},
+        "relationships": {},
+        "covariates": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community_reports": -1,
+        "entities": -1,
+        "text_units": 0,
+        "relationships": -1,
+        "covariates": 0,
+    }
+
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+    relationships_dfs = []
+    text_units_dfs = []
+    covariates_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        nodes_df["id"] = nodes_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(
+            int
+        )
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["id"] = entities_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
+        entities_dfs.append(entities_df)
+
+        # Prepare each index's relationships dataframe for merging
+        relationships_df = relationships_list[idx]
+        for i in relationships_df["human_readable_id"].astype(int):
+            links["relationships"][i + max_vals["relationships"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["relationships"] != -1:
+            col = (
+                relationships_df["human_readable_id"].astype(int)
+                + max_vals["relationships"]
+                + 1
+            )
+            relationships_df["human_readable_id"] = col.astype(str)
+        relationships_df["source"] = relationships_df["source"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["target"] = relationships_df["target"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["relationships"] = int(relationships_df["human_readable_id"].max())
+        relationships_dfs.append(relationships_df)
+
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        text_units_df["id"] = text_units_df["id"].apply(
+            lambda x, index_name=index_name: f"{x}-{index_name}"
+        )
+        text_units_df["human_readable_id"] = (
+            text_units_df["human_readable_id"] + max_vals["text_units"]
+        )
+        max_vals["text_units"] += text_units_df.shape[0]
+        text_units_dfs.append(text_units_df)
+
+        # If presents, prepare each index's covariates dataframe for merging
+        if covariates_list is not None:
+            covariates_df = covariates_list[idx]
+            for i in covariates_df["human_readable_id"].astype(int):
+                links["covariates"][i + max_vals["covariates"]] = {
+                    "index_name": index_name,
+                    "id": i,
+                }
+            covariates_df["id"] = covariates_df["id"].apply(
+                lambda x, index_name=index_name: f"{x}-{index_name}"
+            )
+            covariates_df["human_readable_id"] = (
+                covariates_df["human_readable_id"] + max_vals["covariates"]
+            )
+            covariates_df["text_unit_id"] = covariates_df["text_unit_id"].apply(
+                lambda x, index_name=index_name: x + f"-{index_name}"
+            )
+            covariates_df["subject_id"] = covariates_df["subject_id"].apply(
+                lambda x, index_name=index_name: x + f"-{index_name}"
+            )
+            max_vals["covariates"] += covariates_df.shape[0]
+            covariates_dfs.append(covariates_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
     )
-
-    full_content_embedding_store = _get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=community_full_content_embedding,
+    entities_combined = pd.concat(entities_dfs, axis=0, ignore_index=True, sort=False)
+    relationships_combined = pd.concat(
+        relationships_dfs, axis=0, ignore_index=True, sort=False
     )
-
-    entities_ = read_indexer_entities(nodes, entities, community_level)
-    reports = read_indexer_reports(community_reports, nodes, community_level)
-    read_indexer_report_embeddings(reports, full_content_embedding_store)
-    prompt = _load_search_prompt(config.root_dir, config.drift_search.prompt)
-    reduce_prompt = _load_search_prompt(
-        config.root_dir, config.drift_search.reduce_prompt
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
     )
+    covariates_combined = None
+    if len(covariates_dfs) > 0:
+        covariates_combined = pd.concat(
+            covariates_dfs, axis=0, ignore_index=True, sort=False
+        )
 
-    search_engine = get_drift_search_engine(
-        config=config,
-        reports=reports,
-        text_units=read_indexer_text_units(text_units),
-        entities=entities_,
-        relationships=read_indexer_relationships(relationships),
-        description_embedding_store=description_embedding_store,  # type: ignore
-        local_system_prompt=prompt,
-        reduce_system_prompt=reduce_prompt,
+    result = await local_search(
+        config,
+        nodes=nodes_combined,
+        entities=entities_combined,
+        community_reports=community_reports_combined,
+        text_units=text_units_combined,
+        relationships=relationships_combined,
+        covariates=covariates_combined,
+        community_level=community_level,
         response_type=response_type,
+        query=query,
     )
 
-    search_result = search_engine.astream_search(query=query)
+    # Update the context data by linking index names and community ids
+    context = update_context_data(result[1], links)
 
-    # when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = None
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+    return (result[0], context)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -465,15 +788,17 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
-    description_embedding_store = _get_embedding_store(
+    description_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=entity_description_embedding,
     )
 
-    full_content_embedding_store = _get_embedding_store(
+    full_content_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=community_full_content_embedding,
     )
@@ -481,8 +806,84 @@ async def drift_search(
     entities_ = read_indexer_entities(nodes, entities, community_level)
     reports = read_indexer_reports(community_reports, nodes, community_level)
     read_indexer_report_embeddings(reports, full_content_embedding_store)
-    prompt = _load_search_prompt(config.root_dir, config.drift_search.prompt)
-    reduce_prompt = _load_search_prompt(
+    prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
+    reduce_prompt = load_search_prompt(
+        config.root_dir, config.drift_search.reduce_prompt
+    )
+    search_engine = get_drift_search_engine(
+        config=config,
+        reports=reports,
+        text_units=read_indexer_text_units(text_units),
+        entities=entities_,
+        relationships=read_indexer_relationships(relationships),
+        description_embedding_store=description_embedding_store,  # type: ignore
+        local_system_prompt=prompt,
+        reduce_system_prompt=reduce_prompt,
+        response_type=response_type,
+    )
+
+    result: SearchResult = await search_engine.asearch(query=query)
+    response = result.response
+    context_data = {}
+    for key in result.context_data:
+        context_data[key] = reformat_context_data(result.context_data[key])  # type: ignore
+
+    return response, context_data
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def drift_search_streaming(
+    config: GraphRagConfig,
+    nodes: pd.DataFrame,
+    entities: pd.DataFrame,
+    community_reports: pd.DataFrame,
+    text_units: pd.DataFrame,
+    relationships: pd.DataFrame,
+    community_level: int,
+    response_type: str,
+    query: str,
+) -> AsyncGenerator:
+    """Perform a DRIFT search and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes (pd.DataFrame): A DataFrame containing the final nodes (from create_final_nodes.parquet)
+    - entities (pd.DataFrame): A DataFrame containing the final entities (from create_final_entities.parquet)
+    - community_reports (pd.DataFrame): A DataFrame containing the final community reports (from create_final_community_reports.parquet)
+    - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
+    - relationships (pd.DataFrame): A DataFrame containing the final relationships (from create_final_relationships.parquet)
+    - community_level (int): The community level to search at.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
+    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+
+    description_embedding_store = get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=entity_description_embedding,
+    )
+
+    full_content_embedding_store = get_embedding_store(
+        config_args=vector_store_args,  # type: ignore
+        embedding_name=community_full_content_embedding,
+    )
+
+    entities_ = read_indexer_entities(nodes, entities, community_level)
+    reports = read_indexer_reports(community_reports, nodes, community_level)
+    read_indexer_report_embeddings(reports, full_content_embedding_store)
+    prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
+    reduce_prompt = load_search_prompt(
         config.root_dir, config.drift_search.reduce_prompt
     )
 
@@ -498,11 +899,230 @@ async def drift_search(
         response_type=response_type,
     )
 
-    result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
-    context_data = _reformat_context_data(result.context_data)  # type: ignore
+    search_result = search_engine.astream_search(query=query)
 
-    return response, context_data
+    # when streaming results, a context data object is returned as the first result
+    # and the query response in subsequent tokens
+    context_data = None
+    get_context_data = True
+    async for stream_chunk in search_result:
+        if get_context_data:
+            context_data = reformat_context_data(stream_chunk)  # type: ignore
+            yield context_data
+            get_context_data = False
+        else:
+            yield stream_chunk
+
+
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_index_drift_search(
+    config: GraphRagConfig,
+    nodes_list: list[pd.DataFrame],
+    entities_list: list[pd.DataFrame],
+    community_reports_list: list[pd.DataFrame],
+    text_units_list: list[pd.DataFrame],
+    relationships_list: list[pd.DataFrame],
+    index_names: list[str],
+    community_level: int,
+    response_type: str,
+    streaming: bool,
+    query: str,
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
+    """Perform a DRIFT search across multiple indexes and return the context data and response.
+
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - nodes_list (list[pd.DataFrame]): A list of DataFrames containing the final nodes (from create_final_nodes.parquet)
+    - entities_list (list[pd.DataFrame]): A list of DataFrames containing the final entities (from create_final_entities.parquet)
+    - community_reports_list (list[pd.DataFrame]): A list of DataFrames containing the final community reports (from create_final_community_reports.parquet)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - relationships_list (list[pd.DataFrame]): A list of DataFrames containing the final relationships (from create_final_relationships.parquet)
+    - index_names (list[str]): A list of index names.
+    - community_level (int): The community level to search at.
+    - response_type (str): The response type to return.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
+
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
+    """
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_drift_search"
+        raise NotImplementedError(message)
+
+    links = {
+        "nodes": {},
+        "community_reports": {},
+        "entities": {},
+        "text_units": {},
+        "relationships": {},
+    }
+    max_vals = {
+        "nodes": -1,
+        "community_reports": -1,
+        "entities": -1,
+        "text_units": 0,
+        "relationships": -1,
+    }
+
+    community_reports_dfs = []
+    entities_dfs = []
+    nodes_dfs = []
+    relationships_dfs = []
+    text_units_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's nodes dataframe for merging
+        nodes_df = nodes_list[idx]
+        nodes_df["community"] = nodes_df["community"].astype(int)
+        for i in nodes_df["human_readable_id"]:
+            links["nodes"][i + max_vals["nodes"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["nodes"] != -1:
+            nodes_df["human_readable_id"] += max_vals["nodes"] + 1
+        nodes_df["community"] = nodes_df["community"].apply(
+            lambda x: x + max_vals["community_reports"] + 1 if x != -1 else x
+        )
+        nodes_df["title"] = nodes_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        nodes_df["id"] = nodes_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["nodes"] = int(nodes_df["human_readable_id"].max())
+        nodes_dfs.append(nodes_df)
+
+        # Prepare each index's community reports dataframe for merging
+        community_reports_df = community_reports_list[idx]
+        community_reports_df["community"] = community_reports_df["community"].astype(
+            int
+        )
+        for i in community_reports_df["community"]:
+            links["community_reports"][i + max_vals["community_reports"] + 1] = {
+                "index_name": index_name,
+                "id": str(i),
+            }
+        community_reports_df["community"] += max_vals["community_reports"] + 1
+        community_reports_df["human_readable_id"] += max_vals["community_reports"] + 1
+        community_reports_df["id"] = community_reports_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        max_vals["community_reports"] = int(community_reports_df["community"].max())
+        community_reports_dfs.append(community_reports_df)
+
+        # Prepare each index's entities dataframe for merging
+        entities_df = entities_list[idx]
+        for i in entities_df["human_readable_id"]:
+            links["entities"][i + max_vals["entities"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        entities_df["human_readable_id"] += max_vals["entities"] + 1
+        entities_df["title"] = entities_df["title"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["id"] = entities_df["id"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        entities_df["text_unit_ids"] = entities_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["entities"] = int(entities_df["human_readable_id"].max())
+        entities_dfs.append(entities_df)
+
+        # Prepare each index's relationships dataframe for merging
+        relationships_df = relationships_list[idx]
+        for i in relationships_df["human_readable_id"].astype(int):
+            links["relationships"][i + max_vals["relationships"] + 1] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        if max_vals["relationships"] != -1:
+            col = (
+                relationships_df["human_readable_id"].astype(int)
+                + max_vals["relationships"]
+                + 1
+            )
+            relationships_df["human_readable_id"] = col.astype(str)
+        relationships_df["source"] = relationships_df["source"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["target"] = relationships_df["target"].apply(
+            lambda x, index_name=index_name: x + f"-{index_name}"
+        )
+        relationships_df["text_unit_ids"] = relationships_df["text_unit_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["relationships"] = int(
+            relationships_df["human_readable_id"].astype(int).max()
+        )
+
+        relationships_dfs.append(relationships_df)
+
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        text_units_df["id"] = text_units_df["id"].apply(
+            lambda x, index_name=index_name: f"{x}-{index_name}"
+        )
+        text_units_df["human_readable_id"] = (
+            text_units_df["human_readable_id"] + max_vals["text_units"]
+        )
+        max_vals["text_units"] += text_units_df.shape[0]
+        text_units_dfs.append(text_units_df)
+
+    # Merge the dataframes
+    nodes_combined = pd.concat(nodes_dfs, axis=0, ignore_index=True, sort=False)
+    community_reports_combined = pd.concat(
+        community_reports_dfs, axis=0, ignore_index=True, sort=False
+    )
+    entities_combined = pd.concat(entities_dfs, axis=0, ignore_index=True, sort=False)
+    relationships_combined = pd.concat(
+        relationships_dfs, axis=0, ignore_index=True, sort=False
+    )
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
+    )
+
+    result = await drift_search(
+        config,
+        nodes=nodes_combined,
+        entities=entities_combined,
+        community_reports=community_reports_combined,
+        text_units=text_units_combined,
+        relationships=relationships_combined,
+        community_level=community_level,
+        response_type=response_type,
+        query=query,
+    )
+
+    # Update the context data by linking index names and community ids
+    context = {}
+    if type(result[1]) is dict:
+        for key in result[1]:
+            context[key] = update_context_data(result[1][key], links)
+    else:
+        context = result[1]
+    return (result[0], context)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -520,7 +1140,6 @@ async def basic_search(
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - text_units (pd.DataFrame): A DataFrame containing the final text units (from create_final_text_units.parquet)
-    - response_type (str): The response type to return.
     - query (str): The user query to search for.
 
     Returns
@@ -531,15 +1150,17 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
-    description_embedding_store = _get_embedding_store(
+    description_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=text_unit_text_embedding,
     )
 
-    prompt = _load_search_prompt(config.root_dir, config.basic_search.prompt)
+    prompt = load_search_prompt(config.root_dir, config.basic_search.prompt)
 
     search_engine = get_basic_search_engine(
         config=config,
@@ -550,7 +1171,7 @@ async def basic_search(
 
     result: SearchResult = await search_engine.asearch(query=query)
     response = result.response
-    context_data = _reformat_context_data(result.context_data)  # type: ignore
+    context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
 
 
@@ -576,15 +1197,19 @@ async def basic_search_streaming(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = config.vector_store.model_dump()
+    vector_store_args = {}
+    for index, store in config.vector_store.items():
+        vector_store_args[index] = store.model_dump()
+    else:
+        vector_store_args = None
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
-    description_embedding_store = _get_embedding_store(
+    description_embedding_store = get_embedding_store(
         config_args=vector_store_args,  # type: ignore
         embedding_name=text_unit_text_embedding,
     )
 
-    prompt = _load_search_prompt(config.root_dir, config.basic_search.prompt)
+    prompt = load_search_prompt(config.root_dir, config.basic_search.prompt)
 
     search_engine = get_basic_search_engine(
         config=config,
@@ -601,70 +1226,83 @@ async def basic_search_streaming(
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
-            context_data = _reformat_context_data(stream_chunk)  # type: ignore
+            context_data = reformat_context_data(stream_chunk)  # type: ignore
             yield context_data
             get_context_data = False
         else:
             yield stream_chunk
 
 
-def _get_embedding_store(
-    config_args: dict,
-    embedding_name: str,
-) -> BaseVectorStore:
-    """Get the embedding description store."""
-    vector_store_type = config_args["type"]
-    collection_name = create_collection_name(
-        config_args.get("container_name", "default"), embedding_name
-    )
-    embedding_store = VectorStoreFactory().create_vector_store(
-        vector_store_type=vector_store_type,
-        kwargs={**config_args, "collection_name": collection_name},
-    )
-    embedding_store.connect(**config_args)
-    return embedding_store
+@validate_call(config={"arbitrary_types_allowed": True})
+async def multi_index_basic_search(
+    config: GraphRagConfig,
+    text_units_list: list[pd.DataFrame],
+    index_names: list[str],
+    streaming: bool,
+    query: str,
+) -> (
+    tuple[
+        str | dict[str, Any] | list[dict[str, Any]],
+        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+    ]
+    | AsyncGenerator
+):
+    """Perform a basic search across multiple indexes and return the context data and response.
 
+    Parameters
+    ----------
+    - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
+    - text_units_list (list[pd.DataFrame]): A list of DataFrames containing the final text units (from create_final_text_units.parquet)
+    - index_names (list[str]): A list of index names.
+    - streaming (bool): Whether to stream the results or not.
+    - query (str): The user query to search for.
 
-def _reformat_context_data(context_data: dict) -> dict:
+    Returns
+    -------
+    TODO: Document the search response type and format.
+
+    Raises
+    ------
+    TODO: Document any exceptions to expect.
     """
-    Reformats context_data for all query responses.
+    # Streaming not supported yet
+    if streaming:
+        message = "Streaming not yet implemented for multi_basic_search"
+        raise NotImplementedError(message)
 
-    Reformats a dictionary of dataframes into a dictionary of lists.
-    One list entry for each record. Records are grouped by original
-    dictionary keys.
-
-    Note: depending on which query algorithm is used, the context_data may not
-          contain the same information (keys). In this case, the default behavior will be to
-          set these keys as empty lists to preserve a standard output format.
-    """
-    final_format = {
-        "reports": [],
-        "entities": [],
-        "relationships": [],
-        "claims": [],
-        "sources": [],
+    links = {
+        "text_units": {},
     }
-    for key in context_data:
-        records = (
-            context_data[key].to_dict(orient="records")
-            if context_data[key] is not None and not isinstance(context_data[key], dict)
-            else context_data[key]
+    max_vals = {
+        "text_units": 0,
+    }
+
+    text_units_dfs = []
+
+    for idx, index_name in enumerate(index_names):
+        # Prepare each index's text units dataframe for merging
+        text_units_df = text_units_list[idx]
+        for i in range(text_units_df.shape[0]):
+            links["text_units"][i + max_vals["text_units"]] = {
+                "index_name": index_name,
+                "id": i,
+            }
+        text_units_df["id"] = text_units_df["id"].apply(
+            lambda x, index_name=index_name: f"{x}-{index_name}"
         )
-        if len(records) < 1:
-            continue
-        final_format[key] = records
-    return final_format
+        text_units_df["human_readable_id"] = (
+            text_units_df["human_readable_id"] + max_vals["text_units"]
+        )
+        max_vals["text_units"] += text_units_df.shape[0]
+        text_units_dfs.append(text_units_df)
 
+    # Merge the dataframes
+    text_units_combined = pd.concat(
+        text_units_dfs, axis=0, ignore_index=True, sort=False
+    )
 
-def _load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
-    """
-    Load the search prompt from disk if configured.
-
-    If not, leave it empty - the search functions will load their defaults.
-
-    """
-    if prompt_config:
-        prompt_file = Path(root_dir) / prompt_config
-        if prompt_file.exists():
-            return prompt_file.read_bytes().decode(encoding="utf-8")
-    return None
+    return await basic_search(
+        config,
+        text_units=text_units_combined,
+        query=query,
+    )

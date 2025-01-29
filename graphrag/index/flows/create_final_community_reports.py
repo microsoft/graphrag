@@ -9,11 +9,15 @@ import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config import defaults
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
     restore_community_hierarchy,
     summarize_communities,
+)
+from graphrag.index.operations.summarize_communities.community_reports_extractor import (
+    prep_community_report_context,
 )
 from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
     CLAIM_DESCRIPTION,
@@ -34,6 +38,9 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     NODE_DETAILS,
     NODE_ID,
     NODE_NAME,
+)
+from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
+    get_levels,
 )
 
 
@@ -59,8 +66,6 @@ async def create_final_community_reports(
     if claims_input is not None:
         claims = _prep_claims(claims_input)
 
-    community_hierarchy = restore_community_hierarchy(nodes)
-
     local_contexts = prepare_community_reports(
         nodes,
         edges,
@@ -69,13 +74,27 @@ async def create_final_community_reports(
         summarization_strategy.get("max_input_length", 16_000),
     )
 
+    community_hierarchy = restore_community_hierarchy(nodes)
+    levels = get_levels(nodes)
+
+    level_contexts = []
+    for level in levels:
+        level_context = prep_community_report_context(
+            local_context_df=local_contexts,
+            community_hierarchy_df=community_hierarchy,
+            level=level,
+            max_tokens=summarization_strategy.get(
+                "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
+            ),
+        )
+        level_contexts.append(level_context)
+
     community_reports = await summarize_communities(
-        local_contexts=local_contexts,
-        nodes=nodes,
-        community_hierarchy=community_hierarchy,
-        callbacks=callbacks,
-        cache=cache,
-        strategy=summarization_strategy,
+        local_contexts,
+        level_contexts,
+        callbacks,
+        cache,
+        summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
     )

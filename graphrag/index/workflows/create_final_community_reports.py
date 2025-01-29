@@ -11,7 +11,11 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports,
 )
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import (
+    load_table_from_storage,
+    storage_has_table,
+    write_table_to_storage,
+)
 
 workflow_name = "create_final_community_reports"
 
@@ -29,7 +33,9 @@ async def run_workflow(
         "create_final_communities", context.storage
     )
     claims = None
-    if config.claim_extraction.enabled:
+    if config.claim_extraction.enabled and await storage_has_table(
+        "create_final_covariates", context.storage
+    ):
         claims = await load_table_from_storage(
             "create_final_covariates", context.storage
         )

@@ -57,11 +57,10 @@ def get_embedding_settings(
     embeddings_llm_settings = settings.get_language_model_config(
         settings.embeddings.model_id
     )
-    vector_store_settings = settings.vector_store.model_dump()
-    if vector_store_settings is None:
-        return {
-            "strategy": settings.embeddings.resolved_strategy(embeddings_llm_settings)
-        }
+    vector_store_settings = settings.get_vector_store_config(
+        settings.embeddings.vector_store_id
+    ).model_dump()
+
     #
     # If we get to this point, settings.vector_store is defined, and there's a specific setting for this embedding.
     # settings.vector_store.base contains connection information, or may be undefined
