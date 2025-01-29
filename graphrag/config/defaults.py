@@ -7,6 +7,7 @@ from pathlib import Path
 
 from graphrag.config.enums import (
     AsyncType,
+    AuthType,
     CacheType,
     ChunkStrategyType,
     InputFileType,
@@ -24,6 +25,7 @@ DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
 AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
+AUTH_TYPE = AuthType.APIKey
 #
 # LLM Parameters
 #
