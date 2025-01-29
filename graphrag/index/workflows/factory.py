@@ -33,7 +33,6 @@ def _get_workflows_list(
                 "compute_communities",
                 "create_final_entities",
                 "create_final_relationships",
-                "create_final_nodes",
                 "create_final_communities",
                 *(
                     ["create_final_covariates"]
@@ -52,7 +51,6 @@ def _get_workflows_list(
                 "compute_communities",
                 "create_final_entities",
                 "create_final_relationships",
-                "create_final_nodes",
                 "create_final_communities",
                 "create_final_text_units",
                 "create_final_community_reports_text",

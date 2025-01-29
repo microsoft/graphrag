@@ -17,16 +17,25 @@ workflow_name = "create_final_entities"
 
 
 async def run_workflow(
-    _config: GraphRagConfig,
+    config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final entities."""
     base_entity_nodes = await load_table_from_storage(
         "base_entity_nodes", context.storage
     )
+    base_relationship_edges = await load_table_from_storage(
+        "base_relationship_edges", context.storage
+    )
 
-    output = create_final_entities(base_entity_nodes)
+    output = create_final_entities(
+        base_entity_nodes,
+        base_relationship_edges,
+        callbacks,
+        embed_config=config.embed_graph,
+        layout_enabled=config.umap.enabled,
+    )
 
     await write_table_to_storage(output, workflow_name, context.storage)
 

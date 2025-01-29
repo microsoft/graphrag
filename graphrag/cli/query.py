@@ -42,14 +42,12 @@ def run_global_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
             "create_final_entities",
             "create_final_communities",
             "create_final_community_reports",
         ],
         optional_list=[],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
     final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
@@ -65,7 +63,6 @@ def run_global_search(
             get_context_data = True
             async for stream_chunk in api.global_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
                 communities=final_communities,
                 community_reports=final_community_reports,
@@ -89,7 +86,6 @@ def run_global_search(
     response, context_data = asyncio.run(
         api.global_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
             communities=final_communities,
             community_reports=final_community_reports,
@@ -127,7 +123,7 @@ def run_local_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
+            "create_final_communities",
             "create_final_community_reports",
             "create_final_text_units",
             "create_final_relationships",
@@ -137,7 +133,7 @@ def run_local_search(
             "create_final_covariates",
         ],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -155,8 +151,8 @@ def run_local_search(
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 text_units=final_text_units,
                 relationships=final_relationships,
@@ -180,8 +176,8 @@ def run_local_search(
     response, context_data = asyncio.run(
         api.local_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             text_units=final_text_units,
             relationships=final_relationships,
@@ -219,14 +215,14 @@ def run_drift_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
+            "create_final_communities",
             "create_final_community_reports",
             "create_final_text_units",
             "create_final_relationships",
             "create_final_entities",
         ],
     )
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
     ]
@@ -243,8 +239,8 @@ def run_drift_search(
             get_context_data = True
             async for stream_chunk in api.drift_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 text_units=final_text_units,
                 relationships=final_relationships,
@@ -268,8 +264,8 @@ def run_drift_search(
     response, context_data = asyncio.run(
         api.drift_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             text_units=final_text_units,
             relationships=final_relationships,

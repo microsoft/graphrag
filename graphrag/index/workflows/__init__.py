@@ -54,12 +54,6 @@ from .create_final_entities import (
 from .create_final_entities import (
     workflow_name as create_final_entities,
 )
-from .create_final_nodes import (
-    run_workflow as run_create_final_nodes,
-)
-from .create_final_nodes import (
-    workflow_name as create_final_nodes,
-)
 from .create_final_relationships import (
     run_workflow as run_create_final_relationships,
 )
@@ -103,7 +97,6 @@ all_workflows: dict[
     create_final_covariates: run_create_final_covariates,
     create_final_documents: run_create_final_documents,
     create_final_entities: run_create_final_entities,
-    create_final_nodes: run_create_final_nodes,
     create_final_relationships: run_create_final_relationships,
     create_final_text_units: run_create_final_text_units,
     extract_graph_nlp: run_extract_graph_nlp,

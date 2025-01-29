@@ -26,7 +26,6 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
-    nodes = await load_table_from_storage("create_final_nodes", context.storage)
     edges = await load_table_from_storage("create_final_relationships", context.storage)
     entities = await load_table_from_storage("create_final_entities", context.storage)
     communities = await load_table_from_storage(
@@ -50,7 +49,6 @@ async def run_workflow(
     )
 
     output = await create_final_community_reports(
-        nodes_input=nodes,
         edges_input=edges,
         entities=entities,
         communities=communities,

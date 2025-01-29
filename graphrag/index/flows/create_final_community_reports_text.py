@@ -31,7 +31,6 @@ log = logging.getLogger(__name__)
 
 
 async def create_final_community_reports_text(
-    nodes_input: pd.DataFrame,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
     text_units: pd.DataFrame,
@@ -42,9 +41,13 @@ async def create_final_community_reports_text(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    entities_df = entities.loc[:, ["id", "text_unit_ids"]]
-    nodes_df = nodes_input.merge(entities_df, on="id")
-    nodes = nodes_df.loc[nodes_df.loc[:, "community"] != -1]
+    community_join = communities.explode("entity_ids").loc[
+        :, ["community", "level", "entity_ids"]
+    ]
+    nodes = entities.merge(
+        community_join, left_on="id", right_on="entity_ids", how="left"
+    )
+    nodes = nodes.loc[nodes.loc[:, "community"] != -1]
 
     max_input_length = summarization_strategy.get("max_input_length", 16_000)
 

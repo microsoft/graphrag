@@ -14,7 +14,6 @@ from graphrag.config.embeddings import get_embedded_fields, get_embedding_settin
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
 from graphrag.index.update.communities import (
-    _merge_and_resolve_nodes,
     _update_and_merge_communities,
     _update_and_merge_community_reports,
 )
@@ -129,16 +128,10 @@ async def update_dataframe_outputs(
         progress_logger.info("Updating Final Covariates")
         await _update_covariates(dataframe_dict, storage, update_storage)
 
-    # Merge final nodes and update community ids
-    progress_logger.info("Updating Final Nodes")
-    _, community_id_mapping = await _update_nodes(
-        dataframe_dict, storage, update_storage, merged_entities_df
-    )
-
     # Merge final communities
     progress_logger.info("Updating Final Communities")
-    await _update_communities(
-        dataframe_dict, storage, update_storage, community_id_mapping
+    community_id_mapping = await _update_communities(
+        dataframe_dict, storage, update_storage
     )
 
     # Merge community reports
@@ -186,33 +179,19 @@ async def _update_community_reports(
     return merged_community_reports
 
 
-async def _update_communities(
-    dataframe_dict, storage, update_storage, community_id_mapping
-):
+async def _update_communities(dataframe_dict, storage, update_storage):
     """Update the communities output."""
     old_communities = await load_table_from_storage("create_final_communities", storage)
     delta_communities = dataframe_dict["create_final_communities"]
-    merged_communities = _update_and_merge_communities(
-        old_communities, delta_communities, community_id_mapping
+    merged_communities, community_id_mapping = _update_and_merge_communities(
+        old_communities, delta_communities
     )
 
     await write_table_to_storage(
         merged_communities, "create_final_communities", update_storage
     )
 
-
-async def _update_nodes(dataframe_dict, storage, update_storage, merged_entities_df):
-    """Update the nodes output."""
-    old_nodes = await load_table_from_storage("create_final_nodes", storage)
-    delta_nodes = dataframe_dict["create_final_nodes"]
-
-    merged_nodes, community_id_mapping = _merge_and_resolve_nodes(
-        old_nodes, delta_nodes, merged_entities_df
-    )
-
-    await write_table_to_storage(merged_nodes, "create_final_nodes", update_storage)
-
-    return merged_nodes, community_id_mapping
+    return community_id_mapping
 
 
 async def _update_covariates(dataframe_dict, storage, update_storage):

@@ -46,19 +46,6 @@
             "max_runtime": 150,
             "expected_artifacts": 1
         },
-        "create_final_nodes": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "description",
-                "x",
-                "y"
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
         "create_final_communities": {
             "row_range": [
                 1,

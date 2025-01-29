@@ -45,7 +45,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
 
 
 async def create_final_community_reports(
-    nodes_input: pd.DataFrame,
     edges_input: pd.DataFrame,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -57,9 +56,14 @@ async def create_final_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    entities_df = entities.loc[:, ["id", "description"]]
-    nodes_df = nodes_input.merge(entities_df, on="id")
-    nodes = _prep_nodes(nodes_df)
+    community_join = communities.explode("entity_ids").loc[
+        :, ["community", "level", "entity_ids"]
+    ]
+    nodes = entities.merge(
+        community_join, left_on="id", right_on="entity_ids", how="left"
+    )
+
+    nodes = _prep_nodes(nodes)
     edges = _prep_edges(edges_input)
 
     claims = None
