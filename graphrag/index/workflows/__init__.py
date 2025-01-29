@@ -6,23 +6,17 @@
 
 from graphrag.index.typing import WorkflowFunction
 
-from .compute_communities import (
-    run_workflow as run_compute_communities,
-)
-from .compute_communities import (
-    workflow_name as compute_communities,
-)
 from .create_base_text_units import (
     run_workflow as run_create_base_text_units,
 )
 from .create_base_text_units import (
     workflow_name as create_base_text_units,
 )
-from .create_final_communities import (
-    run_workflow as run_create_final_communities,
+from .create_communities import (
+    run_workflow as run_create_communities,
 )
-from .create_final_communities import (
-    workflow_name as create_final_communities,
+from .create_communities import (
+    workflow_name as create_communities,
 )
 from .create_final_community_reports import (
     run_workflow as run_create_final_community_reports,
@@ -89,9 +83,8 @@ all_workflows: dict[
     str,
     WorkflowFunction,
 ] = {
-    compute_communities: run_compute_communities,
     create_base_text_units: run_create_base_text_units,
-    create_final_communities: run_create_final_communities,
+    create_communities: run_create_communities,
     create_final_community_reports_text: run_create_final_community_reports_text,
     create_final_community_reports: run_create_final_community_reports,
     create_final_covariates: run_create_final_covariates,

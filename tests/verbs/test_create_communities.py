@@ -3,7 +3,7 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.index.workflows.create_final_communities import (
+from graphrag.index.workflows.create_communities import (
     run_workflow,
     workflow_name,
 )
@@ -17,7 +17,7 @@ from .util import (
 )
 
 
-async def test_create_final_communities():
+async def test_create_communities():
     expected = load_test_table(workflow_name)
 
     context = await create_test_context(

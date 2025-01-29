@@ -8,13 +8,32 @@ from uuid import uuid4
 
 import pandas as pd
 
+from graphrag.index.operations.cluster_graph import cluster_graph
+from graphrag.index.operations.create_graph import create_graph
 
-def create_final_communities(
+
+def create_communities(
     entities: pd.DataFrame,
     relationships: pd.DataFrame,
-    communities: pd.DataFrame,
+    max_cluster_size: int,
+    use_lcc: bool,
+    seed: int | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final communities."""
+    graph = create_graph(relationships)
+
+    clusters = cluster_graph(
+        graph,
+        max_cluster_size,
+        use_lcc,
+        seed=seed,
+    )
+
+    communities = pd.DataFrame(
+        clusters, columns=pd.Index(["level", "community", "parent", "title"])
+    ).explode("title")
+    communities["community"] = communities["community"].astype(int)
+
     # aggregate entity ids for each community
     entity_ids = communities.merge(entities, on="title", how="inner")
     entity_ids = (
