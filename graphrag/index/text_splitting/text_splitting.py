@@ -162,7 +162,11 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
 # Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
 # So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
-    texts: list[str], tokenizer: Tokenizer, tick: ProgressTicker
+    texts: list[str],
+    tokenizer: Tokenizer,
+    tick: ProgressTicker,
+    line_delimiter: str = ".\n",
+    metadata: dict[str, Any] | None = None,
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []
@@ -182,8 +186,15 @@ def split_multiple_texts_on_tokens(
     cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
     chunk_ids = input_ids[start_idx:cur_idx]
 
+    # build metadata string by concatenating all key-value pairs
+    metadata_str = ""
+    if metadata is not None and len(metadata) > 0:
+        metadata_str = line_delimiter.join([f"{k}: {v}" for k, v in metadata.items()])
+
     while start_idx < len(input_ids):
-        chunk_text = tokenizer.decode([id for _, id in chunk_ids])
+        chunk_text = f"{metadata_str}{line_delimiter}" if metadata_str else ""
+        chunk_text += tokenizer.decode([id for _, id in chunk_ids])
+
         doc_indices = list({doc_idx for doc_idx, _ in chunk_ids})
         result.append(TextChunk(chunk_text, doc_indices, len(chunk_ids)))
         start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap

@@ -22,6 +22,8 @@ def create_base_text_units(
     overlap: int,
     encoding_model: str,
     strategy: ChunkStrategyType,
+    metadata: list[str] | None,
+    line_delimiter: str = ".\n",
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -32,15 +34,22 @@ def create_base_text_units(
 
     callbacks.progress(Progress(percent=0))
 
+    agg_dict = {"text_with_ids": list}
+    if metadata:
+        for meta in metadata:
+            agg_dict[meta] = "first"  # type: ignore
+
     aggregated = (
         (
             sort.groupby(group_by_columns, sort=False)
             if len(group_by_columns) > 0
             else sort.groupby(lambda _x: True)
         )
-        .agg(texts=("text_with_ids", list))
+        .agg(agg_dict)
         .reset_index()
-    )
+    )  # in here I need to add the metadata columns to it
+
+    aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
 
     aggregated["chunks"] = chunk_text(
         aggregated,
@@ -50,6 +59,8 @@ def create_base_text_units(
         encoding_model=encoding_model,
         strategy=strategy,
         callbacks=callbacks,
+        metadata=metadata or [],
+        line_delimiter=line_delimiter,
     )
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])

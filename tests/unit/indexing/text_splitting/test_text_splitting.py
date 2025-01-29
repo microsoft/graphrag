@@ -4,9 +4,11 @@
 from unittest import mock
 from unittest.mock import MagicMock
 
+import pandas as pd
 import pytest
 import tiktoken
 
+from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
     NoopTextSplitter,
     Tokenizer,
@@ -132,20 +134,22 @@ def test_split_single_text_on_tokens_no_overlap():
     )
 
     expected_splits = [
-        "This is a ",
-        "is a test ",
-        "test text,",
-        "text, mean",
-        " meaning t",
-        "ing to be ",
-        "o be taken",
-        "taken seri",  # cspell:disable-line
-        " seriously",
-        "ously by t",  # cspell:disable-line
-        " by this t",
-        "his test o",
-        "est only.",
-        "nly.",
+        "This is",
+        " is a",
+        " a test",
+        " test text",
+        " text,",
+        ", meaning",
+        " meaning to",
+        " to be",
+        " be taken",  # cspell:disable-line
+        " taken seriously",  # cspell:disable-line
+        " seriously by",
+        " by this",  # cspell:disable-line
+        " this test",
+        " test only",
+        " only.",
+        ".",
     ]
 
     result = split_single_text_on_tokens(text=text, tokenizer=tokenizer)
@@ -200,3 +204,90 @@ def test_split_multiple_texts_on_tokens():
 
     split_multiple_texts_on_tokens(texts, tokenizer, tick=mock_tick)
     mock_tick.assert_called()
+
+
+def test_split_multiple_texts_on_tokens_metadata_one_column():
+    input_df = pd.DataFrame({
+        "text": ["Receptionist", "Officer", "Captain"],
+        "command": ["Jump", "Walk", "Run"],
+        "metadata": ["Table 1", "Office 1", "Ship 1"],
+    })
+
+    expected = [
+        TextChunk(
+            text_chunk="metadata: Table 1.\nReceptioni",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=10,
+        ),
+        TextChunk(
+            text_chunk="metadata: Table 1.\nnist",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=4,
+        ),
+    ]
+
+    mocked_tokenizer = MockTokenizer()
+    mock_tick = MagicMock()
+    tokenizer = Tokenizer(
+        chunk_overlap=2,
+        tokens_per_chunk=10,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+
+    texts = input_df["text"].to_numpy().tolist()
+    metadata = input_df["metadata"].to_numpy().tolist()
+
+    split = split_multiple_texts_on_tokens(
+        [texts[0]], tokenizer, tick=mock_tick, metadata={"metadata": metadata[0]}
+    )
+    assert split == expected
+
+
+def test_split_multiple_texts_on_tokens_metadata_two_columns():
+    input_df = pd.DataFrame({
+        "text": ["Receptionist", "Officer", "Captain"],
+        "command": ["Jump", "Walk", "Run"],
+        "metadata": ["Table 1", "Office 1", "Ship 1"],
+        "metadata2": ["Table 2", "Office 2", "Ship 2"],
+    })
+
+    expected = [
+        TextChunk(
+            text_chunk="metadata: Table 1.\nmetadata2: Table 2.\nReceptioni",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=10,
+        ),
+        TextChunk(
+            text_chunk="metadata: Table 1.\nmetadata2: Table 2.\nnist",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=4,
+        ),
+    ]
+
+    mocked_tokenizer = MockTokenizer()
+    mock_tick = MagicMock()
+    tokenizer = Tokenizer(
+        chunk_overlap=2,
+        tokens_per_chunk=10,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+
+    texts = input_df["text"].to_numpy().tolist()
+
+    split = split_multiple_texts_on_tokens(
+        [texts[0]],
+        tokenizer,
+        tick=mock_tick,
+        metadata={"metadata": "Table 1", "metadata2": "Table 2"},
+    )
+    assert split == expected

@@ -24,6 +24,8 @@ def chunk_text(
     encoding_model: str,
     strategy: ChunkStrategyType,
     callbacks: WorkflowCallbacks,
+    metadata: list[str] | None = None,
+    line_delimiter: str = ".\n",
 ) -> pd.Series:
     """
     Chunk a piece of text into smaller pieces.
@@ -65,7 +67,14 @@ def chunk_text(
         input.apply(
             cast(
                 "Any",
-                lambda x: run_strategy(strategy_exec, x[column], config, tick),
+                lambda x: run_strategy(
+                    strategy_exec,
+                    x[column],
+                    config,
+                    tick,
+                    {v: x[v] for v in metadata or []},
+                    line_delimiter,
+                ),
             ),
             axis=1,
         ),
@@ -77,10 +86,15 @@ def run_strategy(
     input: ChunkInput,
     config: ChunkingConfig,
     tick: ProgressTicker,
+    metadata: dict[str, Any] | None = None,
+    line_delimiter: str = ".\n",
 ) -> list[str | tuple[list[str] | None, str, int]]:
     """Run strategy method definition."""
     if isinstance(input, str):
-        return [item.text_chunk for item in strategy_exec([input], config, tick)]
+        return [
+            item.text_chunk
+            for item in strategy_exec([input], config, tick, metadata, line_delimiter)
+        ]
 
     # We can work with both just a list of text content
     # or a list of tuples of (document_id, text content)
@@ -92,7 +106,7 @@ def run_strategy(
         else:
             texts.append(item[1])
 
-    strategy_results = strategy_exec(texts, config, tick)
+    strategy_results = strategy_exec(texts, config, tick, metadata, line_delimiter)
 
     results = []
     for strategy_result in strategy_results:

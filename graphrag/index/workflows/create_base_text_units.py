@@ -25,6 +25,7 @@ async def run_workflow(
     documents = await load_table_from_storage("input", context.storage)
 
     chunks = config.chunks
+    metadata = config.input.metadata
 
     output = create_base_text_units(
         documents,
@@ -34,6 +35,7 @@ async def run_workflow(
         chunks.overlap,
         chunks.encoding_model,
         strategy=chunks.strategy,
+        metadata=metadata,
     )
 
     await write_table_to_storage(output, workflow_name, context.storage)
