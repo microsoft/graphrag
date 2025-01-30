@@ -13,11 +13,7 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config import defaults
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities import (
-    restore_community_hierarchy,
     summarize_communities,
-)
-from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
-    get_levels,
 )
 from graphrag.index.operations.summarize_communities_text.context_builder import (
     prep_community_report_context,
@@ -46,36 +42,25 @@ async def create_final_community_reports_text(
     nodes_df = nodes_input.merge(entities_df, on="id")
     nodes = nodes_df.loc[nodes_df.loc[:, "community"] != -1]
 
-    max_input_length = summarization_strategy.get("max_input_length", 16_000)
-
     # TEMP: forcing override of the prompt until we can put it into config
     summarization_strategy["extraction_prompt"] = COMMUNITY_REPORT_PROMPT
-    # build initial local context for all communities
+
+    max_input_length = summarization_strategy.get(
+        "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
+    )
+
     local_contexts = prep_local_context(
         communities, text_units, nodes, max_input_length
     )
 
-    community_hierarchy = restore_community_hierarchy(nodes)
-    levels = get_levels(nodes)
-
-    level_contexts = []
-    for level in levels:
-        level_context = prep_community_report_context(
-            local_context_df=local_contexts,
-            community_hierarchy_df=community_hierarchy,
-            level=level,
-            max_tokens=summarization_strategy.get(
-                "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
-            ),
-        )
-        level_contexts.append(level_context)
-
     community_reports = await summarize_communities(
+        nodes,
         local_contexts,
-        level_contexts,
+        prep_community_report_context,
         callbacks,
         cache,
         summarization_strategy,
+        max_input_length=max_input_length,
         async_mode=async_mode,
         num_threads=num_threads,
     )
