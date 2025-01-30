@@ -4,6 +4,7 @@
 """A module containing create_community_reports and load_strategy methods definition."""
 
 import logging
+from collections.abc import Callable
 
 import pandas as pd
 
@@ -12,6 +13,12 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
+from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
+    get_levels,
+)
+from graphrag.index.operations.summarize_communities.restore_community_hierarchy import (
+    restore_community_hierarchy,
+)
 from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     CommunityReportsStrategy,
@@ -24,11 +31,13 @@ log = logging.getLogger(__name__)
 
 
 async def summarize_communities(
+    nodes: pd.DataFrame,
     local_contexts,
-    level_contexts,
+    level_context_builder: Callable,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     strategy: dict,
+    max_input_length: int,
     async_mode: AsyncType = AsyncType.AsyncIO,
     num_threads: int = 4,
 ):
@@ -36,6 +45,20 @@ async def summarize_communities(
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
     runner = load_strategy(strategy["type"])
+
+    community_hierarchy = restore_community_hierarchy(nodes)
+    levels = get_levels(nodes)
+
+    level_contexts = []
+    for level in levels:
+        level_context = level_context_builder(
+            pd.DataFrame(reports),
+            community_hierarchy_df=community_hierarchy,
+            local_context_df=local_contexts,
+            level=level,
+            max_tokens=max_input_length,
+        )
+        level_contexts.append(level_context)
 
     for level_context in level_contexts:
 

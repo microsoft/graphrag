@@ -76,10 +76,10 @@ def prep_local_context(
 
 
 def prep_community_report_context(
-    local_context_df: pd.DataFrame,
+    report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
+    local_context_df: pd.DataFrame,
     level: int,
-    report_df: pd.DataFrame | None = None,
     max_tokens: int = 16000,
 ) -> pd.DataFrame:
     """
