@@ -7,7 +7,7 @@ import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import AsyncType, AzureAuthType, LLMType
+from graphrag.config.enums import AsyncType, AuthType, LLMType
 from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -40,26 +40,41 @@ class LanguageModelConfig(BaseModel):
         ApiKeyMissingError
             If the API key is missing and is required.
         """
-        if (
-            self.type == LLMType.OpenAIEmbedding
-            or self.type == LLMType.OpenAIChat
-            or self.azure_auth_type == AzureAuthType.APIKey
-        ) and (self.api_key is None or self.api_key.strip() == ""):
+        if self.auth_type == AuthType.APIKey and (
+            self.api_key is None or self.api_key.strip() == ""
+        ):
             raise ApiKeyMissingError(
                 self.type.value,
-                self.azure_auth_type.value if self.azure_auth_type else None,
+                self.auth_type.value,
             )
 
-        if (self.azure_auth_type == AzureAuthType.ManagedIdentity) and (
+        if (self.auth_type == AuthType.AzureManagedIdentity) and (
             self.api_key is not None and self.api_key.strip() != ""
         ):
             msg = "API Key should not be provided when using Azure Managed Identity. Please rerun `graphrag init` and remove the api_key when using Azure Managed Identity."
             raise ConflictingSettingsError(msg)
 
-    azure_auth_type: AzureAuthType | None = Field(
-        description="The Azure authentication type to use when using AOI.",
-        default=None,
+    auth_type: AuthType = Field(
+        description="The authentication type.",
+        default=defs.AUTH_TYPE,
     )
+
+    def _validate_auth_type(self) -> None:
+        """Validate the authentication type.
+
+        auth_type must be api_key when using OpenAI and
+        can be either api_key or azure_managed_identity when using AOI.
+
+        Raises
+        ------
+        ConflictingSettingsError
+            If the Azure authentication type conflicts with the model being used.
+        """
+        if self.auth_type == AuthType.AzureManagedIdentity and (
+            self.type == LLMType.OpenAIChat or self.type == LLMType.OpenAIEmbedding
+        ):
+            msg = f"auth_type of azure_managed_identity is not supported for model type {self.type.value}. Please rerun `graphrag init` and set the auth_type to api_key."
+            raise ConflictingSettingsError(msg)
 
     type: LLMType = Field(description="The type of LLM model to use.")
     model: str = Field(description="The LLM model to use.")
@@ -233,6 +248,7 @@ class LanguageModelConfig(BaseModel):
 
     @model_validator(mode="after")
     def _validate_model(self):
+        self._validate_auth_type()
         self._validate_api_key()
         self._validate_azure_settings()
         self._validate_encoding_model()

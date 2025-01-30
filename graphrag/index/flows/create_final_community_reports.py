@@ -13,10 +13,9 @@ from graphrag.config import defaults
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
-    restore_community_hierarchy,
     summarize_communities,
 )
-from graphrag.index.operations.summarize_communities.community_reports_extractor import (
+from graphrag.index.operations.summarize_communities.community_reports_extractor.prep_community_report_context import (
     prep_community_report_context,
 )
 from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
@@ -38,9 +37,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     NODE_DETAILS,
     NODE_ID,
     NODE_NAME,
-)
-from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
-    get_levels,
 )
 
 
@@ -66,35 +62,26 @@ async def create_final_community_reports(
     if claims_input is not None:
         claims = _prep_claims(claims_input)
 
+    max_input_length = summarization_strategy.get(
+        "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
+    )
+
     local_contexts = prepare_community_reports(
         nodes,
         edges,
         claims,
         callbacks,
-        summarization_strategy.get("max_input_length", 16_000),
+        max_input_length,
     )
 
-    community_hierarchy = restore_community_hierarchy(nodes)
-    levels = get_levels(nodes)
-
-    level_contexts = []
-    for level in levels:
-        level_context = prep_community_report_context(
-            local_context_df=local_contexts,
-            community_hierarchy_df=community_hierarchy,
-            level=level,
-            max_tokens=summarization_strategy.get(
-                "max_input_tokens", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
-            ),
-        )
-        level_contexts.append(level_context)
-
     community_reports = await summarize_communities(
+        nodes,
         local_contexts,
-        level_contexts,
+        prep_community_report_context,
         callbacks,
         cache,
         summarization_strategy,
+        max_input_length=max_input_length,
         async_mode=async_mode,
         num_threads=num_threads,
     )

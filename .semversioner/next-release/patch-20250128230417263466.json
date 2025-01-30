@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Require explicit azure auth settings when using AOI."
+}
