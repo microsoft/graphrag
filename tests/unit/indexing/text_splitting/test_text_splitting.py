@@ -215,26 +215,40 @@ def test_split_multiple_texts_on_tokens_metadata_one_column():
 
     expected = [
         TextChunk(
-            text_chunk="metadata: Table 1.\nReceptioni",
+            text_chunk="metadata: Table 1.\nReceptio",
             source_doc_indices=[
                 0,
             ],
-            n_tokens=10,
+            n_tokens=25,
         ),
         TextChunk(
-            text_chunk="metadata: Table 1.\nnist",
+            text_chunk="metadata: Table 1.\neptionis",
             source_doc_indices=[
                 0,
             ],
-            n_tokens=4,
+            n_tokens=25,
+        ),
+        TextChunk(
+            text_chunk="metadata: Table 1.\nionist",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=23,
+        ),
+        TextChunk(
+            text_chunk="metadata: Table 1.\nist",
+            source_doc_indices=[
+                0,
+            ],
+            n_tokens=20,
         ),
     ]
 
     mocked_tokenizer = MockTokenizer()
     mock_tick = MagicMock()
     tokenizer = Tokenizer(
-        chunk_overlap=2,
-        tokens_per_chunk=10,
+        chunk_overlap=5,
+        tokens_per_chunk=25,
         decode=mocked_tokenizer.decode,
         encode=lambda text: mocked_tokenizer.encode(text),
     )
@@ -258,26 +272,26 @@ def test_split_multiple_texts_on_tokens_metadata_two_columns():
 
     expected = [
         TextChunk(
-            text_chunk="metadata: Table 1.\nmetadata2: Table 2.\nReceptioni",
+            text_chunk="metadata: Table 1.\nmetadata2: Table 2.\nReceptionist",
             source_doc_indices=[
                 0,
             ],
-            n_tokens=10,
+            n_tokens=49,
         ),
         TextChunk(
             text_chunk="metadata: Table 1.\nmetadata2: Table 2.\nnist",
             source_doc_indices=[
                 0,
             ],
-            n_tokens=4,
+            n_tokens=41,
         ),
     ]
 
     mocked_tokenizer = MockTokenizer()
     mock_tick = MagicMock()
     tokenizer = Tokenizer(
-        chunk_overlap=2,
-        tokens_per_chunk=10,
+        chunk_overlap=5,
+        tokens_per_chunk=50,
         decode=mocked_tokenizer.decode,
         encode=lambda text: mocked_tokenizer.encode(text),
     )

@@ -159,46 +159,53 @@ def split_single_text_on_tokens(text: str, tokenizer: Tokenizer) -> list[str]:
     return result
 
 
-# Adapted from - https://github.com/langchain-ai/langchain/blob/77b359edf5df0d37ef0d539f678cf64f5557cb54/libs/langchain/langchain/text_splitter.py#L471
-# So we could have better control over the chunking process
 def split_multiple_texts_on_tokens(
     texts: list[str],
     tokenizer: Tokenizer,
-    tick: ProgressTicker,
+    tick: ProgressTicker | None = None,
     line_delimiter: str = ".\n",
     metadata: dict[str, Any] | None = None,
 ) -> list[TextChunk]:
     """Split multiple texts and return chunks with metadata using the tokenizer."""
     result = []
-    mapped_ids = []
+    metadata_str = (
+        line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
+        if metadata
+        else ""
+    )
+    metadata_tokens = tokenizer.encode(metadata_str)
 
+    # Adjust tokenizer to account for metadata tokens
+    adjusted_tokenizer = Tokenizer(
+        chunk_overlap=tokenizer.chunk_overlap,
+        tokens_per_chunk=tokenizer.tokens_per_chunk - len(metadata_tokens),
+        decode=tokenizer.decode,
+        encode=tokenizer.encode,
+    )
+
+    input_ids = []
     for source_doc_idx, text in enumerate(texts):
-        encoded = tokenizer.encode(text)
+        encoded = adjusted_tokenizer.encode(text)
         if tick:
-            tick(1)  # Track progress if tick callback is provided
-        mapped_ids.append((source_doc_idx, encoded))
-
-    input_ids = [
-        (source_doc_idx, id) for source_doc_idx, ids in mapped_ids for id in ids
-    ]
+            tick(1)  # Track progress
+        input_ids.extend((source_doc_idx, token) for token in encoded)
 
     start_idx = 0
-    cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
-    chunk_ids = input_ids[start_idx:cur_idx]
+    total_tokens = len(input_ids)
 
-    # build metadata string by concatenating all key-value pairs
-    metadata_str = ""
-    if metadata is not None and len(metadata) > 0:
-        metadata_str = line_delimiter.join([f"{k}: {v}" for k, v in metadata.items()])
-
-    while start_idx < len(input_ids):
+    while start_idx < total_tokens:
+        cur_idx = min(start_idx + adjusted_tokenizer.tokens_per_chunk, total_tokens)
+        chunk_ids = input_ids[start_idx:cur_idx]
         chunk_text = f"{metadata_str}{line_delimiter}" if metadata_str else ""
-        chunk_text += tokenizer.decode([id for _, id in chunk_ids])
+        chunk_text += adjusted_tokenizer.decode([token for _, token in chunk_ids])
 
         doc_indices = list({doc_idx for doc_idx, _ in chunk_ids})
-        result.append(TextChunk(chunk_text, doc_indices, len(chunk_ids)))
-        start_idx += tokenizer.tokens_per_chunk - tokenizer.chunk_overlap
-        cur_idx = min(start_idx + tokenizer.tokens_per_chunk, len(input_ids))
-        chunk_ids = input_ids[start_idx:cur_idx]
+        result.append(
+            TextChunk(chunk_text, doc_indices, len(chunk_ids) + len(metadata_tokens))
+        )
+
+        start_idx += (
+            adjusted_tokenizer.tokens_per_chunk - adjusted_tokenizer.chunk_overlap
+        )
 
     return result
