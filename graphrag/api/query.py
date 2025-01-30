@@ -220,12 +220,10 @@ async def multi_index_global_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a global search across multiple indexes and return the context data and response.
 
     Parameters
@@ -529,12 +527,10 @@ async def multi_index_local_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a local search across multiple indexes and return the context data and response.
 
     Parameters
@@ -923,12 +919,10 @@ async def multi_index_drift_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a DRIFT search across multiple indexes and return the context data and response.
 
     Parameters
@@ -1235,12 +1229,10 @@ async def multi_index_basic_search(
     index_names: list[str],
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a basic search across multiple indexes and return the context data and response.
 
     Parameters

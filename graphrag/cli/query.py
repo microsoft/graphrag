@@ -79,7 +79,7 @@ def run_global_search(
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
-    
+
     # Otherwise, call the Single-Index Global Search API
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
@@ -179,7 +179,10 @@ def run_local_search(
         index_names = dataframe_dict["index_names"]
 
         # If any covariates tables are missing from any index, set the covariates list to None
-        if len(dataframe_dict["create_final_covariates"]) != dataframe_dict["num_indexes"]:
+        if (
+            len(dataframe_dict["create_final_covariates"])
+            != dataframe_dict["num_indexes"]
+        ):
             final_covariates_list = None
         else:
             final_covariates_list = dataframe_dict["create_final_covariates"]
@@ -218,7 +221,9 @@ def run_local_search(
     if len(dataframe_dict["create_final_covariates"]) == 0:
         final_covariates: pd.DataFrame | None = None
     else:
-        final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"][0]
+        final_covariates: pd.DataFrame | None = dataframe_dict[
+            "create_final_covariates"
+        ][0]
 
     if streaming:
 
@@ -328,7 +333,7 @@ def run_drift_search(
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
-    
+
     # Otherwise, call the Single-Index Drift Search API
     final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
     final_community_reports: pd.DataFrame = dataframe_dict[
@@ -430,7 +435,7 @@ def run_basic_search(
         # NOTE: we return the response and context data here purely as a complete demonstration of the API.
         # External users should use the API directly to get the response and context data.
         return response, context_data
-    
+
     # Otherwise, call the Single-Index Basic Search API
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
 
@@ -487,7 +492,9 @@ def _resolve_output_files(
         for name in output_list:
             if name not in dataframe_dict:
                 dataframe_dict[name] = []
-            df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
+            df_value = asyncio.run(
+                load_table_from_storage(name=name, storage=storage_obj)
+            )
             dataframe_dict[name].append(df_value)
 
         # for optional output files, set the dict entry to None instead of erroring out if it does not exist
