@@ -5,7 +5,7 @@
 import pandas as pd
 
 import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
-from graphrag.index.operations.summarize_communities.community_reports_extractor.sort_context import (
+from graphrag.index.operations.summarize_communities.graph_context.sort_context import (
     sort_context,
 )
 from graphrag.query.llm.text_utils import num_tokens

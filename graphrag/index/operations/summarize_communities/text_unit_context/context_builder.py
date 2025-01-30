@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing prep_community_reports_data method definition."""
+"""Context builders for text units."""
 
 import logging
 from typing import cast
@@ -11,10 +11,13 @@ import pandas as pd
 import graphrag.index.operations.summarize_communities_text.schemas.communities as cs
 import graphrag.index.operations.summarize_communities_text.schemas.graph as gh
 import graphrag.index.operations.summarize_communities_text.schemas.text_units as ts
-from graphrag.index.operations.summarize_communities_text.prep_text_units import (
+from graphrag.index.operations.summarize_communities.build_mixed_context import (
+    build_mixed_context,
+)
+from graphrag.index.operations.summarize_communities.text_unit_context.prep_text_units import (
     prep_text_units,
 )
-from graphrag.index.operations.summarize_communities_text.sort_context import (
+from graphrag.index.operations.summarize_communities.text_unit_context.sort_context import (
     sort_context,
 )
 from graphrag.query.llm.text_utils import num_tokens
@@ -22,7 +25,7 @@ from graphrag.query.llm.text_utils import num_tokens
 log = logging.getLogger(__name__)
 
 
-def prep_local_context(
+def build_local_context(
     community_membership_df: pd.DataFrame,
     text_units_df: pd.DataFrame,
     node_df: pd.DataFrame,
@@ -75,7 +78,7 @@ def prep_local_context(
     return context_df
 
 
-def prep_community_report_context(
+def build_level_context(
     report_df: pd.DataFrame | None,
     community_hierarchy_df: pd.DataFrame,
     local_context_df: pd.DataFrame,
@@ -174,7 +177,7 @@ def prep_community_report_context(
         community_df.groupby(cs.COMMUNITY_ID).agg({cs.ALL_CONTEXT: list}).reset_index()
     )
     community_df[cs.CONTEXT_STRING] = community_df[cs.ALL_CONTEXT].apply(
-        lambda x: _build_mixed_context(x, max_tokens)
+        lambda x: build_mixed_context(x, max_tokens)
     )
     community_df[cs.CONTEXT_SIZE] = community_df[cs.CONTEXT_STRING].apply(
         lambda x: num_tokens(x)
@@ -204,61 +207,3 @@ def prep_community_report_context(
     return cast(
         "pd.DataFrame", pd.concat([valid_context_df, community_df, remaining_df])
     )
-
-
-def _build_mixed_context(context: list[dict], max_tokens: int = 16000) -> str:
-    """
-    Build parent context by concatenating all sub-communities' contexts.
-
-    If the context exceeds the limit, we use sub-community reports instead.
-    """
-    sorted_context = sorted(context, key=lambda x: x[cs.CONTEXT_SIZE], reverse=True)
-
-    # replace local context with sub-community reports, starting from the biggest sub-community
-    substitute_reports = []
-    final_local_contexts = []
-    exceeded_limit = True
-    context_string = ""
-
-    for idx, sub_community_context in enumerate(sorted_context):
-        if exceeded_limit:
-            if sub_community_context[cs.FULL_CONTENT]:
-                substitute_reports.append({
-                    cs.COMMUNITY_ID: sub_community_context[cs.SUB_COMMUNITY_ID],
-                    cs.FULL_CONTENT: sub_community_context[cs.FULL_CONTENT],
-                })
-            else:
-                # this sub-community has no report, so we will use its local context
-                final_local_contexts.extend(sub_community_context[cs.ALL_CONTEXT])
-                continue
-
-            # add local context for the remaining sub-communities
-            remaining_local_context = []
-            for rid in range(idx + 1, len(sorted_context)):
-                remaining_local_context.extend(sorted_context[rid][cs.ALL_CONTEXT])
-            new_context_string = sort_context(
-                local_context=remaining_local_context + final_local_contexts,
-                sub_community_reports=substitute_reports,
-            )
-            if num_tokens(new_context_string) <= max_tokens:
-                exceeded_limit = False
-                context_string = new_context_string
-                break
-
-    if exceeded_limit:
-        # if all sub-community reports exceed the limit, we add reports until context is full
-        substitute_reports = []
-        for sub_community_context in sorted_context:
-            substitute_reports.append({
-                cs.COMMUNITY_ID: sub_community_context[cs.SUB_COMMUNITY_ID],
-                cs.FULL_CONTENT: sub_community_context[cs.FULL_CONTENT],
-            })
-            new_context_string = pd.DataFrame(substitute_reports).to_csv(
-                index=False, sep=","
-            )
-            if num_tokens(new_context_string) > max_tokens:
-                break
-
-            context_string = new_context_string
-
-    return context_string

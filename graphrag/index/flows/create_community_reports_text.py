@@ -14,15 +14,15 @@ from graphrag.config.enums import AsyncType
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
-from graphrag.index.operations.summarize_communities import (
+from graphrag.index.operations.summarize_communities.explode_communities import (
+    explode_communities,
+)
+from graphrag.index.operations.summarize_communities.summarize_communities import (
     summarize_communities,
 )
-from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
-    COMMUNITY_ID,
-)
-from graphrag.index.operations.summarize_communities_text.context_builder import (
-    prep_community_report_context,
-    prep_local_context,
+from graphrag.index.operations.summarize_communities.text_unit_context.context_builder import (
+    build_level_context,
+    build_local_context,
 )
 from graphrag.index.operations.summarize_communities_text.prompts import (
     COMMUNITY_REPORT_PROMPT,
@@ -42,13 +42,7 @@ async def create_community_reports_text(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    community_join = communities.explode("entity_ids").loc[
-        :, ["community", "level", "entity_ids"]
-    ]
-    nodes = entities.merge(
-        community_join, left_on="id", right_on="entity_ids", how="left"
-    )
-    nodes = nodes.loc[nodes.loc[:, COMMUNITY_ID] != -1]
+    nodes = explode_communities(communities, entities)
 
     # TEMP: forcing override of the prompt until we can put it into config
     summarization_strategy["extraction_prompt"] = COMMUNITY_REPORT_PROMPT
@@ -57,14 +51,14 @@ async def create_community_reports_text(
         "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
     )
 
-    local_contexts = prep_local_context(
+    local_contexts = build_local_context(
         communities, text_units, nodes, max_input_length
     )
 
     community_reports = await summarize_communities(
         nodes,
         local_contexts,
-        prep_community_report_context,
+        build_level_context,
         callbacks,
         cache,
         summarization_strategy,

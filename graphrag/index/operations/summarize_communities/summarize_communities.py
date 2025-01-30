@@ -13,16 +13,14 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.operations.summarize_communities.community_reports_extractor.utils import (
-    get_levels,
-)
-from graphrag.index.operations.summarize_communities.restore_community_hierarchy import (
-    restore_community_hierarchy,
-)
 from graphrag.index.operations.summarize_communities.typing import (
     CommunityReport,
     CommunityReportsStrategy,
     CreateCommunityReportsStrategyType,
+)
+from graphrag.index.operations.summarize_communities.utils import (
+    get_levels,
+    restore_community_hierarchy,
 )
 from graphrag.index.run.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker

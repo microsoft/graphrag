@@ -12,13 +12,6 @@ from graphrag.config.enums import AsyncType
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
-from graphrag.index.operations.summarize_communities import (
-    prepare_community_reports,
-    summarize_communities,
-)
-from graphrag.index.operations.summarize_communities.community_reports_extractor.prep_community_report_context import (
-    prep_community_report_context,
-)
 from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -26,7 +19,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     CLAIM_STATUS,
     CLAIM_SUBJECT,
     CLAIM_TYPE,
-    COMMUNITY_ID,
     EDGE_DEGREE,
     EDGE_DESCRIPTION,
     EDGE_DETAILS,
@@ -38,6 +30,16 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     NODE_DETAILS,
     NODE_ID,
     NODE_NAME,
+)
+from graphrag.index.operations.summarize_communities.explode_communities import (
+    explode_communities,
+)
+from graphrag.index.operations.summarize_communities.graph_context.context_builder import (
+    build_level_context,
+    build_local_context,
+)
+from graphrag.index.operations.summarize_communities.summarize_communities import (
+    summarize_communities,
 )
 
 
@@ -53,12 +55,7 @@ async def create_community_reports(
     num_threads: int = 4,
 ) -> pd.DataFrame:
     """All the steps to transform community reports."""
-    community_join = communities.explode("entity_ids").loc[
-        :, ["community", "level", "entity_ids"]
-    ]
-    nodes = entities.merge(
-        community_join, left_on="id", right_on="entity_ids", how="left"
-    )
+    nodes = explode_communities(communities, entities)
 
     nodes = _prep_nodes(nodes)
     edges = _prep_edges(edges_input)
@@ -71,7 +68,7 @@ async def create_community_reports(
         "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
     )
 
-    local_contexts = prepare_community_reports(
+    local_contexts = build_local_context(
         nodes,
         edges,
         claims,
@@ -82,7 +79,7 @@ async def create_community_reports(
     community_reports = await summarize_communities(
         nodes,
         local_contexts,
-        prep_community_report_context,
+        build_level_context,
         callbacks,
         cache,
         summarization_strategy,
@@ -96,9 +93,6 @@ async def create_community_reports(
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     """Prepare nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
-    # Filter rows where community is not -1
-    input = input.loc[input.loc[:, COMMUNITY_ID] != -1]
-
     # Fill missing values in NODE_DESCRIPTION
     input.loc[:, NODE_DESCRIPTION] = input.loc[:, NODE_DESCRIPTION].fillna(
         "No Description"
