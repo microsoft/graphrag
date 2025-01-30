@@ -178,8 +178,8 @@ def run_local_search(
         final_relationships_list = dataframe_dict["create_final_relationships"]
         index_names = dataframe_dict["index_names"]
 
-        # If any indexes don't have covariates, set the covariates list to None
-        if None in dataframe_dict["create_final_covariates"]:
+        # If any covariates tables are missing from any index, set the covariates list to None
+        if len(dataframe_dict["create_final_covariates"]) != dataframe_dict["num_indexes"]:
             final_covariates_list = None
         else:
             final_covariates_list = dataframe_dict["create_final_covariates"]
@@ -213,7 +213,12 @@ def run_local_search(
     final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
     final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"][0]
     final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
-    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"][0]
+
+    # Set the covariates to None if it is missing
+    if len(dataframe_dict["create_final_covariates"]) == 0:
+        final_covariates: pd.DataFrame | None = None
+    else:
+        final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"][0]
 
     if streaming:
 
@@ -496,7 +501,5 @@ def _resolve_output_files(
                         load_table_from_storage(name=optional_file, storage=storage_obj)
                     )
                     dataframe_dict[optional_file].append(df_value)
-                else:
-                    dataframe_dict[optional_file].append(None)
 
     return dataframe_dict

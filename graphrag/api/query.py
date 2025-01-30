@@ -421,7 +421,6 @@ async def local_search(
     entities_ = read_indexer_entities(nodes, entities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
     prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
-
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, nodes, community_level),
@@ -730,7 +729,6 @@ async def multi_index_local_search(
         covariates_combined = pd.concat(
             covariates_dfs, axis=0, ignore_index=True, sort=False
         )
-
     result = await local_search(
         config,
         nodes=nodes_combined,
