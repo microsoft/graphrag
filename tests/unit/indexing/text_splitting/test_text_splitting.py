@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 import tiktoken
+from pydantic import ValidationError
 
 from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
@@ -261,6 +262,36 @@ def test_split_multiple_texts_on_tokens_metadata_one_column():
     )
     assert split == expected
 
+def test_split_multiple_texts_on_tokens_metadata_large():
+    input_df = pd.DataFrame({
+        "text": ["Receptionist", "Officer", "Captain"],
+        "command": ["Jump", "Walk", "Run"],
+        "metadata": [
+            "Table 1 red with glass",
+            "Office 1 with central table and 16 chairs",
+            "Ship 1 with weird name",
+        ],
+    })
+
+    mocked_tokenizer = MockTokenizer()
+    mock_tick = MagicMock()
+    tokenizer = Tokenizer(
+        chunk_overlap=0,
+        tokens_per_chunk=5,
+        decode=mocked_tokenizer.decode,
+        encode=lambda text: mocked_tokenizer.encode(text),
+    )
+
+    texts = input_df["text"].to_numpy().tolist()
+    metadata = input_df["metadata"].to_numpy().tolist()
+
+    with pytest.raises(
+        ValueError,
+        match="Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk.",
+    ):
+        split_multiple_texts_on_tokens(
+            [texts[0]], tokenizer, tick=mock_tick, metadata={"metadata": metadata[0]}
+        )
 
 def test_split_multiple_texts_on_tokens_metadata_two_columns():
     input_df = pd.DataFrame({

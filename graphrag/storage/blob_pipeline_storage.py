@@ -187,6 +187,19 @@ class BlobPipelineStorage(PipelineStorage):
         else:
             return blob_data
 
+    def get_creation_date(self, key: str) -> str:
+        """Get a value from the cache."""
+        try:
+            key = self._keyname(key)
+            container_client = self._blob_service_client.get_container_client(
+                self._container_name
+            )
+            blob_client = container_client.get_blob_client(key)
+            return str(blob_client.download_blob().properties.creation_time)
+        except Exception:
+            log.exception("Error getting key %s", key)
+            return ""
+
     async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
         """Set a value in the cache."""
         try:

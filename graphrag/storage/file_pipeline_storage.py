@@ -118,6 +118,10 @@ class FilePipelineStorage(PipelineStorage):
         ) as f:
             await f.write(value)
 
+    def get_creation_date(self, key: str) -> str:
+        """Get the creation date of a file."""
+        return str(Path(join_path(self._root_dir, key)).stat().st_ctime)
+
     async def has(self, key: str) -> bool:
         """Has method definition."""
         return await exists(join_path(self._root_dir, key))

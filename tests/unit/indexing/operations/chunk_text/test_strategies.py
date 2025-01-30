@@ -67,19 +67,15 @@ class TestRunSentences:
 class TestRunTokens:
     @patch("tiktoken.get_encoding")
     def test_basic_functionality(self, mock_get_encoding):
-        """Test basic token-based chunking."""
-        # Mock tiktoken encoding
         mock_encoder = Mock()
-        mock_encoder.encode.side_effect = lambda x: list(
-            x.encode()
-        )  # Simulate encoding
-        mock_encoder.decode.side_effect = lambda x: bytes(
-            x
-        ).decode()  # Simulate decoding
+        mock_encoder.encode.side_effect = lambda x: list(x.encode())
+        mock_encoder.decode.side_effect = lambda x: bytes(x).decode()
         mock_get_encoding.return_value = mock_encoder
 
         # Input and config
-        input = ["hello world"]
+        input = [
+            "Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
+        ]
         config = ChunkingConfig(size=5, overlap=1, encoding_model="fake-encoding")
         tick = Mock()
 
@@ -87,7 +83,7 @@ class TestRunTokens:
         chunks = list(run_tokens(input, config, tick))
 
         # Verify output
-        assert len(chunks) > 0  # At least one chunk should be produced
+        assert len(chunks) > 0
         assert all(isinstance(chunk, TextChunk) for chunk in chunks)
         tick.assert_called_once_with(1)
 
@@ -99,16 +95,18 @@ class TestRunTokens:
         mock_encoder.decode.side_effect = lambda x: bytes(x).decode()
         mock_get_encoding.return_value = mock_encoder
 
-        input = ["test"]
-        config = ChunkingConfig(size=5, overlap=1, encoding_model="fake-encoding")
+        input = [
+            "Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
+        ]
+        config = ChunkingConfig(size=50, overlap=4, encoding_model="fake-encoding")
         tick = Mock()
-        metadata = {"author": "John"}
+        metadata = {"author": "Charles"}
 
         chunks = list(run_tokens(input, config, tick, metadata))
 
         # Verify metadata is included in the chunk
         assert len(chunks) > 0
-        assert "author: John" in chunks[0].text_chunk
+        assert "author: Charles" in chunks[0].text_chunk
 
     @patch("tiktoken.get_encoding")
     def test_custom_delimiter(self, mock_get_encoding):
@@ -118,8 +116,10 @@ class TestRunTokens:
         mock_encoder.decode.side_effect = lambda x: bytes(x).decode()
         mock_get_encoding.return_value = mock_encoder
 
-        input = ["test"]
-        config = ChunkingConfig(size=5, overlap=1, encoding_model="fake-encoding")
+        input = [
+            "Marley was dead: to begin with. There is no doubt whatever about that. The register of his burial was signed by the clergyman, the clerk, the undertaker, and the chief mourner. Scrooge signed it. And Scrooge's name was good upon 'Change, for anything he chose to put his hand to."
+        ]
+        config = ChunkingConfig(size=50, overlap=4, encoding_model="fake-encoding")
         tick = Mock()
         metadata = {"key": "value"}
 

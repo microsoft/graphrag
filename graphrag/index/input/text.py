@@ -5,6 +5,7 @@
 
 import logging
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +31,10 @@ async def load(
     """Load text inputs from a directory."""
 
     async def load_file(
-        path: str, group: dict | None = None, _encoding: str = "utf-8"
+        path: str,
+        group: dict | None = None,
+        _encoding: str = "utf-8",
+        metadata: list[str] | None = None,
     ) -> dict[str, Any]:
         if group is None:
             group = {}
@@ -38,6 +42,8 @@ async def load(
         new_item = {**group, "text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
+        if metadata and "creation_date" in metadata:
+            new_item["creation_date"] = storage.get_creation_date(path)
         return new_item
 
     files = list(
@@ -57,7 +63,7 @@ async def load(
 
     for file, group in files:
         try:
-            files_loaded.append(await load_file(file, group))
+            files_loaded.append(await load_file(file, group, metadata=config.metadata))
         except Exception:  # noqa: BLE001 (catching Exception is fine here)
             log.warning("Warning! Error loading file %s. Skipping...", file)
 

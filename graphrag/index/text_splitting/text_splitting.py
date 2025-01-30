@@ -174,14 +174,15 @@ def split_multiple_texts_on_tokens(
         else ""
     )
     metadata_tokens = tokenizer.encode(metadata_str)
+    if len(metadata_tokens) >= tokenizer.tokens_per_chunk:
+        message = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
+        raise ValueError(message)
 
     # Adjust tokenizer to account for metadata tokens
-    adjusted_tokenizer = Tokenizer(
-        chunk_overlap=tokenizer.chunk_overlap,
-        tokens_per_chunk=tokenizer.tokens_per_chunk - len(metadata_tokens),
-        decode=tokenizer.decode,
-        encode=tokenizer.encode,
-    )
+    adjusted_tokenizer = Tokenizer(**{
+        **tokenizer.__dict__,
+        "tokens_per_chunk": tokenizer.tokens_per_chunk - len(metadata_tokens),
+    })
 
     input_ids = []
     for source_doc_idx, text in enumerate(texts):
