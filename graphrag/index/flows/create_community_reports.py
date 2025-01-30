@@ -16,6 +16,9 @@ from graphrag.index.operations.summarize_communities import (
     prepare_community_reports,
     summarize_communities,
 )
+from graphrag.index.operations.summarize_communities.community_reports_extractor.prep_community_report_context import (
+    prep_community_report_context,
+)
 from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
     CLAIM_DESCRIPTION,
     CLAIM_DETAILS,
@@ -35,9 +38,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
     NODE_DETAILS,
     NODE_ID,
     NODE_NAME,
-)
-from graphrag.index.operations.summarize_communities.prep_level_contexts import (
-    prep_level_contexts,
 )
 
 
@@ -79,18 +79,14 @@ async def create_community_reports(
         max_input_length,
     )
 
-    level_contexts = prep_level_contexts(
+    community_reports = await summarize_communities(
         nodes,
         local_contexts,
-        max_input_length,
-    )
-
-    community_reports = await summarize_communities(
-        local_contexts,
-        level_contexts,
+        prep_community_report_context,
         callbacks,
         cache,
         summarization_strategy,
+        max_input_length=max_input_length,
         async_mode=async_mode,
         num_threads=num_threads,
     )

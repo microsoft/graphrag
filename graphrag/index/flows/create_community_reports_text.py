@@ -17,10 +17,11 @@ from graphrag.index.operations.finalize_community_reports import (
 from graphrag.index.operations.summarize_communities import (
     summarize_communities,
 )
-from graphrag.index.operations.summarize_communities.prep_level_contexts import (
-    prep_level_contexts,
+from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
+    COMMUNITY_ID,
 )
 from graphrag.index.operations.summarize_communities_text.context_builder import (
+    prep_community_report_context,
     prep_local_context,
 )
 from graphrag.index.operations.summarize_communities_text.prompts import (
@@ -47,31 +48,27 @@ async def create_community_reports_text(
     nodes = entities.merge(
         community_join, left_on="id", right_on="entity_ids", how="left"
     )
-    nodes = nodes.loc[nodes.loc[:, "community"] != -1]
+    nodes = nodes.loc[nodes.loc[:, COMMUNITY_ID] != -1]
+
+    # TEMP: forcing override of the prompt until we can put it into config
+    summarization_strategy["extraction_prompt"] = COMMUNITY_REPORT_PROMPT
 
     max_input_length = summarization_strategy.get(
         "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
     )
 
-    # TEMP: forcing override of the prompt until we can put it into config
-    summarization_strategy["extraction_prompt"] = COMMUNITY_REPORT_PROMPT
-    # build initial local context for all communities
     local_contexts = prep_local_context(
         communities, text_units, nodes, max_input_length
     )
 
-    level_contexts = prep_level_contexts(
+    community_reports = await summarize_communities(
         nodes,
         local_contexts,
-        max_input_length,
-    )
-
-    community_reports = await summarize_communities(
-        local_contexts,
-        level_contexts,
+        prep_community_report_context,
         callbacks,
         cache,
         summarization_strategy,
+        max_input_length=max_input_length,
         async_mode=async_mode,
         num_threads=num_threads,
     )
