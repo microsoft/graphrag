@@ -7,8 +7,7 @@ import logging
 
 import pandas as pd
 
-import graphrag.index.operations.summarize_communities_text.schemas.communities as cs
-import graphrag.index.operations.summarize_communities_text.schemas.text_units as ts
+import graphrag.model.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)
@@ -24,14 +23,16 @@ def get_context_string(
         sub_community_reports = [
             report
             for report in sub_community_reports
-            if cs.COMMUNITY_ID in report
-            and report[cs.COMMUNITY_ID]
-            and str(report[cs.COMMUNITY_ID]).strip() != ""
+            if schemas.COMMUNITY_ID in report
+            and report[schemas.COMMUNITY_ID]
+            and str(report[schemas.COMMUNITY_ID]).strip() != ""
         ]
         report_df = pd.DataFrame(sub_community_reports).drop_duplicates()
         if not report_df.empty:
-            if report_df[cs.COMMUNITY_ID].dtype == float:
-                report_df[cs.COMMUNITY_ID] = report_df[cs.COMMUNITY_ID].astype(int)
+            if report_df[schemas.COMMUNITY_ID].dtype == float:
+                report_df[schemas.COMMUNITY_ID] = report_df[
+                    schemas.COMMUNITY_ID
+                ].astype(int)
             report_string = (
                 f"----REPORTS-----\n{report_df.to_csv(index=False, sep=',')}"
             )
@@ -61,7 +62,7 @@ def sort_context(
 ) -> str:
     """Sort local context (list of text units) by total degree of associated nodes in descending order."""
     sorted_text_units = sorted(
-        local_context, key=lambda x: x[ts.ENTITY_DEGREE], reverse=True
+        local_context, key=lambda x: x[schemas.ENTITY_DEGREE], reverse=True
     )
 
     current_text_units = []

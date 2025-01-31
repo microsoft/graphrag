@@ -23,7 +23,7 @@ class ClaimExtractionConfig(BaseModel):
     )
     description: str = Field(
         description="The claim description to use.",
-        default=defs.CLAIM_DESCRIPTION,
+        default=defs.DESCRIPTION,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",

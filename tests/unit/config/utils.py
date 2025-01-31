@@ -153,7 +153,7 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
     "claim_extaction": {
         "enabled": defs.CLAIM_EXTRACTION_ENABLED,
         "prompt": None,
-        "description": defs.CLAIM_DESCRIPTION,
+        "description": defs.DESCRIPTION,
         "max_gleanings": defs.CLAIM_MAX_GLEANINGS,
         "strategy": None,
         "encoding_model": None,

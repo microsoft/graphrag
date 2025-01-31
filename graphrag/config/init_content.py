@@ -109,7 +109,7 @@ claim_extraction:
   enabled: false
   model_id: {defs.CLAIM_EXTRACTION_MODEL_ID}
   prompt: "prompts/claim_extraction.txt"
-  description: "{defs.CLAIM_DESCRIPTION}"
+  description: "{defs.DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
 
 community_reports:

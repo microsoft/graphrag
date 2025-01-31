@@ -8,7 +8,7 @@ from typing import cast
 
 import pandas as pd
 
-import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+import graphrag.model.schemas as schemas
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.index.operations.summarize_communities.build_mixed_context import (
     build_mixed_context,
@@ -43,7 +43,7 @@ def build_local_context(
     max_tokens: int = 16_000,
 ):
     """Prep communities for report generation."""
-    levels = get_levels(nodes, schemas.NODE_LEVEL)
+    levels = get_levels(nodes, schemas.COMMUNITY_LEVEL)
 
     dfs = []
 
@@ -68,9 +68,9 @@ def _prepare_reports_at_level(
 ) -> pd.DataFrame:
     """Prepare reports at a given level."""
     # Filter and prepare node details
-    level_node_df = node_df[node_df[schemas.NODE_LEVEL] == level]
+    level_node_df = node_df[node_df[schemas.COMMUNITY_LEVEL] == level]
     log.info("Number of nodes at level=%s => %s", level, len(level_node_df))
-    nodes_set = set(level_node_df[schemas.NODE_NAME])
+    nodes_set = set(level_node_df[schemas.TITLE])
 
     # Filter and prepare edge details
     level_edge_df = edge_df[
@@ -80,10 +80,10 @@ def _prepare_reports_at_level(
     level_edge_df.loc[:, schemas.EDGE_DETAILS] = level_edge_df.loc[
         :,
         [
-            schemas.EDGE_ID,
+            schemas.SHORT_ID,
             schemas.EDGE_SOURCE,
             schemas.EDGE_TARGET,
-            schemas.EDGE_DESCRIPTION,
+            schemas.DESCRIPTION,
             schemas.EDGE_DEGREE,
         ],
     ].to_dict(orient="records")
@@ -100,20 +100,20 @@ def _prepare_reports_at_level(
         level_edge_df.groupby(schemas.EDGE_SOURCE)
         .agg({schemas.EDGE_DETAILS: "first"})
         .reset_index()
-        .rename(columns={schemas.EDGE_SOURCE: schemas.NODE_NAME})
+        .rename(columns={schemas.EDGE_SOURCE: schemas.TITLE})
     )
 
     target_edges = (
         level_edge_df.groupby(schemas.EDGE_TARGET)
         .agg({schemas.EDGE_DETAILS: "first"})
         .reset_index()
-        .rename(columns={schemas.EDGE_TARGET: schemas.NODE_NAME})
+        .rename(columns={schemas.EDGE_TARGET: schemas.TITLE})
     )
 
     # Merge aggregated edges into the node DataFrame
     merged_node_df = level_node_df.merge(
-        source_edges, on=schemas.NODE_NAME, how="left"
-    ).merge(target_edges, on=schemas.NODE_NAME, how="left")
+        source_edges, on=schemas.TITLE, how="left"
+    ).merge(target_edges, on=schemas.TITLE, how="left")
 
     # Combine source and target edge details into a single column
     merged_node_df.loc[:, schemas.EDGE_DETAILS] = merged_node_df.loc[
@@ -128,9 +128,9 @@ def _prepare_reports_at_level(
     # Aggregate node and edge details
     merged_node_df = (
         merged_node_df.groupby([
-            schemas.NODE_NAME,
-            schemas.NODE_COMMUNITY,
-            schemas.NODE_LEVEL,
+            schemas.TITLE,
+            schemas.COMMUNITY_ID,
+            schemas.COMMUNITY_LEVEL,
             schemas.NODE_DEGREE,
         ])
         .agg({
@@ -147,8 +147,8 @@ def _prepare_reports_at_level(
         merged_node_df = merged_node_df.merge(
             level_claim_df.loc[
                 :, [schemas.CLAIM_SUBJECT, schemas.CLAIM_DETAILS]
-            ].rename(columns={schemas.CLAIM_SUBJECT: schemas.NODE_NAME}),
-            on=schemas.NODE_NAME,
+            ].rename(columns={schemas.CLAIM_SUBJECT: schemas.TITLE}),
+            on=schemas.TITLE,
             how="left",
         )
 
@@ -157,7 +157,7 @@ def _prepare_reports_at_level(
         merged_node_df.loc[
             :,
             [
-                schemas.NODE_NAME,
+                schemas.TITLE,
                 schemas.NODE_DEGREE,
                 schemas.NODE_DETAILS,
                 schemas.EDGE_DETAILS,
@@ -173,7 +173,7 @@ def _prepare_reports_at_level(
 
     # group all node details by community
     community_df = (
-        merged_node_df.groupby(schemas.NODE_COMMUNITY)
+        merged_node_df.groupby(schemas.COMMUNITY_ID)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )
@@ -262,7 +262,7 @@ def _at_level(level: int, df: pd.DataFrame) -> pd.DataFrame:
 
 def _antijoin_reports(df: pd.DataFrame, reports: pd.DataFrame) -> pd.DataFrame:
     """Return records in df that are not in reports."""
-    return antijoin(df, reports, schemas.NODE_COMMUNITY)
+    return antijoin(df, reports, schemas.COMMUNITY_ID)
 
 
 def _sort_and_trim_context(df: pd.DataFrame, max_tokens: int) -> pd.Series:
@@ -285,9 +285,9 @@ def _get_subcontext_df(
     """Get sub-community context for each community."""
     sub_report_df = _drop_community_level(_at_level(level, report_df))
     sub_context_df = _at_level(level, local_context_df)
-    sub_context_df = join(sub_context_df, sub_report_df, schemas.NODE_COMMUNITY)
+    sub_context_df = join(sub_context_df, sub_report_df, schemas.COMMUNITY_ID)
     sub_context_df.rename(
-        columns={schemas.NODE_COMMUNITY: schemas.SUB_COMMUNITY}, inplace=True
+        columns={schemas.COMMUNITY_ID: schemas.SUB_COMMUNITY}, inplace=True
     )
     return sub_context_df
 
@@ -302,7 +302,7 @@ def _get_community_df(
     """Get community context for each community."""
     # collect all sub communities' contexts for each community
     community_df = _drop_community_level(_at_level(level, community_hierarchy_df))
-    invalid_community_ids = select(invalid_context_df, schemas.NODE_COMMUNITY)
+    invalid_community_ids = select(invalid_context_df, schemas.COMMUNITY_ID)
     subcontext_selection = select(
         sub_context_df,
         schemas.SUB_COMMUNITY,
@@ -312,7 +312,7 @@ def _get_community_df(
     )
 
     invalid_communities = join(
-        community_df, invalid_community_ids, schemas.NODE_COMMUNITY, "inner"
+        community_df, invalid_community_ids, schemas.COMMUNITY_ID, "inner"
     )
     community_df = join(
         invalid_communities, subcontext_selection, schemas.SUB_COMMUNITY
@@ -327,7 +327,7 @@ def _get_community_df(
         axis=1,
     )
     community_df = (
-        community_df.groupby(schemas.NODE_COMMUNITY)
+        community_df.groupby(schemas.COMMUNITY_ID)
         .agg({schemas.ALL_CONTEXT: list})
         .reset_index()
     )

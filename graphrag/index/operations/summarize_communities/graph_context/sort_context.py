@@ -4,7 +4,7 @@
 
 import pandas as pd
 
-import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+import graphrag.model.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
 
@@ -12,9 +12,9 @@ def sort_context(
     local_context: list[dict],
     sub_community_reports: list[dict] | None = None,
     max_tokens: int | None = None,
-    node_name_column: str = schemas.NODE_NAME,
+    node_name_column: str = schemas.TITLE,
     node_details_column: str = schemas.NODE_DETAILS,
-    edge_id_column: str = schemas.EDGE_ID,
+    edge_id_column: str = schemas.SHORT_ID,
     edge_details_column: str = schemas.EDGE_DETAILS,
     edge_degree_column: str = schemas.EDGE_DEGREE,
     edge_source_column: str = schemas.EDGE_SOURCE,
@@ -54,7 +54,7 @@ def sort_context(
 
     # Preprocess local context
     edges = [
-        {**e, schemas.EDGE_ID: int(e[schemas.EDGE_ID])}
+        {**e, schemas.SHORT_ID: int(e[schemas.SHORT_ID])}
         for record in local_context
         for e in record.get(edge_details_column, [])
         if isinstance(e, dict)
@@ -63,16 +63,16 @@ def sort_context(
     node_details = {
         record[node_name_column]: {
             **record[node_details_column],
-            schemas.NODE_ID: int(record[node_details_column][schemas.NODE_ID]),
+            schemas.SHORT_ID: int(record[node_details_column][schemas.SHORT_ID]),
         }
         for record in local_context
     }
 
     claim_details = {
         record[node_name_column]: [
-            {**c, schemas.CLAIM_ID: int(c[schemas.CLAIM_ID])}
+            {**c, schemas.SHORT_ID: int(c[schemas.SHORT_ID])}
             for c in record.get(claim_details_column, [])
-            if isinstance(c, dict) and c.get(schemas.CLAIM_ID) is not None
+            if isinstance(c, dict) and c.get(schemas.SHORT_ID) is not None
         ]
         for record in local_context
         if isinstance(record.get(claim_details_column), list)
@@ -91,21 +91,21 @@ def sort_context(
 
         # Add source and target node details
         for node in [node_details.get(source), node_details.get(target)]:
-            if node and node[schemas.NODE_ID] not in nodes_ids:
-                nodes_ids.add(node[schemas.NODE_ID])
+            if node and node[schemas.SHORT_ID] not in nodes_ids:
+                nodes_ids.add(node[schemas.SHORT_ID])
                 sorted_nodes.append(node)
 
         # Add claims related to source and target
         for claims in [claim_details.get(source), claim_details.get(target)]:
             if claims:
                 for claim in claims:
-                    if claim[schemas.CLAIM_ID] not in claims_ids:
-                        claims_ids.add(claim[schemas.CLAIM_ID])
+                    if claim[schemas.SHORT_ID] not in claims_ids:
+                        claims_ids.add(claim[schemas.SHORT_ID])
                         sorted_claims.append(claim)
 
         # Add the edge
-        if edge[schemas.EDGE_ID] not in edge_ids:
-            edge_ids.add(edge[schemas.EDGE_ID])
+        if edge[schemas.SHORT_ID] not in edge_ids:
+            edge_ids.add(edge[schemas.SHORT_ID])
             sorted_edges.append(edge)
 
         # Generate new context string

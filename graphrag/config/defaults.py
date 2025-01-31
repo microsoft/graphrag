@@ -69,9 +69,7 @@ CHUNK_GROUP_BY_COLUMNS = ["id"]
 CHUNK_STRATEGY = ChunkStrategyType.tokens
 
 # Claim extraction
-CLAIM_DESCRIPTION = (
-    "Any claims or facts that could be relevant to information discovery."
-)
+DESCRIPTION = "Any claims or facts that could be relevant to information discovery."
 CLAIM_MAX_GLEANINGS = 1
 CLAIM_EXTRACTION_ENABLED = False
 CLAIM_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID

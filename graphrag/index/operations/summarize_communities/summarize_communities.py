@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 import pandas as pd
 
-import graphrag.index.operations.summarize_communities.community_reports_extractor.schemas as schemas
+import graphrag.model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -63,7 +63,7 @@ async def summarize_communities(
         async def run_generate(record):
             result = await _generate_report(
                 runner,
-                community_id=record[schemas.NODE_COMMUNITY],
+                community_id=record[schemas.COMMUNITY_ID],
                 community_level=record[schemas.COMMUNITY_LEVEL],
                 community_context=record[schemas.CONTEXT_STRING],
                 callbacks=callbacks,

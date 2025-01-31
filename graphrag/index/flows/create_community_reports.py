@@ -5,31 +5,13 @@
 
 import pandas as pd
 
+import graphrag.model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config import defaults
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
-)
-from graphrag.index.operations.summarize_communities.community_reports_extractor.schemas import (
-    CLAIM_DESCRIPTION,
-    CLAIM_DETAILS,
-    CLAIM_ID,
-    CLAIM_STATUS,
-    CLAIM_SUBJECT,
-    CLAIM_TYPE,
-    EDGE_DEGREE,
-    EDGE_DESCRIPTION,
-    EDGE_DETAILS,
-    EDGE_ID,
-    EDGE_SOURCE,
-    EDGE_TARGET,
-    NODE_DEGREE,
-    NODE_DESCRIPTION,
-    NODE_DETAILS,
-    NODE_ID,
-    NODE_NAME,
 )
 from graphrag.index.operations.summarize_communities.explode_communities import (
     explode_communities,
@@ -93,38 +75,58 @@ async def create_community_reports(
 
 def _prep_nodes(input: pd.DataFrame) -> pd.DataFrame:
     """Prepare nodes by filtering, filling missing descriptions, and creating NODE_DETAILS."""
-    # Fill missing values in NODE_DESCRIPTION
-    input.loc[:, NODE_DESCRIPTION] = input.loc[:, NODE_DESCRIPTION].fillna(
+    # Fill missing values in DESCRIPTION
+    input.loc[:, schemas.DESCRIPTION] = input.loc[:, schemas.DESCRIPTION].fillna(
         "No Description"
     )
 
     # Create NODE_DETAILS column
-    input.loc[:, NODE_DETAILS] = input.loc[
-        :, [NODE_ID, NODE_NAME, NODE_DESCRIPTION, NODE_DEGREE]
+    input.loc[:, schemas.NODE_DETAILS] = input.loc[
+        :,
+        [
+            schemas.SHORT_ID,
+            schemas.TITLE,
+            schemas.DESCRIPTION,
+            schemas.NODE_DEGREE,
+        ],
     ].to_dict(orient="records")
 
     return input
 
 
 def _prep_edges(input: pd.DataFrame) -> pd.DataFrame:
-    # Fill missing NODE_DESCRIPTION
-    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+    # Fill missing DESCRIPTION
+    input.fillna(value={schemas.DESCRIPTION: "No Description"}, inplace=True)
 
     # Create EDGE_DETAILS column
-    input.loc[:, EDGE_DETAILS] = input.loc[
-        :, [EDGE_ID, EDGE_SOURCE, EDGE_TARGET, EDGE_DESCRIPTION, EDGE_DEGREE]
+    input.loc[:, schemas.EDGE_DETAILS] = input.loc[
+        :,
+        [
+            schemas.SHORT_ID,
+            schemas.EDGE_SOURCE,
+            schemas.EDGE_TARGET,
+            schemas.DESCRIPTION,
+            schemas.EDGE_DEGREE,
+        ],
     ].to_dict(orient="records")
 
     return input
 
 
 def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
-    # Fill missing NODE_DESCRIPTION
-    input.fillna(value={NODE_DESCRIPTION: "No Description"}, inplace=True)
+    # Fill missing DESCRIPTION
+    input.fillna(value={schemas.DESCRIPTION: "No Description"}, inplace=True)
 
     # Create CLAIM_DETAILS column
-    input.loc[:, CLAIM_DETAILS] = input.loc[
-        :, [CLAIM_ID, CLAIM_SUBJECT, CLAIM_TYPE, CLAIM_STATUS, CLAIM_DESCRIPTION]
+    input.loc[:, schemas.CLAIM_DETAILS] = input.loc[
+        :,
+        [
+            schemas.SHORT_ID,
+            schemas.CLAIM_SUBJECT,
+            schemas.CLAIM_TYPE,
+            schemas.CLAIM_STATUS,
+            schemas.DESCRIPTION,
+        ],
     ].to_dict(orient="records")
 
     return input
