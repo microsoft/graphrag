@@ -24,7 +24,7 @@ from graphrag.index.operations.summarize_communities.text_unit_context.context_b
     build_level_context,
     build_local_context,
 )
-from graphrag.index.operations.summarize_communities_text.prompts import (
+from graphrag.prompts.index.community_report_text_units import (
     COMMUNITY_REPORT_PROMPT,
 )
 
