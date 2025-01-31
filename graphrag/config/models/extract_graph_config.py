@@ -19,11 +19,11 @@ class EntityExtractionConfig(BaseModel):
     )
     entity_types: list[str] = Field(
         description="The entity extraction entity types to use.",
-        default=defs.ENTITY_EXTRACTION_ENTITY_TYPES,
+        default=defs.EXTRACT_GRAPH_ENTITY_TYPES,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
-        default=defs.ENTITY_EXTRACTION_MAX_GLEANINGS,
+        default=defs.EXTRACT_GRAPH_MAX_GLEANINGS,
     )
     strategy: dict | None = Field(
         description="Override the default entity extraction strategy", default=None
@@ -33,14 +33,14 @@ class EntityExtractionConfig(BaseModel):
     )
     model_id: str = Field(
         description="The model ID to use for text embeddings.",
-        default=defs.ENTITY_EXTRACTION_MODEL_ID,
+        default=defs.EXTRACT_GRAPH_MODEL_ID,
     )
 
     def resolved_strategy(
         self, root_dir: str, model_config: LanguageModelConfig
     ) -> dict:
         """Get the resolved entity extraction strategy."""
-        from graphrag.index.operations.extract_entities import (
+        from graphrag.index.operations.extract_graph.typing import (
             ExtractEntityStrategyType,
         )
 

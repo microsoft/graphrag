@@ -17,7 +17,7 @@ from fnllm import ChatLLM
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
-from graphrag.prompts.index.entity_extraction import (
+from graphrag.prompts.index.extract_graph import (
     CONTINUE_PROMPT,
     GRAPH_EXTRACTION_PROMPT,
     LOOP_PROMPT,
@@ -86,7 +86,7 @@ class GraphExtractor:
         self._max_gleanings = (
             max_gleanings
             if max_gleanings is not None
-            else defs.ENTITY_EXTRACTION_MAX_GLEANINGS
+            else defs.EXTRACT_GRAPH_MAX_GLEANINGS
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 

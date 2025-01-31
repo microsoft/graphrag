@@ -3,7 +3,7 @@
 
 """A file containing prompts definition."""
 
-CLAIM_EXTRACTION_PROMPT = """
+EXTRACT_CLAIMS_PROMPT = """
 -Target activity-
 You are an intelligent assistant that helps a human analyst to analyze claims against certain entities presented in a text document.
 

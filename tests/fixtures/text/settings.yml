@@ -34,7 +34,7 @@ vector_store:
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     container_name: "simple_text_ci"
 
-claim_extraction:
+extract_claims:
   enabled: true
 
 community_reports:

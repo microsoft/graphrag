@@ -12,7 +12,7 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.index.bootstrap import bootstrap
-from graphrag.index.operations.extract_entities.typing import (
+from graphrag.index.operations.extract_graph.typing import (
     Document,
     EntityExtractStrategy,
     ExtractEntityStrategyType,
@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event"]
 
 
-async def extract_entities(
+async def extract_graph(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
@@ -42,7 +42,7 @@ async def extract_entities(
     ## Usage
     ```yaml
     args:
-        column: the_document_text_column_to_extract_entities_from
+        column: the_document_text_column_to_extract_graph_from
         id_column: the_column_with_the_unique_id_for_each_row
         to: the_column_to_output_the_entities_to
         strategy: <strategy_config>, see strategies section below
@@ -65,7 +65,7 @@ async def extract_entities(
     ```yml
     strategy:
         type: graph_intelligence
-        extraction_prompt: !include ./entity_extraction_prompt.txt # Optional, the prompt to use for extraction
+        extraction_prompt: !include ./extract_graph_prompt.txt # Optional, the prompt to use for extraction
         completion_delimiter: "<|COMPLETE|>" # Optional, the delimiter to use for the LLM to mark completion
         tuple_delimiter: "<|>" # Optional, the delimiter to use for the LLM to mark a tuple
         record_delimiter: "##" # Optional, the delimiter to use for the LLM to mark a record
@@ -143,7 +143,7 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
     """Load strategy method definition."""
     match strategy_type:
         case ExtractEntityStrategyType.graph_intelligence:
-            from graphrag.index.operations.extract_entities.graph_intelligence_strategy import (
+            from graphrag.index.operations.extract_graph.graph_intelligence_strategy import (
                 run_graph_intelligence,
             )
 
@@ -152,7 +152,7 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
         case ExtractEntityStrategyType.nltk:
             bootstrap()
             # dynamically import nltk strategy to avoid dependency if not used
-            from graphrag.index.operations.extract_entities.nltk_strategy import (
+            from graphrag.index.operations.extract_graph.nltk_strategy import (
                 run as run_nltk,
             )
 

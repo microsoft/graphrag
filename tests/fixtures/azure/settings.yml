@@ -1,4 +1,4 @@
-claim_extraction:
+extract_claims:
   enabled: true
 
 vector_store:

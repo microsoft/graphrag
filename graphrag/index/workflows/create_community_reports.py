@@ -30,7 +30,7 @@ async def run_workflow(
     entities = await load_table_from_storage("entities", context.storage)
     communities = await load_table_from_storage("communities", context.storage)
     claims = None
-    if config.claim_extraction.enabled and await storage_has_table(
+    if config.extract_claims.enabled and await storage_has_table(
         "covariates", context.storage
     ):
         claims = await load_table_from_storage("covariates", context.storage)

@@ -9,7 +9,7 @@ from nltk.corpus import words
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.operations.extract_entities.typing import (
+from graphrag.index.operations.extract_graph.typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,

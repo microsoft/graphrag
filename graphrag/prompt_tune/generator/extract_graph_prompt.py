@@ -7,7 +7,7 @@ from pathlib import Path
 
 import graphrag.config.defaults as defs
 from graphrag.index.utils.tokens import num_tokens_from_string
-from graphrag.prompt_tune.template.entity_extraction import (
+from graphrag.prompt_tune.template.extract_graph import (
     EXAMPLE_EXTRACTION_TEMPLATE,
     GRAPH_EXTRACTION_JSON_PROMPT,
     GRAPH_EXTRACTION_PROMPT,
@@ -15,10 +15,10 @@ from graphrag.prompt_tune.template.entity_extraction import (
     UNTYPED_GRAPH_EXTRACTION_PROMPT,
 )
 
-ENTITY_EXTRACTION_FILENAME = "entity_extraction.txt"
+EXTRACT_GRAPH_FILENAME = "extract_graph.txt"
 
 
-def create_entity_extraction_prompt(
+def create_extract_graph_prompt(
     entity_types: str | list[str] | None,
     docs: list[str],
     examples: list[str],
@@ -101,7 +101,7 @@ def create_entity_extraction_prompt(
     if output_path:
         output_path.mkdir(parents=True, exist_ok=True)
 
-        output_path = output_path / ENTITY_EXTRACTION_FILENAME
+        output_path = output_path / EXTRACT_GRAPH_FILENAME
         # Write file to output path
         with output_path.open("wb") as file:
             file.write(prompt.encode(encoding="utf-8", errors="strict"))

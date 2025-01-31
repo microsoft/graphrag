@@ -45,14 +45,14 @@ async def test_extract_graph():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    claim_extraction_llm_settings = config.get_language_model_config(
-        config.entity_extraction.model_id
+    extract_claims_llm_settings = config.get_language_model_config(
+        config.extract_graph.model_id
     ).model_dump()
-    claim_extraction_llm_settings["type"] = LLMType.StaticResponse
-    claim_extraction_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
-    config.entity_extraction.strategy = {
+    extract_claims_llm_settings["type"] = LLMType.StaticResponse
+    extract_claims_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
+    config.extract_graph.strategy = {
         "type": "graph_intelligence",
-        "llm": claim_extraction_llm_settings,
+        "llm": extract_claims_llm_settings,
     }
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id

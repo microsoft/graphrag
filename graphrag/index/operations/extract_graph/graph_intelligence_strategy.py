@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing run_graph_intelligence,  run_extract_entities and _create_text_splitter methods to run graph intelligence."""
+"""A module containing run_graph_intelligence,  run_extract_graph and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
 from fnllm import ChatLLM
@@ -11,8 +11,8 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm
-from graphrag.index.operations.extract_entities.graph_extractor import GraphExtractor
-from graphrag.index.operations.extract_entities.typing import (
+from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
+from graphrag.index.operations.extract_graph.typing import (
     Document,
     EntityExtractionResult,
     EntityTypes,
@@ -30,15 +30,15 @@ async def run_graph_intelligence(
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
     llm = load_llm(
-        "entity_extraction",
+        "extract_graph",
         llm_config,
         callbacks=callbacks,
         cache=cache,
     )
-    return await run_extract_entities(llm, docs, entity_types, callbacks, args)
+    return await run_extract_graph(llm, docs, entity_types, callbacks, args)
 
 
-async def run_extract_entities(
+async def run_extract_graph(
     llm: ChatLLM,
     docs: list[Document],
     entity_types: EntityTypes,
@@ -51,7 +51,7 @@ async def run_extract_entities(
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
-    max_gleanings = args.get("max_gleanings", defs.ENTITY_EXTRACTION_MAX_GLEANINGS)
+    max_gleanings = args.get("max_gleanings", defs.EXTRACT_GRAPH_MAX_GLEANINGS)
 
     extractor = GraphExtractor(
         llm_invoker=llm,

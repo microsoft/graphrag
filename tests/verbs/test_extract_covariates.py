@@ -35,11 +35,11 @@ async def test_extract_covariates():
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     llm_settings = config.get_language_model_config(
-        config.claim_extraction.model_id
+        config.extract_claims.model_id
     ).model_dump()
     llm_settings["type"] = LLMType.StaticResponse
     llm_settings["responses"] = MOCK_LLM_RESPONSES
-    config.claim_extraction.strategy = {
+    config.extract_claims.strategy = {
         "type": "graph_intelligence",
         "llm": llm_settings,
         "claim_description": "description",

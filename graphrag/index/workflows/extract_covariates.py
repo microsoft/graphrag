@@ -24,15 +24,15 @@ async def run_workflow(
     """All the steps to extract and format covariates."""
     text_units = await load_table_from_storage("text_units", context.storage)
 
-    claim_extraction_llm_settings = config.get_language_model_config(
-        config.claim_extraction.model_id
+    extract_claims_llm_settings = config.get_language_model_config(
+        config.extract_claims.model_id
     )
-    extraction_strategy = config.claim_extraction.resolved_strategy(
-        config.root_dir, claim_extraction_llm_settings
+    extraction_strategy = config.extract_claims.resolved_strategy(
+        config.root_dir, extract_claims_llm_settings
     )
 
-    async_mode = claim_extraction_llm_settings.async_mode
-    num_threads = claim_extraction_llm_settings.parallelization_num_threads
+    async_mode = extract_claims_llm_settings.async_mode
+    num_threads = extract_claims_llm_settings.parallelization_num_threads
 
     output = await extract_covariates(
         text_units,

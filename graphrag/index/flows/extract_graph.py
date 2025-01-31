@@ -11,7 +11,9 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
-from graphrag.index.operations.extract_entities import extract_entities
+from graphrag.index.operations.extract_graph.extract_graph import (
+    extract_graph as extractor,
+)
 from graphrag.index.operations.finalize_entities import finalize_entities
 from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.summarize_descriptions import (
@@ -34,7 +36,7 @@ async def extract_graph(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
-    extracted_entities, extracted_relationships = await extract_entities(
+    extracted_entities, extracted_relationships = await extractor(
         text_units=text_units,
         callbacks=callbacks,
         cache=cache,

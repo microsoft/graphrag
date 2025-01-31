@@ -32,7 +32,7 @@ async def run_workflow(
         "relationships", context.storage
     )
     final_covariates = None
-    if config.claim_extraction.enabled and await storage_has_table(
+    if config.extract_claims.enabled and await storage_has_table(
         "covariates", context.storage
     ):
         final_covariates = await load_table_from_storage("covariates", context.storage)

@@ -16,7 +16,7 @@ class ClaimExtractionConfig(BaseModel):
 
     enabled: bool = Field(
         description="Whether claim extraction is enabled.",
-        default=defs.CLAIM_EXTRACTION_ENABLED,
+        default=defs.EXTRACT_CLAIMS_ENABLED,
     )
     prompt: str | None = Field(
         description="The claim extraction prompt to use.", default=None
@@ -37,7 +37,7 @@ class ClaimExtractionConfig(BaseModel):
     )
     model_id: str = Field(
         description="The model ID to use for claim extraction.",
-        default=defs.CLAIM_EXTRACTION_MODEL_ID,
+        default=defs.EXTRACT_CLAIMS_MODEL_ID,
     )
 
     def resolved_strategy(

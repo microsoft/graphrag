@@ -30,7 +30,7 @@ async def test_create_final_text_units():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    config.claim_extraction.enabled = True
+    config.extract_claims.enabled = True
 
     await run_workflow(
         config,
@@ -56,7 +56,7 @@ async def test_create_final_text_units_no_covariates():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    config.claim_extraction.enabled = False
+    config.extract_claims.enabled = False
 
     await run_workflow(
         config,
