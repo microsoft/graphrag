@@ -94,12 +94,9 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "encoding": defs.INPUT_FILE_ENCODING,
         "file_pattern": defs.INPUT_TEXT_PATTERN,
         "file_filter": None,
-        "source_column": None,
-        "timestamp_column": None,
-        "timestamp_format": None,
         "text_column": defs.INPUT_TEXT_COLUMN,
         "title_column": None,
-        "document_attribute_columns": [],
+        "metadata": None,
     },
     "embed_graph": {
         "enabled": defs.NODE2VEC_ENABLED,
@@ -344,12 +341,9 @@ def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:
     assert actual.encoding == expected.encoding
     assert actual.file_pattern == expected.file_pattern
     assert actual.file_filter == expected.file_filter
-    assert actual.source_column == expected.source_column
-    assert actual.timestamp_column == expected.timestamp_column
-    assert actual.timestamp_format == expected.timestamp_format
     assert actual.text_column == expected.text_column
     assert actual.title_column == expected.title_column
-    assert actual.document_attribute_columns == expected.document_attribute_columns
+    assert actual.metadata == expected.metadata
 
 
 def assert_embed_graph_configs(
