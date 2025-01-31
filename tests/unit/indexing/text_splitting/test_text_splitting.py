@@ -161,6 +161,7 @@ def test_split_multiple_texts_on_tokens():
     split_multiple_texts_on_tokens(texts, tokenizer, tick=mock_tick)
     mock_tick.assert_called()
 
+
 def test_split_single_text_on_tokens_no_overlap():
     text = "This is a test text, meaning to be taken seriously by this test only."
     enc = tiktoken.get_encoding("cl100k_base")
