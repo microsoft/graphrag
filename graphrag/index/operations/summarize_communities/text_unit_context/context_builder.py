@@ -101,24 +101,26 @@ def build_level_context(
         level_context_df = local_context_df[
             local_context_df[schemas.COMMUNITY_LEVEL] == level
         ]
+
         valid_context_df = cast(
             "pd.DataFrame",
-            level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] == 0],
+            level_context_df[~level_context_df[schemas.CONTEXT_EXCEED_FLAG]],
         )
         invalid_context_df = cast(
             "pd.DataFrame",
-            level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] == 1],
+            level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG]],
         )
+
         if invalid_context_df.empty:
             return valid_context_df
 
-        invalid_context_df[schemas.CONTEXT_STRING] = invalid_context_df[
+        invalid_context_df.loc[:, [schemas.CONTEXT_STRING]] = invalid_context_df[
             schemas.ALL_CONTEXT
         ].apply(lambda x: sort_context(x, max_tokens=max_tokens))
-        invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df[
+        invalid_context_df.loc[:, [schemas.CONTEXT_SIZE]] = invalid_context_df[
             schemas.CONTEXT_STRING
         ].apply(lambda x: num_tokens(x))
-        invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
+        invalid_context_df.loc[:, [schemas.CONTEXT_EXCEED_FLAG]] = False
 
         return pd.concat([valid_context_df, invalid_context_df])
 
@@ -138,11 +140,11 @@ def build_level_context(
     )
     valid_context_df = cast(
         "pd.DataFrame",
-        level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] == 0],
+        level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] is False],
     )
     invalid_context_df = cast(
         "pd.DataFrame",
-        level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] == 1],
+        level_context_df[level_context_df[schemas.CONTEXT_EXCEED_FLAG] is True],
     )
 
     if invalid_context_df.empty:
@@ -202,7 +204,7 @@ def build_level_context(
     community_df[schemas.CONTEXT_SIZE] = community_df[schemas.CONTEXT_STRING].apply(
         lambda x: num_tokens(x)
     )
-    community_df[schemas.CONTEXT_EXCEED_FLAG] = 0
+    community_df[schemas.CONTEXT_EXCEED_FLAG] = False
     community_df[schemas.COMMUNITY_LEVEL] = level
 
     # handle any remaining invalid records that can't be subsituted with sub-community reports
@@ -222,7 +224,7 @@ def build_level_context(
     remaining_df[schemas.CONTEXT_SIZE] = cast(
         "pd.DataFrame", remaining_df[schemas.CONTEXT_STRING]
     ).apply(lambda x: num_tokens(x))
-    remaining_df[schemas.CONTEXT_EXCEED_FLAG] = 0
+    remaining_df[schemas.CONTEXT_EXCEED_FLAG] = False
 
     return cast(
         "pd.DataFrame", pd.concat([valid_context_df, community_df, remaining_df])

@@ -224,7 +224,7 @@ def build_level_context(
         invalid_context_df[schemas.CONTEXT_SIZE] = invalid_context_df.loc[
             :, schemas.CONTEXT_STRING
         ].map(num_tokens)
-        invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = 0
+        invalid_context_df[schemas.CONTEXT_EXCEED_FLAG] = False
         return union(valid_context_df, invalid_context_df)
 
     level_context_df = _antijoin_reports(level_context_df, report_df)
@@ -246,7 +246,7 @@ def build_level_context(
     result = union(valid_context_df, community_df, remaining_df)
     result[schemas.CONTEXT_SIZE] = result.loc[:, schemas.CONTEXT_STRING].map(num_tokens)
 
-    result[schemas.CONTEXT_EXCEED_FLAG] = 0
+    result[schemas.CONTEXT_EXCEED_FLAG] = False
     return result
 
 

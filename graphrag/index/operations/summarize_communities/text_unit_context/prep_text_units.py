@@ -30,7 +30,7 @@ def prep_text_units(
     ]
     text_unit_degrees = (
         node_to_text_ids.groupby([schemas.COMMUNITY_ID, schemas.ID])
-        .agg({schemas.NODE_DEGREE: sum})
+        .agg({schemas.NODE_DEGREE: "sum"})
         .reset_index()
     )
     result_df = text_unit_df.merge(text_unit_degrees, on=schemas.ID, how="left")
