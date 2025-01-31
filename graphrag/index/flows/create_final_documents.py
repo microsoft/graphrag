@@ -57,7 +57,7 @@ def create_final_documents(
         # Drop the original metadata columns after collapsing them
         rejoined.drop(columns=metadata, inplace=True)
 
-    # set the final column order, but adjust for attributes
+    # set the final column order, but adjust for metadata
     core_columns = [
         "id",
         "human_readable_id",
