@@ -5,7 +5,7 @@
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
-from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
+from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
     FindingModel,
 )
