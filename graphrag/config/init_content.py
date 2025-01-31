@@ -48,7 +48,7 @@ vector_store:
     container_name: {defs.VECTOR_STORE_CONTAINER_NAME}
     overwrite: {defs.VECTOR_STORE_OVERWRITE}
 
-embeddings:
+embed_text:
   model_id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
   vector_store_id: {defs.VECTOR_STORE_DEFAULT_ID}
 
@@ -130,7 +130,6 @@ umap:
 snapshots:
   graphml: false
   embeddings: false
-  transient: false
 
 ### Query settings ###
 ## The prompt locations are required here, but each search method has a number of optional knobs that can be tuned.

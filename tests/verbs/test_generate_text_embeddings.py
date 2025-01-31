@@ -31,14 +31,14 @@ async def test_generate_text_embeddings():
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     llm_settings = config.get_language_model_config(
-        config.embeddings.model_id
+        config.embed_text.model_id
     ).model_dump()
 
-    config.embeddings.strategy = {
+    config.embed_text.strategy = {
         "type": "mock",
         "llm": llm_settings,
     }
-    config.embeddings.target = TextEmbeddingTarget.all
+    config.embed_text.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
 
     await run_workflow(

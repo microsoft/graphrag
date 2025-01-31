@@ -37,22 +37,10 @@ vector_store:
 claim_extraction:
   enabled: true
 
-embeddings:
-  model_id: "default_embedding_model"
-
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000
   max_input_length: 8000
-
-
-storage:
-  type: file
-  base_dir: "output"
-
-reporting:
-  type: file
-  base_dir: "logs"
 
 snapshots:
   embeddings: True

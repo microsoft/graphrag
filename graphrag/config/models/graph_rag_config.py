@@ -151,11 +151,11 @@ class GraphRagConfig(BaseModel):
     )
     """Graph Embedding configuration."""
 
-    embeddings: TextEmbeddingConfig = Field(
-        description="The embeddings LLM configuration to use.",
+    embed_text: TextEmbeddingConfig = Field(
+        description="Text embedding configuration.",
         default=TextEmbeddingConfig(),
     )
-    """The embeddings LLM configuration to use."""
+    """Text embedding configuration."""
 
     chunks: ChunkingConfig = Field(
         description="The chunking configuration to use.",

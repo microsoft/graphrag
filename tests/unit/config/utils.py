@@ -111,7 +111,7 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "random_seed": defs.NODE2VEC_RANDOM_SEED,
         "use_lcc": defs.USE_LCC,
     },
-    "embeddings": {
+    "embed_text": {
         "batch_size": defs.EMBEDDING_BATCH_SIZE,
         "batch_max_tokens": defs.EMBEDDING_BATCH_MAX_TOKENS,
         "target": defs.EMBEDDING_TARGET,
@@ -560,7 +560,7 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)
     assert_embed_graph_configs(actual.embed_graph, expected.embed_graph)
-    assert_text_embedding_configs(actual.embeddings, expected.embeddings)
+    assert_text_embedding_configs(actual.embed_text, expected.embed_text)
     assert_chunking_configs(actual.chunks, expected.chunks)
     assert_snapshots_configs(actual.snapshots, expected.snapshots)
     assert_entity_extraction_configs(
