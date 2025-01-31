@@ -52,7 +52,7 @@ def create_final_documents(
         rejoined[metadata] = rejoined[metadata].astype(str)
 
         # Collapse the metadata columns into a single JSON object column
-        rejoined["attributes"] = rejoined[metadata].to_dict(orient="records")
+        rejoined["metadata"] = rejoined[metadata].to_dict(orient="records")
 
         # Drop the original metadata columns after collapsing them
         rejoined.drop(columns=metadata, inplace=True)
