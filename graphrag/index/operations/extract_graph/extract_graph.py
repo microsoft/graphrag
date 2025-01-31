@@ -11,7 +11,6 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.extract_graph.typing import (
     Document,
     EntityExtractStrategy,
@@ -85,13 +84,6 @@ async def extract_graph(
             proxy: !ENV ${GRAPHRAG_OPENAI_PROXY} # The proxy to use for azure
 
     ```
-
-    ### nltk
-    This strategy uses the [nltk] library to extract entities from a document. In particular it uses a nltk to extract entities from a piece of text. The strategy config is as follows:
-    ```yml
-    strategy:
-        type: nltk
-    ```
     """
     log.debug("entity_extract strategy=%s", strategy)
     if entity_types is None:
@@ -149,14 +141,6 @@ def _load_strategy(strategy_type: ExtractEntityStrategyType) -> EntityExtractStr
 
             return run_graph_intelligence
 
-        case ExtractEntityStrategyType.nltk:
-            bootstrap()
-            # dynamically import nltk strategy to avoid dependency if not used
-            from graphrag.index.operations.extract_graph.nltk_strategy import (
-                run as run_nltk,
-            )
-
-            return run_nltk
         case _:
             msg = f"Unknown strategy: {strategy_type}"
             raise ValueError(msg)
