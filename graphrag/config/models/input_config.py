@@ -43,6 +43,6 @@ class InputConfig(BaseModel):
     text_column: str = Field(
         description="The input text column to use.", default=defs.INPUT_TEXT_COLUMN
     )
-    metadata: list[str] = Field(
-        description="The document metadata to use with each chunk.", default=[]
+    metadata: list[str] | None = Field(
+        description="The document metadata to use with each chunk.", default=None
     )

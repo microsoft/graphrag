@@ -146,12 +146,6 @@ async def _text_embed_with_vector_store(
     if embed_column not in input.columns:
         msg = f"Column {embed_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)
-    title = embed_column
-    if title not in input.columns:
-        msg = (
-            f"Column {title} not found in input dataframe with columns {input.columns}"
-        )
-        raise ValueError(msg)
     if id_column not in input.columns:
         msg = f"Column {id_column} not found in input dataframe with columns {input.columns}"
         raise ValueError(msg)

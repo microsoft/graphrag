@@ -44,8 +44,7 @@ async def test_create_final_documents_with_attribute_columns():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
-    config.input.metadata = ["title"]
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
 
     await run_workflow(
         config,
@@ -59,8 +58,10 @@ async def test_create_final_documents_with_attribute_columns():
     # our test dataframe does not have attributes, so we'll assert without it
     # and separately confirm it is in the output
     compare_outputs(
-        actual, expected, columns=["id", "human_readable_id", "text", "text_unit_ids"]
+        actual,
+        expected,
+        columns=["id", "human_readable_id", "text", "text_unit_ids", "title"],
     )
     assert len(actual.columns) == 5
-    assert "title" not in actual.columns
-    assert "attributes" in actual.columns
+    assert "title" in actual.columns
+    assert "attributes" not in actual.columns

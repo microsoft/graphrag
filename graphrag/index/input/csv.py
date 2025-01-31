@@ -50,6 +50,19 @@ async def load(
                 )
             else:
                 data["text"] = data.apply(lambda x: x[config.text_column], axis=1)
+
+        if config.metadata is not None:
+            for metadata in config.metadata:
+                if metadata not in data.columns:
+                    log.warning(
+                        "metadata column %s not found in csv file %s",
+                        metadata,
+                        path,
+                    )
+                else:
+                    data[metadata] = data.apply(
+                        lambda x, metadata=metadata: x[metadata], axis=1
+                    )
         return data
 
     file_pattern = (

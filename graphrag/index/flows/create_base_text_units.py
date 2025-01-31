@@ -59,7 +59,7 @@ def create_base_text_units(
         encoding_model=encoding_model,
         strategy=strategy,
         callbacks=callbacks,
-        metadata=metadata or [],
+        metadata=metadata,
         line_delimiter=line_delimiter,
     )
 

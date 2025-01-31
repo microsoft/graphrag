@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 from collections.abc import Iterator
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
@@ -120,7 +121,7 @@ class FilePipelineStorage(PipelineStorage):
 
     def get_creation_date(self, key: str) -> str:
         """Get the creation date of a file."""
-        return str(Path(join_path(self._root_dir, key)).stat().st_ctime)
+        return str(get_creation_time_with_local_tz(self._root_dir, key))
 
     async def has(self, key: str) -> bool:
         """Has method definition."""
@@ -170,3 +171,16 @@ def _create_progress_status(
         completed_items=num_loaded + num_filtered,
         description=f"{num_loaded} files loaded ({num_filtered} filtered)",
     )
+
+
+def get_creation_time_with_local_tz(root_dir, key):
+    """Get the creation time of a file with the local timezone."""
+    file_path = Path(join_path(root_dir, key))
+
+    creation_timestamp = file_path.stat().st_ctime
+
+    creation_time_utc = datetime.fromtimestamp(creation_timestamp, tz=timezone.utc)
+
+    creation_time_local = creation_time_utc.astimezone()
+
+    return creation_time_local.strftime("%Y-%m-%d %H:%M:%S %Z")

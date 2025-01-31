@@ -27,8 +27,9 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
+    metadata = config.input.metadata
     input = config.input
-    output = create_final_documents(documents, text_units)
+    output = create_final_documents(documents, text_units, metadata)
 
     await write_table_to_storage(output, workflow_name, context.storage)
 

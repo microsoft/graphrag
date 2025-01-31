@@ -9,6 +9,7 @@ import pandas as pd
 def create_final_documents(
     documents: pd.DataFrame,
     text_units: pd.DataFrame,
+    metadata: list[str] | None,
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     exploded = (
@@ -53,6 +54,9 @@ def create_final_documents(
         "text",
         "text_unit_ids",
     ]
+    if metadata:
+        core_columns.extend(metadata)
+
     final_columns = [column for column in core_columns if column in rejoined.columns]
 
-    return rejoined.loc[:, final_columns]
+    return rejoined.loc[:, list(set(final_columns))]

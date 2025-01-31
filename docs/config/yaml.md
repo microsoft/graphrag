@@ -93,7 +93,7 @@ This is the base LLM configuration section. Other steps may override this config
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
 - `file_filter` **dict** - Key/value pairs to filter. Default is None.
 - `text_column` **str** - (CSV Mode Only) The text column name.
-- `metadata` **list[str]** - (CSV Mode Only) The additional document attributes to include.
+- `metadata` **list[str]** - The additional document attributes to include when chunking.
 
 ### chunks
 
