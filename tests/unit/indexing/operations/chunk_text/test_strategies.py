@@ -4,11 +4,15 @@
 from unittest.mock import Mock, patch
 
 from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.index.bootstrap import bootstrap
 from graphrag.index.operations.chunk_text.strategies import run_sentences, run_tokens
 from graphrag.index.operations.chunk_text.typing import TextChunk
 
 
 class TestRunSentences:
+    def setup_method(self, method):
+        bootstrap()
+
     def test_basic_functionality(self):
         """Test basic sentence splitting without metadata"""
         input = ["This is a test. Another sentence."]
