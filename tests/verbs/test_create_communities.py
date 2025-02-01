@@ -5,7 +5,6 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.index.workflows.create_communities import (
     run_workflow,
-    workflow_name,
 )
 from graphrag.utils.storage import load_table_from_storage
 
@@ -18,13 +17,12 @@ from .util import (
 
 
 async def test_create_communities():
-    expected = load_test_table(workflow_name)
+    expected = load_test_table("communities")
 
     context = await create_test_context(
         storage=[
             "entities",
             "relationships",
-            "communities",
         ],
     )
 
@@ -36,13 +34,11 @@ async def test_create_communities():
         NoopWorkflowCallbacks(),
     )
 
-    actual = await load_table_from_storage(workflow_name, context.storage)
+    actual = await load_table_from_storage("communities", context.storage)
 
     assert "period" in expected.columns
-    assert "id" in expected.columns
     columns = list(expected.columns.values)
     columns.remove("period")
-    columns.remove("id")
     compare_outputs(
         actual,
         expected,

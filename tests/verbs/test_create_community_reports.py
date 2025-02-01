@@ -11,7 +11,6 @@ from graphrag.index.operations.summarize_communities.community_reports_extractor
 )
 from graphrag.index.workflows.create_community_reports import (
     run_workflow,
-    workflow_name,
 )
 from graphrag.utils.storage import load_table_from_storage
 
@@ -41,7 +40,7 @@ MOCK_RESPONSES = [
 
 
 async def test_create_community_reports():
-    expected = load_test_table(workflow_name)
+    expected = load_test_table("community_reports")
 
     context = await create_test_context(
         storage=[
@@ -70,7 +69,7 @@ async def test_create_community_reports():
         NoopWorkflowCallbacks(),
     )
 
-    actual = await load_table_from_storage(workflow_name, context.storage)
+    actual = await load_table_from_storage("community_reports", context.storage)
 
     assert len(actual.columns) == len(expected.columns)
 

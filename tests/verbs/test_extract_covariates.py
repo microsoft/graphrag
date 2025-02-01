@@ -27,7 +27,7 @@ MOCK_LLM_RESPONSES = [
 
 async def test_extract_covariates():
     input = load_test_table("text_units")
-    expected = load_test_table(workflow_name)
+    expected = load_test_table("covariates")
 
     context = await create_test_context(
         storage=["text_units"],
@@ -51,7 +51,7 @@ async def test_extract_covariates():
         NoopWorkflowCallbacks(),
     )
 
-    actual = await load_table_from_storage(workflow_name, context.storage)
+    actual = await load_table_from_storage("covariates", context.storage)
 
     assert len(actual.columns) == len(expected.columns)
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
