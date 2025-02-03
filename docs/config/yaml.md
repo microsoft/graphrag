@@ -92,9 +92,12 @@ This is the base LLM configuration section. Other steps may override this config
 - `file_encoding` **str** - The encoding of the input file. Default is `utf-8`
 - `file_pattern` **str** - A regex to match input files. Default is `.*\.csv$` if in csv mode and `.*\.txt$` if in text mode.
 - `file_filter` **dict** - Key/value pairs to filter. Default is None.
+- `source_column` **str** - (CSV Mode Only) The source column name.
+- `timestamp_column` **str** - (CSV Mode Only) The timestamp column name.
+- `timestamp_format` **str** - (CSV Mode Only) The source format.
 - `text_column` **str** - (CSV Mode Only) The text column name.
 - `title_column` **str** - (CSV Mode Only) The title column name.
-- `metadata` **list[str]** - (CSV Mode Only) The additional document attributes to include in a new metadata column.
+- `document_attribute_columns` **list[str]** - (CSV Mode Only) The additional document attributes to include.
 
 ### chunks
 
