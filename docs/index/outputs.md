@@ -67,7 +67,7 @@ List of document content after import.
 | title         | str   | Filename, unless otherwise configured during CSV import. |
 | text          | str   | Full text of the document. |
 | text_unit_ids | str[] | List of text units (chunks) that were parsed from the document. |
-| attributes    | dict  | (optional) If specified during CSV import, this is a dict of attributes for the document. |
+| metadata      | dict  | (optional) If specified during CSV import, this is a dict of metadata for the document. |
 
 ## create_final_entities
 List of all entities found in the data by the LM.
