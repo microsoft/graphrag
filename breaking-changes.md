@@ -7,14 +7,14 @@ There are five surface areas that may be impacted on any given release. They are
 - [CLI](https://microsoft.github.io/graphrag/cli/) - The CLI is the interface most project consumers are using. **Changes to the CLI will conform to standard semver.**
 - [API](https://github.com/microsoft/graphrag/tree/main/graphrag/api) - The API layer is the primary interface we expect developers to use if they are consuming the project as a library in their own codebases. **Changes to the API layer modules will conform to standard semver.**
 - Internals - Any code modules behind the CLI and API layers are considered "internal" and may change at any time without conforming to strict semver. This is intended to give the research team high flexibility to change our underlying implementation rapidly. We are not enforcing access via tightly controlled `__init__.py` files, so please understand that if you utilize modules other than the index or query API, they may break between releases in a non-semver-compliant manner.
-- [settings.yml](https://microsoft.github.io/graphrag/config/yaml/) - The settings.yml file may have changes made to it as we adjust configurability. **Changes that affect the settings.yml will result in a minor version bump**. `graphrag init` will always emit compatible starter config, so we recommend always running the command when updating GraphRAG between minor versions, and copying your endpoint information or other customizations over to the new file.
+- [settings.yaml](https://microsoft.github.io/graphrag/config/yaml/) - The settings.yaml file may have changes made to it as we adjust configurability. **Changes that affect the settings.yml will result in a minor version bump**. `graphrag init` will always emit compatible starter config, so we recommend always running the command when updating GraphRAG between minor versions, and copying your endpoint information or other customizations over to the new file.
 - [Data model](https://microsoft.github.io/graphrag/index/outputs/) - The output data model may change over time as we adjust our approach. **Changes to the data model will conform to standard semver.** Any changes to the output tables will be shimmed for backwards compatibility between major releases, and we'll provide a migration notebook for folks to upgrade without requiring a re-index.
 
 > TL;DR: Always run `graphrag init --path [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary.
 
 # v1
 
-Run the [migration notebook](./docs/examples_notebooks/index_migration.ipynb) to convert older tables to the v1 format.
+Run the [migration notebook](./docs/examples_notebooks/index_migration_to_v1.ipynb) to convert older tables to the v1 format.
 
 Note that one of the new requirements is that we write embeddings to a vector store during indexing. By default, this uses a local lancedb instance. When you re-generate the default config, a block will be added to reflect this. If you need to write to Azure AI Search instead, we recommend updating these settings before you index, so you don't need to do a separate vector ingest.
 
