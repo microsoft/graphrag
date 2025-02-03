@@ -18,7 +18,7 @@ from graphrag.config.models.community_reports_config import CommunityReportsConf
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
-from graphrag.config.models.extract_graph_config import EntityExtractionConfig
+from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
@@ -169,9 +169,9 @@ class GraphRagConfig(BaseModel):
     )
     """The snapshots configuration to use."""
 
-    extract_graph: EntityExtractionConfig = Field(
+    extract_graph: ExtractGraphConfig = Field(
         description="The entity extraction configuration to use.",
-        default=EntityExtractionConfig(),
+        default=ExtractGraphConfig(),
     )
     """The entity extraction configuration to use."""
 

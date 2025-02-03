@@ -12,7 +12,7 @@ from graphrag.config.models.community_reports_config import CommunityReportsConf
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
-from graphrag.config.models.extract_graph_config import EntityExtractionConfig
+from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.input_config import InputConfig
@@ -391,7 +391,7 @@ def assert_snapshots_configs(
 
 
 def assert_extract_graph_configs(
-    actual: EntityExtractionConfig, expected: EntityExtractionConfig
+    actual: ExtractGraphConfig, expected: ExtractGraphConfig
 ) -> None:
     assert actual.prompt == expected.prompt
     assert actual.entity_types == expected.entity_types

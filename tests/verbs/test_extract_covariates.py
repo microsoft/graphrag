@@ -8,7 +8,6 @@ from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
-    workflow_name,
 )
 from graphrag.utils.storage import load_table_from_storage
 

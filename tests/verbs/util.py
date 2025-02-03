@@ -72,7 +72,10 @@ def compare_outputs(
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
             if column != "id":  # don't check uuids
                 assert_series_equal(
-                    actual[column], expected[column], check_dtype=False, check_index=False
+                    actual[column],
+                    expected[column],
+                    check_dtype=False,
+                    check_index=False,
                 )
         except AssertionError:
             print("Expected:")

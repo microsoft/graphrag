@@ -11,7 +11,7 @@ import graphrag.config.defaults as defs
 from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
-class EntityExtractionConfig(BaseModel):
+class ExtractGraphConfig(BaseModel):
     """Configuration section for entity extraction."""
 
     prompt: str | None = Field(
