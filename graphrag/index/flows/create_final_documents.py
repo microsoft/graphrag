@@ -9,7 +9,7 @@ import pandas as pd
 def create_final_documents(
     documents: pd.DataFrame,
     text_units: pd.DataFrame,
-    document_attribute_columns: list[str] | None = None,
+    metadata: list[str] | None = None,
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     exploded = (
@@ -46,22 +46,18 @@ def create_final_documents(
     rejoined["id"] = rejoined["id"].astype(str)
     rejoined["human_readable_id"] = rejoined.index + 1
 
-    # Convert attribute columns to strings and collapse them into a JSON object
-    if document_attribute_columns:
+    # Convert metadata columns to strings and collapse them into a JSON object
+    if metadata:
         # Convert all specified columns to string at once
-        rejoined[document_attribute_columns] = rejoined[
-            document_attribute_columns
-        ].astype(str)
+        rejoined[metadata] = rejoined[metadata].astype(str)
 
-        # Collapse the document_attribute_columns into a single JSON object column
-        rejoined["attributes"] = rejoined[document_attribute_columns].to_dict(
-            orient="records"
-        )
+        # Collapse the metadata columns into a single JSON object column
+        rejoined["metadata"] = rejoined[metadata].to_dict(orient="records")
 
-        # Drop the original attribute columns after collapsing them
-        rejoined.drop(columns=document_attribute_columns, inplace=True)
+        # Drop the original metadata columns after collapsing them
+        rejoined.drop(columns=metadata, inplace=True)
 
-    # set the final column order, but adjust for attributes
+    # set the final column order, but adjust for metadata
     core_columns = [
         "id",
         "human_readable_id",
@@ -70,7 +66,7 @@ def create_final_documents(
         "text_unit_ids",
     ]
     final_columns = [column for column in core_columns if column in rejoined.columns]
-    if document_attribute_columns:
-        final_columns.append("attributes")
+    if metadata:
+        final_columns.append("metadata")
 
     return rejoined.loc[:, final_columns]

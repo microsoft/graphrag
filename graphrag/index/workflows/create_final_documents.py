@@ -26,9 +26,7 @@ async def run_workflow(
     text_units = await load_table_from_storage("text_units", context.storage)
 
     input = config.input
-    output = create_final_documents(
-        documents, text_units, input.document_attribute_columns
-    )
+    output = create_final_documents(documents, text_units, input.metadata)
 
     await write_table_to_storage(output, "documents", context.storage)
 
