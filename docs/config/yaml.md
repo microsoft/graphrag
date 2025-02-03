@@ -66,7 +66,7 @@ models:
 - `parallelization_num_threads` **int** - The maximum number of work threads.
 - `async_mode` **asyncio|threaded** The async mode to use. Either `asyncio` or `threaded.
 
-### embeddings
+### embed_text
 
 By default, the GraphRAG indexer will only export embeddings required for our query methods. However, the model has embeddings defined for all plaintext fields, and these can be customized by setting the `target` and `names` fields.
 
@@ -143,7 +143,7 @@ This section controls the cache mechanism used by the pipeline. This is used to 
 - `base_dir` **str** - The base directory to write cache to, relative to the root.
 - `storage_account_blob_url` **str** - The storage account blob URL to use.
 
-### storage
+### output
 
 This section controls the storage mechanism used by the pipeline used for exporting output tables.
 
@@ -179,7 +179,7 @@ This section controls the reporting mechanism used by the pipeline, for common e
 - `base_dir` **str** - The base directory to write reports to, relative to the root.
 - `storage_account_blob_url` **str** - The storage account blob URL to use.
 
-### entity_extraction
+### extract_graph
 
 #### Fields
 
@@ -215,7 +215,7 @@ Defines settings for NLP-based graph extraction methods.
   - noun_phrase_tags **list[str]** - List of noun phrase tags to ignore.
   - noun_phrase_grammars **dict[str, str]** - Noun phrase grammars for the model (cfg-only).
 
-### claim_extraction
+### extract_claims
 
 #### Fields
 
@@ -286,7 +286,6 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 - `embeddings` **bool** - Export embeddings snapshots to parquet.
 - `graphml` **bool** - Export graph snapshots to GraphML.
-- `transient` **bool** - Export transient workflow tables snapshots to parquet.
 
 ## Query
 
@@ -376,4 +375,4 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 ### workflows
 
-**str** - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.
+**list[str]** - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.
