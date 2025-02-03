@@ -45,7 +45,7 @@ async def test_create_final_documents_with_attribute_columns():
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    config.input.document_attribute_columns = ["title"]
+    config.input.metadata = ["title"]
 
     await run_workflow(
         config,
@@ -63,4 +63,4 @@ async def test_create_final_documents_with_attribute_columns():
     )
     assert len(actual.columns) == 5
     assert "title" not in actual.columns
-    assert "attributes" in actual.columns
+    assert "metadata" in actual.columns
