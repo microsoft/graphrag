@@ -14,7 +14,7 @@ Figure 1: An LLM-generated knowledge graph built using GPT-4 Turbo.
 GraphRAG is a structured, hierarchical approach to Retrieval Augmented Generation (RAG), as opposed to naive semantic-search
 approaches using plain text snippets. The GraphRAG process involves extracting a knowledge graph out of raw text, building a community hierarchy, generating summaries for these communities, and then leveraging these structures when perform RAG-based tasks.
 
-To learn more about GraphRAG and how it can be used to enhance your LLMs ability to reason about your private data, please visit the [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/).
+To learn more about GraphRAG and how it can be used to enhance your language model's ability to reason about your private data, please visit the [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/).
 
 ## Solution Accelerator 🚀
 
@@ -32,7 +32,7 @@ Retrieval-Augmented Generation (RAG) is a technique to improve LLM outputs using
 - Baseline RAG struggles to connect the dots. This happens when answering a question requires traversing disparate pieces of information through their shared attributes in order to provide new synthesized insights.
 - Baseline RAG performs poorly when being asked to holistically understand summarized semantic concepts over large data collections or even singular large documents.
 
-To address this, the tech community is working to develop methods that extend and enhance RAG. Microsoft Research’s new approach, GraphRAG, uses LLMs to create a knowledge graph based on an input corpus. This graph, along with community summaries and graph machine learning outputs, are used to augment prompts at query time. GraphRAG shows substantial improvement in answering the two classes of questions described above, demonstrating intelligence or mastery that outperforms other approaches previously applied to private datasets.
+To address this, the tech community is working to develop methods that extend and enhance RAG. Microsoft Research’s new approach, GraphRAG, creates a knowledge graph based on an input corpus. This graph, along with community summaries and graph machine learning outputs, are used to augment prompts at query time. GraphRAG shows substantial improvement in answering the two classes of questions described above, demonstrating intelligence or mastery that outperforms other approaches previously applied to private datasets.
 
 ## The GraphRAG Process 🤖
 
@@ -41,7 +41,7 @@ GraphRAG builds upon our prior [research](https://www.microsoft.com/en-us/workla
 ### Index
 
 - Slice up an input corpus into a series of TextUnits, which act as analyzable units for the rest of the process, and provide fine-grained references in our outputs.
-- Extract all entities, relationships, and key claims from the TextUnits using an LLM.
+- Extract all entities, relationships, and key claims from the TextUnits.
 - Perform a hierarchical clustering of the graph using the [Leiden technique](https://arxiv.org/pdf/1810.08473.pdf). To see this visually, check out Figure 1 above. Each circle is an entity (e.g., a person, place, or organization), with the size representing the degree of the entity, and the color representing its community.
 - Generate summaries of each community and its constituents from the bottom-up. This aids in holistic understanding of the dataset.
 
@@ -57,3 +57,10 @@ At query time, these structures are used to provide materials for the LLM contex
 
 Using _GraphRAG_ with your data out of the box may not yield the best possible results.
 We strongly recommend to fine-tune your prompts following the [Prompt Tuning Guide](prompt_tuning/overview.md) in our documentation.
+
+
+## Versioning
+
+Please see the [breaking changes](https://github.com/microsoft/graphrag/blob/main/breaking-changes.md) document for notes on our approach to versioning the project.
+
+*Always run `graphrag init --root [path] --force` between minor version bumps to ensure you have the latest config format. Run the provided migration notebook between major version bumps if you want to avoid re-indexing prior datasets. Note that this will overwrite your configuration and prompts, so backup if necessary.*
