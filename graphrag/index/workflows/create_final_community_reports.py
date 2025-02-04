@@ -11,7 +11,11 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_community_reports import (
     create_final_community_reports,
 )
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import (
+    load_table_from_storage,
+    storage_has_table,
+    write_table_to_storage,
+)
 
 workflow_name = "create_final_community_reports"
 
@@ -29,23 +33,31 @@ async def run_workflow(
         "create_final_communities", context.storage
     )
     claims = None
-    if config.claim_extraction.enabled:
+    if config.claim_extraction.enabled and await storage_has_table(
+        "create_final_covariates", context.storage
+    ):
         claims = await load_table_from_storage(
             "create_final_covariates", context.storage
         )
-    async_mode = config.community_reports.async_mode
-    num_threads = config.community_reports.parallelization.num_threads
-    summarization_strategy = config.community_reports.resolved_strategy(config.root_dir)
+
+    community_reports_llm_settings = config.get_language_model_config(
+        config.community_reports.model_id
+    )
+    async_mode = community_reports_llm_settings.async_mode
+    num_threads = community_reports_llm_settings.parallelization_num_threads
+    summarization_strategy = config.community_reports.resolved_strategy(
+        config.root_dir, community_reports_llm_settings
+    )
 
     output = await create_final_community_reports(
-        nodes,
-        edges,
-        entities,
-        communities,
-        claims,
-        callbacks,
-        context.cache,
-        summarization_strategy,
+        nodes_input=nodes,
+        edges_input=edges,
+        entities=entities,
+        communities=communities,
+        claims_input=claims,
+        callbacks=callbacks,
+        cache=context.cache,
+        summarization_strategy=summarization_strategy,
         async_mode=async_mode,
         num_threads=num_threads,
     )

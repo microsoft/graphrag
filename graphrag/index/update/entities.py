@@ -110,8 +110,11 @@ async def _run_entity_summarization(
     pd.DataFrame
         The updated entities dataframe with summarized descriptions.
     """
+    summarization_llm_settings = config.get_language_model_config(
+        config.summarize_descriptions.model_id
+    )
     summarization_strategy = config.summarize_descriptions.resolved_strategy(
-        config.root_dir,
+        config.root_dir, summarization_llm_settings
     )
 
     # Prepare tasks for async summarization where needed
@@ -120,7 +123,11 @@ async def _run_entity_summarization(
         if isinstance(description, list) and len(description) > 1:
             # Run entity summarization asynchronously
             result = await run_entity_summarization(
-                row["title"], description, callbacks, cache, summarization_strategy
+                row["title"],
+                description,
+                callbacks,
+                cache,
+                summarization_strategy,
             )
             return result.description
         # Handle case where description is a single-item list or not a list

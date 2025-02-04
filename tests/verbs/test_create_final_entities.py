@@ -10,6 +10,7 @@ from graphrag.index.workflows.create_final_entities import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -23,7 +24,7 @@ async def test_create_final_entities():
         storage=["base_entity_nodes"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
 
     await run_workflow(
         config,

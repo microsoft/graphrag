@@ -10,7 +10,7 @@ from typing import Any
 
 import pandas as pd
 
-from graphrag.index.config.input import PipelineInputConfig
+from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 
 async def load(
-    config: PipelineInputConfig,
+    config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:

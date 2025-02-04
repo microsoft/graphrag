@@ -3,10 +3,11 @@ claim_extraction:
 
 embeddings:
   vector_store:
-    type: "azure_ai_search"
-    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-    api_key: ${AZURE_AI_SEARCH_API_KEY}
-    container_name: "azure_ci"
+    default_vector_store:
+      type: "azure_ai_search"
+      url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+      api_key: ${AZURE_AI_SEARCH_API_KEY}
+      container_name: "azure_ci"
 
 input:
   type: blob
