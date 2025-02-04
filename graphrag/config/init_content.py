@@ -79,8 +79,9 @@ reporting:
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 output:
-  type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
-  base_dir: "{defs.OUTPUT_BASE_DIR}"
+  {defs.OUTPUT_DEFAULT_ID}:
+    type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
+    base_dir: "{defs.OUTPUT_BASE_DIR}"
 
 ## only turn this on if running `graphrag index` with custom settings
 ## we normally use `graphrag update` with the defaults

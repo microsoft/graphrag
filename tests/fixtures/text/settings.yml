@@ -47,8 +47,9 @@ community_reports:
 
 
 storage:
-  type: file
-  base_dir: "output"
+  default_output:
+    type: file
+    base_dir: "output"
 
 reporting:
   type: file
