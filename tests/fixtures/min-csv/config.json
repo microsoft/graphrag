@@ -16,7 +16,7 @@
                 2500
             ],
             "max_runtime": 300,
-            "expected_artifacts": 0
+            "expected_artifacts": 2
         },
         "create_communities": {
             "row_range": [
