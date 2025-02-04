@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "remove unused columns and change property document_attribute_columns to metadata"
+}

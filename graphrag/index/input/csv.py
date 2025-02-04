@@ -41,15 +41,6 @@ async def load(
             )
         if "id" not in data.columns:
             data["id"] = data.apply(lambda x: gen_sha512_hash(x, x.keys()), axis=1)
-        if config.source_column is not None and "source" not in data.columns:
-            if config.source_column not in data.columns:
-                log.warning(
-                    "source_column %s not found in csv file %s",
-                    config.source_column,
-                    path,
-                )
-            else:
-                data["source"] = data.apply(lambda x: x[config.source_column], axis=1)
         if config.text_column is not None and "text" not in data.columns:
             if config.text_column not in data.columns:
                 log.warning(
@@ -68,37 +59,6 @@ async def load(
                 )
             else:
                 data["title"] = data.apply(lambda x: x[config.title_column], axis=1)
-
-        if config.timestamp_column is not None:
-            fmt = config.timestamp_format
-            if fmt is None:
-                msg = "Must specify timestamp_format if timestamp_column is specified"
-                raise ValueError(msg)
-
-            if config.timestamp_column not in data.columns:
-                log.warning(
-                    "timestamp_column %s not found in csv file %s",
-                    config.timestamp_column,
-                    path,
-                )
-            else:
-                data["timestamp"] = pd.to_datetime(
-                    data[config.timestamp_column], format=fmt
-                )
-
-            # TODO: Theres probably a less gross way to do this
-            if "year" not in data.columns:
-                data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)
-            if "month" not in data.columns:
-                data["month"] = data.apply(lambda x: x["timestamp"].month, axis=1)
-            if "day" not in data.columns:
-                data["day"] = data.apply(lambda x: x["timestamp"].day, axis=1)
-            if "hour" not in data.columns:
-                data["hour"] = data.apply(lambda x: x["timestamp"].hour, axis=1)
-            if "minute" not in data.columns:
-                data["minute"] = data.apply(lambda x: x["timestamp"].minute, axis=1)
-            if "second" not in data.columns:
-                data["second"] = data.apply(lambda x: x["timestamp"].second, axis=1)
 
         return data
 
