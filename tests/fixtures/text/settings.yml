@@ -44,3 +44,7 @@ community_reports:
 
 snapshots:
   embeddings: True
+
+drift_search:
+  drift_k_followups: 5
+  n_depth: 2
