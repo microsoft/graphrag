@@ -61,14 +61,23 @@ def _compute_leiden_communities(
 ) -> tuple[dict[int, dict[str, int]], dict[int, int]]:
     """Return Leiden root communities and their hierarchy mapping."""
     # NOTE: This import is done here to reduce the initial import time of the graphrag package
-    from graspologic.partition import hierarchical_leiden
+    from graspologic_native import hierarchical_leiden
+    # from graspologic.partition import hierarchical_leiden
 
     if use_lcc:
         graph = stable_largest_connected_component(graph)
 
     community_mapping = hierarchical_leiden(
-        graph, max_cluster_size=max_cluster_size, random_seed=seed
+        edges=_nx_to_edge_list(graph),
+        max_cluster_size=max_cluster_size,
+        seed=seed,
+        starting_communities=None,
+        resolution=1.0,
+        randomness=0.001,
+        use_modularity=True,
+        iterations=0,
     )
+
     results: dict[int, dict[str, int]] = {}
     hierarchy: dict[int, int] = {}
     for partition in community_mapping:
@@ -80,3 +89,32 @@ def _compute_leiden_communities(
         )
 
     return results, hierarchy
+
+
+def _nx_to_edge_list(
+    graph: nx.Graph,
+    weight_attribute: str = "weight",
+    weight_default: float = 1.0,
+) -> list[tuple[str, str, float]]:
+    """
+    Convert an undirected, non-multigraph networkx graph to a list of edges,
+    where each edge is a tuple of (source_str, target_str, weight).
+    """
+
+    # Validate graph type: must be undirected and not a multigraph
+    if graph.is_directed() or graph.is_multigraph():
+        raise ValueError(
+            "Only undirected non-multi-graph networkx graphs are supported."
+        )
+
+    edge_list: list[tuple[str, str, float]] = []
+
+    # Decide how to retrieve the weight data
+    edge_iter = graph.edges(data=weight_attribute, default=weight_default)  # type: ignore
+
+    for source, target, weight in edge_iter:
+        source_str = str(source)
+        target_str = str(target)
+        edge_list.append((source_str, target_str, float(weight)))
+
+    return edge_list
