@@ -3,22 +3,10 @@
 
 """Parameterization settings for the default configuration."""
 
-from enum import Enum
-
 from pydantic import BaseModel, Field
 
 import graphrag.config.defaults as defs
-
-
-class ChunkStrategyType(str, Enum):
-    """ChunkStrategy class definition."""
-
-    tokens = "tokens"
-    sentence = "sentence"
-
-    def __repr__(self):
-        """Get a string representation."""
-        return f'"{self.value}"'
+from graphrag.config.enums import ChunkStrategyType
 
 
 class ChunkingConfig(BaseModel):
@@ -33,7 +21,7 @@ class ChunkingConfig(BaseModel):
         default=defs.CHUNK_GROUP_BY_COLUMNS,
     )
     strategy: ChunkStrategyType = Field(
-        description="The chunking strategy to use.", default=ChunkStrategyType.tokens
+        description="The chunking strategy to use.", default=defs.CHUNK_STRATEGY
     )
     encoding_model: str = Field(
         description="The encoding model to use.", default=defs.ENCODING_MODEL

@@ -3,7 +3,7 @@
 
 import pytest
 
-from graphrag.utils.embeddings import create_collection_name
+from graphrag.config.embeddings import create_collection_name
 
 
 def test_create_collection_name():

@@ -34,15 +34,15 @@ class LocalSearchConfig(BaseModel):
         description="The top k mapped relations.",
         default=defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
     )
-    temperature: float | None = Field(
+    temperature: float = Field(
         description="The temperature to use for token generation.",
         default=defs.LOCAL_SEARCH_LLM_TEMPERATURE,
     )
-    top_p: float | None = Field(
+    top_p: float = Field(
         description="The top-p value to use for token generation.",
         default=defs.LOCAL_SEARCH_LLM_TOP_P,
     )
-    n: int | None = Field(
+    n: int = Field(
         description="The number of completions to generate.",
         default=defs.LOCAL_SEARCH_LLM_N,
     )

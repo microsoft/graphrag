@@ -1,8 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-import pytest
-
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import LLMType
@@ -12,6 +10,7 @@ from graphrag.index.workflows.extract_graph import (
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
     load_test_table,
 )
@@ -30,21 +29,11 @@ MOCK_LLM_ENTITY_RESPONSES = [
     """.strip()
 ]
 
-MOCK_LLM_ENTITY_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_ENTITY_RESPONSES,
-}
-
 MOCK_LLM_SUMMARIZATION_RESPONSES = [
     """
     This is a MOCK response for the LLM. It is summarized!
     """.strip()
 ]
-
-MOCK_LLM_SUMMARIZATION_CONFIG = {
-    "type": LLMType.StaticResponse,
-    "responses": MOCK_LLM_SUMMARIZATION_RESPONSES,
-}
 
 
 async def test_extract_graph():
@@ -55,14 +44,24 @@ async def test_extract_graph():
         storage=["create_base_text_units"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    claim_extraction_llm_settings = config.get_language_model_config(
+        config.entity_extraction.model_id
+    ).model_dump()
+    claim_extraction_llm_settings["type"] = LLMType.StaticResponse
+    claim_extraction_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
     config.entity_extraction.strategy = {
         "type": "graph_intelligence",
-        "llm": MOCK_LLM_ENTITY_CONFIG,
+        "llm": claim_extraction_llm_settings,
     }
+    summarize_llm_settings = config.get_language_model_config(
+        config.summarize_descriptions.model_id
+    ).model_dump()
+    summarize_llm_settings["type"] = LLMType.StaticResponse
+    summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
     config.summarize_descriptions.strategy = {
         "type": "graph_intelligence",
-        "llm": MOCK_LLM_SUMMARIZATION_CONFIG,
+        "llm": summarize_llm_settings,
     }
 
     await run_workflow(
@@ -90,25 +89,3 @@ async def test_extract_graph():
     # we need to update the mocking to provide somewhat unique graphs so a true merge happens
     # the assertion should grab a node and ensure the description matches the mock description, not the original as we are doing below
     assert nodes_actual["description"].to_numpy()[0] == "Company_A is a test company"
-
-
-async def test_extract_graph_missing_llm_throws():
-    context = await create_test_context(
-        storage=["create_base_text_units"],
-    )
-
-    config = create_graphrag_config()
-    config.entity_extraction.strategy = {
-        "type": "graph_intelligence",
-        "llm": MOCK_LLM_ENTITY_CONFIG,
-    }
-    config.summarize_descriptions.strategy = {
-        "type": "graph_intelligence",
-    }
-
-    with pytest.raises(ValueError):  # noqa PT011
-        await run_workflow(
-            config,
-            context,
-            NoopWorkflowCallbacks(),
-        )

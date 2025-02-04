@@ -11,7 +11,11 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_final_text_units import (
     create_final_text_units,
 )
-from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import (
+    load_table_from_storage,
+    storage_has_table,
+    write_table_to_storage,
+)
 
 workflow_name = "create_final_text_units"
 
@@ -32,7 +36,9 @@ async def run_workflow(
         "create_final_relationships", context.storage
     )
     final_covariates = None
-    if config.claim_extraction.enabled:
+    if config.claim_extraction.enabled and await storage_has_table(
+        "create_final_covariates", context.storage
+    ):
         final_covariates = await load_table_from_storage(
             "create_final_covariates", context.storage
         )

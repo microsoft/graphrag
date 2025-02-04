@@ -4,11 +4,31 @@
 import pandas as pd
 from pandas.testing import assert_series_equal
 
+import graphrag.config.defaults as defs
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.run.utils import create_run_context
 from graphrag.utils.storage import write_table_to_storage
 
 pd.set_option("display.max_columns", None)
+
+FAKE_API_KEY = "NOT_AN_API_KEY"
+
+DEFAULT_CHAT_MODEL_CONFIG = {
+    "api_key": FAKE_API_KEY,
+    "type": defs.LLM_TYPE.value,
+    "model": defs.LLM_MODEL,
+}
+
+DEFAULT_EMBEDDING_MODEL_CONFIG = {
+    "api_key": FAKE_API_KEY,
+    "type": defs.EMBEDDING_TYPE.value,
+    "model": defs.EMBEDDING_MODEL,
+}
+
+DEFAULT_MODEL_CONFIG = {
+    defs.DEFAULT_CHAT_MODEL_ID: DEFAULT_CHAT_MODEL_CONFIG,
+    defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
+}
 
 
 async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:

@@ -11,7 +11,6 @@ from typing import Any
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
-from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
@@ -35,7 +34,6 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         self,
         llm: ChatOpenAI,
         context_builder: DRIFTSearchContextBuilder,
-        config: DRIFTSearchConfig | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         query_state: QueryState | None = None,
     ):
@@ -51,12 +49,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         """
         super().__init__(llm, context_builder, token_encoder)
 
-        self.config = config or DRIFTSearchConfig()
         self.context_builder = context_builder
         self.token_encoder = token_encoder
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
-            config=self.config, chat_llm=llm, token_encoder=token_encoder
+            config=self.context_builder.config,
+            chat_llm=llm,
+            token_encoder=token_encoder,
         )
         self.local_search = self.init_local_search()
 
@@ -69,21 +68,21 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         LocalSearch: An instance of the LocalSearch class with the configured parameters.
         """
         local_context_params = {
-            "text_unit_prop": self.config.local_search_text_unit_prop,
-            "community_prop": self.config.local_search_community_prop,
-            "top_k_mapped_entities": self.config.local_search_top_k_mapped_entities,
-            "top_k_relationships": self.config.local_search_top_k_relationships,
+            "text_unit_prop": self.context_builder.config.local_search_text_unit_prop,
+            "community_prop": self.context_builder.config.local_search_community_prop,
+            "top_k_mapped_entities": self.context_builder.config.local_search_top_k_mapped_entities,
+            "top_k_relationships": self.context_builder.config.local_search_top_k_relationships,
             "include_entity_rank": True,
             "include_relationship_weight": True,
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,
-            "max_tokens": self.config.local_search_max_data_tokens,
+            "max_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
         llm_params = {
-            "max_tokens": self.config.local_search_llm_max_gen_tokens,
-            "temperature": self.config.local_search_temperature,
+            "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
+            "temperature": self.context_builder.config.local_search_temperature,
             "response_format": {"type": "json_object"},
         }
 
@@ -220,13 +219,15 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         # Main loop
         epochs = 0
         llm_call_offset = 0
-        while epochs < self.config.n:
+        while epochs < self.context_builder.config.n:
             actions = self.query_state.rank_incomplete_actions()
             if len(actions) == 0:
                 log.info("No more actions to take. Exiting DRIFT loop.")
                 break
-            actions = actions[: self.config.drift_k_followups]
-            llm_call_offset += len(actions) - self.config.drift_k_followups
+            actions = actions[: self.context_builder.config.drift_k_followups]
+            llm_call_offset += (
+                len(actions) - self.context_builder.config.drift_k_followups
+            )
             # Process actions
             results = await self.asearch_step(
                 global_query=query, search_engine=self.local_search, actions=actions
@@ -260,8 +261,8 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 llm_calls=llm_calls,
                 prompt_tokens=prompt_tokens,
                 output_tokens=output_tokens,
-                max_tokens=self.config.reduce_max_tokens,
-                temperature=self.config.reduce_temperature,
+                max_tokens=self.context_builder.config.reduce_max_tokens,
+                temperature=self.context_builder.config.reduce_temperature,
             )
 
         return SearchResult(
@@ -317,8 +318,8 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         async for resp in self._reduce_response_streaming(
             responses=result.response,
             query=query,
-            max_tokens=self.config.reduce_max_tokens,
-            temperature=self.config.reduce_temperature,
+            max_tokens=self.context_builder.config.reduce_max_tokens,
+            temperature=self.context_builder.config.reduce_temperature,
         ):
             yield resp
 

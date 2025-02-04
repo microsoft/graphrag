@@ -47,6 +47,7 @@ format-jinja = """
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 environs = "^11.0.0"
+en-core-web-md = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0.tar.gz" }
 
 # Vector Stores
 azure-search-documents = "^11.5.2"
@@ -91,6 +92,8 @@ json-repair = "^0.30.3"
 tqdm = "^4.67.1"
 httpx = "^0.28.1"
 
+textblob = "^0.18.0.post0"
+spacy = "^3.8.4"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.9"
 ipykernel = "^6.29.5"

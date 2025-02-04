@@ -17,7 +17,7 @@ from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.logger.print_progress import PrintProgressLogger
-from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT
+from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
     generate_community_report_rating,
 )
@@ -95,9 +95,11 @@ async def generate_indexing_prompts(
     )
 
     # Create LLM from config
+    # TODO: Expose way to specify Prompt Tuning model ID through config
+    default_llm_settings = config.get_language_model_config(PROMPT_TUNING_MODEL_ID)
     llm = load_llm(
         "prompt_tuning",
-        config.llm,
+        default_llm_settings,
         cache=None,
         callbacks=NoopWorkflowCallbacks(),
     )
@@ -120,6 +122,9 @@ async def generate_indexing_prompts(
     )
 
     entity_types = None
+    entity_extraction_llm_settings = config.get_language_model_config(
+        config.entity_extraction.model_id
+    )
     if discover_entity_types:
         logger.info("Generating entity types...")
         entity_types = await generate_entity_types(
@@ -127,7 +132,7 @@ async def generate_indexing_prompts(
             domain=domain,
             persona=persona,
             docs=doc_list,
-            json_mode=config.llm.model_supports_json or False,
+            json_mode=entity_extraction_llm_settings.model_supports_json or False,
         )
 
     logger.info("Generating entity relationship examples...")
@@ -147,7 +152,7 @@ async def generate_indexing_prompts(
         examples=examples,
         language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
-        encoding_model=config.encoding_model,
+        encoding_model=entity_extraction_llm_settings.encoding_model,
         max_token_count=max_tokens,
         min_examples_required=min_examples_required,
     )

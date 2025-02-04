@@ -7,6 +7,7 @@ from graphrag.index.workflows.compute_communities import run_workflow
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     compare_outputs,
     create_test_context,
     load_test_table,
@@ -20,7 +21,7 @@ async def test_compute_communities():
         storage=["base_relationship_edges"],
     )
 
-    config = create_graphrag_config()
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
 
     await run_workflow(
         config,

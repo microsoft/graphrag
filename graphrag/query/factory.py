@@ -45,9 +45,10 @@ def get_local_search_engine(
     system_prompt: str | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
+    default_llm_settings = config.get_language_model_config("default_chat_model")
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
 
     ls_config = config.local_search
 
@@ -102,7 +103,11 @@ def get_global_search_engine(
     general_knowledge_inclusion_prompt: str | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    # TODO: Global search should select model based on config??
+    default_llm_settings = config.get_language_model_config("default_chat_model")
+
+    # Here we get encoding based on specified encoding name
+    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
     gs_config = config.global_search
 
     dynamic_community_selection_kwargs = {}
@@ -111,7 +116,8 @@ def get_global_search_engine(
 
         dynamic_community_selection_kwargs.update({
             "llm": get_llm(config),
-            "token_encoder": tiktoken.encoding_for_model(config.llm.model),
+            # And here we get encoding based on model
+            "token_encoder": tiktoken.encoding_for_model(default_llm_settings.model),
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
@@ -178,9 +184,10 @@ def get_drift_search_engine(
     reduce_system_prompt: str | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
+    default_llm_settings = config.get_language_model_config("default_chat_model")
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
 
     return DRIFTSearch(
         llm=llm,
@@ -208,9 +215,10 @@ def get_basic_search_engine(
     system_prompt: str | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
+    default_llm_settings = config.get_language_model_config("default_chat_model")
     llm = get_llm(config)
     text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(config.encoding_model)
+    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
 
     ls_config = config.basic_search
 

@@ -31,9 +31,9 @@ async def extract_graph(
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
     entities, relationships = await extract_entities(
-        text_units,
-        callbacks,
-        cache,
+        text_units=text_units,
+        callbacks=callbacks,
+        cache=cache,
         text_column="text",
         id_column="id",
         strategy=extraction_strategy,
@@ -55,10 +55,10 @@ async def extract_graph(
         raise ValueError(error_msg)
 
     entity_summaries, relationship_summaries = await summarize_descriptions(
-        entities,
-        relationships,
-        callbacks,
-        cache,
+        entities_df=entities,
+        relationships_df=relationships,
+        callbacks=callbacks,
+        cache=cache,
         strategy=summarization_strategy,
         num_threads=summarization_num_threads,
     )

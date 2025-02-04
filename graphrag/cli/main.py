@@ -6,12 +6,12 @@
 import os
 import re
 from collections.abc import Callable
-from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
+from graphrag.config.enums import IndexingMethod, SearchMethod
 from graphrag.logger.types import LoggerType
 from graphrag.prompt_tune.defaults import (
     MAX_TOKEN_COUNT,
@@ -82,19 +82,6 @@ def path_autocomplete(
     return completer
 
 
-class SearchType(Enum):
-    """The type of search to run."""
-
-    LOCAL = "local"
-    GLOBAL = "global"
-    DRIFT = "drift"
-    BASIC = "basic"
-
-    def __str__(self):
-        """Return the string representation of the enum value."""
-        return self.value
-
-
 @app.command("init")
 def _initialize_cli(
     root: Annotated[
@@ -109,11 +96,15 @@ def _initialize_cli(
             ),
         ),
     ],
+    force: Annotated[
+        bool,
+        typer.Option(help="Force initialization even if the project already exists."),
+    ] = False,
 ):
     """Generate a default configuration file."""
     from graphrag.cli.initialize import initialize_project_at
 
-    initialize_project_at(path=root)
+    initialize_project_at(path=root, force=force)
 
 
 @app.command("index")
@@ -137,15 +128,15 @@ def _index_cli(
             ),
         ),
     ] = Path(),  # set default to current directory
+    method: Annotated[
+        IndexingMethod, typer.Option(help="The indexing method to use.")
+    ] = IndexingMethod.Standard,
     verbose: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with verbose logging")
     ] = False,
     memprofile: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with memory profiling")
     ] = False,
-    resume: Annotated[
-        str | None, typer.Option(help="Resume a given indexing run")
-    ] = None,
     logger: Annotated[
         LoggerType, typer.Option(help="The progress logger to use.")
     ] = LoggerType.RICH,
@@ -165,7 +156,7 @@ def _index_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -178,7 +169,6 @@ def _index_cli(
     index_cli(
         root_dir=root,
         verbose=verbose,
-        resume=resume,
         memprofile=memprofile,
         cache=cache,
         logger=LoggerType(logger),
@@ -186,6 +176,7 @@ def _index_cli(
         dry_run=dry_run,
         skip_validation=skip_validation,
         output_dir=output,
+        method=method,
     )
 
 
@@ -207,6 +198,9 @@ def _update_cli(
             resolve_path=True,
         ),
     ] = Path(),  # set default to current directory
+    method: Annotated[
+        IndexingMethod, typer.Option(help="The indexing method to use.")
+    ] = IndexingMethod.Standard,
     verbose: Annotated[
         bool, typer.Option(help="Run the indexing pipeline with verbose logging")
     ] = False,
@@ -226,7 +220,7 @@ def _update_cli(
     output: Annotated[
         Path | None,
         typer.Option(
-            help="Indexing pipeline output directory. Overrides storage.base_dir in the configuration file.",
+            help="Indexing pipeline output directory. Overrides output.base_dir in the configuration file.",
             dir_okay=True,
             writable=True,
             resolve_path=True,
@@ -236,7 +230,7 @@ def _update_cli(
     """
     Update an existing knowledge graph index.
 
-    Applies a default storage configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
+    Applies a default output configuration (if not provided by config), saving the new index to the local file system in the `update_output` folder.
     """
     from graphrag.cli.index import update_cli
 
@@ -249,6 +243,7 @@ def _update_cli(
         config_filepath=config,
         skip_validation=skip_validation,
         output_dir=output,
+        method=method,
     )
 
 
@@ -364,7 +359,7 @@ def _prompt_tune_cli(
 
 @app.command("query")
 def _query_cli(
-    method: Annotated[SearchType, typer.Option(help="The query algorithm to use.")],
+    method: Annotated[SearchMethod, typer.Option(help="The query algorithm to use.")],
     query: Annotated[str, typer.Option(help="The query to execute.")],
     config: Annotated[
         Path | None,
@@ -433,7 +428,7 @@ def _query_cli(
     )
 
     match method:
-        case SearchType.LOCAL:
+        case SearchMethod.LOCAL:
             run_local_search(
                 config_filepath=config,
                 data_dir=data,
@@ -443,7 +438,7 @@ def _query_cli(
                 streaming=streaming,
                 query=query,
             )
-        case SearchType.GLOBAL:
+        case SearchMethod.GLOBAL:
             run_global_search(
                 config_filepath=config,
                 data_dir=data,
@@ -454,7 +449,7 @@ def _query_cli(
                 streaming=streaming,
                 query=query,
             )
-        case SearchType.DRIFT:
+        case SearchMethod.DRIFT:
             run_drift_search(
                 config_filepath=config,
                 data_dir=data,
@@ -464,7 +459,7 @@ def _query_cli(
                 response_type=response_type,
                 query=query,
             )
-        case SearchType.BASIC:
+        case SearchMethod.BASIC:
             run_basic_search(
                 config_filepath=config,
                 data_dir=data,

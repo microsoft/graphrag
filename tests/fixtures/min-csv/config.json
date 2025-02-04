@@ -7,7 +7,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 0
         },
@@ -16,7 +15,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 0
         },
@@ -25,7 +23,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
             "expected_artifacts": 0
         },
@@ -38,7 +35,6 @@
                 "type",
                 "description"
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
             "expected_artifacts": 1
         },
@@ -47,7 +43,6 @@
                 1,
                 6000
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         },
@@ -61,7 +56,6 @@
                 "x",
                 "y"
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         },
@@ -70,7 +64,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         },
@@ -90,7 +83,6 @@
                 "period",
                 "size"
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
             "expected_artifacts": 1
         },
@@ -103,7 +95,6 @@
                 "relationship_ids",
                 "entity_ids"
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         },
@@ -112,7 +103,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         },
@@ -121,7 +111,6 @@
                 1,
                 2500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
             "expected_artifacts": 1
         }
@@ -134,6 +123,14 @@
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
             "method": "global"
+        },
+        {
+            "query": "What is the main theme of the story?",
+            "method": "drift"
+        },
+        {
+            "query": "Who is Jordan Hayes?",
+            "method": "basic"
         }
     ],
     "slow": false
