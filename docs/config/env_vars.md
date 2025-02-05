@@ -25,13 +25,13 @@ Our pipeline can ingest .csv or .txt data from an input folder. These files can 
 
 These are the primary settings for configuring LLM connectivity.
 
-| Parameter                   | Required?                             | Description                                                                                                                     | Type  | Default Value |
-| --------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------- |
-| `GRAPHRAG_API_KEY`          | **Yes for OpenAI. Optional for AOAI** | The API key. (Note: `OPENAI_API_KEY is also used as a fallback). If not defined when using AOAI, managed identity will be used. | `str` | `None`        |
-| `GRAPHRAG_API_BASE`         | **For AOAI**                          | The API Base URL                                                                                                                | `str` | `None`        |
-| `GRAPHRAG_API_VERSION`      | **For AOAI**                          | The AOAI API version.                                                                                                           | `str` | `None`        |
-| `GRAPHRAG_API_ORGANIZATION` |                                       | The AOAI organization.                                                                                                          | `str` | `None`        |
-| `GRAPHRAG_API_PROXY`        |                                       | The AOAI proxy.                                                                                                                 | `str` | `None`        |
+| Parameter                   | Required?                             | Description                                                                                                                      | Type  | Default Value |
+| --------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------- |
+| `GRAPHRAG_API_KEY`          | **Yes for OpenAI. Optional for AOAI** | The API key. (Note: `OPENAI_API_KEY` is also used as a fallback). If not defined when using AOAI, managed identity will be used. | `str` | `None`        |
+| `GRAPHRAG_API_BASE`         | **For AOAI**                          | The API Base URL                                                                                                                 | `str` | `None`        |
+| `GRAPHRAG_API_VERSION`      | **For AOAI**                          | The AOAI API version.                                                                                                            | `str` | `None`        |
+| `GRAPHRAG_API_ORGANIZATION` |                                       | The AOAI organization.                                                                                                           | `str` | `None`        |
+| `GRAPHRAG_API_PROXY`        |                                       | The AOAI proxy.                                                                                                                  | `str` | `None`        |
 
 ## Text Generation Settings
 
