@@ -56,3 +56,8 @@ reporting:
 
 snapshots:
   embeddings: True
+
+drift_search:
+  n_depth: 1
+  k_follow_ups: 3
+  primer_folds: 3
