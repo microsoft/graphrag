@@ -118,5 +118,5 @@ Make sure you have python3.10-dev installed or more generally `python<version>-d
 
 ### LLM call constantly exceeds TPM, RPM or time limits
 
-`GRAPHRAG_LLM_THREAD_COUNT` and `GRAPHRAG_EMBEDDING_THREAD_COUNT` are both set to 50 by default. You can modify this values
+`GRAPHRAG_LLM_THREAD_COUNT` and `GRAPHRAG_EMBEDDING_THREAD_COUNT` are both set to 50 by default. You can modify these values
 to reduce concurrency. Please refer to the [Configuration Documents](https://microsoft.github.io/graphrag/config/overview/)
