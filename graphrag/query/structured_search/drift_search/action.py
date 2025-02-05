@@ -7,6 +7,8 @@ import json
 import logging
 from typing import Any
 
+from graphrag.query.llm.text_utils import try_parse_json_object
+
 log = logging.getLogger(__name__)
 
 
@@ -72,17 +74,12 @@ class DriftAction:
             drift_query=global_query, query=self.query
         )
 
-        try:
-            response = json.loads(search_result.response)
-        except json.JSONDecodeError:
-            error_message = "Failed to parse search response"
-            log.exception("%s: %s", error_message, search_result.response)
-            # Do not launch exception as it will roll up with other steps
-            # Instead return an empty response and let score -inf handle it
-            response = {}
+        # Do not launch exception as it will roll up with other steps
+        # Instead return an empty response and let score -inf handle it
+        _, response = try_parse_json_object(search_result.response, verbose=False)
 
         self.answer = response.pop("response", None)
-        self.score = response.pop("score", float("-inf"))
+        self.score = float(response.pop("score", "-inf"))
         self.metadata.update({"context_data": search_result.context_data})
 
         if self.answer is None:
