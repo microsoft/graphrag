@@ -80,3 +80,15 @@ class PipelineStorage(metaclass=ABCMeta):
     @abstractmethod
     def keys(self) -> list[str]:
         """List all keys in the storage."""
+
+    @abstractmethod
+    def get_creation_date(self, key: str) -> str:
+        """Get the creation date for the given key.
+
+        Args:
+            - key - The key to get the creation date for.
+
+        Returns
+        -------
+            - output - The creation date for the given key.
+        """

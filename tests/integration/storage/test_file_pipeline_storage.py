@@ -4,9 +4,13 @@
 
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 
-from graphrag.storage.file_pipeline_storage import FilePipelineStorage
+from graphrag.storage.file_pipeline_storage import (
+    FilePipelineStorage,
+    get_creation_time_with_local_tz,
+)
 
 __dirname__ = os.path.dirname(__file__)
 
@@ -32,8 +36,25 @@ async def test_find():
     output = await storage.get("test.txt")
     assert output is None
 
+def test_get_creation_date():
+    storage = FilePipelineStorage()
+
+    creation_date = storage.get_creation_date("tests/fixtures/text/input/dulce.txt")
+    assert creation_date != ""
+
+
+def test_get_creation_time_with_local_tz():
+    creation_time = get_creation_time_with_local_tz(
+        "tests/fixtures/text/input", "dulce.txt"
+    )
+    datetime_format = "%Y-%m-%d %H:%M:%S %z"
+
+    parsed_datetime = datetime.strptime(creation_time, datetime_format).astimezone()
+    assert parsed_datetime.strftime(datetime_format) == creation_time
+
 
 async def test_child():
+
     storage = FilePipelineStorage()
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))

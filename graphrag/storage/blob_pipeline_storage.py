@@ -289,6 +289,19 @@ class BlobPipelineStorage(PipelineStorage):
         path = str(Path(self._container_name) / self._path_prefix / key)
         return f"abfs://{path}"
 
+    def get_creation_date(self, key: str) -> str:
+        """Get a value from the cache."""
+        try:
+            key = self._keyname(key)
+            container_client = self._blob_service_client.get_container_client(
+                self._container_name
+            )
+            blob_client = container_client.get_blob_client(key)
+            return str(blob_client.download_blob().properties.creation_time)
+        except Exception:
+            log.exception("Error getting key %s", key)
+            return ""
+
 
 def create_blob_storage(**kwargs: Any) -> PipelineStorage:
     """Create a blob based storage."""

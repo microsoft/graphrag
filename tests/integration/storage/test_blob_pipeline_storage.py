@@ -62,6 +62,20 @@ async def test_dotprefix():
         storage._delete_container()  # noqa: SLF001
 
 
+async def test_get_creation_date():
+    storage = BlobPipelineStorage(
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testfind",
+        path_prefix=".",
+    )
+    try:
+        await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
+        creation_date = storage.get_creation_date("input/christmas.txt")
+        assert creation_date != ""
+    finally:
+        storage._delete_container()  # noqa: SLF001
+
+
 async def test_child():
     parent = BlobPipelineStorage(
         connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
