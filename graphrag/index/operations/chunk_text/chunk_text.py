@@ -95,11 +95,13 @@ def run_strategy(
     """Run strategy method definition."""
     line_delimiter = ".\n"
     metadata_str = ""
+
     if metadata:
         metadata_str = (
             line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
             + line_delimiter
         )
+
         if count_tokens_with_metadata:
             encode, _ = get_encoding_fn(config.encoding_model)
             metadata_tokens = len(encode(metadata_str))
@@ -114,12 +116,7 @@ def run_strategy(
     # We can work with both just a list of text content
     # or a list of tuples of (document_id, text content)
     # text_to_chunk = '''
-    texts = []
-    for item in input:
-        if isinstance(item, str):
-            texts.append(item)
-        else:
-            texts.append(item[1])
+    texts = [item if isinstance(item, str) else item[1] for item in input]
 
     strategy_results = strategy_exec(texts, config, tick)
 
