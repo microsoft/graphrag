@@ -3,6 +3,7 @@
 
 """A module containing run_workflow method definition."""
 
+
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -25,6 +26,7 @@ async def run_workflow(
     documents = await load_table_from_storage("input", context.storage)
 
     chunks = config.chunks
+    count_tokens_with_metadata = chunks.count_tokens_with_metadata
 
     output = create_base_text_units(
         documents,
@@ -34,6 +36,8 @@ async def run_workflow(
         chunks.overlap,
         chunks.encoding_model,
         strategy=chunks.strategy,
+        prepend_metadata=chunks.prepend_metadata,
+        count_tokens_with_metadata=count_tokens_with_metadata,
     )
 
     await write_table_to_storage(output, workflow_name, context.storage)

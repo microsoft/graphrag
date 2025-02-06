@@ -22,6 +22,8 @@ def create_base_text_units(
     overlap: int,
     encoding_model: str,
     strategy: ChunkStrategyType,
+    prepend_metadata: bool = False,
+    count_tokens_with_metadata: bool = False,
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -32,15 +34,20 @@ def create_base_text_units(
 
     callbacks.progress(Progress(percent=0))
 
+    agg_dict = {"text_with_ids": list}
+    if "metadata" in documents:
+        agg_dict["metadata"] = "first"  # type: ignore
+
     aggregated = (
         (
             sort.groupby(group_by_columns, sort=False)
             if len(group_by_columns) > 0
             else sort.groupby(lambda _x: True)
         )
-        .agg(texts=("text_with_ids", list))
+        .agg(agg_dict)
         .reset_index()
     )
+    aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
 
     aggregated["chunks"] = chunk_text(
         aggregated,
@@ -50,6 +57,8 @@ def create_base_text_units(
         encoding_model=encoding_model,
         strategy=strategy,
         callbacks=callbacks,
+        prepend_metadata=prepend_metadata,
+        count_tokens_with_metadata=count_tokens_with_metadata,
     )
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])

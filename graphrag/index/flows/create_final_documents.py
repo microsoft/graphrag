@@ -56,7 +56,5 @@ def create_final_documents(
     final_columns = [column for column in core_columns if column in rejoined.columns]
     if "metadata" in rejoined.columns:
         final_columns.append("metadata")
-    #     final_columns.append("metadata")
-    # if metadata in docs, add it
 
     return rejoined.loc[:, final_columns]
