@@ -17,7 +17,7 @@ workflow_name = "create_final_documents"
 
 
 async def run_workflow(
-    config: GraphRagConfig,
+    _: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
@@ -27,8 +27,7 @@ async def run_workflow(
         "create_base_text_units", context.storage
     )
 
-    input = config.input
-    output = create_final_documents(documents, text_units, input.metadata)
+    output = create_final_documents(documents, text_units)
 
     await write_table_to_storage(output, workflow_name, context.storage)
 
