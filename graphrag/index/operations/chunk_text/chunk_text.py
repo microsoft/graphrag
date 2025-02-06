@@ -105,6 +105,9 @@ def run_strategy(
         if count_tokens_with_metadata:
             encode, _ = get_encoding_fn(config.encoding_model)
             metadata_tokens = len(encode(metadata_str))
+            if metadata_tokens >= config.size:
+                message = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
+                raise ValueError(message)
             config.size -= metadata_tokens
 
     if isinstance(input, str):

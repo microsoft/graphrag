@@ -227,6 +227,26 @@ def test_run_strategy_metadata_count_tokens():
     run_strategy(strategy_mocked, input, config, tick, metadata, True)
     strategy_mocked.assert_called_with([input], new_config, tick)
 
+def test_run_strategy_metadata_count_tokens_large_metadata():
+    input = "All work and no play makes Jack a dull boy"
+    config = ChunkingConfig()
+    config.size = 5
+    tick = Mock()
+    strategy_mocked = MagicMock()
+    metadata = {"type": "book", "author": "Stephen King"}
+
+    strategy_mocked.return_value = [
+        TextChunk(
+            text_chunk="All work and no play makes ",
+            source_doc_indices=[0],
+            n_tokens=20,
+        ),
+        TextChunk(text_chunk="Jack a dull boy", source_doc_indices=[0], n_tokens=3),
+    ]
+
+    error_msg = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
+    with pytest.raises(ValueError, match=error_msg):
+        run_strategy(strategy_mocked, input, config, tick, metadata, True)
 
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
@@ -322,3 +342,4 @@ def test_chunk_text_prepend_metadata(
         "{'type': 'book'}",
         False,
     )
+
