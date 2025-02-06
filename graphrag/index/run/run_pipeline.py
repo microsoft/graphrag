@@ -61,12 +61,7 @@ async def run_pipeline(
     progress_logger = logger or NullProgressLogger()
     callbacks = callbacks or [ConsoleWorkflowCallbacks()]
     callback_chain = create_callback_chain(callbacks, progress_logger)
-    num_entries = len(config.output)
-    if num_entries != 1:
-        msg = "Only one output storage is supported during indexing."
-        raise ValueError(msg)
-    output = next(iter(config.output.values()))
-    storage_config = output.model_dump()  # type: ignore
+    storage_config = config.output.model_dump()  # type: ignore
     storage = StorageFactory().create_storage(
         storage_type=storage_config["type"],  # type: ignore
         kwargs=storage_config,

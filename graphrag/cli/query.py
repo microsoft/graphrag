@@ -53,7 +53,7 @@ def run_global_search(
     )
 
     # Call the Multi-Index Global Search API
-    if dataframe_dict["num_indexes"] > 1:
+    if dataframe_dict["multi-index"]:
         final_nodes_list = dataframe_dict["create_final_nodes"]
         final_entities_list = dataframe_dict["create_final_entities"]
         final_communities_list = dataframe_dict["create_final_communities"]
@@ -81,12 +81,12 @@ def run_global_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Global Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"][0]
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ][0]
+    ]
 
     if streaming:
 
@@ -170,7 +170,7 @@ def run_local_search(
     )
 
     # Call the Multi-Index Local Search API
-    if dataframe_dict["num_indexes"] > 1:
+    if dataframe_dict["multi-index"]:
         final_nodes_list = dataframe_dict["create_final_nodes"]
         final_entities_list = dataframe_dict["create_final_entities"]
         final_community_reports_list = dataframe_dict["create_final_community_reports"]
@@ -209,21 +209,14 @@ def run_local_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Local Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ][0]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"][0]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
-
-    # Set the covariates to None if it is missing
-    if len(dataframe_dict["create_final_covariates"]) == 0:
-        final_covariates: pd.DataFrame | None = None
-    else:
-        final_covariates: pd.DataFrame | None = dataframe_dict[
-            "create_final_covariates"
-        ][0]
+    ]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
 
     if streaming:
 
@@ -306,7 +299,7 @@ def run_drift_search(
     )
 
     # Call the Multi-Index Drift Search API
-    if dataframe_dict["num_indexes"] > 1:
+    if dataframe_dict["multi-index"]:
         final_nodes_list = dataframe_dict["create_final_nodes"]
         final_entities_list = dataframe_dict["create_final_entities"]
         final_community_reports_list = dataframe_dict["create_final_community_reports"]
@@ -335,13 +328,13 @@ def run_drift_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Drift Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"][0]
+    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
     final_community_reports: pd.DataFrame = dataframe_dict[
         "create_final_community_reports"
-    ][0]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"][0]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"][0]
+    ]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
 
     if streaming:
 
@@ -418,7 +411,7 @@ def run_basic_search(
     )
 
     # Call the Multi-Index Basic Search API
-    if dataframe_dict["num_indexes"] > 1:
+    if dataframe_dict["multi-index"]:
         final_text_units_list = dataframe_dict["create_final_text_units"]
         index_names = dataframe_dict["index_names"]
 
@@ -437,7 +430,7 @@ def run_basic_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Basic Search API
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"][0]
+    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
 
     if streaming:
 
@@ -482,31 +475,61 @@ def _resolve_output_files(
 ) -> dict[str, Any]:
     """Read indexing output files to a dataframe dict."""
     dataframe_dict = {}
-    dataframe_dict["num_indexes"] = len(config.output)
-    dataframe_dict["index_names"] = list(config.output.keys())
-    for output in config.output.values():
-        output_config = output.model_dump()
-        storage_obj = StorageFactory().create_storage(
-            storage_type=output_config["type"], kwargs=output_config
-        )
-        for name in output_list:
-            if name not in dataframe_dict:
-                dataframe_dict[name] = []
-            df_value = asyncio.run(
-                load_table_from_storage(name=name, storage=storage_obj)
+
+    # Loading output files for multi-index search
+    if config.outputs:
+        dataframe_dict["multi-index"] = True
+        dataframe_dict["num_indexes"] = len(config.outputs)
+        dataframe_dict["index_names"] = []
+        for output in config.outputs:
+            output_config = output.model_dump()
+            dataframe_dict["index_names"].append(output_config["base_dir"])
+            storage_obj = StorageFactory().create_storage(
+                storage_type=output_config["type"], kwargs=output_config
             )
-            dataframe_dict[name].append(df_value)
+            for name in output_list:
+                if name not in dataframe_dict:
+                    dataframe_dict[name] = []
+                df_value = asyncio.run(
+                    load_table_from_storage(name=name, storage=storage_obj)
+                )
+                dataframe_dict[name].append(df_value)
 
-        # for optional output files, set the dict entry to None instead of erroring out if it does not exist
-        if optional_list:
-            for optional_file in optional_list:
-                if optional_file not in dataframe_dict:
-                    dataframe_dict[optional_file] = []
-                file_exists = asyncio.run(storage_has_table(optional_file, storage_obj))
-                if file_exists:
-                    df_value = asyncio.run(
-                        load_table_from_storage(name=optional_file, storage=storage_obj)
+            # for optional output files, do not append if the dataframe does not exist
+            if optional_list:
+                for optional_file in optional_list:
+                    if optional_file not in dataframe_dict:
+                        dataframe_dict[optional_file] = []
+                    file_exists = asyncio.run(
+                        storage_has_table(optional_file, storage_obj)
                     )
-                    dataframe_dict[optional_file].append(df_value)
+                    if file_exists:
+                        df_value = asyncio.run(
+                            load_table_from_storage(
+                                name=optional_file, storage=storage_obj
+                            )
+                        )
+                        dataframe_dict[optional_file].append(df_value)
+            return dataframe_dict
+    # Loading output files for single-index search
+    dataframe_dict["multi-index"] = False
+    output_config = config.output.model_dump()  # type: ignore
+    storage_obj = StorageFactory().create_storage(
+        storage_type=output_config["type"], kwargs=output_config
+    )
+    for name in output_list:
+        df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
+        dataframe_dict[name] = df_value
 
+    # for optional output files, set the dict entry to None instead of erroring out if it does not exist
+    if optional_list:
+        for optional_file in optional_list:
+            file_exists = asyncio.run(storage_has_table(optional_file, storage_obj))
+            if file_exists:
+                df_value = asyncio.run(
+                    load_table_from_storage(name=optional_file, storage=storage_obj)
+                )
+                dataframe_dict[optional_file] = df_value
+            else:
+                dataframe_dict[optional_file] = None
     return dataframe_dict

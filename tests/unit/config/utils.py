@@ -69,13 +69,11 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "storage_account_blob_url": None,
     },
     "output": {
-        defs.OUTPUT_DEFAULT_ID: {
-            "type": defs.OUTPUT_TYPE,
-            "base_dir": defs.OUTPUT_BASE_DIR,
-            "connection_string": None,
-            "container_name": None,
-            "storage_account_blob_url": None,
-        }
+        "type": defs.OUTPUT_TYPE,
+        "base_dir": defs.OUTPUT_BASE_DIR,
+        "connection_string": None,
+        "container_name": None,
+        "storage_account_blob_url": None,
     },
     "update_index_output": None,
     "cache": {

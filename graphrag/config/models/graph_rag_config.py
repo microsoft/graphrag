@@ -101,20 +101,38 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.reporting.base_dir).resolve()
             )
 
-    output: dict[str, OutputConfig] = Field(
+    output: OutputConfig = Field(
         description="The output configuration.",
-        default={defs.OUTPUT_DEFAULT_ID: OutputConfig()},
+        default=OutputConfig(),
     )
     """The output configuration."""
 
     def _validate_output_base_dir(self) -> None:
         """Validate the output base directory."""
-        for output in self.output.values():
-            if output.type == defs.OutputType.file:
-                if output.base_dir.strip() == "":
-                    msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
-                    raise ValueError(msg)
-                output.base_dir = str((Path(self.root_dir) / output.base_dir).resolve())
+        if self.output.type == defs.OutputType.file:
+            if self.output.base_dir.strip() == "":
+                msg = "output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
+                raise ValueError(msg)
+            self.output.base_dir = str(
+                (Path(self.root_dir) / self.output.base_dir).resolve()
+            )
+
+    outputs: list[OutputConfig] | None = Field(
+        description="A list of output configurations used for multi-index query.",
+        default=None,
+    )
+
+    def _validate_output_list_base_dirs(self) -> None:
+        """Validate the output list base directories."""
+        if self.outputs:
+            for output in self.outputs:
+                if output.type == defs.OutputType.file:
+                    if output.base_dir.strip() == "":
+                        msg = "Output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
+                        raise ValueError(msg)
+                    output.base_dir = str(
+                        (Path(self.root_dir) / output.base_dir).resolve()
+                    )
 
     update_index_output: OutputConfig | None = Field(
         description="The output configuration for the updated index.",
@@ -314,6 +332,7 @@ class GraphRagConfig(BaseModel):
         self._validate_models()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
+        self._validate_output_list_base_dirs()
         self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
         return self
