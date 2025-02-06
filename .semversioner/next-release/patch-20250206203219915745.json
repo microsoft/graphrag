@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "add option to prepend metadata into chunks"
+}
