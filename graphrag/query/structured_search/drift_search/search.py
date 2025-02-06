@@ -219,7 +219,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         # Main loop
         epochs = 0
         llm_call_offset = 0
-        while epochs < self.context_builder.config.n:
+        while epochs < self.context_builder.config.n_depth:
             actions = self.query_state.rank_incomplete_actions()
             if len(actions) == 0:
                 log.info("No more actions to take. Exiting DRIFT loop.")

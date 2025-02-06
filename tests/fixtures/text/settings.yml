@@ -46,5 +46,6 @@ snapshots:
   embeddings: True
 
 drift_search:
-  drift_k_followups: 5
-  n_depth: 2
+  n_depth: 1
+  k_follow_ups: 3
+  primer_folds: 3
