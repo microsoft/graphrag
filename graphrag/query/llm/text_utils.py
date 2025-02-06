@@ -50,7 +50,7 @@ def chunk_text(
     yield from (token_encoder.decode(list(chunk)) for chunk in chunk_iterator)
 
 
-def try_parse_json_object(input: str) -> tuple[str, dict]:
+def try_parse_json_object(input: str, verbose: bool = True) -> tuple[str, dict]:
     """JSON cleaning and formatting utilities."""
     # Sometimes, the LLM returns a json string with some extra description, this function will clean it up.
 
@@ -59,7 +59,8 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
         # Try parse first
         result = json.loads(input)
     except json.JSONDecodeError:
-        log.info("Warning: Error decoding faulty json, attempting repair")
+        if verbose:
+            log.info("Warning: Error decoding faulty json, attempting repair")
 
     if result:
         return input, result
@@ -97,11 +98,13 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
         try:
             result = json.loads(input)
         except json.JSONDecodeError:
-            log.exception("error loading json, json=%s", input)
+            if verbose:
+                log.exception("error loading json, json=%s", input)
             return input, {}
         else:
             if not isinstance(result, dict):
-                log.exception("not expected dict type. type=%s:", type(result))
+                if verbose:
+                    log.exception("not expected dict type. type=%s:", type(result))
                 return input, {}
             return input, result
     else:
