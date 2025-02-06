@@ -223,7 +223,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             max_retry_wait=config.max_retry_wait,
             requests_per_minute=config.requests_per_minute,
             tokens_per_minute=config.tokens_per_minute,
-            cognitive_services_endpoint=audience,
+            audience=audience,
             retry_strategy=RetryStrategy(config.retry_strategy),
             timeout=config.request_timeout,
             max_concurrency=config.concurrent_requests,
@@ -231,6 +231,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             encoding=encoding_model,
             deployment=config.deployment_name,
             chat_parameters=chat_parameters,
+            sleep_on_rate_limit_recommendation=True,
         )
     return PublicOpenAIConfig(
         api_key=config.api_key,
@@ -247,6 +248,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         model=config.model,
         encoding=encoding_model,
         chat_parameters=chat_parameters,
+        sleep_on_rate_limit_recommendation=True,
     )
 
 
