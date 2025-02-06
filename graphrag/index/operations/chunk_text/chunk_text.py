@@ -3,7 +3,6 @@
 
 """A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
 
-import json
 from typing import Any, cast
 
 import pandas as pd
