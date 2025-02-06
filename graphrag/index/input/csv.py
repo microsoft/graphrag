@@ -65,17 +65,6 @@ async def load(
         creation_date = storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 
-        # Convert metadata columns to strings and collapse them into a JSON object
-        if config.metadata:
-            # Convert all specified columns to string at once
-            data[config.metadata] = data[config.metadata].astype(str)
-
-            # Collapse the metadata columns into a single JSON object column
-            data["metadata"] = data[config.metadata].to_dict(orient="records")
-
-            # Drop the original metadata columns after collapsing them
-            data.drop(columns=config.metadata, inplace=True)
-
         return data
 
     file_pattern = (

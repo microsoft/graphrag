@@ -72,8 +72,18 @@ async def create_input(
             f"Loading Input ({config.file_type})", transient=False
         )
         loader = loaders[config.file_type]
-        results = await loader(config, progress, storage)
-        return cast("pd.DataFrame", results)
+        result = await loader(config, progress, storage)
+        # Convert metadata columns to strings and collapse them into a JSON object
+        if config.metadata:
+            # Convert all specified columns to string at once
+            result[config.metadata] = result[config.metadata].astype(str)
+
+            # Collapse the metadata columns into a single JSON object column
+            result["metadata"] = result[config.metadata].to_dict(orient="records")
+
+            # Drop the original metadata columns after collapsing them
+            result.drop(columns=config.metadata, inplace=True)
+        return cast("pd.DataFrame", result)
 
     msg = f"Unknown input type {config.file_type}"
     raise ValueError(msg)
