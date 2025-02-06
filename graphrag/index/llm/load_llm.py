@@ -8,8 +8,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from fnllm import ChatLLM, EmbeddingsLLM, JsonStrategy, LLMEvents
 from fnllm.caching import Cache as LLMCache
+from fnllm.config import JsonStrategy, RetryStrategy
+from fnllm.events import LLMEvents
 from fnllm.openai import (
     AzureOpenAIConfig,
     OpenAIConfig,
@@ -30,6 +31,8 @@ from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
+    from fnllm.types import ChatLLM, EmbeddingsLLM
+
     from graphrag.cache.pipeline_cache import PipelineCache
     from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
     from graphrag.index.typing import ErrorHandlerFn
@@ -209,7 +212,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             msg = "Azure OpenAI Chat LLM requires an API base"
             raise ValueError(msg)
 
-        audience = config.audience or defs.AZURE_AUDIENCE
+        audience = config.audience or defs.COGNITIVE_SERVICES_AUDIENCE
         return AzureOpenAIConfig(
             api_key=config.api_key,
             endpoint=config.api_base,
@@ -221,6 +224,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             requests_per_minute=config.requests_per_minute,
             tokens_per_minute=config.tokens_per_minute,
             cognitive_services_endpoint=audience,
+            retry_strategy=RetryStrategy(config.retry_strategy),
             timeout=config.request_timeout,
             max_concurrency=config.concurrent_requests,
             model=config.model,
@@ -233,6 +237,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         base_url=config.api_base,
         json_strategy=json_strategy,
         organization=config.organization,
+        retry_strategy=RetryStrategy(config.retry_strategy),
         max_retries=config.max_retries,
         max_retry_wait=config.max_retry_wait,
         requests_per_minute=config.requests_per_minute,

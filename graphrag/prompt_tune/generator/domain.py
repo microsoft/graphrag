@@ -3,7 +3,7 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 

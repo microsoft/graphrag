@@ -5,7 +5,7 @@
 
 import numpy as np
 import pandas as pd
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks

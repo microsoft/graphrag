@@ -5,7 +5,7 @@
 
 from functools import cache
 
-from fnllm import ChatLLM, EmbeddingsLLM
+from fnllm.types import ChatLLM, EmbeddingsLLM
 
 
 @cache

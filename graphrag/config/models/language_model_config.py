@@ -31,7 +31,7 @@ class LanguageModelConfig(BaseModel):
         API Key is required when using OpenAI API
         or when using Azure API with API Key authentication.
         For the time being, this check is extra verbose for clarity.
-        It will also through an exception if an API Key is provided
+        It will also raise an exception if an API Key is provided
         when one is not expected such as the case of using Azure
         Managed Identity.
 
@@ -199,6 +199,10 @@ class LanguageModelConfig(BaseModel):
         description="The number of requests per minute to use for the LLM service.",
         default=defs.LLM_REQUESTS_PER_MINUTE,
     )
+    retry_strategy: str = Field(
+        description="The retry strategy to use for the LLM service.",
+        default=defs.RETRY_STRATEGY,
+    )
     max_retries: int = Field(
         description="The maximum number of retries to use for the LLM service.",
         default=defs.LLM_MAX_RETRIES,
@@ -206,10 +210,6 @@ class LanguageModelConfig(BaseModel):
     max_retry_wait: float = Field(
         description="The maximum retry wait to use for the LLM service.",
         default=defs.LLM_MAX_RETRY_WAIT,
-    )
-    sleep_on_rate_limit_recommendation: bool = Field(
-        description="Whether to sleep on rate limit recommendations.",
-        default=defs.LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION,
     )
     concurrent_requests: int = Field(
         description="Whether to use concurrent requests for the LLM service.",

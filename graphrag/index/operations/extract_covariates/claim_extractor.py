@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import tiktoken
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
