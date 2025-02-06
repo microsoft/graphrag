@@ -89,6 +89,7 @@ class TestRunTokens:
         assert len(chunks) > 0
         assert "123" in chunks[0].text_chunk
 
+
 @patch("tiktoken.get_encoding")
 def test_get_encoding_fn_encode(mock_get_encoding):
     # Create a mock encoding object with encode and decode methods

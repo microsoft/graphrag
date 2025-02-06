@@ -38,17 +38,17 @@ def test_get_num_total_array():
 def test_load_strategy_tokens():
     strategy_type = ChunkStrategyType.tokens
 
-    stratergy_loaded = load_strategy(strategy_type)
+    strategy_loaded = load_strategy(strategy_type)
 
-    assert stratergy_loaded.__name__ == "run_tokens"
+    assert strategy_loaded.__name__ == "run_tokens"
 
 
 def test_load_strategy_sentence():
     strategy_type = ChunkStrategyType.sentence
 
-    stratergy_loaded = load_strategy(strategy_type)
+    strategy_loaded = load_strategy(strategy_type)
 
-    assert stratergy_loaded.__name__ == "run_sentences"
+    assert strategy_loaded.__name__ == "run_sentences"
 
 
 def test_load_strategy_none():
@@ -158,6 +158,7 @@ def test_run_strategy_arr_tuple_same_doc():
     runned = run_strategy(strategy_mocked, input, config, tick)
     assert runned == expected
 
+
 def test_run_strategy_metadata():
     input = "All work and no play makes Jack a dull boy"
     config = Mock()
@@ -227,6 +228,7 @@ def test_run_strategy_metadata_count_tokens():
     run_strategy(strategy_mocked, input, config, tick, metadata, True)
     strategy_mocked.assert_called_with([input], new_config, tick)
 
+
 def test_run_strategy_metadata_count_tokens_large_metadata():
     input = "All work and no play makes Jack a dull boy"
     config = ChunkingConfig()
@@ -247,6 +249,7 @@ def test_run_strategy_metadata_count_tokens_large_metadata():
     error_msg = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
     with pytest.raises(ValueError, match=error_msg):
         run_strategy(strategy_mocked, input, config, tick, metadata, True)
+
 
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
@@ -342,4 +345,3 @@ def test_chunk_text_prepend_metadata(
         "{'type': 'book'}",
         False,
     )
-

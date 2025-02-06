@@ -36,6 +36,7 @@ async def test_find():
     output = await storage.get("test.txt")
     assert output is None
 
+
 def test_get_creation_date():
     storage = FilePipelineStorage()
 
@@ -54,7 +55,6 @@ def test_get_creation_time_with_local_tz():
 
 
 async def test_child():
-
     storage = FilePipelineStorage()
     storage = storage.child("tests/fixtures/text/input")
     items = list(storage.find(re.compile(r".*\.txt$")))

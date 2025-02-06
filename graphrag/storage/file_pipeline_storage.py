@@ -150,6 +150,7 @@ class FilePipelineStorage(PipelineStorage):
         """Get the creation date of a file."""
         return str(get_creation_time_with_local_tz(self._root_dir, key))
 
+
 def join_path(file_path: str, file_name: str) -> Path:
     """Join a path and a file. Independent of the OS."""
     return Path(file_path) / Path(file_name).parent / Path(file_name).name
@@ -170,6 +171,7 @@ def _create_progress_status(
         completed_items=num_loaded + num_filtered,
         description=f"{num_loaded} files loaded ({num_filtered} filtered)",
     )
+
 
 def get_creation_time_with_local_tz(root_dir, key) -> str:
     """Get the creation time of a file with the local timezone."""

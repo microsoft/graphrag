@@ -3,7 +3,6 @@
 
 """A module containing run_workflow method definition."""
 
-
 import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
