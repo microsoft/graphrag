@@ -14,7 +14,10 @@ from azure.storage.blob import BlobServiceClient
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import (
+    PipelineStorage,
+    get_timestamp_formatted_with_local_tz,
+)
 
 log = logging.getLogger(__name__)
 
@@ -297,7 +300,8 @@ class BlobPipelineStorage(PipelineStorage):
                 self._container_name
             )
             blob_client = container_client.get_blob_client(key)
-            return str(blob_client.download_blob().properties.creation_time)
+            timestamp = blob_client.download_blob().properties.creation_time
+            return get_timestamp_formatted_with_local_tz(timestamp)
         except Exception:
             log.exception("Error getting key %s", key)
             return ""

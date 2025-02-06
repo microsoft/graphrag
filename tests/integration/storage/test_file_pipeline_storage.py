@@ -9,7 +9,6 @@ from pathlib import Path
 
 from graphrag.storage.file_pipeline_storage import (
     FilePipelineStorage,
-    get_creation_time_with_local_tz,
 )
 
 __dirname__ = os.path.dirname(__file__)
@@ -41,17 +40,11 @@ def test_get_creation_date():
     storage = FilePipelineStorage()
 
     creation_date = storage.get_creation_date("tests/fixtures/text/input/dulce.txt")
-    assert creation_date != ""
 
-
-def test_get_creation_time_with_local_tz():
-    creation_time = get_creation_time_with_local_tz(
-        "tests/fixtures/text/input", "dulce.txt"
-    )
     datetime_format = "%Y-%m-%d %H:%M:%S %z"
+    parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()
 
-    parsed_datetime = datetime.strptime(creation_time, datetime_format).astimezone()
-    assert parsed_datetime.strftime(datetime_format) == creation_time
+    assert parsed_datetime.strftime(datetime_format) == creation_date
 
 
 async def test_child():
