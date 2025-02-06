@@ -6,6 +6,7 @@
 import re
 from abc import ABCMeta, abstractmethod
 from collections.abc import Iterator
+from datetime import datetime
 from typing import Any
 
 from graphrag.logger.base import ProgressLogger
@@ -92,3 +93,10 @@ class PipelineStorage(metaclass=ABCMeta):
         -------
             - output - The creation date for the given key.
         """
+
+
+def get_timestamp_formatted_with_local_tz(timestamp: datetime) -> str:
+    """Get the formatted timestamp with the local time zone."""
+    creation_time_local = timestamp.astimezone()
+
+    return creation_time_local.strftime("%Y-%m-%d %H:%M:%S %z")

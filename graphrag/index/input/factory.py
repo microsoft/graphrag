@@ -81,8 +81,6 @@ async def create_input(
             # Collapse the metadata columns into a single JSON object column
             result["metadata"] = result[config.metadata].to_dict(orient="records")
 
-            # Drop the original metadata columns after collapsing them
-            result.drop(columns=config.metadata, inplace=True)
         return cast("pd.DataFrame", result)
 
     msg = f"Unknown input type {config.file_type}"

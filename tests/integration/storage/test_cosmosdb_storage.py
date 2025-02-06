@@ -109,6 +109,7 @@ async def test_clear():
     finally:
         await storage.clear()
 
+
 async def test_get_creation_date():
     storage = CosmosDBPipelineStorage(
         connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
