@@ -19,7 +19,7 @@ If the embedding target is `all`, and you want to only embed a subset of these f
 
 ## Input Data
 
-Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, look for configuration values starting with `GRAPHRAG_INPUT_` below. In general, CSV-based data provides the most customizability. Each CSV should at least contain a `text` field (which can be mapped with environment variables), but it's helpful if they also have `title` field. Additional fields can be included as well, which will land as extra fields on the `Document` table.
+Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. To configure how input data is handled, what fields are mapped over, and how timestamps are parsed, look for configuration values starting with `GRAPHRAG_INPUT_` below. In general, CSV-based data provides the most customizability. Each CSV should at least contain a `text` field (which can be mapped with environment variables), but it's helpful if they also have `title`, `timestamp`, and `source` fields. Additional fields can be included as well, which will land as extra fields on the `Document` table.
 
 ## Base LLM Settings
 
@@ -105,8 +105,11 @@ These settings control the data input used by the pipeline. Any settings with a 
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------------------- | ---------- |
 | `GRAPHRAG_INPUT_TYPE`                       | The input storage type to use when reading files. (`file` or `blob`)                                                                                               | `str` | optional             | `file`     |
 | `GRAPHRAG_INPUT_FILE_PATTERN`               | The file pattern regexp to use when reading input files from the input directory.                                                                                  | `str` | optional             | `.*\.txt$` |
+| `GRAPHRAG_INPUT_SOURCE_COLUMN`              | The 'source' column to use when reading CSV input files.                                                                                                           | `str` | optional             | `source`   |
+| `GRAPHRAG_INPUT_TIMESTAMP_COLUMN`           | The 'timestamp' column to use when reading CSV input files.                                                                                                        | `str` | optional             | `None`     |
+| `GRAPHRAG_INPUT_TIMESTAMP_FORMAT`           | The timestamp format to use when parsing timestamps in the timestamp column.                                                                                       | `str` | optional             | `None`     |
 | `GRAPHRAG_INPUT_TEXT_COLUMN`                | The 'text' column to use when reading CSV input files.                                                                                                             | `str` | optional             | `text`     |
-| `GRAPHRAG_INPUT_METADATA` | A list of CSV columns, comma-separated, to incorporate as metadata fields.                                                                                         | `str` | optional             | `None`      |
+| `GRAPHRAG_INPUT_DOCUMENT_ATTRIBUTE_COLUMNS` | A list of CSV columns, comma-separated, to incorporate as document fields.                                                                                         | `str` | optional             | `id`       |
 | `GRAPHRAG_INPUT_TITLE_COLUMN`               | The 'title' column to use when reading CSV input files.                                                                                                            | `str` | optional             | `title`    |
 | `GRAPHRAG_INPUT_STORAGE_ACCOUNT_BLOB_URL`   | The Azure Storage blob endpoint to use when in `blob` mode and using managed identity. Will have the format `https://<storage_account_name>.blob.core.windows.net` | `str` | optional             | `None`     |
 | `GRAPHRAG_INPUT_CONNECTION_STRING`          | The connection string to use when reading CSV input files from Azure Blob Storage.                                                                                 | `str` | optional             | `None`     |
@@ -128,8 +131,6 @@ These settings control the data input used by the pipeline. Any settings with a 
 | `GRAPHRAG_CHUNK_OVERLAP`        | The chunk overlap in tokens for text-chunk analysis windows.                                | `str` | optional             | 100                           |
 | `GRAPHRAG_CHUNK_BY_COLUMNS`     | A comma-separated list of document attributes to groupby when performing TextUnit chunking. | `str` | optional             | `id`                          |
 | `GRAPHRAG_CHUNK_ENCODING_MODEL` | The encoding model to use for chunking.                                                     | `str` | optional             | The top-level encoding model. |
-| `GRAPHRAG_CHUNK_PREPEND_METADATA` | Wheter to prepend metadata into each chunk.                                                    | `bool` | optional             | `False` |
-| `GRAPHRAG_CHUNK_COUNT_TOKENS_WITH_METADATA` | Wheter metadata should be included into max tokens count when chunking                                                | `bool` | optional             | `False` |
 
 ## Prompting Overrides
 
