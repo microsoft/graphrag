@@ -23,11 +23,10 @@ cache:
   base_dir: cache_azure_ai
 
 storage:
-  default_output:
-    type: blob
-    connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
-    container_name: azurefixture
-    base_dir: output
+  type: blob
+  connection_string: ${LOCAL_BLOB_STORAGE_CONNECTION_STRING}
+  container_name: azurefixture
+  base_dir: output
 
 reporting:
   type: blob

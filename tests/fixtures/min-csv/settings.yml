@@ -42,9 +42,8 @@ embeddings:
   model_id: "default_embedding_model"
 
 storage:
-  default_output:
-    type: file
-    base_dir: "output"
+  type: file
+  base_dir: "output"
 
 reporting:
   type: file

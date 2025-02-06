@@ -313,21 +313,13 @@ def assert_reporting_configs(
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
 
 
-def assert_output_configs(
-    actual: dict[str, OutputConfig], expected: dict[str, OutputConfig]
-) -> None:
-    assert type(actual) is type(expected)
-    assert len(actual) == len(expected)
-    for (index_a, output_a), (index_e, output_e) in zip(
-        actual.items(), expected.items(), strict=True
-    ):
-        assert index_a == index_e
-        assert output_a.type == output_e.type
-        assert output_a.base_dir == output_e.base_dir
-        assert output_a.connection_string == output_e.connection_string
-        assert output_a.container_name == output_e.container_name
-        assert output_a.storage_account_blob_url == output_e.storage_account_blob_url
-        assert output_a.cosmosdb_account_url == output_e.cosmosdb_account_url
+def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
+    assert expected.type == actual.type
+    assert expected.base_dir == actual.base_dir
+    assert expected.connection_string == actual.connection_string
+    assert expected.container_name == actual.container_name
+    assert expected.storage_account_blob_url == actual.storage_account_blob_url
+    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
 
 
 def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
