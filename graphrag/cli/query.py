@@ -168,7 +168,6 @@ def run_local_search(
             "create_final_covariates",
         ],
     )
-
     # Call the Multi-Index Local Search API
     if dataframe_dict["multi-index"]:
         final_nodes_list = dataframe_dict["create_final_nodes"]
@@ -480,10 +479,9 @@ def _resolve_output_files(
     if config.outputs:
         dataframe_dict["multi-index"] = True
         dataframe_dict["num_indexes"] = len(config.outputs)
-        dataframe_dict["index_names"] = []
-        for output in config.outputs:
+        dataframe_dict["index_names"] = config.outputs.keys()
+        for output in config.outputs.values():
             output_config = output.model_dump()
-            dataframe_dict["index_names"].append(output_config["base_dir"])
             storage_obj = StorageFactory().create_storage(
                 storage_type=output_config["type"], kwargs=output_config
             )
@@ -510,7 +508,7 @@ def _resolve_output_files(
                             )
                         )
                         dataframe_dict[optional_file].append(df_value)
-            return dataframe_dict
+        return dataframe_dict
     # Loading output files for single-index search
     dataframe_dict["multi-index"] = False
     output_config = config.output.model_dump()  # type: ignore

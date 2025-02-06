@@ -577,7 +577,6 @@ async def multi_index_local_search(
         "relationships": -1,
         "covariates": 0,
     }
-
     community_reports_dfs = []
     entities_dfs = []
     nodes_dfs = []

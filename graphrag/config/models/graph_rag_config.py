@@ -117,15 +117,15 @@ class GraphRagConfig(BaseModel):
                 (Path(self.root_dir) / self.output.base_dir).resolve()
             )
 
-    outputs: list[OutputConfig] | None = Field(
+    outputs: dict[str, OutputConfig] | None = Field(
         description="A list of output configurations used for multi-index query.",
         default=None,
     )
 
-    def _validate_output_list_base_dirs(self) -> None:
-        """Validate the output list base directories."""
+    def _validate_multi_output_base_dirs(self) -> None:
+        """Validate the outputs dict base directories."""
         if self.outputs:
-            for output in self.outputs:
+            for output in self.outputs.values():
                 if output.type == defs.OutputType.file:
                     if output.base_dir.strip() == "":
                         msg = "Output base directory is required for file output. Please rerun `graphrag init` and set the output configuration."
@@ -332,7 +332,7 @@ class GraphRagConfig(BaseModel):
         self._validate_models()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
-        self._validate_output_list_base_dirs()
+        self._validate_multi_output_base_dirs()
         self._validate_update_index_output_base_dir()
         self._validate_vector_store_db_uri()
         return self
