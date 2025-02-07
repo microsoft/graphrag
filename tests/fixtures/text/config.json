@@ -2,14 +2,6 @@
     "input_path": "./tests/fixtures/text",
     "input_file_type": "text",
     "workflow_config": {
-        "compute_communities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 0
-        },
         "create_base_text_units": {
             "row_range": [
                 1,
@@ -24,9 +16,9 @@
                 2500
             ],
             "max_runtime": 300,
-            "expected_artifacts": 0
+            "expected_artifacts": 2
         },
-        "create_final_covariates": {
+        "extract_covariates": {
             "row_range": [
                 1,
                 2500
@@ -43,40 +35,7 @@
             "max_runtime": 300,
             "expected_artifacts": 1
         },
-        "create_final_entities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "type",
-                "description"
-            ],
-            "max_runtime": 300,
-            "expected_artifacts": 1
-        },
-        "create_final_relationships": {
-            "row_range": [
-                1,
-                6000
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_nodes": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "description",
-                "x",
-                "y"
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_communities": {
+        "create_communities": {
             "row_range": [
                 1,
                 2500
@@ -84,7 +43,7 @@
             "max_runtime": 150,
             "expected_artifacts": 1
         },
-        "create_final_community_reports": {
+        "create_community_reports": {
             "row_range": [
                 1,
                 2500

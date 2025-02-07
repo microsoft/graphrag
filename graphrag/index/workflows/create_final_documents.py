@@ -22,13 +22,11 @@ async def run_workflow(
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform final documents."""
-    documents = await load_table_from_storage("input", context.storage)
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    documents = await load_table_from_storage("documents", context.storage)
+    text_units = await load_table_from_storage("text_units", context.storage)
 
     output = create_final_documents(documents, text_units)
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "documents", context.storage)
 
     return output

@@ -34,17 +34,17 @@ required_embeddings: set[str] = {
 
 def get_embedded_fields(settings: GraphRagConfig) -> set[str]:
     """Get the fields to embed based on the enum or specifically selected embeddings."""
-    match settings.embeddings.target:
+    match settings.embed_text.target:
         case TextEmbeddingTarget.all:
             return all_embeddings
         case TextEmbeddingTarget.required:
             return required_embeddings
         case TextEmbeddingTarget.selected:
-            return set(settings.embeddings.names)
+            return set(settings.embed_text.names)
         case TextEmbeddingTarget.none:
             return set()
         case _:
-            msg = f"Unknown embeddings target: {settings.embeddings.target}"
+            msg = f"Unknown embeddings target: {settings.embed_text.target}"
             raise ValueError(msg)
 
 
@@ -55,10 +55,10 @@ def get_embedding_settings(
     """Transform GraphRAG config into settings for workflows."""
     # TEMP
     embeddings_llm_settings = settings.get_language_model_config(
-        settings.embeddings.model_id
+        settings.embed_text.model_id
     )
     vector_store_settings = settings.get_vector_store_config(
-        settings.embeddings.vector_store_id
+        settings.embed_text.vector_store_id
     ).model_dump()
 
     #
@@ -66,7 +66,7 @@ def get_embedding_settings(
     # settings.vector_store.base contains connection information, or may be undefined
     # settings.vector_store.<vector_name> contains the specific settings for this embedding
     #
-    strategy = settings.embeddings.resolved_strategy(
+    strategy = settings.embed_text.resolved_strategy(
         embeddings_llm_settings
     )  # get the default strategy
     strategy.update({

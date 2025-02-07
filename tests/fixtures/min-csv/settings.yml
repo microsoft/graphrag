@@ -38,17 +38,6 @@ input:
   file_type: csv
   file_pattern: ".*\\.csv$$"
 
-embeddings:
-  model_id: "default_embedding_model"
-
-storage:
-  type: file
-  base_dir: "output"
-
-reporting:
-  type: file
-  base_dir: "logs"
-
 snapshots:
   embeddings: True
 

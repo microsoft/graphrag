@@ -28,9 +28,6 @@ from graphrag.prompt_tune.generator.community_reporter_role import (
     generate_community_reporter_role,
 )
 from graphrag.prompt_tune.generator.domain import generate_domain
-from graphrag.prompt_tune.generator.entity_extraction_prompt import (
-    create_entity_extraction_prompt,
-)
 from graphrag.prompt_tune.generator.entity_relationship import (
     generate_entity_relationship_examples,
 )
@@ -38,6 +35,9 @@ from graphrag.prompt_tune.generator.entity_summarization_prompt import (
     create_entity_summarization_prompt,
 )
 from graphrag.prompt_tune.generator.entity_types import generate_entity_types
+from graphrag.prompt_tune.generator.extract_graph_prompt import (
+    create_extract_graph_prompt,
+)
 from graphrag.prompt_tune.generator.language import detect_language
 from graphrag.prompt_tune.generator.persona import generate_persona
 from graphrag.prompt_tune.loader.input import MIN_CHUNK_SIZE, load_docs_in_chunks
@@ -122,8 +122,8 @@ async def generate_indexing_prompts(
     )
 
     entity_types = None
-    entity_extraction_llm_settings = config.get_language_model_config(
-        config.entity_extraction.model_id
+    extract_graph_llm_settings = config.get_language_model_config(
+        config.extract_graph.model_id
     )
     if discover_entity_types:
         logger.info("Generating entity types...")
@@ -132,7 +132,7 @@ async def generate_indexing_prompts(
             domain=domain,
             persona=persona,
             docs=doc_list,
-            json_mode=entity_extraction_llm_settings.model_supports_json or False,
+            json_mode=extract_graph_llm_settings.model_supports_json or False,
         )
 
     logger.info("Generating entity relationship examples...")
@@ -146,13 +146,13 @@ async def generate_indexing_prompts(
     )
 
     logger.info("Generating entity extraction prompt...")
-    entity_extraction_prompt = create_entity_extraction_prompt(
+    extract_graph_prompt = create_extract_graph_prompt(
         entity_types=entity_types,
         docs=doc_list,
         examples=examples,
         language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
-        encoding_model=entity_extraction_llm_settings.encoding_model,
+        encoding_model=extract_graph_llm_settings.encoding_model,
         max_token_count=max_tokens,
         min_examples_required=min_examples_required,
     )
@@ -177,7 +177,7 @@ async def generate_indexing_prompts(
     )
 
     return (
-        entity_extraction_prompt,
+        extract_graph_prompt,
         entity_summarization_prompt,
         community_summarization_prompt,
     )

@@ -12,7 +12,9 @@ from typing import cast
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.summarize_communities import restore_community_hierarchy
+from graphrag.index.operations.summarize_communities.utils import (
+    restore_community_hierarchy,
+)
 from graphrag.model.community import Community
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.covariate import Covariate
@@ -74,7 +76,7 @@ def read_indexer_relationships(final_relationships: pd.DataFrame) -> list[Relati
 
 def read_indexer_reports(
     final_community_reports: pd.DataFrame,
-    final_nodes: pd.DataFrame,
+    final_communities: pd.DataFrame,
     community_level: int | None,
     dynamic_community_selection: bool = False,
     content_embedding_col: str = "full_content_embedding",
@@ -85,7 +87,7 @@ def read_indexer_reports(
     If not dynamic_community_selection, then select reports with the max community level that an entity belongs to.
     """
     reports_df = final_community_reports
-    nodes_df = final_nodes
+    nodes_df = final_communities.explode("entity_ids")
 
     if community_level is not None:
         nodes_df = _filter_under_community_level(nodes_df, community_level)
@@ -130,26 +132,32 @@ def read_indexer_report_embeddings(
 
 
 def read_indexer_entities(
-    final_nodes: pd.DataFrame,
     final_entities: pd.DataFrame,
+    final_communities: pd.DataFrame,
     community_level: int | None,
 ) -> list[Entity]:
     """Read in the Entities from the raw indexing outputs."""
-    nodes_df = final_nodes
+    community_join = final_communities.explode("entity_ids").loc[
+        :, ["community", "level", "entity_ids"]
+    ]
+    nodes_df = final_entities.merge(
+        community_join, left_on="id", right_on="entity_ids", how="left"
+    )
     entities_df = final_entities
 
     if community_level is not None:
         nodes_df = _filter_under_community_level(nodes_df, community_level)
 
-    nodes_df = cast("pd.DataFrame", nodes_df[["id", "degree", "community"]])
+    nodes_df = nodes_df.loc[:, ["id", "community"]]
 
     # group entities by id and degree and remove duplicated community IDs
-    nodes_df = nodes_df.groupby(["id", "degree"]).agg({"community": set}).reset_index()
-    nodes_df["community"] = nodes_df["community"].apply(lambda x: [str(i) for i in x])
+    nodes_df = nodes_df.groupby(["id"]).agg({"community": set}).reset_index()
+    nodes_df["community"] = nodes_df["community"].apply(
+        lambda x: [str(int(i)) for i in x]
+    )
     final_df = nodes_df.merge(entities_df, on="id", how="inner").drop_duplicates(
         subset=["id"]
     )
-
     # read entity dataframe to knowledge model objects
     return read_entities(
         df=final_df,
@@ -168,7 +176,6 @@ def read_indexer_entities(
 
 def read_indexer_communities(
     final_communities: pd.DataFrame,
-    final_nodes: pd.DataFrame,
     final_community_reports: pd.DataFrame,
 ) -> list[Community]:
     """Read in the Communities from the raw indexing outputs.
@@ -176,7 +183,7 @@ def read_indexer_communities(
     Reconstruct the community hierarchy information and add to the sub-community field.
     """
     communities_df = final_communities
-    nodes_df = final_nodes
+    nodes_df = communities_df.explode("entity_ids")
     reports_df = final_community_reports
 
     # ensure communities matches community reports

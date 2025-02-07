@@ -22,7 +22,7 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform base text_units."""
-    documents = await load_table_from_storage("input", context.storage)
+    documents = await load_table_from_storage("documents", context.storage)
 
     chunks = config.chunks
     chunk_size_includes_metadata = chunks.chunk_size_includes_metadata
@@ -39,6 +39,6 @@ async def run_workflow(
         chunk_size_includes_metadata=chunk_size_includes_metadata,
     )
 
-    await write_table_to_storage(output, workflow_name, context.storage)
+    await write_table_to_storage(output, "text_units", context.storage)
 
     return output

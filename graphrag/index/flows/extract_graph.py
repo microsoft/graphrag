@@ -4,14 +4,18 @@
 """All the steps to create the base entity graph."""
 
 from typing import Any
-from uuid import uuid4
 
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
-from graphrag.index.operations.extract_entities import extract_entities
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.index.operations.extract_graph.extract_graph import (
+    extract_graph as extractor,
+)
+from graphrag.index.operations.finalize_entities import finalize_entities
+from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
@@ -27,10 +31,12 @@ async def extract_graph(
     entity_types: list[str] | None = None,
     summarization_strategy: dict[str, Any] | None = None,
     summarization_num_threads: int = 4,
+    embed_config: EmbedGraphConfig | None = None,
+    layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     # this returns a graph for each text unit, to be merged later
-    entities, relationships = await extract_entities(
+    extracted_entities, extracted_relationships = await extractor(
         text_units=text_units,
         callbacks=callbacks,
         cache=cache,
@@ -42,12 +48,12 @@ async def extract_graph(
         num_threads=extraction_num_threads,
     )
 
-    if not _validate_data(entities):
+    if not _validate_data(extracted_entities):
         error_msg = "Entity Extraction failed. No entities detected during extraction."
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
-    if not _validate_data(relationships):
+    if not _validate_data(extracted_relationships):
         error_msg = (
             "Entity Extraction failed. No relationships detected during extraction."
         )
@@ -55,41 +61,26 @@ async def extract_graph(
         raise ValueError(error_msg)
 
     entity_summaries, relationship_summaries = await summarize_descriptions(
-        entities_df=entities,
-        relationships_df=relationships,
+        entities_df=extracted_entities,
+        relationships_df=extracted_relationships,
         callbacks=callbacks,
         cache=cache,
         strategy=summarization_strategy,
         num_threads=summarization_num_threads,
     )
 
-    base_relationship_edges = _prep_edges(relationships, relationship_summaries)
-
-    base_entity_nodes = _prep_nodes(entities, entity_summaries)
-
-    return (base_entity_nodes, base_relationship_edges)
-
-
-def _prep_nodes(entities, summaries) -> pd.DataFrame:
-    entities.drop(columns=["description"], inplace=True)
-    nodes = entities.merge(summaries, on="title", how="left").drop_duplicates(
-        subset="title"
+    relationships = extracted_relationships.drop(columns=["description"]).merge(
+        relationship_summaries, on=["source", "target"], how="left"
     )
-    nodes = nodes.loc[nodes["title"].notna()].reset_index()
-    nodes["human_readable_id"] = nodes.index
-    nodes["id"] = nodes["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return nodes
 
+    extracted_entities.drop(columns=["description"], inplace=True)
+    entities = extracted_entities.merge(entity_summaries, on="title", how="left")
 
-def _prep_edges(relationships, summaries) -> pd.DataFrame:
-    edges = (
-        relationships.drop(columns=["description"])
-        .drop_duplicates(subset=["source", "target"])
-        .merge(summaries, on=["source", "target"], how="left")
+    final_entities = finalize_entities(
+        entities, relationships, callbacks, embed_config, layout_enabled
     )
-    edges["human_readable_id"] = edges.index
-    edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return edges
+    final_relationships = finalize_relationships(relationships)
+    return (final_entities, final_relationships)
 
 
 def _validate_data(df: pd.DataFrame) -> bool:

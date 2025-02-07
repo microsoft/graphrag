@@ -4,7 +4,7 @@
 from unittest.mock import Mock, patch
 
 from graphrag.config.models.chunking_config import ChunkingConfig
-from graphrag.index.bootstrap import bootstrap
+from graphrag.index.operations.chunk_text.bootstrap import bootstrap
 from graphrag.index.operations.chunk_text.strategies import (
     get_encoding_fn,
     run_sentences,
