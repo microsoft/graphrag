@@ -54,7 +54,7 @@ def create_base_text_units(
     num_total = _get_num_total(aggregated, "texts")
     tick = progress_ticker(callbacks.progress, num_total)
 
-    def chunker(row: dict[str, Any]) -> Any:
+    def chunker(row: dict[str, Any]) -> pd.Series:
         line_delimiter = ".\n"
         metadata_str = ""
         metadata_tokens = 0
@@ -86,13 +86,13 @@ def create_base_text_units(
 
         for i, chunk in enumerate(chunked):
             if isinstance(chunk, str):
-                chunk = metadata_str + chunk
+                chunked[i] = metadata_str + chunk
             else:
-                for x, chunk_tupl in enumerate(chunk):
-                    if chunk_tupl is not None:
-                        new_chunk = metadata_str + chunk_tupl[1]
-                        chunk[x] = (chunk[x][0], new_chunk, chunk[x][2])
-            chunked[i] = chunk
+                updated_chunks = [
+                    (tup[0], metadata_str + tup[1], tup[2]) if tup is not None else None
+                    for tup in chunk
+                ]
+                chunked[i] = updated_chunks
 
         if tick:
             tick(1)
