@@ -253,12 +253,12 @@ async def multi_index_global_search(
         raise NotImplementedError(message)
 
     links = {
-        "community": {},
+        "communities": {},
         "community_reports": {},
         "entities": {},
     }
     max_vals = {
-        "community": -1,
+        "communities": -1,
         "community_reports": -1,
         "entities": -1,
     }
@@ -288,16 +288,16 @@ async def multi_index_global_search(
         communities_df["community"] = communities_df["community"].astype(int)
         communities_df["parent"] = communities_df["parent"].astype(int)
         for i in communities_df["community"]:
-            links["community"][i + max_vals["community"] + 1] = {
+            links["communities"][i + max_vals["communities"] + 1] = {
                 "index_name": index_name,
                 "id": str(i),
             }
-        communities_df["community"] += max_vals["community"] + 1
+        communities_df["community"] += max_vals["communities"] + 1
         communities_df["parent"] = communities_df["parent"].apply(
-            lambda x: x if x == -1 else x + max_vals["community"] + 1
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
         )
-        communities_df["human_readable_id"] += max_vals["community"] + 1
-        max_vals["community"] = int(communities_df["community"].max())
+        communities_df["human_readable_id"] += max_vals["communities"] + 1
+        max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
         # Prepare each index's entities dataframe for merging
