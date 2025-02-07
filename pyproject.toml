@@ -46,12 +46,12 @@ format-jinja = """
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-environs = "^11.0.0"
+environs = "^14.1.0"
 en-core-web-md = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0.tar.gz" }
 
 # Vector Stores
 azure-search-documents = "^11.5.2"
-lancedb = "^0.17.0"
+lancedb = "^0.19.0"
 
 # Async IO
 aiofiles = "^24.1.0"
@@ -85,10 +85,10 @@ azure-storage-blob = "^12.24.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.15.1"
-fnllm = "^0.0.10"
+fnllm = "^0.1.1"
 
 tenacity = "^9.0.0"
-json-repair = "^0.30.3"
+json-repair = "^0.35.0"
 tqdm = "^4.67.1"
 httpx = "^0.28.1"
 
@@ -102,7 +102,7 @@ nbconvert = "^7.16.4"
 poethepoet = "^0.31.1"
 pyright = "^1.1.390"
 pytest = "^8.3.4"
-pytest-asyncio = "^0.24.0"
+pytest-asyncio = "^0.25.3"
 pytest-timeout = "^2.3.1"
 ruff = "^0.8.2"
 semversioner = "^2.0.5"
