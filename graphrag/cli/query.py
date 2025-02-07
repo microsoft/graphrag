@@ -170,10 +170,7 @@ def run_local_search(
         index_names = dataframe_dict["index_names"]
 
         # If any covariates tables are missing from any index, set the covariates list to None
-        if (
-            len(dataframe_dict["covariates"])
-            != dataframe_dict["num_indexes"]
-        ):
+        if len(dataframe_dict["covariates"]) != dataframe_dict["num_indexes"]:
             final_covariates_list = None
         else:
             final_covariates_list = dataframe_dict["covariates"]
