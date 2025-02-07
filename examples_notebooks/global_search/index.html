@@ -2133,9 +2133,9 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="load-community-reports-as-context-for-global-search">Load community reports as context for global search<a class="anchor-link" href="#load-community-reports-as-context-for-global-search">¶</a></h3><ul>
-<li>Load all community reports in the <code>create_final_community_reports</code> table from the GraphRAG, to be used as context data for global search.</li>
-<li>Load entities from the <code>create_final_nodes</code> and <code>create_final_entities</code> tables from the GraphRAG, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
-<li>Load all communities in the <code>create_final_communites</code> table from the GraphRAG, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
+<li>Load all community reports in the <code>community_reports</code> table from GraphRAG, to be used as context data for global search.</li>
+<li>Load entities from the <code>entities</code> tables from GraphRAG, to be used for calculating community weights for context ranking. Note that this is optional (if no entities are provided, we will not calculate community weights and only use the rank attribute in the community reports table for context ranking)</li>
+<li>Load all communities in the <code>communities</code> table from the GraphRAG, to be used to reconstruct the community graph hierarchy for dynamic community selection.</li>
 </ul>
 </div>
 </div>
@@ -2161,10 +2161,9 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># parquet files generated from indexing pipeline</span>
 <span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
-<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_communities"</span>
-<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_community_reports"</span>
-<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_nodes"</span>
-<span class="n">ENTITY_EMBEDDING_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_entities"</span>
+<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"communities"</span>
+<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"community_reports"</span>
+<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"entities"</span>
 
 <span class="c1"># community level in the Leiden community hierarchy from which we will load the community reports</span>
 <span class="c1"># higher value means we use reports from more fine-grained communities (at the cost of higher computation cost)</span>
@@ -2172,10 +2171,9 @@ token_encoder = tiktoken.encoding_for_model(llm_model)</div>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4"># parquet files generated from indexing pipeline
 INPUT_DIR = "./inputs/operation dulce"
-COMMUNITY_TABLE = "create_final_communities"
-COMMUNITY_REPORT_TABLE = "create_final_community_reports"
-ENTITY_TABLE = "create_final_nodes"
-ENTITY_EMBEDDING_TABLE = "create_final_entities"
+COMMUNITY_TABLE = "communities"
+COMMUNITY_REPORT_TABLE = "community_reports"
+ENTITY_TABLE = "entities"
 
 # community level in the Leiden community hierarchy from which we will load the community reports
 # higher value means we use reports from more fine-grained communities (at the cost of higher computation cost)
@@ -2207,11 +2205,10 @@ COMMUNITY_LEVEL = 2</div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">community_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 <span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 <span class="n">report_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_REPORT_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">entity_embedding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_EMBEDDING_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 
-<span class="n">communities</span> <span class="o">=</span> <span class="n">read_indexer_communities</span><span class="p">(</span><span class="n">community_df</span><span class="p">,</span> <span class="n">entity_df</span><span class="p">,</span> <span class="n">report_df</span><span class="p">)</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span><span class="n">report_df</span><span class="p">,</span> <span class="n">entity_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
-<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">entity_embedding_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
+<span class="n">communities</span> <span class="o">=</span> <span class="n">read_indexer_communities</span><span class="p">(</span><span class="n">community_df</span><span class="p">,</span> <span class="n">report_df</span><span class="p">)</span>
+<span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span><span class="n">report_df</span><span class="p">,</span> <span class="n">community_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
+<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">community_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total report count: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
@@ -2223,11 +2220,10 @@ COMMUNITY_LEVEL = 2</div>
 <div class="clipboard-copy-txt" id="cell-5">community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
 entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
 report_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_REPORT_TABLE}.parquet")
-entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
 
-communities = read_indexer_communities(community_df, entity_df, report_df)
-reports = read_indexer_reports(report_df, entity_df, COMMUNITY_LEVEL)
-entities = read_indexer_entities(entity_df, entity_embedding_df, COMMUNITY_LEVEL)
+communities = read_indexer_communities(community_df, report_df)
+reports = read_indexer_reports(report_df, community_df, COMMUNITY_LEVEL)
+entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
 
 print(f"Total report count: {len(report_df)}")
 print(
@@ -2245,138 +2241,74 @@ report_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Total report count: 72
-Report count after filtering by community level 2: 56
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[5], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> community_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">COMMUNITY_TABLE</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> entity_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>ENTITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">      3</span> report_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>COMMUNITY_REPORT_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
+<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
+<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>human_readable_id</th>
-<th>community</th>
-<th>parent</th>
-<th>level</th>
-<th>title</th>
-<th>summary</th>
-<th>full_content</th>
-<th>rank</th>
-<th>rank_explanation</th>
-<th>findings</th>
-<th>full_content_json</th>
-<th>period</th>
-<th>size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>16949a5d17b740b2b4a6f787b0a637f1</td>
-<td>43</td>
-<td>43</td>
-<td>10</td>
-<td>2</td>
-<td>Ben Bloomberg and the Harmoniser Project</td>
-<td>The community centers around Ben Bloomberg, a ...</td>
-<td># Ben Bloomberg and the Harmoniser Project\n\n...</td>
-<td>7.5</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Ben Bloomberg is a pivotal f...</td>
-<td>{\n    "title": "Ben Bloomberg and the Harmoni...</td>
-<td>2025-01-10</td>
-<td>35</td>
-</tr>
-<tr>
-<th>1</th>
-<td>4ff756b7041f4dcab6612e016af2b14d</td>
-<td>44</td>
-<td>44</td>
-<td>10</td>
-<td>2</td>
-<td>North Hampton and Influential Musicians</td>
-<td>The community centers around North Hampton, a ...</td>
-<td># North Hampton and Influential Musicians\n\nT...</td>
-<td>6.5</td>
-<td>The impact severity rating is moderately high ...</td>
-<td>[{'explanation': 'North Hampton serves as the ...</td>
-<td>{\n    "title": "North Hampton and Influential...</td>
-<td>2025-01-10</td>
-<td>4</td>
-</tr>
-<tr>
-<th>2</th>
-<td>2d3df394272743a781606ad80ccb5312</td>
-<td>45</td>
-<td>45</td>
-<td>10</td>
-<td>2</td>
-<td>Prince of Monaco and Monaco</td>
-<td>The community revolves around the Prince of Mo...</td>
-<td># Prince of Monaco and Monaco\n\nThe community...</td>
-<td>4.0</td>
-<td>The impact severity rating is moderate due to ...</td>
-<td>[{'explanation': 'The Prince of Monaco is a ke...</td>
-<td>{\n    "title": "Prince of Monaco and Monaco",...</td>
-<td>2025-01-10</td>
-<td>2</td>
-</tr>
-<tr>
-<th>3</th>
-<td>becbd958973f42b0bd53cca9250feaf1</td>
-<td>46</td>
-<td>46</td>
-<td>10</td>
-<td>2</td>
-<td>Robot Opera and Broadway</td>
-<td>The community revolves around the Robot Opera,...</td>
-<td># Robot Opera and Broadway\n\nThe community re...</td>
-<td>7.5</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'The Robot Opera is a notable...</td>
-<td>{\n    "title": "Robot Opera and Broadway",\n ...</td>
-<td>2025-01-10</td>
-<td>2</td>
-</tr>
-<tr>
-<th>4</th>
-<td>f7d29921ae3e41a79ae7f88dae584892</td>
-<td>47</td>
-<td>47</td>
-<td>13</td>
-<td>2</td>
-<td>Ben and Jacob's Fusion of Art and Technology</td>
-<td>The community centers around Ben and Jacob, wh...</td>
-<td># Ben and Jacob's Fusion of Art and Technology...</td>
-<td>7.5</td>
-<td>The impact severity rating is high due to the ...</td>
-<td>[{'explanation': 'Ben and Jacob are key collab...</td>
-<td>{\n    "title": "Ben and Jacob's Fusion of Art...</td>
-<td>2025-01-10</td>
-<td>5</td>
-</tr>
-</tbody>
-</table>
-</div>
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
+<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
+<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
+<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
+<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
+<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
+<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
+<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
+<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
+<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
+<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
+<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
+<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
+<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
+<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
+<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
+
+<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: './inputs/operation dulce/communities.parquet'</pre>
 </div>
 </div>
 </div>
@@ -2393,8 +2325,8 @@ Report count after filtering by community level 2: 56
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2425,6 +2357,29 @@ Report count after filtering by community level 2: 56
     entities=entities,  # default to None if you don't want to use community weights for ranking
     token_encoder=token_encoder,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> GlobalCommunityContext(
+<span class="ansi-green-fg">----&gt; 2</span>     community_reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     communities<span style="color: rgb(98,98,98)">=</span>communities,
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
+<span class="ansi-green-intense-fg ansi-bold">      6</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2512,8 +2467,8 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2562,6 +2517,36 @@ reduce_llm_params = {
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[8], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> GlobalSearch(
+<span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
+<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     max_data_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     map_llm_params<span style="color: rgb(98,98,98)">=</span>map_llm_params,
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     reduce_llm_params<span style="color: rgb(98,98,98)">=</span>reduce_llm_params,
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     allow_general_knowledge<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,  <span style="color: rgb(95,135,135)"># set this to True will add instruction to encourage the LLM to incorporate general knowledge in the response, which may increase hallucinations, but could be useful in some use cases.</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     json_mode<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,  <span style="color: rgb(95,135,135)"># set this to False if your LLM model does not support JSON mode.</span>
+<span class="ansi-green-intense-fg ansi-bold">     10</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>context_builder_params,
+<span class="ansi-green-intense-fg ansi-bold">     11</span>     concurrent_coroutines<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">32</span>,
+<span class="ansi-green-intense-fg ansi-bold">     12</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
+<span class="ansi-green-intense-fg ansi-bold">     13</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
@@ -2603,17 +2588,17 @@ print(result.response)</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>### Cosmic Vocalization: An Overview
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[9], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(
+<span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is Cosmic Vocalization and who are involved in it?</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> )
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
-Cosmic Vocalization is a term coined by Jordan Hayes to describe a repeating sequence found in cryptic communications. This concept is pivotal as it serves as a reference point for both humanity and extraterrestrial entities, facilitating a mutual understanding and interpretation of signals exchanged during the Interstellar Duet [Data: Reports (65)]. The idea of Cosmic Vocalization underscores the importance of establishing a common ground in interstellar communications, which is crucial for the success of such exchanges.
-
-### Key Participants
-
-The Paranormal Military Squad plays a significant role in activities related to Cosmic Vocalization. They are integral participants in the Galactic Orchestra, which encompasses the Interstellar Duet and the exchange of Harmonious Signals [Data: Reports (65)]. This involvement highlights the strategic importance of Cosmic Vocalization in broader interstellar and paranormal military operations, suggesting that these communications are not only scientific but also have potential military applications.
-
-In summary, Cosmic Vocalization is a critical concept in the realm of interstellar communication, with the Paranormal Military Squad being key participants in its related activities. This involvement indicates a blend of scientific exploration and strategic military interests in the ongoing efforts to understand and utilize these cryptic communications.
-</pre>
+<span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2651,486 +2636,17 @@ result.context_data["reports"]</div>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[10], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect the data used to build the context for the LLM responses</span>
+<span class="ansi-green-fg">----&gt; 2</span> <span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>context_data[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">reports</span><span style="color: rgb(175,0,0)">"</span>]
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>id</th>
-<th>title</th>
-<th>occurrence weight</th>
-<th>content</th>
-<th>rank</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>50</td>
-<td>Alex Mercer and the Dulce Base Team</td>
-<td>0.956522</td>
-<td># Alex Mercer and the Dulce Base Team\n\nThe c...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>1</th>
-<td>35</td>
-<td>Kevin Scott and Technology Development</td>
-<td>0.608696</td>
-<td># Kevin Scott and Technology Development\n\nTh...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>2</th>
-<td>53</td>
-<td>Dulce Base and Paranormal Military Squad</td>
-<td>0.565217</td>
-<td># Dulce Base and Paranormal Military Squad\n\n...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>3</th>
-<td>22</td>
-<td>Paranormal Military Squad and Technological Ex...</td>
-<td>0.434783</td>
-<td># Paranormal Military Squad and Technological ...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>4</th>
-<td>60</td>
-<td>First Contact with Extraterrestrial Civilization</td>
-<td>0.304348</td>
-<td># First Contact with Extraterrestrial Civiliza...</td>
-<td>9.5</td>
-</tr>
-<tr>
-<th>5</th>
-<td>61</td>
-<td>Dulce Base Operations and Distress</td>
-<td>0.173913</td>
-<td># Dulce Base Operations and Distress\n\nThe co...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>6</th>
-<td>57</td>
-<td>Operation: Dulce in New Mexico</td>
-<td>0.130435</td>
-<td># Operation: Dulce in New Mexico\n\nThe commun...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>7</th>
-<td>48</td>
-<td>Jacob Collier and Ben Bloomberg's First Tour</td>
-<td>0.130435</td>
-<td># Jacob Collier and Ben Bloomberg's First Tour...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>8</th>
-<td>51</td>
-<td>Cosmic Translators and Alien Script</td>
-<td>0.086957</td>
-<td># Cosmic Translators and Alien Script\n\nThe c...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>9</th>
-<td>64</td>
-<td>Terminal and Deep Hum</td>
-<td>0.086957</td>
-<td># Terminal and Deep Hum\n\nThe community revol...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>10</th>
-<td>29</td>
-<td>Paranormal Military Squad and Cosmic Dialogue</td>
-<td>0.086957</td>
-<td># Paranormal Military Squad and Cosmic Dialogu...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>11</th>
-<td>39</td>
-<td>Extraterrestrial Signal Decryption Community</td>
-<td>0.086957</td>
-<td># Extraterrestrial Signal Decryption Community...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>12</th>
-<td>34</td>
-<td>Growth Mindset and Stanford</td>
-<td>0.086957</td>
-<td># Growth Mindset and Stanford\n\nThe community...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>13</th>
-<td>20</td>
-<td>Jacob Collier and Taylor Swift's Albums</td>
-<td>0.086957</td>
-<td># Jacob Collier and Taylor Swift's Albums\n\nT...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>14</th>
-<td>0</td>
-<td>Omberg and Jacob Collier Collaboration</td>
-<td>0.086957</td>
-<td># Omberg and Jacob Collier Collaboration\n\nTh...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>15</th>
-<td>65</td>
-<td>Galactic Orchestra and Interstellar Duet</td>
-<td>0.043478</td>
-<td># Galactic Orchestra and Interstellar Duet\n\n...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>16</th>
-<td>59</td>
-<td>Alien Intelligence and Interstellar Siren's Call</td>
-<td>0.043478</td>
-<td># Alien Intelligence and Interstellar Siren's ...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>17</th>
-<td>16</td>
-<td>Jimmy Fallon Project on Primetime Television</td>
-<td>0.043478</td>
-<td># Jimmy Fallon Project on Primetime Television...</td>
-<td>6.5</td>
-</tr>
-<tr>
-<th>18</th>
-<td>42</td>
-<td>Decryption Process and Digital Soundscape</td>
-<td>0.043478</td>
-<td># Decryption Process and Digital Soundscape\n\...</td>
-<td>6.5</td>
-</tr>
-<tr>
-<th>19</th>
-<td>5</td>
-<td>Jacob Collier's Video Production</td>
-<td>0.043478</td>
-<td># Jacob Collier's Video Production\n\nThe comm...</td>
-<td>4.0</td>
-</tr>
-<tr>
-<th>20</th>
-<td>14</td>
-<td>Ben Bloomberg's Phone System and House</td>
-<td>0.043478</td>
-<td># Ben Bloomberg's Phone System and House\n\nTh...</td>
-<td>3.0</td>
-</tr>
-<tr>
-<th>21</th>
-<td>9</td>
-<td>Jacob Collier's Video Production</td>
-<td>0.043478</td>
-<td># Jacob Collier's Video Production\n\nThe comm...</td>
-<td>3.0</td>
-</tr>
-<tr>
-<th>22</th>
-<td>17</td>
-<td>Ben Bloomberg's Phone System and Parental Conc...</td>
-<td>0.043478</td>
-<td># Ben Bloomberg's Phone System and Parental Co...</td>
-<td>3.0</td>
-</tr>
-<tr>
-<th>23</th>
-<td>58</td>
-<td>Paranormal Military Squad and Alien Communicat...</td>
-<td>0.956522</td>
-<td># Paranormal Military Squad and Alien Communic...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>24</th>
-<td>52</td>
-<td>Paranormal Military Squad at Dulce Base</td>
-<td>0.695652</td>
-<td># Paranormal Military Squad at Dulce Base\n\nT...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>25</th>
-<td>11</td>
-<td>Jacob Collier and His Musical Collaborations</td>
-<td>0.565217</td>
-<td># Jacob Collier and His Musical Collaborations...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>26</th>
-<td>54</td>
-<td>Dr. Jordan Hayes and the Paranormal Military S...</td>
-<td>0.347826</td>
-<td># Dr. Jordan Hayes and the Paranormal Military...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>27</th>
-<td>55</td>
-<td>Operation: Dulce and Paranormal Military Squad</td>
-<td>0.260870</td>
-<td># Operation: Dulce and Paranormal Military Squ...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>28</th>
-<td>68</td>
-<td>Earth's Interstellar Communication and Galacti...</td>
-<td>0.260870</td>
-<td># Earth's Interstellar Communication and Galac...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>29</th>
-<td>70</td>
-<td>Paranormal Military Squad and Interstellar Com...</td>
-<td>0.130435</td>
-<td># Paranormal Military Squad and Interstellar C...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>30</th>
-<td>71</td>
-<td>Threshold and Humankind's Communication with E...</td>
-<td>0.130435</td>
-<td># Threshold and Humankind's Communication with...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>31</th>
-<td>56</td>
-<td>Dulce Military Base and Paranormal Operations</td>
-<td>0.130435</td>
-<td># Dulce Military Base and Paranormal Operation...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>32</th>
-<td>69</td>
-<td>Paranormal Military Squad and Interstellar Com...</td>
-<td>0.130435</td>
-<td># Paranormal Military Squad and Interstellar C...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>33</th>
-<td>33</td>
-<td>Behind the Tech and Microsoft Community</td>
-<td>0.130435</td>
-<td># Behind the Tech and Microsoft Community\n\nT...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>34</th>
-<td>49</td>
-<td>Djesse Vol. 3 and Djesse Albums Series</td>
-<td>0.130435</td>
-<td># Djesse Vol. 3 and Djesse Albums Series\n\nTh...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>35</th>
-<td>66</td>
-<td>Humanity and Cosmic Relationships</td>
-<td>0.086957</td>
-<td># Humanity and Cosmic Relationships\n\nThe com...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>36</th>
-<td>19</td>
-<td>Pandemic and Its Impact on Work and Art</td>
-<td>0.086957</td>
-<td># Pandemic and Its Impact on Work and Art\n\nT...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>37</th>
-<td>67</td>
-<td>Decryption and Understanding of Alien Signal</td>
-<td>0.043478</td>
-<td># Decryption and Understanding of Alien Signal...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>38</th>
-<td>12</td>
-<td>Montreux Jazz Festival and Key Performers</td>
-<td>0.043478</td>
-<td># Montreux Jazz Festival and Key Performers\n\...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>39</th>
-<td>46</td>
-<td>Robot Opera and Broadway</td>
-<td>0.043478</td>
-<td># Robot Opera and Broadway\n\nThe community re...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>40</th>
-<td>21</td>
-<td>Taylor Swift's Albums and Documentary</td>
-<td>0.043478</td>
-<td># Taylor Swift's Albums and Documentary\n\nThe...</td>
-<td>7.0</td>
-</tr>
-<tr>
-<th>41</th>
-<td>7</td>
-<td>Stage Equipment and Transportation Network</td>
-<td>0.043478</td>
-<td># Stage Equipment and Transportation Network\n...</td>
-<td>6.5</td>
-</tr>
-<tr>
-<th>42</th>
-<td>37</td>
-<td>Jaron Lanier and His Collection of Musical Ins...</td>
-<td>0.043478</td>
-<td># Jaron Lanier and His Collection of Musical I...</td>
-<td>4.5</td>
-</tr>
-<tr>
-<th>43</th>
-<td>45</td>
-<td>Prince of Monaco and Monaco</td>
-<td>0.043478</td>
-<td># Prince of Monaco and Monaco\n\nThe community...</td>
-<td>4.0</td>
-</tr>
-<tr>
-<th>44</th>
-<td>62</td>
-<td>Paranormal Military Squad at Dulce Base</td>
-<td>1.000000</td>
-<td># Paranormal Military Squad at Dulce Base\n\nT...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>45</th>
-<td>63</td>
-<td>Paranormal Military Squad and Operation: Dulce</td>
-<td>0.782609</td>
-<td># Paranormal Military Squad and Operation: Dul...</td>
-<td>9.0</td>
-</tr>
-<tr>
-<th>46</th>
-<td>43</td>
-<td>Ben Bloomberg and the Harmoniser Project</td>
-<td>0.478261</td>
-<td># Ben Bloomberg and the Harmoniser Project\n\n...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>47</th>
-<td>47</td>
-<td>Ben and Jacob's Fusion of Art and Technology</td>
-<td>0.173913</td>
-<td># Ben and Jacob's Fusion of Art and Technology...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>48</th>
-<td>28</td>
-<td>Mission to Uncover Dulce's Mysteries</td>
-<td>0.130435</td>
-<td># Mission to Uncover Dulce's Mysteries\n\nThe ...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>49</th>
-<td>18</td>
-<td>Taylor Swift and Album of the Year</td>
-<td>0.130435</td>
-<td># Taylor Swift and Album of the Year\n\nThe co...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>50</th>
-<td>40</td>
-<td>Conversation between Kevin Scott and Jacob Col...</td>
-<td>0.086957</td>
-<td># Conversation between Kevin Scott and Jacob C...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>51</th>
-<td>41</td>
-<td>Humanity and the Unseen Partner</td>
-<td>0.043478</td>
-<td># Humanity and the Unseen Partner\n\nThe commu...</td>
-<td>8.5</td>
-</tr>
-<tr>
-<th>52</th>
-<td>15</td>
-<td>Jimmy Fallon Project on Primetime TV</td>
-<td>0.043478</td>
-<td># Jimmy Fallon Project on Primetime TV\n\nThe ...</td>
-<td>7.5</td>
-</tr>
-<tr>
-<th>53</th>
-<td>38</td>
-<td>Kevin Scott and the Engineering Mindset</td>
-<td>0.043478</td>
-<td># Kevin Scott and the Engineering Mindset\n\nT...</td>
-<td>6.5</td>
-</tr>
-<tr>
-<th>54</th>
-<td>44</td>
-<td>North Hampton and Influential Musicians</td>
-<td>0.043478</td>
-<td># North Hampton and Influential Musicians\n\nT...</td>
-<td>6.5</td>
-</tr>
-<tr>
-<th>55</th>
-<td>36</td>
-<td>Kevin Scott's Daughter and Her Fantasy Novel</td>
-<td>0.043478</td>
-<td># Kevin Scott's Daughter and Her Fantasy Novel...</td>
-<td>2.0</td>
-</tr>
-</tbody>
-</table>
-</div>
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3174,9 +2690,17 @@ print(
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>LLM calls: 4. Prompt tokens: 32951. Output tokens: 505.
-</pre>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[11], line 3</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># inspect number of LLM calls and tokens</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(0,135,0)">print</span>(
+<span class="ansi-green-fg">----&gt; 3</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">LLM calls: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">result</span><span style="color: rgb(98,98,98)">.</span>llm_calls<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">. Prompt tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result<span style="color: rgb(98,98,98)">.</span>prompt_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">. Output tokens: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>result<span style="color: rgb(98,98,98)">.</span>output_tokens<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'result' is not defined</pre>
 </div>
 </div>
 </div>
