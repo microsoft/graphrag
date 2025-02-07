@@ -35,9 +35,10 @@ async def create_test_context(storage: list[str] | None = None) -> PipelineRunCo
     """Create a test context with tables loaded into storage storage."""
     context = create_run_context(None, None, None)
 
-    # always set the input docs
-    input = load_test_table("source_documents")
-    await write_table_to_storage(input, "input", context.storage)
+    # always set the input docs, but since our stored table is final, drop what wouldn't be in the original source input
+    input = load_test_table("documents")
+    input.drop(columns=["text_unit_ids"], inplace=True)
+    await write_table_to_storage(input, "documents", context.storage)
 
     if storage:
         for name in storage:
@@ -69,9 +70,13 @@ def compare_outputs(
         assert column in actual.columns
         try:
             # dtypes can differ since the test data is read from parquet and our workflow runs in memory
-            assert_series_equal(
-                actual[column], expected[column], check_dtype=False, check_index=False
-            )
+            if column != "id":  # don't check uuids
+                assert_series_equal(
+                    actual[column],
+                    expected[column],
+                    check_dtype=False,
+                    check_index=False,
+                )
         except AssertionError:
             print("Expected:")
             print(expected[column])

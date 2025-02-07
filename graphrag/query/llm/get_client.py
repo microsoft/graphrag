@@ -49,7 +49,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
 def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     """Get the LLM client for embeddings."""
     embeddings_llm_settings = config.get_language_model_config(
-        config.embeddings.model_id
+        config.embed_text.model_id
     )
     is_azure_client = embeddings_llm_settings.type == LLMType.AzureOpenAIEmbedding
     debug_embedding_api_key = embeddings_llm_settings.api_key or ""

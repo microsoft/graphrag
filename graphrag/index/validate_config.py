@@ -32,7 +32,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
 
     # Validate Embeddings LLM configs
     embedding_llm_settings = parameters.get_language_model_config(
-        parameters.embeddings.model_id
+        parameters.embed_text.model_id
     )
     embed_llm = load_llm_embeddings(
         name="test-embed-llm",

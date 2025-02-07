@@ -44,26 +44,23 @@ def run_global_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
-            "create_final_entities",
-            "create_final_communities",
-            "create_final_community_reports",
+            "entities",
+            "communities",
+            "community_reports",
         ],
         optional_list=[],
     )
 
     # Call the Multi-Index Global Search API
     if dataframe_dict["multi-index"]:
-        final_nodes_list = dataframe_dict["create_final_nodes"]
-        final_entities_list = dataframe_dict["create_final_entities"]
-        final_communities_list = dataframe_dict["create_final_communities"]
-        final_community_reports_list = dataframe_dict["create_final_community_reports"]
+        final_entities_list = dataframe_dict["entities"]
+        final_communities_list = dataframe_dict["communities"]
+        final_community_reports_list = dataframe_dict["community_reports"]
         index_names = dataframe_dict["index_names"]
 
         response, context_data = asyncio.run(
             api.multi_index_global_search(
                 config=config,
-                nodes_list=final_nodes_list,
                 entities_list=final_entities_list,
                 communities_list=final_communities_list,
                 community_reports_list=final_community_reports_list,
@@ -81,12 +78,9 @@ def run_global_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Global Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
-    final_communities: pd.DataFrame = dataframe_dict["create_final_communities"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
 
     if streaming:
 
@@ -96,7 +90,6 @@ def run_global_search(
             get_context_data = True
             async for stream_chunk in api.global_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
                 communities=final_communities,
                 community_reports=final_community_reports,
@@ -120,7 +113,6 @@ def run_global_search(
     response, context_data = asyncio.run(
         api.global_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
             communities=final_communities,
             community_reports=final_community_reports,
@@ -158,39 +150,36 @@ def run_local_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
-            "create_final_community_reports",
-            "create_final_text_units",
-            "create_final_relationships",
-            "create_final_entities",
+            "communities",
+            "community_reports",
+            "text_units",
+            "relationships",
+            "entities",
         ],
         optional_list=[
-            "create_final_covariates",
+            "covariates",
         ],
     )
     # Call the Multi-Index Local Search API
     if dataframe_dict["multi-index"]:
-        final_nodes_list = dataframe_dict["create_final_nodes"]
-        final_entities_list = dataframe_dict["create_final_entities"]
-        final_community_reports_list = dataframe_dict["create_final_community_reports"]
-        final_text_units_list = dataframe_dict["create_final_text_units"]
-        final_relationships_list = dataframe_dict["create_final_relationships"]
+        final_entities_list = dataframe_dict["entities"]
+        final_communities_list = dataframe_dict["communities"]
+        final_community_reports_list = dataframe_dict["community_reports"]
+        final_text_units_list = dataframe_dict["text_units"]
+        final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
 
         # If any covariates tables are missing from any index, set the covariates list to None
-        if (
-            len(dataframe_dict["create_final_covariates"])
-            != dataframe_dict["num_indexes"]
-        ):
+        if len(dataframe_dict["covariates"]) != dataframe_dict["num_indexes"]:
             final_covariates_list = None
         else:
-            final_covariates_list = dataframe_dict["create_final_covariates"]
+            final_covariates_list = dataframe_dict["covariates"]
 
         response, context_data = asyncio.run(
             api.multi_index_local_search(
                 config=config,
-                nodes_list=final_nodes_list,
                 entities_list=final_entities_list,
+                communities_list=final_communities_list,
                 community_reports_list=final_community_reports_list,
                 text_units_list=final_text_units_list,
                 relationships_list=final_relationships_list,
@@ -208,14 +197,12 @@ def run_local_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Local Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
-    final_covariates: pd.DataFrame | None = dataframe_dict["create_final_covariates"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
+    final_covariates: pd.DataFrame | None = dataframe_dict["covariates"]
 
     if streaming:
 
@@ -225,8 +212,8 @@ def run_local_search(
             get_context_data = True
             async for stream_chunk in api.local_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 text_units=final_text_units,
                 relationships=final_relationships,
@@ -250,8 +237,8 @@ def run_local_search(
     response, context_data = asyncio.run(
         api.local_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             text_units=final_text_units,
             relationships=final_relationships,
@@ -289,28 +276,28 @@ def run_drift_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_nodes",
-            "create_final_community_reports",
-            "create_final_text_units",
-            "create_final_relationships",
-            "create_final_entities",
+            "communities",
+            "community_reports",
+            "text_units",
+            "relationships",
+            "entities",
         ],
     )
 
     # Call the Multi-Index Drift Search API
     if dataframe_dict["multi-index"]:
-        final_nodes_list = dataframe_dict["create_final_nodes"]
-        final_entities_list = dataframe_dict["create_final_entities"]
-        final_community_reports_list = dataframe_dict["create_final_community_reports"]
-        final_text_units_list = dataframe_dict["create_final_text_units"]
-        final_relationships_list = dataframe_dict["create_final_relationships"]
+        final_entities_list = dataframe_dict["entities"]
+        final_communities_list = dataframe_dict["communities"]
+        final_community_reports_list = dataframe_dict["community_reports"]
+        final_text_units_list = dataframe_dict["text_units"]
+        final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
 
         response, context_data = asyncio.run(
             api.multi_index_drift_search(
                 config=config,
-                nodes_list=final_nodes_list,
                 entities_list=final_entities_list,
+                communities_list=final_communities_list,
                 community_reports_list=final_community_reports_list,
                 text_units_list=final_text_units_list,
                 relationships_list=final_relationships_list,
@@ -327,13 +314,11 @@ def run_drift_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Drift Search API
-    final_nodes: pd.DataFrame = dataframe_dict["create_final_nodes"]
-    final_community_reports: pd.DataFrame = dataframe_dict[
-        "create_final_community_reports"
-    ]
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
-    final_relationships: pd.DataFrame = dataframe_dict["create_final_relationships"]
-    final_entities: pd.DataFrame = dataframe_dict["create_final_entities"]
+    final_communities: pd.DataFrame = dataframe_dict["communities"]
+    final_community_reports: pd.DataFrame = dataframe_dict["community_reports"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
+    final_relationships: pd.DataFrame = dataframe_dict["relationships"]
+    final_entities: pd.DataFrame = dataframe_dict["entities"]
 
     if streaming:
 
@@ -343,8 +328,8 @@ def run_drift_search(
             get_context_data = True
             async for stream_chunk in api.drift_search_streaming(
                 config=config,
-                nodes=final_nodes,
                 entities=final_entities,
+                communities=final_communities,
                 community_reports=final_community_reports,
                 text_units=final_text_units,
                 relationships=final_relationships,
@@ -368,8 +353,8 @@ def run_drift_search(
     response, context_data = asyncio.run(
         api.drift_search(
             config=config,
-            nodes=final_nodes,
             entities=final_entities,
+            communities=final_communities,
             community_reports=final_community_reports,
             text_units=final_text_units,
             relationships=final_relationships,
@@ -405,13 +390,13 @@ def run_basic_search(
     dataframe_dict = _resolve_output_files(
         config=config,
         output_list=[
-            "create_final_text_units",
+            "text_units",
         ],
     )
 
     # Call the Multi-Index Basic Search API
     if dataframe_dict["multi-index"]:
-        final_text_units_list = dataframe_dict["create_final_text_units"]
+        final_text_units_list = dataframe_dict["text_units"]
         index_names = dataframe_dict["index_names"]
 
         response, context_data = asyncio.run(
@@ -429,7 +414,7 @@ def run_basic_search(
         return response, context_data
 
     # Otherwise, call the Single-Index Basic Search API
-    final_text_units: pd.DataFrame = dataframe_dict["create_final_text_units"]
+    final_text_units: pd.DataFrame = dataframe_dict["text_units"]
 
     if streaming:
 

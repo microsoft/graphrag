@@ -13,12 +13,12 @@ from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
 from graphrag.config.models.chunking_config import ChunkingConfig
-from graphrag.config.models.claim_extraction_config import ClaimExtractionConfig
 from graphrag.config.models.cluster_graph_config import ClusterGraphConfig
 from graphrag.config.models.community_reports_config import CommunityReportsConfig
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
-from graphrag.config.models.entity_extraction_config import EntityExtractionConfig
+from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
+from graphrag.config.models.extract_graph_config import ExtractGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.input_config import InputConfig
@@ -169,11 +169,11 @@ class GraphRagConfig(BaseModel):
     )
     """Graph Embedding configuration."""
 
-    embeddings: TextEmbeddingConfig = Field(
-        description="The embeddings LLM configuration to use.",
+    embed_text: TextEmbeddingConfig = Field(
+        description="Text embedding configuration.",
         default=TextEmbeddingConfig(),
     )
-    """The embeddings LLM configuration to use."""
+    """Text embedding configuration."""
 
     chunks: ChunkingConfig = Field(
         description="The chunking configuration to use.",
@@ -187,9 +187,9 @@ class GraphRagConfig(BaseModel):
     )
     """The snapshots configuration to use."""
 
-    entity_extraction: EntityExtractionConfig = Field(
+    extract_graph: ExtractGraphConfig = Field(
         description="The entity extraction configuration to use.",
-        default=EntityExtractionConfig(),
+        default=ExtractGraphConfig(),
     )
     """The entity extraction configuration to use."""
 
@@ -211,10 +211,10 @@ class GraphRagConfig(BaseModel):
     )
     """The community reports configuration to use."""
 
-    claim_extraction: ClaimExtractionConfig = Field(
+    extract_claims: ClaimExtractionConfig = Field(
         description="The claim extraction configuration to use.",
         default=ClaimExtractionConfig(
-            enabled=defs.CLAIM_EXTRACTION_ENABLED,
+            enabled=defs.EXTRACT_CLAIMS_ENABLED,
         ),
     )
     """The claim extraction configuration to use."""

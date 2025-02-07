@@ -34,25 +34,13 @@ vector_store:
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     container_name: "simple_text_ci"
 
-claim_extraction:
+extract_claims:
   enabled: true
-
-embeddings:
-  model_id: "default_embedding_model"
 
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000
   max_input_length: 8000
-
-
-storage:
-  type: file
-  base_dir: "output"
-
-reporting:
-  type: file
-  base_dir: "logs"
 
 snapshots:
   embeddings: True

@@ -21,24 +21,24 @@ from .util import (
 async def test_generate_text_embeddings():
     context = await create_test_context(
         storage=[
-            "create_final_documents",
-            "create_final_relationships",
-            "create_final_text_units",
-            "create_final_entities",
-            "create_final_community_reports",
+            "documents",
+            "relationships",
+            "text_units",
+            "entities",
+            "community_reports",
         ]
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     llm_settings = config.get_language_model_config(
-        config.embeddings.model_id
+        config.embed_text.model_id
     ).model_dump()
 
-    config.embeddings.strategy = {
+    config.embed_text.strategy = {
         "type": "mock",
         "llm": llm_settings,
     }
-    config.embeddings.target = TextEmbeddingTarget.all
+    config.embed_text.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
 
     await run_workflow(

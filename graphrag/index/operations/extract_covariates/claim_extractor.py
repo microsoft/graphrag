@@ -13,9 +13,9 @@ from fnllm import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.prompts.index.claim_extraction import (
-    CLAIM_EXTRACTION_PROMPT,
+from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
+    EXTRACT_CLAIMS_PROMPT,
     LOOP_PROMPT,
 )
 
@@ -67,7 +67,7 @@ class ClaimExtractor:
     ):
         """Init method definition."""
         self._llm = llm_invoker
-        self._extraction_prompt = extraction_prompt or CLAIM_EXTRACTION_PROMPT
+        self._extraction_prompt = extraction_prompt or EXTRACT_CLAIMS_PROMPT
         self._input_text_key = input_text_key or "input_text"
         self._input_entity_spec_key = input_entity_spec_key or "entity_specs"
         self._tuple_delimiter_key = tuple_delimiter_key or "tuple_delimiter"

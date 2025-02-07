@@ -3,7 +3,7 @@
 import math
 import platform
 
-from graphrag.index.operations.summarize_communities.community_reports_extractor import (
+from graphrag.index.operations.summarize_communities.graph_context.sort_context import (
     sort_context,
 )
 from graphrag.query.llm.text_utils import num_tokens

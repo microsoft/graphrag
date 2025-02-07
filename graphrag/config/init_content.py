@@ -48,7 +48,7 @@ vector_store:
     container_name: {defs.VECTOR_STORE_CONTAINER_NAME}
     overwrite: {defs.VECTOR_STORE_OVERWRITE}
 
-embeddings:
+embed_text:
   model_id: {defs.DEFAULT_EMBEDDING_MODEL_ID}
   vector_store_id: {defs.VECTOR_STORE_DEFAULT_ID}
 
@@ -90,11 +90,11 @@ update_index_output:
 
 ### Workflow settings ###
 
-entity_extraction:
-  model_id: {defs.ENTITY_EXTRACTION_MODEL_ID}
-  prompt: "prompts/entity_extraction.txt"
-  entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
-  max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
+extract_graph:
+  model_id: {defs.EXTRACT_GRAPH_MODEL_ID}
+  prompt: "prompts/extract_graph.txt"
+  entity_types: [{",".join(defs.EXTRACT_GRAPH_ENTITY_TYPES)}]
+  max_gleanings: {defs.EXTRACT_GRAPH_MAX_GLEANINGS}
 
 summarize_descriptions:
   model_id: {defs.SUMMARIZE_MODEL_ID}
@@ -105,11 +105,11 @@ extract_graph_nlp:
   text_analyzer:
     extractor_type: {defs.NLP_EXTRACTOR_TYPE.value} # [regex_english, syntactic_parser, cfg]
 
-claim_extraction:
+extract_claims:
   enabled: false
-  model_id: {defs.CLAIM_EXTRACTION_MODEL_ID}
-  prompt: "prompts/claim_extraction.txt"
-  description: "{defs.CLAIM_DESCRIPTION}"
+  model_id: {defs.EXTRACT_CLAIMS_MODEL_ID}
+  prompt: "prompts/extract_claims.txt"
+  description: "{defs.DESCRIPTION}"
   max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
 
 community_reports:
@@ -130,7 +130,6 @@ umap:
 snapshots:
   graphml: false
   embeddings: false
-  transient: false
 
 ### Query settings ###
 ## The prompt locations are required here, but each search method has a number of optional knobs that can be tuned.

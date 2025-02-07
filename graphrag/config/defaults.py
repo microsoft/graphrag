@@ -69,12 +69,10 @@ CHUNK_GROUP_BY_COLUMNS = ["id"]
 CHUNK_STRATEGY = ChunkStrategyType.tokens
 
 # Claim extraction
-CLAIM_DESCRIPTION = (
-    "Any claims or facts that could be relevant to information discovery."
-)
+DESCRIPTION = "Any claims or facts that could be relevant to information discovery."
 CLAIM_MAX_GLEANINGS = 1
-CLAIM_EXTRACTION_ENABLED = False
-CLAIM_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID
+EXTRACT_CLAIMS_ENABLED = False
+EXTRACT_CLAIMS_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
 # Graph clustering
 MAX_CLUSTER_SIZE = 10
@@ -87,9 +85,9 @@ COMMUNITY_REPORT_MAX_INPUT_LENGTH = 8000
 COMMUNITY_REPORT_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
 # Graph extraction via LLM
-ENTITY_EXTRACTION_ENTITY_TYPES = ["organization", "person", "geo", "event"]
-ENTITY_EXTRACTION_MAX_GLEANINGS = 1
-ENTITY_EXTRACTION_MODEL_ID = DEFAULT_CHAT_MODEL_ID
+EXTRACT_GRAPH_ENTITY_TYPES = ["organization", "person", "geo", "event"]
+EXTRACT_GRAPH_MAX_GLEANINGS = 1
+EXTRACT_GRAPH_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
 # Graph extraction via NLP
 NLP_NORMALIZE_EDGE_WEIGHTS = True
@@ -130,7 +128,6 @@ REPORTING_TYPE = ReportingType.file
 REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_EMBEDDINGS = False
-SNAPSHOTS_TRANSIENT = False
 OUTPUT_BASE_DIR = "output"
 OUTPUT_DEFAULT_ID = "default_output"
 OUTPUT_TYPE = OutputType.file
