@@ -170,7 +170,8 @@ def test_load_config_with_cli_overrides() -> None:
     expected = get_default_graphrag_config(str(root_dir))
     expected.output.base_dir = str(expected_output_base_dir)
     actual = load_config(
-        root_dir=root_dir, cli_overrides={"output.base_dir": output_dir}
+        root_dir=root_dir,
+        cli_overrides={"output.base_dir": output_dir},
     )
     assert_graphrag_configs(actual, expected)
 
