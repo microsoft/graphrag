@@ -535,6 +535,7 @@ async def multi_index_local_search(
 
     links = {
         "community_reports": {},
+        "communities": {},
         "entities": {},
         "text_units": {},
         "relationships": {},
@@ -542,6 +543,7 @@ async def multi_index_local_search(
     }
     max_vals = {
         "community_reports": -1,
+        "communities": -1,
         "entities": -1,
         "text_units": 0,
         "relationships": -1,
@@ -913,12 +915,14 @@ async def multi_index_drift_search(
 
     links = {
         "community_reports": {},
+        "communities": {},
         "entities": {},
         "text_units": {},
         "relationships": {},
     }
     max_vals = {
         "community_reports": -1,
+        "communities": -1,
         "entities": -1,
         "text_units": 0,
         "relationships": -1,
