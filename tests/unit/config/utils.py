@@ -122,7 +122,7 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "strategy": defs.CHUNK_STRATEGY,
         "encoding_model": defs.ENCODING_MODEL,
         "prepend_metadata": False,
-        "count_tokens_with_metadata": False,
+        "chunk_size_includes_metadata": False,
     },
     "snapshots": {
         "embeddings": defs.SNAPSHOTS_EMBEDDINGS,

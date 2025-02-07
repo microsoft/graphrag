@@ -9,7 +9,6 @@ import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
-from graphrag.index.operations.chunk_text.strategies import get_encoding_fn
 from graphrag.index.operations.chunk_text.typing import (
     ChunkInput,
     ChunkStrategy,
@@ -25,8 +24,6 @@ def chunk_text(
     encoding_model: str,
     strategy: ChunkStrategyType,
     callbacks: WorkflowCallbacks,
-    prepend_metadata: bool = False,
-    count_tokens_with_metadata: bool = False,
 ) -> pd.Series:
     """
     Chunk a piece of text into smaller pieces.
@@ -75,8 +72,6 @@ def chunk_text(
                     x[column],
                     config,
                     tick,
-                    x["metadata"] if prepend_metadata else None,
-                    count_tokens_with_metadata,
                 ),
             ),
             axis=1,
@@ -89,32 +84,10 @@ def run_strategy(
     input: ChunkInput,
     config: ChunkingConfig,
     tick: ProgressTicker,
-    metadata: dict[str, str] | None = None,
-    count_tokens_with_metadata: bool = False,
 ) -> list[str | tuple[list[str] | None, str, int]]:
     """Run strategy method definition."""
-    line_delimiter = ".\n"
-    metadata_str = ""
-
-    if metadata:
-        metadata_str = (
-            line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
-            + line_delimiter
-        )
-
-        if count_tokens_with_metadata:
-            encode, _ = get_encoding_fn(config.encoding_model)
-            metadata_tokens = len(encode(metadata_str))
-            if metadata_tokens >= config.size:
-                message = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
-                raise ValueError(message)
-            config.size -= metadata_tokens
-
     if isinstance(input, str):
-        return [
-            metadata_str + item.text_chunk
-            for item in strategy_exec([input], config, tick)
-        ]
+        return [item.text_chunk for item in strategy_exec([input], config, tick)]
 
     # We can work with both just a list of text content
     # or a list of tuples of (document_id, text content)
@@ -126,14 +99,13 @@ def run_strategy(
     results = []
     for strategy_result in strategy_results:
         doc_indices = strategy_result.source_doc_indices
-        chunked_text = metadata_str + strategy_result.text_chunk
         if isinstance(input[doc_indices[0]], str):
-            results.append(chunked_text)
+            results.append(strategy_result.text_chunk)
         else:
             doc_ids = [input[doc_idx][0] for doc_idx in doc_indices]
             results.append((
                 doc_ids,
-                chunked_text,
+                strategy_result.text_chunk,
                 strategy_result.n_tokens,
             ))
     return results

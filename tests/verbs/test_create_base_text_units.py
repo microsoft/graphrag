@@ -32,3 +32,46 @@ async def test_create_base_text_units():
     actual = await load_table_from_storage(workflow_name, context.storage)
 
     compare_outputs(actual, expected)
+
+
+async def test_create_base_text_units_metadata():
+    expected = load_test_table(f"{workflow_name}_metadata")
+
+    context = await create_test_context()
+
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    # test data was created with 4o, so we need to match the encoding for chunks to be identical
+    config.chunks.encoding_model = "o200k_base"
+    config.input.metadata = ["title"]
+    config.chunks.prepend_metadata = True
+
+    await run_workflow(
+        config,
+        context,
+        NoopWorkflowCallbacks(),
+    )
+
+    actual = await load_table_from_storage(workflow_name, context.storage)
+    compare_outputs(actual, expected)
+
+
+async def test_create_base_text_units_metadata_included_in_chunk():
+    expected = load_test_table(f"{workflow_name}_metadata_included_chunk")
+
+    context = await create_test_context()
+
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    # test data was created with 4o, so we need to match the encoding for chunks to be identical
+    config.chunks.encoding_model = "o200k_base"
+    config.input.metadata = ["title"]
+    config.chunks.prepend_metadata = True
+    config.chunks.chunk_size_includes_metadata = True
+
+    await run_workflow(
+        config,
+        context,
+        NoopWorkflowCallbacks(),
+    )
+
+    actual = await load_table_from_storage(workflow_name, context.storage)
+    compare_outputs(actual, expected)

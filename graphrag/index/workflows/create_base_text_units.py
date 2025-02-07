@@ -25,7 +25,7 @@ async def run_workflow(
     documents = await load_table_from_storage("input", context.storage)
 
     chunks = config.chunks
-    count_tokens_with_metadata = chunks.count_tokens_with_metadata
+    chunk_size_includes_metadata = chunks.chunk_size_includes_metadata
 
     output = create_base_text_units(
         documents,
@@ -36,7 +36,7 @@ async def run_workflow(
         chunks.encoding_model,
         strategy=chunks.strategy,
         prepend_metadata=chunks.prepend_metadata,
-        count_tokens_with_metadata=count_tokens_with_metadata,
+        chunk_size_includes_metadata=chunk_size_includes_metadata,
     )
 
     await write_table_to_storage(output, workflow_name, context.storage)

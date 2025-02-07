@@ -3,13 +3,12 @@
 
 
 from unittest import mock
-from unittest.mock import ANY, MagicMock, Mock
+from unittest.mock import ANY, Mock
 
 import pandas as pd
 import pytest
 
 from graphrag.config.enums import ChunkStrategyType
-from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.index.operations.chunk_text.chunk_text import (
     _get_num_total,
     chunk_text,
@@ -159,98 +158,6 @@ def test_run_strategy_arr_tuple_same_doc():
     assert runned == expected
 
 
-def test_run_strategy_metadata():
-    input = "All work and no play makes Jack a dull boy"
-    config = Mock()
-    tick = Mock()
-    strategy_mocked = Mock()
-    metadata = {"type": "book"}
-
-    strategy_mocked.return_value = [
-        TextChunk(
-            text_chunk="All work and no play makes ", source_doc_indices=[0], n_tokens=5
-        ),
-        TextChunk(text_chunk="Jack a dull boy", source_doc_indices=[0], n_tokens=3),
-    ]
-
-    expected = [
-        "type: book.\nAll work and no play makes ",
-        "type: book.\nJack a dull boy",
-    ]
-
-    runned = run_strategy(strategy_mocked, input, config, tick, metadata)
-    assert runned == expected
-
-
-def test_run_strategy_two_metadata():
-    input = "All work and no play makes Jack a dull boy"
-    config = Mock()
-    tick = Mock()
-    strategy_mocked = Mock()
-    metadata = {"type": "book", "author": "Stephen King"}
-
-    strategy_mocked.return_value = [
-        TextChunk(
-            text_chunk="All work and no play makes ", source_doc_indices=[0], n_tokens=5
-        ),
-        TextChunk(text_chunk="Jack a dull boy", source_doc_indices=[0], n_tokens=3),
-    ]
-
-    expected = [
-        "type: book.\nauthor: Stephen King.\nAll work and no play makes ",
-        "type: book.\nauthor: Stephen King.\nJack a dull boy",
-    ]
-
-    runned = run_strategy(strategy_mocked, input, config, tick, metadata)
-    assert runned == expected
-
-
-def test_run_strategy_metadata_count_tokens():
-    input = "All work and no play makes Jack a dull boy"
-    config = ChunkingConfig()
-    config.size = 20
-    tick = Mock()
-    strategy_mocked = MagicMock()
-    metadata = {"type": "book"}
-
-    new_config = config
-    new_config.size = 16
-
-    strategy_mocked.return_value = [
-        TextChunk(
-            text_chunk="All work and no play makes ",
-            source_doc_indices=[0],
-            n_tokens=20,
-        ),
-        TextChunk(text_chunk="Jack a dull boy", source_doc_indices=[0], n_tokens=3),
-    ]
-
-    run_strategy(strategy_mocked, input, config, tick, metadata, True)
-    strategy_mocked.assert_called_with([input], new_config, tick)
-
-
-def test_run_strategy_metadata_count_tokens_large_metadata():
-    input = "All work and no play makes Jack a dull boy"
-    config = ChunkingConfig()
-    config.size = 5
-    tick = Mock()
-    strategy_mocked = MagicMock()
-    metadata = {"type": "book", "author": "Stephen King"}
-
-    strategy_mocked.return_value = [
-        TextChunk(
-            text_chunk="All work and no play makes ",
-            source_doc_indices=[0],
-            n_tokens=20,
-        ),
-        TextChunk(text_chunk="Jack a dull boy", source_doc_indices=[0], n_tokens=3),
-    ]
-
-    error_msg = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
-    with pytest.raises(ValueError, match=error_msg):
-        run_strategy(strategy_mocked, input, config, tick, metadata, True)
-
-
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
 @mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
 @mock.patch("graphrag.logger.progress.ProgressTicker")
@@ -269,79 +176,5 @@ def test_chunk_text(mock_progress_ticker, mock_run_strategy, mock_load_strategy)
     chunk_text(input_data, column, size, overlap, encoding_model, strategy, callbacks)
 
     mock_run_strategy.assert_called_with(
-        mock_load_strategy(), "The Shining", ANY, mock_progress_ticker(), None, False
-    )
-
-
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
-@mock.patch("graphrag.logger.progress.ProgressTicker")
-def test_chunk_text_count_tokens_with_metadata(
-    mock_progress_ticker, mock_run_strategy, mock_load_strategy
-):
-    input_data = pd.DataFrame({"name": ["The Shining"]})
-    column = "name"
-    size = 10
-    overlap = 2
-    encoding_model = "model"
-    strategy = ChunkStrategyType.sentence
-    callbacks = Mock()
-
-    mock_load_strategy.return_value = Mock()
-    mock_progress_ticker.return_value = Mock()
-
-    chunk_text(
-        input_data,
-        column,
-        size,
-        overlap,
-        encoding_model,
-        strategy,
-        callbacks,
-        count_tokens_with_metadata=True,
-    )
-
-    mock_run_strategy.assert_called_with(
-        mock_load_strategy(), "The Shining", ANY, mock_progress_ticker(), None, True
-    )
-
-
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.load_strategy")
-@mock.patch("graphrag.index.operations.chunk_text.chunk_text.run_strategy")
-@mock.patch("graphrag.logger.progress.ProgressTicker")
-def test_chunk_text_prepend_metadata(
-    mock_progress_ticker, mock_run_strategy, mock_load_strategy
-):
-    input_data = pd.DataFrame({
-        "name": ["The Shining"],
-        "metadata": ["{'type': 'book'}"],
-    })
-    column = "name"
-    size = 10
-    overlap = 2
-    encoding_model = "model"
-    strategy = ChunkStrategyType.sentence
-    callbacks = Mock()
-
-    mock_load_strategy.return_value = Mock()
-    mock_progress_ticker.return_value = Mock()
-
-    chunk_text(
-        input_data,
-        column,
-        size,
-        overlap,
-        encoding_model,
-        strategy,
-        callbacks,
-        prepend_metadata=True,
-    )
-
-    mock_run_strategy.assert_called_with(
-        mock_load_strategy(),
-        "The Shining",
-        ANY,
-        mock_progress_ticker(),
-        "{'type': 'book'}",
-        False,
+        mock_load_strategy(), "The Shining", ANY, mock_progress_ticker()
     )
