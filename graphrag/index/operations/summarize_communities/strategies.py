@@ -12,7 +12,7 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm
-from graphrag.index.operations.summarize_communities.community_reports_extractor.community_reports_extractor import (
+from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportsExtractor,
 )
 from graphrag.index.operations.summarize_communities.typing import (

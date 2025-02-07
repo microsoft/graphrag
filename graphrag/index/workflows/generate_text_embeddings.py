@@ -23,20 +23,14 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to transform community reports."""
-    final_documents = await load_table_from_storage(
-        "create_final_documents", context.storage
-    )
+    final_documents = await load_table_from_storage("documents", context.storage)
     final_relationships = await load_table_from_storage(
-        "create_final_relationships", context.storage
+        "relationships", context.storage
     )
-    final_text_units = await load_table_from_storage(
-        "create_final_text_units", context.storage
-    )
-    final_entities = await load_table_from_storage(
-        "create_final_entities", context.storage
-    )
+    final_text_units = await load_table_from_storage("text_units", context.storage)
+    final_entities = await load_table_from_storage("entities", context.storage)
     final_community_reports = await load_table_from_storage(
-        "create_final_community_reports", context.storage
+        "community_reports", context.storage
     )
 
     embedded_fields = get_embedded_fields(config)

@@ -19,7 +19,3 @@ class SnapshotsConfig(BaseModel):
         description="A flag indicating whether to take snapshots of GraphML.",
         default=defs.SNAPSHOTS_GRAPHML,
     )
-    transient: bool = Field(
-        description="A flag indicating whether to take snapshots of transient tables.",
-        default=defs.SNAPSHOTS_TRANSIENT,
-    )

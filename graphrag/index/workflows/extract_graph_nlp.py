@@ -21,29 +21,26 @@ workflow_name = "extract_graph_nlp"
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
+    callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
 
-    base_entity_nodes, base_relationship_edges = extract_graph_nlp(
+    entities, relationships = extract_graph_nlp(
         text_units,
+        callbacks,
         extraction_config=config.extract_graph_nlp,
         pruning_config=config.prune_graph,
+        embed_config=config.embed_graph,
+        layout_enabled=config.umap.enabled,
     )
 
-    await write_table_to_storage(
-        base_entity_nodes, "base_entity_nodes", context.storage
-    )
-    await write_table_to_storage(
-        base_relationship_edges, "base_relationship_edges", context.storage
-    )
+    await write_table_to_storage(entities, "entities", context.storage)
+    await write_table_to_storage(relationships, "relationships", context.storage)
 
     if config.snapshots.graphml:
         # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(base_relationship_edges)
+        graph = create_graph(relationships)
         await snapshot_graphml(
             graph,
             name="graph",

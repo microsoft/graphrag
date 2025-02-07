@@ -3,10 +3,10 @@
 
 """All the steps to create the base entity graph."""
 
-from uuid import uuid4
-
 import pandas as pd
 
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
@@ -14,14 +14,19 @@ from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
     create_noun_phrase_extractor,
 )
 from graphrag.index.operations.create_graph import create_graph
+from graphrag.index.operations.finalize_entities import finalize_entities
+from graphrag.index.operations.finalize_relationships import finalize_relationships
 from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph
 
 
 def extract_graph_nlp(
     text_units: pd.DataFrame,
+    callbacks: WorkflowCallbacks,
     extraction_config: ExtractGraphNLPConfig,
     pruning_config: PruneGraphConfig,
+    embed_config: EmbedGraphConfig | None = None,
+    layout_enabled: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """All the steps to create the base entity graph."""
     text_analyzer_config = extraction_config.text_analyzer
@@ -56,25 +61,13 @@ def extract_graph_nlp(
     )
 
     # add in any other columns required by downstream workflows
-    base_entity_nodes = _prep_nodes(joined_nodes)
-    base_relationship_edges = _prep_edges(joined_edges)
+    joined_nodes["type"] = "NOUN PHRASE"
+    joined_nodes["description"] = ""
 
-    return (base_entity_nodes, base_relationship_edges)
+    joined_edges["description"] = ""
 
-
-def _prep_nodes(nodes) -> pd.DataFrame:
-    nodes.reset_index(inplace=True)
-    nodes["type"] = "NOUN PHRASE"
-    nodes["description"] = ""
-    nodes["human_readable_id"] = nodes.index
-    nodes["id"] = nodes["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return nodes
-
-
-def _prep_edges(edges) -> pd.DataFrame:
-    edges = edges.drop_duplicates(subset=["source", "target"])
-    edges.reset_index(inplace=True)
-    edges["description"] = ""
-    edges["human_readable_id"] = edges.index
-    edges["id"] = edges["human_readable_id"].apply(lambda _x: str(uuid4()))
-    return edges
+    final_entities = finalize_entities(
+        joined_nodes, joined_edges, callbacks, embed_config, layout_enabled
+    )
+    final_relationships = finalize_relationships(joined_edges)
+    return (final_entities, final_relationships)

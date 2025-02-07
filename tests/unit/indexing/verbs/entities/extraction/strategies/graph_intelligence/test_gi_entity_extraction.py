@@ -2,18 +2,18 @@
 # Licensed under the MIT License
 import unittest
 
-from graphrag.index.operations.extract_entities.graph_intelligence_strategy import (
-    run_extract_entities,
+from graphrag.index.operations.extract_graph.graph_intelligence_strategy import (
+    run_extract_graph,
 )
-from graphrag.index.operations.extract_entities.typing import (
+from graphrag.index.operations.extract_graph.typing import (
     Document,
 )
 from tests.unit.indexing.verbs.helpers.mock_llm import create_mock_llm
 
 
 class TestRunChain(unittest.IsolatedAsyncioTestCase):
-    async def test_run_extract_entities_single_document_correct_entities_returned(self):
-        results = await run_extract_entities(
+    async def test_run_extract_graph_single_document_correct_entities_returned(self):
+        results = await run_extract_graph(
             docs=[Document("test_text", "1")],
             entity_types=["person"],
             callbacks=None,
@@ -44,10 +44,10 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity["title"] for entity in results.entities
         ])
 
-    async def test_run_extract_entities_multiple_documents_correct_entities_returned(
+    async def test_run_extract_graph_multiple_documents_correct_entities_returned(
         self,
     ):
-        results = await run_extract_entities(
+        results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             callbacks=None,
@@ -82,8 +82,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             entity["title"] for entity in results.entities
         ])
 
-    async def test_run_extract_entities_multiple_documents_correct_edges_returned(self):
-        results = await run_extract_entities(
+    async def test_run_extract_graph_multiple_documents_correct_edges_returned(self):
+        results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             callbacks=None,
@@ -124,10 +124,10 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             "TEST_ENTITY_1 -> TEST_ENTITY_3",
         ])
 
-    async def test_run_extract_entities_multiple_documents_correct_entity_source_ids_mapped(
+    async def test_run_extract_graph_multiple_documents_correct_entity_source_ids_mapped(
         self,
     ):
-        results = await run_extract_entities(
+        results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             callbacks=None,
@@ -173,10 +173,10 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             "2",
         ])  # TEST_ENTITY_1 should be 1 and 2
 
-    async def test_run_extract_entities_multiple_documents_correct_edge_source_ids_mapped(
+    async def test_run_extract_graph_multiple_documents_correct_edge_source_ids_mapped(
         self,
     ):
-        results = await run_extract_entities(
+        results = await run_extract_graph(
             docs=[Document("text_1", "1"), Document("text_2", "2")],
             entity_types=["person"],
             callbacks=None,

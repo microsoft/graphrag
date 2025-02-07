@@ -24,19 +24,17 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
     """All the steps to create the base entity graph."""
-    text_units = await load_table_from_storage(
-        "create_base_text_units", context.storage
-    )
+    text_units = await load_table_from_storage("text_units", context.storage)
 
-    entity_extraction_llm_settings = config.get_language_model_config(
-        config.entity_extraction.model_id
+    extract_graph_llm_settings = config.get_language_model_config(
+        config.extract_graph.model_id
     )
-    extraction_strategy = config.entity_extraction.resolved_strategy(
-        config.root_dir, entity_extraction_llm_settings
+    extraction_strategy = config.extract_graph.resolved_strategy(
+        config.root_dir, extract_graph_llm_settings
     )
-    extraction_num_threads = entity_extraction_llm_settings.parallelization_num_threads
-    extraction_async_mode = entity_extraction_llm_settings.async_mode
-    entity_types = config.entity_extraction.entity_types
+    extraction_num_threads = extract_graph_llm_settings.parallelization_num_threads
+    extraction_async_mode = extract_graph_llm_settings.async_mode
+    entity_types = config.extract_graph.entity_types
 
     summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
@@ -46,7 +44,7 @@ async def run_workflow(
     )
     summarization_num_threads = summarization_llm_settings.parallelization_num_threads
 
-    base_entity_nodes, base_relationship_edges = await extract_graph(
+    entities, relationships = await extract_graph(
         text_units=text_units,
         callbacks=callbacks,
         cache=context.cache,
@@ -56,18 +54,16 @@ async def run_workflow(
         entity_types=entity_types,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
+        embed_config=config.embed_graph,
+        layout_enabled=config.umap.enabled,
     )
 
-    await write_table_to_storage(
-        base_entity_nodes, "base_entity_nodes", context.storage
-    )
-    await write_table_to_storage(
-        base_relationship_edges, "base_relationship_edges", context.storage
-    )
+    await write_table_to_storage(entities, "entities", context.storage)
+    await write_table_to_storage(relationships, "relationships", context.storage)
 
     if config.snapshots.graphml:
         # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(base_relationship_edges)
+        graph = create_graph(relationships)
         await snapshot_graphml(
             graph,
             name="graph",

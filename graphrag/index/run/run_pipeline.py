@@ -31,21 +31,9 @@ from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.logger.progress import Progress
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.storage import delete_table_from_storage, write_table_to_storage
+from graphrag.utils.storage import write_table_to_storage
 
 log = logging.getLogger(__name__)
-
-
-# these are transient outputs written to storage for downstream workflow use
-# they are not required after indexing, so we'll clean them up at the end for clarity
-# (unless snapshots.transient is set!)
-transient_outputs = [
-    "input",
-    "base_communities",
-    "base_entity_nodes",
-    "base_relationship_edges",
-    "create_base_text_units",
-]
 
 
 async def run_pipeline(
@@ -148,11 +136,11 @@ async def _run_pipeline(
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
-    last_workflow = "input"
+    last_workflow = "starting documents"
 
     try:
         await _dump_stats(context.stats, context.storage)
-        await write_table_to_storage(dataset, "input", context.storage)
+        await write_table_to_storage(dataset, "documents", context.storage)
 
         for name, fn in pipeline:
             last_workflow = name
@@ -172,10 +160,6 @@ async def _run_pipeline(
 
         context.stats.total_runtime = time.time() - start_time
         await _dump_stats(context.stats, context.storage)
-
-        if not config.snapshots.transient:
-            for output in transient_outputs:
-                await delete_table_from_storage(output, context.storage)
 
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)

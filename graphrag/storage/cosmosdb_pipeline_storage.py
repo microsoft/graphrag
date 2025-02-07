@@ -250,9 +250,6 @@ class CosmosDBPipelineStorage(PipelineStorage):
                         if "id" not in cosmosdb_item:
                             prefixed_id = f"{prefix}:{index}"
                             self._no_id_prefixes.append(prefix)
-                        # Append an additional prefix to the id to force a unique identifier for the create_final_nodes rows
-                        elif prefix == "create_final_nodes":
-                            prefixed_id = f"{prefix}-community_{cosmosdb_item['community']}:{cosmosdb_item['id']}"
                         else:
                             prefixed_id = f"{prefix}:{cosmosdb_item['id']}"
                         cosmosdb_item["id"] = prefixed_id
