@@ -220,13 +220,10 @@ async def multi_index_global_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-    | AsyncGenerator
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a global search across multiple indexes and return the context data and response.
 
     Parameters
@@ -422,7 +419,6 @@ async def local_search(
     entities_ = read_indexer_entities(nodes, entities, community_level)
     covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
     prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
-
     search_engine = get_local_search_engine(
         config=config,
         reports=read_indexer_reports(community_reports, nodes, community_level),
@@ -531,13 +527,10 @@ async def multi_index_local_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-    | AsyncGenerator
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a local search across multiple indexes and return the context data and response.
 
     Parameters
@@ -584,7 +577,6 @@ async def multi_index_local_search(
         "relationships": -1,
         "covariates": 0,
     }
-
     community_reports_dfs = []
     entities_dfs = []
     nodes_dfs = []
@@ -732,7 +724,6 @@ async def multi_index_local_search(
         covariates_combined = pd.concat(
             covariates_dfs, axis=0, ignore_index=True, sort=False
         )
-
     result = await local_search(
         config,
         nodes=nodes_combined,
@@ -927,13 +918,10 @@ async def multi_index_drift_search(
     response_type: str,
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-    | AsyncGenerator
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a DRIFT search across multiple indexes and return the context data and response.
 
     Parameters
@@ -1240,13 +1228,10 @@ async def multi_index_basic_search(
     index_names: list[str],
     streaming: bool,
     query: str,
-) -> (
-    tuple[
-        str | dict[str, Any] | list[dict[str, Any]],
-        str | list[pd.DataFrame] | dict[str, pd.DataFrame],
-    ]
-    | AsyncGenerator
-):
+) -> tuple[
+    str | dict[str, Any] | list[dict[str, Any]],
+    str | list[pd.DataFrame] | dict[str, pd.DataFrame],
+]:
     """Perform a basic search across multiple indexes and return the context data and response.
 
     Parameters

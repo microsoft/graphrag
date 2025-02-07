@@ -322,6 +322,15 @@ def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
     assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
 
 
+def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
+    assert expected.type == actual.type
+    assert expected.base_dir == actual.base_dir
+    assert expected.connection_string == actual.connection_string
+    assert expected.container_name == actual.container_name
+    assert expected.storage_account_blob_url == actual.storage_account_blob_url
+    assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+
+
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
     assert actual.type == expected.type
     assert actual.base_dir == expected.base_dir
@@ -549,7 +558,9 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
 
     if actual.update_index_output is not None:
         assert expected.update_index_output is not None
-        assert_output_configs(actual.update_index_output, expected.update_index_output)
+        assert_update_output_configs(
+            actual.update_index_output, expected.update_index_output
+        )
     else:
         assert expected.update_index_output is None
 
