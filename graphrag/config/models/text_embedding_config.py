@@ -48,7 +48,6 @@ class TextEmbeddingConfig(BaseModel):
         return self.strategy or {
             "type": TextEmbedStrategyType.openai,
             "llm": model_config.model_dump(),
-            "stagger": model_config.parallelization_stagger,
             "num_threads": model_config.parallelization_num_threads,
             "batch_size": self.batch_size,
             "batch_max_tokens": self.batch_max_tokens,

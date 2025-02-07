@@ -20,7 +20,6 @@ models:
     model: {defs.LLM_MODEL}
     model_supports_json: true # recommended if this is available for your model.
     parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-    parallelization_stagger: {defs.PARALLELIZATION_STAGGER}
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     # audience: "https://cognitiveservices.azure.com/.default"
     # api_base: https://<instance>.openai.azure.com
@@ -33,7 +32,6 @@ models:
     auth_type: {defs.AUTH_TYPE.value} # or azure_managed_identity
     model: {defs.EMBEDDING_MODEL}
     parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-    parallelization_stagger: {defs.PARALLELIZATION_STAGGER}
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-02-15-preview

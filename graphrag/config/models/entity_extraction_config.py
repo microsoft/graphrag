@@ -47,7 +47,6 @@ class EntityExtractionConfig(BaseModel):
         return self.strategy or {
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "stagger": model_config.parallelization_stagger,
             "num_threads": model_config.parallelization_num_threads,
             "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
