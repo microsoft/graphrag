@@ -1889,22 +1889,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">INPUT_DIR</span> <span class="o">=</span> <span class="s2">"./inputs/operation dulce"</span>
 <span class="n">LANCEDB_URI</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/lancedb"</span>
 
-<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"community_reports"</span>
-<span class="n">COMMUNITY_TABLE</span> <span class="o">=</span> <span class="s2">"communities"</span>
-<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"entities"</span>
-<span class="n">RELATIONSHIP_TABLE</span> <span class="o">=</span> <span class="s2">"relationships"</span>
-<span class="n">COVARIATE_TABLE</span> <span class="o">=</span> <span class="s2">"covariates"</span>
-<span class="n">TEXT_UNIT_TABLE</span> <span class="o">=</span> <span class="s2">"text_units"</span>
+<span class="n">COMMUNITY_REPORT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_community_reports"</span>
+<span class="n">ENTITY_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_nodes"</span>
+<span class="n">ENTITY_EMBEDDING_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_entities"</span>
+<span class="n">RELATIONSHIP_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_relationships"</span>
+<span class="n">COVARIATE_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_covariates"</span>
+<span class="n">TEXT_UNIT_TABLE</span> <span class="o">=</span> <span class="s2">"create_final_text_units"</span>
 <span class="n">COMMUNITY_LEVEL</span> <span class="o">=</span> <span class="mi">2</span>
 
 
 <span class="c1"># read nodes table to get community and degree data</span>
 <span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-<span class="n">community_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">COMMUNITY_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<span class="n">entity_embedding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">INPUT_DIR</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">ENTITY_EMBEDDING_TABLE</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Entity df columns: </span><span class="si">{</span><span class="n">entity_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">community_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
+<span class="n">entities</span> <span class="o">=</span> <span class="n">read_indexer_entities</span><span class="p">(</span><span class="n">entity_df</span><span class="p">,</span> <span class="n">entity_embedding_df</span><span class="p">,</span> <span class="n">COMMUNITY_LEVEL</span><span class="p">)</span>
 
 <span class="c1"># load description embeddings to an in-memory lancedb vectorstore</span>
 <span class="c1"># to connect to a remote db, specify url and port values.</span>
@@ -1959,22 +1959,22 @@ from graphrag.vector_stores.lancedb import LanceDBVectorStore
 INPUT_DIR = "./inputs/operation dulce"
 LANCEDB_URI = f"{INPUT_DIR}/lancedb"
 
-COMMUNITY_REPORT_TABLE = "community_reports"
-COMMUNITY_TABLE = "communities"
-ENTITY_TABLE = "entities"
-RELATIONSHIP_TABLE = "relationships"
-COVARIATE_TABLE = "covariates"
-TEXT_UNIT_TABLE = "text_units"
+COMMUNITY_REPORT_TABLE = "create_final_community_reports"
+ENTITY_TABLE = "create_final_nodes"
+ENTITY_EMBEDDING_TABLE = "create_final_entities"
+RELATIONSHIP_TABLE = "create_final_relationships"
+COVARIATE_TABLE = "create_final_covariates"
+TEXT_UNIT_TABLE = "create_final_text_units"
 COMMUNITY_LEVEL = 2
 
 
 # read nodes table to get community and degree data
 entity_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_TABLE}.parquet")
-community_df = pd.read_parquet(f"{INPUT_DIR}/{COMMUNITY_TABLE}.parquet")
+entity_embedding_df = pd.read_parquet(f"{INPUT_DIR}/{ENTITY_EMBEDDING_TABLE}.parquet")
 
 print(f"Entity df columns: {entity_df.columns}")
 
-entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
+entities = read_indexer_entities(entity_df, entity_embedding_df, COMMUNITY_LEVEL)
 
 # load description embeddings to an in-memory lancedb vectorstore
 # to connect to a remote db, specify url and port values.
@@ -2012,76 +2012,106 @@ text_unit_df.head()</div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[2], line 37</span>
-<span class="ansi-green-intense-fg ansi-bold">     33</span> COMMUNITY_LEVEL <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(98,98,98)">2</span>
-<span class="ansi-green-intense-fg ansi-bold">     36</span> <span style="color: rgb(95,135,135)"># read nodes table to get community and degree data</span>
-<span class="ansi-green-fg">---&gt; 37</span> entity_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">ENTITY_TABLE</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     38</span> community_df <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>INPUT_DIR<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>COMMUNITY_TABLE<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">     40</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Entity df columns: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>entity_df<span style="color: rgb(98,98,98)">.</span>columns<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Entity df columns: Index(['id', 'human_readable_id', 'title', 'community', 'level', 'degree', 'x',
+       'y'],
+      dtype='object')
+Entity count: 888
+Relationship count: 812
+Text unit records: 38
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
-<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
-<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
-<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
-<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
-<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
-<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
-<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
-<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
-<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
-<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
-<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
-<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
-<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
-<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
-<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
-<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
-<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
-<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: './inputs/operation dulce/entities.parquet'</pre>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>human_readable_id</th>
+<th>text</th>
+<th>n_tokens</th>
+<th>document_ids</th>
+<th>entity_ids</th>
+<th>relationship_ids</th>
+<th>covariate_ids</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>aa55265004ced76e9050ed4b7a45c0496e10faa0eddb8a...</td>
+<td>1</td>
+<td>../\nJACOB COLLIER:  Honestly, I think mastery...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[9af066c8-031b-4c52-b93b-b37763f6f0f7, 5b15580...</td>
+<td>[f91209d1-0939-452e-b51b-be1763e2a27d, f2274c3...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>7f0fb1d3bf517dc76dffa984eec7a25e851e44ead0df82...</td>
+<td>2</td>
+<td>OMBERG:  I grew up and started getting into al...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[c2ac3612-3aaf-440c-babd-e21f474e0366, 9aab0b4...</td>
+<td>[13c74c18-439b-4419-8427-4ba826503055, 7120179...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>27b739ceeddfa100f7be3cf002fd3a27aea2228f1a02c4...</td>
+<td>3</td>
+<td>, you know, and it’s a very linear pathway too...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[9af066c8-031b-4c52-b93b-b37763f6f0f7, 5456bcb...</td>
+<td>[a67f1c21-32ab-4eaa-b063-c815e7f3ea9d]</td>
+</tr>
+<tr>
+<th>3</th>
+<td>d97017305e234cc51554d653447d73b58441e1ff0f99e4...</td>
+<td>4</td>
+<td>you know, we started taking a lot of parts an...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[bac3dd9b-f5c8-4966-9dc3-87f1f5976e36, 4f41be8...</td>
+<td>[695ac017-7c10-44ad-a681-3b4c1ae86a87]</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2b6d29f8a74b16ea9a70423bce803a08a5b9ed4e6a946b...</td>
+<td>5</td>
+<td>only so much processing that my mind can do i...</td>
+<td>1200</td>
+<td>[1e0886ae010728d10b2972f66b88608dc82b8645d3085...</td>
+<td>[9a062709-56dd-4bf2-8b41-926124b7a6f7, f8c54a6...</td>
+<td>[d225ff7b-ca47-4fab-8d9a-4f86111526f8, 3fddb40...</td>
+<td>[d8a7ad5c-a170-430e-9f9d-902047371ee2]</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2154,8 +2184,8 @@ text_embedder = OpenAIEmbedding(
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2185,7 +2215,7 @@ text_embedder = OpenAIEmbedding(
 <span class="n">report_df</span> <span class="o">=</span> <span class="n">read_community_reports</span><span class="p">(</span><span class="n">INPUT_DIR</span><span class="p">)</span>
 <span class="n">reports</span> <span class="o">=</span> <span class="n">read_indexer_reports</span><span class="p">(</span>
     <span class="n">report_df</span><span class="p">,</span>
-    <span class="n">community_df</span><span class="p">,</span>
+    <span class="n">entity_df</span><span class="p">,</span>
     <span class="n">COMMUNITY_LEVEL</span><span class="p">,</span>
     <span class="n">content_embedding_col</span><span class="o">=</span><span class="s2">"full_content_embeddings"</span><span class="p">,</span>
 <span class="p">)</span>
@@ -2203,7 +2233,7 @@ text_embedder = OpenAIEmbedding(
 report_df = read_community_reports(INPUT_DIR)
 reports = read_indexer_reports(
     report_df,
-    community_df,
+    entity_df,
     COMMUNITY_LEVEL,
     content_embedding_col="full_content_embeddings",
 )
@@ -2212,99 +2242,9 @@ read_indexer_report_embeddings(reports, full_content_embedding_store)</div>
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 10</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     input_path <span style="color: rgb(98,98,98)">=</span> Path(input_dir) <span style="color: rgb(98,98,98)">/</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>community_report_table<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(input_path)
-<span class="ansi-green-fg">---&gt; 10</span> report_df <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">read_community_reports</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">INPUT_DIR</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     11</span> reports <span style="color: rgb(98,98,98)">=</span> read_indexer_reports(
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     report_df,
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     community_df,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     COMMUNITY_LEVEL,
-<span class="ansi-green-intense-fg ansi-bold">     15</span>     content_embedding_col<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">full_content_embeddings</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">     16</span> )
-<span class="ansi-green-intense-fg ansi-bold">     17</span> read_indexer_report_embeddings(reports, full_content_embedding_store)
-
-Cell <span class="ansi-green-fg">In[4], line 7</span>, in <span class="ansi-cyan-fg">read_community_reports</span><span class="ansi-blue-fg">(input_dir, community_report_table)</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(175,0,0)">"""Embeds the full content of the community reports and saves the DataFrame with embeddings to the output path."""</span>
-<span class="ansi-green-intense-fg ansi-bold">      6</span> input_path <span style="color: rgb(98,98,98)">=</span> Path(input_dir) <span style="color: rgb(98,98,98)">/</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>community_report_table<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">.parquet</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 7</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">input_path</span><span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
-<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
-<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
-<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
-<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
-<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
-<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
-<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
-<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
-<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
-<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
-<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
-<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
-<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
-<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
-<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
-<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
-<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
-<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: 'inputs/operation dulce/community_reports.parquet'</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2375,43 +2315,6 @@ search = DRIFTSearch(
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 13</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> drift_params <span style="color: rgb(98,98,98)">=</span> DRIFTSearchConfig(
-<span class="ansi-green-intense-fg ansi-bold">      2</span>     temperature<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">0</span>,
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     max_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span>     n<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">1</span>,
-<span class="ansi-green-intense-fg ansi-bold">      8</span> )
-<span class="ansi-green-intense-fg ansi-bold">     10</span> context_builder <span style="color: rgb(98,98,98)">=</span> DRIFTSearchContextBuilder(
-<span class="ansi-green-intense-fg ansi-bold">     11</span>     chat_llm<span style="color: rgb(98,98,98)">=</span>chat_llm,
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     text_embedder<span style="color: rgb(98,98,98)">=</span>text_embedder,
-<span class="ansi-green-fg">---&gt; 13</span>     entities<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">entities</span>,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
-<span class="ansi-green-intense-fg ansi-bold">     15</span>     reports<span style="color: rgb(98,98,98)">=</span>reports,
-<span class="ansi-green-intense-fg ansi-bold">     16</span>     entity_text_embeddings<span style="color: rgb(98,98,98)">=</span>description_embedding_store,
-<span class="ansi-green-intense-fg ansi-bold">     17</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
-<span class="ansi-green-intense-fg ansi-bold">     18</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     19</span>     config<span style="color: rgb(98,98,98)">=</span>drift_params,
-<span class="ansi-green-intense-fg ansi-bold">     20</span> )
-<span class="ansi-green-intense-fg ansi-bold">     22</span> search <span style="color: rgb(98,98,98)">=</span> DRIFTSearch(
-<span class="ansi-green-intense-fg ansi-bold">     23</span>     llm<span style="color: rgb(98,98,98)">=</span>chat_llm, context_builder<span style="color: rgb(98,98,98)">=</span>context_builder, token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder
-<span class="ansi-green-intense-fg ansi-bold">     24</span> )
-
-<span class="ansi-red-fg">NameError</span>: name 'entities' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
@@ -2448,11 +2351,311 @@ Cell <span class="ansi-green-fg">In[5], line 13</span>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-red-fg">RateLimitError</span>                            Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[6], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search</span><span style="color: rgb(98,98,98)">.</span>asearch(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Who is agent Mercer?</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">----&gt; 1</span> resp <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> search<span style="color: rgb(98,98,98)">.</span>asearch(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Who is agent Mercer?</span><span style="color: rgb(175,0,0)">"</span>)
 
-<span class="ansi-red-fg">NameError</span>: name 'search' is not defined</pre>
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/drift_search/search.py:202</span>, in <span class="ansi-cyan-fg">DRIFTSearch.asearch</span><span class="ansi-blue-fg">(self, query, conversation_history, reduce, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    199</span> <span style="color: rgb(95,135,135)"># Check if query state is empty</span>
+<span class="ansi-green-intense-fg ansi-bold">    200</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>query_state<span style="color: rgb(98,98,98)">.</span>graph:
+<span class="ansi-green-intense-fg ansi-bold">    201</span>     <span style="color: rgb(95,135,135)"># Prime the search with the primer</span>
+<span class="ansi-green-fg">--&gt; 202</span>     primer_context, token_ct <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">context_builder</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">build_context</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    203</span>     llm_calls[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> token_ct[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">llm_calls</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">    204</span>     prompt_tokens[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">build_context</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> token_ct[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">prompt_tokens</span><span style="color: rgb(175,0,0)">"</span>]
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/drift_search/drift_context.py:200</span>, in <span class="ansi-cyan-fg">DRIFTSearchContextBuilder.build_context</span><span class="ansi-blue-fg">(self, query, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    191</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(missing_reports_error)
+<span class="ansi-green-intense-fg ansi-bold">    193</span> query_processor <span style="color: rgb(98,98,98)">=</span> PrimerQueryProcessor(
+<span class="ansi-green-intense-fg ansi-bold">    194</span>     chat_llm<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>chat_llm,
+<span class="ansi-green-intense-fg ansi-bold">    195</span>     text_embedder<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>text_embedder,
+<span class="ansi-green-intense-fg ansi-bold">    196</span>     token_encoder<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>token_encoder,
+<span class="ansi-green-intense-fg ansi-bold">    197</span>     reports<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reports,
+<span class="ansi-green-intense-fg ansi-bold">    198</span> )
+<span class="ansi-green-fg">--&gt; 200</span> query_embedding, token_ct <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">query_processor</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    202</span> report_df <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>convert_reports_to_df(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reports)
+<span class="ansi-green-intense-fg ansi-bold">    204</span> <span style="color: rgb(95,135,135)"># Check compatibility between query embedding and document embeddings</span>
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/drift_search/primer.py:97</span>, in <span class="ansi-cyan-fg">PrimerQueryProcessor.__call__</span><span class="ansi-blue-fg">(self, query)</span>
+<span class="ansi-green-intense-fg ansi-bold">     86</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span style="color: rgb(0,0,255)">__call__</span>(<span style="color: rgb(0,135,0)">self</span>, query: <span style="color: rgb(0,135,0)">str</span>) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(0,135,0)">tuple</span>[<span style="color: rgb(0,135,0)">list</span>[<span style="color: rgb(0,135,0)">float</span>], <span style="color: rgb(0,135,0)">dict</span>[<span style="color: rgb(0,135,0)">str</span>, <span style="color: rgb(0,135,0)">int</span>]]:
+<span class="ansi-green-intense-fg ansi-bold">     87</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">     88</span> <span style="color: rgb(175,0,0)">    Call method to process the query, expand it, and embed the result.</span>
+<span class="ansi-green-intense-fg ansi-bold">     89</span> 
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">     95</span> <span style="color: rgb(175,0,0)">    tuple[list[float], int]: List of embeddings for the expanded query and the token count.</span>
+<span class="ansi-green-intense-fg ansi-bold">     96</span> <span style="color: rgb(175,0,0)">    """</span>
+<span class="ansi-green-fg">---&gt; 97</span>     hyde_query, token_ct <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">expand_query</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">query</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     98</span>     log<span style="color: rgb(98,98,98)">.</span>info(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Expanded query: </span><span class="ansi-bold" style="color: rgb(175,95,135)">%s</span><span style="color: rgb(175,0,0)">"</span>, hyde_query)
+<span class="ansi-green-intense-fg ansi-bold">     99</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>text_embedder<span style="color: rgb(98,98,98)">.</span>embed(hyde_query), token_ct
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/structured_search/drift_search/primer.py:73</span>, in <span class="ansi-cyan-fg">PrimerQueryProcessor.expand_query</span><span class="ansi-blue-fg">(self, query)</span>
+<span class="ansi-green-intense-fg ansi-bold">     66</span> prompt <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"""</span><span style="color: rgb(175,0,0)">Create a hypothetical answer to the following query: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>query<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span>
+<span class="ansi-green-intense-fg ansi-bold">     67</span> <span style="color: rgb(175,0,0)">          Format it to follow the structure of the template below:</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span>
+<span class="ansi-green-intense-fg ansi-bold">     68</span> <span style="color: rgb(175,0,0)">          </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>template<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">     69</span> <span style="color: rgb(175,0,0)">          Ensure that the hypothetical answer does not reference new named entities that are not present in the original query.</span><span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">     71</span> messages <span style="color: rgb(98,98,98)">=</span> [{<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">role</span><span style="color: rgb(175,0,0)">"</span>: <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">user</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">content</span><span style="color: rgb(175,0,0)">"</span>: prompt}]
+<span class="ansi-green-fg">---&gt; 73</span> text <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">chat_llm</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">generate</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     74</span> prompt_tokens <span style="color: rgb(98,98,98)">=</span> num_tokens(prompt, <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>token_encoder)
+<span class="ansi-green-intense-fg ansi-bold">     75</span> output_tokens <span style="color: rgb(98,98,98)">=</span> num_tokens(text, <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>token_encoder)
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:78</span>, in <span class="ansi-cyan-fg">ChatOpenAI.generate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     71</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-intense-fg ansi-bold">     72</span>     retryer <span style="color: rgb(98,98,98)">=</span> Retrying(
+<span class="ansi-green-intense-fg ansi-bold">     73</span>         stop<span style="color: rgb(98,98,98)">=</span>stop_after_attempt(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>max_retries),
+<span class="ansi-green-intense-fg ansi-bold">     74</span>         wait<span style="color: rgb(98,98,98)">=</span>wait_exponential_jitter(<span style="color: rgb(0,135,0)">max</span><span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">10</span>),
+<span class="ansi-green-intense-fg ansi-bold">     75</span>         reraise<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
+<span class="ansi-green-intense-fg ansi-bold">     76</span>         retry<span style="color: rgb(98,98,98)">=</span>retry_if_exception_type(<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>retry_error_types),
+<span class="ansi-green-intense-fg ansi-bold">     77</span>     )
+<span class="ansi-green-fg">---&gt; 78</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">for</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">attempt</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">in</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">retryer</span><span class="ansi-yellow-bg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     79</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">with</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">attempt</span><span class="ansi-yellow-bg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">     80</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">return</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_generate</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">     81</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     82</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">streaming</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">streaming</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     83</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">callbacks</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">callbacks</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     84</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     85</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:443</span>, in <span class="ansi-cyan-fg">BaseRetrying.__iter__</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    441</span> retry_state <span style="color: rgb(98,98,98)">=</span> RetryCallState(<span style="color: rgb(0,135,0)">self</span>, fn<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, args<span style="color: rgb(98,98,98)">=</span>(), kwargs<span style="color: rgb(98,98,98)">=</span>{})
+<span class="ansi-green-intense-fg ansi-bold">    442</span> <span class="ansi-bold" style="color: rgb(0,135,0)">while</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+<span class="ansi-green-fg">--&gt; 443</span>     do <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">iter</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">retry_state</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retry_state</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    444</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(do, DoAttempt):
+<span class="ansi-green-intense-fg ansi-bold">    445</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">yield</span> AttemptManager(retry_state<span style="color: rgb(98,98,98)">=</span>retry_state)
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:376</span>, in <span class="ansi-cyan-fg">BaseRetrying.iter</span><span class="ansi-blue-fg">(self, retry_state)</span>
+<span class="ansi-green-intense-fg ansi-bold">    374</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">    375</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> action <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>iter_state<span style="color: rgb(98,98,98)">.</span>actions:
+<span class="ansi-green-fg">--&gt; 376</span>     result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">action</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">retry_state</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    377</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:418</span>, in <span class="ansi-cyan-fg">BaseRetrying._post_stop_check_actions.&lt;locals&gt;.exc_check</span><span class="ansi-blue-fg">(rs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    416</span> retry_exc <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>retry_error_cls(fut)
+<span class="ansi-green-intense-fg ansi-bold">    417</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>reraise:
+<span class="ansi-green-fg">--&gt; 418</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-yellow-bg">retry_exc</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">reraise</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    419</span> <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> retry_exc <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">fut</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">exception</span>()
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/tenacity/__init__.py:185</span>, in <span class="ansi-cyan-fg">RetryError.reraise</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    183</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span style="color: rgb(0,0,255)">reraise</span>(<span style="color: rgb(0,135,0)">self</span>) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> t<span style="color: rgb(98,98,98)">.</span>NoReturn:
+<span class="ansi-green-intense-fg ansi-bold">    184</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>last_attempt<span style="color: rgb(98,98,98)">.</span>failed:
+<span class="ansi-green-fg">--&gt; 185</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">last_attempt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    186</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span>
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/concurrent/futures/_base.py:449</span>, in <span class="ansi-cyan-fg">Future.result</span><span class="ansi-blue-fg">(self, timeout)</span>
+<span class="ansi-green-intense-fg ansi-bold">    447</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> CancelledError()
+<span class="ansi-green-intense-fg ansi-bold">    448</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_state <span style="color: rgb(98,98,98)">==</span> FINISHED:
+<span class="ansi-green-fg">--&gt; 449</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">__get_result</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    451</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_condition<span style="color: rgb(98,98,98)">.</span>wait(timeout)
+<span class="ansi-green-intense-fg ansi-bold">    453</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_state <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> [CANCELLED, CANCELLED_AND_NOTIFIED]:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/concurrent/futures/_base.py:401</span>, in <span class="ansi-cyan-fg">Future.__get_result</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    399</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_exception:
+<span class="ansi-green-intense-fg ansi-bold">    400</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; 401</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_exception
+<span class="ansi-green-intense-fg ansi-bold">    402</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">finally</span>:
+<span class="ansi-green-intense-fg ansi-bold">    403</span>         <span style="color: rgb(95,135,135)"># Break a reference cycle with the exception in self._exception</span>
+<span class="ansi-green-intense-fg ansi-bold">    404</span>         <span style="color: rgb(0,135,0)">self</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:80</span>, in <span class="ansi-cyan-fg">ChatOpenAI.generate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">     78</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> attempt <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> retryer:
+<span class="ansi-green-intense-fg ansi-bold">     79</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> attempt:
+<span class="ansi-green-fg">---&gt; 80</span>             <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_generate</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">     81</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     82</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">streaming</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">streaming</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     83</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg">callbacks</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">callbacks</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     84</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     85</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     86</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> RetryError <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-intense-fg ansi-bold">     87</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_reporter<span style="color: rgb(98,98,98)">.</span>error(
+<span class="ansi-green-intense-fg ansi-bold">     88</span>         message<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Error at generate()</span><span style="color: rgb(175,0,0)">"</span>, details<span style="color: rgb(98,98,98)">=</span>{<span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__class__</span><span style="color: rgb(98,98,98)">.</span><span style="color: rgb(0,0,135)">__name__</span>: <span style="color: rgb(0,135,0)">str</span>(e)}
+<span class="ansi-green-intense-fg ansi-bold">     89</span>     )
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/query/llm/oai/chat_openai.py:196</span>, in <span class="ansi-cyan-fg">ChatOpenAI._generate</span><span class="ansi-blue-fg">(self, messages, streaming, callbacks, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    194</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> model:
+<span class="ansi-green-intense-fg ansi-bold">    195</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(_MODEL_REQUIRED_MSG)
+<span class="ansi-green-fg">--&gt; 196</span> response <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">sync_client</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">chat</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">completions</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">create</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">  </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    197</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    198</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">  </span><span class="ansi-yellow-bg" style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    199</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">streaming</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    200</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    201</span> <span class="ansi-yellow-bg">)</span>  <span style="color: rgb(95,135,135)"># type: ignore</span>
+<span class="ansi-green-intense-fg ansi-bold">    202</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> streaming:
+<span class="ansi-green-intense-fg ansi-bold">    203</span>     full_response <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_utils/_utils.py:279</span>, in <span class="ansi-cyan-fg">required_args.&lt;locals&gt;.inner.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    277</span>             msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Missing required argument: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>quote(missing[<span style="color: rgb(98,98,98)">0</span>])<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-intense-fg ansi-bold">    278</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">TypeError</span>(msg)
+<span class="ansi-green-fg">--&gt; 279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/resources/chat/completions.py:859</span>, in <span class="ansi-cyan-fg">Completions.create</span><span class="ansi-blue-fg">(self, messages, model, audio, frequency_penalty, function_call, functions, logit_bias, logprobs, max_completion_tokens, max_tokens, metadata, modalities, n, parallel_tool_calls, prediction, presence_penalty, reasoning_effort, response_format, seed, service_tier, stop, store, stream, stream_options, temperature, tool_choice, tools, top_logprobs, top_p, user, extra_headers, extra_query, extra_body, timeout)</span>
+<span class="ansi-green-intense-fg ansi-bold">    817</span> <span style="color: rgb(175,0,255)">@required_args</span>([<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">messages</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">model</span><span style="color: rgb(175,0,0)">"</span>], [<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">messages</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">model</span><span style="color: rgb(175,0,0)">"</span>, <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">stream</span><span style="color: rgb(175,0,0)">"</span>])
+<span class="ansi-green-intense-fg ansi-bold">    818</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span style="color: rgb(0,0,255)">create</span>(
+<span class="ansi-green-intense-fg ansi-bold">    819</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    856</span>     timeout: <span style="color: rgb(0,135,0)">float</span> <span style="color: rgb(98,98,98)">|</span> httpx<span style="color: rgb(98,98,98)">.</span>Timeout <span style="color: rgb(98,98,98)">|</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span style="color: rgb(98,98,98)">|</span> NotGiven <span style="color: rgb(98,98,98)">=</span> NOT_GIVEN,
+<span class="ansi-green-intense-fg ansi-bold">    857</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> ChatCompletion <span style="color: rgb(98,98,98)">|</span> Stream[ChatCompletionChunk]:
+<span class="ansi-green-intense-fg ansi-bold">    858</span>     validate_response_format(response_format)
+<span class="ansi-green-fg">--&gt; 859</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_post</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    860</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/chat/completions</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    861</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">body</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">maybe_transform</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    862</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">{</span>
+<span class="ansi-green-intense-fg ansi-bold">    863</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">messages</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">messages</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    864</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">model</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">model</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    865</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">audio</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">audio</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    866</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">frequency_penalty</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">frequency_penalty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    867</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">function_call</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">function_call</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    868</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">functions</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">functions</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    869</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">logit_bias</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">logit_bias</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    870</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">logprobs</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">logprobs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    871</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">max_completion_tokens</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">max_completion_tokens</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    872</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">max_tokens</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">max_tokens</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    873</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">metadata</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">metadata</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    874</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">modalities</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">modalities</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    875</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">n</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    876</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">parallel_tool_calls</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">parallel_tool_calls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    877</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">prediction</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">prediction</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    878</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">presence_penalty</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">presence_penalty</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    879</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">reasoning_effort</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">reasoning_effort</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    880</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">response_format</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">response_format</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    881</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">seed</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">seed</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    882</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">service_tier</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">service_tier</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    883</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">stop</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">stop</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    884</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">store</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">store</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    885</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">stream</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    886</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">stream_options</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">stream_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    887</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">temperature</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">temperature</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    888</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">tool_choice</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tool_choice</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    889</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">tools</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tools</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    890</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">top_logprobs</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">top_logprobs</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    891</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">top_p</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">top_p</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    892</span> <span class="ansi-yellow-bg">                </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">user</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">:</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">user</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    893</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">}</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    894</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">completion_create_params</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">CompletionCreateParams</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    895</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    896</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">make_request_options</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    897</span> <span class="ansi-yellow-bg">            </span><span class="ansi-yellow-bg">extra_headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">extra_headers</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">extra_query</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">extra_query</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">extra_body</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">extra_body</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">timeout</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">timeout</span>
+<span class="ansi-green-intense-fg ansi-bold">    898</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    899</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">ChatCompletion</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    900</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,0,255)">or</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    901</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">Stream</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">ChatCompletionChunk</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    902</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1283</span>, in <span class="ansi-cyan-fg">SyncAPIClient.post</span><span class="ansi-blue-fg">(self, path, cast_to, body, options, files, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1269</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span><span style="color: rgb(188,188,188)"> </span><span style="color: rgb(0,0,255)">post</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1270</span>     <span style="color: rgb(0,135,0)">self</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1271</span>     path: <span style="color: rgb(0,135,0)">str</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1278</span>     stream_cls: <span style="color: rgb(0,135,0)">type</span>[_StreamT] <span style="color: rgb(98,98,98)">|</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span> <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> ) <span style="color: rgb(98,98,98)">-</span><span style="color: rgb(98,98,98)">&gt;</span> ResponseT <span style="color: rgb(98,98,98)">|</span> _StreamT:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     opts <span style="color: rgb(98,98,98)">=</span> FinalRequestOptions<span style="color: rgb(98,98,98)">.</span>construct(
+<span class="ansi-green-intense-fg ansi-bold">   1281</span>         method<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">post</span><span style="color: rgb(175,0,0)">"</span>, url<span style="color: rgb(98,98,98)">=</span>path, json_data<span style="color: rgb(98,98,98)">=</span>body, files<span style="color: rgb(98,98,98)">=</span>to_httpx_files(files), <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>options
+<span class="ansi-green-intense-fg ansi-bold">   1282</span>     )
+<span class="ansi-green-fg">-&gt; 1283</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> cast(ResponseT, <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">request</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">opts</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">)</span>)
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:960</span>, in <span class="ansi-cyan-fg">SyncAPIClient.request</span><span class="ansi-blue-fg">(self, cast_to, options, remaining_retries, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">    957</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    958</span>     retries_taken <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(98,98,98)">0</span>
+<span class="ansi-green-fg">--&gt; 960</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">    961</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    962</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    963</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    964</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    965</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    966</span> <span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1049</span>, in <span class="ansi-cyan-fg">SyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, retries_taken, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1047</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1048</span>     err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>close()
+<span class="ansi-green-fg">-&gt; 1049</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_retry_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1050</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">input_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1051</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1052</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1053</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">response_headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">err</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1054</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1055</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1056</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1058</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1059</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1060</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1098</span>, in <span class="ansi-cyan-fg">SyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1094</span> <span style="color: rgb(95,135,135)"># In a synchronous context we are blocking the entire thread. Up to the library user to run the client in a</span>
+<span class="ansi-green-intense-fg ansi-bold">   1095</span> <span style="color: rgb(95,135,135)"># different thread if necessary.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1096</span> time<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1098</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1099</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1100</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1101</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">+</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1102</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1103</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1104</span> <span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1049</span>, in <span class="ansi-cyan-fg">SyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, retries_taken, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1047</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1048</span>     err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>close()
+<span class="ansi-green-fg">-&gt; 1049</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_retry_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1050</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">input_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1051</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1052</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1053</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">response_headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">err</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1054</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1055</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1056</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1058</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1059</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1060</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1098</span>, in <span class="ansi-cyan-fg">SyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1094</span> <span style="color: rgb(95,135,135)"># In a synchronous context we are blocking the entire thread. Up to the library user to run the client in a</span>
+<span class="ansi-green-intense-fg ansi-bold">   1095</span> <span style="color: rgb(95,135,135)"># different thread if necessary.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1096</span> time<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1098</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1099</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1100</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1101</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">+</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1102</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1103</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1104</span> <span class="ansi-yellow-bg">)</span>
+
+    <span class="ansi-red-fg">[... skipping similar frames: SyncAPIClient._request at line 1049 (17 times), SyncAPIClient._retry_request at line 1098 (17 times)]</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1049</span>, in <span class="ansi-cyan-fg">SyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, retries_taken, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1047</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> remaining_retries <span style="color: rgb(98,98,98)">&gt;</span> <span style="color: rgb(98,98,98)">0</span> <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_should_retry(err<span style="color: rgb(98,98,98)">.</span>response):
+<span class="ansi-green-intense-fg ansi-bold">   1048</span>     err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>close()
+<span class="ansi-green-fg">-&gt; 1049</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_retry_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1050</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">input_options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1051</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1052</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1053</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">response_headers</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">err</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">response</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">headers</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1054</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1055</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1056</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1058</span> <span style="color: rgb(95,135,135)"># If the response is streamed then we need to explicitly read the response</span>
+<span class="ansi-green-intense-fg ansi-bold">   1059</span> <span style="color: rgb(95,135,135)"># to completion before attempting to access the response text.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1060</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>is_closed:
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1098</span>, in <span class="ansi-cyan-fg">SyncAPIClient._retry_request</span><span class="ansi-blue-fg">(self, options, cast_to, retries_taken, response_headers, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1094</span> <span style="color: rgb(95,135,135)"># In a synchronous context we are blocking the entire thread. Up to the library user to run the client in a</span>
+<span class="ansi-green-intense-fg ansi-bold">   1095</span> <span style="color: rgb(95,135,135)"># different thread if necessary.</span>
+<span class="ansi-green-intense-fg ansi-bold">   1096</span> time<span style="color: rgb(98,98,98)">.</span>sleep(timeout)
+<span class="ansi-green-fg">-&gt; 1098</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_request</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1099</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">options</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1100</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">cast_to</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1101</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">retries_taken</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">+</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">1</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1102</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1103</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">stream_cls</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   1104</span> <span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/openai/_base_client.py:1064</span>, in <span class="ansi-cyan-fg">SyncAPIClient._request</span><span class="ansi-blue-fg">(self, cast_to, options, retries_taken, stream, stream_cls)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1061</span>         err<span style="color: rgb(98,98,98)">.</span>response<span style="color: rgb(98,98,98)">.</span>read()
+<span class="ansi-green-intense-fg ansi-bold">   1063</span>     log<span style="color: rgb(98,98,98)">.</span>debug(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Re-raising status error</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">-&gt; 1064</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_make_status_error_from_response(err<span style="color: rgb(98,98,98)">.</span>response) <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+<span class="ansi-green-intense-fg ansi-bold">   1066</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_process_response(
+<span class="ansi-green-intense-fg ansi-bold">   1067</span>     cast_to<span style="color: rgb(98,98,98)">=</span>cast_to,
+<span class="ansi-green-intense-fg ansi-bold">   1068</span>     options<span style="color: rgb(98,98,98)">=</span>options,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1072</span>     retries_taken<span style="color: rgb(98,98,98)">=</span>retries_taken,
+<span class="ansi-green-intense-fg ansi-bold">   1073</span> )
+
+<span class="ansi-red-fg">RateLimitError</span>: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}</pre>
 </div>
 </div>
 </div>
