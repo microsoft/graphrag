@@ -6,7 +6,7 @@
 import asyncio
 import json
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,

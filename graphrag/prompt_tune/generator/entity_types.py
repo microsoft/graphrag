@@ -3,7 +3,7 @@
 
 """Entity type generation module for fine-tuning."""
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 from pydantic import BaseModel
 
 from graphrag.prompt_tune.defaults import DEFAULT_TASK

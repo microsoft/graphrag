@@ -8,8 +8,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from fnllm import ChatLLM, EmbeddingsLLM, JsonStrategy, LLMEvents
 from fnllm.caching import Cache as LLMCache
+from fnllm.enums import JsonStrategy
+from fnllm.events import LLMEvents
 from fnllm.openai import (
     AzureOpenAIConfig,
     OpenAIConfig,
@@ -30,6 +31,8 @@ from graphrag.index.llm.manager import ChatLLMSingleton, EmbeddingsLLMSingleton
 from .mock_llm import MockChatLLM
 
 if TYPE_CHECKING:
+    from fnllm.types import ChatLLM, EmbeddingsLLM
+
     from graphrag.cache.pipeline_cache import PipelineCache
     from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
     from graphrag.index.typing import ErrorHandlerFn
@@ -220,7 +223,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
             max_retry_wait=config.max_retry_wait,
             requests_per_minute=config.requests_per_minute,
             tokens_per_minute=config.tokens_per_minute,
-            cognitive_services_endpoint=audience,
+            audience=audience,
             timeout=config.request_timeout,
             max_concurrency=config.concurrent_requests,
             model=config.model,

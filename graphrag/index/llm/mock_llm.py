@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from typing import Any, cast
 
-from fnllm import ChatLLM, LLMInput, LLMOutput
+from fnllm.types import ChatLLM, LLMInput, LLMOutput
 from fnllm.types.generics import THistoryEntry, TJsonModel, TModelParameters
 from pydantic import BaseModel
 from typing_extensions import Unpack

@@ -8,7 +8,7 @@ import logging
 from typing import Any
 
 import numpy as np
-from fnllm import EmbeddingsLLM
+from fnllm.types import EmbeddingsLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
