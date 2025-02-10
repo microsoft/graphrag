@@ -204,15 +204,6 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             output_tokens_categories=output_tokens,
         )
 
-    def search(
-        self,
-        query: str,
-        conversation_history: ConversationHistory | None = None,
-        **kwargs: Any,
-    ) -> GlobalSearchResult:
-        """Perform a global search synchronously."""
-        return asyncio.run(self.asearch(query, conversation_history))
-
     async def _map_response_single_batch(
         self,
         context_data: str,

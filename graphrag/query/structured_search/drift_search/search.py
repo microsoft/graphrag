@@ -278,31 +278,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             output_tokens_categories=output_tokens,
         )
 
-    def search(
-        self,
-        query: str,
-        conversation_history: Any = None,
-        **kwargs,
-    ) -> SearchResult:
-        """
-        Perform a synchronous DRIFT search (Not Implemented).
-
-        Args:
-            query (str): The query to search for.
-            conversation_history (Any, optional): The conversation history.
-
-        Raises
-        ------
-        NotImplementedError: Synchronous DRIFT is not implemented.
-        """
-        error_msg = "Synchronous DRIFT is not implemented."
-        raise NotImplementedError(error_msg)
-
     async def astream_search(
         self, query: str, conversation_history: ConversationHistory | None = None
     ) -> AsyncGenerator[str, None]:
         """
-        Perform a streaming DRIFT search (Not Implemented).
+        Perform a streaming DRIFT search asynchronously.
 
         Args:
             query (str): The query to search for.

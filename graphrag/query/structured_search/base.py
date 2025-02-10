@@ -69,15 +69,6 @@ class BaseSearch(ABC, Generic[T]):
         self.context_builder_params = context_builder_params or {}
 
     @abstractmethod
-    def search(
-        self,
-        query: str,
-        conversation_history: ConversationHistory | None = None,
-        **kwargs,
-    ) -> SearchResult:
-        """Search for the given query."""
-
-    @abstractmethod
     async def asearch(
         self,
         query: str,
