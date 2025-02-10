@@ -5,6 +5,7 @@
 
 import pandas as pd
 
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
@@ -20,9 +21,10 @@ from graphrag.index.operations.graph_to_dataframes import graph_to_dataframes
 from graphrag.index.operations.prune_graph import prune_graph
 
 
-def extract_graph_nlp(
+async def extract_graph_nlp(
     text_units: pd.DataFrame,
     callbacks: WorkflowCallbacks,
+    cache: PipelineCache,
     extraction_config: ExtractGraphNLPConfig,
     pruning_config: PruneGraphConfig,
     embed_config: EmbedGraphConfig | None = None,
@@ -31,10 +33,12 @@ def extract_graph_nlp(
     """All the steps to create the base entity graph."""
     text_analyzer_config = extraction_config.text_analyzer
     text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
-    extracted_nodes, extracted_edges = build_noun_graph(
+    extracted_nodes, extracted_edges = await build_noun_graph(
         text_units,
         text_analyzer=text_analyzer,
         normalize_edge_weights=extraction_config.normalize_edge_weights,
+        num_threads=extraction_config.parallelization_num_threads,
+        cache=cache,
     )
 
     # create a temporary graph to prune, then turn it back into dataframes
