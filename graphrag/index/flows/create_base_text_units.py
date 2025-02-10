@@ -3,6 +3,7 @@
 
 """All the steps to transform base text_units."""
 
+import json
 from typing import Any, cast
 
 import pandas as pd
@@ -61,6 +62,8 @@ def create_base_text_units(
 
         if prepend_metadata and "metadata" in row:
             metadata = row["metadata"]
+            if isinstance(metadata, str):
+                metadata = json.loads(metadata)
             if isinstance(metadata, dict):
                 metadata_str = (
                     line_delimiter.join(f"{k}: {v}" for k, v in metadata.items())
