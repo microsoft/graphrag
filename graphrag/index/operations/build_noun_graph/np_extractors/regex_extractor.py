@@ -117,3 +117,7 @@ class RegexENNounPhraseExtractor(BaseNounPhraseExtractor):
             "has_compound_words": has_compound_words,
             "has_valid_tokens": has_valid_tokens,
         }
+
+    def __str__(self) -> str:
+        """Return string representation of the extractor, used for cache key generation."""
+        return f"regex_en_{self.exclude_nouns}_{self.max_word_length}_{self.word_delimiter}"

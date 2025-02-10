@@ -33,3 +33,7 @@ class BaseNounPhraseExtractor(metaclass=ABCMeta):
 
         Returns: List of noun phrases.
         """
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """Return string representation of the extractor, used for cache key generation."""
