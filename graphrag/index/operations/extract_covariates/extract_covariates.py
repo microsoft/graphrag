@@ -52,7 +52,7 @@ async def extract_covariates(
 
     async def run_strategy(row):
         text = row[column]
-        result = await run_claim_extraction(
+        result = await run_extract_claims(
             input=text,
             entity_types=entity_types,
             resolved_entities_map=resolved_entities_map,
@@ -80,7 +80,7 @@ def create_row_from_claim_data(row, covariate_data: Covariate, covariate_type: s
     return {**row, **asdict(covariate_data), "covariate_type": covariate_type}
 
 
-async def run_claim_extraction(
+async def run_extract_claims(
     input: str | Iterable[str],
     entity_types: list[str],
     resolved_entities_map: dict[str, str],
@@ -91,7 +91,7 @@ async def run_claim_extraction(
     """Run the Claim extraction chain."""
     llm_config = LanguageModelConfig(**strategy_config["llm"])
     llm = load_llm(
-        "claim_extraction",
+        "extract_claims",
         llm_config,
         callbacks=callbacks,
         cache=cache,

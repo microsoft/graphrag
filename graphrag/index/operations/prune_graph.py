@@ -9,7 +9,7 @@ import graspologic as glc
 import networkx as nx
 import numpy as np
 
-import graphrag.index.operations.build_noun_graph.schemas as schema
+import graphrag.model.schemas as schemas
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import DegreeView
@@ -50,23 +50,23 @@ def prune_graph(
     graph.remove_nodes_from([
         node
         for node, data in graph.nodes(data=True)
-        if data[schema.NODE_FREQUENCY] < min_node_freq
+        if data[schemas.NODE_FREQUENCY] < min_node_freq
     ])
     if max_node_freq_std is not None:
         upper_threshold = _get_upper_threshold_by_std(
-            [data[schema.NODE_FREQUENCY] for _, data in graph.nodes(data=True)],
+            [data[schemas.NODE_FREQUENCY] for _, data in graph.nodes(data=True)],
             max_node_freq_std,
         )
         graph.remove_nodes_from([
             node
             for node, data in graph.nodes(data=True)
-            if data[schema.NODE_FREQUENCY] > upper_threshold
+            if data[schemas.NODE_FREQUENCY] > upper_threshold
         ])
 
     # remove edges by min weight
     if min_edge_weight_pct > 0:
         min_edge_weight = np.percentile(
-            [data[schema.EDGE_WEIGHT] for _, _, data in graph.edges(data=True)],
+            [data[schemas.EDGE_WEIGHT] for _, _, data in graph.edges(data=True)],
             min_edge_weight_pct,
         )
         graph.remove_edges_from([
@@ -74,7 +74,7 @@ def prune_graph(
             for source, target, data in graph.edges(data=True)
             if source in graph.nodes()
             and target in graph.nodes()
-            and data[schema.EDGE_WEIGHT] < min_edge_weight
+            and data[schemas.EDGE_WEIGHT] < min_edge_weight
         ])
 
     if lcc_only:

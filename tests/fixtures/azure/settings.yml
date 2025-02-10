@@ -1,13 +1,12 @@
-claim_extraction:
+extract_claims:
   enabled: true
 
-embeddings:
-  vector_store:
-    default_vector_store:
-      type: "azure_ai_search"
-      url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
-      api_key: ${AZURE_AI_SEARCH_API_KEY}
-      container_name: "azure_ci"
+vector_store:
+  default_vector_store:
+    type: "azure_ai_search"
+    url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
+    api_key: ${AZURE_AI_SEARCH_API_KEY}
+    container_name: "azure_ci"
 
 input:
   type: blob

@@ -30,18 +30,10 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph",
-                "compute_communities",
-                "create_final_entities",
-                "create_final_relationships",
-                "create_final_nodes",
-                "create_final_communities",
-                *(
-                    ["create_final_covariates"]
-                    if config.claim_extraction.enabled
-                    else []
-                ),
+                *(["extract_covariates"] if config.extract_claims.enabled else []),
+                "create_communities",
                 "create_final_text_units",
-                "create_final_community_reports",
+                "create_community_reports",
                 "generate_text_embeddings",
             ]
         case IndexingMethod.Fast:
@@ -49,12 +41,8 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph_nlp",
-                "compute_communities",
-                "create_final_entities",
-                "create_final_relationships",
-                "create_final_nodes",
-                "create_final_communities",
+                "create_communities",
                 "create_final_text_units",
-                "create_final_community_reports_text",
+                "create_community_reports_text",
                 "generate_text_embeddings",
             ]
