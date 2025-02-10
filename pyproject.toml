@@ -85,7 +85,7 @@ azure-storage-blob = "^12.24.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.15.1"
-fnllm = "^0.1.1"
+fnllm = "^0.1.2"
 
 tenacity = "^9.0.0"
 json-repair = "^0.35.0"
