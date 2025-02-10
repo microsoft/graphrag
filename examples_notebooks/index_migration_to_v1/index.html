@@ -16,7 +16,7 @@
     
     
       
-        <title>Api overview - GraphRAG</title>
+        <title>Index migration to v1 - GraphRAG</title>
       
     
     
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-overview" class="md-skip">
+        <a href="#index-migration-pre-v1-to-v1" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Api overview
+              Index migration to v1
             
           </span>
         </div>
@@ -1352,69 +1352,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#api-overview" class="md-nav__link">
+  <a href="#index-migration-pre-v1-to-v1" class="md-nav__link">
     <span class="md-ellipsis">
-      API Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisite" class="md-nav__link">
-    <span class="md-ellipsis">
-      Prerequisite
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Prerequisite">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#load-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Load configuration
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generate-a-object" class="md-nav__link">
-    <span class="md-ellipsis">
-      Generate a object
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#indexing-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      Indexing API
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#build-an-index" class="md-nav__link">
-    <span class="md-ellipsis">
-      Build an index
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#query-an-index" class="md-nav__link">
-    <span class="md-ellipsis">
-      Query an index
+      Index Migration (pre-v1 to v1)
     </span>
   </a>
   
@@ -1438,7 +1378,7 @@
   
 
 
-  <h1>Api overview</h1>
+  <h1>Index migration to v1</h1>
 
 <script>
 (function (global, factory) {
@@ -1912,12 +1852,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="api-overview">API Overview<a class="anchor-link" href="#api-overview">¶</a></h2><p>This notebook provides a demonstration of how to interact with graphrag as a library using the API as opposed to the CLI. Note that graphrag's CLI actually connects to the library through this API for all operations.</p>
+<h2 id="index-migration-pre-v1-to-v1">Index Migration (pre-v1 to v1)<a class="anchor-link" href="#index-migration-pre-v1-to-v1">¶</a></h2><p>This notebook is used to maintain data model parity with older indexes for version 1.0 of GraphRAG. If you have a pre-1.0 index and need to migrate without re-running the entire pipeline, you can use this notebook to only update the pieces necessary for alignment.</p>
+<p>NOTE: we recommend regenerating your settings.yml with the latest version of GraphRAG using <code>graphrag init</code>. Copy your LLM settings into it before running this notebook. This ensures your config is aligned with the latest version for the migration. This also ensures that you have default vector store config, which is now required or indexing will fail.</p>
+<p>WARNING: This will overwrite your parquet files, you may want to make a backup!</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1935,39 +1877,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">graphrag.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">api</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineRunResult</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># This is the directory that has your settings.yaml</span>
+<span class="c1"># NOTE: much older indexes may have been output with a timestamped directory</span>
+<span class="c1"># if this is the case, you will need to make sure the storage.base_dir in settings.yaml points to it correctly</span>
+<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory"</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">import graphrag.api as api
-from graphrag.index.typing import PipelineRunResult</div>
+<div class="clipboard-copy-txt" id="cell-2"># This is the directory that has your settings.yaml
+# NOTE: much older indexes may have been output with a timestamped directory
+# if this is the case, you will need to make sure the storage.base_dir in settings.yaml points to it correctly
+PROJECT_DIRECTORY = "<your directory"<="" div="" project="">
+</your></div>
 </div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="prerequisite">Prerequisite<a class="anchor-link" href="#prerequisite">¶</a></h2><p>As a prerequisite to all API operations, a <code>GraphRagConfig</code> object is required. It is the primary means to control the behavior of graphrag and can be instantiated from a <code>settings.yaml</code> configuration file.</p>
-<p>Please refer to the <a href="https://microsoft.github.io/graphrag/cli/#init">CLI docs</a> for more detailed information on how to generate the <code>settings.yaml</code> file.</p>
-<h4 id="load-settingsyaml-configuration">Load <code>settings.yaml</code> configuration<a class="anchor-link" href="#load-settingsyaml-configuration">¶</a></h4>
 </div>
 </div>
 </div>
@@ -1990,15 +1910,29 @@ from graphrag.index.typing import PipelineRunResult</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;project_directory&gt;"</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/settings.yaml"</span><span class="p">))</span>  <span class="c1"># noqa: PTH123, SIM115</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.load_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.storage.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">StorageFactory</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">PROJECT_DIRECTORY</span><span class="p">))</span>
+<span class="n">storage_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">StorageFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_storage</span><span class="p">(</span>
+    <span class="n">storage_type</span><span class="o">=</span><span class="n">storage_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="n">storage_config</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">import yaml
+<div class="clipboard-copy-txt" id="cell-3">from pathlib import Path
 
-PROJECT_DIRECTORY = "<project_directory>"
-settings = yaml.safe_load(open(f"{PROJECT_DIRECTORY}/settings.yaml"))  # noqa: PTH123, SIM115</project_directory></div>
+from graphrag.config.load_config import load_config
+from graphrag.storage.factory import StorageFactory
+
+config = load_config(Path(PROJECT_DIRECTORY))
+storage_config = config.output.model_dump()
+storage = StorageFactory().create_storage(
+    storage_type=storage_config["type"],
+    kwargs=storage_config,
+)</div>
 </div>
 </div>
 </div>
@@ -2013,50 +1947,50 @@ settings = yaml.safe_load(open(f"{PROJECT_DIRECTORY}/settings.yaml"))  # noqa: P
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[3], line 4</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">yaml</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span> PROJECT_DIRECTORY <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">&lt;project_directory&gt;</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 4</span> settings <span style="color: rgb(98,98,98)">=</span> yaml<span style="color: rgb(98,98,98)">.</span>safe_load(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/settings.yaml</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>)  <span style="color: rgb(95,135,135)"># noqa: PTH123, SIM115</span>
+Cell <span class="ansi-green-fg">In[3], line 6</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">load_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_config
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">factory</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> StorageFactory
+<span class="ansi-green-fg">----&gt; 6</span> config <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">load_config</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">Path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg">)</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> storage_config <span style="color: rgb(98,98,98)">=</span> config<span style="color: rgb(98,98,98)">.</span>output<span style="color: rgb(98,98,98)">.</span>model_dump()
+<span class="ansi-green-intense-fg ansi-bold">      8</span> storage <span style="color: rgb(98,98,98)">=</span> StorageFactory()<span style="color: rgb(98,98,98)">.</span>create_storage(
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     storage_type<span style="color: rgb(98,98,98)">=</span>storage_config[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">type</span><span style="color: rgb(175,0,0)">"</span>],
+<span class="ansi-green-intense-fg ansi-bold">     10</span>     kwargs<span style="color: rgb(98,98,98)">=</span>storage_config,
+<span class="ansi-green-intense-fg ansi-bold">     11</span> )
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/IPython/core/interactiveshell.py:324</span>, in <span class="ansi-cyan-fg">_modified_open</span><span class="ansi-blue-fg">(file, *args, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    317</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> {<span style="color: rgb(98,98,98)">0</span>, <span style="color: rgb(98,98,98)">1</span>, <span style="color: rgb(98,98,98)">2</span>}:
-<span class="ansi-green-intense-fg ansi-bold">    318</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(
-<span class="ansi-green-intense-fg ansi-bold">    319</span>         <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">IPython won</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)">t let you open fd=</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>file<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> by default </span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    320</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">as it is likely to crash IPython. If you know what you are doing, </span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    321</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">you can use builtins</span><span style="color: rgb(175,0,0)">'</span><span style="color: rgb(175,0,0)"> open.</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">    322</span>     )
-<span class="ansi-green-fg">--&gt; 324</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">io_open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">file</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:183</span>, in <span class="ansi-cyan-fg">load_config</span><span class="ansi-blue-fg">(root_dir, config_filepath, cli_overrides)</span>
+<span class="ansi-green-intense-fg ansi-bold">    151</span> <span style="color: rgb(175,0,0)">"""Load configuration from a file.</span>
+<span class="ansi-green-intense-fg ansi-bold">    152</span> 
+<span class="ansi-green-intense-fg ansi-bold">    153</span> <span style="color: rgb(175,0,0)">Parameters</span>
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    180</span> <span style="color: rgb(175,0,0)">    If there are pydantic validation errors when instantiating the config.</span>
+<span class="ansi-green-intense-fg ansi-bold">    181</span> <span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">    182</span> root <span style="color: rgb(98,98,98)">=</span> root_dir<span style="color: rgb(98,98,98)">.</span>resolve()
+<span class="ansi-green-fg">--&gt; 183</span> config_path <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_config_path</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">config_filepath</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    184</span> _load_dotenv(config_path)
+<span class="ansi-green-intense-fg ansi-bold">    185</span> config_extension <span style="color: rgb(98,98,98)">=</span> config_path<span style="color: rgb(98,98,98)">.</span>suffix
 
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/settings.yaml'</pre>
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:106</span>, in <span class="ansi-cyan-fg">_get_config_path</span><span class="ansi-blue-fg">(root_dir, config_filepath)</span>
+<span class="ansi-green-intense-fg ansi-bold">    104</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">    105</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; 106</span>     config_path <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_search_for_config_in_root_dir</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">root_dir</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    108</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> config_path:
+<span class="ansi-green-intense-fg ansi-bold">    109</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Config file not found in root directory: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root_dir<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>
+
+File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_config.py:40</span>, in <span class="ansi-cyan-fg">_search_for_config_in_root_dir</span><span class="ansi-blue-fg">(root)</span>
+<span class="ansi-green-intense-fg ansi-bold">     38</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> root<span style="color: rgb(98,98,98)">.</span>is_dir():
+<span class="ansi-green-intense-fg ansi-bold">     39</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Invalid config path: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>root<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> is not a directory</span><span style="color: rgb(175,0,0)">"</span>
+<span class="ansi-green-fg">---&gt; 40</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(msg)
+<span class="ansi-green-intense-fg ansi-bold">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
+<span class="ansi-green-intense-fg ansi-bold">     43</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root <span style="color: rgb(98,98,98)">/</span> file)<span style="color: rgb(98,98,98)">.</span>is_file():
+
+<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory is not a directory</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>At this point, you can modify the imported settings to align with your application's requirements. For example, if building a UI application, the application might need to change the input and/or storage destinations dynamically in order to enable users to build and query different indexes.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="generate-a-graphragconfig-object">Generate a <code>GraphRagConfig</code> object<a class="anchor-link" href="#generate-a-graphragconfig-object">¶</a></h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2074,61 +2008,20 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.create_graphrag_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_graphrag_config</span>
-
-<span class="n">graphrag_config</span> <span class="o">=</span> <span class="n">create_graphrag_config</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">PROJECT_DIRECTORY</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">remove_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Remove columns from a DataFrame, suppressing errors."""</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">from graphrag.config.create_graphrag_config import create_graphrag_config
-
-graphrag_config = create_graphrag_config(values=settings, root_dir=PROJECT_DIRECTORY)</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[4], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">create_graphrag_config</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> create_graphrag_config
-<span class="ansi-green-fg">----&gt; 3</span> graphrag_config <span style="color: rgb(98,98,98)">=</span> create_graphrag_config(values<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">settings</span>, root_dir<span style="color: rgb(98,98,98)">=</span>PROJECT_DIRECTORY)
-
-<span class="ansi-red-fg">NameError</span>: name 'settings' is not defined</pre>
+<div class="clipboard-copy-txt" id="cell-4">def remove_columns(df, columns):
+    """Remove columns from a DataFrame, suppressing errors."""
+    df.drop(labels=columns, axis=1, errors="ignore", inplace=True)</div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="indexing-api">Indexing API<a class="anchor-link" href="#indexing-api">¶</a></h2><p><em>Indexing</em> is the process of ingesting raw text data and constructing a knowledge graph. GraphRAG currently supports plaintext (<code>.txt</code>) and <code>.csv</code> file formats.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="build-an-index">Build an index<a class="anchor-link" href="#build-an-index">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2146,52 +2039,51 @@ Cell <span class="ansi-green-fg">In[4], line 3</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">index_result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PipelineRunResult</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">build_index</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">graphrag_config</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_community_parent</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute the parent community using the node membership as a lookup."""</span>
+    <span class="n">parent_mapping</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"community"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">]]</span>
 
-<span class="c1"># index_result is a list of workflows that make up the indexing pipeline that was run</span>
-<span class="k">for</span> <span class="n">workflow_result</span> <span class="ow">in</span> <span class="n">index_result</span><span class="p">:</span>
-    <span class="n">status</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"error</span><span class="se">\n</span><span class="si">{</span><span class="n">workflow_result</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">workflow_result</span><span class="o">.</span><span class="n">errors</span> <span class="k">else</span> <span class="s2">"success"</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Workflow Name: </span><span class="si">{</span><span class="n">workflow_result</span><span class="o">.</span><span class="n">workflow</span><span class="si">}</span><span class="se">\t</span><span class="s2">Status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># Create a parent mapping by adding 1 to the level column</span>
+    <span class="n">parent_mapping</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Shift levels for parent relationship</span>
+    <span class="n">parent_mapping</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"community"</span><span class="p">:</span> <span class="s2">"parent"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Merge the parent information back into the base DataFrame</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">parent_mapping</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"level"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+
+    <span class="c1"># Fill missing parents with -1 (default value)</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="s2">"parent"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">join</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="nb">list</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">join</span><span class="p">[</span><span class="n">join</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"parent"</span><span class="p">]]</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">index_result: list[PipelineRunResult] = await api.build_index(config=graphrag_config)
+<div class="clipboard-copy-txt" id="cell-5">def get_community_parent(nodes):
+    """Compute the parent community using the node membership as a lookup."""
+    parent_mapping = nodes.loc[:, ["level", "community", "title"]]
+    nodes = nodes.loc[:, ["level", "community", "title"]]
 
-# index_result is a list of workflows that make up the indexing pipeline that was run
-for workflow_result in index_result:
-    status = f"error\n{workflow_result.errors}" if workflow_result.errors else "success"
-    print(f"Workflow Name: {workflow_result.workflow}\tStatus: {status}")</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[5], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> index_result: <span style="color: rgb(0,135,0)">list</span>[PipelineRunResult] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> api<span style="color: rgb(98,98,98)">.</span>build_index(config<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">graphrag_config</span>)
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(95,135,135)"># index_result is a list of workflows that make up the indexing pipeline that was run</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> workflow_result <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> index_result:
+    # Create a parent mapping by adding 1 to the level column
+    parent_mapping["level"] += 1  # Shift levels for parent relationship
+    parent_mapping.rename(columns={"community": "parent"}, inplace=True)
 
-<span class="ansi-red-fg">NameError</span>: name 'graphrag_config' is not defined</pre>
+    # Merge the parent information back into the base DataFrame
+    nodes = nodes.merge(parent_mapping, on=["level", "title"], how="left")
+
+    # Fill missing parents with -1 (default value)
+    nodes["parent"] = nodes["parent"].fillna(-1).astype(int)
+
+    join = (
+        nodes.groupby(["community", "level", "parent"])
+        .agg({"title": list})
+        .reset_index()
+    )
+    return join[join["community"] &gt; -1].loc[:, ["community", "parent"]]</div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="query-an-index">Query an index<a class="anchor-link" href="#query-an-index">¶</a></h2><p>To query an index, several index files must first be read into memory and passed to the query API.</p>
 </div>
 </div>
 </div>
@@ -2214,42 +2106,194 @@ Cell <span class="ansi-green-fg">In[5], line 1</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
 
-<span class="n">final_entities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/entities.parquet"</span><span class="p">)</span>
-<span class="n">final_communities</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/communities.parquet"</span><span class="p">)</span>
-<span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PROJECT_DIRECTORY</span><span class="si">}</span><span class="s2">/output/community_reports.parquet"</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.utils.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table_from_storage</span><span class="p">,</span> <span class="n">write_table_to_storage</span>
+
+<span class="c1"># First we'll go through any parquet files that had model changes and update them</span>
+<span class="c1"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
+
+<span class="n">final_documents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_text_units</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_entities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_nodes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_relationships</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span>
+<span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span><span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="n">final_community_reports</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_table_from_storage</span><span class="p">(</span>
+    <span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
 
-<span class="n">response</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">global_search</span><span class="p">(</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">graphrag_config</span><span class="p">,</span>
-    <span class="n">entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
-    <span class="n">communities</span><span class="o">=</span><span class="n">final_communities</span><span class="p">,</span>
-    <span class="n">community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
-    <span class="n">community_level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">dynamic_community_selection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">response_type</span><span class="o">=</span><span class="s2">"Multiple Paragraphs"</span><span class="p">,</span>
-    <span class="n">query</span><span class="o">=</span><span class="s2">"Who is Scrooge and what are his main relationships?"</span><span class="p">,</span>
+
+<span class="c1"># Documents renames raw_content for consistency</span>
+<span class="k">if</span> <span class="s2">"raw_content"</span> <span class="ow">in</span> <span class="n">final_documents</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_documents</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"raw_content"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">final_documents</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_documents</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># Text units just get a human_readable_id or consistency</span>
+<span class="n">final_text_units</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_text_units</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># We renamed "name" to "title" for consistency with the rest of the tables</span>
+<span class="k">if</span> <span class="s2">"name"</span> <span class="ow">in</span> <span class="n">final_entities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_entities</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"title"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span>
+    <span class="n">final_entities</span><span class="p">,</span> <span class="p">[</span><span class="s2">"name_embedding"</span><span class="p">,</span> <span class="s2">"graph_embedding"</span><span class="p">,</span> <span class="s2">"description_embedding"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Final nodes uses community for joins, which is now an int everywhere</span>
+<span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_nodes</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span>
+    <span class="n">final_nodes</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">"type"</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">,</span>
+        <span class="s2">"source_id"</span><span class="p">,</span>
+        <span class="s2">"graph_embedding"</span><span class="p">,</span>
+        <span class="s2">"entity_type"</span><span class="p">,</span>
+        <span class="s2">"top_level_node_id"</span><span class="p">,</span>
+        <span class="s2">"size"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Relationships renames "rank" to "combined_degree" to be clear what the default ranking is</span>
+<span class="k">if</span> <span class="s2">"rank"</span> <span class="ow">in</span> <span class="n">final_relationships</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_relationships</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"rank"</span><span class="p">:</span> <span class="s2">"combined_degree"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Compute the parents for each community, to add to communities and reports</span>
+<span class="n">parent_df</span> <span class="o">=</span> <span class="n">get_community_parent</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">)</span>
+
+<span class="c1"># Communities previously used the "id" field for the Leiden id, but we've moved this to the community field and use a uuid for id like the others</span>
+<span class="k">if</span> <span class="s2">"community"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_communities</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_communities</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span>
+    <span class="n">final_communities</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">final_communities</span><span class="p">))]</span>
+<span class="k">if</span> <span class="s2">"parent"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_communities</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+<span class="k">if</span> <span class="s2">"entity_ids"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">node_mapping</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">final_nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">]]</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"community"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">entity_ids</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">final_communities</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">node_mapping</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
+    <span class="p">)</span>
+<span class="n">remove_columns</span><span class="p">(</span><span class="n">final_communities</span><span class="p">,</span> <span class="p">[</span><span class="s2">"raw_community"</span><span class="p">])</span>
+
+<span class="c1"># We need int for community and the human_readable_id copy for consistency</span>
+<span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"human_readable_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="p">[</span><span class="s2">"community"</span><span class="p">]</span>
+<span class="k">if</span> <span class="s2">"parent"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">final_community_reports</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">parent_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
+    <span class="p">)</span>
+
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"create_final_documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_text_units</span><span class="p">,</span> <span class="s2">"create_final_text_units"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_entities</span><span class="p">,</span> <span class="s2">"create_final_entities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_nodes</span><span class="p">,</span> <span class="s2">"create_final_nodes"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_relationships</span><span class="p">,</span> <span class="s2">"create_final_relationships"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_communities</span><span class="p">,</span> <span class="s2">"create_final_communities"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span>
+    <span class="n">final_community_reports</span><span class="p">,</span> <span class="s2">"create_final_community_reports"</span><span class="p">,</span> <span class="n">storage</span>
 <span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">import pandas as pd
+<div class="clipboard-copy-txt" id="cell-6">from uuid import uuid4
 
-final_entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
-final_communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
-final_community_reports = pd.read_parquet(
-    f"{PROJECT_DIRECTORY}/output/community_reports.parquet"
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
+
+# First we'll go through any parquet files that had model changes and update them
+# The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility
+
+final_documents = await load_table_from_storage("create_final_documents", storage)
+final_text_units = await load_table_from_storage("create_final_text_units", storage)
+final_entities = await load_table_from_storage("create_final_entities", storage)
+final_nodes = await load_table_from_storage("create_final_nodes", storage)
+final_relationships = await load_table_from_storage(
+    "create_final_relationships", storage
+)
+final_communities = await load_table_from_storage("create_final_communities", storage)
+final_community_reports = await load_table_from_storage(
+    "create_final_community_reports", storage
 )
 
-response, context = await api.global_search(
-    config=graphrag_config,
-    entities=final_entities,
-    communities=final_communities,
-    community_reports=final_community_reports,
-    community_level=2,
-    dynamic_community_selection=False,
-    response_type="Multiple Paragraphs",
-    query="Who is Scrooge and what are his main relationships?",
+
+# Documents renames raw_content for consistency
+if "raw_content" in final_documents.columns:
+    final_documents.rename(columns={"raw_content": "text"}, inplace=True)
+final_documents["human_readable_id"] = final_documents.index + 1
+
+# Text units just get a human_readable_id or consistency
+final_text_units["human_readable_id"] = final_text_units.index + 1
+
+# We renamed "name" to "title" for consistency with the rest of the tables
+if "name" in final_entities.columns:
+    final_entities.rename(columns={"name": "title"}, inplace=True)
+remove_columns(
+    final_entities, ["name_embedding", "graph_embedding", "description_embedding"]
+)
+
+# Final nodes uses community for joins, which is now an int everywhere
+final_nodes["community"] = final_nodes["community"].fillna(-1)
+final_nodes["community"] = final_nodes["community"].astype(int)
+remove_columns(
+    final_nodes,
+    [
+        "type",
+        "description",
+        "source_id",
+        "graph_embedding",
+        "entity_type",
+        "top_level_node_id",
+        "size",
+    ],
+)
+
+# Relationships renames "rank" to "combined_degree" to be clear what the default ranking is
+if "rank" in final_relationships.columns:
+    final_relationships.rename(columns={"rank": "combined_degree"}, inplace=True)
+
+
+# Compute the parents for each community, to add to communities and reports
+parent_df = get_community_parent(final_nodes)
+
+# Communities previously used the "id" field for the Leiden id, but we've moved this to the community field and use a uuid for id like the others
+if "community" not in final_communities.columns:
+    final_communities["community"] = final_communities["id"].astype(int)
+    final_communities["human_readable_id"] = final_communities["community"]
+    final_communities["id"] = [str(uuid4()) for _ in range(len(final_communities))]
+if "parent" not in final_communities.columns:
+    final_communities = final_communities.merge(parent_df, on="community", how="left")
+if "entity_ids" not in final_communities.columns:
+    node_mapping = (
+        final_nodes.loc[:, ["community", "id"]]
+        .groupby("community")
+        .agg(entity_ids=("id", list))
+    )
+    final_communities = final_communities.merge(
+        node_mapping, on="community", how="left"
+    )
+remove_columns(final_communities, ["raw_community"])
+
+# We need int for community and the human_readable_id copy for consistency
+final_community_reports["community"] = final_community_reports["community"].astype(int)
+final_community_reports["human_readable_id"] = final_community_reports["community"]
+if "parent" not in final_community_reports.columns:
+    final_community_reports = final_community_reports.merge(
+        parent_df, on="community", how="left"
+    )
+
+await write_table_to_storage(final_documents, "create_final_documents", storage)
+await write_table_to_storage(final_text_units, "create_final_text_units", storage)
+await write_table_to_storage(final_entities, "create_final_entities", storage)
+await write_table_to_storage(final_nodes, "create_final_nodes", storage)
+await write_table_to_storage(final_relationships, "create_final_relationships", storage)
+await write_table_to_storage(final_communities, "create_final_communities", storage)
+await write_table_to_storage(
+    final_community_reports, "create_final_community_reports", storage
 )</div>
 </div>
 </div>
@@ -2264,87 +2308,18 @@ response, context = await api.global_search(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pandas</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pd</span>
-<span class="ansi-green-fg">----&gt; 3</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">pd</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read_parquet</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">f</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">{</span><span class="ansi-yellow-bg">PROJECT_DIRECTORY</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,135)">}</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">/output/entities.parquet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> final_communities <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/communities.parquet</span><span style="color: rgb(175,0,0)">"</span>)
-<span class="ansi-green-intense-fg ansi-bold">      5</span> final_community_reports <span style="color: rgb(98,98,98)">=</span> pd<span style="color: rgb(98,98,98)">.</span>read_parquet(
-<span class="ansi-green-intense-fg ansi-bold">      6</span>     <span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>PROJECT_DIRECTORY<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">/output/community_reports.parquet</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-intense-fg ansi-bold">      7</span> )
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 8</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">utils</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">storage</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> load_table_from_storage, write_table_to_storage
+<span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(95,135,135)"># First we'll go through any parquet files that had model changes and update them</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># The new data model may have removed excess columns as well, but we will only make the minimal changes required for compatibility</span>
+<span class="ansi-green-fg">----&gt; 8</span> final_documents <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_documents</span><span style="color: rgb(175,0,0)">"</span>, <span class="ansi-yellow-bg">storage</span>)
+<span class="ansi-green-intense-fg ansi-bold">      9</span> final_text_units <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_text_units</span><span style="color: rgb(175,0,0)">"</span>, storage)
+<span class="ansi-green-intense-fg ansi-bold">     10</span> final_entities <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> load_table_from_storage(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">create_final_entities</span><span style="color: rgb(175,0,0)">"</span>, storage)
 
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:667</span>, in <span class="ansi-cyan-fg">read_parquet</span><span class="ansi-blue-fg">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    664</span>     use_nullable_dtypes <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">False</span>
-<span class="ansi-green-intense-fg ansi-bold">    665</span> check_dtype_backend(dtype_backend)
-<span class="ansi-green-fg">--&gt; 667</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">impl</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">read</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    668</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    669</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">columns</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    670</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filters</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    671</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    672</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">use_nullable_dtypes</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    673</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">dtype_backend</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    674</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    675</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    676</span> <span class="ansi-yellow-bg">)</span>
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:267</span>, in <span class="ansi-cyan-fg">PyArrowImpl.read</span><span class="ansi-blue-fg">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    264</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> manager <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">array</span><span style="color: rgb(175,0,0)">"</span>:
-<span class="ansi-green-intense-fg ansi-bold">    265</span>     to_pandas_kwargs[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">split_blocks</span><span style="color: rgb(175,0,0)">"</span>] <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>  <span style="color: rgb(95,135,135)"># type: ignore[assignment]</span>
-<span class="ansi-green-fg">--&gt; 267</span> path_or_handle, handles, filesystem <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">_get_path_or_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    268</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    269</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">filesystem</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    270</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    271</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rb</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">"</span><span class="ansi-yellow-bg">,</span>
-<span class="ansi-green-intense-fg ansi-bold">    272</span> <span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    273</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
-<span class="ansi-green-intense-fg ansi-bold">    274</span>     pa_table <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>api<span style="color: rgb(98,98,98)">.</span>parquet<span style="color: rgb(98,98,98)">.</span>read_table(
-<span class="ansi-green-intense-fg ansi-bold">    275</span>         path_or_handle,
-<span class="ansi-green-intense-fg ansi-bold">    276</span>         columns<span style="color: rgb(98,98,98)">=</span>columns,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    279</span>         <span style="color: rgb(98,98,98)">*</span><span style="color: rgb(98,98,98)">*</span>kwargs,
-<span class="ansi-green-intense-fg ansi-bold">    280</span>     )
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/parquet.py:140</span>, in <span class="ansi-cyan-fg">_get_path_or_handle</span><span class="ansi-blue-fg">(path, fs, storage_options, mode, is_dir)</span>
-<span class="ansi-green-intense-fg ansi-bold">    130</span> handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    131</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (
-<span class="ansi-green-intense-fg ansi-bold">    132</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> fs
-<span class="ansi-green-intense-fg ansi-bold">    133</span>     <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> is_dir
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    138</span>     <span style="color: rgb(95,135,135)"># fsspec resources can also point to directories</span>
-<span class="ansi-green-intense-fg ansi-bold">    139</span>     <span style="color: rgb(95,135,135)"># this branch is used for example when reading from non-fsspec URLs</span>
-<span class="ansi-green-fg">--&gt; 140</span>     handles <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">get_handle</span><span class="ansi-yellow-bg">(</span>
-<span class="ansi-green-intense-fg ansi-bold">    141</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">path_or_handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">is_text</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(0,135,0)">False</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">storage_options</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">storage_options</span>
-<span class="ansi-green-intense-fg ansi-bold">    142</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    143</span>     fs <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
-<span class="ansi-green-intense-fg ansi-bold">    144</span>     path_or_handle <span style="color: rgb(98,98,98)">=</span> handles<span style="color: rgb(98,98,98)">.</span>handle
-
-File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7-py3.11/lib/python3.11/site-packages/pandas/io/common.py:882</span>, in <span class="ansi-cyan-fg">get_handle</span><span class="ansi-blue-fg">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
-<span class="ansi-green-intense-fg ansi-bold">    873</span>         handle <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">open</span>(
-<span class="ansi-green-intense-fg ansi-bold">    874</span>             handle,
-<span class="ansi-green-intense-fg ansi-bold">    875</span>             ioargs<span style="color: rgb(98,98,98)">.</span>mode,
-<span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    878</span>             newline<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">"</span>,
-<span class="ansi-green-intense-fg ansi-bold">    879</span>         )
-<span class="ansi-green-intense-fg ansi-bold">    880</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
-<span class="ansi-green-intense-fg ansi-bold">    881</span>         <span style="color: rgb(95,135,135)"># Binary mode</span>
-<span class="ansi-green-fg">--&gt; 882</span>         handle <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">handle</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ioargs</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">    883</span>     handles<span style="color: rgb(98,98,98)">.</span>append(handle)
-<span class="ansi-green-intense-fg ansi-bold">    885</span> <span style="color: rgb(95,135,135)"># Convert BytesIO or file objects passed with an encoding</span>
-
-<span class="ansi-red-fg">FileNotFoundError</span>: [Errno 2] No such file or directory: '&lt;project_directory&gt;/output/entities.parquet'</pre>
+<span class="ansi-red-fg">NameError</span>: name 'storage' is not defined</pre>
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The response object is the official reponse from graphrag while the context object holds various metadata regarding the querying process used to obtain the final response.</p>
 </div>
 </div>
 </div>
@@ -2367,9 +2342,71 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.cache.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.callbacks.noop_workflow_callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoopWorkflowCallbacks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.config.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_embedded_fields</span><span class="p">,</span> <span class="n">get_embedding_settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphrag.index.flows.generate_text_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_text_embeddings</span>
+
+<span class="c1"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
+<span class="c1"># We'll construct the context and run this function flow directly to avoid everything else</span>
+
+
+<span class="n">embedded_fields</span> <span class="o">=</span> <span class="n">get_embedded_fields</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">text_embed</span> <span class="o">=</span> <span class="n">get_embedding_settings</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="n">NoopWorkflowCallbacks</span><span class="p">()</span>
+<span class="n">cache_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">CacheFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_cache</span><span class="p">(</span>
+    <span class="n">cache_type</span><span class="o">=</span><span class="n">cache_config</span><span class="p">[</span><span class="s2">"type"</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+    <span class="n">root_dir</span><span class="o">=</span><span class="n">PROJECT_DIRECTORY</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="n">cache_config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">await</span> <span class="n">generate_text_embeddings</span><span class="p">(</span>
+    <span class="n">final_documents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">final_relationships</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">final_text_units</span><span class="o">=</span><span class="n">final_text_units</span><span class="p">,</span>
+    <span class="n">final_entities</span><span class="o">=</span><span class="n">final_entities</span><span class="p">,</span>
+    <span class="n">final_community_reports</span><span class="o">=</span><span class="n">final_community_reports</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+    <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span>
+    <span class="n">text_embed_config</span><span class="o">=</span><span class="n">text_embed</span><span class="p">,</span>
+    <span class="n">embedded_fields</span><span class="o">=</span><span class="n">embedded_fields</span><span class="p">,</span>
+    <span class="n">snapshot_embeddings_enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-7">print(response)</div>
+<div class="clipboard-copy-txt" id="cell-7">from graphrag.cache.factory import CacheFactory
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.config.embeddings import get_embedded_fields, get_embedding_settings
+from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
+
+# We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place
+# We'll construct the context and run this function flow directly to avoid everything else
+
+
+embedded_fields = get_embedded_fields(config)
+text_embed = get_embedding_settings(config)
+callbacks = NoopWorkflowCallbacks()
+cache_config = config.cache.model_dump()  # type: ignore
+cache = CacheFactory().create_cache(
+    cache_type=cache_config["type"],  # type: ignore
+    root_dir=PROJECT_DIRECTORY,
+    kwargs=cache_config,
+)
+
+await generate_text_embeddings(
+    final_documents=None,
+    final_relationships=None,
+    final_text_units=final_text_units,
+    final_entities=final_entities,
+    final_community_reports=final_community_reports,
+    callbacks=callbacks,
+    cache=cache,
+    storage=storage,
+    text_embed_config=text_embed,
+    embedded_fields=embedded_fields,
+    snapshot_embeddings_enabled=False,
+)</div>
 </div>
 </div>
 </div>
@@ -2384,71 +2421,15 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> <span style="color: rgb(0,135,0)">print</span>(<span class="ansi-yellow-bg">response</span>)
+Cell <span class="ansi-green-fg">In[7], line 10</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># We'll construct the context and run this function flow directly to avoid everything else</span>
+<span class="ansi-green-fg">---&gt; 10</span> embedded_fields <span style="color: rgb(98,98,98)">=</span> get_embedded_fields(<span class="ansi-yellow-bg">config</span>)
+<span class="ansi-green-intense-fg ansi-bold">     11</span> text_embed <span style="color: rgb(98,98,98)">=</span> get_embedding_settings(config)
+<span class="ansi-green-intense-fg ansi-bold">     12</span> callbacks <span style="color: rgb(98,98,98)">=</span> NoopWorkflowCallbacks()
 
-<span class="ansi-red-fg">NameError</span>: name 'response' is not defined</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Digging into the context a bit more provides users with extremely granular information such as what sources of data (down to the level of text chunks) were ultimately retrieved and used as part of the context sent to the LLM model).</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="CodeMirror cm-s-jupyter">
-<div class="zeroclipboard-container">
-<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
-<div>
-<span class="notice" hidden="">Copied!</span>
-<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
-<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
-</svg>
-</div>
-</clipboard-copy>
-</div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
-
-<span class="n">pprint</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>  <span class="c1"># noqa: T203</span>
-</pre></div>
-<div class="clipboard-copy-txt" id="cell-8">from pprint import pprint
-
-pprint(context)  # noqa: T203</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">pprint</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> pprint
-<span class="ansi-green-fg">----&gt; 3</span> pprint(<span class="ansi-yellow-bg">context</span>)  <span style="color: rgb(95,135,135)"># noqa: T203</span>
-
-<span class="ansi-red-fg">NameError</span>: name 'context' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'config' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2457,7 +2438,7 @@ Cell <span class="ansi-green-fg">In[8], line 3</span>
 </div>
 </div> <!-- jp-Notebook -->
 </div> <!-- jupyter-wrapper -->
-
+</div>
         <style>
         ['pre { line-height: 125%; }\ntd.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }\nspan.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }\ntd.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }\nspan.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }\n.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }\n.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }\n.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */\n.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */\n.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */\n.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */\n.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */\n.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */\n.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */\n.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */\n.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */\n.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */\n.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */\n.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */\n.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */\n.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */\n.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */\n.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */\n.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */\n.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */\n.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */\n.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */\n.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */\n.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */\n.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */\n.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */\n.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */\n.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */\n.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */\n.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */\n.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */\n.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */\n.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */\n.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */\n.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */\n.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */\n.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */\n.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */\n.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */\n.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */\n.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */\n.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */\n.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */']
         </style>
