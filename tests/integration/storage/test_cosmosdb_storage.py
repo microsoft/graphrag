@@ -117,12 +117,12 @@ async def test_get_creation_date():
         container_name="testclearcontainer",
     )
     try:
-        json_exists = {
+        json_content = {
             "content": "Happy Easter!",
         }
-        await storage.set("easter.json", json.dumps(json_exists), encoding="utf-8")
+        await storage.set("easter.json", json.dumps(json_content), encoding="utf-8")
 
-        creation_date = storage.get_creation_date("easter.json")
+        creation_date = await storage.get_creation_date("easter.json")
 
         datetime_format = "%Y-%m-%d %H:%M:%S %z"
         parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()

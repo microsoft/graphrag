@@ -62,7 +62,7 @@ async def load(
         else:
             data["title"] = data.apply(lambda _: path, axis=1)
 
-        creation_date = storage.get_creation_date(path)
+        creation_date = await storage.get_creation_date(path)
         data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 
         return data

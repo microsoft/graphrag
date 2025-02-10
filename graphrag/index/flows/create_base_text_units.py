@@ -88,23 +88,20 @@ def create_base_text_units(
         )
 
         if prepend_metadata:
-            for i, chunk in enumerate(chunked):
+            for index, chunk in enumerate(chunked):
                 if isinstance(chunk, str):
-                    chunked[i] = metadata_str + chunk
+                    chunked[index] = metadata_str + chunk
                 else:
-                    updated_chunks = [
-                        (tup[0], metadata_str + tup[1], tup[2])
-                        if tup is not None
-                        else None
+                    chunked[index] = [
+                        (tup[0], metadata_str + tup[1], tup[2]) if tup else None
                         for tup in chunk
                     ]
-                    chunked[i] = updated_chunks
 
         if tick:
             tick(1)
         return chunked
 
-    aggregated["chunks"] = aggregated.apply(lambda row: chunker(row), axis=1)[0]
+    aggregated["chunks"] = aggregated.apply(lambda row: pd.Series(chunker(row)), axis=1)
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
     aggregated = aggregated.explode("chunks")

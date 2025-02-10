@@ -327,12 +327,10 @@ class CosmosDBPipelineStorage(PipelineStorage):
         """Get the prefix of the filename key."""
         return key.split(".")[0]
 
-    def get_creation_date(self, key: str) -> str:
+    async def get_creation_date(self, key: str) -> str:
         """Get a value from the cache."""
         try:
-            if not self._database_client or not self._container_client:
-                return ""
-            item = self._container_client.read_item(item=key, partition_key=key)
+            item = await self.get(key)
             return get_timestamp_formatted_with_local_tz(item["_ts"])
 
         except Exception:

@@ -149,7 +149,7 @@ class FilePipelineStorage(PipelineStorage):
         """Return the keys in the storage."""
         return [item.name for item in Path(self._root_dir).iterdir() if item.is_file()]
 
-    def get_creation_date(self, key: str) -> str:
+    async def get_creation_date(self, key: str) -> str:
         """Get the creation date of a file."""
         file_path = Path(join_path(self._root_dir, key))
 

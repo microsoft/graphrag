@@ -71,7 +71,7 @@ async def test_get_creation_date():
     )
     try:
         await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
-        creation_date = storage.get_creation_date("input/christmas.txt")
+        creation_date = await storage.get_creation_date("input/christmas.txt")
 
         datetime_format = "%Y-%m-%d %H:%M:%S %z"
         parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()

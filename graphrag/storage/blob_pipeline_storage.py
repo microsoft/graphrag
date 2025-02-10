@@ -292,7 +292,7 @@ class BlobPipelineStorage(PipelineStorage):
         path = str(Path(self._container_name) / self._path_prefix / key)
         return f"abfs://{path}"
 
-    def get_creation_date(self, key: str) -> str:
+    async def get_creation_date(self, key: str) -> str:
         """Get a value from the cache."""
         try:
             key = self._keyname(key)
