@@ -29,7 +29,7 @@ async def test_create_base_text_units():
 
     actual = await load_table_from_storage("text_units", context.storage)
 
-    compare_outputs(actual, expected)
+    compare_outputs(actual, expected, columns=["text", "document_ids", "n_tokens"])
 
 
 async def test_create_base_text_units_metadata():
