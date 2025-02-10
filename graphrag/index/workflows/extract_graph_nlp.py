@@ -3,8 +3,6 @@
 
 """A module containing run_workflow method definition."""
 
-import pandas as pd
-
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
@@ -13,6 +11,7 @@ from graphrag.index.flows.extract_graph_nlp import (
 )
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.snapshot_graphml import snapshot_graphml
+from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "extract_graph_nlp"
@@ -22,7 +21,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: WorkflowCallbacks,
-) -> pd.DataFrame | None:
+) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
 
@@ -47,3 +46,11 @@ async def run_workflow(
             name="graph",
             storage=context.storage,
         )
+
+    return WorkflowFunctionOutput(
+        result={
+            "entities": entities,
+            "relationships": relationships,
+        },
+        config=None,
+    )
