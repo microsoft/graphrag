@@ -55,7 +55,7 @@ def create_base_text_units(
     num_total = _get_num_total(aggregated, "texts")
     tick = progress_ticker(callbacks.progress, num_total)
 
-    def chunker(row: dict[str, Any]) -> pd.Series:
+    def chunker(row_name: str, row: dict[str, Any]) -> Any:
         line_delimiter = ".\n"
         metadata_str = ""
         metadata_tokens = 0
@@ -85,23 +85,24 @@ def create_base_text_units(
             encoding_model=encoding_model,
             strategy=strategy,
             callbacks=NoopWorkflowCallbacks(),
-        )
+        )[int(row_name)]
 
         if prepend_metadata:
             for index, chunk in enumerate(chunked):
                 if isinstance(chunk, str):
                     chunked[index] = metadata_str + chunk
                 else:
-                    chunked[index] = [
-                        (tup[0], metadata_str + tup[1], tup[2]) if tup else None
-                        for tup in chunk
-                    ]
+                    chunked[index] = (
+                        (chunk[0], metadata_str + chunk[1], chunk[2]) if chunk else None
+                    )
 
         if tick:
             tick(1)
-        return chunked
 
-    aggregated["chunks"] = aggregated.apply(lambda row: pd.Series(chunker(row)), axis=1)
+        row["chunks"] = chunked
+        return row
+
+    aggregated = aggregated.apply(lambda row: chunker(row.name, row), axis=1)
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])
     aggregated = aggregated.explode("chunks")
