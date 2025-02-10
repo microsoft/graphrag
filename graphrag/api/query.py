@@ -297,6 +297,10 @@ async def multi_index_global_search(
             lambda x: x if x == -1 else x + max_vals["communities"] + 1
         )
         communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
         max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
@@ -567,6 +571,10 @@ async def multi_index_local_search(
             }
         communities_df["community"] += max_vals["communities"] + 1
         communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
         max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
@@ -945,6 +953,10 @@ async def multi_index_drift_search(
             }
         communities_df["community"] += max_vals["communities"] + 1
         communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
         max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
