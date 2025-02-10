@@ -7,6 +7,7 @@ import json
 import logging
 import re
 from collections.abc import Iterator
+from datetime import datetime, timezone
 from io import BytesIO, StringIO
 from typing import Any
 
@@ -330,8 +331,12 @@ class CosmosDBPipelineStorage(PipelineStorage):
     async def get_creation_date(self, key: str) -> str:
         """Get a value from the cache."""
         try:
-            item = await self.get(key)
-            return get_timestamp_formatted_with_local_tz(item["_ts"])
+            if not self._database_client or not self._container_client:
+                return ""
+            item = self._container_client.read_item(item=key, partition_key=key)
+            return get_timestamp_formatted_with_local_tz(
+                datetime.fromtimestamp(item["_ts"], tz=timezone.utc)
+            )
 
         except Exception:
             log.exception("Error getting key %s", key)
