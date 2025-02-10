@@ -9,8 +9,6 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.extract_graph import (
     extract_graph,
 )
-from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.snapshot_graphml import snapshot_graphml
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
@@ -53,21 +51,10 @@ async def run_workflow(
         entity_types=entity_types,
         summarization_strategy=summarization_strategy,
         summarization_num_threads=summarization_num_threads,
-        embed_config=config.embed_graph,
-        layout_enabled=config.umap.enabled,
     )
 
     await write_table_to_storage(entities, "entities", context.storage)
     await write_table_to_storage(relationships, "relationships", context.storage)
-
-    if config.snapshots.graphml:
-        # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(relationships)
-        await snapshot_graphml(
-            graph,
-            name="graph",
-            storage=context.storage,
-        )
 
     return WorkflowFunctionOutput(
         result={
