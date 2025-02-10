@@ -87,15 +87,18 @@ def create_base_text_units(
             callbacks=NoopWorkflowCallbacks(),
         )
 
-        for i, chunk in enumerate(chunked):
-            if isinstance(chunk, str):
-                chunked[i] = metadata_str + chunk
-            else:
-                updated_chunks = [
-                    (tup[0], metadata_str + tup[1], tup[2]) if tup is not None else None
-                    for tup in chunk
-                ]
-                chunked[i] = updated_chunks
+        if prepend_metadata:
+            for i, chunk in enumerate(chunked):
+                if isinstance(chunk, str):
+                    chunked[i] = metadata_str + chunk
+                else:
+                    updated_chunks = [
+                        (tup[0], metadata_str + tup[1], tup[2])
+                        if tup is not None
+                        else None
+                        for tup in chunk
+                    ]
+                    chunked[i] = updated_chunks
 
         if tick:
             tick(1)
