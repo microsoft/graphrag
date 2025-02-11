@@ -9,6 +9,9 @@ import nltk
 import tiktoken
 
 from graphrag.config.models.chunking_config import ChunkingConfig
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.operations.chunk_text.agentic_chunker import run_semantic_chunker
+from graphrag.index.operations.chunk_text.markdown_chunker import MarkdownChunker
 from graphrag.index.operations.chunk_text.typing import TextChunk
 from graphrag.index.text_splitting.text_splitting import (
     Tokenizer,
@@ -58,3 +61,28 @@ def run_sentences(
                 source_doc_indices=[doc_idx],
             )
         tick(1)
+
+async def run_markdown(
+        input: list[str],
+        config: ChunkingConfig,
+        tick: ProgressTicker,
+        mainConfig: GraphRagConfig
+) -> list[TextChunk]:
+    """Chunks text into semantically coherent chunks using semantic chunker."""
+    results = []
+    chunker = MarkdownChunker()
+
+    # Process each input document
+    for doc_idx, text in enumerate(input):
+        # Get chunks using existing semantic chunker
+        chunks = await chunker.run_semantic_chunker(text, mainConfig)
+
+        # Create TextChunk objects for each chunk
+        for chunk in chunks:
+            results.append(TextChunk(
+                text_chunk=chunk,
+                source_doc_indices=[doc_idx],
+            ))
+        tick(1)
+
+    return results

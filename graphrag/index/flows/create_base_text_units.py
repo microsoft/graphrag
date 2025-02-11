@@ -9,12 +9,13 @@ import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import Progress
 
 
-def create_base_text_units(
+async def create_base_text_units(
     documents: pd.DataFrame,
     callbacks: WorkflowCallbacks,
     group_by_columns: list[str],
@@ -22,6 +23,7 @@ def create_base_text_units(
     overlap: int,
     encoding_model: str,
     strategy: ChunkStrategyType,
+    config: GraphRagConfig
 ) -> pd.DataFrame:
     """All the steps to transform base text_units."""
     sort = documents.sort_values(by=["id"], ascending=[True])
@@ -42,7 +44,7 @@ def create_base_text_units(
         .reset_index()
     )
 
-    aggregated["chunks"] = chunk_text(
+    aggregated["chunks"] = await chunk_text(
         aggregated,
         column="texts",
         size=size,
@@ -50,6 +52,7 @@ def create_base_text_units(
         encoding_model=encoding_model,
         strategy=strategy,
         callbacks=callbacks,
+        mainConfig=config
     )
 
     aggregated = cast("pd.DataFrame", aggregated[[*group_by_columns, "chunks"]])

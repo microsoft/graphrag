@@ -1,14 +1,11 @@
-# Copyright (c) 2024 Microsoft Corporation.
-# Licensed under the MIT License
-
-"""A module containing _get_num_total, chunk, run_strategy and load_strategy methods definitions."""
-
 from typing import Any, cast
-
 import pandas as pd
+from inspect import iscoroutinefunction
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkingConfig, ChunkStrategyType
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.operations.chunk_text.strategies import run_markdown
 from graphrag.index.operations.chunk_text.typing import (
     ChunkInput,
     ChunkStrategy,
@@ -16,75 +13,44 @@ from graphrag.index.operations.chunk_text.typing import (
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 
-def chunk_text(
-    input: pd.DataFrame,
-    column: str,
-    size: int,
-    overlap: int,
-    encoding_model: str,
-    strategy: ChunkStrategyType,
-    callbacks: WorkflowCallbacks,
+async def chunk_text(
+        input: pd.DataFrame,
+        column: str,
+        size: int,
+        overlap: int,
+        encoding_model: str,
+        strategy: ChunkStrategyType,
+        callbacks: WorkflowCallbacks,
+        mainConfig: GraphRagConfig = None
 ) -> pd.Series:
-    """
-    Chunk a piece of text into smaller pieces.
-
-    ## Usage
-    ```yaml
-    args:
-        column: <column name> # The name of the column containing the text to chunk, this can either be a column with text, or a column with a list[tuple[doc_id, str]]
-        strategy: <strategy config> # The strategy to use to chunk the text, see below for more details
-    ```
-
-    ## Strategies
-    The text chunk verb uses a strategy to chunk the text. The strategy is an object which defines the strategy to use. The following strategies are available:
-
-    ### tokens
-    This strategy uses the [tokens] library to chunk a piece of text. The strategy config is as follows:
-
-    ```yaml
-    strategy: tokens
-    size: 1200 # Optional, The chunk size to use, default: 1200
-    overlap: 100 # Optional, The chunk overlap to use, default: 100
-    ```
-
-    ### sentence
-    This strategy uses the nltk library to chunk a piece of text into sentences. The strategy config is as follows:
-
-    ```yaml
-    strategy: sentence
-    ```
-    """
+    """Chunk a piece of text into smaller pieces."""
     strategy_exec = load_strategy(strategy)
-
     num_total = _get_num_total(input, column)
     tick = progress_ticker(callbacks.progress, num_total)
-    # collapse the config back to a single object to support "polymorphic" function call
     config = ChunkingConfig(size=size, overlap=overlap, encoding_model=encoding_model)
-    return cast(
-        "pd.Series",
-        input.apply(
-            cast(
-                "Any",
-                lambda x: run_strategy(strategy_exec, x[column], config, tick),
-            ),
-            axis=1,
-        ),
-    )
+
+    results = []
+    for idx, row in input.iterrows():
+        result = await run_strategy(strategy_exec, row[column], config, tick, mainConfig)
+        results.append(result)
+
+    return pd.Series(results, index=input.index)
 
 
-def run_strategy(
+async def run_strategy(
     strategy_exec: ChunkStrategy,
     input: ChunkInput,
     config: ChunkingConfig,
     tick: ProgressTicker,
+    mainConfig: GraphRagConfig
 ) -> list[str | tuple[list[str] | None, str, int]]:
     """Run strategy method definition."""
     if isinstance(input, str):
-        return [item.text_chunk for item in strategy_exec([input], config, tick)]
+        strategy_results = await strategy_exec([input], config, tick, mainConfig)
+        return [item.text_chunk for item in strategy_results]
 
     # We can work with both just a list of text content
     # or a list of tuples of (document_id, text content)
-    # text_to_chunk = '''
     texts = []
     for item in input:
         if isinstance(item, str):
@@ -92,7 +58,7 @@ def run_strategy(
         else:
             texts.append(item[1])
 
-    strategy_results = strategy_exec(texts, config, tick)
+    strategy_results = await strategy_exec(texts, config, tick, mainConfig)
 
     results = []
     for strategy_result in strategy_results:
@@ -114,15 +80,14 @@ def load_strategy(strategy: ChunkStrategyType) -> ChunkStrategy:
     match strategy:
         case ChunkStrategyType.tokens:
             from graphrag.index.operations.chunk_text.strategies import run_tokens
-
             return run_tokens
         case ChunkStrategyType.sentence:
-            # NLTK
             from graphrag.index.operations.chunk_text.bootstrap import bootstrap
             from graphrag.index.operations.chunk_text.strategies import run_sentences
-
             bootstrap()
             return run_sentences
+        case ChunkStrategyType.markdown:
+            return run_markdown
         case _:
             msg = f"Unknown strategy: {strategy}"
             raise ValueError(msg)
