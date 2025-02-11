@@ -17,7 +17,7 @@ workflow_name = "create_final_documents"
 
 
 async def run_workflow(
-    _: GraphRagConfig,
+    _config: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: WorkflowCallbacks,
 ) -> pd.DataFrame | None:
