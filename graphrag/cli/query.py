@@ -58,6 +58,10 @@ def run_global_search(
         final_community_reports_list = dataframe_dict["community_reports"]
         index_names = dataframe_dict["index_names"]
 
+        logger.success(
+            f"Running Multi-index Global Search: {dataframe_dict['index_names']}"
+        )
+
         response, context_data = asyncio.run(
             api.multi_index_global_search(
                 config=config,
@@ -168,6 +172,10 @@ def run_local_search(
         final_text_units_list = dataframe_dict["text_units"]
         final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
+
+        logger.success(
+            f"Running Multi-index Local Search: {dataframe_dict['index_names']}"
+        )
 
         # If any covariates tables are missing from any index, set the covariates list to None
         if len(dataframe_dict["covariates"]) != dataframe_dict["num_indexes"]:
@@ -293,6 +301,10 @@ def run_drift_search(
         final_relationships_list = dataframe_dict["relationships"]
         index_names = dataframe_dict["index_names"]
 
+        logger.success(
+            f"Running Multi-index Drift Search: {dataframe_dict['index_names']}"
+        )
+
         response, context_data = asyncio.run(
             api.multi_index_drift_search(
                 config=config,
@@ -398,6 +410,10 @@ def run_basic_search(
     if dataframe_dict["multi-index"]:
         final_text_units_list = dataframe_dict["text_units"]
         index_names = dataframe_dict["index_names"]
+
+        logger.success(
+            f"Running Multi-index Basic Search: {dataframe_dict['index_names']}"
+        )
 
         response, context_data = asyncio.run(
             api.multi_index_basic_search(
