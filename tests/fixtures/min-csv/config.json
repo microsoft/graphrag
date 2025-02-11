@@ -16,6 +16,22 @@
                 2500
             ],
             "max_runtime": 300,
+            "expected_artifacts": 0
+        },
+        "prune_graph": {
+            "row_range": [
+                1,
+                2500
+            ],
+            "max_runtime": 30,
+            "expected_artifacts": 0
+        },
+        "finalize_graph": {
+            "row_range": [
+                1,
+                2500
+            ],
+            "max_runtime": 30,
             "expected_artifacts": 2
         },
         "create_communities": {
