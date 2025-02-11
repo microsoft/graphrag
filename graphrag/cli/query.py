@@ -302,7 +302,7 @@ def run_drift_search(
         index_names = dataframe_dict["index_names"]
 
         logger.success(
-            f"Running Multi-index Local Search: {dataframe_dict['index_names']}"
+            f"Running Multi-index Drift Search: {dataframe_dict['index_names']}"
         )
 
         response, context_data = asyncio.run(
@@ -410,6 +410,10 @@ def run_basic_search(
     if dataframe_dict["multi-index"]:
         final_text_units_list = dataframe_dict["text_units"]
         index_names = dataframe_dict["index_names"]
+
+        logger.success(
+            f"Running Multi-index Basic Search: {dataframe_dict['index_names']}"
+        )
 
         response, context_data = asyncio.run(
             api.multi_index_basic_search(
