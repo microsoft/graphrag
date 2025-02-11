@@ -78,6 +78,7 @@ List of all entities found in the data by the LM.
 | type          | str   | Type of the entity. By default this will be "organization", "person", "geo", or "event" unless configured differently or auto-tuning is used. |
 | description   | str   | Textual description of the entity. Entities may be found in many text units, so this is an LM-derived summary of all descriptions. |
 | text_unit_ids | str[] | List of the text units containing the entity. |
+| frequency     | int   | Count of text units the entity was found within. |
 | degree        | int   | Node degree (connectedness) in the graph. |
 | x             | float | X position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
 | y             | float | Y position of the node for visual layouts. If graph embeddings and UMAP are not turned on, this will be 0. |
