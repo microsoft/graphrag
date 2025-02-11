@@ -28,9 +28,9 @@ class ChunkingConfig(BaseModel):
     )
     prepend_metadata: bool = Field(
         description="Prepend metadata into each chunk.",
-        default=defs.GRAPHRAG_CHUNK_PREPEND_METADATA,
+        default=defs.CHUNK_PREPEND_METADATA,
     )
     chunk_size_includes_metadata: bool = Field(
         description="Count metadata in max tokens.",
-        default=defs.GRAPHRAG_CHUNK_CHUNK_SIZE_INCLUDES_METADATA,
+        default=defs.CHUNK_SIZE_INCLUDES_METADATA,
     )
