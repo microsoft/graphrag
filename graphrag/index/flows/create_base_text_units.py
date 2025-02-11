@@ -8,13 +8,12 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
-from graphrag.index.operations.chunk_text.chunk_text import _get_num_total, chunk_text
+from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.operations.chunk_text.strategies import get_encoding_fn
 from graphrag.index.utils.hashing import gen_sha512_hash
-from graphrag.logger.progress import Progress, progress_ticker
+from graphrag.logger.progress import Progress
 
 
 def create_base_text_units(
@@ -52,9 +51,6 @@ def create_base_text_units(
     )
     aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
 
-    num_total = _get_num_total(aggregated, "texts")
-    tick = progress_ticker(callbacks.progress, num_total)
-
     def chunker(row: dict[str, Any]) -> Any:
         line_delimiter = ".\n"
         metadata_str = ""
@@ -74,7 +70,7 @@ def create_base_text_units(
                 encode, _ = get_encoding_fn(encoding_model)
                 metadata_tokens = len(encode(metadata_str))
                 if metadata_tokens >= size:
-                    message = "Metadata tokens exceed the maximum tokens per chunk. Please increase the tokens per chunk."
+                    message = "Metadata tokens exceeds the maximum tokens per chunk. Please increase the tokens per chunk."
                     raise ValueError(message)
 
         chunked = chunk_text(
@@ -84,7 +80,7 @@ def create_base_text_units(
             overlap=overlap,
             encoding_model=encoding_model,
             strategy=strategy,
-            callbacks=NoopWorkflowCallbacks(),
+            callbacks=callbacks,
         )[0]
 
         if prepend_metadata:
@@ -95,9 +91,6 @@ def create_base_text_units(
                     chunked[index] = (
                         (chunk[0], metadata_str + chunk[1], chunk[2]) if chunk else None
                     )
-
-        if tick:
-            tick(1)
 
         row["chunks"] = chunked
         return row
