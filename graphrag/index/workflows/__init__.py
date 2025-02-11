@@ -72,6 +72,12 @@ from .generate_text_embeddings import (
 from .generate_text_embeddings import (
     workflow_name as generate_text_embeddings,
 )
+from .prune_graph import (
+    run_workflow as run_prune_graph,
+)
+from .prune_graph import (
+    workflow_name as prune_graph,
+)
 
 # register all of our built-in workflows at once
 PipelineFactory.register_all({
@@ -86,4 +92,5 @@ PipelineFactory.register_all({
     extract_graph: run_extract_graph,
     finalize_graph: run_finalize_graph,
     generate_text_embeddings: run_generate_text_embeddings,
+    prune_graph: run_prune_graph,
 })

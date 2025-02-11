@@ -44,7 +44,7 @@ async def _extract_nodes(
     Extract initial nodes and edges from text units.
 
     Input: text unit df with schema [id, text, document_id]
-    Returns a dataframe with schema [id, title, freq, text_unit_ids].
+    Returns a dataframe with schema [id, title, frequency, text_unit_ids].
     """
     cache = cache or NoopPipelineCache()
     cache = cache.child("extract_noun_phrases")
@@ -76,9 +76,9 @@ async def _extract_nodes(
         noun_node_df.groupby("title").agg({"text_unit_id": list}).reset_index()
     )
     grouped_node_df = grouped_node_df.rename(columns={"text_unit_id": "text_unit_ids"})
-    grouped_node_df["freq"] = grouped_node_df["text_unit_ids"].apply(len)
-    grouped_node_df = grouped_node_df[["title", "freq", "text_unit_ids"]]
-    return grouped_node_df.loc[:, ["title", "freq", "text_unit_ids"]]
+    grouped_node_df["frequency"] = grouped_node_df["text_unit_ids"].apply(len)
+    grouped_node_df = grouped_node_df[["title", "frequency", "text_unit_ids"]]
+    return grouped_node_df.loc[:, ["title", "frequency", "text_unit_ids"]]
 
 
 def _extract_edges(
@@ -89,7 +89,7 @@ def _extract_edges(
     Extract edges from nodes.
 
     Nodes appear in the same text unit are connected.
-    Input: nodes_df with schema [id, title, freq, text_unit_ids]
+    Input: nodes_df with schema [id, title, frequency, text_unit_ids]
     Returns: edges_df with schema [source, target, weight, text_unit_ids]
     """
     text_units_df = nodes_df.explode("text_unit_ids")
@@ -156,7 +156,7 @@ def _calculate_pmi_edge_weights(
     nodes_df: pd.DataFrame,
     edges_df: pd.DataFrame,
     node_name_col="title",
-    node_freq_col="freq",
+    node_freq_col="frequency",
     edge_weight_col="weight",
     edge_source_col="source",
     edge_target_col="target",
