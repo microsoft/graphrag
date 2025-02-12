@@ -7,6 +7,7 @@ import json
 import logging
 import re
 from collections.abc import Iterator
+from datetime import datetime, timezone
 from io import BytesIO, StringIO
 from typing import Any
 
@@ -18,7 +19,10 @@ from azure.identity import DefaultAzureCredential
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import (
+    PipelineStorage,
+    get_timestamp_formatted_with_local_tz,
+)
 
 log = logging.getLogger(__name__)
 
@@ -323,6 +327,20 @@ class CosmosDBPipelineStorage(PipelineStorage):
     def _get_prefix(self, key: str) -> str:
         """Get the prefix of the filename key."""
         return key.split(".")[0]
+
+    async def get_creation_date(self, key: str) -> str:
+        """Get a value from the cache."""
+        try:
+            if not self._database_client or not self._container_client:
+                return ""
+            item = self._container_client.read_item(item=key, partition_key=key)
+            return get_timestamp_formatted_with_local_tz(
+                datetime.fromtimestamp(item["_ts"], tz=timezone.utc)
+            )
+
+        except Exception:
+            log.exception("Error getting key %s", key)
+            return ""
 
 
 # TODO remove this helper function and have the factory instantiate the class directly
