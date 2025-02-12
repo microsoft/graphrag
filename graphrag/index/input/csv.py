@@ -50,7 +50,7 @@ async def load(
                 )
             else:
                 data["text"] = data.apply(lambda x: x[config.text_column], axis=1)
-        if config.title_column is not None and "title" not in data.columns:
+        if config.title_column is not None:
             if config.title_column not in data.columns:
                 log.warning(
                     "title_column %s not found in csv file %s",
@@ -59,6 +59,11 @@ async def load(
                 )
             else:
                 data["title"] = data.apply(lambda x: x[config.title_column], axis=1)
+        else:
+            data["title"] = data.apply(lambda _: path, axis=1)
+
+        creation_date = await storage.get_creation_date(path)
+        data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 
         return data
 

@@ -36,7 +36,7 @@ async def test_create_final_documents():
     compare_outputs(actual, expected)
 
 
-async def test_create_final_documents_with_attribute_columns():
+async def test_create_final_documents_with_metadata_column():
     expected = load_test_table("documents")
 
     context = await create_test_context(
@@ -60,6 +60,6 @@ async def test_create_final_documents_with_attribute_columns():
     compare_outputs(
         actual, expected, columns=["id", "human_readable_id", "text", "text_unit_ids"]
     )
-    assert len(actual.columns) == 5
-    assert "title" not in actual.columns
+    assert len(actual.columns) == 6
+    assert "title" in actual.columns
     assert "metadata" in actual.columns

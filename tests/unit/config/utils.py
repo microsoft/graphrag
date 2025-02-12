@@ -121,6 +121,8 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "group_by_columns": defs.CHUNK_GROUP_BY_COLUMNS,
         "strategy": defs.CHUNK_STRATEGY,
         "encoding_model": defs.ENCODING_MODEL,
+        "prepend_metadata": False,
+        "chunk_size_includes_metadata": False,
     },
     "snapshots": {
         "embeddings": defs.SNAPSHOTS_EMBEDDINGS,
