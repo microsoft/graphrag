@@ -8,8 +8,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
+from fnllm.base.config import JsonStrategy, RetryStrategy
 from fnllm.caching import Cache as LLMCache
-from fnllm.config import JsonStrategy, RetryStrategy
 from fnllm.events import LLMEvents
 from fnllm.openai import (
     AzureOpenAIConfig,
