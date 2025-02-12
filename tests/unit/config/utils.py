@@ -418,7 +418,8 @@ def assert_summarize_descriptions_configs(
 def assert_community_reports_configs(
     actual: CommunityReportsConfig, expected: CommunityReportsConfig
 ) -> None:
-    assert actual.prompt == expected.prompt
+    assert actual.graph_prompt == expected.graph_prompt
+    assert actual.text_prompt == expected.text_prompt
     assert actual.max_length == expected.max_length
     assert actual.max_input_length == expected.max_input_length
     assert actual.strategy == expected.strategy

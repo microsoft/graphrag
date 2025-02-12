@@ -10,6 +10,9 @@ from graphrag.logger.factory import LoggerFactory, LoggerType
 from graphrag.prompts.index.community_report import (
     COMMUNITY_REPORT_PROMPT,
 )
+from graphrag.prompts.index.community_report_text_units import (
+    COMMUNITY_REPORT_TEXT_PROMPT,
+)
 from graphrag.prompts.index.extract_claims import EXTRACT_CLAIMS_PROMPT
 from graphrag.prompts.index.extract_graph import GRAPH_EXTRACTION_PROMPT
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
@@ -72,7 +75,8 @@ def initialize_project_at(path: Path, force: bool) -> None:
         "extract_graph": GRAPH_EXTRACTION_PROMPT,
         "summarize_descriptions": SUMMARIZE_PROMPT,
         "extract_claims": EXTRACT_CLAIMS_PROMPT,
-        "community_report": COMMUNITY_REPORT_PROMPT,
+        "community_report_graph": COMMUNITY_REPORT_PROMPT,
+        "community_report_text": COMMUNITY_REPORT_TEXT_PROMPT,
         "drift_search_system_prompt": DRIFT_LOCAL_SYSTEM_PROMPT,
         "drift_reduce_prompt": DRIFT_REDUCE_PROMPT,
         "global_search_map_system_prompt": MAP_SYSTEM_PROMPT,
