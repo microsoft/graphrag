@@ -14,19 +14,19 @@ INIT_YAML = f"""\
 
 models:
   {defs.DEFAULT_CHAT_MODEL_ID}:
-    type: {defs.LLM_TYPE.value}       # or azure_openai_chat
+    type: {defs.LLM_TYPE.value} # or azure_openai_chat
     # api_base: https://<instance>.openai.azure.com
     # api_version: 2024-05-01-preview
     auth_type: {defs.AUTH_TYPE.value} # or azure_managed_identity
-    api_key: ${{GRAPHRAG_API_KEY}}    # set this in the generated .env file
+    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
     # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
     model: {defs.LLM_MODEL}
     # deployment_name: <azure_model_deployment_name>
-    # encoding_model: {defs.ENCODING_MODEL} # will be automatically set by tiktoken if left undefined
-    model_supports_json: true         # recommended if this is available for your model.
-    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-    concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS}
+    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
+    model_supports_json: true # recommended if this is available for your model.
+    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS} # process data chunks in parallel
+    concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # max number of simultaneous LLM requests allowed
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     retry_strategy: native
     max_retries: -1                   # set to -1 for dynamic retry logic (the most optimal setting)
@@ -42,10 +42,10 @@ models:
     # organization: <organization_id>
     model: {defs.EMBEDDING_MODEL}
     # deployment_name: <azure_model_deployment_name>
-    # encoding_model: {defs.ENCODING_MODEL} # will be automatically set by tiktoken if left undefined
-    model_supports_json: true         # recommended if this is available for your model.
-    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-    concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS}
+    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
+    model_supports_json: true # recommended if this is available for your model.
+    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS} # process data chunks in parallel
+    concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # max number of simultaneous LLM requests allowed
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     retry_strategy: native
     max_retries: -1                   # set to -1 for dynamic retry logic (the most optimal setting)
