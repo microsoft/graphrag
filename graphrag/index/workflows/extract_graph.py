@@ -45,11 +45,11 @@ async def run_workflow(
         callbacks=callbacks,
         cache=context.cache,
         extraction_strategy=extraction_strategy,
-        extraction_num_threads=extract_graph_llm_settings.parallelization_num_threads,
+        extraction_num_threads=extract_graph_llm_settings.concurrent_requests,
         extraction_async_mode=extract_graph_llm_settings.async_mode,
         entity_types=config.extract_graph.entity_types,
         summarization_strategy=summarization_strategy,
-        summarization_num_threads=summarization_llm_settings.parallelization_num_threads,
+        summarization_num_threads=summarization_llm_settings.concurrent_requests,
         embed_config=config.embed_graph,
         layout_enabled=config.umap.enabled,
     )

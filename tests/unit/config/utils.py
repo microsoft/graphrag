@@ -264,7 +264,6 @@ def assert_language_model_configs(
     assert actual.max_retries == expected.max_retries
     assert actual.max_retry_wait == expected.max_retry_wait
     assert actual.concurrent_requests == expected.concurrent_requests
-    assert actual.parallelization_num_threads == expected.parallelization_num_threads
     assert actual.async_mode == expected.async_mode
     if actual.responses is not None:
         assert expected.responses is not None

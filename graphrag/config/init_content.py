@@ -25,11 +25,10 @@ models:
     # deployment_name: <azure_model_deployment_name>
     # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
     model_supports_json: true # recommended if this is available for your model.
-    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS} # process data chunks in parallel
     concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # max number of simultaneous LLM requests allowed
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     retry_strategy: native
-    max_retries: -1                   # set to -1 for dynamic retry logic (the most optimal setting)
+    max_retries: -1                   # set to -1 for dynamic retry logic (most optimal setting based on server response)
     tokens_per_minute: 0              # set to 0 to disable rate limiting
     requests_per_minute: 0            # set to 0 to disable rate limiting
   {defs.DEFAULT_EMBEDDING_MODEL_ID}:
@@ -44,11 +43,10 @@ models:
     # deployment_name: <azure_model_deployment_name>
     # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
     model_supports_json: true # recommended if this is available for your model.
-    parallelization_num_threads: {defs.PARALLELIZATION_NUM_THREADS} # process data chunks in parallel
     concurrent_requests: {defs.LLM_CONCURRENT_REQUESTS} # max number of simultaneous LLM requests allowed
     async_mode: {defs.ASYNC_MODE.value} # or asyncio
     retry_strategy: native
-    max_retries: -1                   # set to -1 for dynamic retry logic (the most optimal setting)
+    max_retries: -1                   # set to -1 for dynamic retry logic (most optimal setting based on server response)
     tokens_per_minute: 0              # set to 0 to disable rate limiting
     requests_per_minute: 0            # set to 0 to disable rate limiting
 

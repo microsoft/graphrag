@@ -218,10 +218,6 @@ class LanguageModelConfig(BaseModel):
     responses: list[str | BaseModel] | None = Field(
         default=None, description="Static responses to use in mock mode."
     )
-    parallelization_num_threads: int = Field(
-        description="The number of threads to use for the LLM service.",
-        default=defs.PARALLELIZATION_NUM_THREADS,
-    )
     async_mode: AsyncType = Field(
         description="The async mode to use.", default=defs.ASYNC_MODE
     )
