@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Rework the update output storage structure."
+}
