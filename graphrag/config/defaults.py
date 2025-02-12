@@ -67,6 +67,8 @@ CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 100
 CHUNK_GROUP_BY_COLUMNS = ["id"]
 CHUNK_STRATEGY = ChunkStrategyType.tokens
+CHUNK_PREPEND_METADATA = False
+CHUNK_SIZE_INCLUDES_METADATA = False
 
 # Claim extraction
 DESCRIPTION = "Any claims or facts that could be relevant to information discovery."
