@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 from collections.abc import Iterator
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
@@ -17,7 +18,10 @@ from aiofiles.ospath import exists
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import (
+    PipelineStorage,
+    get_timestamp_formatted_with_local_tz,
+)
 
 log = logging.getLogger(__name__)
 
@@ -144,6 +148,15 @@ class FilePipelineStorage(PipelineStorage):
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
         return [item.name for item in Path(self._root_dir).iterdir() if item.is_file()]
+
+    async def get_creation_date(self, key: str) -> str:
+        """Get the creation date of a file."""
+        file_path = Path(join_path(self._root_dir, key))
+
+        creation_timestamp = file_path.stat().st_ctime
+        creation_time_utc = datetime.fromtimestamp(creation_timestamp, tz=timezone.utc)
+
+        return get_timestamp_formatted_with_local_tz(creation_time_utc)
 
 
 def join_path(file_path: str, file_name: str) -> Path:

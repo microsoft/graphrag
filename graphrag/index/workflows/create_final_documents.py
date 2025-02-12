@@ -16,7 +16,7 @@ workflow_name = "create_final_documents"
 
 
 async def run_workflow(
-    config: GraphRagConfig,
+    _config: GraphRagConfig,
     context: PipelineRunContext,
     _callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
@@ -24,8 +24,7 @@ async def run_workflow(
     documents = await load_table_from_storage("documents", context.storage)
     text_units = await load_table_from_storage("text_units", context.storage)
 
-    input = config.input
-    output = create_final_documents(documents, text_units, input.metadata)
+    output = create_final_documents(documents, text_units)
 
     await write_table_to_storage(output, "documents", context.storage)
 
