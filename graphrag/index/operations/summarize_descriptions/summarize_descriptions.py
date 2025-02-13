@@ -89,8 +89,8 @@ async def summarize_descriptions(
 
         node_futures = [
             do_summarize_descriptions(
-                str(row.title),
-                sorted(set(row.description)),
+                str(row.title), # type: ignore
+                sorted(set(row.description)), # type: ignore
                 ticker,
                 semaphore,
             )
@@ -109,8 +109,8 @@ async def summarize_descriptions(
 
         edge_futures = [
             do_summarize_descriptions(
-                (str(row.source), str(row.target)),
-                sorted(set(row.description)),
+                (str(row.source), str(row.target)), # type: ignore
+                sorted(set(row.description)), # type: ignore
                 ticker,
                 semaphore,
             )
