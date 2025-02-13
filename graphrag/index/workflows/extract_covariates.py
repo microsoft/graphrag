@@ -32,7 +32,7 @@ async def run_workflow(
     )
 
     async_mode = extract_claims_llm_settings.async_mode
-    num_threads = extract_claims_llm_settings.parallelization_num_threads
+    num_threads = extract_claims_llm_settings.concurrent_requests
 
     output = await extract_covariates(
         text_units,
