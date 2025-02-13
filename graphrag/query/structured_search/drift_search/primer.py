@@ -154,7 +154,7 @@ class DRIFTPrimer:
 
         return parsed_response, token_ct
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         top_k_reports: pd.DataFrame,

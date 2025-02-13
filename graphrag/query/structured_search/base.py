@@ -69,27 +69,22 @@ class BaseSearch(ABC, Generic[T]):
         self.context_builder_params = context_builder_params or {}
 
     @abstractmethod
-    def search(
-        self,
-        query: str,
-        conversation_history: ConversationHistory | None = None,
-        **kwargs,
-    ) -> SearchResult:
-        """Search for the given query."""
-
-    @abstractmethod
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
         **kwargs,
     ) -> SearchResult:
         """Search for the given query asynchronously."""
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
 
     @abstractmethod
-    def astream_search(
+    def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator[str, None] | None:
+    ) -> AsyncGenerator[Any, None]:
         """Stream search for the given query."""
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
