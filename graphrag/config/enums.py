@@ -112,6 +112,9 @@ class LLMType(str, Enum):
     # Debug
     StaticResponse = "static_response"
 
+    # Mock
+    Mock = "mock"
+
     def __repr__(self):
         """Get a string representation."""
         return f'"{self.value}"'
