@@ -8,7 +8,7 @@ import traceback
 from dataclasses import dataclass
 from typing import Any
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 from pydantic import BaseModel, Field
 
 from graphrag.index.typing import ErrorHandlerFn

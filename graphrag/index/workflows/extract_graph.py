@@ -32,9 +32,6 @@ async def run_workflow(
     extraction_strategy = config.extract_graph.resolved_strategy(
         config.root_dir, extract_graph_llm_settings
     )
-    extraction_num_threads = extract_graph_llm_settings.parallelization_num_threads
-    extraction_async_mode = extract_graph_llm_settings.async_mode
-    entity_types = config.extract_graph.entity_types
 
     summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
@@ -42,18 +39,17 @@ async def run_workflow(
     summarization_strategy = config.summarize_descriptions.resolved_strategy(
         config.root_dir, summarization_llm_settings
     )
-    summarization_num_threads = summarization_llm_settings.parallelization_num_threads
 
     entities, relationships = await extract_graph(
         text_units=text_units,
         callbacks=callbacks,
         cache=context.cache,
         extraction_strategy=extraction_strategy,
-        extraction_num_threads=extraction_num_threads,
-        extraction_async_mode=extraction_async_mode,
-        entity_types=entity_types,
+        extraction_num_threads=extract_graph_llm_settings.concurrent_requests,
+        extraction_async_mode=extract_graph_llm_settings.async_mode,
+        entity_types=config.extract_graph.entity_types,
         summarization_strategy=summarization_strategy,
-        summarization_num_threads=summarization_num_threads,
+        summarization_num_threads=summarization_llm_settings.concurrent_requests,
         embed_config=config.embed_graph,
         layout_enabled=config.umap.enabled,
     )

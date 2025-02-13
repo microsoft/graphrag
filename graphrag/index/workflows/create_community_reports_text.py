@@ -31,7 +31,7 @@ async def run_workflow(
         config.community_reports.model_id
     )
     async_mode = community_reports_llm_settings.async_mode
-    num_threads = community_reports_llm_settings.parallelization_num_threads
+    num_threads = community_reports_llm_settings.concurrent_requests
     summarization_strategy = config.community_reports.resolved_strategy(
         config.root_dir, community_reports_llm_settings
     )
