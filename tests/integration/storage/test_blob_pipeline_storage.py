@@ -3,6 +3,7 @@
 """Blob Storage Tests."""
 
 import re
+from datetime import datetime
 
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 
@@ -58,6 +59,24 @@ async def test_dotprefix():
         items = list(storage.find(file_pattern=re.compile(r".*\.txt$")))
         items = [item[0] for item in items]
         assert items == ["input/christmas.txt"]
+    finally:
+        storage._delete_container()  # noqa: SLF001
+
+
+async def test_get_creation_date():
+    storage = BlobPipelineStorage(
+        connection_string=WELL_KNOWN_BLOB_STORAGE_KEY,
+        container_name="testfind",
+        path_prefix=".",
+    )
+    try:
+        await storage.set("input/christmas.txt", "Merry Christmas!", encoding="utf-8")
+        creation_date = await storage.get_creation_date("input/christmas.txt")
+
+        datetime_format = "%Y-%m-%d %H:%M:%S %z"
+        parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()
+
+        assert parsed_datetime.strftime(datetime_format) == creation_date
     finally:
         storage._delete_container()  # noqa: SLF001
 

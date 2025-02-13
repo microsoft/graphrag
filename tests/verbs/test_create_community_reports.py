@@ -61,6 +61,7 @@ async def test_create_community_reports():
     config.community_reports.strategy = {
         "type": "graph_intelligence",
         "llm": llm_settings,
+        "graph_prompt": "",
     }
 
     await run_workflow(

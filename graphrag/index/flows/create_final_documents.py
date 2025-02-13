@@ -7,9 +7,7 @@ import pandas as pd
 
 
 def create_final_documents(
-    documents: pd.DataFrame,
-    text_units: pd.DataFrame,
-    metadata: list[str] | None = None,
+    documents: pd.DataFrame, text_units: pd.DataFrame
 ) -> pd.DataFrame:
     """All the steps to transform final documents."""
     exploded = (
@@ -46,17 +44,6 @@ def create_final_documents(
     rejoined["id"] = rejoined["id"].astype(str)
     rejoined["human_readable_id"] = rejoined.index + 1
 
-    # Convert metadata columns to strings and collapse them into a JSON object
-    if metadata:
-        # Convert all specified columns to string at once
-        rejoined[metadata] = rejoined[metadata].astype(str)
-
-        # Collapse the metadata columns into a single JSON object column
-        rejoined["metadata"] = rejoined[metadata].to_dict(orient="records")
-
-        # Drop the original metadata columns after collapsing them
-        rejoined.drop(columns=metadata, inplace=True)
-
     # set the final column order, but adjust for metadata
     core_columns = [
         "id",
@@ -64,9 +51,10 @@ def create_final_documents(
         "title",
         "text",
         "text_unit_ids",
+        "creation_date",
     ]
     final_columns = [column for column in core_columns if column in rejoined.columns]
-    if metadata:
+    if "metadata" in rejoined.columns:
         final_columns.append("metadata")
 
     return rejoined.loc[:, final_columns]

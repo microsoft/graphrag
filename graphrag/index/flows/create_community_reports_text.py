@@ -24,9 +24,6 @@ from graphrag.index.operations.summarize_communities.text_unit_context.context_b
     build_level_context,
     build_local_context,
 )
-from graphrag.prompts.index.community_report_text_units import (
-    COMMUNITY_REPORT_PROMPT,
-)
 
 log = logging.getLogger(__name__)
 
@@ -44,8 +41,7 @@ async def create_community_reports_text(
     """All the steps to transform community reports."""
     nodes = explode_communities(communities, entities)
 
-    # TEMP: forcing override of the prompt until we can put it into config
-    summarization_strategy["extraction_prompt"] = COMMUNITY_REPORT_PROMPT
+    summarization_strategy["extraction_prompt"] = summarization_strategy["text_prompt"]
 
     max_input_length = summarization_strategy.get(
         "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
