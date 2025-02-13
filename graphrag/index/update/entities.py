@@ -119,11 +119,12 @@ async def _run_entity_summarization(
 
     # Prepare tasks for async summarization where needed
     async def process_row(row):
-        description = row["description"]
+        # Accessing attributes directly from the named tuple.
+        description = row.description
         if isinstance(description, list) and len(description) > 1:
             # Run entity summarization asynchronously
             result = await run_entity_summarization(
-                row["title"],
+                row.title,
                 description,
                 callbacks,
                 cache,
@@ -134,7 +135,9 @@ async def _run_entity_summarization(
         return description[0] if isinstance(description, list) else description
 
     # Create a list of async tasks for summarization
-    tasks = [process_row(row) for _, row in entities_df.iterrows()]
+    tasks = [
+        process_row(row) for row in entities_df.itertuples(index=False, name="Entity")
+    ]
     results = await asyncio.gather(*tasks)
 
     # Update the 'description' column in the DataFrame
