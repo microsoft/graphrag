@@ -102,7 +102,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
         self.semaphore = asyncio.Semaphore(concurrent_coroutines)
 
-    async def astream_search(
+    async def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -135,7 +135,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         ):
             yield response
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -204,15 +204,6 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             output_tokens_categories=output_tokens,
         )
 
-    def search(
-        self,
-        query: str,
-        conversation_history: ConversationHistory | None = None,
-        **kwargs: Any,
-    ) -> GlobalSearchResult:
-        """Perform a global search synchronously."""
-        return asyncio.run(self.asearch(query, conversation_history))
-
     async def _map_response_single_batch(
         self,
         context_data: str,
@@ -235,7 +226,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 log.info("Map response: %s", search_response)
             try:
                 # parse search response json
-                processed_response = self.parse_search_response(search_response)
+                processed_response = self._parse_search_response(search_response)
             except ValueError:
                 log.warning(
                     "Warning: Error parsing search response json - skipping this batch"
@@ -264,7 +255,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 output_tokens=0,
             )
 
-    def parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
+    def _parse_search_response(self, search_response: str) -> list[dict[str, Any]]:
         """Parse the search response json and return a list of key points.
 
         Parameters
