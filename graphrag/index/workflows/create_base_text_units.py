@@ -34,6 +34,8 @@ async def run_workflow(
         chunks.overlap,
         chunks.encoding_model,
         strategy=chunks.strategy,
+        prepend_metadata=chunks.prepend_metadata,
+        chunk_size_includes_metadata=chunks.chunk_size_includes_metadata,
     )
 
     await write_table_to_storage(output, "text_units", context.storage)

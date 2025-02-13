@@ -121,6 +121,8 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "group_by_columns": defs.CHUNK_GROUP_BY_COLUMNS,
         "strategy": defs.CHUNK_STRATEGY,
         "encoding_model": defs.ENCODING_MODEL,
+        "prepend_metadata": False,
+        "chunk_size_includes_metadata": False,
     },
     "snapshots": {
         "embeddings": defs.SNAPSHOTS_EMBEDDINGS,
@@ -410,7 +412,8 @@ def assert_summarize_descriptions_configs(
 def assert_community_reports_configs(
     actual: CommunityReportsConfig, expected: CommunityReportsConfig
 ) -> None:
-    assert actual.prompt == expected.prompt
+    assert actual.graph_prompt == expected.graph_prompt
+    assert actual.text_prompt == expected.text_prompt
     assert actual.max_length == expected.max_length
     assert actual.max_input_length == expected.max_input_length
     assert actual.strategy == expected.strategy
