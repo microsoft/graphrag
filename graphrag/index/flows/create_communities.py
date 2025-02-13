@@ -4,6 +4,7 @@
 """All the steps to transform final communities."""
 
 from datetime import datetime, timezone
+from typing import cast
 from uuid import uuid4
 
 import pandas as pd
@@ -92,6 +93,17 @@ def create_communities(
         str
     )
     final_communities["parent"] = final_communities["parent"].astype(int)
+    # collect the children so we have a tree going both ways
+    parent_grouped = cast(
+        "pd.DataFrame",
+        final_communities.groupby("parent").agg(children=("community", "unique")),
+    )
+    final_communities = final_communities.merge(
+        parent_grouped,
+        left_on="community",
+        right_on="parent",
+        how="left",
+    )
 
     # add fields for incremental update tracking
     final_communities["period"] = datetime.now(timezone.utc).date().isoformat()
@@ -103,8 +115,9 @@ def create_communities(
             "id",
             "human_readable_id",
             "community",
-            "parent",
             "level",
+            "parent",
+            "children",
             "title",
             "entity_ids",
             "relationship_ids",
