@@ -12,6 +12,7 @@ from typing import Any, TypeVar, cast
 
 import pandas as pd
 
+from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.logger.progress import progress_ticker
@@ -33,11 +34,12 @@ class ParallelizationError(ValueError):
 async def derive_from_rows(
     input: pd.DataFrame,
     transform: Callable[[pd.Series], Awaitable[ItemType]],
-    callbacks: WorkflowCallbacks,
+    callbacks: WorkflowCallbacks | None = None,
     num_threads: int = 4,
     async_type: AsyncType = AsyncType.AsyncIO,
 ) -> list[ItemType | None]:
     """Apply a generic transform function to each row. Any errors will be reported and thrown."""
+    callbacks = callbacks or NoopWorkflowCallbacks()
     match async_type:
         case AsyncType.AsyncIO:
             return await derive_from_rows_asyncio(

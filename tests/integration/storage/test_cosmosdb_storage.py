@@ -5,6 +5,7 @@
 import json
 import re
 import sys
+from datetime import datetime
 
 import pytest
 
@@ -105,5 +106,28 @@ async def test_clear():
 
         assert storage._container_client is None  # noqa: SLF001
         assert storage._database_client is None  # noqa: SLF001
+    finally:
+        await storage.clear()
+
+
+async def test_get_creation_date():
+    storage = CosmosDBPipelineStorage(
+        connection_string=WELL_KNOWN_COSMOS_CONNECTION_STRING,
+        database_name="testclear",
+        container_name="testclearcontainer",
+    )
+    try:
+        json_content = {
+            "content": "Happy Easter!",
+        }
+        await storage.set("easter.json", json.dumps(json_content), encoding="utf-8")
+
+        creation_date = await storage.get_creation_date("easter.json")
+
+        datetime_format = "%Y-%m-%d %H:%M:%S %z"
+        parsed_datetime = datetime.strptime(creation_date, datetime_format).astimezone()
+
+        assert parsed_datetime.strftime(datetime_format) == creation_date
+
     finally:
         await storage.clear()

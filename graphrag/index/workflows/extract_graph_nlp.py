@@ -26,9 +26,10 @@ async def run_workflow(
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
 
-    entities, relationships = extract_graph_nlp(
+    entities, relationships = await extract_graph_nlp(
         text_units,
         callbacks,
+        context.cache,
         extraction_config=config.extract_graph_nlp,
         pruning_config=config.prune_graph,
         embed_config=config.embed_graph,

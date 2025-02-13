@@ -114,7 +114,8 @@ extract_claims:
 
 community_reports:
   model_id: {defs.COMMUNITY_REPORT_MODEL_ID}
-  prompt: "prompts/community_report.txt"
+  graph_prompt: "prompts/community_report_graph.txt"
+  text_prompt: "prompts/community_report_text.txt"
   max_length: {defs.COMMUNITY_REPORT_MAX_LENGTH}
   max_input_length: {defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH}
 

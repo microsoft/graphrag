@@ -7,27 +7,38 @@ import math
 
 import pandas as pd
 
+from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.cache.pipeline_cache import PipelineCache
+from graphrag.config.enums import AsyncType
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
 )
+from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.hashing import gen_sha512_hash
 
 
-def build_noun_graph(
+async def build_noun_graph(
     text_unit_df: pd.DataFrame,
     text_analyzer: BaseNounPhraseExtractor,
     normalize_edge_weights: bool,
+    num_threads: int = 4,
+    cache: PipelineCache | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Build a noun graph from text units."""
     text_units = text_unit_df.loc[:, ["id", "text"]]
-    nodes_df = _extract_nodes(text_units, text_analyzer)
+    nodes_df = await _extract_nodes(
+        text_units, text_analyzer, num_threads=num_threads, cache=cache
+    )
     edges_df = _extract_edges(nodes_df, normalize_edge_weights=normalize_edge_weights)
 
     return (nodes_df, edges_df)
 
 
-def _extract_nodes(
+async def _extract_nodes(
     text_unit_df: pd.DataFrame,
     text_analyzer: BaseNounPhraseExtractor,
+    num_threads: int = 4,
+    cache: PipelineCache | None = None,
 ) -> pd.DataFrame:
     """
     Extract initial nodes and edges from text units.
@@ -35,9 +46,26 @@ def _extract_nodes(
     Input: text unit df with schema [id, text, document_id]
     Returns a dataframe with schema [id, title, freq, text_unit_ids].
     """
-    text_unit_df["noun_phrases"] = text_unit_df["text"].apply(
-        lambda text: text_analyzer.extract(text)
+    cache = cache or NoopPipelineCache()
+    cache = cache.child("extract_noun_phrases")
+
+    async def extract(row):
+        text = row["text"]
+        attrs = {"text": text, "analyzer": str(text_analyzer)}
+        key = gen_sha512_hash(attrs, attrs.keys())
+        result = await cache.get(key)
+        if not result:
+            result = text_analyzer.extract(text)
+            await cache.set(key, result)
+        return result
+
+    text_unit_df["noun_phrases"] = await derive_from_rows(
+        text_unit_df,
+        extract,
+        num_threads=num_threads,
+        async_type=AsyncType.Threaded,
     )
+
     noun_node_df = text_unit_df.explode("noun_phrases")
     noun_node_df = noun_node_df.rename(
         columns={"noun_phrases": "title", "id": "text_unit_id"}
