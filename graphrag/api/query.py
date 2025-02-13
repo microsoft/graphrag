@@ -36,6 +36,9 @@ from graphrag.query.factory import (
     get_global_search_engine,
     get_local_search_engine,
 )
+from graphrag.query.context_builder.conversation_history import (
+    ConversationHistory,
+)
 from graphrag.query.indexer_adapters import (
     read_indexer_communities,
     read_indexer_covariates,
@@ -69,6 +72,7 @@ async def global_search(
     dynamic_community_selection: bool,
     response_type: str,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -124,7 +128,7 @@ async def global_search(
         reduce_system_prompt=reduce_prompt,
         general_knowledge_inclusion_prompt=knowledge_prompt,
     )
-    result: SearchResult = await search_engine.asearch(query=query)
+    result: SearchResult = await search_engine.asearch(query=query, conversation_history=conversation_history)
     response = result.response
     context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
@@ -140,6 +144,7 @@ async def global_search_streaming(
     dynamic_community_selection: bool,
     response_type: str,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> AsyncGenerator:
     """Perform a global search and return the context data and response via a generator.
 
@@ -193,7 +198,7 @@ async def global_search_streaming(
         reduce_system_prompt=reduce_prompt,
         general_knowledge_inclusion_prompt=knowledge_prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.astream_search(query=query, conversation_history=conversation_history)
 
     # when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
@@ -359,6 +364,7 @@ async def local_search(
     community_level: int,
     response_type: str,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -409,7 +415,7 @@ async def local_search(
         system_prompt=prompt,
     )
 
-    result: SearchResult = await search_engine.asearch(query=query)
+    result: SearchResult = await search_engine.asearch(query=query, conversation_history=conversation_history)
     response = result.response
     context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
@@ -427,6 +433,7 @@ async def local_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -475,7 +482,7 @@ async def local_search_streaming(
         response_type=response_type,
         system_prompt=prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.astream_search(query=query, conversation_history=conversation_history)
 
     # when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
@@ -727,6 +734,7 @@ async def drift_search(
     community_level: int,
     response_type: str,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -785,7 +793,7 @@ async def drift_search(
         response_type=response_type,
     )
 
-    result: SearchResult = await search_engine.asearch(query=query)
+    result: SearchResult = await search_engine.asearch(query=query, conversation_history=conversation_history)
     response = result.response
     context_data = {}
     for key in result.context_data:
@@ -1085,6 +1093,7 @@ async def basic_search(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1124,7 +1133,7 @@ async def basic_search(
         system_prompt=prompt,
     )
 
-    result: SearchResult = await search_engine.asearch(query=query)
+    result: SearchResult = await search_engine.asearch(query=query, conversation_history=conversation_history)
     response = result.response
     context_data = reformat_context_data(result.context_data)  # type: ignore
     return response, context_data
@@ -1135,6 +1144,7 @@ async def basic_search_streaming(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    conversation_history: ConversationHistory | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -1173,7 +1183,7 @@ async def basic_search_streaming(
         system_prompt=prompt,
     )
 
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.astream_search(query=query, conversation_history=conversation_history)
 
     # when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
