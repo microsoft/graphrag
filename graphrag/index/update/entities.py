@@ -15,6 +15,8 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
 )
+from graphrag.logger.print_progress import ProgressLogger
+
 
 
 def _group_and_resolve_entities(
@@ -103,6 +105,7 @@ async def _run_entity_summarization(
     config: GraphRagConfig,
     cache: PipelineCache,
     callbacks: WorkflowCallbacks,
+    progress_logger: ProgressLogger,
 ) -> pd.DataFrame:
     """Run entity summarization.
 
@@ -144,11 +147,21 @@ async def _run_entity_summarization(
         # Handle case where description is a single-item list or not a list
         return description[0] if isinstance(description, list) else description
 
-    # Create a list of async tasks for summarization
-    tasks = [
-        process_row(row) for row in entities_df.itertuples(index=False, name="Entity")
-    ]
-    results = await asyncio.gather(*tasks)
+    # Process in batches, so we don't hit the LLM too hard
+    async def process_in_batches(df, batch_size):
+        results = []
+        for start in range(0, len(df), batch_size):
+            end = start + batch_size
+            batch = df.iloc[start:end]
+            tasks = [process_row(row) for row in entities_df.itertuples(index=False, name="Entity")]
+            batch_results = await asyncio.gather(*tasks)
+            results.extend(batch_results)
+        return results
+
+    progress_logger.info(f"Summarizing descriptions for {len(entities_df)} entities")
+
+    batch_size = 200  # Adjust the batch size as needed
+    results = await process_in_batches(entities_df, batch_size)
 
     # Update the 'description' column in the DataFrame
     entities_df["description"] = results
