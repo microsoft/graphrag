@@ -4,7 +4,7 @@
 """A module containing run_graph_intelligence,  run_extract_graph and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache

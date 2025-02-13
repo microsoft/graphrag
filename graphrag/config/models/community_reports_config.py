@@ -49,8 +49,7 @@ class CommunityReportsConfig(BaseModel):
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "stagger": model_config.parallelization_stagger,
-            "num_threads": model_config.parallelization_num_threads,
+            "num_threads": model_config.concurrent_requests,
             "graph_prompt": (Path(root_dir) / self.graph_prompt).read_text(
                 encoding="utf-8"
             )
