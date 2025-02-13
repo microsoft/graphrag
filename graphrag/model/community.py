@@ -13,8 +13,14 @@ from graphrag.model.named import Named
 class Community(Named):
     """A protocol for a community in the system."""
 
-    level: str = ""
+    level: str
     """Community level."""
+
+    parent: str
+    """Community ID of the parent node of this community."""
+
+    children: list[str]
+    """List of community IDs of the child nodes of this community."""
 
     entity_ids: list[str] | None = None
     """List of entity IDs related to the community (optional)."""
@@ -24,9 +30,6 @@ class Community(Named):
 
     covariate_ids: dict[str, list[str]] | None = None
     """Dictionary of different types of covariates related to the community (optional), e.g. claims"""
-
-    sub_community_ids: list[str] | None = None
-    """List of community IDs of the child nodes of this community (optional)."""
 
     attributes: dict[str, Any] | None = None
     """A dictionary of additional attributes associated with the community (optional). To be included in the search prompt."""
@@ -48,7 +51,8 @@ class Community(Named):
         entities_key: str = "entity_ids",
         relationships_key: str = "relationship_ids",
         covariates_key: str = "covariate_ids",
-        sub_communities_key: str = "sub_community_ids",
+        parent_key: str = "parent",
+        children_key: str = "children",
         attributes_key: str = "attributes",
         size_key: str = "size",
         period_key: str = "period",
@@ -57,12 +61,13 @@ class Community(Named):
         return Community(
             id=d[id_key],
             title=d[title_key],
-            short_id=d.get(short_id_key),
             level=d[level_key],
+            parent=d[parent_key],
+            children=d[children_key],
+            short_id=d.get(short_id_key),
             entity_ids=d.get(entities_key),
             relationship_ids=d.get(relationships_key),
             covariate_ids=d.get(covariates_key),
-            sub_community_ids=d.get(sub_communities_key),
             attributes=d.get(attributes_key),
             size=d.get(size_key),
             period=d.get(period_key),
