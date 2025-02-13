@@ -18,6 +18,6 @@ def create_graph(
 
     if nodes is not None:
         nodes.set_index(node_id, inplace=True)
-        graph.add_nodes_from((n, dict(d)) for n, d in nodes.iterrows())
+        graph.add_nodes_from(nodes.to_dict("index").items())
 
     return graph

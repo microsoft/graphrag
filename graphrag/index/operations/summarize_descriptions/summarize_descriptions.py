@@ -89,12 +89,12 @@ async def summarize_descriptions(
 
         node_futures = [
             do_summarize_descriptions(
-                str(row[1]["title"]),
-                sorted(set(row[1]["description"])),
+                str(row.title),  # type: ignore
+                sorted(set(row.description)),  # type: ignore
                 ticker,
                 semaphore,
             )
-            for row in nodes.iterrows()
+            for row in nodes.itertuples(index=False)
         ]
 
         node_results = await asyncio.gather(*node_futures)
@@ -109,12 +109,12 @@ async def summarize_descriptions(
 
         edge_futures = [
             do_summarize_descriptions(
-                (str(row[1]["source"]), str(row[1]["target"])),
-                sorted(set(row[1]["description"])),
+                (str(row.source), str(row.target)),  # type: ignore
+                sorted(set(row.description)),  # type: ignore
                 ticker,
                 semaphore,
             )
-            for row in edges.iterrows()
+            for row in edges.itertuples(index=False)
         ]
 
         edge_results = await asyncio.gather(*edge_futures)
