@@ -1,0 +1,4 @@
+{
+  "type": "major",
+  "description": "Add children to communities to avoid re-compute."
+}
