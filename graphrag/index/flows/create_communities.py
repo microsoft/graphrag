@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import cast
 from uuid import uuid4
 
+import numpy as np
 import pandas as pd
 
 from graphrag.index.operations.cluster_graph import cluster_graph
@@ -104,7 +105,10 @@ def create_communities(
         right_on="parent",
         how="left",
     )
-
+    # replace NaN children with empty list
+    final_communities["children"] = final_communities["children"].apply(
+        lambda x: x if isinstance(x, np.ndarray) else []  # type: ignore
+    )
     # add fields for incremental update tracking
     final_communities["period"] = datetime.now(timezone.utc).date().isoformat()
     final_communities["size"] = final_communities.loc[:, "entity_ids"].apply(len)
