@@ -6,6 +6,7 @@
 import asyncio
 import sys
 
+import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
@@ -17,6 +18,9 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     # Validate Chat LLM configs
     # TODO: Replace default_chat_model with a way to select the model
     default_llm_settings = parameters.get_language_model_config("default_chat_model")
+    # if max_retries is not set, set it to the default value
+    if default_llm_settings.max_retries == -1:
+        default_llm_settings.max_retries = defs.LLM_MAX_RETRIES
     llm = load_llm(
         name="test-llm",
         config=default_llm_settings,

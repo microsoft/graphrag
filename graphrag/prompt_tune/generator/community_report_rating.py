@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.prompt.community_report_rating import (
     GENERATE_REPORT_RATING_PROMPT,

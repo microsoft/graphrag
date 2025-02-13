@@ -10,8 +10,7 @@ models:
     tokens_per_minute: ${GRAPHRAG_LLM_TPM}
     requests_per_minute: ${GRAPHRAG_LLM_RPM}
     model_supports_json: true
-    parallelization_num_threads: 50
-    parallelization_stagger: 0.3
+    concurrent_requests: 50
     async_mode: threaded
   default_embedding_model:
     azure_auth_type: api_key
@@ -23,8 +22,7 @@ models:
     model: ${GRAPHRAG_EMBEDDING_MODEL}
     tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
     requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
-    parallelization_num_threads: 50
-    parallelization_stagger: 0.3
+    concurrent_requests: 50
     async_mode: threaded
 
 vector_store:
