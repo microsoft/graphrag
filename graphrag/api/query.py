@@ -1108,8 +1108,6 @@ async def basic_search_streaming(
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
-    else:
-        vector_store_args = None
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
