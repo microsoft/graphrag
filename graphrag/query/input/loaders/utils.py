@@ -3,7 +3,8 @@
 
 """Data load utils."""
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import numpy as np
 
@@ -22,12 +23,14 @@ def _get_value(
     """
     if column_name is None:
         if required:
-            raise ValueError("Column name is None")
+            msg = "Column name is None"
+            raise ValueError(msg)
         return None
     if column_name in data:
         return data[column_name]
     if required:
-        raise ValueError(f"Column [{column_name}] not found in data")
+        msg = f"Column [{column_name}] not found in data"
+        raise ValueError(msg)
     return None
 
 
@@ -51,11 +54,13 @@ def to_list(
     if isinstance(value, np.ndarray):
         value = value.tolist()
     if not isinstance(value, list):
-        raise ValueError(f"value is not a list: {value} ({type(value)})")
+        msg = f"value is not a list: {value} ({type(value)})"
+        raise TypeError(msg)
     if item_type is not None:
         for v in value:
             if not isinstance(v, item_type):
-                raise TypeError(f"list item is not [{item_type}]: {v} ({type(v)})")
+                msg = f"list item is not [{item_type}]: {v} ({type(v)})"
+                raise TypeError(msg)
     return value
 
 
@@ -73,11 +78,13 @@ def to_optional_list(
     if isinstance(value, str):
         value = [value]
     if not isinstance(value, list):
-        raise ValueError(f"value is not a list: {value} ({type(value)})")
+        msg = f"value is not a list: {value} ({type(value)})"
+        raise TypeError(msg)
     if item_type is not None:
         for v in value:
             if not isinstance(v, item_type):
-                raise TypeError(f"list item is not [{item_type}]: {v} ({type(v)})")
+                msg = f"list item is not [{item_type}]: {v} ({type(v)})"
+                raise TypeError(msg)
     return value
 
 
@@ -87,7 +94,8 @@ def to_int(data: Mapping[str, Any], column_name: str | None) -> int:
     if isinstance(value, float):
         value = int(value)
     if not isinstance(value, int):
-        raise ValueError(f"value is not an int: {value} ({type(value)})")
+        msg = f"value is not an int: {value} ({type(value)})"
+        raise TypeError(msg)
     return int(value)
 
 
@@ -101,7 +109,8 @@ def to_optional_int(data: Mapping[str, Any], column_name: str | None) -> int | N
     if isinstance(value, float):
         value = int(value)
     if not isinstance(value, int):
-        raise ValueError(f"value is not an int: {value} ({type(value)})")
+        msg = f"value is not an int: {value} ({type(value)})"
+        raise TypeError(msg)
     return int(value)
 
 
@@ -109,7 +118,8 @@ def to_float(data: Mapping[str, Any], column_name: str | None) -> float:
     """Convert and validate a value to a float."""
     value = _get_value(data, column_name, required=True)
     if not isinstance(value, float):
-        raise ValueError(f"value is not a float: {value} ({type(value)})")
+        msg = f"value is not a float: {value} ({type(value)})"
+        raise TypeError(msg)
     return float(value)
 
 
@@ -134,15 +144,18 @@ def to_dict(
     """Convert and validate a value to a dict."""
     value = _get_value(data, column_name, required=True)
     if not isinstance(value, dict):
-        raise ValueError(f"value is not a dict: {value} ({type(value)})")
+        msg = f"value is not a dict: {value} ({type(value)})"
+        raise TypeError(msg)
     if key_type is not None:
         for k in value:
             if not isinstance(k, key_type):
-                raise TypeError(f"dict key is not [{key_type}]: {k} ({type(k)})")
+                msg = f"dict key is not [{key_type}]: {k} ({type(k)})"
+                raise TypeError(msg)
     if value_type is not None:
         for v in value.values():
             if not isinstance(v, value_type):
-                raise TypeError(f"dict value is not [{value_type}]: {v} ({type(v)})")
+                msg = f"dict value is not [{value_type}]: {v} ({type(v)})"
+                raise TypeError(msg)
     return value
 
 
@@ -159,13 +172,16 @@ def to_optional_dict(
     if value is None:
         return None
     if not isinstance(value, dict):
-        raise TypeError(f"value is not a dict: {value} ({type(value)})")
+        msg = f"value is not a dict: {value} ({type(value)})"
+        raise TypeError(msg)
     if key_type is not None:
         for k in value:
             if not isinstance(k, key_type):
-                raise TypeError(f"dict key is not [{key_type}]: {k} ({type(k)})")
+                msg = f"dict key is not [{key_type}]: {k} ({type(k)})"
+                raise TypeError(msg)
     if value_type is not None:
         for v in value.values():
             if not isinstance(v, value_type):
-                raise TypeError(f"dict value is not [{value_type}]: {v} ({type(v)})")
+                msg = f"dict value is not [{value_type}]: {v} ({type(v)})"
+                raise TypeError(msg)
     return value

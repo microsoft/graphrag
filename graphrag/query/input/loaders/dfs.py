@@ -24,6 +24,7 @@ from graphrag.query.input.loaders.utils import (
 def _prepare_records(df: pd.DataFrame) -> list[dict]:
     """
     Reset index and convert the DataFrame to a list of dictionaries.
+
     We rename the reset index column to 'Index' for consistency.
     """
     df_reset = df.reset_index().rename(columns={"index": "Index"})
