@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Optimize data iteration by removing some iterrows from code"
+}
