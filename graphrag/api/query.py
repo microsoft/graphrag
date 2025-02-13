@@ -177,7 +177,7 @@ async def global_search_streaming(
         reduce_system_prompt=reduce_prompt,
         general_knowledge_inclusion_prompt=knowledge_prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.stream_search(query=query)
 
     # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
@@ -454,11 +454,11 @@ async def local_search_streaming(
         response_type=response_type,
         system_prompt=prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.stream_search(query=query)
 
     # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
@@ -820,12 +820,11 @@ async def drift_search_streaming(
         reduce_system_prompt=reduce_prompt,
         response_type=response_type,
     )
+    search_result = search_engine.stream_search(query=query)
 
-    search_result = search_engine.astream_search(query=query)
-
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
@@ -1123,12 +1122,11 @@ async def basic_search_streaming(
         text_unit_embeddings=description_embedding_store,
         system_prompt=prompt,
     )
+    search_result = search_engine.stream_search(query=query)
 
-    search_result = search_engine.astream_search(query=query)
-
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:

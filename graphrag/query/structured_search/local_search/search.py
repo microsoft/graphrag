@@ -54,7 +54,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         self.callbacks = callbacks
         self.response_type = response_type
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -128,7 +128,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                 output_tokens=0,
             )
 
-    async def astream_search(
+    async def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,

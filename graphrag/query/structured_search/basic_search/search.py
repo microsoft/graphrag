@@ -55,7 +55,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         self.callbacks = callbacks
         self.response_type = response_type
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -121,11 +121,11 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 output_tokens=0,
             )
 
-    async def astream_search(
+    async def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator:
+    ) -> AsyncGenerator[Any, None]:
         """Build basic search context that fits a single context window and generate answer for the user query."""
         start_time = time.time()
 

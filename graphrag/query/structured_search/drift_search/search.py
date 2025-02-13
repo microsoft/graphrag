@@ -144,7 +144,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         error_msg = "Response must be a list of dictionaries."
         raise ValueError(error_msg)
 
-    async def asearch_step(
+    async def _search_step(
         self, global_query: str, search_engine: LocalSearch, actions: list[DriftAction]
     ) -> list[DriftAction]:
         """
@@ -160,12 +160,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         list[DriftAction]: The results from executing the search actions asynchronously.
         """
         tasks = [
-            action.asearch(search_engine=search_engine, global_query=global_query)
+            action.search(search_engine=search_engine, global_query=global_query)
             for action in actions
         ]
         return await tqdm_asyncio.gather(*tasks, leave=False)
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: Any = None,
@@ -204,7 +204,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             prompt_tokens["build_context"] = token_ct["prompt_tokens"]
             output_tokens["build_context"] = token_ct["prompt_tokens"]
 
-            primer_response = await self.primer.asearch(
+            primer_response = await self.primer.search(
                 query=query, top_k_reports=primer_context
             )
             llm_calls["primer"] = primer_response.llm_calls
@@ -229,7 +229,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 len(actions) - self.context_builder.config.drift_k_followups
             )
             # Process actions
-            results = await self.asearch_step(
+            results = await self._search_step(
                 global_query=query, search_engine=self.local_search, actions=actions
             )
 
@@ -278,7 +278,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             output_tokens_categories=output_tokens,
         )
 
-    async def astream_search(
+    async def stream_search(
         self, query: str, conversation_history: ConversationHistory | None = None
     ) -> AsyncGenerator[str, None]:
         """
@@ -288,7 +288,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             query (str): The query to search for.
             conversation_history (ConversationHistory, optional): The conversation history.
         """
-        result = await self.asearch(
+        result = await self.search(
             query=query, conversation_history=conversation_history, reduce=False
         )
 
