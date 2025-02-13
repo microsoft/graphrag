@@ -6,7 +6,7 @@
 import logging
 import traceback
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks

@@ -57,11 +57,15 @@ lancedb = "^0.17.0"
 aiofiles = "^24.1.0"
 
 # LLM
+fnllm = {extras = ["azure", "openai"], version = "^0.1.2"}
+httpx = "^0.28.1"
+json-repair = "^0.30.3"
 openai = "^1.57.0"
 nltk = "3.9.1"
+tenacity = "^9.0.0"
 tiktoken = "^0.8.0"
 
-# Data-Sci
+# Data-Science
 numpy = "^1.25.2"
 graspologic = "^3.4.1"
 networkx = "^3.4.2"
@@ -78,22 +82,18 @@ rich = "^13.9.4"
 devtools = "^0.12.2"
 typing-extensions = "^4.12.2"
 
-#Azure
+# Azure
 azure-cosmos = "^4.9.0"
 azure-identity = "^1.19.0"
 azure-storage-blob = "^12.24.0"
 
 future = "^1.0.0" # Needed until graspologic fixes their dependency
 typer = "^0.15.1"
-fnllm = "^0.0.10"
-
-tenacity = "^9.0.0"
-json-repair = "^0.30.3"
 tqdm = "^4.67.1"
-httpx = "^0.28.1"
 
 textblob = "^0.18.0.post0"
 spacy = "^3.8.4"
+
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.9"
 ipykernel = "^6.29.5"

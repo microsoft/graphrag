@@ -3,7 +3,7 @@
 
 """Generate a community reporter role for community summarization."""
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
