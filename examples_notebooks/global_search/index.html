@@ -2567,13 +2567,13 @@ Cell <span class="ansi-green-fg">In[8], line 3</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
     <span class="s2">"What is Cosmic Vocalization and who are involved in it?"</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-9">result = await search_engine.asearch(
+<div class="clipboard-copy-txt" id="cell-9">result = await search_engine.search(
     "What is Cosmic Vocalization and who are involved in it?"
 )
 
@@ -2593,7 +2593,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[9], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(
+<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">What is Cosmic Vocalization and who are involved in it?</span><span style="color: rgb(175,0,0)">"</span>
 <span class="ansi-green-intense-fg ansi-bold">      3</span> )
 <span class="ansi-green-intense-fg ansi-bold">      5</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)

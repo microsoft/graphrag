@@ -3282,10 +3282,10 @@ Cell <span class="ansi-green-fg">In[12], line 3</span>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span><span class="s2">"Tell me about Agent Mercer"</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"Tell me about Agent Mercer"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-13">result = await search_engine.asearch("Tell me about Agent Mercer")
+<div class="clipboard-copy-txt" id="cell-13">result = await search_engine.search("Tell me about Agent Mercer")
 print(result.response)</div>
 </div>
 </div>
@@ -3302,7 +3302,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[13], line 1</span>
-<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">----&gt; 1</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Agent Mercer</span><span style="color: rgb(175,0,0)">"</span>)
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
@@ -3331,11 +3331,11 @@ Cell <span class="ansi-green-fg">In[13], line 1</span>
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">question</span> <span class="o">=</span> <span class="s2">"Tell me about Dr. Jordan Hayes"</span>
-<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">asearch</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-14">question = "Tell me about Dr. Jordan Hayes"
-result = await search_engine.asearch(question)
+result = await search_engine.search(question)
 print(result.response)</div>
 </div>
 </div>
@@ -3353,7 +3353,7 @@ print(result.response)</div>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
 Cell <span class="ansi-green-fg">In[14], line 2</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> question <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Tell me about Dr. Jordan Hayes</span><span style="color: rgb(175,0,0)">"</span>
-<span class="ansi-green-fg">----&gt; 2</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>asearch(question)
+<span class="ansi-green-fg">----&gt; 2</span> result <span style="color: rgb(98,98,98)">=</span> <span class="ansi-bold" style="color: rgb(0,135,0)">await</span> <span class="ansi-yellow-bg">search_engine</span><span style="color: rgb(98,98,98)">.</span>search(question)
 <span class="ansi-green-intense-fg ansi-bold">      3</span> <span style="color: rgb(0,135,0)">print</span>(result<span style="color: rgb(98,98,98)">.</span>response)
 
 <span class="ansi-red-fg">NameError</span>: name 'search_engine' is not defined</pre>
