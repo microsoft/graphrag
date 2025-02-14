@@ -87,7 +87,7 @@ class CommunityReportsExtractor:
             )
 
             # TODO: Json mode is currently broken on fnllm: https://github.com/microsoft/essex-toolkit/issues/364
-            # once fixed, just assign output to response.parsed_json
+            # once fixed, just assign to output the response.parsed_json
             output = CommunityReportResponse.model_validate(
                 json.loads(response.output.content)
             )
