@@ -80,9 +80,9 @@ async def get_delta_docs(
 
 
 async def update_dataframe_outputs(
-    dataframe_dict: dict[str, pd.DataFrame],
-    storage: PipelineStorage,
-    update_storage: PipelineStorage,
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
     config: GraphRagConfig,
     cache: PipelineCache,
     callbacks: WorkflowCallbacks,
@@ -92,52 +92,53 @@ async def update_dataframe_outputs(
 
     Parameters
     ----------
-    dataframe_dict : dict[str, pd.DataFrame]
-        The dictionary of dataframes.
-    storage : PipelineStorage
-        The storage used to store the dataframes.
+    previous_storage : PipelineStorage
+        The storage used to store the dataframes in the original run.
+    delta_storage : PipelineStorage
+        The storage used to store the subset of new dataframes in the update run.
+    output_storage : PipelineStorage
+        The storage used to store the updated dataframes (the final incremental output).
     """
     progress_logger.info("Updating Documents")
     final_documents_df = await _concat_dataframes(
-        "documents", dataframe_dict, storage, update_storage
+        "documents", previous_storage, delta_storage, output_storage
     )
 
     # Update entities and merge them
     progress_logger.info("Updating Entities")
     merged_entities_df, entity_id_mapping = await _update_entities(
-        dataframe_dict, storage, update_storage, config, cache, callbacks
+        previous_storage, delta_storage, output_storage, config, cache, callbacks
     )
 
     # Update relationships with the entities id mapping
     progress_logger.info("Updating Relationships")
     merged_relationships_df = await _update_relationships(
-        dataframe_dict, storage, update_storage
+        previous_storage, delta_storage, output_storage
     )
 
     # Update and merge final text units
     progress_logger.info("Updating Text Units")
     merged_text_units = await _update_text_units(
-        dataframe_dict, storage, update_storage, entity_id_mapping
+        previous_storage, delta_storage, output_storage, entity_id_mapping
     )
 
     # Merge final covariates
-    if (
-        await storage_has_table("covariates", storage)
-        and "covariates" in dataframe_dict
-    ):
+    if await storage_has_table(
+        "covariates", previous_storage
+    ) and await storage_has_table("covariates", delta_storage):
         progress_logger.info("Updating Covariates")
-        await _update_covariates(dataframe_dict, storage, update_storage)
+        await _update_covariates(previous_storage, delta_storage, output_storage)
 
     # Merge final communities
     progress_logger.info("Updating Communities")
     community_id_mapping = await _update_communities(
-        dataframe_dict, storage, update_storage
+        previous_storage, delta_storage, output_storage
     )
 
     # Merge community reports
     progress_logger.info("Updating Community Reports")
     merged_community_reports = await _update_community_reports(
-        dataframe_dict, storage, update_storage, community_id_mapping
+        previous_storage, delta_storage, output_storage, community_id_mapping
     )
 
     # Generate text embeddings
@@ -152,7 +153,7 @@ async def update_dataframe_outputs(
         final_community_reports=merged_community_reports,
         callbacks=callbacks,
         cache=cache,
-        storage=update_storage,
+        storage=output_storage,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
         snapshot_embeddings_enabled=config.snapshots.embeddings,
@@ -160,84 +161,85 @@ async def update_dataframe_outputs(
 
 
 async def _update_community_reports(
-    dataframe_dict, storage, update_storage, community_id_mapping
+    previous_storage, delta_storage, output_storage, community_id_mapping
 ):
     """Update the community reports output."""
-    old_community_reports = await load_table_from_storage("community_reports", storage)
-    delta_community_reports = dataframe_dict["community_reports"]
-
+    old_community_reports = await load_table_from_storage(
+        "community_reports", previous_storage
+    )
+    delta_community_reports = await load_table_from_storage(
+        "community_reports", delta_storage
+    )
     merged_community_reports = _update_and_merge_community_reports(
         old_community_reports, delta_community_reports, community_id_mapping
     )
 
     await write_table_to_storage(
-        merged_community_reports, "community_reports", update_storage
+        merged_community_reports, "community_reports", output_storage
     )
 
     return merged_community_reports
 
 
-async def _update_communities(dataframe_dict, storage, update_storage):
+async def _update_communities(previous_storage, delta_storage, output_storage):
     """Update the communities output."""
-    old_communities = await load_table_from_storage("communities", storage)
-    delta_communities = dataframe_dict["communities"]
+    old_communities = await load_table_from_storage("communities", previous_storage)
+    delta_communities = await load_table_from_storage("communities", delta_storage)
     merged_communities, community_id_mapping = _update_and_merge_communities(
         old_communities, delta_communities
     )
 
-    await write_table_to_storage(merged_communities, "communities", update_storage)
+    await write_table_to_storage(merged_communities, "communities", output_storage)
 
     return community_id_mapping
 
 
-async def _update_covariates(dataframe_dict, storage, update_storage):
+async def _update_covariates(previous_storage, delta_storage, output_storage):
     """Update the covariates output."""
-    old_covariates = await load_table_from_storage("covariates", storage)
-    delta_covariates = dataframe_dict["covariates"]
-
+    old_covariates = await load_table_from_storage("covariates", previous_storage)
+    delta_covariates = await load_table_from_storage("covariates", delta_storage)
     merged_covariates = _merge_covariates(old_covariates, delta_covariates)
 
-    await write_table_to_storage(merged_covariates, "covariates", update_storage)
+    await write_table_to_storage(merged_covariates, "covariates", output_storage)
 
 
 async def _update_text_units(
-    dataframe_dict, storage, update_storage, entity_id_mapping
+    previous_storage, delta_storage, output_storage, entity_id_mapping
 ):
     """Update the text units output."""
-    old_text_units = await load_table_from_storage("text_units", storage)
-    delta_text_units = dataframe_dict["text_units"]
-
+    old_text_units = await load_table_from_storage("text_units", previous_storage)
+    delta_text_units = await load_table_from_storage("text_units", delta_storage)
     merged_text_units = _update_and_merge_text_units(
         old_text_units, delta_text_units, entity_id_mapping
     )
 
-    await write_table_to_storage(merged_text_units, "text_units", update_storage)
+    await write_table_to_storage(merged_text_units, "text_units", output_storage)
 
     return merged_text_units
 
 
-async def _update_relationships(dataframe_dict, storage, update_storage):
+async def _update_relationships(previous_storage, delta_storage, output_storage):
     """Update the relationships output."""
-    old_relationships = await load_table_from_storage("relationships", storage)
-    delta_relationships = dataframe_dict["relationships"]
+    old_relationships = await load_table_from_storage("relationships", previous_storage)
+    delta_relationships = await load_table_from_storage("relationships", delta_storage)
     merged_relationships_df = _update_and_merge_relationships(
         old_relationships,
         delta_relationships,
     )
 
     await write_table_to_storage(
-        merged_relationships_df, "relationships", update_storage
+        merged_relationships_df, "relationships", output_storage
     )
 
     return merged_relationships_df
 
 
 async def _update_entities(
-    dataframe_dict, storage, update_storage, config, cache, callbacks
+    previous_storage, delta_storage, output_storage, config, cache, callbacks
 ):
     """Update Final Entities output."""
-    old_entities = await load_table_from_storage("entities", storage)
-    delta_entities = dataframe_dict["entities"]
+    old_entities = await load_table_from_storage("entities", previous_storage)
+    delta_entities = await load_table_from_storage("entities", delta_storage)
 
     merged_entities_df, entity_id_mapping = _group_and_resolve_entities(
         old_entities, delta_entities
@@ -252,30 +254,22 @@ async def _update_entities(
     )
 
     # Save the updated entities back to storage
-    await write_table_to_storage(merged_entities_df, "entities", update_storage)
+    await write_table_to_storage(merged_entities_df, "entities", output_storage)
 
     return merged_entities_df, entity_id_mapping
 
 
-async def _concat_dataframes(name, dataframe_dict, storage, update_storage):
-    """Concatenate dataframes.
-
-    Parameters
-    ----------
-    name : str
-        The name of the dataframe to concatenate.
-    dataframe_dict : dict[str, pd.DataFrame]
-        The dictionary of dataframes from a pipeline run.
-    storage : PipelineStorage
-        The storage used to store the dataframes.
-    """
-    old_df = await load_table_from_storage(name, storage)
-    delta_df = dataframe_dict[name]
+async def _concat_dataframes(name, previous_storage, delta_storage, output_storage):
+    """Concatenate dataframes."""
+    old_df = await load_table_from_storage(name, previous_storage)
+    delta_df = await load_table_from_storage(name, delta_storage)
 
     # Merge the final documents
-    final_df = pd.concat([old_df, delta_df], copy=False)
+    initial_id = old_df["human_readable_id"].max() + 1
+    delta_df["human_readable_id"] = np.arange(initial_id, initial_id + len(delta_df))
+    final_df = pd.concat([old_df, delta_df], ignore_index=True, copy=False)
 
-    await write_table_to_storage(final_df, name, update_storage)
+    await write_table_to_storage(final_df, name, output_storage)
 
     return final_df
 
@@ -329,13 +323,6 @@ def _merge_covariates(
         The merged covariates.
     """
     # Get the max human readable id from the old covariates and update the delta covariates
-    old_covariates["human_readable_id"] = old_covariates["human_readable_id"].astype(
-        int
-    )
-    delta_covariates["human_readable_id"] = delta_covariates[
-        "human_readable_id"
-    ].astype(int)
-
     initial_id = old_covariates["human_readable_id"].max() + 1
     delta_covariates["human_readable_id"] = np.arange(
         initial_id, initial_id + len(delta_covariates)

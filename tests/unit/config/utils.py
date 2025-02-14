@@ -75,7 +75,13 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "container_name": None,
         "storage_account_blob_url": None,
     },
-    "update_index_output": None,
+    "update_index_output": {
+        "type": defs.OUTPUT_TYPE,
+        "base_dir": defs.UPDATE_OUTPUT_BASE_DIR,
+        "connection_string": None,
+        "container_name": None,
+        "storage_account_blob_url": None,
+    },
     "cache": {
         "type": defs.CACHE_TYPE,
         "base_dir": defs.CACHE_BASE_DIR,

@@ -91,12 +91,6 @@ output:
   type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
   base_dir: "{defs.OUTPUT_BASE_DIR}"
 
-## only turn this on if running `graphrag index` with custom settings
-## we normally use `graphrag update` with the defaults
-update_index_output:
-  # type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
-  # base_dir: "{defs.UPDATE_OUTPUT_BASE_DIR}"
-
 ### Workflow settings ###
 
 extract_graph:

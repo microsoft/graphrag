@@ -146,7 +146,8 @@ class CosmosDBPipelineStorage(PipelineStorage):
             if file_filter is None:
                 return True
             return all(
-                re.match(value, item.get(key, "")) for key, value in file_filter.items()
+                re.search(value, item.get(key, ""))
+                for key, value in file_filter.items()
             )
 
         try:
@@ -171,7 +172,7 @@ class CosmosDBPipelineStorage(PipelineStorage):
                 return
             num_filtered = 0
             for item in items:
-                match = file_pattern.match(item["id"])
+                match = file_pattern.search(item["id"])
                 if match:
                     group = match.groupdict()
                     if item_filter(group):
