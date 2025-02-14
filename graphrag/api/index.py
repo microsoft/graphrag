@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 async def build_index(
     config: GraphRagConfig,
     method: IndexingMethod = IndexingMethod.Standard,
+    is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
@@ -50,8 +51,6 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    is_update_run = bool(config.update_index_output)
-
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )

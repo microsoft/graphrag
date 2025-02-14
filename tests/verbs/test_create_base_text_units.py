@@ -11,6 +11,7 @@ from .util import (
     compare_outputs,
     create_test_context,
     load_test_table,
+    update_document_metadata,
 )
 
 
@@ -43,6 +44,8 @@ async def test_create_base_text_units_metadata():
     config.input.metadata = ["title"]
     config.chunks.prepend_metadata = True
 
+    await update_document_metadata(config.input.metadata, context)
+
     await run_workflow(
         config,
         context,
@@ -64,6 +67,8 @@ async def test_create_base_text_units_metadata_included_in_chunk():
     config.input.metadata = ["title"]
     config.chunks.prepend_metadata = True
     config.chunks.chunk_size_includes_metadata = True
+
+    await update_document_metadata(config.input.metadata, context)
 
     await run_workflow(
         config,
