@@ -133,7 +133,9 @@ class BlobPipelineStorage(PipelineStorage):
             if file_filter is None:
                 return True
 
-            return all(re.match(value, item[key]) for key, value in file_filter.items())
+            return all(
+                re.search(value, item[key]) for key, value in file_filter.items()
+            )
 
         try:
             container_client = self._blob_service_client.get_container_client(
@@ -145,7 +147,7 @@ class BlobPipelineStorage(PipelineStorage):
             num_total = len(list(all_blobs))
             num_filtered = 0
             for blob in all_blobs:
-                match = file_pattern.match(blob.name)
+                match = file_pattern.search(blob.name)
                 if match and blob.name.startswith(base_dir):
                     group = match.groupdict()
                     if item_filter(group):

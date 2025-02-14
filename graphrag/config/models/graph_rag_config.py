@@ -134,20 +134,20 @@ class GraphRagConfig(BaseModel):
                         (Path(self.root_dir) / output.base_dir).resolve()
                     )
 
-    update_index_output: OutputConfig | None = Field(
+    update_index_output: OutputConfig = Field(
         description="The output configuration for the updated index.",
-        default=None,
+        default=OutputConfig(
+            type=defs.OUTPUT_TYPE,
+            base_dir=defs.UPDATE_OUTPUT_BASE_DIR,
+        ),
     )
     """The output configuration for the updated index."""
 
     def _validate_update_index_output_base_dir(self) -> None:
         """Validate the update index output base directory."""
-        if (
-            self.update_index_output
-            and self.update_index_output.type == defs.OutputType.file
-        ):
+        if self.update_index_output.type == defs.OutputType.file:
             if self.update_index_output.base_dir.strip() == "":
-                msg = "Update index output base directory is required for file output. Please rerun `graphrag init` and set the update index output configuration."
+                msg = "update_index_output base directory is required for file output. Please rerun `graphrag init` and set the update_index_output configuration."
                 raise ValueError(msg)
             self.update_index_output.base_dir = str(
                 (Path(self.root_dir) / self.update_index_output.base_dir).resolve()

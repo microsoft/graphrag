@@ -78,11 +78,13 @@ def index_cli(
     if output_dir:
         cli_overrides["output.base_dir"] = str(output_dir)
         cli_overrides["reporting.base_dir"] = str(output_dir)
+        cli_overrides["update_index_output.base_dir"] = str(output_dir)
     config = load_config(root_dir, config_filepath, cli_overrides)
 
     _run_index(
         config=config,
         method=method,
+        is_update_run=False,
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
@@ -108,21 +110,14 @@ def update_cli(
     if output_dir:
         cli_overrides["output.base_dir"] = str(output_dir)
         cli_overrides["reporting.base_dir"] = str(output_dir)
+        cli_overrides["update_index_output.base_dir"] = str(output_dir)
+
     config = load_config(root_dir, config_filepath, cli_overrides)
-
-    # Check if update output exist, if not configure it with default values
-    if not config.update_index_output:
-        from graphrag.config.defaults import OUTPUT_TYPE, UPDATE_OUTPUT_BASE_DIR
-        from graphrag.config.models.output_config import OutputConfig
-
-        config.update_index_output = OutputConfig(
-            type=OUTPUT_TYPE,
-            base_dir=UPDATE_OUTPUT_BASE_DIR,
-        )
 
     _run_index(
         config=config,
         method=method,
+        is_update_run=True,
         verbose=verbose,
         memprofile=memprofile,
         cache=cache,
@@ -135,6 +130,7 @@ def update_cli(
 def _run_index(
     config,
     method,
+    is_update_run,
     verbose,
     memprofile,
     cache,
@@ -176,6 +172,7 @@ def _run_index(
         api.build_index(
             config=config,
             method=method,
+            is_update_run=is_update_run,
             memory_profile=memprofile,
             progress_logger=progress_logger,
         )

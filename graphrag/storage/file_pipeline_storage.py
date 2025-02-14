@@ -51,7 +51,9 @@ class FilePipelineStorage(PipelineStorage):
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
-            return all(re.match(value, item[key]) for key, value in file_filter.items())
+            return all(
+                re.search(value, item[key]) for key, value in file_filter.items()
+            )
 
         search_path = Path(self._root_dir) / (base_dir or "")
         log.info("search %s for files matching %s", search_path, file_pattern.pattern)
@@ -60,7 +62,7 @@ class FilePipelineStorage(PipelineStorage):
         num_total = len(all_files)
         num_filtered = 0
         for file in all_files:
-            match = file_pattern.match(f"{file}")
+            match = file_pattern.search(f"{file}")
             if match:
                 group = match.groupdict()
                 if item_filter(group):

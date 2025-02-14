@@ -65,9 +65,15 @@ def _group_and_resolve_entities(
             "description": lambda x: list(x.astype(str)),  # Ensure str
             # Concatenate nd.array into a single list
             "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
+            "degree": "first",  # todo: we could probably re-compute this with the entire new graph
+            "x": "first",
+            "y": "first",
         })
         .reset_index()
     )
+
+    # recompute frequency to include new text units
+    aggregated["frequency"] = aggregated["text_unit_ids"].apply(len)
 
     # Force the result into a DataFrame
     resolved: pd.DataFrame = pd.DataFrame(aggregated)
@@ -82,6 +88,10 @@ def _group_and_resolve_entities(
             "type",
             "description",
             "text_unit_ids",
+            "frequency",
+            "degree",
+            "x",
+            "y",
         ],
     ]
 
