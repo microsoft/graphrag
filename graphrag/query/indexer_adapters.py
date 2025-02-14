@@ -12,9 +12,6 @@ from typing import cast
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.operations.summarize_communities.utils import (
-    restore_community_hierarchy,
-)
 from graphrag.model.community import Community
 from graphrag.model.community_report import CommunityReport
 from graphrag.model.covariate import Covariate
@@ -197,27 +194,6 @@ def read_indexer_communities(
         ]
         nodes_df = nodes_df.loc[nodes_df.community.isin(reports_df.community.unique())]
 
-    # reconstruct the community hierarchy
-    # note that restore_community_hierarchy only return communities with sub communities
-    community_hierarchy = restore_community_hierarchy(input=nodes_df)
-
-    # small datasets can result in hierarchies that are only one deep, so the hierarchy will have no rows
-    if not community_hierarchy.empty:
-        community_hierarchy = (
-            community_hierarchy.groupby(["community"])
-            .agg({"sub_community": list})
-            .reset_index()
-            .rename(columns={"sub_community": "sub_community_ids"})
-        )
-        # add sub community IDs to community DataFrame
-        communities_df = communities_df.merge(
-            community_hierarchy, on="community", how="left"
-        )
-        # replace NaN sub community IDs with empty list
-        communities_df.sub_community_ids = communities_df.sub_community_ids.apply(
-            lambda x: x if isinstance(x, list) else []
-        )
-
     return read_communities(
         communities_df,
         id_col="id",
@@ -227,7 +203,8 @@ def read_indexer_communities(
         entities_col=None,
         relationships_col=None,
         covariates_col=None,
-        sub_communities_col="sub_community_ids",
+        parent_col="parent",
+        children_col="children",
         attributes_cols=None,
     )
 

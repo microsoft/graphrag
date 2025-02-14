@@ -12,7 +12,7 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn

@@ -3,14 +3,13 @@
 
 """A module containing run_workflow method definition."""
 
-import pandas as pd
-
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.extract_covariates import (
     extract_covariates,
 )
+from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 workflow_name = "extract_covariates"
@@ -20,7 +19,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: WorkflowCallbacks,
-) -> pd.DataFrame | None:
+) -> WorkflowFunctionOutput:
     """All the steps to extract and format covariates."""
     text_units = await load_table_from_storage("text_units", context.storage)
 
@@ -32,7 +31,7 @@ async def run_workflow(
     )
 
     async_mode = extract_claims_llm_settings.async_mode
-    num_threads = extract_claims_llm_settings.parallelization_num_threads
+    num_threads = extract_claims_llm_settings.concurrent_requests
 
     output = await extract_covariates(
         text_units,
@@ -47,4 +46,4 @@ async def run_workflow(
 
     await write_table_to_storage(output, "covariates", context.storage)
 
-    return output
+    return WorkflowFunctionOutput(result=output, config=None)

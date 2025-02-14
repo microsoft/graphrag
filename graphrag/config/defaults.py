@@ -24,7 +24,7 @@ DEFAULT_CHAT_MODEL_ID = "default_chat_model"
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
 ASYNC_MODE = AsyncType.Threaded
 ENCODING_MODEL = "cl100k_base"
-AZURE_AUDIENCE = "https://cognitiveservices.azure.com/.default"
+COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
 AUTH_TYPE = AuthType.APIKey
 #
 # LLM Parameters
@@ -39,14 +39,11 @@ LLM_N = 1
 LLM_REQUEST_TIMEOUT = 180.0
 LLM_TOKENS_PER_MINUTE = 50_000
 LLM_REQUESTS_PER_MINUTE = 1_000
+RETRY_STRATEGY = "native"
 LLM_MAX_RETRIES = 10
 LLM_MAX_RETRY_WAIT = 10.0
 LLM_PRESENCE_PENALTY = 0.0
-LLM_SLEEP_ON_RATE_LIMIT_RECOMMENDATION = True
 LLM_CONCURRENT_REQUESTS = 25
-
-PARALLELIZATION_STAGGER = 0.3
-PARALLELIZATION_NUM_THREADS = 50
 
 #
 # Text embedding
@@ -67,6 +64,8 @@ CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 100
 CHUNK_GROUP_BY_COLUMNS = ["id"]
 CHUNK_STRATEGY = ChunkStrategyType.tokens
+CHUNK_PREPEND_METADATA = False
+CHUNK_SIZE_INCLUDES_METADATA = False
 
 # Claim extraction
 DESCRIPTION = "Any claims or facts that could be relevant to information discovery."
@@ -129,12 +128,11 @@ REPORTING_BASE_DIR = "logs"
 SNAPSHOTS_GRAPHML = False
 SNAPSHOTS_EMBEDDINGS = False
 OUTPUT_BASE_DIR = "output"
-OUTPUT_DEFAULT_ID = "default_output"
 OUTPUT_TYPE = OutputType.file
+UPDATE_OUTPUT_BASE_DIR = "update_output"
 SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
 SUMMARIZE_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 UMAP_ENABLED = False
-UPDATE_OUTPUT_BASE_DIR = "update_output"
 
 # Graph Pruning
 PRUNE_MIN_NODE_FREQ = 2

@@ -1,6 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 from pydantic import BaseModel
 
 from graphrag.index.llm.mock_llm import MockChatLLM

@@ -46,6 +46,8 @@ async def create_community_reports(
     if claims_input is not None:
         claims = _prep_claims(claims_input)
 
+    summarization_strategy["extraction_prompt"] = summarization_strategy["graph_prompt"]
+
     max_input_length = summarization_strategy.get(
         "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
     )
@@ -60,6 +62,7 @@ async def create_community_reports(
 
     community_reports = await summarize_communities(
         nodes,
+        communities,
         local_contexts,
         build_level_context,
         callbacks,

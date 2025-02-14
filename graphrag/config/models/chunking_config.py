@@ -26,3 +26,11 @@ class ChunkingConfig(BaseModel):
     encoding_model: str = Field(
         description="The encoding model to use.", default=defs.ENCODING_MODEL
     )
+    prepend_metadata: bool = Field(
+        description="Prepend metadata into each chunk.",
+        default=defs.CHUNK_PREPEND_METADATA,
+    )
+    chunk_size_includes_metadata: bool = Field(
+        description="Count metadata in max tokens.",
+        default=defs.CHUNK_SIZE_INCLUDES_METADATA,
+    )

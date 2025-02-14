@@ -12,6 +12,7 @@ from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
 from graphrag.query.input.loaders.utils import (
+    to_list,
     to_optional_dict,
     to_optional_float,
     to_optional_int,
@@ -19,6 +20,16 @@ from graphrag.query.input.loaders.utils import (
     to_optional_str,
     to_str,
 )
+
+
+def _prepare_records(df: pd.DataFrame) -> list[dict]:
+    """
+    Reset index and convert the DataFrame to a list of dictionaries.
+
+    We rename the reset index column to 'Index' for consistency.
+    """
+    df_reset = df.reset_index().rename(columns={"index": "Index"})
+    return df_reset.to_dict("records")
 
 
 def read_entities(
@@ -35,12 +46,14 @@ def read_entities(
     rank_col: str | None = "degree",
     attributes_cols: list[str] | None = None,
 ) -> list[Entity]:
-    """Read entities from a dataframe."""
-    entities = []
-    for idx, row in df.iterrows():
-        entity = Entity(
+    """Read entities from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        Entity(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=to_optional_str(row, short_id_col)
+            if short_id_col
+            else str(row["Index"]),
             title=to_str(row, title_col),
             type=to_optional_str(row, type_col),
             description=to_optional_str(row, description_col),
@@ -57,8 +70,8 @@ def read_entities(
                 else None
             ),
         )
-        entities.append(entity)
-    return entities
+        for row in records
+    ]
 
 
 def read_relationships(
@@ -74,12 +87,14 @@ def read_relationships(
     text_unit_ids_col: str | None = "text_unit_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Relationship]:
-    """Read relationships from a dataframe."""
-    relationships = []
-    for idx, row in df.iterrows():
-        rel = Relationship(
+    """Read relationships from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        Relationship(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=to_optional_str(row, short_id_col)
+            if short_id_col
+            else str(row["Index"]),
             source=to_str(row, source_col),
             target=to_str(row, target_col),
             description=to_optional_str(row, description_col),
@@ -95,8 +110,8 @@ def read_relationships(
                 else None
             ),
         )
-        relationships.append(rel)
-    return relationships
+        for row in records
+    ]
 
 
 def read_covariates(
@@ -108,12 +123,14 @@ def read_covariates(
     text_unit_ids_col: str | None = "text_unit_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[Covariate]:
-    """Read covariates from a dataframe."""
-    covariates = []
-    for idx, row in df.iterrows():
-        cov = Covariate(
+    """Read covariates from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        Covariate(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=to_optional_str(row, short_id_col)
+            if short_id_col
+            else str(row["Index"]),
             subject_id=to_str(row, subject_col),
             covariate_type=(
                 to_str(row, covariate_type_col) if covariate_type_col else "claim"
@@ -125,8 +142,8 @@ def read_covariates(
                 else None
             ),
         )
-        covariates.append(cov)
-    return covariates
+        for row in records
+    ]
 
 
 def read_communities(
@@ -138,15 +155,18 @@ def read_communities(
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
     covariates_col: str | None = "covariate_ids",
-    sub_communities_col: str | None = "sub_community_ids",
+    parent_col: str | None = "parent",
+    children_col: str | None = "children",
     attributes_cols: list[str] | None = None,
 ) -> list[Community]:
-    """Read communities from a dataframe."""
-    communities = []
-    for idx, row in df.iterrows():
-        comm = Community(
+    """Read communities from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        Community(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=to_optional_str(row, short_id_col)
+            if short_id_col
+            else str(row["Index"]),
             title=to_str(row, title_col),
             level=to_str(row, level_col),
             entity_ids=to_optional_list(row, entities_col, item_type=str),
@@ -154,15 +174,16 @@ def read_communities(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            sub_community_ids=to_optional_list(row, sub_communities_col),
+            parent=to_str(row, parent_col),
+            children=to_list(row, children_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols
                 else None
             ),
         )
-        communities.append(comm)
-    return communities
+        for row in records
+    ]
 
 
 def read_community_reports(
@@ -177,12 +198,14 @@ def read_community_reports(
     content_embedding_col: str | None = "full_content_embedding",
     attributes_cols: list[str] | None = None,
 ) -> list[CommunityReport]:
-    """Read community reports from a dataframe."""
-    reports = []
-    for idx, row in df.iterrows():
-        report = CommunityReport(
+    """Read community reports from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        CommunityReport(
             id=to_str(row, id_col),
-            short_id=to_optional_str(row, short_id_col) if short_id_col else str(idx),
+            short_id=to_optional_str(row, short_id_col)
+            if short_id_col
+            else str(row["Index"]),
             title=to_str(row, title_col),
             community_id=to_str(row, community_col),
             summary=to_str(row, summary_col),
@@ -197,8 +220,8 @@ def read_community_reports(
                 else None
             ),
         )
-        reports.append(report)
-    return reports
+        for row in records
+    ]
 
 
 def read_text_units(
@@ -212,12 +235,12 @@ def read_text_units(
     document_ids_col: str | None = "document_ids",
     attributes_cols: list[str] | None = None,
 ) -> list[TextUnit]:
-    """Read text units from a dataframe."""
-    text_units = []
-    for idx, row in df.iterrows():
-        chunk = TextUnit(
+    """Read text units from a dataframe using pre-converted records."""
+    records = _prepare_records(df)
+    return [
+        TextUnit(
             id=to_str(row, id_col),
-            short_id=str(idx),
+            short_id=str(row["Index"]),
             text=to_str(row, text_col),
             entity_ids=to_optional_list(row, entities_col, item_type=str),
             relationship_ids=to_optional_list(row, relationships_col, item_type=str),
@@ -232,5 +255,5 @@ def read_text_units(
                 else None
             ),
         )
-        text_units.append(chunk)
-    return text_units
+        for row in records
+    ]

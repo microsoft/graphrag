@@ -6,7 +6,7 @@
 import json
 from dataclasses import dataclass
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string

@@ -9,7 +9,7 @@ DESCRIPTION = "description"
 
 # POST-PREP NODE TABLE SCHEMA
 NODE_DEGREE = "degree"
-NODE_FREQUENCY = "freq"
+NODE_FREQUENCY = "frequency"
 NODE_DETAILS = "node_details"
 
 NODE_PARENT_COMMUNITY = "parent_community"
@@ -29,7 +29,6 @@ CLAIM_DETAILS = "claim_details"
 
 # COMMUNITY HIERARCHY TABLE SCHEMA
 SUB_COMMUNITY = "sub_community"
-SUB_COMMUNITY_SIZE = "sub_community_size"
 COMMUNITY_LEVEL = "level"
 
 # COMMUNITY CONTEXT TABLE SCHEMA

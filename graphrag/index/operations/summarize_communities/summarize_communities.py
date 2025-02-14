@@ -20,7 +20,6 @@ from graphrag.index.operations.summarize_communities.typing import (
 )
 from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
-    restore_community_hierarchy,
 )
 from graphrag.index.run.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
@@ -30,6 +29,7 @@ log = logging.getLogger(__name__)
 
 async def summarize_communities(
     nodes: pd.DataFrame,
+    communities: pd.DataFrame,
     local_contexts,
     level_context_builder: Callable,
     callbacks: WorkflowCallbacks,
@@ -42,9 +42,19 @@ async def summarize_communities(
     """Generate community summaries."""
     reports: list[CommunityReport | None] = []
     tick = progress_ticker(callbacks.progress, len(local_contexts))
-    runner = load_strategy(strategy["type"])
+    strategy_exec = load_strategy(strategy["type"])
+    strategy_config = {**strategy}
 
-    community_hierarchy = restore_community_hierarchy(nodes)
+    # if max_retries is not set, inject a dynamically assigned value based on the total number of expected LLM calls to be made
+    if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
+        strategy_config["llm"]["max_retries"] = len(nodes)
+
+    community_hierarchy = (
+        communities.explode("children")
+        .rename({"children": "sub_community"}, axis=1)
+        .loc[:, ["community", "level", "sub_community"]]
+    ).dropna()
+
     levels = get_levels(nodes)
 
     level_contexts = []
@@ -62,13 +72,13 @@ async def summarize_communities(
 
         async def run_generate(record):
             result = await _generate_report(
-                runner,
+                strategy_exec,
                 community_id=record[schemas.COMMUNITY_ID],
                 community_level=record[schemas.COMMUNITY_LEVEL],
                 community_context=record[schemas.CONTEXT_STRING],
                 callbacks=callbacks,
                 cache=cache,
-                strategy=strategy,
+                strategy=strategy_config,
             )
             tick()
             return result

@@ -3,7 +3,7 @@
 
 """Language detection for GraphRAG prompts."""
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
 

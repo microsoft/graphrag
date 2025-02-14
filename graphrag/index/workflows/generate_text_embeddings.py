@@ -3,8 +3,6 @@
 
 """A module containing run_workflow method definition."""
 
-import pandas as pd
-
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
@@ -12,6 +10,7 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.generate_text_embeddings import (
     generate_text_embeddings,
 )
+from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage
 
 workflow_name = "generate_text_embeddings"
@@ -21,7 +20,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: WorkflowCallbacks,
-) -> pd.DataFrame | None:
+) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     final_documents = await load_table_from_storage("documents", context.storage)
     final_relationships = await load_table_from_storage(
@@ -49,3 +48,5 @@ async def run_workflow(
         embedded_fields=embedded_fields,
         snapshot_embeddings_enabled=config.snapshots.embeddings,
     )
+
+    return WorkflowFunctionOutput(result=None, config=None)

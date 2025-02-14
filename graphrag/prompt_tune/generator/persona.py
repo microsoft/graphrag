@@ -3,7 +3,7 @@
 
 """Persona generating module for fine-tuning GraphRAG prompts."""
 
-from fnllm import ChatLLM
+from fnllm.types import ChatLLM
 
 from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.persona import GENERATE_PERSONA_PROMPT

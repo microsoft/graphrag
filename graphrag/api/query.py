@@ -18,7 +18,7 @@ Backwards compatibility is not guaranteed at this time.
 """
 
 from collections.abc import AsyncGenerator
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import pandas as pd
 from pydantic import validate_call
@@ -52,9 +52,6 @@ from graphrag.utils.api import (
     update_context_data,
 )
 from graphrag.utils.cli import redact
-
-if TYPE_CHECKING:
-    from graphrag.query.structured_search.base import SearchResult
 
 logger = PrintProgressLogger("")
 
@@ -94,40 +91,27 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    communities_ = read_indexer_communities(communities, community_reports)
-    reports = read_indexer_reports(
-        community_reports,
-        communities,
+    full_response = ""
+    context_data = {}
+    get_context_data = True
+    # NOTE: when streaming, the first chunk of returned data is the complete context data.
+    # All subsequent chunks are the query response.
+    async for chunk in global_search_streaming(
+        config=config,
+        entities=entities,
+        communities=communities,
+        community_reports=community_reports,
         community_level=community_level,
         dynamic_community_selection=dynamic_community_selection,
-    )
-    entities_ = read_indexer_entities(
-        entities, communities, community_level=community_level
-    )
-
-    map_prompt = load_search_prompt(config.root_dir, config.global_search.map_prompt)
-    reduce_prompt = load_search_prompt(
-        config.root_dir, config.global_search.reduce_prompt
-    )
-    knowledge_prompt = load_search_prompt(
-        config.root_dir, config.global_search.knowledge_prompt
-    )
-
-    search_engine = get_global_search_engine(
-        config,
-        reports=reports,
-        entities=entities_,
-        communities=communities_,
         response_type=response_type,
-        dynamic_community_selection=dynamic_community_selection,
-        map_system_prompt=map_prompt,
-        reduce_system_prompt=reduce_prompt,
-        general_knowledge_inclusion_prompt=knowledge_prompt,
-    )
-    result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
-    context_data = reformat_context_data(result.context_data)  # type: ignore
-    return response, context_data
+        query=query,
+    ):
+        if get_context_data:
+            context_data = chunk
+            get_context_data = False
+        else:
+            full_response += chunk
+    return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -193,11 +177,11 @@ async def global_search_streaming(
         reduce_system_prompt=reduce_prompt,
         general_knowledge_inclusion_prompt=knowledge_prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.stream_search(query=query)
 
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
@@ -253,12 +237,12 @@ async def multi_index_global_search(
         raise NotImplementedError(message)
 
     links = {
-        "community": {},
+        "communities": {},
         "community_reports": {},
         "entities": {},
     }
     max_vals = {
-        "community": -1,
+        "communities": -1,
         "community_reports": -1,
         "entities": -1,
     }
@@ -288,16 +272,20 @@ async def multi_index_global_search(
         communities_df["community"] = communities_df["community"].astype(int)
         communities_df["parent"] = communities_df["parent"].astype(int)
         for i in communities_df["community"]:
-            links["community"][i + max_vals["community"] + 1] = {
+            links["communities"][i + max_vals["communities"] + 1] = {
                 "index_name": index_name,
                 "id": str(i),
             }
-        communities_df["community"] += max_vals["community"] + 1
+        communities_df["community"] += max_vals["communities"] + 1
         communities_df["parent"] = communities_df["parent"].apply(
-            lambda x: x if x == -1 else x + max_vals["community"] + 1
+            lambda x: x if x == -1 else x + max_vals["communities"] + 1
         )
-        communities_df["human_readable_id"] += max_vals["community"] + 1
-        max_vals["community"] = int(communities_df["community"].max())
+        communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
+        max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
         # Prepare each index's entities dataframe for merging
@@ -381,34 +369,29 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
-
-    description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=entity_description_embedding,
-    )
-    entities_ = read_indexer_entities(entities, communities, community_level)
-    covariates_ = read_indexer_covariates(covariates) if covariates is not None else []
-    prompt = load_search_prompt(config.root_dir, config.local_search.prompt)
-    search_engine = get_local_search_engine(
+    full_response = ""
+    context_data = {}
+    get_context_data = True
+    # NOTE: when streaming, the first chunk of returned data is the complete context data.
+    # All subsequent chunks are the query response.
+    async for chunk in local_search_streaming(
         config=config,
-        reports=read_indexer_reports(community_reports, communities, community_level),
-        text_units=read_indexer_text_units(text_units),
-        entities=entities_,
-        relationships=read_indexer_relationships(relationships),
-        covariates={"claims": covariates_},
-        description_embedding_store=description_embedding_store,  # type: ignore
+        entities=entities,
+        communities=communities,
+        community_reports=community_reports,
+        text_units=text_units,
+        relationships=relationships,
+        covariates=covariates,
+        community_level=community_level,
         response_type=response_type,
-        system_prompt=prompt,
-    )
-
-    result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
-    context_data = reformat_context_data(result.context_data)  # type: ignore
-    return response, context_data
+        query=query,
+    ):
+        if get_context_data:
+            context_data = chunk
+            get_context_data = False
+        else:
+            full_response += chunk
+    return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -471,11 +454,11 @@ async def local_search_streaming(
         response_type=response_type,
         system_prompt=prompt,
     )
-    search_result = search_engine.astream_search(query=query)
+    search_result = search_engine.stream_search(query=query)
 
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
@@ -535,6 +518,7 @@ async def multi_index_local_search(
 
     links = {
         "community_reports": {},
+        "communities": {},
         "entities": {},
         "text_units": {},
         "relationships": {},
@@ -542,6 +526,7 @@ async def multi_index_local_search(
     }
     max_vals = {
         "community_reports": -1,
+        "communities": -1,
         "entities": -1,
         "text_units": 0,
         "relationships": -1,
@@ -565,6 +550,10 @@ async def multi_index_local_search(
             }
         communities_df["community"] += max_vals["communities"] + 1
         communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
         max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
@@ -741,47 +730,28 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
-
-    description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=entity_description_embedding,
-    )
-
-    full_content_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=community_full_content_embedding,
-    )
-
-    entities_ = read_indexer_entities(entities, communities, community_level)
-    reports = read_indexer_reports(community_reports, communities, community_level)
-    read_indexer_report_embeddings(reports, full_content_embedding_store)
-    prompt = load_search_prompt(config.root_dir, config.drift_search.prompt)
-    reduce_prompt = load_search_prompt(
-        config.root_dir, config.drift_search.reduce_prompt
-    )
-    search_engine = get_drift_search_engine(
-        config=config,
-        reports=reports,
-        text_units=read_indexer_text_units(text_units),
-        entities=entities_,
-        relationships=read_indexer_relationships(relationships),
-        description_embedding_store=description_embedding_store,  # type: ignore
-        local_system_prompt=prompt,
-        reduce_system_prompt=reduce_prompt,
-        response_type=response_type,
-    )
-
-    result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
+    full_response = ""
     context_data = {}
-    for key in result.context_data:
-        context_data[key] = reformat_context_data(result.context_data[key])  # type: ignore
-
-    return response, context_data
+    get_context_data = True
+    # NOTE: when streaming, the first chunk of returned data is the complete context data.
+    # All subsequent chunks are the query response.
+    async for chunk in drift_search_streaming(
+        config=config,
+        entities=entities,
+        communities=communities,
+        community_reports=community_reports,
+        text_units=text_units,
+        relationships=relationships,
+        community_level=community_level,
+        response_type=response_type,
+        query=query,
+    ):
+        if get_context_data:
+            context_data = chunk
+            get_context_data = False
+        else:
+            full_response += chunk
+    return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -850,12 +820,11 @@ async def drift_search_streaming(
         reduce_system_prompt=reduce_prompt,
         response_type=response_type,
     )
+    search_result = search_engine.stream_search(query=query)
 
-    search_result = search_engine.astream_search(query=query)
-
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:
@@ -913,12 +882,14 @@ async def multi_index_drift_search(
 
     links = {
         "community_reports": {},
+        "communities": {},
         "entities": {},
         "text_units": {},
         "relationships": {},
     }
     max_vals = {
         "community_reports": -1,
+        "communities": -1,
         "entities": -1,
         "text_units": 0,
         "relationships": -1,
@@ -941,6 +912,10 @@ async def multi_index_drift_search(
             }
         communities_df["community"] += max_vals["communities"] + 1
         communities_df["human_readable_id"] += max_vals["communities"] + 1
+        # concat the index name to the entity_ids, since this is used for joining later
+        communities_df["entity_ids"] = communities_df["entity_ids"].apply(
+            lambda x, index_name=index_name: [i + f"-{index_name}" for i in x]
+        )
         max_vals["communities"] = int(communities_df["community"].max())
         communities_dfs.append(communities_df)
 
@@ -1089,29 +1064,22 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
-    vector_store_args = {}
-    for index, store in config.vector_store.items():
-        vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
-
-    description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
-        embedding_name=text_unit_text_embedding,
-    )
-
-    prompt = load_search_prompt(config.root_dir, config.basic_search.prompt)
-
-    search_engine = get_basic_search_engine(
+    full_response = ""
+    context_data = {}
+    get_context_data = True
+    # NOTE: when streaming, the first chunk of returned data is the complete context data.
+    # All subsequent chunks are the query response.
+    async for chunk in basic_search_streaming(
         config=config,
-        text_units=read_indexer_text_units(text_units),
-        text_unit_embeddings=description_embedding_store,
-        system_prompt=prompt,
-    )
-
-    result: SearchResult = await search_engine.asearch(query=query)
-    response = result.response
-    context_data = reformat_context_data(result.context_data)  # type: ignore
-    return response, context_data
+        text_units=text_units,
+        query=query,
+    ):
+        if get_context_data:
+            context_data = chunk
+            get_context_data = False
+        else:
+            full_response += chunk
+    return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -1139,8 +1107,6 @@ async def basic_search_streaming(
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
-    else:
-        vector_store_args = None
     logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
 
     description_embedding_store = get_embedding_store(
@@ -1156,12 +1122,11 @@ async def basic_search_streaming(
         text_unit_embeddings=description_embedding_store,
         system_prompt=prompt,
     )
+    search_result = search_engine.stream_search(query=query)
 
-    search_result = search_engine.astream_search(query=query)
-
-    # when streaming results, a context data object is returned as the first result
+    # NOTE: when streaming results, a context data object is returned as the first result
     # and the query response in subsequent tokens
-    context_data = None
+    context_data = {}
     get_context_data = True
     async for stream_chunk in search_result:
         if get_context_data:

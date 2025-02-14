@@ -5,7 +5,11 @@ from unittest.mock import Mock, patch
 
 from graphrag.config.models.chunking_config import ChunkingConfig
 from graphrag.index.operations.chunk_text.bootstrap import bootstrap
-from graphrag.index.operations.chunk_text.strategies import run_sentences, run_tokens
+from graphrag.index.operations.chunk_text.strategies import (
+    get_encoding_fn,
+    run_sentences,
+    run_tokens,
+)
 from graphrag.index.operations.chunk_text.typing import TextChunk
 
 
@@ -84,3 +88,40 @@ class TestRunTokens:
         # Verify non-string input is handled
         assert len(chunks) > 0
         assert "123" in chunks[0].text_chunk
+
+
+@patch("tiktoken.get_encoding")
+def test_get_encoding_fn_encode(mock_get_encoding):
+    # Create a mock encoding object with encode and decode methods
+    mock_encoding = Mock()
+    mock_encoding.encode = Mock(return_value=[1, 2, 3])
+    mock_encoding.decode = Mock(return_value="decoded text")
+
+    # Configure the mock_get_encoding to return the mock encoding object
+    mock_get_encoding.return_value = mock_encoding
+
+    # Call the function to get encode and decode functions
+    encode, _ = get_encoding_fn("mock_encoding")
+
+    # Test the encode function
+    encoded_text = encode("test text")
+    assert encoded_text == [1, 2, 3]
+    mock_encoding.encode.assert_called_once_with("test text")
+
+
+@patch("tiktoken.get_encoding")
+def test_get_encoding_fn_decode(mock_get_encoding):
+    # Create a mock encoding object with encode and decode methods
+    mock_encoding = Mock()
+    mock_encoding.encode = Mock(return_value=[1, 2, 3])
+    mock_encoding.decode = Mock(return_value="decoded text")
+
+    # Configure the mock_get_encoding to return the mock encoding object
+    mock_get_encoding.return_value = mock_encoding
+
+    # Call the function to get encode and decode functions
+    _, decode = get_encoding_fn("mock_encoding")
+
+    decoded_text = decode([1, 2, 3])
+    assert decoded_text == "decoded text"
+    mock_encoding.decode.assert_called_once_with([1, 2, 3])

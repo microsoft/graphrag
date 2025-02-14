@@ -13,9 +13,9 @@ def finalize_community_reports(
     communities: pd.DataFrame,
 ) -> pd.DataFrame:
     """All the steps to transform final community reports."""
-    # Merge with communities to add size and period
+    # Merge with communities to add shared fields
     community_reports = reports.merge(
-        communities.loc[:, ["community", "parent", "size", "period"]],
+        communities.loc[:, ["community", "parent", "children", "size", "period"]],
         on="community",
         how="left",
         copy=False,
@@ -31,8 +31,9 @@ def finalize_community_reports(
             "id",
             "human_readable_id",
             "community",
-            "parent",
             "level",
+            "parent",
+            "children",
             "title",
             "summary",
             "full_content",

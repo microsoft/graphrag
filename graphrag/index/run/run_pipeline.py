@@ -5,6 +5,7 @@
 
 import json
 import logging
+import re
 import time
 import traceback
 from collections.abc import AsyncIterable
@@ -31,7 +32,7 @@ from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.logger.progress import Progress
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
-from graphrag.utils.storage import write_table_to_storage
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
 
@@ -66,45 +67,49 @@ async def run_pipeline(
     if is_update_run:
         progress_logger.info("Running incremental indexing.")
 
-        update_storage_config = config.update_index_output.model_dump()  # type: ignore
-        update_index_storage = StorageFactory().create_storage(
-            storage_type=update_storage_config["type"],  # type: ignore
-            kwargs=update_storage_config,
-        )
-
         delta_dataset = await get_delta_docs(dataset, storage)
 
-        # Fail on empty delta dataset
+        # warn on empty delta dataset
         if delta_dataset.new_inputs.empty:
-            error_msg = "Incremental Indexing Error: No new documents to process."
-            raise ValueError(error_msg)
+            warning_msg = "Incremental indexing found no new documents, exiting."
+            progress_logger.warning(warning_msg)
+        else:
+            update_storage_config = config.update_index_output.model_dump()  # type: ignore
+            update_storage = StorageFactory().create_storage(
+                storage_type=update_storage_config["type"],  # type: ignore
+                kwargs=update_storage_config,
+            )
+            # we use this to store the new subset index, and will merge its content with the previous index
+            timestamped_storage = update_storage.child(time.strftime("%Y%m%d-%H%M%S"))
+            delta_storage = timestamped_storage.child("delta")
+            # copy the previous output to a backup folder, so we can replace it with the update
+            # we'll read from this later when we merge the old and new indexes
+            previous_storage = timestamped_storage.child("previous")
+            await _copy_previous_output(storage, previous_storage)
 
-        delta_storage = update_index_storage.child("delta")
+            # Run the pipeline on the new documents
+            async for table in _run_pipeline(
+                pipeline=pipeline,
+                config=config,
+                dataset=delta_dataset.new_inputs,
+                cache=cache,
+                storage=delta_storage,
+                callbacks=callback_chain,
+                logger=progress_logger,
+            ):
+                yield table
 
-        # Run the pipeline on the new documents
-        tables_dict = {}
-        async for table in _run_pipeline(
-            pipeline=pipeline,
-            config=config,
-            dataset=delta_dataset.new_inputs,
-            cache=cache,
-            storage=delta_storage,
-            callbacks=callback_chain,
-            logger=progress_logger,
-        ):
-            tables_dict[table.workflow] = table.result
+            progress_logger.success("Finished running workflows on new documents.")
 
-        progress_logger.success("Finished running workflows on new documents.")
-
-        await update_dataframe_outputs(
-            dataframe_dict=tables_dict,
-            storage=storage,
-            update_storage=update_index_storage,
-            config=config,
-            cache=cache,
-            callbacks=NoopWorkflowCallbacks(),
-            progress_logger=progress_logger,
-        )
+            await update_dataframe_outputs(
+                previous_storage=previous_storage,
+                delta_storage=delta_storage,
+                output_storage=storage,
+                config=config,
+                cache=cache,
+                callbacks=NoopWorkflowCallbacks(),
+                progress_logger=progress_logger,
+            )
 
     else:
         progress_logger.info("Running standard indexing.")
@@ -138,23 +143,26 @@ async def _run_pipeline(
     context.stats.num_documents = len(dataset)
     last_workflow = "starting documents"
 
+    conf = config.model_copy()
     try:
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "documents", context.storage)
 
-        for name, fn in pipeline:
+        for name, workflow_function in pipeline:
             last_workflow = name
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
             work_time = time.time()
-            result = await fn(
-                config,
+            result = await workflow_function(
+                conf,
                 context,
                 callbacks,
             )
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
-            yield PipelineRunResult(name, result, None)
+            if result.config:
+                conf = result.config
+            yield PipelineRunResult(name, result.result, conf, None)
 
             context.stats.workflows[name] = {"overall": time.time() - work_time}
 
@@ -164,7 +172,7 @@ async def _run_pipeline(
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         callbacks.error("Error running pipeline!", e, traceback.format_exc())
-        yield PipelineRunResult(last_workflow, None, [e])
+        yield PipelineRunResult(last_workflow, None, conf, [e])
 
 
 async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None:
@@ -172,3 +180,13 @@ async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None
     await storage.set(
         "stats.json", json.dumps(asdict(stats), indent=4, ensure_ascii=False)
     )
+
+
+async def _copy_previous_output(
+    storage: PipelineStorage,
+    copy_storage: PipelineStorage,
+):
+    for file in storage.find(re.compile(r"\.parquet$")):
+        base_name = file[0].replace(".parquet", "")
+        table = await load_table_from_storage(base_name, storage)
+        await write_table_to_storage(table, base_name, copy_storage)

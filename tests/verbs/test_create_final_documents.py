@@ -13,6 +13,7 @@ from .util import (
     compare_outputs,
     create_test_context,
     load_test_table,
+    update_document_metadata,
 )
 
 
@@ -36,15 +37,18 @@ async def test_create_final_documents():
     compare_outputs(actual, expected)
 
 
-async def test_create_final_documents_with_attribute_columns():
-    expected = load_test_table("documents")
-
+async def test_create_final_documents_with_metadata_column():
     context = await create_test_context(
         storage=["text_units"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     config.input.metadata = ["title"]
+
+    # simulate the metadata construction during initial input loading
+    await update_document_metadata(config.input.metadata, context)
+
+    expected = await load_table_from_storage("documents", context.storage)
 
     await run_workflow(
         config,
@@ -54,12 +58,12 @@ async def test_create_final_documents_with_attribute_columns():
 
     actual = await load_table_from_storage("documents", context.storage)
 
-    # we should have dropped "title" and added "attributes"
-    # our test dataframe does not have attributes, so we'll assert without it
+    # our test dataframe does not have metadata, so we'll assert without it
     # and separately confirm it is in the output
     compare_outputs(
-        actual, expected, columns=["id", "human_readable_id", "text", "text_unit_ids"]
+        actual, expected, columns=["id", "human_readable_id", "text", "metadata"]
     )
-    assert len(actual.columns) == 5
-    assert "title" not in actual.columns
+    assert len(actual.columns) == 7
+    assert "title" in actual.columns
+    assert "text_unit_ids" in actual.columns
     assert "metadata" in actual.columns

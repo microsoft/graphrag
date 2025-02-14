@@ -14,8 +14,13 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
 
-    prompt: str | None = Field(
-        description="The community report extraction prompt to use.", default=None
+    graph_prompt: str | None = Field(
+        description="The community report extraction prompt to use for graph-based summarization.",
+        default=None,
+    )
+    text_prompt: str | None = Field(
+        description="The community report extraction prompt to use for text-based summarization.",
+        default=None,
     )
     max_length: int = Field(
         description="The community report maximum length in tokens.",
@@ -44,12 +49,16 @@ class CommunityReportsConfig(BaseModel):
         return self.strategy or {
             "type": CreateCommunityReportsStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "stagger": model_config.parallelization_stagger,
-            "num_threads": model_config.parallelization_num_threads,
-            "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
+            "num_threads": model_config.concurrent_requests,
+            "graph_prompt": (Path(root_dir) / self.graph_prompt).read_text(
                 encoding="utf-8"
             )
-            if self.prompt
+            if self.graph_prompt
+            else None,
+            "text_prompt": (Path(root_dir) / self.text_prompt).read_text(
+                encoding="utf-8"
+            )
+            if self.text_prompt
             else None,
             "max_report_length": self.max_length,
             "max_input_length": self.max_input_length,
