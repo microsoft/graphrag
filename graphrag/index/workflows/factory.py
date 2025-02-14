@@ -48,7 +48,6 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph",
-                "prune_graph",
                 "finalize_graph",
                 *(["extract_covariates"] if config.extract_claims.enabled else []),
                 "create_communities",
