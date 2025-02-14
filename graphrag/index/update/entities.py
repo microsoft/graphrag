@@ -158,7 +158,7 @@ async def _run_entity_summarization(
         for start in range(0, len(df), batch_size):
             end = start + batch_size
             batch = df.iloc[start:end]
-            tasks = [process_row(row) for row in entities_df.itertuples(index=False, name="Entity")]
+            tasks = [process_row(row) for row in batch.itertuples(index=False, name="Entity")]
             batch_results = await asyncio.gather(*tasks)
             results.extend(batch_results)
             batch_num += 1
