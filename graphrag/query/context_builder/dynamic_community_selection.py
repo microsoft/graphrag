@@ -56,23 +56,7 @@ class DynamicCommunitySelection:
         self.llm_kwargs = llm_kwargs
 
         self.reports = {report.community_id: report for report in community_reports}
-        # mapping from community to sub communities
-        self.node2children = {
-            community.short_id: (
-                []
-                if community.sub_community_ids is None
-                else [str(x) for x in community.sub_community_ids]
-            )
-            for community in communities
-            if community.short_id is not None
-        }
-
-        # mapping from community to parent community
-        self.node2parent: dict[str, str] = {
-            sub_community: community
-            for community, sub_communities in self.node2children.items()
-            for sub_community in sub_communities
-        }
+        self.communities = {community.short_id: community for community in communities}
 
         # mapping from level to communities
         self.levels: dict[str, list[str]] = {}
@@ -140,18 +124,18 @@ class DynamicCommunitySelection:
                     relevant_communities.add(community)
                     # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
-                    if community in self.node2children:
-                        for sub_community in self.node2children[community]:
-                            if sub_community in self.reports:
-                                communities_to_rate.append(sub_community)
+                    if community in self.communities:
+                        for child in self.communities[community].children:
+                            if child in self.reports:
+                                communities_to_rate.append(child)
                             else:
                                 log.debug(
                                     "dynamic community selection: cannot find community %s in reports",
-                                    sub_community,
+                                    child,
                                 )
                     # remove parent node if the current node is deemed relevant
-                    if not self.keep_parent and community in self.node2parent:
-                        relevant_communities.discard(self.node2parent[community])
+                    if not self.keep_parent and community in self.communities:
+                        relevant_communities.discard(self.communities[community].parent)
             queue = communities_to_rate
             level += 1
             if (

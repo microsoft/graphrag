@@ -62,6 +62,7 @@ async def create_community_reports(
 
     community_reports = await summarize_communities(
         nodes,
+        communities,
         local_contexts,
         build_level_context,
         callbacks,

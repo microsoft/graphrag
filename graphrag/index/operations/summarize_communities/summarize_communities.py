@@ -20,7 +20,6 @@ from graphrag.index.operations.summarize_communities.typing import (
 )
 from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
-    restore_community_hierarchy,
 )
 from graphrag.index.run.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
@@ -30,6 +29,7 @@ log = logging.getLogger(__name__)
 
 async def summarize_communities(
     nodes: pd.DataFrame,
+    communities: pd.DataFrame,
     local_contexts,
     level_context_builder: Callable,
     callbacks: WorkflowCallbacks,
@@ -49,7 +49,12 @@ async def summarize_communities(
     if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
         strategy_config["llm"]["max_retries"] = len(nodes)
 
-    community_hierarchy = restore_community_hierarchy(nodes)
+    community_hierarchy = (
+        communities.explode("children")
+        .rename({"children": "sub_community"}, axis=1)
+        .loc[:, ["community", "level", "sub_community"]]
+    ).dropna()
+
     levels = get_levels(nodes)
 
     level_contexts = []

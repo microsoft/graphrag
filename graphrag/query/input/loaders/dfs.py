@@ -12,6 +12,7 @@ from graphrag.model.entity import Entity
 from graphrag.model.relationship import Relationship
 from graphrag.model.text_unit import TextUnit
 from graphrag.query.input.loaders.utils import (
+    to_list,
     to_optional_dict,
     to_optional_float,
     to_optional_int,
@@ -154,7 +155,8 @@ def read_communities(
     entities_col: str | None = "entity_ids",
     relationships_col: str | None = "relationship_ids",
     covariates_col: str | None = "covariate_ids",
-    sub_communities_col: str | None = "sub_community_ids",
+    parent_col: str | None = "parent",
+    children_col: str | None = "children",
     attributes_cols: list[str] | None = None,
 ) -> list[Community]:
     """Read communities from a dataframe using pre-converted records."""
@@ -172,7 +174,8 @@ def read_communities(
             covariate_ids=to_optional_dict(
                 row, covariates_col, key_type=str, value_type=str
             ),
-            sub_community_ids=to_optional_list(row, sub_communities_col),
+            parent=to_str(row, parent_col),
+            children=to_list(row, children_col),
             attributes=(
                 {col: row.get(col) for col in attributes_cols}
                 if attributes_cols

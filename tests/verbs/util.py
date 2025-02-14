@@ -7,7 +7,7 @@ from pandas.testing import assert_series_equal
 import graphrag.config.defaults as defs
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.run.utils import create_run_context
-from graphrag.utils.storage import write_table_to_storage
+from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 pd.set_option("display.max_columns", None)
 
@@ -43,7 +43,6 @@ async def create_test_context(storage: list[str] | None = None) -> PipelineRunCo
     if storage:
         for name in storage:
             table = load_test_table(name)
-            # normal storage interface insists on bytes
             await write_table_to_storage(table, name, context.storage)
 
     return context
@@ -83,3 +82,12 @@ def compare_outputs(
             print("Actual:")
             print(actual[column])
             raise
+
+
+async def update_document_metadata(metadata: list[str], context: PipelineRunContext):
+    """Takes the default documents and adds the configured metadata columns for later parsing by the text units and final documents workflows."""
+    documents = await load_table_from_storage("documents", context.storage)
+    documents["metadata"] = documents[metadata].apply(lambda row: row.to_dict(), axis=1)
+    await write_table_to_storage(
+        documents, "documents", context.storage
+    )  # write to the runtime context storage only
