@@ -1915,11 +1915,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># This is the directory that has your settings.yaml</span>
-<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory"</span>
+<span class="n">PROJECT_DIRECTORY</span> <span class="o">=</span> <span class="s2">"&lt;your project directory&gt;"</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2"># This is the directory that has your settings.yaml
-PROJECT_DIRECTORY = "<your directory"<="" div="" project="">
-</your></div>
+PROJECT_DIRECTORY = "<your directory="" project="">"</your></div>
+</div>
 </div>
 </div>
 </div>
@@ -2016,7 +2016,7 @@ File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_c
 <span class="ansi-green-intense-fg ansi-bold">     42</span> <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> file <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> _default_config_files:
 <span class="ansi-green-intense-fg ansi-bold">     43</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> (root <span style="color: rgb(98,98,98)">/</span> file)<span style="color: rgb(98,98,98)">.</span>is_file():
 
-<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory is not a directory</pre>
+<span class="ansi-red-fg">FileNotFoundError</span>: Invalid config path: /home/runner/work/graphrag/graphrag/docs/examples_notebooks/&lt;your project directory&gt; is not a directory</pre>
 </div>
 </div>
 </div>
@@ -2099,6 +2099,30 @@ File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_c
     <span class="n">final_nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"degree"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="p">)</span>
 <span class="n">final_entities</span> <span class="o">=</span> <span class="n">final_entities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">graph_props</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+<span class="c1"># we're also persistint the frequency column</span>
+<span class="n">final_entities</span><span class="p">[</span><span class="s2">"frequency"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_entities</span><span class="p">[</span><span class="s2">"text_unit_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+
+<span class="c1"># we added children to communities to eliminate query-time reconstruction</span>
+<span class="n">parent_grouped</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"parent"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">children</span><span class="o">=</span><span class="p">(</span><span class="s2">"community"</span><span class="p">,</span> <span class="s2">"unique"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">final_communities</span> <span class="o">=</span> <span class="n">final_communities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">parent_grouped</span><span class="p">,</span>
+    <span class="n">left_on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span>
+    <span class="n">right_on</span><span class="o">=</span><span class="s2">"parent"</span><span class="p">,</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># add children to the reports as well</span>
+<span class="n">final_community_reports</span> <span class="o">=</span> <span class="n">final_community_reports</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">parent_grouped</span><span class="p">,</span>
+    <span class="n">left_on</span><span class="o">=</span><span class="s2">"community"</span><span class="p">,</span>
+    <span class="n">right_on</span><span class="o">=</span><span class="s2">"parent"</span><span class="p">,</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># copy children into the reports as well</span>
 
 <span class="c1"># we renamed all the output files for better clarity now that we don't have workflow naming constraints from DataShaper</span>
 <span class="k">await</span> <span class="n">write_table_to_storage</span><span class="p">(</span><span class="n">final_documents</span><span class="p">,</span> <span class="s2">"documents"</span><span class="p">,</span> <span class="n">storage</span><span class="p">)</span>
@@ -2144,6 +2168,30 @@ graph_props = (
     final_nodes.loc[:, ["id", "degree", "x", "y"]].groupby("id").first().reset_index()
 )
 final_entities = final_entities.merge(graph_props, on="id", how="left")
+# we're also persistint the frequency column
+final_entities["frequency"] = final_entities["text_unit_ids"].count()
+
+
+# we added children to communities to eliminate query-time reconstruction
+parent_grouped = final_communities.groupby("parent").agg(
+    children=("community", "unique")
+)
+final_communities = final_communities.merge(
+    parent_grouped,
+    left_on="community",
+    right_on="parent",
+    how="left",
+)
+
+# add children to the reports as well
+final_community_reports = final_community_reports.merge(
+    parent_grouped,
+    left_on="community",
+    right_on="parent",
+    how="left",
+)
+
+# copy children into the reports as well
 
 # we renamed all the output files for better clarity now that we don't have workflow naming constraints from DataShaper
 await write_table_to_storage(final_documents, "documents", storage)
@@ -2194,7 +2242,7 @@ Cell <span class="ansi-green-fg">In[5], line 7</span>
 </div>
 </div> <!-- jp-Notebook -->
 </div> <!-- jupyter-wrapper -->
-</div>
+
         <style>
         ['pre { line-height: 125%; }\ntd.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }\nspan.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }\ntd.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }\nspan.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }\n.highlight-ipynb .hll { background-color: var(--jp-cell-editor-active-background) }\n.highlight-ipynb { background: var(--jp-cell-editor-background); color: var(--jp-mirror-editor-variable-color) }\n.highlight-ipynb .c { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment */\n.highlight-ipynb .err { color: var(--jp-mirror-editor-error-color) } /* Error */\n.highlight-ipynb .k { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword */\n.highlight-ipynb .o { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator */\n.highlight-ipynb .p { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation */\n.highlight-ipynb .ch { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Hashbang */\n.highlight-ipynb .cm { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Multiline */\n.highlight-ipynb .cp { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Preproc */\n.highlight-ipynb .cpf { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.PreprocFile */\n.highlight-ipynb .c1 { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Single */\n.highlight-ipynb .cs { color: var(--jp-mirror-editor-comment-color); font-style: italic } /* Comment.Special */\n.highlight-ipynb .kc { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Constant */\n.highlight-ipynb .kd { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Declaration */\n.highlight-ipynb .kn { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Namespace */\n.highlight-ipynb .kp { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Pseudo */\n.highlight-ipynb .kr { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Reserved */\n.highlight-ipynb .kt { color: var(--jp-mirror-editor-keyword-color); font-weight: bold } /* Keyword.Type */\n.highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */\n.highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */\n.highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */\n.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */\n.highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */\n.highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */\n.highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */\n.highlight-ipynb .mh { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Hex */\n.highlight-ipynb .mi { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer */\n.highlight-ipynb .mo { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Oct */\n.highlight-ipynb .sa { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Affix */\n.highlight-ipynb .sb { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Backtick */\n.highlight-ipynb .sc { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Char */\n.highlight-ipynb .dl { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Delimiter */\n.highlight-ipynb .sd { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Doc */\n.highlight-ipynb .s2 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Double */\n.highlight-ipynb .se { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Escape */\n.highlight-ipynb .sh { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Heredoc */\n.highlight-ipynb .si { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Interpol */\n.highlight-ipynb .sx { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Other */\n.highlight-ipynb .sr { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Regex */\n.highlight-ipynb .s1 { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Single */\n.highlight-ipynb .ss { color: var(--jp-mirror-editor-string-color) } /* Literal.String.Symbol */\n.highlight-ipynb .il { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Integer.Long */']
         </style>
