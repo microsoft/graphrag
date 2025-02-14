@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Separates graph pruning for differential usage."
+}
