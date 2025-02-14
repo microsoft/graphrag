@@ -261,6 +261,7 @@ class TestIndexer:
         input_file_type: str,
         workflow_config: dict[str, dict[str, Any]],
         query_config: list[dict[str, str]],
+        run_count: int = 1,
     ):
         if workflow_config.get("skip"):
             print(f"skipping smoke test {input_path})")
@@ -273,7 +274,11 @@ class TestIndexer:
             dispose = asyncio.run(prepare_azurite_data(input_path, azure))
 
         print("running indexer")
-        self.__run_indexer(root, input_file_type)
+        # run the indexer more than once if requested - subsequent runs should use the cache
+        # this verifies that cache behavior is stable
+        for i in range(run_count):
+            print(f"run {i + 1} of {run_count}")
+            self.__run_indexer(root, input_file_type)
         print("indexer complete")
 
         if dispose is not None:

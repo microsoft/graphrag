@@ -117,5 +117,6 @@
             "method": "basic"
         }
     ],
-    "slow": false
+    "slow": false,
+    "run_count": 2
 }
