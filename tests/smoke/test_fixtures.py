@@ -273,13 +273,13 @@ class TestIndexer:
         if azure is not None:
             dispose = asyncio.run(prepare_azurite_data(input_path, azure))
 
-        print("running indexer")
+        log.info("running indexer")
         # run the indexer more than once if requested - subsequent runs should use the cache
         # this verifies that cache behavior is stable
         for i in range(run_count):
-            print(f"run {i + 1} of {run_count}")
+            log.info(f"run {i + 1} of {run_count}")  # noqa: G004
             self.__run_indexer(root, input_file_type)
-        print("indexer complete")
+        log.info("indexer complete")
 
         if dispose is not None:
             dispose()
