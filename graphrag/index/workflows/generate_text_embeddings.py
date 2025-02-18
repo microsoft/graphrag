@@ -31,9 +31,6 @@ from graphrag.utils.storage import load_table_from_storage, write_table_to_stora
 log = logging.getLogger(__name__)
 
 
-workflow_name = "generate_text_embeddings"
-
-
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,

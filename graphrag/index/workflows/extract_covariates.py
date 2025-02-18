@@ -19,8 +19,6 @@ from graphrag.index.operations.extract_covariates.extract_covariates import (
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "extract_covariates"
-
 
 async def run_workflow(
     config: GraphRagConfig,

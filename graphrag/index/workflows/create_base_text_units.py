@@ -19,8 +19,6 @@ from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import Progress
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "create_base_text_units"
-
 
 async def run_workflow(
     config: GraphRagConfig,

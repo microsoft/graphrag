@@ -11,8 +11,6 @@ from graphrag.index.context import PipelineRunContext
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "create_final_documents"
-
 
 async def run_workflow(
     _config: GraphRagConfig,

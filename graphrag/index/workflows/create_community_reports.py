@@ -32,8 +32,6 @@ from graphrag.utils.storage import (
     write_table_to_storage,
 )
 
-workflow_name = "create_community_reports"
-
 
 async def run_workflow(
     config: GraphRagConfig,

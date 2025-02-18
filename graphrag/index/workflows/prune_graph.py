@@ -15,8 +15,6 @@ from graphrag.index.operations.prune_graph import prune_graph as prune_graph_ope
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "prune_graph"
-
 
 async def run_workflow(
     config: GraphRagConfig,

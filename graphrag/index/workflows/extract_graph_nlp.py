@@ -17,8 +17,6 @@ from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "extract_graph_nlp"
-
 
 async def run_workflow(
     config: GraphRagConfig,

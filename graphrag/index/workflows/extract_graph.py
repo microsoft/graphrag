@@ -21,8 +21,6 @@ from graphrag.index.operations.summarize_descriptions import (
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
-workflow_name = "extract_graph"
-
 
 async def run_workflow(
     config: GraphRagConfig,
