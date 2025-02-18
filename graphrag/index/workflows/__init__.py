@@ -4,7 +4,7 @@
 
 """A package containing all built-in workflow definitions."""
 
-from graphrag.index.typing import WorkflowFunction
+from graphrag.index.workflows.factory import PipelineFactory
 
 from .create_base_text_units import (
     run_workflow as run_create_base_text_units,
@@ -60,17 +60,27 @@ from .extract_graph_nlp import (
 from .extract_graph_nlp import (
     workflow_name as extract_graph_nlp,
 )
+from .finalize_graph import (
+    run_workflow as run_finalize_graph,
+)
+from .finalize_graph import (
+    workflow_name as finalize_graph,
+)
 from .generate_text_embeddings import (
     run_workflow as run_generate_text_embeddings,
 )
 from .generate_text_embeddings import (
     workflow_name as generate_text_embeddings,
 )
+from .prune_graph import (
+    run_workflow as run_prune_graph,
+)
+from .prune_graph import (
+    workflow_name as prune_graph,
+)
 
-all_workflows: dict[
-    str,
-    WorkflowFunction,
-] = {
+# register all of our built-in workflows at once
+PipelineFactory.register_all({
     create_base_text_units: run_create_base_text_units,
     create_communities: run_create_communities,
     create_community_reports_text: run_create_community_reports_text,
@@ -80,6 +90,7 @@ all_workflows: dict[
     create_final_text_units: run_create_final_text_units,
     extract_graph_nlp: run_extract_graph_nlp,
     extract_graph: run_extract_graph,
+    finalize_graph: run_finalize_graph,
     generate_text_embeddings: run_generate_text_embeddings,
-}
-"""This is a dictionary of all build-in workflows. To be replace with an injectable provider!"""
+    prune_graph: run_prune_graph,
+})

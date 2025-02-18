@@ -3,6 +3,7 @@
 
 """A module containing 'CommunityReportsResult' and 'CommunityReportsExtractor' models."""
 
+import json
 import logging
 import traceback
 from dataclasses import dataclass
@@ -79,12 +80,17 @@ class CommunityReportsExtractor:
             )
             response = await self._llm(
                 prompt,
-                json=True,
+                json=True,  # Leaving this as True to avoid creating new cache entries
                 name="create_community_report",
-                json_model=CommunityReportResponse,
+                json_model=CommunityReportResponse,  # A model is required when using json mode
                 model_parameters={"max_tokens": self._max_report_length},
             )
-            output = response.parsed_json
+
+            # TODO: Json mode is currently broken on fnllm: https://github.com/microsoft/essex-toolkit/issues/364
+            # once fixed, just assign to output the response.parsed_json
+            output = CommunityReportResponse.model_validate(
+                json.loads(response.output.content)
+            )
         except Exception as e:
             log.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)

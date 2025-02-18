@@ -3,14 +3,13 @@
 
 """A module containing run_workflow method definition."""
 
-import pandas as pd
-
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.flows.create_community_reports import (
     create_community_reports,
 )
+from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
@@ -24,7 +23,7 @@ async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
     callbacks: WorkflowCallbacks,
-) -> pd.DataFrame | None:
+) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     edges = await load_table_from_storage("relationships", context.storage)
     entities = await load_table_from_storage("entities", context.storage)
@@ -58,4 +57,4 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.storage)
 
-    return output
+    return WorkflowFunctionOutput(result=output, config=None)

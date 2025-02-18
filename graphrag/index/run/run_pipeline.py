@@ -143,23 +143,26 @@ async def _run_pipeline(
     context.stats.num_documents = len(dataset)
     last_workflow = "starting documents"
 
+    conf = config.model_copy()
     try:
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "documents", context.storage)
 
-        for name, fn in pipeline:
+        for name, workflow_function in pipeline:
             last_workflow = name
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
             work_time = time.time()
-            result = await fn(
-                config,
+            result = await workflow_function(
+                conf,
                 context,
                 callbacks,
             )
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
-            yield PipelineRunResult(name, result, None)
+            if result.config:
+                conf = result.config
+            yield PipelineRunResult(name, result.result, conf, None)
 
             context.stats.workflows[name] = {"overall": time.time() - work_time}
 
@@ -169,7 +172,7 @@ async def _run_pipeline(
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         callbacks.error("Error running pipeline!", e, traceback.format_exc())
-        yield PipelineRunResult(last_workflow, None, [e])
+        yield PipelineRunResult(last_workflow, None, conf, [e])
 
 
 async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None:
