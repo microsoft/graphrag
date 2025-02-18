@@ -2457,16 +2457,16 @@ await generate_text_embeddings(
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[7], line 10</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[7], line 4</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">callbacks</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">noop_workflow_callbacks</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> NoopWorkflowCallbacks
+<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">config</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> get_embedded_fields, get_embedding_settings
+<span class="ansi-green-fg">----&gt; 4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">index</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">flows</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">generate_text_embeddings</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> generate_text_embeddings
 <span class="ansi-green-intense-fg ansi-bold">      6</span> <span style="color: rgb(95,135,135)"># We only need to re-run the embeddings workflow, to ensure that embeddings for all required search fields are in place</span>
 <span class="ansi-green-intense-fg ansi-bold">      7</span> <span style="color: rgb(95,135,135)"># We'll construct the context and run this function flow directly to avoid everything else</span>
-<span class="ansi-green-fg">---&gt; 10</span> embedded_fields <span style="color: rgb(98,98,98)">=</span> get_embedded_fields(<span class="ansi-yellow-bg">config</span>)
-<span class="ansi-green-intense-fg ansi-bold">     11</span> text_embed <span style="color: rgb(98,98,98)">=</span> get_embedding_settings(config)
-<span class="ansi-green-intense-fg ansi-bold">     12</span> callbacks <span style="color: rgb(98,98,98)">=</span> NoopWorkflowCallbacks()
+<span class="ansi-green-intense-fg ansi-bold">     10</span> embedded_fields <span style="color: rgb(98,98,98)">=</span> get_embedded_fields(config)
 
-<span class="ansi-red-fg">NameError</span>: name 'config' is not defined</pre>
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.index.flows'</pre>
 </div>
 </div>
 </div>
