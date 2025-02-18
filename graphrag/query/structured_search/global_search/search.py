@@ -14,7 +14,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -69,7 +69,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         allow_general_knowledge: bool = False,
         general_knowledge_inclusion_prompt: str | None = None,
         json_mode: bool = True,
-        callbacks: list[GlobalSearchLLMCallback] | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
         max_data_tokens: int = 8000,
         map_llm_params: dict[str, Any] = DEFAULT_MAP_LLM_PARAMS,
         reduce_llm_params: dict[str, Any] = DEFAULT_REDUCE_LLM_PARAMS,
@@ -125,9 +125,8 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)  # type: ignore
+                callback.on_context(context_result.context_records)
 
-        # send context records first before sending the reduce response
-        yield context_result.context_records
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
@@ -174,6 +173,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_map_response_end(map_responses)
+                callback.on_context(context_result.context_records)
         llm_calls["map"] = sum(response.llm_calls for response in map_responses)
         prompt_tokens["map"] = sum(response.prompt_tokens for response in map_responses)
         output_tokens["map"] = sum(response.output_tokens for response in map_responses)

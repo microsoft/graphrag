@@ -5,6 +5,7 @@
 
 import tiktoken
 
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.model.community import Community
 from graphrag.model.community_report import CommunityReport
@@ -101,6 +102,7 @@ def get_global_search_engine(
     map_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
     general_knowledge_inclusion_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     # TODO: Global search should select model based on config??
@@ -169,6 +171,7 @@ def get_global_search_engine(
         },
         concurrent_coroutines=gs_config.concurrency,
         response_type=response_type,
+        callbacks=callbacks,
     )
 
 
