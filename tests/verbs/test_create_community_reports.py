@@ -55,7 +55,7 @@ async def test_create_community_reports():
     llm_settings = config.get_language_model_config(
         config.community_reports.model_id
     ).model_dump()
-    llm_settings["type"] = LLMType.StaticResponse
+    llm_settings["type"] = LLMType.Mock
     llm_settings["responses"] = MOCK_RESPONSES
     llm_settings["parse_json"] = True
     config.community_reports.strategy = {

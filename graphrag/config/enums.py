@@ -110,7 +110,7 @@ class LLMType(str, Enum):
     AzureOpenAIChat = "azure_openai_chat"
 
     # Debug
-    StaticResponse = "static_response"
+    Mock = "mock"
 
     def __repr__(self):
         """Get a string representation."""

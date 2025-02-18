@@ -44,7 +44,7 @@ async def test_extract_graph():
     extract_claims_llm_settings = config.get_language_model_config(
         config.extract_graph.model_id
     ).model_dump()
-    extract_claims_llm_settings["type"] = LLMType.StaticResponse
+    extract_claims_llm_settings["type"] = LLMType.Mock
     extract_claims_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
     config.extract_graph.strategy = {
         "type": "graph_intelligence",
@@ -53,7 +53,7 @@ async def test_extract_graph():
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     ).model_dump()
-    summarize_llm_settings["type"] = LLMType.StaticResponse
+    summarize_llm_settings["type"] = LLMType.Mock
     summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
     config.summarize_descriptions.strategy = {
         "type": "graph_intelligence",

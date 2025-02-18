@@ -290,7 +290,7 @@ loaders = {
         "load": _load_azure_openai_embeddings_llm,
         "chat": False,
     },
-    LLMType.StaticResponse: {
+    LLMType.Mock: {
         "load": _load_static_response,
         "chat": False,
     },
