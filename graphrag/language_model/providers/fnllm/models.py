@@ -211,19 +211,3 @@ class AzureOpenAIEmbeddingFNLLM:
             raise ValueError(msg)
         embeddings: list[list[float]] = response.output.embeddings
         return embeddings
-
-
-# --- Register implementations ---
-ModelFactory.register_chat(
-    ModelType.AzureOpenAIChat, lambda **kwargs: AzureOpenAIChatFNLLM(**kwargs)
-)
-ModelFactory.register_chat(
-    ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
-)
-
-ModelFactory.register_embedding(
-    ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
-)
-ModelFactory.register_embedding(
-    ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
-)
