@@ -132,7 +132,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
                 output_tokens=0,
             )
 
-    async def stream_search(
+    def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -157,9 +157,8 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         if self.callbacks:
             for callback in self.callbacks:
                 callback.on_context(context_result.context_records)
-        async for response in self.llm.astream_generate(  # type: ignore
+        return self.llm.astream_generate(  # type: ignore
             messages=search_messages,
             callbacks=self.callbacks,  # type: ignore
             **self.llm_params,
-        ):
-            yield response
+        )

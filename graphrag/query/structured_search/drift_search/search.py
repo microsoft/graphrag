@@ -381,7 +381,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
         return reduced_response
 
-    async def _reduce_response_streaming(
+    def _reduce_response_streaming(
         self,
         responses: str | dict[str, Any],
         query: str,
@@ -423,9 +423,8 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        async for resp in self.llm.astream_generate(
+        return self.llm.astream_generate(
             search_messages,
             callbacks=self.callbacks,  # type: ignore
             **llm_kwargs,
-        ):
-            yield resp
+        )

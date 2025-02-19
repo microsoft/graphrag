@@ -121,7 +121,7 @@ async def global_search(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def global_search_streaming(
+def global_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -185,10 +185,7 @@ async def global_search_streaming(
         general_knowledge_inclusion_prompt=knowledge_prompt,
         callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    async for stream_chunk in search_result:
-        yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -400,7 +397,7 @@ async def local_search(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def local_search_streaming(
+def local_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -461,10 +458,7 @@ async def local_search_streaming(
         system_prompt=prompt,
         callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    async for stream_chunk in search_result:
-        yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -760,7 +754,7 @@ async def drift_search(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def drift_search_streaming(
+def drift_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -827,10 +821,7 @@ async def drift_search_streaming(
         response_type=response_type,
         callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    async for stream_chunk in search_result:
-        yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -1088,7 +1079,7 @@ async def basic_search(
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def basic_search_streaming(
+def basic_search_streaming(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
@@ -1129,10 +1120,7 @@ async def basic_search_streaming(
         system_prompt=prompt,
         callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    async for stream_chunk in search_result:
-        yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
