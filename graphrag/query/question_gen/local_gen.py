@@ -45,7 +45,7 @@ class LocalQuestionGen(BaseQuestionGen):
             context_builder_params=context_builder_params,
         )
         self.system_prompt = system_prompt
-        self.callbacks = callbacks
+        self.callbacks = callbacks or []
 
     async def agenerate(
         self,
