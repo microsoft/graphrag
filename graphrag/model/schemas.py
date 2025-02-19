@@ -9,7 +9,7 @@ DESCRIPTION = "description"
 
 # POST-PREP NODE TABLE SCHEMA
 NODE_DEGREE = "degree"
-NODE_FREQUENCY = "freq"
+NODE_FREQUENCY = "frequency"
 NODE_DETAILS = "node_details"
 
 NODE_PARENT_COMMUNITY = "parent_community"

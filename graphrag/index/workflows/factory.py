@@ -3,19 +3,37 @@
 
 """Encapsulates pipeline construction and selection."""
 
+from typing import ClassVar
+
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.typing import Pipeline
-from graphrag.index.workflows import all_workflows
+from graphrag.index.typing import Pipeline, WorkflowFunction
 
 
-def create_pipeline(
-    config: GraphRagConfig, method: IndexingMethod = IndexingMethod.Standard
-) -> Pipeline:
-    """Create a pipeline generator."""
-    workflows = _get_workflows_list(config, method)
-    for name in workflows:
-        yield name, all_workflows[name]
+class PipelineFactory:
+    """A factory class for workflow pipelines."""
+
+    workflows: ClassVar[dict[str, WorkflowFunction]] = {}
+
+    @classmethod
+    def register(cls, name: str, workflow: WorkflowFunction):
+        """Register a custom workflow function."""
+        cls.workflows[name] = workflow
+
+    @classmethod
+    def register_all(cls, workflows: dict[str, WorkflowFunction]):
+        """Register a dict of custom workflow functions."""
+        for name, workflow in workflows.items():
+            cls.register(name, workflow)
+
+    @classmethod
+    def create_pipeline(
+        cls, config: GraphRagConfig, method: IndexingMethod = IndexingMethod.Standard
+    ) -> Pipeline:
+        """Create a pipeline generator."""
+        workflows = _get_workflows_list(config, method)
+        for name in workflows:
+            yield name, cls.workflows[name]
 
 
 def _get_workflows_list(
@@ -30,6 +48,7 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph",
+                "finalize_graph",
                 *(["extract_covariates"] if config.extract_claims.enabled else []),
                 "create_communities",
                 "create_final_text_units",
@@ -41,6 +60,8 @@ def _get_workflows_list(
                 "create_base_text_units",
                 "create_final_documents",
                 "extract_graph_nlp",
+                "prune_graph",
+                "finalize_graph",
                 "create_communities",
                 "create_final_text_units",
                 "create_community_reports_text",

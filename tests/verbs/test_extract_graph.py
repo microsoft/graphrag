@@ -12,7 +12,6 @@ from graphrag.utils.storage import load_table_from_storage
 from .util import (
     DEFAULT_MODEL_CONFIG,
     create_test_context,
-    load_test_table,
 )
 
 MOCK_LLM_ENTITY_RESPONSES = [
@@ -37,9 +36,6 @@ MOCK_LLM_SUMMARIZATION_RESPONSES = [
 
 
 async def test_extract_graph():
-    nodes_expected = load_test_table("entities")
-    edges_expected = load_test_table("relationships")
-
     context = await create_test_context(
         storage=["text_units"],
     )
@@ -73,13 +69,8 @@ async def test_extract_graph():
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
 
-    assert len(nodes_actual.columns) == len(nodes_expected.columns), (
-        "Nodes dataframe columns differ"
-    )
-
-    assert len(edges_actual.columns) == len(edges_expected.columns), (
-        "Edges dataframe columns differ"
-    )
+    assert len(nodes_actual.columns) == 5
+    assert len(edges_actual.columns) == 5
 
     # TODO: with the combined verb we can't force summarization
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized
