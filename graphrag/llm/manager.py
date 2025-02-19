@@ -9,9 +9,7 @@ It leverages the LLMFactory for instantiation.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from graphrag.llm.factory import LLMFactory
 
@@ -22,9 +20,9 @@ if TYPE_CHECKING:
 class LLMManager:
     """Singleton manager for LLM instances."""
 
-    _instance: LLMManager | None = None
+    _instance: ClassVar[LLMManager | None] = None
 
-    def __new__(cls: type[Self]) -> Self:
+    def __new__(cls) -> LLMManager:  # noqa: PYI034: False positive
         """Create a new instance of LLMManager if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)

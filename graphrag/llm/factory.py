@@ -77,7 +77,6 @@ LLMFactory.register_chat(
     LLMType.AzureOpenAIChat, lambda **kwargs: AzureOpenAIChatFNLLM(**kwargs)
 )
 LLMFactory.register_chat(LLMType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs))
-LLMFactory.register_chat(LLMType.MockChat, lambda **kwargs: MockChatLLM(**kwargs))
 
 LLMFactory.register_embedding(
     LLMType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
@@ -85,6 +84,4 @@ LLMFactory.register_embedding(
 LLMFactory.register_embedding(
     LLMType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
 )
-LLMFactory.register_embedding(
-    LLMType.MockEmbedding, lambda **kwargs: MockEmbeddingLLM(**kwargs)
-)
+

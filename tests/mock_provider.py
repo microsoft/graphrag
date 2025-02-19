@@ -19,6 +19,7 @@ class MockChatLLM:
         responses: list[str | BaseModel] | None,
         config: LanguageModelConfig | None,
         json: bool = False,
+        **kwargs: Any,
     ):
         self.responses = config.responses if config and config.responses else responses
         self.response_index = 0
