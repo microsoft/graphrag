@@ -14,7 +14,6 @@ from graphrag.llm.providers.fnllm.models import (
     OpenAIChatFNLLM,
     OpenAIEmbeddingFNLLM,
 )
-from graphrag.llm.providers.mock_provider import MockChatLLM, MockEmbeddingLLM
 
 
 class LLMFactory:
@@ -84,4 +83,3 @@ LLMFactory.register_embedding(
 LLMFactory.register_embedding(
     LLMType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
 )
-
