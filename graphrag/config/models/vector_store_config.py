@@ -19,7 +19,7 @@ class VectorStoreConfig(BaseModel):
 
     db_uri: str | None = Field(
         description="The database URI to use.",
-        default=vector_store_defaults.db_uri,
+        default=None,
     )
 
     def _validate_db_uri(self) -> None:
