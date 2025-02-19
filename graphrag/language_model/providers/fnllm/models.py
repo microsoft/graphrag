@@ -13,11 +13,9 @@ from fnllm.types import EmbeddingsLLM as FNLLMEmbeddingLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.enums import ModelType
 from graphrag.config.models.language_model_config import (
     LanguageModelConfig,
 )
-from graphrag.language_model.factory import ModelFactory
 from graphrag.language_model.providers.fnllm.events import FNLLMEvents
 from graphrag.language_model.providers.fnllm.utils import (
     _create_cache,

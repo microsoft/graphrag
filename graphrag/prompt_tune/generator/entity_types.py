@@ -46,7 +46,7 @@ async def generate_entity_types(
     history = [{"role": "system", "content": persona}]
 
     if json_mode:
-        response = await llm.chat(
+        response = await model.chat(
             entity_types_prompt, history=history, json_model=EntityTypesResponse
         )
         parsed_model = response.parsed_response
