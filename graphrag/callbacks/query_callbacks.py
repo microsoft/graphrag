@@ -21,7 +21,9 @@ class QueryCallbacks(BaseLLMCallback):
     def on_map_response_end(self, map_response_outputs: list[SearchResult]) -> None:
         """Handle the end of map operation."""
 
-    def on_reduce_response_start(self, reduce_response_context: str) -> None:
+    def on_reduce_response_start(
+        self, reduce_response_context: str | dict[str, Any]
+    ) -> None:
         """Handle the start of reduce operation."""
 
     def on_reduce_response_end(self, reduce_response_output: str) -> None:

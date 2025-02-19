@@ -187,6 +187,7 @@ def get_drift_search_engine(
     response_type: str,
     local_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -210,6 +211,7 @@ def get_drift_search_engine(
             response_type=response_type,
         ),
         token_encoder=token_encoder,
+        callbacks=callbacks,
     )
 
 

@@ -11,6 +11,7 @@ from typing import Any
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
@@ -36,6 +37,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         context_builder: DRIFTSearchContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         query_state: QueryState | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
     ):
         """
         Initialize the DRIFTSearch class.
@@ -57,6 +59,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             chat_llm=llm,
             token_encoder=token_encoder,
         )
+        self.callbacks = callbacks
         self.local_search = self.init_local_search()
 
     def init_local_search(self) -> LocalSearch:
@@ -94,6 +97,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             llm_params=llm_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
+            callbacks=self.callbacks,
         )
 
     def _process_primer_results(
@@ -255,6 +259,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = response_state
         if reduce:
             # Reduce response_state to a single comprehensive response
+            if self.callbacks:
+                for callback in self.callbacks:
+                    callback.on_reduce_response_start(response_state)
             reduced_response = await self._reduce_response(
                 responses=response_state,
                 query=query,
@@ -264,7 +271,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 max_tokens=self.context_builder.config.reduce_max_tokens,
                 temperature=self.context_builder.config.reduce_temperature,
             )
-
+            if self.callbacks:
+                for callback in self.callbacks:
+                    callback.on_reduce_response_end(reduced_response)
         return SearchResult(
             response=reduced_response,
             context_data=context_data,
@@ -295,13 +304,22 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         if isinstance(result.response, list):
             result.response = result.response[0]
 
+        if self.callbacks:
+            for callback in self.callbacks:
+                callback.on_reduce_response_start(result.response)
+
+        full_response = ""
         async for resp in self._reduce_response_streaming(
             responses=result.response,
             query=query,
             max_tokens=self.context_builder.config.reduce_max_tokens,
             temperature=self.context_builder.config.reduce_temperature,
         ):
+            full_response += resp
             yield resp
+        if self.callbacks:
+            for callback in self.callbacks:
+                callback.on_reduce_response_end(full_response)
 
     async def _reduce_response(
         self,
@@ -351,7 +369,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = self.llm.generate(
             messages=search_messages,
             streaming=False,
-            callbacks=None,
+            callbacks=self.callbacks,  # type: ignore
             **llm_kwargs,
         )
 
@@ -407,7 +425,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
         async for resp in self.llm.astream_generate(
             search_messages,
-            callbacks=None,
+            callbacks=self.callbacks,  # type: ignore
             **llm_kwargs,
         ):
             yield resp

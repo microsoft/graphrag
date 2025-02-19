@@ -345,8 +345,15 @@ def run_drift_search(
 
         async def run_streaming_search():
             full_response = ""
-            context_data = None
-            get_context_data = True
+            context_data = {}
+
+            def on_context(context: Any) -> None:
+                nonlocal context_data
+                context_data = context
+
+            callbacks = NoopQueryCallbacks()
+            callbacks.on_context = on_context
+
             async for stream_chunk in api.drift_search_streaming(
                 config=config,
                 entities=final_entities,
@@ -357,14 +364,11 @@ def run_drift_search(
                 community_level=community_level,
                 response_type=response_type,
                 query=query,
+                callbacks=[callbacks],
             ):
-                if get_context_data:
-                    context_data = stream_chunk
-                    get_context_data = False
-                else:
-                    full_response += stream_chunk
-                    print(stream_chunk, end="")  # noqa: T201
-                    sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += stream_chunk
+                print(stream_chunk, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
 
