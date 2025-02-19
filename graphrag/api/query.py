@@ -352,7 +352,6 @@ async def local_search(
 ]:
     """Perform a local search and return the context data and response.
 
-    Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
@@ -1046,6 +1045,7 @@ async def basic_search(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1066,21 +1066,25 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in basic_search_streaming(
         config=config,
         text_units=text_units,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
@@ -1089,6 +1093,7 @@ async def basic_search_streaming(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -1123,20 +1128,12 @@ async def basic_search_streaming(
         text_units=read_indexer_text_units(text_units),
         text_unit_embeddings=description_embedding_store,
         system_prompt=prompt,
+        callbacks=callbacks,
     )
     search_result = search_engine.stream_search(query=query)
 
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
     async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+        yield stream_chunk
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -1146,6 +1143,7 @@ async def multi_index_basic_search(
     index_names: list[str],
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1208,4 +1206,5 @@ async def multi_index_basic_search(
         config,
         text_units=text_units_combined,
         query=query,
+        callbacks=callbacks,
     )

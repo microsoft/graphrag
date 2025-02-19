@@ -218,6 +218,7 @@ def get_basic_search_engine(
     text_unit_embeddings: BaseVectorStore,
     config: GraphRagConfig,
     system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -251,4 +252,5 @@ def get_basic_search_engine(
             "embedding_vectorstore_key": "id",
             "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
+        callbacks=callbacks,
     )
