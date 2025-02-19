@@ -10,6 +10,7 @@ from typing import Any
 
 import tiktoken
 
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.prompts.query.local_search_system_prompt import (
     LOCAL_SEARCH_SYSTEM_PROMPT,
 )
@@ -17,7 +18,7 @@ from graphrag.query.context_builder.builders import LocalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
+from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
@@ -39,7 +40,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
         token_encoder: tiktoken.Encoding | None = None,
         system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
-        callbacks: list[BaseLLMCallback] | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
         llm_params: dict[str, Any] = DEFAULT_LLM_PARAMS,
         context_builder_params: dict | None = None,
     ):
@@ -96,12 +97,15 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             response = await self.llm.agenerate(
                 messages=search_messages,
                 streaming=True,
-                callbacks=self.callbacks,
+                callbacks=self.callbacks,  # type: ignore
                 **self.llm_params,
             )
             llm_calls["response"] = 1
             prompt_tokens["response"] = num_tokens(search_prompt, self.token_encoder)
             output_tokens["response"] = num_tokens(response, self.token_encoder)
+            if self.callbacks:
+                for callback in self.callbacks:
+                    callback.on_context(context_result.context_records)
 
             return SearchResult(
                 response=response,
@@ -150,11 +154,12 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        # send context records first before sending the reduce response
-        yield context_result.context_records
+        if self.callbacks:
+            for callback in self.callbacks:
+                callback.on_context(context_result.context_records)
         async for response in self.llm.astream_generate(  # type: ignore
             messages=search_messages,
-            callbacks=self.callbacks,
+            callbacks=self.callbacks,  # type: ignore
             **self.llm_params,
         ):
             yield response

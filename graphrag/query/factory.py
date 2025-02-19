@@ -44,6 +44,7 @@ def get_local_search_engine(
     response_type: str,
     description_embedding_store: BaseVectorStore,
     system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -89,6 +90,7 @@ def get_local_search_engine(
             "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
         response_type=response_type,
+        callbacks=callbacks,
     )
 
 

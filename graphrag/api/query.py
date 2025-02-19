@@ -345,6 +345,7 @@ async def local_search(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -371,11 +372,18 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in local_search_streaming(
         config=config,
         entities=entities,
@@ -387,12 +395,9 @@ async def local_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
@@ -408,6 +413,7 @@ async def local_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -455,20 +461,12 @@ async def local_search_streaming(
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
         system_prompt=prompt,
+        callbacks=callbacks,
     )
     search_result = search_engine.stream_search(query=query)
 
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
     async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+        yield stream_chunk
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -485,6 +483,7 @@ async def multi_index_local_search(
     response_type: str,
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -689,6 +688,7 @@ async def multi_index_local_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     )
 
     # Update the context data by linking index names and community ids
