@@ -11,7 +11,7 @@ from graphrag.index.typing import ErrorHandlerFn
 
 
 class FNLLMEvents(LLMEvents):
-    """LLM events handler that calls the error handler."""
+    """FNLLM events handler that calls the error handler."""
 
     def __init__(self, on_error: ErrorHandlerFn):
         self._on_error = on_error

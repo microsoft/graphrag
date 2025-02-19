@@ -15,8 +15,8 @@ from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.embed_text.strategies.typing import TextEmbeddingResult
 from graphrag.index.text_splitting.text_splitting import TokenTextSplitter
 from graphrag.index.utils.is_null import is_null
-from graphrag.llm.manager import LLMManager
-from graphrag.llm.protocol.base import EmbeddingLLM
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.logger.progress import ProgressTicker, progress_ticker
 
 log = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ async def run(
     llm_config = args["llm"]
     llm_config = LanguageModelConfig(**args["llm"])
     splitter = _get_splitter(llm_config, batch_max_tokens)
-    llm = LLMManager().get_or_create_embedding_llm(
+    model = ModelManager().get_or_create_embedding_model(
         name="text_embedding",
         model_type=llm_config.type,
         config=llm_config,
@@ -65,7 +65,7 @@ async def run(
     ticker = progress_ticker(callbacks.progress, len(text_batches))
 
     # Embed each chunk of snippets
-    embeddings = await _execute(llm, text_batches, ticker, semaphore)
+    embeddings = await _execute(model, text_batches, ticker, semaphore)
     embeddings = _reconstitute_embeddings(embeddings, input_sizes)
 
     return TextEmbeddingResult(embeddings=embeddings)
@@ -81,14 +81,14 @@ def _get_splitter(
 
 
 async def _execute(
-    llm: EmbeddingLLM,
+    model: EmbeddingModel,
     chunks: list[list[str]],
     tick: ProgressTicker,
     semaphore: asyncio.Semaphore,
 ) -> list[list[float]]:
     async def embed(chunk: list[str]):
         async with semaphore:
-            chunk_embeddings = await llm.embed(chunk)
+            chunk_embeddings = await model.embed(chunk)
             result = np.array(chunk_embeddings)
             tick(1)
         return result

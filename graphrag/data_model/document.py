@@ -6,7 +6,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from graphrag.model.named import Named
+from graphrag.data_model.named import Named
 
 
 @dataclass

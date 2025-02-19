@@ -10,8 +10,8 @@ from pydantic import BaseModel, Field
 T = TypeVar("T", bound=BaseModel, covariant=True)
 
 
-class LLMOutput(Protocol):
-    """Protocol for LLM response's output object."""
+class ModelOutput(Protocol):
+    """Protocol for Model response's output object."""
 
     @property
     def content(self) -> str:
@@ -19,11 +19,11 @@ class LLMOutput(Protocol):
         ...
 
 
-class LLMResponse(Protocol, Generic[T]):
+class ModelResponse(Protocol, Generic[T]):
     """Protocol for LLM response."""
 
     @property
-    def output(self) -> LLMOutput:
+    def output(self) -> ModelOutput:
         """Return the output of the response."""
         ...
 
@@ -38,24 +38,24 @@ class LLMResponse(Protocol, Generic[T]):
         ...
 
 
-class BaseLLMOutput(BaseModel):
+class BaseModelOutput(BaseModel):
     """Base class for LLM output."""
 
     content: str = Field(..., description="The textual content of the output.")
     """The textual content of the output."""
 
 
-class BaseLLMResponse(BaseModel, Generic[T]):
-    """Base class for LLM response."""
+class BaseModelResponse(BaseModel, Generic[T]):
+    """Base class for a Model response."""
 
-    output: BaseLLMOutput
+    output: BaseModelOutput
     """"""
     parsed_response: T | None = None
     """Parsed response."""
     history: list[Any] = Field(default_factory=list)
     """History of the response."""
     tool_calls: list = Field(default_factory=list)
-    """Tool calls required by the LLM. These will be instances of the LLM tools (with filled parameters)."""
+    """Tool calls required by the Model. These will be instances of the LLM tools (with filled parameters)."""
     metrics: Any | None = None
     """Request/response metrics."""
     cache_hit: bool | None = None

@@ -12,11 +12,11 @@ import pandas as pd
 import tiktoken
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
-from graphrag.model.text_unit import TextUnit
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
+from graphrag.data_model.text_unit import TextUnit
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_LOCAL_SYSTEM_PROMPT,
     DRIFT_REDUCE_PROMPT,

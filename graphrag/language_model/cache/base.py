@@ -6,7 +6,7 @@
 from typing import Any, Protocol
 
 
-class LLMCache(Protocol):
+class ModelCache(Protocol):
     """Base cache protocol."""
 
     async def has(self, key: str) -> bool:

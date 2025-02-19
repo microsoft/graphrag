@@ -14,11 +14,11 @@ from graphrag.config.models.language_model_config import (
     LanguageModelConfig,
 )
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.llm.providers.fnllm.cache import FNLLMCacheProvider
+from graphrag.language_model.providers.fnllm.cache import FNLLMCacheProvider
 
 
 def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider | None:
-    """Create an LLM cache from a pipeline cache."""
+    """Create an FNLLM cache from a pipeline cache."""
     if cache is None:
         return None
     return FNLLMCacheProvider(cache).child(name)

@@ -13,8 +13,8 @@ from graphrag.index.operations.summarize_descriptions.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
 )
-from graphrag.llm.manager import LLMManager
-from graphrag.llm.protocol.base import ChatLLM
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 
 async def run_graph_intelligence(
@@ -26,7 +26,7 @@ async def run_graph_intelligence(
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
-    llm = LLMManager().get_or_create_chat_llm(
+    llm = ModelManager().get_or_create_chat_model(
         name="summarize_descriptions",
         model_type=llm_config.type,
         config=llm_config,
@@ -38,7 +38,7 @@ async def run_graph_intelligence(
 
 
 async def run_summarize_descriptions(
-    llm: ChatLLM,
+    model: ChatModel,
     id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: WorkflowCallbacks,
@@ -52,7 +52,7 @@ async def run_summarize_descriptions(
     max_tokens = args.get("max_tokens", None)
 
     extractor = SummarizeExtractor(
-        llm_invoker=llm,
+        model_invoker=model,
         summarization_prompt=summarize_prompt,
         entity_name_key=entity_name_key,
         input_descriptions_key=input_descriptions_key,

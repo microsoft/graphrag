@@ -18,8 +18,8 @@ from graphrag.index.operations.summarize_communities.typing import (
     StrategyConfig,
 )
 from graphrag.index.utils.rate_limiter import RateLimiter
-from graphrag.llm.manager import LLMManager
-from graphrag.llm.protocol.base import ChatLLM
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ async def run_graph_intelligence(
 ) -> CommunityReport | None:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
-    llm = LLMManager().get_or_create_chat_llm(
+    llm = ModelManager().get_or_create_chat_model(
         name="community_reporting",
         model_type=llm_config.type,
         config=llm_config,
@@ -46,7 +46,7 @@ async def run_graph_intelligence(
 
 
 async def _run_extractor(
-    llm: ChatLLM,
+    model: ChatModel,
     community: str | int,
     input: str,
     level: int,
@@ -56,7 +56,7 @@ async def _run_extractor(
     # RateLimiter
     rate_limiter = RateLimiter(rate=1, per=60)
     extractor = CommunityReportsExtractor(
-        llm,
+        model,
         extraction_prompt=args.get("extraction_prompt", None),
         max_report_length=args.get("max_report_length", None),
         on_error=lambda e, stack, _data: callbacks.error(

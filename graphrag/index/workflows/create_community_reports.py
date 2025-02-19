@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config import defaults

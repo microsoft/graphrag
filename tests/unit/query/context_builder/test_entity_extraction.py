@@ -3,8 +3,8 @@
 
 from typing import Any
 
-from graphrag.model.entity import Entity
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.types import TextEmbedder
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,

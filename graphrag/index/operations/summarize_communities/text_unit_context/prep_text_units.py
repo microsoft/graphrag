@@ -7,7 +7,7 @@ import logging
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 
 log = logging.getLogger(__name__)
 

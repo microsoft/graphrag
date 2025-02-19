@@ -9,7 +9,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model.entity import Entity
+from graphrag.data_model.entity import Entity
 
 
 def get_entity_by_id(entities: dict[str, Entity], value: str) -> Entity | None:

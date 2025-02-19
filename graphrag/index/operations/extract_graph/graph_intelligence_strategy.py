@@ -16,8 +16,8 @@ from graphrag.index.operations.extract_graph.typing import (
     EntityTypes,
     StrategyConfig,
 )
-from graphrag.llm.manager import LLMManager
-from graphrag.llm.protocol.base import ChatLLM
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 
 async def run_graph_intelligence(
@@ -30,7 +30,7 @@ async def run_graph_intelligence(
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
 
-    llm = LLMManager().get_or_create_chat_llm(
+    llm = ModelManager().get_or_create_chat_model(
         name="extract_graph",
         model_type=llm_config.type,
         config=llm_config,
@@ -42,7 +42,7 @@ async def run_graph_intelligence(
 
 
 async def run_extract_graph(
-    llm: ChatLLM,
+    model: ChatModel,
     docs: list[Document],
     entity_types: EntityTypes,
     callbacks: WorkflowCallbacks | None,
@@ -57,7 +57,7 @@ async def run_extract_graph(
     max_gleanings = args.get("max_gleanings", defs.EXTRACT_GRAPH_MAX_GLEANINGS)
 
     extractor = GraphExtractor(
-        llm_invoker=llm,
+        model_invoker=model,
         prompt=extraction_prompt,
         encoding_model=encoding_model,
         max_gleanings=max_gleanings,

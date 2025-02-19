@@ -9,9 +9,9 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
 from graphrag.query.input.retrieval.covariates import (
     get_candidate_covariates,
     to_covariate_dataframe,

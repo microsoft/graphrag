@@ -9,7 +9,7 @@ import sys
 import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.llm.manager import LLMManager
+from graphrag.language_model.manager import ModelManager
 from graphrag.logger.print_progress import ProgressLogger
 
 
@@ -21,7 +21,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     # if max_retries is not set, set it to the default value
     if default_llm_settings.max_retries == -1:
         default_llm_settings.max_retries = defs.LLM_MAX_RETRIES
-    llm = LLMManager().register_chat(
+    llm = ModelManager().register_chat(
         name="test-llm",
         model_type=default_llm_settings.type,
         config=default_llm_settings,
@@ -40,7 +40,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embedding_llm_settings = parameters.get_language_model_config(
         parameters.embed_text.model_id
     )
-    embed_llm = LLMManager().register_embedding(
+    embed_llm = ModelManager().register_embedding(
         name="test-embed-llm",
         model_type=embedding_llm_settings.type,
         config=embedding_llm_settings,

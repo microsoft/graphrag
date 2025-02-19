@@ -98,7 +98,7 @@ class TextEmbeddingTarget(str, Enum):
         return f'"{self.value}"'
 
 
-class LLMType(str, Enum):
+class ModelType(str, Enum):
     """LLMType enum class definition."""
 
     # Embeddings

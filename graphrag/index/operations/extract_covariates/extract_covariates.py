@@ -21,7 +21,7 @@ from graphrag.index.operations.extract_covariates.typing import (
     CovariateExtractionResult,
 )
 from graphrag.index.run.derive_from_rows import derive_from_rows
-from graphrag.llm.manager import LLMManager
+from graphrag.language_model.manager import ModelManager
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ async def run_extract_claims(
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
     llm_config = LanguageModelConfig(**strategy_config["llm"])
-    llm = LLMManager().get_or_create_chat_llm(
+    llm = ModelManager().get_or_create_chat_model(
         name="extract_claims",
         model_type=llm_config.type,
         config=llm_config,
@@ -110,7 +110,7 @@ async def run_extract_claims(
     encoding_model = strategy_config.get("encoding_name")
 
     extractor = ClaimExtractor(
-        llm_invoker=llm,
+        model_invoker=llm,
         extraction_prompt=extraction_prompt,
         max_gleanings=max_gleanings,
         encoding_model=encoding_model,

@@ -3,6 +3,6 @@
 
 """Base protocol definitions for LLMs."""
 
-from .base import ChatLLM, EmbeddingLLM
+from .base import ChatModel, EmbeddingModel
 
-__all__ = ["ChatLLM", "EmbeddingLLM"]
+__all__ = ["ChatModel", "EmbeddingModel"]

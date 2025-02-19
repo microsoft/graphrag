@@ -13,22 +13,28 @@ from fnllm.types import EmbeddingsLLM as FNLLMEmbeddingLLM
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.enums import ModelType
 from graphrag.config.models.language_model_config import (
     LanguageModelConfig,
 )
-from graphrag.llm.providers.fnllm.events import FNLLMEvents
-from graphrag.llm.providers.fnllm.utils import (
+from graphrag.language_model.factory import ModelFactory
+from graphrag.language_model.providers.fnllm.events import FNLLMEvents
+from graphrag.language_model.providers.fnllm.utils import (
     _create_cache,
     _create_error_handler,
     _create_openai_config,
 )
-from graphrag.llm.response.base import BaseLLMOutput, BaseLLMResponse, LLMResponse
+from graphrag.language_model.response.base import (
+    BaseModelOutput,
+    BaseModelResponse,
+    ModelResponse,
+)
 
 
 class OpenAIChatFNLLM:
-    """An OpenAI Chat LLM provider using the fnllm library."""
+    """An OpenAI Chat Model provider using the fnllm library."""
 
-    llm: FNLLMChatLLM
+    model: FNLLMChatLLM
 
     def __init__(
         self,
@@ -38,32 +44,32 @@ class OpenAIChatFNLLM:
         callbacks: WorkflowCallbacks,
         cache: PipelineCache | None,
     ) -> None:
-        llm_config = _create_openai_config(config, False)
+        model_config = _create_openai_config(config, False)
         error_handler = _create_error_handler(callbacks)
-        llm_cache = _create_cache(cache, name)
-        client = create_openai_client(llm_config)
-        self.llm = create_openai_chat_llm(
-            llm_config,
+        model_cache = _create_cache(cache, name)
+        client = create_openai_client(model_config)
+        self.model = create_openai_chat_llm(
+            model_config,
             client=client,
-            cache=llm_cache,
+            cache=model_cache,
             events=FNLLMEvents(error_handler),
         )
 
-    async def chat(self, prompt: str, **kwargs) -> LLMResponse:
+    async def chat(self, prompt: str, **kwargs) -> ModelResponse:
         """
-        Chat with the LLM using the given prompt.
+        Chat with the Model using the given prompt.
 
         Args:
             prompt: The prompt to chat with.
-            kwargs: Additional arguments to pass to the LLM.
+            kwargs: Additional arguments to pass to the Model.
 
         Returns
         -------
-            The response from the LLM.
+            The response from the Model.
         """
-        response = await self.llm(prompt, **kwargs)
-        return BaseLLMResponse(
-            output=BaseLLMOutput(content=response.output.content),
+        response = await self.model(prompt, **kwargs)
+        return BaseModelResponse(
+            output=BaseModelOutput(content=response.output.content),
             parsed_response=response.parsed_json,
             history=response.history,
             cache_hit=response.cache_hit,
@@ -73,9 +79,9 @@ class OpenAIChatFNLLM:
 
 
 class OpenAIEmbeddingFNLLM:
-    """An OpenAI Embedding LLM provider using the fnllm library."""
+    """An OpenAI Embedding Model provider using the fnllm library."""
 
-    llm: FNLLMEmbeddingLLM
+    model: FNLLMEmbeddingLLM
 
     def __init__(
         self,
@@ -85,20 +91,20 @@ class OpenAIEmbeddingFNLLM:
         callbacks: WorkflowCallbacks,
         cache: PipelineCache | None,
     ) -> None:
-        llm_config = _create_openai_config(config, False)
+        model_config = _create_openai_config(config, False)
         error_handler = _create_error_handler(callbacks)
-        llm_cache = _create_cache(cache, name)
-        client = create_openai_client(llm_config)
-        self.llm = create_openai_embeddings_llm(
-            llm_config,
+        model_cache = _create_cache(cache, name)
+        client = create_openai_client(model_config)
+        self.model = create_openai_embeddings_llm(
+            model_config,
             client=client,
-            cache=llm_cache,
+            cache=model_cache,
             events=FNLLMEvents(error_handler),
         )
 
     async def embed(self, text: str | list[str], **kwargs) -> list[list[float]]:
         """
-        Embed the given text using the LLM.
+        Embed the given text using the Model.
 
         Args:
             text: The text to embed.
@@ -108,7 +114,7 @@ class OpenAIEmbeddingFNLLM:
         -------
             The embeddings of the text.
         """
-        response = await self.llm(text, **kwargs)
+        response = await self.model(text, **kwargs)
         if response.output.embeddings is None:
             msg = "No embeddings found in response"
             raise ValueError(msg)
@@ -119,7 +125,7 @@ class OpenAIEmbeddingFNLLM:
 class AzureOpenAIChatFNLLM:
     """An Azure OpenAI Chat LLM provider using the fnllm library."""
 
-    llm: FNLLMChatLLM
+    model: FNLLMChatLLM
 
     def __init__(
         self,
@@ -129,32 +135,32 @@ class AzureOpenAIChatFNLLM:
         callbacks: WorkflowCallbacks,
         cache: PipelineCache | None,
     ) -> None:
-        llm_config = _create_openai_config(config, True)
+        model_config = _create_openai_config(config, True)
         error_handler = _create_error_handler(callbacks)
-        llm_cache = _create_cache(cache, name)
-        client = create_openai_client(llm_config)
-        self.llm = create_openai_chat_llm(
-            llm_config,
+        model_cache = _create_cache(cache, name)
+        client = create_openai_client(model_config)
+        self.model = create_openai_chat_llm(
+            model_config,
             client=client,
-            cache=llm_cache,
+            cache=model_cache,
             events=FNLLMEvents(error_handler),
         )
 
-    async def chat(self, prompt: str, **kwargs) -> LLMResponse:
+    async def chat(self, prompt: str, **kwargs) -> ModelResponse:
         """
-        Chat with the LLM using the given prompt.
+        Chat with the Model using the given prompt.
 
         Args:
             prompt: The prompt to chat with.
-            kwargs: Additional arguments to pass to the LLM.
+            kwargs: Additional arguments to pass to the Model.
 
         Returns
         -------
-            The response from the LLM.
+            The response from the Model.
         """
-        response = await self.llm(prompt, **kwargs)
-        return BaseLLMResponse(
-            output=BaseLLMOutput(content=response.output.content),
+        response = await self.model(prompt, **kwargs)
+        return BaseModelResponse(
+            output=BaseModelOutput(content=response.output.content),
             parsed_response=response.parsed_json,
             history=response.history,
             cache_hit=response.cache_hit,
@@ -164,9 +170,9 @@ class AzureOpenAIChatFNLLM:
 
 
 class AzureOpenAIEmbeddingFNLLM:
-    """An Azure OpenAI Embedding LLM provider using the fnllm library."""
+    """An Azure OpenAI Embedding Model provider using the fnllm library."""
 
-    llm: FNLLMEmbeddingLLM
+    model: FNLLMEmbeddingLLM
 
     def __init__(
         self,
@@ -176,32 +182,48 @@ class AzureOpenAIEmbeddingFNLLM:
         callbacks: WorkflowCallbacks,
         cache: PipelineCache | None,
     ) -> None:
-        llm_config = _create_openai_config(config, True)
+        model_config = _create_openai_config(config, True)
         error_handler = _create_error_handler(callbacks)
-        llm_cache = _create_cache(cache, name)
-        client = create_openai_client(llm_config)
-        self.llm = create_openai_embeddings_llm(
-            llm_config,
+        model_cache = _create_cache(cache, name)
+        client = create_openai_client(model_config)
+        self.model = create_openai_embeddings_llm(
+            model_config,
             client=client,
-            cache=llm_cache,
+            cache=model_cache,
             events=FNLLMEvents(error_handler),
         )
 
     async def embed(self, text: str | list[str], **kwargs) -> list[list[float]]:
         """
-        Embed the given text using the LLM.
+        Embed the given text using the Model.
 
         Args:
             text: The text to embed.
-            kwargs: Additional arguments to pass to the LLM.
+            kwargs: Additional arguments to pass to the Model.
 
         Returns
         -------
             The embeddings of the text.
         """
-        response = await self.llm(text, **kwargs)
+        response = await self.model(text, **kwargs)
         if response.output.embeddings is None:
             msg = "No embeddings found in response"
             raise ValueError(msg)
         embeddings: list[list[float]] = response.output.embeddings
         return embeddings
+
+
+# --- Register implementations ---
+ModelFactory.register_chat(
+    ModelType.AzureOpenAIChat, lambda **kwargs: AzureOpenAIChatFNLLM(**kwargs)
+)
+ModelFactory.register_chat(
+    ModelType.OpenAIChat, lambda **kwargs: OpenAIChatFNLLM(**kwargs)
+)
+
+ModelFactory.register_embedding(
+    ModelType.AzureOpenAIEmbedding, lambda **kwargs: AzureOpenAIEmbeddingFNLLM(**kwargs)
+)
+ModelFactory.register_embedding(
+    ModelType.OpenAIEmbedding, lambda **kwargs: OpenAIEmbeddingFNLLM(**kwargs)
+)

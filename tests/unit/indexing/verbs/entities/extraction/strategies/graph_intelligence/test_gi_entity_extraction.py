@@ -21,7 +21,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -56,7 +56,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -93,7 +93,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -138,7 +138,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -188,7 +188,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)

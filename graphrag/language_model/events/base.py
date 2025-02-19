@@ -1,13 +1,13 @@
 # Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Base llm events protocol."""
+"""Base model events protocol."""
 
 from typing import Any, Protocol
 
 
-class LLMEventHandler(Protocol):
-    """Protocol for LLM event handling."""
+class ModelEventHandler(Protocol):
+    """Protocol for Model event handling."""
 
     async def on_error(
         self,
@@ -15,5 +15,5 @@ class LLMEventHandler(Protocol):
         traceback: str | None = None,
         arguments: dict[str, Any] | None = None,
     ) -> None:
-        """Handle an llm error."""
+        """Handle an model error."""
         ...

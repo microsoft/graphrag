@@ -7,7 +7,7 @@ import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import AsyncType, AuthType, LLMType
+from graphrag.config.enums import AsyncType, AuthType, ModelType
 from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -71,12 +71,12 @@ class LanguageModelConfig(BaseModel):
             If the Azure authentication type conflicts with the model being used.
         """
         if self.auth_type == AuthType.AzureManagedIdentity and (
-            self.type == LLMType.OpenAIChat or self.type == LLMType.OpenAIEmbedding
+            self.type == ModelType.OpenAIChat or self.type == ModelType.OpenAIEmbedding
         ):
             msg = f"auth_type of azure_managed_identity is not supported for model type {self.type.value}. Please rerun `graphrag init` and set the auth_type to api_key."
             raise ConflictingSettingsError(msg)
 
-    type: LLMType = Field(description="The type of LLM model to use.")
+    type: ModelType = Field(description="The type of LLM model to use.")
     model: str = Field(description="The LLM model to use.")
     encoding_model: str = Field(description="The encoding model to use", default="")
 
@@ -133,8 +133,8 @@ class LanguageModelConfig(BaseModel):
             If the API base is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_base is None or self.api_base.strip() == ""):
             raise AzureApiBaseMissingError(self.type.value)
 
@@ -153,8 +153,8 @@ class LanguageModelConfig(BaseModel):
             If the API base is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_version is None or self.api_version.strip() == ""):
             raise AzureApiVersionMissingError(self.type.value)
 
@@ -173,8 +173,8 @@ class LanguageModelConfig(BaseModel):
             If the deployment name is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
             raise AzureDeploymentNameMissingError(self.type.value)
 

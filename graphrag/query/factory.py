@@ -7,12 +7,12 @@ import tiktoken
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
-from graphrag.model.text_unit import TextUnit
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
+from graphrag.data_model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.basic_search.basic_context import (

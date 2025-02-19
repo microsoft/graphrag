@@ -9,11 +9,11 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
-from graphrag.model.text_unit import TextUnit
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
+from graphrag.data_model.text_unit import TextUnit
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,

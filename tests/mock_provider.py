@@ -8,7 +8,11 @@ from typing import Any
 from pydantic import BaseModel
 
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.llm.response.base import BaseLLMOutput, BaseLLMResponse, LLMResponse
+from graphrag.language_model.response.base import (
+    BaseModelOutput,
+    BaseModelResponse,
+    ModelResponse,
+)
 
 
 class MockChatLLM:
@@ -28,10 +32,10 @@ class MockChatLLM:
         self,
         prompt: str,
         **kwargs,
-    ) -> LLMResponse:
+    ) -> ModelResponse:
         """Return the next response in the list."""
         if not self.responses:
-            return BaseLLMResponse(output=BaseLLMOutput(content=""))
+            return BaseModelResponse(output=BaseModelOutput(content=""))
 
         response = self.responses[self.response_index % len(self.responses)]
         self.response_index += 1
@@ -41,8 +45,8 @@ class MockChatLLM:
             response.model_dump_json() if isinstance(response, BaseModel) else response
         )
 
-        return BaseLLMResponse(
-            output=BaseLLMOutput(content=response),
+        return BaseModelResponse(
+            output=BaseModelOutput(content=response),
             parsed_response=parsed_json,
         )
 

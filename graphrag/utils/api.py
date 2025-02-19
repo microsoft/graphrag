@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from graphrag.config.embeddings import create_collection_name
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
