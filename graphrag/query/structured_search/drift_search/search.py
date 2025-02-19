@@ -59,7 +59,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             chat_llm=llm,
             token_encoder=token_encoder,
         )
-        self.callbacks = callbacks
+        self.callbacks = callbacks or []
         self.local_search = self.init_local_search()
 
     def init_local_search(self) -> LocalSearch:
@@ -259,9 +259,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = response_state
         if reduce:
             # Reduce response_state to a single comprehensive response
-            if self.callbacks:
-                for callback in self.callbacks:
-                    callback.on_reduce_response_start(response_state)
+            for callback in self.callbacks:
+                callback.on_reduce_response_start(response_state)
+
             reduced_response = await self._reduce_response(
                 responses=response_state,
                 query=query,
@@ -271,9 +271,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
                 max_tokens=self.context_builder.config.reduce_max_tokens,
                 temperature=self.context_builder.config.reduce_temperature,
             )
-            if self.callbacks:
-                for callback in self.callbacks:
-                    callback.on_reduce_response_end(reduced_response)
+
+            for callback in self.callbacks:
+                callback.on_reduce_response_end(reduced_response)
         return SearchResult(
             response=reduced_response,
             context_data=context_data,
@@ -304,9 +304,8 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         if isinstance(result.response, list):
             result.response = result.response[0]
 
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_reduce_response_start(result.response)
+        for callback in self.callbacks:
+            callback.on_reduce_response_start(result.response)
 
         full_response = ""
         async for resp in self._reduce_response_streaming(
@@ -317,9 +316,9 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         ):
             full_response += resp
             yield resp
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_reduce_response_end(full_response)
+
+        for callback in self.callbacks:
+            callback.on_reduce_response_end(full_response)
 
     async def _reduce_response(
         self,

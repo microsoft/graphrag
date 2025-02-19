@@ -52,7 +52,7 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             context_builder_params=context_builder_params or {},
         )
         self.system_prompt = system_prompt or LOCAL_SEARCH_SYSTEM_PROMPT
-        self.callbacks = callbacks
+        self.callbacks = callbacks or []
         self.response_type = response_type
 
     async def search(
@@ -103,9 +103,9 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             llm_calls["response"] = 1
             prompt_tokens["response"] = num_tokens(search_prompt, self.token_encoder)
             output_tokens["response"] = num_tokens(response, self.token_encoder)
-            if self.callbacks:
-                for callback in self.callbacks:
-                    callback.on_context(context_result.context_records)
+
+            for callback in self.callbacks:
+                callback.on_context(context_result.context_records)
 
             return SearchResult(
                 response=response,
@@ -154,9 +154,9 @@ class LocalSearch(BaseSearch[LocalContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_context(context_result.context_records)
+        for callback in self.callbacks:
+            callback.on_context(context_result.context_records)
+
         return self.llm.astream_generate(  # type: ignore
             messages=search_messages,
             callbacks=self.callbacks,  # type: ignore
