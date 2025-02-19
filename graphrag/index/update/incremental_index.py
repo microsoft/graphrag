@@ -12,7 +12,6 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.embeddings import get_embedded_fields, get_embedding_settings
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.flows.generate_text_embeddings import generate_text_embeddings
 from graphrag.index.update.communities import (
     _update_and_merge_communities,
     _update_and_merge_community_reports,
@@ -22,6 +21,7 @@ from graphrag.index.update.entities import (
     _run_entity_summarization,
 )
 from graphrag.index.update.relationships import _update_and_merge_relationships
+from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
 from graphrag.logger.print_progress import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import (
