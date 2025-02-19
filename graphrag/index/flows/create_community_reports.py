@@ -8,7 +8,7 @@ import pandas as pd
 import graphrag.model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config import defaults
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
@@ -49,7 +49,7 @@ async def create_community_reports(
     summarization_strategy["extraction_prompt"] = summarization_strategy["graph_prompt"]
 
     max_input_length = summarization_strategy.get(
-        "max_input_length", defaults.COMMUNITY_REPORT_MAX_INPUT_LENGTH
+        "max_input_length", graphrag_config_defaults.community_reports.max_input_length
     )
 
     local_contexts = build_local_context(

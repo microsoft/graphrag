@@ -14,7 +14,7 @@ import networkx as nx
 import tiktoken
 from fnllm.types import ChatLLM
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
 from graphrag.prompts.index.extract_graph import (
@@ -86,12 +86,12 @@ class GraphExtractor:
         self._max_gleanings = (
             max_gleanings
             if max_gleanings is not None
-            else defs.EXTRACT_GRAPH_MAX_GLEANINGS
+            else graphrag_config_defaults.extract_graph.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
+        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
         yes = f"{encoding.encode('Y')[0]}"
         no = f"{encoding.encode('N')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}

@@ -6,9 +6,9 @@
 import networkx as nx
 from fnllm.types import ChatLLM
 
-import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
@@ -51,7 +51,9 @@ async def run_extract_graph(
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
-    max_gleanings = args.get("max_gleanings", defs.EXTRACT_GRAPH_MAX_GLEANINGS)
+    max_gleanings = args.get(
+        "max_gleanings", graphrag_config_defaults.extract_graph.max_gleanings
+    )
 
     extractor = GraphExtractor(
         llm_invoker=llm,
