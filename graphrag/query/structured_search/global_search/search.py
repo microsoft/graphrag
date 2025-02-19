@@ -14,7 +14,7 @@ from typing import Any
 import pandas as pd
 import tiktoken
 
-from graphrag.callbacks.global_search_callbacks import GlobalSearchLLMCallback
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -69,7 +69,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         allow_general_knowledge: bool = False,
         general_knowledge_inclusion_prompt: str | None = None,
         json_mode: bool = True,
-        callbacks: list[GlobalSearchLLMCallback] | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
         max_data_tokens: int = 8000,
         map_llm_params: dict[str, Any] = DEFAULT_MAP_LLM_PARAMS,
         reduce_llm_params: dict[str, Any] = DEFAULT_REDUCE_LLM_PARAMS,
@@ -89,7 +89,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self.general_knowledge_inclusion_prompt = (
             general_knowledge_inclusion_prompt or GENERAL_KNOWLEDGE_INSTRUCTION
         )
-        self.callbacks = callbacks
+        self.callbacks = callbacks or []
         self.max_data_tokens = max_data_tokens
 
         self.map_llm_params = map_llm_params
@@ -113,21 +113,20 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             conversation_history=conversation_history,
             **self.context_builder_params,
         )
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
+        for callback in self.callbacks:
+            callback.on_map_response_start(context_result.context_chunks)  # type: ignore
+
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
             for data in context_result.context_chunks
         ])
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_map_response_end(map_responses)  # type: ignore
 
-        # send context records first before sending the reduce response
-        yield context_result.context_records
+        for callback in self.callbacks:
+            callback.on_map_response_end(map_responses)  # type: ignore
+            callback.on_context(context_result.context_records)
+
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
@@ -162,18 +161,20 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         prompt_tokens["build_context"] = context_result.prompt_tokens
         output_tokens["build_context"] = context_result.output_tokens
 
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_map_response_start(context_result.context_chunks)  # type: ignore
+        for callback in self.callbacks:
+            callback.on_map_response_start(context_result.context_chunks)  # type: ignore
+
         map_responses = await asyncio.gather(*[
             self._map_response_single_batch(
                 context_data=data, query=query, **self.map_llm_params
             )
             for data in context_result.context_chunks
         ])
-        if self.callbacks:
-            for callback in self.callbacks:
-                callback.on_map_response_end(map_responses)
+
+        for callback in self.callbacks:
+            callback.on_map_response_end(map_responses)
+            callback.on_context(context_result.context_records)
+
         llm_calls["map"] = sum(response.llm_calls for response in map_responses)
         prompt_tokens["map"] = sum(response.prompt_tokens for response in map_responses)
         output_tokens["map"] = sum(response.output_tokens for response in map_responses)
