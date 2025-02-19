@@ -55,4 +55,6 @@ class MockEmbeddingLLM:
 
     async def embed(self, text: str | list[str], **kwargs: Any) -> list[list[float]]:
         """Generate an embedding for the input text."""
-        return [[0.0, 0.0, 0.0]]
+        if isinstance(text, str):
+            return [[1.0, 1.0, 1.0]]
+        return [[1.0, 1.0, 1.0] for _ in text]
