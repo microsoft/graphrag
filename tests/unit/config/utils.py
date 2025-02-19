@@ -89,6 +89,7 @@ DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
         "container_name": None,
         "storage_account_blob_url": None,
         "cosmosdb_account_url": None,
+        "documentdb_account_url": None,
     },
     "input": {
         "type": defs.INPUT_TYPE,
@@ -321,6 +322,7 @@ def assert_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
     assert expected.container_name == actual.container_name
     assert expected.storage_account_blob_url == actual.storage_account_blob_url
     assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.documentdb_account_url == actual.documentdb_account_url
 
 
 def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -> None:
@@ -330,6 +332,7 @@ def assert_update_output_configs(actual: OutputConfig, expected: OutputConfig) -
     assert expected.container_name == actual.container_name
     assert expected.storage_account_blob_url == actual.storage_account_blob_url
     assert expected.cosmosdb_account_url == actual.cosmosdb_account_url
+    assert expected.documentdb_account_url == actual.documentdb_account_url
 
 
 def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
@@ -339,6 +342,7 @@ def assert_cache_configs(actual: CacheConfig, expected: CacheConfig) -> None:
     assert actual.container_name == expected.container_name
     assert actual.storage_account_blob_url == expected.storage_account_blob_url
     assert actual.cosmosdb_account_url == expected.cosmosdb_account_url
+    assert actual.documentdb_account_url == expected.documentdb_account_url
 
 
 def assert_input_configs(actual: InputConfig, expected: InputConfig) -> None:

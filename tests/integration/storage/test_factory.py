@@ -12,6 +12,7 @@ import pytest
 from graphrag.config.enums import OutputType
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
 from graphrag.storage.cosmosdb_pipeline_storage import CosmosDBPipelineStorage
+from graphrag.storage.documentdb_pipeline_storage import DocumentDBPipelineStorage
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
@@ -46,6 +47,19 @@ def test_create_cosmosdb_storage():
     }
     storage = StorageFactory.create_storage(OutputType.cosmosdb, kwargs)
     assert isinstance(storage, CosmosDBPipelineStorage)
+
+def test_create_documentdb_storage():
+    kwargs = {
+        "type": "documentdb",
+        "database_name": "postgres",
+        "collection": "testtable",
+        "user": "admin",
+        "password": "admin",
+        "host": "host.docker.internal",
+        "port": 9712,
+    }
+    storage = StorageFactory.create_storage(OutputType.documentdb, kwargs)
+    assert isinstance(storage, DocumentDBPipelineStorage)
 
 
 def test_create_file_storage():
