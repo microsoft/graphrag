@@ -50,6 +50,9 @@ class MockChatLLM:
 class MockEmbeddingLLM:
     """A mock embedding LLM provider."""
 
+    def __init__(self, **kwargs: Any):
+        pass
+
     async def embed(self, text: str | list[str], **kwargs: Any) -> list[list[float]]:
         """Generate an embedding for the input text."""
         return [[0.0, 0.0, 0.0]]
