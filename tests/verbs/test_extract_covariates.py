@@ -36,7 +36,7 @@ async def test_extract_covariates():
     llm_settings = config.get_language_model_config(
         config.extract_claims.model_id
     ).model_dump()
-    llm_settings["type"] = LLMType.Mock
+    llm_settings["type"] = LLMType.MockChat
     llm_settings["responses"] = MOCK_LLM_RESPONSES
     config.extract_claims.strategy = {
         "type": "graph_intelligence",

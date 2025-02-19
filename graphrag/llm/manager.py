@@ -9,10 +9,14 @@ It leverages the LLMFactory for instantiation.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from llm.factory import LLMFactory
-from llm.protocol import ChatLLM, EmbeddingLLM
+from typing_extensions import Self
+
+from graphrag.llm.factory import LLMFactory
+
+if TYPE_CHECKING:
+    from graphrag.llm.protocol import ChatLLM, EmbeddingLLM
 
 
 class LLMManager:
@@ -20,7 +24,8 @@ class LLMManager:
 
     _instance: LLMManager | None = None
 
-    def __new__(cls) -> LLMManager:
+    def __new__(cls: type[Self]) -> Self:
+        """Create a new instance of LLMManager if it does not exist."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -34,69 +39,111 @@ class LLMManager:
 
     @classmethod
     def get_instance(cls) -> LLMManager:
-        """Returns the singleton instance of LLMManager."""
+        """Return the singleton instance of LLMManager."""
         return cls.__new__(cls)
 
-    def register_chat(self, name: str, chat_key: str, **chat_kwargs: Any) -> None:
+    def register_chat(self, name: str, model_type: str, **chat_kwargs: Any) -> ChatLLM:
         """
-        Registers a ChatLLM instance under a unique name.
+        Register a ChatLLM instance under a unique name.
 
         Args:
             name: Unique identifier for the ChatLLM instance.
-            chat_key: Key for the ChatLLM implementation in LLMFactory.
+            model_type: Key for the ChatLLM implementation in LLMFactory.
             **chat_kwargs: Additional parameters for instantiation.
         """
-        self.chat_llms[name] = LLMFactory.create_chat_llm(chat_key, **chat_kwargs)
+        chat_kwargs["name"] = name
+        self.chat_llms[name] = LLMFactory.create_chat_llm(model_type, **chat_kwargs)
+        return self.chat_llms[name]
 
     def register_embedding(
-        self, name: str, embedding_key: str, **embedding_kwargs: Any
-    ) -> None:
+        self, name: str, model_type: str, **embedding_kwargs: Any
+    ) -> EmbeddingLLM:
         """
-        Registers an EmbeddingsLLM instance under a unique name.
+        Register an EmbeddingsLLM instance under a unique name.
 
         Args:
             name: Unique identifier for the EmbeddingsLLM instance.
             embedding_key: Key for the EmbeddingsLLM implementation in LLMFactory.
             **embedding_kwargs: Additional parameters for instantiation.
         """
+        embedding_kwargs["name"] = name
         self.embedding_llms[name] = LLMFactory.create_embedding_llm(
-            embedding_key, **embedding_kwargs
+            model_type, **embedding_kwargs
         )
+        return self.embedding_llms[name]
 
-    def get_chat_llm(self, name: str) -> ChatLLM:
+    def get_chat_llm(self, name: str) -> ChatLLM | None:
         """
-        Retrieves the ChatLLM instance registered under the given name.
+        Retrieve the ChatLLM instance registered under the given name.
 
-        Raises:
+        Raises
+        ------
             ValueError: If no ChatLLM is registered under the name.
         """
         if name not in self.chat_llms:
-            raise ValueError(f"No ChatLLM registered under name '{name}'.")
+            msg = f"No ChatLLM registered under the name '{name}'."
+            raise ValueError(msg)
         return self.chat_llms[name]
 
-    def get_embedding_llm(self, name: str) -> EmbeddingLLM:
+    def get_embedding_llm(self, name: str) -> EmbeddingLLM | None:
         """
-        Retrieves the EmbeddingsLLM instance registered under the given name.
+        Retrieve the EmbeddingsLLM instance registered under the given name.
 
-        Raises:
+        Raises
+        ------
             ValueError: If no EmbeddingsLLM is registered under the name.
         """
         if name not in self.embedding_llms:
-            raise ValueError(f"No EmbeddingsLLM registered under name '{name}'.")
+            msg = f"No EmbeddingsLLM registered under the name '{name}'."
+            raise ValueError(msg)
+        return self.embedding_llms[name]
+
+    def get_or_create_chat_llm(
+        self, name: str, model_type: str, **chat_kwargs: Any
+    ) -> ChatLLM:
+        """
+        Retrieve the ChatLLM instance registered under the given name.
+
+        If the ChatLLM does not exist, it is created and registered.
+
+        Args:
+            name: Unique identifier for the ChatLLM instance.
+            model_type: Key for the ChatLLM implementation in LLMFactory.
+            **chat_kwargs: Additional parameters for instantiation.
+        """
+        if name not in self.chat_llms:
+            return self.register_chat(name, model_type, **chat_kwargs)
+        return self.chat_llms[name]
+
+    def get_or_create_embedding_llm(
+        self, name: str, model_type: str, **embedding_kwargs: Any
+    ) -> EmbeddingLLM:
+        """
+        Retrieve the EmbeddingsLLM instance registered under the given name.
+
+        If the EmbeddingsLLM does not exist, it is created and registered.
+
+        Args:
+            name: Unique identifier for the EmbeddingsLLM instance.
+            model_type: Key for the EmbeddingsLLM implementation in LLMFactory.
+            **embedding_kwargs: Additional parameters for instantiation.
+        """
+        if name not in self.embedding_llms:
+            return self.register_embedding(name, model_type, **embedding_kwargs)
         return self.embedding_llms[name]
 
     def remove_chat(self, name: str) -> None:
-        """Removes the ChatLLM instance registered under the given name."""
+        """Remove the ChatLLM instance registered under the given name."""
         self.chat_llms.pop(name, None)
 
     def remove_embedding(self, name: str) -> None:
-        """Removes the EmbeddingsLLM instance registered under the given name."""
+        """Remove the EmbeddingsLLM instance registered under the given name."""
         self.embedding_llms.pop(name, None)
 
     def list_chat_llms(self) -> dict[str, ChatLLM]:
-        """Returns a copy of all registered ChatLLM instances."""
-        return {k: v for k, v in self.chat_llms.items()}
+        """Return a copy of all registered ChatLLM instances."""
+        return dict(self.chat_llms)
 
     def list_embedding_llms(self) -> dict[str, EmbeddingLLM]:
-        """Returns a copy of all registered EmbeddingsLLM instances."""
-        return {k: v for k, v in self.embedding_llms.items()}
+        """Return a copy of all registered EmbeddingsLLM instances."""
+        return dict(self.embedding_llms)

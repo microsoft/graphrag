@@ -3,8 +3,7 @@
 
 """Generate a community reporter role for community summarization."""
 
-from fnllm.types import ChatLLM
-
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
 )
@@ -31,6 +30,6 @@ async def generate_community_reporter_role(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await llm(domain_prompt)
+    response = await llm.chat(domain_prompt)
 
     return str(response.output.content)

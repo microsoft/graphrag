@@ -4,13 +4,11 @@
 """A module containing run_graph_intelligence,  run_extract_graph and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
-from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
 from graphrag.index.operations.extract_graph.typing import (
     Document,
@@ -18,6 +16,8 @@ from graphrag.index.operations.extract_graph.typing import (
     EntityTypes,
     StrategyConfig,
 )
+from graphrag.llm.manager import LLMManager
+from graphrag.llm.protocol.base import ChatLLM
 
 
 async def run_graph_intelligence(
@@ -29,12 +29,15 @@ async def run_graph_intelligence(
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
-    llm = load_llm(
-        "extract_graph",
-        llm_config,
+
+    llm = LLMManager().get_or_create_chat_llm(
+        name="extract_graph",
+        model_type=llm_config.type,
+        config=llm_config,
         callbacks=callbacks,
         cache=cache,
     )
+
     return await run_extract_graph(llm, docs, entity_types, callbacks, args)
 
 

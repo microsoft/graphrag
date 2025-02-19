@@ -3,8 +3,6 @@
 
 """A module containing utilitaries for fnllm."""
 
-from typing import TYPE_CHECKING
-
 from fnllm.base.config import JsonStrategy, RetryStrategy
 from fnllm.openai import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
 from fnllm.openai.types.chat.parameters import OpenAIChatParameters
@@ -13,10 +11,9 @@ import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import (
-    LanguageModelConfig,  # noqa: TC001
+    LanguageModelConfig,
 )
 from graphrag.index.typing import ErrorHandlerFn
-from graphrag.llm.cache.base import LLMCache
 from graphrag.llm.providers.fnllm.cache import FNLLMCacheProvider
 
 

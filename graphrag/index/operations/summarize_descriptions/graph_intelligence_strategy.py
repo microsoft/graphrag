@@ -3,12 +3,9 @@
 
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
-from fnllm.types import ChatLLM
-
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,
 )
@@ -16,6 +13,8 @@ from graphrag.index.operations.summarize_descriptions.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
 )
+from graphrag.llm.manager import LLMManager
+from graphrag.llm.protocol.base import ChatLLM
 
 
 async def run_graph_intelligence(
@@ -27,12 +26,14 @@ async def run_graph_intelligence(
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
-    llm = load_llm(
-        "summarize_descriptions",
-        llm_config,
+    llm = LLMManager().get_or_create_chat_llm(
+        name="summarize_descriptions",
+        model_type=llm_config.type,
+        config=llm_config,
         callbacks=callbacks,
         cache=cache,
     )
+
     return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
 

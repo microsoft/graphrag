@@ -1,12 +1,14 @@
 # Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Base cache protocol"""
+"""Base cache protocol definition."""
 
 from typing import Any, Protocol
 
 
 class LLMCache(Protocol):
+    """Base cache protocol."""
+
     async def has(self, key: str) -> bool:
         """Check if the cache has a value."""
         ...

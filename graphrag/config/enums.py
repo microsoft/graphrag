@@ -110,7 +110,8 @@ class LLMType(str, Enum):
     AzureOpenAIChat = "azure_openai_chat"
 
     # Debug
-    Mock = "mock"
+    MockChat = "mock_chat"
+    MockEmbedding = "mock_embedding"
 
     def __repr__(self):
         """Get a string representation."""

@@ -6,10 +6,9 @@
 import json
 from dataclasses import dataclass
 
-from fnllm.types import ChatLLM
-
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
@@ -126,7 +125,7 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._llm(
+        response = await self._llm.chat(
             self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(

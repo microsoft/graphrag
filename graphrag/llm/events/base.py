@@ -1,12 +1,14 @@
 # Copyright (c) 2025 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Base llm events protocol"""
+"""Base llm events protocol."""
 
 from typing import Any, Protocol
 
 
 class LLMEventHandler(Protocol):
+    """Protocol for LLM event handling."""
+
     async def on_error(
         self,
         error: BaseException | None,

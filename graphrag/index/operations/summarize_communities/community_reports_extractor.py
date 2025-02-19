@@ -9,10 +9,10 @@ import traceback
 from dataclasses import dataclass
 from typing import Any
 
-from fnllm.types import ChatLLM
 from pydantic import BaseModel, Field
 
 from graphrag.index.typing import ErrorHandlerFn
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 
 log = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class CommunityReportsExtractor:
             prompt = self._extraction_prompt.replace(
                 "{" + self._input_text_key + "}", input_text
             )
-            response = await self._llm(
+            response = await self._llm.chat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
                 name="create_community_report",

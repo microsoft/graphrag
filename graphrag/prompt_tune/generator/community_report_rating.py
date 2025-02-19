@@ -3,8 +3,7 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from fnllm.types import ChatLLM
-
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompt_tune.prompt.community_report_rating import (
     GENERATE_REPORT_RATING_PROMPT,
 )
@@ -31,6 +30,6 @@ async def generate_community_report_rating(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await llm(domain_prompt)
+    response = await llm.chat(domain_prompt)
 
     return str(response.output.content).strip()

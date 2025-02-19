@@ -9,10 +9,10 @@ from dataclasses import dataclass
 from typing import Any
 
 import tiktoken
-from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
     EXTRACT_CLAIMS_PROMPT,
@@ -164,7 +164,7 @@ class ClaimExtractor:
             self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER
         )
 
-        response = await self._llm(
+        response = await self._llm.chat(
             self._extraction_prompt.format(**{
                 self._input_text_key: doc,
                 **prompt_args,
@@ -175,7 +175,7 @@ class ClaimExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._llm(
+            response = await self._llm.chat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -189,7 +189,7 @@ class ClaimExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._llm(
+            response = await self._llm.chat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,

@@ -12,11 +12,11 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
-from fnllm.types import ChatLLM
 
 import graphrag.config.defaults as defs
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
+from graphrag.llm.protocol.base import ChatLLM
 from graphrag.prompts.index.extract_graph import (
     CONTINUE_PROMPT,
     GRAPH_EXTRACTION_PROMPT,
@@ -152,7 +152,7 @@ class GraphExtractor:
     async def _process_document(
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
-        response = await self._llm(
+        response = await self._llm.chat(
             self._extraction_prompt.format(**{
                 **prompt_variables,
                 self._input_text_key: text,
@@ -162,7 +162,7 @@ class GraphExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._llm(
+            response = await self._llm.chat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -173,7 +173,7 @@ class GraphExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._llm(
+            response = await self._llm.chat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,
