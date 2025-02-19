@@ -16,8 +16,8 @@ class MockChatLLM:
 
     def __init__(
         self,
-        responses: list[str | BaseModel] | None,
-        config: LanguageModelConfig | None,
+        responses: list[str | BaseModel] | None = None,
+        config: LanguageModelConfig | None = None,
         json: bool = False,
         **kwargs: Any,
     ):
