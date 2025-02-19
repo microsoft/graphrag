@@ -7,6 +7,7 @@ from graphrag.config.embeddings import (
     all_embeddings,
 )
 from graphrag.config.enums import LLMType, TextEmbeddingTarget
+from graphrag.index.operations.embed_text.embed_text import TextEmbedStrategyType
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
@@ -36,6 +37,7 @@ async def test_generate_text_embeddings():
     llm_settings["type"] = LLMType.MockEmbedding
 
     config.embed_text.strategy = {
+        "type": TextEmbedStrategyType.openai,
         "llm": llm_settings,
     }
     config.embed_text.target = TextEmbeddingTarget.all
