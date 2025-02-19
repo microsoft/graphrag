@@ -33,9 +33,9 @@ async def test_generate_text_embeddings():
     llm_settings = config.get_language_model_config(
         config.embed_text.model_id
     ).model_dump()
+    llm_settings["type"] = LLMType.MockEmbedding
 
     config.embed_text.strategy = {
-        "type": LLMType.MockEmbedding,
         "llm": llm_settings,
     }
     config.embed_text.target = TextEmbeddingTarget.all
