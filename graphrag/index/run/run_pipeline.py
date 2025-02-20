@@ -21,8 +21,9 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunStats
 from graphrag.index.input.factory import create_input
+from graphrag.index.run.pipeline import Pipeline
+from graphrag.index.run.pipeline_run_result import PipelineRunResult
 from graphrag.index.run.utils import create_callback_chain, create_run_context
-from graphrag.index.typing import Pipeline, PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
@@ -62,7 +63,11 @@ async def run_pipeline(
         kwargs=cache_config,
     )
 
+    callback_chain.pipeline_start(pipeline.names())
+
     dataset = await create_input(config.input, logger, root_dir)
+
+    results: list[PipelineRunResult] = []
 
     if is_update_run:
         progress_logger.info("Running incremental indexing.")
@@ -97,6 +102,7 @@ async def run_pipeline(
                 callbacks=callback_chain,
                 logger=progress_logger,
             ):
+                results.append(table)
                 yield table
 
             progress_logger.success("Finished running workflows on new documents.")
@@ -123,7 +129,10 @@ async def run_pipeline(
             callbacks=callback_chain,
             logger=progress_logger,
         ):
+            results.append(table)
             yield table
+
+    callback_chain.pipeline_end(results)
 
 
 async def _run_pipeline(
@@ -148,7 +157,7 @@ async def _run_pipeline(
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "documents", context.storage)
 
-        for name, workflow_function in pipeline:
+        for name, workflow_function in pipeline.run():
             last_workflow = name
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)

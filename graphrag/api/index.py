@@ -11,12 +11,14 @@ Backwards compatibility is not guaranteed at this time.
 import logging
 
 from graphrag.cache.noop_pipeline_cache import NoopPipelineCache
+from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.reporting import create_pipeline_reporter
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.run.pipeline_run_result import PipelineRunResult
 from graphrag.index.run.run_pipeline import run_pipeline
-from graphrag.index.typing import PipelineRunResult, WorkflowFunction
+from graphrag.index.typing import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.base import ProgressLogger
 
@@ -58,6 +60,7 @@ async def build_index(
     # TODO: remove the type ignore once the new config engine has been refactored
     callbacks = callbacks or []
     callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
+    callbacks.append(ConsoleWorkflowCallbacks())
     outputs: list[PipelineRunResult] = []
 
     if memory_profile:
