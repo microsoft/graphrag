@@ -4,10 +4,8 @@
 """Entity relationship example generation module."""
 
 import asyncio
-import json
 
-from fnllm.types import ChatLLM
-
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_JSON_PROMPT,
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
@@ -18,7 +16,7 @@ MAX_EXAMPLES = 5
 
 
 async def generate_entity_relationship_examples(
-    llm: ChatLLM,
+    model: ChatModel,
     persona: str,
     entity_types: str | list[str] | None,
     docs: str | list[str],
@@ -58,11 +56,10 @@ async def generate_entity_relationship_examples(
 
     messages = messages[:MAX_EXAMPLES]
 
-    tasks = [llm(message, history=history, json=json_mode) for message in messages]
+    tasks = [
+        model.chat(message, history=history, json=json_mode) for message in messages
+    ]
 
     responses = await asyncio.gather(*tasks)
 
-    return [
-        json.dumps(response.json or "") if json_mode else str(response.output.content)
-        for response in responses
-    ]
+    return [str(response.output.content) for response in responses]

@@ -5,7 +5,7 @@ from pandas.testing import assert_series_equal
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import LLMType
+from graphrag.config.enums import ModelType
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
 )
@@ -36,7 +36,7 @@ async def test_extract_covariates():
     llm_settings = config.get_language_model_config(
         config.extract_claims.model_id
     ).model_dump()
-    llm_settings["type"] = LLMType.StaticResponse
+    llm_settings["type"] = ModelType.MockChat
     llm_settings["responses"] = MOCK_LLM_RESPONSES
     config.extract_claims.strategy = {
         "type": "graph_intelligence",

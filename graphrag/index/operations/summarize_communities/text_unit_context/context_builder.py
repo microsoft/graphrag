@@ -8,7 +8,7 @@ from typing import cast
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 from graphrag.index.operations.summarize_communities.build_mixed_context import (
     build_mixed_context,
 )

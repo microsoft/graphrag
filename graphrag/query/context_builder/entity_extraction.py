@@ -5,8 +5,8 @@
 
 from enum import Enum
 
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
 from graphrag.query.input.retrieval.entities import (
     get_entity_by_id,
     get_entity_by_key,

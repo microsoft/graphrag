@@ -14,7 +14,7 @@ import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
-from graphrag.model.community_report import CommunityReport
+from graphrag.data_model.community_report import CommunityReport
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_PRIMER_PROMPT,
 )

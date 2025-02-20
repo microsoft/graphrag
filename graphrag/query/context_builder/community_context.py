@@ -10,8 +10,8 @@ from typing import Any, cast
 import pandas as pd
 import tiktoken
 
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.entity import Entity
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.entity import Entity
 from graphrag.query.llm.text_utils import num_tokens
 
 log = logging.getLogger(__name__)

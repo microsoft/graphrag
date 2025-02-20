@@ -3,12 +3,11 @@
 
 """Language detection for GraphRAG prompts."""
 
-from fnllm.types import ChatLLM
-
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
 
 
-async def detect_language(llm: ChatLLM, docs: str | list[str]) -> str:
+async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
     """Detect input language to use for GraphRAG prompts.
 
     Parameters
@@ -23,6 +22,6 @@ async def detect_language(llm: ChatLLM, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     language_prompt = DETECT_LANGUAGE_PROMPT.format(input_text=docs_str)
 
-    response = await llm(language_prompt)
+    response = await model.chat(language_prompt)
 
     return str(response.output.content)

@@ -6,10 +6,9 @@
 import json
 from dataclasses import dataclass
 
-from fnllm.types import ChatLLM
-
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
 
 # Max token size for input prompts
@@ -29,7 +28,7 @@ class SummarizationResult:
 class SummarizeExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: ChatLLM
+    _model: ChatModel
     _entity_name_key: str
     _input_descriptions_key: str
     _summarization_prompt: str
@@ -39,7 +38,7 @@ class SummarizeExtractor:
 
     def __init__(
         self,
-        llm_invoker: ChatLLM,
+        model_invoker: ChatModel,
         entity_name_key: str | None = None,
         input_descriptions_key: str | None = None,
         summarization_prompt: str | None = None,
@@ -49,7 +48,7 @@ class SummarizeExtractor:
     ):
         """Init method definition."""
         # TODO: streamline construction
-        self._llm = llm_invoker
+        self._model = model_invoker
         self._entity_name_key = entity_name_key or "entity_name"
         self._input_descriptions_key = input_descriptions_key or "description_list"
 
@@ -126,7 +125,7 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._llm(
+        response = await self._model.chat(
             self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(

@@ -6,7 +6,7 @@
 import pandas as pd
 import tiktoken
 
-from graphrag.model.text_unit import TextUnit
+from graphrag.data_model.text_unit import TextUnit
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
     ContextBuilderResult,
