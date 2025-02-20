@@ -291,7 +291,7 @@ class ChatOpenAI(BaseLLM, OpenAILLMImpl):
                             callback.on_llm_new_token(delta)
                     if chunk.choices[0].finish_reason == "stop":  # type: ignore
                         break
-                except StopIteration:
+                except StopAsyncIteration:
                     break
             return full_response
 
