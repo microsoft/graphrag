@@ -98,7 +98,7 @@ class TextEmbeddingTarget(str, Enum):
         return f'"{self.value}"'
 
 
-class LLMType(str, Enum):
+class ModelType(str, Enum):
     """LLMType enum class definition."""
 
     # Embeddings
@@ -110,7 +110,8 @@ class LLMType(str, Enum):
     AzureOpenAIChat = "azure_openai_chat"
 
     # Debug
-    StaticResponse = "static_response"
+    MockChat = "mock_chat"
+    MockEmbedding = "mock_embedding"
 
     def __repr__(self):
         """Get a string representation."""

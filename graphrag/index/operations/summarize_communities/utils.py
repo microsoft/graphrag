@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 
 
 def get_levels(

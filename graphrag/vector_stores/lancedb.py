@@ -8,7 +8,7 @@ from typing import Any
 
 import pyarrow as pa
 
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.types import TextEmbedder
 
 from graphrag.vector_stores.base import (
     BaseVectorStore,

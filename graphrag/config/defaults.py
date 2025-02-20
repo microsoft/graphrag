@@ -12,7 +12,7 @@ from graphrag.config.enums import (
     ChunkStrategyType,
     InputFileType,
     InputType,
-    LLMType,
+    ModelType,
     NounPhraseExtractorType,
     OutputType,
     ReportingType,
@@ -30,7 +30,7 @@ AUTH_TYPE = AuthType.APIKey
 # LLM Parameters
 #
 LLM_FREQUENCY_PENALTY = 0.0
-LLM_TYPE = LLMType.OpenAIChat
+LLM_TYPE = ModelType.OpenAIChat
 LLM_MODEL = "gpt-4-turbo-preview"
 LLM_MAX_TOKENS = 4000
 LLM_TEMPERATURE = 0
@@ -48,7 +48,7 @@ LLM_CONCURRENT_REQUESTS = 25
 #
 # Text embedding
 #
-EMBEDDING_TYPE = LLMType.OpenAIEmbedding
+EMBEDDING_TYPE = ModelType.OpenAIEmbedding
 EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_BATCH_SIZE = 16
 EMBEDDING_BATCH_MAX_TOKENS = 8191

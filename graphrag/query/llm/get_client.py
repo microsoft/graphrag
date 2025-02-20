@@ -6,7 +6,7 @@
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 import graphrag.config.defaults as defs
-from graphrag.config.enums import AuthType, LLMType
+from graphrag.config.enums import AuthType, ModelType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.oai.embedding import OpenAIEmbedding
@@ -16,7 +16,7 @@ from graphrag.query.llm.oai.typing import OpenaiApiType
 def get_llm(config: GraphRagConfig) -> ChatOpenAI:
     """Get the LLM client."""
     llm_config = config.get_language_model_config("default_chat_model")
-    is_azure_client = llm_config.type == LLMType.AzureOpenAIChat
+    is_azure_client = llm_config.type == ModelType.AzureOpenAIChat
     debug_llm_key = llm_config.api_key or ""
     llm_debug_info = {
         **llm_config.model_dump(),
@@ -51,7 +51,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
 def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
     """Get the LLM client for embeddings."""
     embeddings_llm_config = config.get_language_model_config(config.embed_text.model_id)
-    is_azure_client = embeddings_llm_config.type == LLMType.AzureOpenAIEmbedding
+    is_azure_client = embeddings_llm_config.type == ModelType.AzureOpenAIEmbedding
     debug_embedding_api_key = embeddings_llm_config.api_key or ""
     llm_debug_info = {
         **embeddings_llm_config.model_dump(),

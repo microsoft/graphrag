@@ -5,7 +5,7 @@
 
 import pandas as pd
 
-from graphrag.model.schemas import (
+from graphrag.data_model.schemas import (
     COMMUNITY_ID,
 )
 

@@ -7,8 +7,8 @@ from typing import Any, cast
 
 import pandas as pd
 
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
 
 
 def get_candidate_covariates(

@@ -16,7 +16,7 @@ from pydantic import PositiveInt, validate_call
 import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.llm.load_llm import load_llm
+from graphrag.language_model.manager import ModelManager
 from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.prompt_tune.defaults import MAX_TOKEN_COUNT, PROMPT_TUNING_MODEL_ID
 from graphrag.prompt_tune.generator.community_report_rating import (
@@ -104,11 +104,12 @@ async def generate_indexing_prompts(
     if default_llm_settings.max_retries == -1:
         default_llm_settings.max_retries = min(len(doc_list), defs.LLM_MAX_RETRIES)
 
-    llm = load_llm(
-        "prompt_tuning",
-        default_llm_settings,
-        cache=None,
+    llm = ModelManager().register_chat(
+        name="prompt_tuning",
+        model_type=default_llm_settings.type,
+        config=default_llm_settings,
         callbacks=NoopWorkflowCallbacks(),
+        cache=None,
     )
 
     if not domain:
