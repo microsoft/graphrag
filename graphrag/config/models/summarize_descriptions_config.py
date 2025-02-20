@@ -27,6 +27,10 @@ class SummarizeDescriptionsConfig(BaseModel):
     model_id: str = Field(
         description="The model ID to use for summarization.",
         default=defs.SUMMARIZE_MODEL_ID,
+	)
+    batch_size: int = Field(
+        description="The batch size to use when calling the LLM for entity summarization.",
+        default=defs.SUMMARIZE_DESCRIPTIONS_BATCH_SIZE,
     )
 
     def resolved_strategy(

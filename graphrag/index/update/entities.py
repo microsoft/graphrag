@@ -5,16 +5,20 @@
 
 import asyncio
 import itertools
+import logging
 
 import numpy as np
 import pandas as pd
 
+import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
 )
+
+log = logging.getLogger(__name__)
 
 
 def _group_and_resolve_entities(
@@ -123,7 +127,9 @@ async def _run_entity_summarization(
     summarization_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     )
-    summarization_strategy = config.summarize_descriptions.resolved_strategy(
+    summarize_descriptions_config = config.summarize_descriptions
+
+    summarization_strategy = summarize_descriptions_config.resolved_strategy(
         config.root_dir, summarization_llm_settings
     )
 
@@ -144,11 +150,34 @@ async def _run_entity_summarization(
         # Handle case where description is a single-item list or not a list
         return description[0] if isinstance(description, list) else description
 
-    # Create a list of async tasks for summarization
-    tasks = [
-        process_row(row) for row in entities_df.itertuples(index=False, name="Entity")
-    ]
-    results = await asyncio.gather(*tasks)
+    # Process in batches, so we don't hit the LLM too hard
+    async def process_in_batches(df, batch_size):
+        results = []
+        batch_num = 0
+        total_batches = len(df) // batch_size + 1
+        for start in range(0, len(df), batch_size):
+            end = start + batch_size
+            batch = df.iloc[start:end]
+            tasks = [process_row(row) for row in batch.itertuples(index=False, name="Entity")]
+            batch_results = await asyncio.gather(*tasks)
+            results.extend(batch_results)
+            batch_num += 1
+            log.debug(f"Processed batch {batch_num}/{total_batches}")
+        return results
+
+    # Process the DataFrame in batches
+    batch_size = summarize_descriptions_config.batch_size  # Adjust the batch size as needed
+    if batch_size <= 0:
+        log.warning(
+            f"Invalid batch size {batch_size}. Defaulting to {defs.SUMMARIZE_DESCRIPTIONS_BATCH_SIZE}."
+        )
+        batch_size = defs.SUMMARIZE_DESCRIPTIONS_BATCH_SIZE
+
+    total_entity_count = len(entities_df)
+    log.info(f"Summarizing descriptions for {total_entity_count} entities in batches of {batch_size}, for a total of {total_entity_count // batch_size} batches.")
+
+
+    results = await process_in_batches(entities_df, batch_size)
 
     # Update the 'description' column in the DataFrame
     entities_df["description"] = results

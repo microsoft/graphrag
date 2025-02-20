@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Batch entity summarization during update"
+}
