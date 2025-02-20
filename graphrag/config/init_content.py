@@ -80,15 +80,15 @@ chunks:
 ## connection_string and container_name must be provided
 
 cache:
-  type: {defs.CACHE_TYPE.value} # [file, blob, cosmosdb]
+  type: {defs.CACHE_TYPE.value} # [file, blob, cosmosdb, documentdb]
   base_dir: "{defs.CACHE_BASE_DIR}"
 
 reporting:
-  type: {defs.REPORTING_TYPE.value} # [file, blob, cosmosdb]
+  type: {defs.REPORTING_TYPE.value} # [file, blob, cosmosdb, documentdb]
   base_dir: "{defs.REPORTING_BASE_DIR}"
 
 output:
-  type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb]
+  type: {defs.OUTPUT_TYPE.value} # [file, blob, cosmosdb, documentdb]
   base_dir: "{defs.OUTPUT_BASE_DIR}"
 
 ### Workflow settings ###

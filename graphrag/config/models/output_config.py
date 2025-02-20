@@ -31,3 +31,6 @@ class OutputConfig(BaseModel):
     cosmosdb_account_url: str | None = Field(
         description="The cosmosdb account url to use.", default=None
     )
+    documentdb_account_url: str | None = Field(
+        description="The documentdb account url to use.", default=None
+    )

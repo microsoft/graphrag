@@ -21,6 +21,8 @@ class CacheType(str, Enum):
     """The blob cache configuration type."""
     cosmosdb = "cosmosdb"
     """The cosmosdb cache configuration type"""
+    documentdb = "documentdb"
+    """The documentdb cache configuration type"""
 
     def __repr__(self):
         """Get a string representation."""
@@ -64,6 +66,8 @@ class OutputType(str, Enum):
     """The blob output type."""
     cosmosdb = "cosmosdb"
     """The cosmosdb output type"""
+    documentdb = "documentdb"
+    """The documentdb output type"""
 
     def __repr__(self):
         """Get a string representation."""
