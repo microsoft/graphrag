@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 
 
 class SnapshotsConfig(BaseModel):
@@ -13,9 +13,9 @@ class SnapshotsConfig(BaseModel):
 
     embeddings: bool = Field(
         description="A flag indicating whether to take snapshots of embeddings.",
-        default=defs.SNAPSHOTS_EMBEDDINGS,
+        default=graphrag_config_defaults.snapshots.embeddings,
     )
     graphml: bool = Field(
         description="A flag indicating whether to take snapshots of GraphML.",
-        default=defs.SNAPSHOTS_GRAPHML,
+        default=graphrag_config_defaults.snapshots.graphml,
     )

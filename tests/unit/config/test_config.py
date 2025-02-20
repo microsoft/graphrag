@@ -25,7 +25,7 @@ def test_missing_openai_required_api_key() -> None:
     model_config_missing_api_key = {
         defs.DEFAULT_CHAT_MODEL_ID: {
             "type": ModelType.OpenAIChat,
-            "model": defs.LLM_MODEL,
+            "model": defs.DEFAULT_CHAT_MODEL,
         },
         defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
     }
@@ -47,7 +47,7 @@ def test_missing_azure_api_key() -> None:
         defs.DEFAULT_CHAT_MODEL_ID: {
             "type": ModelType.AzureOpenAIChat,
             "auth_type": AuthType.APIKey,
-            "model": defs.LLM_MODEL,
+            "model": defs.DEFAULT_CHAT_MODEL,
             "api_base": "some_api_base",
             "api_version": "some_api_version",
             "deployment_name": "some_deployment_name",
@@ -70,7 +70,7 @@ def test_conflicting_auth_type() -> None:
         defs.DEFAULT_CHAT_MODEL_ID: {
             "auth_type": AuthType.AzureManagedIdentity,
             "type": ModelType.OpenAIChat,
-            "model": defs.LLM_MODEL,
+            "model": defs.DEFAULT_CHAT_MODEL,
         },
         defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
     }
@@ -84,7 +84,7 @@ def test_conflicting_azure_api_key() -> None:
         defs.DEFAULT_CHAT_MODEL_ID: {
             "type": ModelType.AzureOpenAIChat,
             "auth_type": AuthType.AzureManagedIdentity,
-            "model": defs.LLM_MODEL,
+            "model": defs.DEFAULT_CHAT_MODEL,
             "api_base": "some_api_base",
             "api_version": "some_api_version",
             "deployment_name": "some_deployment_name",
@@ -100,7 +100,7 @@ def test_conflicting_azure_api_key() -> None:
 base_azure_model_config = {
     "type": ModelType.AzureOpenAIChat,
     "auth_type": AuthType.AzureManagedIdentity,
-    "model": defs.LLM_MODEL,
+    "model": defs.DEFAULT_CHAT_MODEL,
     "api_base": "some_api_base",
     "api_version": "some_api_version",
     "deployment_name": "some_deployment_name",

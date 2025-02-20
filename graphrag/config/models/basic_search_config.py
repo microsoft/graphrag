@@ -5,38 +5,41 @@
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 
 
 class BasicSearchConfig(BaseModel):
     """The default configuration section for Cache."""
 
     prompt: str | None = Field(
-        description="The basic search prompt to use.", default=None
+        description="The basic search prompt to use.",
+        default=graphrag_config_defaults.basic_search.prompt,
     )
     text_unit_prop: float = Field(
         description="The text unit proportion.",
-        default=defs.BASIC_SEARCH_TEXT_UNIT_PROP,
+        default=graphrag_config_defaults.basic_search.text_unit_prop,
     )
     conversation_history_max_turns: int = Field(
         description="The conversation history maximum turns.",
-        default=defs.BASIC_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
+        default=graphrag_config_defaults.basic_search.conversation_history_max_turns,
     )
     temperature: float = Field(
         description="The temperature to use for token generation.",
-        default=defs.BASIC_SEARCH_LLM_TEMPERATURE,
+        default=graphrag_config_defaults.basic_search.temperature,
     )
     top_p: float = Field(
         description="The top-p value to use for token generation.",
-        default=defs.BASIC_SEARCH_LLM_TOP_P,
+        default=graphrag_config_defaults.basic_search.top_p,
     )
     n: int = Field(
         description="The number of completions to generate.",
-        default=defs.BASIC_SEARCH_LLM_N,
+        default=graphrag_config_defaults.basic_search.n,
     )
     max_tokens: int = Field(
-        description="The maximum tokens.", default=defs.BASIC_SEARCH_MAX_TOKENS
+        description="The maximum tokens.",
+        default=graphrag_config_defaults.basic_search.max_tokens,
     )
     llm_max_tokens: int = Field(
-        description="The LLM maximum tokens.", default=defs.BASIC_SEARCH_LLM_MAX_TOKENS
+        description="The LLM maximum tokens.",
+        default=graphrag_config_defaults.basic_search.llm_max_tokens,
     )
