@@ -5,20 +5,21 @@
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 
 
 class ClusterGraphConfig(BaseModel):
     """Configuration section for clustering graphs."""
 
     max_cluster_size: int = Field(
-        description="The maximum cluster size to use.", default=defs.MAX_CLUSTER_SIZE
+        description="The maximum cluster size to use.",
+        default=graphrag_config_defaults.cluster_graph.max_cluster_size,
     )
     use_lcc: bool = Field(
         description="Whether to use the largest connected component.",
-        default=defs.USE_LCC,
+        default=graphrag_config_defaults.cluster_graph.use_lcc,
     )
     seed: int = Field(
         description="The seed to use for the clustering.",
-        default=defs.CLUSTER_GRAPH_SEED,
+        default=graphrag_config_defaults.cluster_graph.seed,
     )

@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 
 
 class EmbedGraphConfig(BaseModel):
@@ -13,27 +13,33 @@ class EmbedGraphConfig(BaseModel):
 
     enabled: bool = Field(
         description="A flag indicating whether to enable node2vec.",
-        default=defs.NODE2VEC_ENABLED,
+        default=graphrag_config_defaults.embed_graph.enabled,
     )
     dimensions: int = Field(
-        description="The node2vec vector dimensions.", default=defs.NODE2VEC_DIMENSIONS
+        description="The node2vec vector dimensions.",
+        default=graphrag_config_defaults.embed_graph.dimensions,
     )
     num_walks: int = Field(
-        description="The node2vec number of walks.", default=defs.NODE2VEC_NUM_WALKS
+        description="The node2vec number of walks.",
+        default=graphrag_config_defaults.embed_graph.num_walks,
     )
     walk_length: int = Field(
-        description="The node2vec walk length.", default=defs.NODE2VEC_WALK_LENGTH
+        description="The node2vec walk length.",
+        default=graphrag_config_defaults.embed_graph.walk_length,
     )
     window_size: int = Field(
-        description="The node2vec window size.", default=defs.NODE2VEC_WINDOW_SIZE
+        description="The node2vec window size.",
+        default=graphrag_config_defaults.embed_graph.window_size,
     )
     iterations: int = Field(
-        description="The node2vec iterations.", default=defs.NODE2VEC_ITERATIONS
+        description="The node2vec iterations.",
+        default=graphrag_config_defaults.embed_graph.iterations,
     )
     random_seed: int = Field(
-        description="The node2vec random seed.", default=defs.NODE2VEC_RANDOM_SEED
+        description="The node2vec random seed.",
+        default=graphrag_config_defaults.embed_graph.random_seed,
     )
     use_lcc: bool = Field(
         description="Whether to use the largest connected component.",
-        default=defs.USE_LCC,
+        default=graphrag_config_defaults.embed_graph.use_lcc,
     )

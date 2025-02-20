@@ -3,12 +3,14 @@
 
 """Parameterization settings for the default configuration."""
 
+from dataclasses import asdict
 from pathlib import Path
 
 from devtools import pformat
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -49,7 +51,8 @@ class GraphRagConfig(BaseModel):
         return self.model_dump_json(indent=4)
 
     root_dir: str = Field(
-        description="The root directory for the configuration.", default=""
+        description="The root directory for the configuration.",
+        default=graphrag_config_defaults.root_dir,
     )
 
     def _validate_root_dir(self) -> None:
@@ -65,7 +68,7 @@ class GraphRagConfig(BaseModel):
 
     models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.",
-        default={},
+        default=graphrag_config_defaults.models,
     )
 
     def _validate_models(self) -> None:
@@ -119,7 +122,7 @@ class GraphRagConfig(BaseModel):
 
     outputs: dict[str, OutputConfig] | None = Field(
         description="A list of output configurations used for multi-index query.",
-        default=None,
+        default=graphrag_config_defaults.outputs,
     )
 
     def _validate_multi_output_base_dirs(self) -> None:
@@ -137,8 +140,8 @@ class GraphRagConfig(BaseModel):
     update_index_output: OutputConfig = Field(
         description="The output configuration for the updated index.",
         default=OutputConfig(
-            type=defs.OUTPUT_TYPE,
-            base_dir=defs.UPDATE_OUTPUT_BASE_DIR,
+            type=graphrag_config_defaults.update_index_output.type,
+            base_dir=graphrag_config_defaults.update_index_output.base_dir,
         ),
     )
     """The output configuration for the updated index."""
@@ -214,7 +217,7 @@ class GraphRagConfig(BaseModel):
     extract_claims: ClaimExtractionConfig = Field(
         description="The claim extraction configuration to use.",
         default=ClaimExtractionConfig(
-            enabled=defs.EXTRACT_CLAIMS_ENABLED,
+            enabled=graphrag_config_defaults.extract_claims.enabled,
         ),
     )
     """The claim extraction configuration to use."""
@@ -258,13 +261,16 @@ class GraphRagConfig(BaseModel):
 
     vector_store: dict[str, VectorStoreConfig] = Field(
         description="The vector store configuration.",
-        default={defs.VECTOR_STORE_DEFAULT_ID: VectorStoreConfig()},
+        default_factory=lambda: {
+            k: VectorStoreConfig(**asdict(v))
+            for k, v in graphrag_config_defaults.vector_store.items()
+        },
     )
     """The vector store configuration."""
 
     workflows: list[str] | None = Field(
         description="List of workflows to run, in execution order. This always overrides any built-in workflow methods.",
-        default=None,
+        default=graphrag_config_defaults.workflows,
     )
     """List of workflows to run, in execution order."""
 

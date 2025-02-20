@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
@@ -16,28 +16,31 @@ class ClaimExtractionConfig(BaseModel):
 
     enabled: bool = Field(
         description="Whether claim extraction is enabled.",
-        default=defs.EXTRACT_CLAIMS_ENABLED,
+        default=graphrag_config_defaults.extract_claims.enabled,
     )
     prompt: str | None = Field(
-        description="The claim extraction prompt to use.", default=None
+        description="The claim extraction prompt to use.",
+        default=graphrag_config_defaults.extract_claims.prompt,
     )
     description: str = Field(
         description="The claim description to use.",
-        default=defs.DESCRIPTION,
+        default=graphrag_config_defaults.extract_claims.description,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
-        default=defs.CLAIM_MAX_GLEANINGS,
+        default=graphrag_config_defaults.extract_claims.max_gleanings,
     )
     strategy: dict | None = Field(
-        description="The override strategy to use.", default=None
+        description="The override strategy to use.",
+        default=graphrag_config_defaults.extract_claims.strategy,
     )
     encoding_model: str | None = Field(
-        default=None, description="The encoding model to use."
+        default=graphrag_config_defaults.extract_claims.encoding_model,
+        description="The encoding model to use.",
     )
     model_id: str = Field(
         description="The model ID to use for claim extraction.",
-        default=defs.EXTRACT_CLAIMS_MODEL_ID,
+        default=graphrag_config_defaults.extract_claims.model_id,
     )
 
     def resolved_strategy(

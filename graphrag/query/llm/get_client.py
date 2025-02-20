@@ -5,7 +5,7 @@
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import language_model_defaults
 from graphrag.config.enums import AuthType, ModelType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.query.llm.oai.chat_openai import ChatOpenAI
@@ -43,7 +43,7 @@ def get_llm(config: GraphRagConfig) -> ChatOpenAI:
         api_version=llm_config.api_version,
         max_retries=llm_config.max_retries
         if llm_config.max_retries != -1
-        else defs.LLM_MAX_RETRIES,
+        else language_model_defaults.max_retries,
         request_timeout=llm_config.request_timeout,
     )
 
@@ -78,5 +78,5 @@ def get_text_embedder(config: GraphRagConfig) -> OpenAIEmbedding:
         api_version=embeddings_llm_config.api_version,
         max_retries=embeddings_llm_config.max_retries
         if embeddings_llm_config.max_retries != -1
-        else defs.LLM_MAX_RETRIES,
+        else language_model_defaults.max_retries,
     )

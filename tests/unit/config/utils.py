@@ -1,6 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
+from dataclasses import asdict
+
 from pydantic import BaseModel
 
 import graphrag.config.defaults as defs
@@ -13,12 +15,17 @@ from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
 from graphrag.config.models.extract_claims_config import ClaimExtractionConfig
 from graphrag.config.models.extract_graph_config import ExtractGraphConfig
+from graphrag.config.models.extract_graph_nlp_config import (
+    ExtractGraphNLPConfig,
+    TextAnalyzerConfig,
+)
 from graphrag.config.models.global_search_config import GlobalSearchConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.config.models.input_config import InputConfig
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.config.models.local_search_config import LocalSearchConfig
 from graphrag.config.models.output_config import OutputConfig
+from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.config.models.reporting_config import ReportingConfig
 from graphrag.config.models.snapshots_config import SnapshotsConfig
 from graphrag.config.models.summarize_descriptions_config import (
@@ -32,14 +39,14 @@ FAKE_API_KEY = "NOT_AN_API_KEY"
 
 DEFAULT_CHAT_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.LLM_TYPE.value,
-    "model": defs.LLM_MODEL,
+    "type": defs.DEFAULT_CHAT_MODEL_TYPE.value,
+    "model": defs.DEFAULT_CHAT_MODEL,
 }
 
 DEFAULT_EMBEDDING_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.EMBEDDING_TYPE.value,
-    "model": defs.EMBEDDING_MODEL,
+    "type": defs.DEFAULT_EMBEDDING_MODEL_TYPE.value,
+    "model": defs.DEFAULT_EMBEDDING_MODEL,
 }
 
 DEFAULT_MODEL_CONFIG = {
@@ -47,202 +54,13 @@ DEFAULT_MODEL_CONFIG = {
     defs.DEFAULT_EMBEDDING_MODEL_ID: DEFAULT_EMBEDDING_MODEL_CONFIG,
 }
 
-DEFAULT_GRAPHRAG_CONFIG_SETTINGS = {
-    "models": DEFAULT_MODEL_CONFIG,
-    "vector_store": {
-        defs.VECTOR_STORE_DEFAULT_ID: {
-            "type": defs.VECTOR_STORE_TYPE,
-            "db_uri": defs.VECTOR_STORE_DB_URI,
-            "container_name": defs.VECTOR_STORE_CONTAINER_NAME,
-            "overwrite": defs.VECTOR_STORE_OVERWRITE,
-            "url": None,
-            "api_key": None,
-            "audience": None,
-            "database_name": None,
-        },
-    },
-    "reporting": {
-        "type": defs.REPORTING_TYPE,
-        "base_dir": defs.REPORTING_BASE_DIR,
-        "connection_string": None,
-        "container_name": None,
-        "storage_account_blob_url": None,
-    },
-    "output": {
-        "type": defs.OUTPUT_TYPE,
-        "base_dir": defs.OUTPUT_BASE_DIR,
-        "connection_string": None,
-        "container_name": None,
-        "storage_account_blob_url": None,
-    },
-    "update_index_output": {
-        "type": defs.OUTPUT_TYPE,
-        "base_dir": defs.UPDATE_OUTPUT_BASE_DIR,
-        "connection_string": None,
-        "container_name": None,
-        "storage_account_blob_url": None,
-    },
-    "cache": {
-        "type": defs.CACHE_TYPE,
-        "base_dir": defs.CACHE_BASE_DIR,
-        "connection_string": None,
-        "container_name": None,
-        "storage_account_blob_url": None,
-        "cosmosdb_account_url": None,
-    },
-    "input": {
-        "type": defs.INPUT_TYPE,
-        "file_type": defs.INPUT_FILE_TYPE,
-        "base_dir": defs.INPUT_BASE_DIR,
-        "connection_string": None,
-        "storage_account_blob_url": None,
-        "container_name": None,
-        "encoding": defs.INPUT_FILE_ENCODING,
-        "file_pattern": defs.INPUT_TEXT_PATTERN,
-        "file_filter": None,
-        "text_column": defs.INPUT_TEXT_COLUMN,
-        "title_column": None,
-        "metadata": None,
-    },
-    "embed_graph": {
-        "enabled": defs.NODE2VEC_ENABLED,
-        "dimensions": defs.NODE2VEC_DIMENSIONS,
-        "num_walks": defs.NODE2VEC_NUM_WALKS,
-        "walk_length": defs.NODE2VEC_WALK_LENGTH,
-        "window_size": defs.NODE2VEC_WINDOW_SIZE,
-        "iterations": defs.NODE2VEC_ITERATIONS,
-        "random_seed": defs.NODE2VEC_RANDOM_SEED,
-        "use_lcc": defs.USE_LCC,
-    },
-    "embed_text": {
-        "batch_size": defs.EMBEDDING_BATCH_SIZE,
-        "batch_max_tokens": defs.EMBEDDING_BATCH_MAX_TOKENS,
-        "target": defs.EMBEDDING_TARGET,
-        "strategy": None,
-        "model_id": defs.EMBEDDING_MODEL_ID,
-    },
-    "chunks": {
-        "size": defs.CHUNK_SIZE,
-        "overlap": defs.CHUNK_OVERLAP,
-        "group_by_columns": defs.CHUNK_GROUP_BY_COLUMNS,
-        "strategy": defs.CHUNK_STRATEGY,
-        "encoding_model": defs.ENCODING_MODEL,
-        "prepend_metadata": False,
-        "chunk_size_includes_metadata": False,
-    },
-    "snapshots": {
-        "embeddings": defs.SNAPSHOTS_EMBEDDINGS,
-        "graphml": defs.SNAPSHOTS_GRAPHML,
-    },
-    "extract_graph": {
-        "prompt": None,
-        "entity_types": defs.EXTRACT_GRAPH_ENTITY_TYPES,
-        "max_gleanings": defs.EXTRACT_GRAPH_MAX_GLEANINGS,
-        "strategy": None,
-        "encoding_model": None,
-        "model_id": defs.EXTRACT_GRAPH_MODEL_ID,
-    },
-    "summarize_descriptions": {
-        "prompt": None,
-        "max_length": defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
-        "strategy": None,
-        "model_id": defs.SUMMARIZE_MODEL_ID,
-    },
-    "community_report": {
-        "prompt": None,
-        "max_length": defs.COMMUNITY_REPORT_MAX_LENGTH,
-        "max_input_length": defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH,
-        "strategy": None,
-        "model_id": defs.COMMUNITY_REPORT_MODEL_ID,
-    },
-    "claim_extaction": {
-        "enabled": defs.EXTRACT_CLAIMS_ENABLED,
-        "prompt": None,
-        "description": defs.DESCRIPTION,
-        "max_gleanings": defs.CLAIM_MAX_GLEANINGS,
-        "strategy": None,
-        "encoding_model": None,
-        "model_id": defs.EXTRACT_CLAIMS_MODEL_ID,
-    },
-    "cluster_graph": {
-        "max_cluster_size": defs.MAX_CLUSTER_SIZE,
-        "use_lcc": defs.USE_LCC,
-        "seed": defs.CLUSTER_GRAPH_SEED,
-    },
-    "umap": {"enabled": defs.UMAP_ENABLED},
-    "local_search": {
-        "prompt": None,
-        "text_unit_prop": defs.LOCAL_SEARCH_TEXT_UNIT_PROP,
-        "community_prop": defs.LOCAL_SEARCH_COMMUNITY_PROP,
-        "conversation_history_max_turns": defs.LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
-        "top_k_entities": defs.LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
-        "top_k_relationships": defs.LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
-        "temperature": defs.LOCAL_SEARCH_LLM_TEMPERATURE,
-        "top_p": defs.LOCAL_SEARCH_LLM_TOP_P,
-        "n": defs.LOCAL_SEARCH_LLM_N,
-        "max_tokens": defs.LOCAL_SEARCH_MAX_TOKENS,
-        "llm_max_tokens": defs.LOCAL_SEARCH_LLM_MAX_TOKENS,
-    },
-    "global_search": {
-        "map_prompt": None,
-        "reduce_prompt": None,
-        "knowledge_prompt": None,
-        "temperature": defs.GLOBAL_SEARCH_LLM_TEMPERATURE,
-        "top_p": defs.GLOBAL_SEARCH_LLM_TOP_P,
-        "n": defs.GLOBAL_SEARCH_LLM_N,
-        "max_tokens": defs.GLOBAL_SEARCH_MAX_TOKENS,
-        "data_max_tokens": defs.GLOBAL_SEARCH_DATA_MAX_TOKENS,
-        "map_max_tokens": defs.GLOBAL_SEARCH_MAP_MAX_TOKENS,
-        "reduce_max_tokens": defs.GLOBAL_SEARCH_REDUCE_MAX_TOKENS,
-        "concurrency": defs.GLOBAL_SEARCH_CONCURRENCY,
-        "dynamic_search_llm": defs.DYNAMIC_SEARCH_LLM_MODEL,
-        "dynamic_search_threshold": defs.DYNAMIC_SEARCH_RATE_THRESHOLD,
-        "dynamic_search_keep_parent": defs.DYNAMIC_SEARCH_KEEP_PARENT,
-        "dynamic_search_num_repeats": defs.DYNAMIC_SEARCH_NUM_REPEATS,
-        "dynamic_search_use_summary": defs.DYNAMIC_SEARCH_USE_SUMMARY,
-        "dynamic_search_concurrent_coroutines": defs.DYNAMIC_SEARCH_CONCURRENT_COROUTINES,
-        "dynamic_search_max_level": defs.DYNAMIC_SEARCH_MAX_LEVEL,
-    },
-    "drift_search": {
-        "prompt": None,
-        "temperature": defs.DRIFT_SEARCH_LLM_TEMPERATURE,
-        "top_p": defs.DRIFT_SEARCH_LLM_TOP_P,
-        "n": defs.DRIFT_SEARCH_LLM_N,
-        "max_tokens": defs.DRIFT_SEARCH_MAX_TOKENS,
-        "data_max_tokens": defs.DRIFT_SEARCH_DATA_MAX_TOKENS,
-        "concurrency": defs.DRIFT_SEARCH_CONCURRENCY,
-        "drift_k_followups": defs.DRIFT_SEARCH_K_FOLLOW_UPS,
-        "primer_folds": defs.DRIFT_SEARCH_PRIMER_FOLDS,
-        "primer_llm_max_tokens": defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS,
-        "n_depth": defs.DRIFT_N_DEPTH,
-        "local_search_text_unit_prop": defs.DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP,
-        "local_search_community_prop": defs.DRIFT_LOCAL_SEARCH_COMMUNITY_PROP,
-        "local_search_top_k_mapped_entities": defs.DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
-        "local_search_top_k_relationships": defs.DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
-        "local_search_max_data_tokens": defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS,
-        "local_search_temperature": defs.DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE,
-        "local_search_top_p": defs.DRIFT_LOCAL_SEARCH_LLM_TOP_P,
-        "local_search_n": defs.DRIFT_LOCAL_SEARCH_LLM_N,
-        "local_search_max_tokens": defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS,
-    },
-    "basic_search": {
-        "prompt": None,
-        "text_unit_prop": defs.BASIC_SEARCH_TEXT_UNIT_PROP,
-        "conversation_history_max_turns": defs.BASIC_SEARCH_CONVERSATION_HISTORY_MAX_TURNS,
-        "temperature": defs.BASIC_SEARCH_LLM_TEMPERATURE,
-        "top_p": defs.BASIC_SEARCH_LLM_TOP_P,
-        "n": defs.BASIC_SEARCH_LLM_N,
-        "max_tokens": defs.BASIC_SEARCH_MAX_TOKENS,
-        "llm_max_tokens": defs.BASIC_SEARCH_LLM_MAX_TOKENS,
-    },
-}
-
 
 def get_default_graphrag_config(root_dir: str | None = None) -> GraphRagConfig:
-    if root_dir is not None and root_dir.strip() != "":
-        DEFAULT_GRAPHRAG_CONFIG_SETTINGS["root_dir"] = root_dir
-
-    return GraphRagConfig(**DEFAULT_GRAPHRAG_CONFIG_SETTINGS)
+    return GraphRagConfig(**{
+        **asdict(defs.graphrag_config_defaults),
+        "models": DEFAULT_MODEL_CONFIG,
+        **({"root_dir": root_dir} if root_dir else {}),
+    })
 
 
 def assert_language_model_configs(
@@ -269,6 +87,7 @@ def assert_language_model_configs(
     assert actual.model_supports_json == expected.model_supports_json
     assert actual.tokens_per_minute == expected.tokens_per_minute
     assert actual.requests_per_minute == expected.requests_per_minute
+    assert actual.retry_strategy == expected.retry_strategy
     assert actual.max_retries == expected.max_retries
     assert actual.max_retry_wait == expected.max_retry_wait
     assert actual.concurrent_requests == expected.concurrent_requests
@@ -378,6 +197,7 @@ def assert_text_embedding_configs(
     assert actual.names == expected.names
     assert actual.strategy == expected.strategy
     assert actual.model_id == expected.model_id
+    assert actual.vector_store_id == expected.vector_store_id
 
 
 def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) -> None:
@@ -386,6 +206,8 @@ def assert_chunking_configs(actual: ChunkingConfig, expected: ChunkingConfig) ->
     assert actual.group_by_columns == expected.group_by_columns
     assert actual.strategy == expected.strategy
     assert actual.encoding_model == expected.encoding_model
+    assert actual.prepend_metadata == expected.prepend_metadata
+    assert actual.chunk_size_includes_metadata == expected.chunk_size_includes_metadata
 
 
 def assert_snapshots_configs(
@@ -404,6 +226,41 @@ def assert_extract_graph_configs(
     assert actual.strategy == expected.strategy
     assert actual.encoding_model == expected.encoding_model
     assert actual.model_id == expected.model_id
+
+
+def assert_text_analyzer_configs(
+    actual: TextAnalyzerConfig, expected: TextAnalyzerConfig
+) -> None:
+    assert actual.extractor_type == expected.extractor_type
+    assert actual.model_name == expected.model_name
+    assert actual.max_word_length == expected.max_word_length
+    assert actual.word_delimiter == expected.word_delimiter
+    assert actual.include_named_entities == expected.include_named_entities
+    assert actual.exclude_nouns == expected.exclude_nouns
+    assert actual.exclude_entity_tags == expected.exclude_entity_tags
+    assert actual.exclude_pos_tags == expected.exclude_pos_tags
+    assert actual.noun_phrase_tags == expected.noun_phrase_tags
+    assert actual.noun_phrase_grammars == expected.noun_phrase_grammars
+
+
+def assert_extract_graph_nlp_configs(
+    actual: ExtractGraphNLPConfig, expected: ExtractGraphNLPConfig
+) -> None:
+    assert actual.normalize_edge_weights == expected.normalize_edge_weights
+    assert_text_analyzer_configs(actual.text_analyzer, expected.text_analyzer)
+    assert actual.concurrent_requests == expected.concurrent_requests
+
+
+def assert_prune_graph_configs(
+    actual: PruneGraphConfig, expected: PruneGraphConfig
+) -> None:
+    assert actual.min_node_freq == expected.min_node_freq
+    assert actual.max_node_freq_std == expected.max_node_freq_std
+    assert actual.min_node_degree == expected.min_node_degree
+    assert actual.max_node_degree_std == expected.max_node_degree_std
+    assert actual.min_edge_weight_pct == expected.min_edge_weight_pct
+    assert actual.remove_ego_nodes == expected.remove_ego_nodes
+    assert actual.lcc_only == expected.lcc_only
 
 
 def assert_summarize_descriptions_configs(
@@ -498,11 +355,14 @@ def assert_drift_search_configs(
     actual: DRIFTSearchConfig, expected: DRIFTSearchConfig
 ) -> None:
     assert actual.prompt == expected.prompt
+    assert actual.reduce_prompt == expected.reduce_prompt
     assert actual.temperature == expected.temperature
     assert actual.top_p == expected.top_p
     assert actual.n == expected.n
     assert actual.max_tokens == expected.max_tokens
     assert actual.data_max_tokens == expected.data_max_tokens
+    assert actual.reduce_max_tokens == expected.reduce_max_tokens
+    assert actual.reduce_temperature == expected.reduce_temperature
     assert actual.concurrency == expected.concurrency
     assert actual.drift_k_followups == expected.drift_k_followups
     assert actual.primer_folds == expected.primer_folds
@@ -557,13 +417,17 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_reporting_configs(actual.reporting, expected.reporting)
     assert_output_configs(actual.output, expected.output)
 
-    if actual.update_index_output is not None:
-        assert expected.update_index_output is not None
-        assert_update_output_configs(
-            actual.update_index_output, expected.update_index_output
-        )
+    if expected.outputs is not None:
+        assert actual.outputs is not None
+        assert len(actual.outputs) == len(expected.outputs)
+        for a, e in zip(actual.outputs.keys(), expected.outputs.keys(), strict=True):
+            assert_output_configs(actual.outputs[a], expected.outputs[e])
     else:
-        assert expected.update_index_output is None
+        assert actual.outputs is None
+
+    assert_update_output_configs(
+        actual.update_index_output, expected.update_index_output
+    )
 
     assert_cache_configs(actual.cache, expected.cache)
     assert_input_configs(actual.input, expected.input)
@@ -572,6 +436,9 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
     assert_chunking_configs(actual.chunks, expected.chunks)
     assert_snapshots_configs(actual.snapshots, expected.snapshots)
     assert_extract_graph_configs(actual.extract_graph, expected.extract_graph)
+    assert_extract_graph_nlp_configs(
+        actual.extract_graph_nlp, expected.extract_graph_nlp
+    )
     assert_summarize_descriptions_configs(
         actual.summarize_descriptions, expected.summarize_descriptions
     )
@@ -579,8 +446,10 @@ def assert_graphrag_configs(actual: GraphRagConfig, expected: GraphRagConfig) ->
         actual.community_reports, expected.community_reports
     )
     assert_extract_claims_configs(actual.extract_claims, expected.extract_claims)
+    assert_prune_graph_configs(actual.prune_graph, expected.prune_graph)
     assert_cluster_graph_configs(actual.cluster_graph, expected.cluster_graph)
     assert_umap_configs(actual.umap, expected.umap)
     assert_local_search_configs(actual.local_search, expected.local_search)
     assert_global_search_configs(actual.global_search, expected.global_search)
     assert_drift_search_configs(actual.drift_search, expected.drift_search)
+    assert_basic_search_configs(actual.basic_search, expected.basic_search)
