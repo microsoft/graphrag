@@ -3,15 +3,17 @@
 
 """Azure DocumentDB Storage implementation of PipelineStorage."""
 
+import sys
 import json
 import logging
 import re
 from collections.abc import Iterator
 from datetime import datetime, timezone
-from io import BytesIO, StringIO
-from typing import Any
+from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
 import pandas as pd
+import psycopg2
+from psycopg2.extras import RealDictCursor, Json
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
@@ -20,11 +22,7 @@ from graphrag.storage.pipeline_storage import (
     get_timestamp_formatted_with_local_tz,
 )
 
-import psycopg2
-from psycopg2.extras import RealDictCursor, Json
-
 log = logging.getLogger(__name__)
-
 
 class DocumentDBPipelineStorage(PipelineStorage):
     """The DocumentDB Storage Implementation."""
@@ -44,7 +42,7 @@ class DocumentDBPipelineStorage(PipelineStorage):
         host: str = "localhost",
         port: int = 5432,
         encoding: str = "utf-8",
-    ):
+    ) -> None:
         """Initialize the DocumentDB Storage."""
         self._connection = psycopg2.connect(
             dbname="postgres",
@@ -72,24 +70,24 @@ class DocumentDBPipelineStorage(PipelineStorage):
         """Create the table if it doesn't exist."""
         self._cursor.execute(f"""
             SELECT documentdb_api.create_collection('{self._database_name}', '{self._collection}');
-    	""")    
+        """)
         self._connection.commit()
 
     def _delete_collection(self) -> None:
         """Delete the table if it exists."""
         self._cursor.execute(f"""
             SELECT documentdb_api.drop_collection('{self._database_name}', '{self._collection}');
-    	""") 
+        """)
         self._connection.commit()
 
     def find(
         self,
-        file_pattern: re.Pattern[str],
-        base_dir: str | None = None,
-        progress: ProgressLogger | None = None,
-        file_filter: dict[str, Any] | None = None,
-        max_count=-1,
-    ) -> Iterator[tuple[str, dict[str, Any]]]:
+        file_pattern: Pattern[str],
+        base_dir: Optional[str] = None,
+        progress: Optional[ProgressLogger] = None,
+        file_filter: Optional[Dict[str, Any]] = None,
+        max_count: int = -1,
+    ) -> Iterator[Tuple[str, Dict[str, Any]]]:
         """Find documents in a DocumentDB table using a file pattern regex and custom file filter (optional)."""
         base_dir = base_dir or ""
         log.info(
@@ -100,16 +98,16 @@ class DocumentDBPipelineStorage(PipelineStorage):
 
         if not self._connection or not self._cursor:
             return
-                
+
         try:
-            find_query = { 
-                "find" : self._collection, 
-                "filter" : {
+            find_query = {
+                "find": self._collection,
+                "filter": {
                     "$and": [
                         {
                             "key": {
                                 "$regex": file_pattern.pattern
-                            } 
+                            }
                         }
                     ]
                 }
@@ -135,7 +133,7 @@ class DocumentDBPipelineStorage(PipelineStorage):
 
             if num_total == 0:
                 return
-            
+
             num_filtered = 0
             for item in items:
                 key = item["key"]
@@ -159,18 +157,16 @@ class DocumentDBPipelineStorage(PipelineStorage):
                 "An error occurred while searching for documents in Document DB."
             )
 
-    async def get(
-        self, key: str, as_bytes: bool | None = None, encoding: str | None = None
-    ) -> Any:
+    async def get(self, key: str, as_bytes: Optional[bool] = None, encoding: Optional[str] = None) -> Any:
         """Fetch an item from the table that matches the given key."""
         try:
-            find_query = { 
-                "find" : self._collection, 
-                "filter" : {
+            find_query = {
+                "find": self._collection,
+                "filter": {
                     "key": key
                 }
             }
-            
+
             query = f"""
                 SELECT cursorPage->>'cursor.firstBatch' AS results
                 FROM documentdb_api.find_cursor_first_page('{self._database_name}', {Json(find_query)});
@@ -181,7 +177,7 @@ class DocumentDBPipelineStorage(PipelineStorage):
             items = json.loads(item.get('results', '[]'))
             if len(items) == 0:
                 return None
-            
+
             item = items[0]
 
             if item:
@@ -191,10 +187,10 @@ class DocumentDBPipelineStorage(PipelineStorage):
             log.exception("Error reading item %s", key)
             return None
 
-    async def set(self, key: str, value: Any, encoding: str | None = None) -> None:
+    async def set(self, key: str, value: Any, encoding: Optional[str] = None) -> None:
         """Insert or update the contents of a file into the DocumentDB table for the given filename key."""
         try:
-            insert_query = { 
+            insert_query = {
                 "key": key,
                 "value": json.loads(value),
                 "created_at": datetime.now(timezone.utc).isoformat()
@@ -208,17 +204,14 @@ class DocumentDBPipelineStorage(PipelineStorage):
 
     async def has(self, key: str) -> bool:
         """Check if the contents of the given filename key exist in the DocumentDB table."""
-        aggregate_query = { 
-            "aggregate": self._collection, 
-            "pipeline": [ 
-                { "$match": { 
-                    "key": key 
-                    } 
-                },
-                { 
-                    "$count": "key"
-                } 
-            ] , "cursor": { "batchSize": 1 } }
+        aggregate_query = {
+            "aggregate": self._collection,
+            "pipeline": [
+                {"$match": {"key": key}},
+                {"$count": "key"}
+            ],
+            "cursor": {"batchSize": 1}
+        }
 
         self._cursor.execute(f"""
             SELECT jsonb_extract_path_text(results::jsonb, '0', 'key')::int AS count
@@ -226,7 +219,7 @@ class DocumentDBPipelineStorage(PipelineStorage):
                 SELECT cursorPage->>'cursor.firstBatch' AS results
                 FROM documentdb_api.aggregate_cursor_first_page('{self._database_name}', {Json(aggregate_query)})
             );
-            """)
+        """)
         result = self._cursor.fetchone()
         return result.get('count', 0) > 0
 
@@ -234,12 +227,11 @@ class DocumentDBPipelineStorage(PipelineStorage):
         """Delete the item with the given filename key from the DocumentDB table."""
         try:
             delete_query = {
-                "delete": self._collection, 
+                "delete": self._collection,
                 "deletes": [
                     {
-                        "q": {
-                            "key": key
-                        }, "limit": 1
+                        "q": {"key": key},
+                        "limit": 1
                     }
                 ]
             }
@@ -253,12 +245,40 @@ class DocumentDBPipelineStorage(PipelineStorage):
         self._delete_collection()
         self._create_collection()
 
-    def keys(self) -> list[str]:
+    def keys(self) -> List[str]:
         """Return the keys in the storage."""
-        self._cursor.execute(f"SELECT key FROM {self._table_name}")
-        return [row["key"] for row in self._cursor.fetchall()]
+        count_query = {
+            "aggregate": self._collection,
+            "pipeline": [
+                { "$count": "key" }
+            ], 
+            "cursor": { "batchSize": 1 }
+        }
 
-    def child(self, name: str | None) -> PipelineStorage:
+        self._cursor.execute(f"""
+            SELECT jsonb_extract_path_text(results::jsonb, '0', 'key')::int AS batch_size
+            FROM (
+                SELECT cursorPage->>'cursor.firstBatch' AS results
+                FROM documentdb_api.aggregate_cursor_first_page(
+                    'documentdb',
+                    {Json(count_query)}
+                )
+            ) subquery;
+        """)
+        result = self._cursor.fetchone()
+        
+        keys_query = { 
+            "aggregate": self._collection, 
+            "pipeline": [ 
+                { "$group": 
+                    { "_id": "$key",  } 
+                } 
+            ] , "cursor": { "batchSize": result.get('batch_size', sys.maxsize) } }
+        self._cursor.execute(f"SELECT cursorpage->>'cursor.firstBatch' AS result FROM documentdb_api.aggregate_cursor_first_page('documentdb', {Json(keys_query)});")
+        result = self._cursor.fetchone()
+        return [row["_id"] for row in json.loads(result['result'])]
+
+    def child(self, name: Optional[str]) -> PipelineStorage:
         """Create a child storage instance."""
         return self
 
@@ -269,13 +289,13 @@ class DocumentDBPipelineStorage(PipelineStorage):
     async def get_creation_date(self, key: str) -> str:
         """Get the creation date of the item with the given key."""
         try:
-            find_query = { 
-                "find" : self._collection, 
-                "filter" : {
+            find_query = {
+                "find": self._collection,
+                "filter": {
                     "key": key
                 }
             }
-            
+
             query = f"""
                 SELECT cursorPage->>'cursor.firstBatch' AS results
                 FROM documentdb_api.find_cursor_first_page('{self._database_name}', {Json(find_query)});
@@ -286,7 +306,7 @@ class DocumentDBPipelineStorage(PipelineStorage):
             items = json.loads(item.get('results', '[]'))
             if len(items) == 0:
                 return ""
-            
+
             item = items[0]
 
             if item:
@@ -297,7 +317,6 @@ class DocumentDBPipelineStorage(PipelineStorage):
         except Exception:
             log.exception("Error getting key %s", key)
             return ""
-
 
 def create_documentdb_storage(**kwargs: Any) -> PipelineStorage:
     """Create a DocumentDB storage instance."""
@@ -317,10 +336,7 @@ def create_documentdb_storage(**kwargs: Any) -> PipelineStorage:
         port=port,
     )
 
-
-def _create_progress_status(
-    num_loaded: int, num_filtered: int, num_total: int
-) -> Progress:
+def _create_progress_status(num_loaded: int, num_filtered: int, num_total: int) -> Progress:
     return Progress(
         total_items=num_total,
         completed_items=num_loaded + num_filtered,

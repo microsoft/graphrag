@@ -136,3 +136,27 @@ async def test_get_creation_date():
 
     finally:
         await storage.clear()
+
+async def test_keys():
+    storage = DocumentDBPipelineStorage(
+        database_name = "documentdb",
+        collection = "testkeystable",
+        user = "admin",
+        password = "admin",
+        host = "host.docker.internal",
+        port = 9712,
+    )
+    try:
+        json_content = {
+            "content": "Happy Easter!",
+        }
+        await storage.set("easter.json", json.dumps(json_content), encoding="utf-8")
+        json_content = {
+            "content": "Happy Christmas!",
+        }
+        await storage.set("christmas.json", json.dumps(json_content), encoding="utf-8")
+
+        keys = storage.keys()
+        assert len(keys) == 2
+    finally:
+        await storage.clear()

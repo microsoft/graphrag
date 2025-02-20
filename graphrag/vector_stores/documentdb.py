@@ -4,10 +4,10 @@
 """A package containing the DocumentDB vector store implementation."""
 
 import json
-from typing import Any
+from typing import Any, List, Union
 import psycopg2
 from psycopg2 import sql
-from psycopg2.extras import Json
+from psycopg2.extras import RealDictCursor, Json
 
 from graphrag.model.types import TextEmbedder
 from graphrag.vector_stores.base import (
@@ -17,15 +17,33 @@ from graphrag.vector_stores.base import (
     VectorStoreSearchResult,
 )
 
-class DocumentDBVectoreStore(BaseVectorStore):
-    """Microsoft DocumentB (PostgreSQL) vector storage implementation."""
+class DocumentDBVectorStore(BaseVectorStore):
+    """Microsoft DocumentDB (PostgreSQL) vector storage implementation."""
+
+    _connection: psycopg2.extensions.connection
+    _cursor: psycopg2.extensions.cursor
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.db_name = kwargs.get("database_name", "documentdb")
-        self.vector_options = kwargs.get("vector_options", { "kind": "vector-ivf", "similarity": "COS", "dimensions": DEFAULT_VECTOR_SIZE, "numLists": 3 })
 
-    def connect(self, **kwargs: Any) -> Any:
+        kind = kwargs.get("kind", "vector-ivf")  # Possible values: vector-hnsw, vector-ivf.
+        similarity = kwargs.get("similarity", "COS")  # COS for cosine similarity, L2 for Euclidean distance, or IP for inner product.
+        dimensions = kwargs.get("dimensions", DEFAULT_VECTOR_SIZE)
+        num_lists = kwargs.get("numLists", 100)  # Only IVF index requires this parameter.
+        m = kwargs.get("m", 16)  # Only HNSW index requires this parameter.
+        ef_construction = kwargs.get("efConstruction", 64)  # Only HNSW index requires this parameter.
+
+        self.vector_options = kwargs.get("vector_options", {
+            "kind": kind,
+            "similarity": similarity,
+            "dimensions": dimensions,
+            "numLists": num_lists,
+            "m": m,
+            "efConstruction": ef_construction
+        })
+
+    def connect(self, **kwargs: Any) -> None:
         """Connect to DocumentDB (PostgreSQL) vector storage."""
         user = kwargs.get("user")
         password = kwargs.get("password")
@@ -34,39 +52,23 @@ class DocumentDBVectoreStore(BaseVectorStore):
 
         if not all([self.db_name, user, password, host]):
             raise ValueError("Database credentials must be provided.")
-        
-        self.db_connection = psycopg2.connect(
-            dbname="postgres", user=user, password=password, host=host, port=port
+
+        self._connection = psycopg2.connect(
+            dbname="postgres",
+            user=user,
+            password=password,
+            host=host,
+            port=port
         )
-        cursor = self.db_connection.cursor()
+        self._cursor = self._connection.cursor(cursor_factory=RealDictCursor)
 
-        # replace this with a more general solution
-        x = sql.SQL("SET search_path TO documentdb_api, documentdb_core; SET documentdb_core.bsonUseEJson TO true;")
-        cursor.execute(x)
-        self.db_connection.commit()
+        set_first = 'SET search_path TO documentdb_api, documentdb_core;'
+        self._cursor.execute(set_first)
+        self._connection.commit()
 
-        coll_query = {
-            "listCollections": 1,
-            "filter" : {
-                "collection_name":  self.collection_name
-            }
-        }
-        try:
-            query = sql.SQL("SELECT cursorpage->>'cursor.firstBatch' FROM documentdb_api.list_collections_cursor_first_page(%s, %s);")
-            cursor.execute(query, [self.db_name, Json(coll_query)])
-            result = cursor.fetchone()
-            if result and result[0]:
-                first_batch = json.loads(result[0]) 
-                if self.collection_name in first_batch:
-                    self.document_collection = self.collection_name
-                else:
-                    self.document_collection = self.create_collection()
-        except Exception as e:
-            self.document_collection = self.collection_name
+        self.document_collection = self.create_collection()
 
-    def load_documents(
-        self, documents: list[VectorStoreDocument], overwrite: bool = True
-    ) -> None:
+    def load_documents(self, documents: List[VectorStoreDocument], overwrite: bool = True) -> None:
         """Load documents into vector storage."""
         data = [
             {
@@ -82,34 +84,28 @@ class DocumentDBVectoreStore(BaseVectorStore):
         if len(data) == 0:
             data = None
 
-        # NOTE: If modifying the next section of code, ensure that the schema remains the same.
-        #       The pyarrow format of the 'vector' field may change if the order of operations is changed
-        #       and will break vector search.
-        cursor = self.db_connection.cursor()
-
         if overwrite:
             drop_query = sql.SQL("SELECT * FROM documentdb_api.drop_collection(%s, %s);")
             create_query = sql.SQL("SELECT * FROM documentdb_api.create_collection(%s, %s);")
 
-            cursor.execute(drop_query, [self.db_name, self.collection_name])
-            self.db_connection.commit()
-            cursor.execute(create_query, [self.db_name, self.collection_name])
-            self.db_connection.commit()
+            self._cursor.execute(drop_query, [self.db_name, self.collection_name])
+            self._connection.commit()
+            self._cursor.execute(create_query, [self.db_name, self.collection_name])
+            self._connection.commit()
 
             self.create_vector_index("vector_index", "vector")
-            
+
         if data:
             for doc in data:
-                insert_query = sql.SQL("SELECT * FROM documentdb_api.insert_document(%s, %s, %s, %s, %s);")
-                cursor.execute(insert_query, [self.db_name, self.collection_name, Json(doc)])
-                self.db_connection.commit()
+                insert_query = sql.SQL("SELECT documentdb_api.insert_one(%s, %s, %s);")
+                self._cursor.execute(insert_query, [self.db_name, self.collection_name, Json(doc)])
+                self._connection.commit()
 
     def create_collection(self) -> str:
         """Create a collection in the database."""
-        cursor = self.db_connection.cursor()
         create_collection_query = sql.SQL("SELECT * FROM documentdb_api.create_collection(%s, %s);")
-        cursor.execute(create_collection_query, [self.db_name, self.collection_name])
-        self.db_connection.commit()
+        self._cursor.execute(create_collection_query, [self.db_name, self.collection_name])
+        self._connection.commit()
 
         self.create_vector_index("vector_index", "vector")
         return self.collection_name
@@ -128,11 +124,11 @@ class DocumentDBVectoreStore(BaseVectorStore):
                 }
             ]
         }
-        cursor = self.db_connection.cursor()
-        # create_index_query = sql.SQL("SELECT documentdb_api.create_indexes_background(%s, %s);")
+        
+        # see bug issue: https://github.com/microsoft/documentdb/issues/63
         create_index_query = sql.SQL("SELECT documentdb_api_internal.create_indexes_non_concurrently(%s, %s, true);")
-        cursor.execute(create_index_query, [self.db_name, Json(index_query)])
-        self.db_connection.commit()
+        self._cursor.execute(create_index_query, [self.db_name, Json(index_query)])
+        self._connection.commit()
 
     def filter_by_id(self, include_ids: list[str] | list[int]) -> Any:
         """Build a query filter to filter documents by id."""
@@ -141,22 +137,20 @@ class DocumentDBVectoreStore(BaseVectorStore):
         else:
             if isinstance(include_ids[0], str):
                 self.query_filter = {
-                    "id": { 
+                    "id": {
                         "$in": [f"'{id}'" for id in include_ids]
                     }
                 }
             else:
                 self.query_filter = {
-                    "id": { 
-                        "$in": include_ids 
+                    "id": {
+                        "$in": include_ids
                     }
                 }
-                
+
         return self.query_filter
 
-    def similarity_search_by_vector(
-        self, query_embedding: list[float], k: int = 10, **kwargs: Any
-    ) -> list[VectorStoreSearchResult]:
+    def similarity_search_by_vector(self, query_embedding: List[float], k: int = 10, **kwargs: Any) -> List[VectorStoreSearchResult]:
         """Perform a vector-based similarity search."""
         search_filter = {
             "aggregate": self.collection_name,
@@ -180,10 +174,10 @@ class DocumentDBVectoreStore(BaseVectorStore):
         if self.query_filter:
             search_filter["pipeline"].insert(0, {"filter": self.query_filter})
 
-        cursor = self.db_connection.cursor()
+        self._cursor = self._connection.cursor()
         search_query = sql.SQL("SELECT cursorpage->>'cursor.firstBatch' FROM documentdb_api.aggregate_cursor_first_page(%s, %s);")
-        cursor.execute(search_query, [self.db_name, Json(search_filter)])
-        results = cursor.fetchall()
+        self._cursor.execute(search_query, [self.db_name, Json(search_filter)])
+        results = self._cursor.fetchall()
         docs = [json.loads(result[0]) for result in results if result[0]]
 
         return [
@@ -194,14 +188,12 @@ class DocumentDBVectoreStore(BaseVectorStore):
                     vector=doc["vector"],
                     attributes=json.loads(doc["attributes"]),
                 ),
-                score=1 - abs(float(doc["_distance"])),
+                score=abs(float(doc['__cosmos_meta__']['score'])),
             )
-            for doc in docs
+            for doc in docs[0]
         ]
 
-    def similarity_search_by_text(
-        self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any
-    ) -> list[VectorStoreSearchResult]:
+    def similarity_search_by_text(self, text: str, text_embedder: TextEmbedder, k: int = 10, **kwargs: Any) -> List[VectorStoreSearchResult]:
         """Perform a similarity search using a given input text."""
         query_embedding = text_embedder(text)
         if query_embedding:
@@ -217,12 +209,12 @@ class DocumentDBVectoreStore(BaseVectorStore):
             }
         }
 
-        cursor = self.db_connection.cursor()
+        self._cursor = self._connection.cursor()
         search_query = sql.SQL("SELECT cursorpage->>'cursor.firstBatch' FROM documentdb_api.find_cursor_first_page(%s, %s);")
-        cursor.execute(search_query, [self.db_name, Json(find_filter)])
-        result = cursor.fetchone()
+        self._cursor.execute(search_query, [self.db_name, Json(find_filter)])
+        result = self._cursor.fetchone()
         doc = json.loads(result[0]) if result and result[0] else None
-        
+
         if doc:
             return VectorStoreDocument(
                 id=doc[0]["id"],
@@ -231,51 +223,3 @@ class DocumentDBVectoreStore(BaseVectorStore):
                 attributes=json.loads(doc[0]["attributes"]),
             )
         return VectorStoreDocument(id=id, text=None, vector=None)
-
-
-if __name__ == "__main__":
-    from graphrag.model.entity import Entity
-    entities = [
-        Entity(
-            id="2da37c7a-50a8-44d4-aa2c-fd401e19976c",
-            short_id="sid1",
-            title="t1",
-            rank=2,
-        ),
-        Entity(
-            id="c4f93564-4507-4ee4-b102-98add401a965",
-            short_id="sid2",
-            title="t22",
-            rank=4,
-        ),
-        Entity(
-            id="7c6f2bc9-47c9-4453-93a3-d2e174a02cd9",
-            short_id="sid3",
-            title="t333",
-            rank=1,
-        ),
-        Entity(
-            id="8fd6d72a-8e9d-4183-8a97-c38bcc971c83",
-            short_id="sid4",
-            title="t4444",
-            rank=3,
-        ),
-    ]
-    documents = [VectorStoreDocument(id=entity.id, text=entity.title, vector=[0]) for entity in entities]
-
-
-    kwargs = {
-        "collection_name": "default",
-        "database_name": "documentdb",
-        "vector_options": { "kind": "vector-ivf", "similarity": "COS", "dimensions": DEFAULT_VECTOR_SIZE, "numLists": 3 }
-    }
-
-    store = DocumentDBVectoreStore(**kwargs)
-    store.connect(**{
-        "user": "admin",
-        "password": "admin",
-        "host": "host.docker.internal",
-        "port": 9712
-    })
-    store.load_documents(documents, overwrite=False)
-    store.search_by_id("1")
