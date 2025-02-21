@@ -55,9 +55,8 @@ async def build_index(
     """
     logger = progress_logger or NullProgressLogger()
     # create a pipeline reporter and add to any additional callbacks
-    # TODO: remove the type ignore once the new config engine has been refactored
     callbacks = callbacks or []
-    callbacks.append(create_pipeline_reporter(config.reporting, None))  # type: ignore
+    callbacks.append(create_pipeline_reporter(config.reporting, None))
 
     workflow_callbacks = create_callback_chain(callbacks, logger)
 

@@ -24,7 +24,7 @@ class BlobWorkflowCallbacks(NoopWorkflowCallbacks):
     def __init__(
         self,
         connection_string: str | None,
-        container_name: str,
+        container_name: str | None,
         blob_name: str = "",
         base_dir: str | None = None,
         storage_account_blob_url: str | None = None,
