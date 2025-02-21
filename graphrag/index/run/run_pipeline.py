@@ -46,14 +46,14 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
 
-    storage_config = config.output.model_dump()  # type: ignore
+    storage_config = config.output.model_dump()
     storage = StorageFactory().create_storage(
-        storage_type=storage_config["type"],  # type: ignore
+        storage_type=storage_config["type"],
         kwargs=storage_config,
     )
-    cache_config = config.cache.model_dump()  # type: ignore
+    cache_config = config.cache.model_dump()
     cache = CacheFactory().create_cache(
-        cache_type=cache_config["type"],  # type: ignore
+        cache_type=cache_config["type"],
         root_dir=root_dir,
         kwargs=cache_config,
     )
@@ -70,9 +70,9 @@ async def run_pipeline(
             warning_msg = "Incremental indexing found no new documents, exiting."
             logger.warning(warning_msg)
         else:
-            update_storage_config = config.update_index_output.model_dump()  # type: ignore
+            update_storage_config = config.update_index_output.model_dump()
             update_storage = StorageFactory().create_storage(
-                storage_type=update_storage_config["type"],  # type: ignore
+                storage_type=update_storage_config["type"],
                 kwargs=update_storage_config,
             )
             # we use this to store the new subset index, and will merge its content with the previous index

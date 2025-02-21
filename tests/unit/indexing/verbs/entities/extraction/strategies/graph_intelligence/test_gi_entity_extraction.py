@@ -160,7 +160,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             ),
         )
 
-        graph = results.graph  # type: ignore
+        graph = results.graph
         assert graph is not None, "No graph returned!"
 
         # TODO: The edges might come back in any order, but we're assuming they're coming
@@ -210,7 +210,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
             ),
         )
 
-        graph = results.graph  # type: ignore
+        graph = results.graph
         assert graph is not None, "No graph returned!"
         edges = list(graph.edges(data=True))
 
@@ -218,6 +218,6 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
         assert len(edges) == 2
 
         # Sort by source_id for consistent ordering
-        edge_source_ids = sorted([edge[2].get("source_id", "") for edge in edges])  # type: ignore
-        assert edge_source_ids[0].split(",") == ["1"]  # type: ignore
-        assert edge_source_ids[1].split(",") == ["2"]  # type: ignore
+        edge_source_ids = sorted([edge[2].get("source_id", "") for edge in edges])
+        assert edge_source_ids[0].split(",") == ["1"]
+        assert edge_source_ids[1].split(",") == ["2"]
