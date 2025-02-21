@@ -10,9 +10,9 @@ from typing import Any
 
 import pandas as pd
 
-import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
@@ -103,7 +103,9 @@ async def run_extract_claims(
     )
 
     extraction_prompt = strategy_config.get("extraction_prompt")
-    max_gleanings = strategy_config.get("max_gleanings", defs.CLAIM_MAX_GLEANINGS)
+    max_gleanings = strategy_config.get(
+        "max_gleanings", graphrag_config_defaults.extract_claims.max_gleanings
+    )
     tuple_delimiter = strategy_config.get("tuple_delimiter")
     record_delimiter = strategy_config.get("record_delimiter")
     completion_delimiter = strategy_config.get("completion_delimiter")

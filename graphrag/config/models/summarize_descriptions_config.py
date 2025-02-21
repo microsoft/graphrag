@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
@@ -15,18 +15,20 @@ class SummarizeDescriptionsConfig(BaseModel):
     """Configuration section for description summarization."""
 
     prompt: str | None = Field(
-        description="The description summarization prompt to use.", default=None
+        description="The description summarization prompt to use.",
+        default=graphrag_config_defaults.summarize_descriptions.prompt,
     )
     max_length: int = Field(
         description="The description summarization maximum length.",
-        default=defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH,
+        default=graphrag_config_defaults.summarize_descriptions.max_length,
     )
     strategy: dict | None = Field(
-        description="The override strategy to use.", default=None
+        description="The override strategy to use.",
+        default=graphrag_config_defaults.summarize_descriptions.strategy,
     )
     model_id: str = Field(
         description="The model ID to use for summarization.",
-        default=defs.SUMMARIZE_MODEL_ID,
+        default=graphrag_config_defaults.summarize_descriptions.model_id,
     )
 
     def resolved_strategy(

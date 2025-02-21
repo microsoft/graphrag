@@ -10,7 +10,7 @@ from typing import Any
 
 import tiktoken
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
@@ -82,12 +82,14 @@ class ClaimExtractor:
             input_resolved_entities_key or "resolved_entities"
         )
         self._max_gleanings = (
-            max_gleanings if max_gleanings is not None else defs.CLAIM_MAX_GLEANINGS
+            max_gleanings
+            if max_gleanings is not None
+            else graphrag_config_defaults.extract_claims.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
+        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
         yes = f"{encoding.encode('Y')[0]}"
         no = f"{encoding.encode('N')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
