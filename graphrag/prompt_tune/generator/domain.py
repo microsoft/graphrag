@@ -3,12 +3,11 @@
 
 """Domain generation for GraphRAG prompts."""
 
-from fnllm.types import ChatLLM
-
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
 
 
-async def generate_domain(llm: ChatLLM, docs: str | list[str]) -> str:
+async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
     Parameters
@@ -23,6 +22,6 @@ async def generate_domain(llm: ChatLLM, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     domain_prompt = GENERATE_DOMAIN_PROMPT.format(input_text=docs_str)
 
-    response = await llm(domain_prompt)
+    response = await model.chat(domain_prompt)
 
     return str(response.output.content)

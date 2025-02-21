@@ -23,6 +23,8 @@ from typing import Any
 import pandas as pd
 from pydantic import validate_call
 
+from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.embeddings import (
     community_full_content_embedding,
     entity_description_embedding,
@@ -48,7 +50,6 @@ from graphrag.query.indexer_adapters import (
 from graphrag.utils.api import (
     get_embedding_store,
     load_search_prompt,
-    reformat_context_data,
     update_context_data,
 )
 from graphrag.utils.cli import redact
@@ -66,6 +67,7 @@ async def global_search(
     dynamic_community_selection: bool,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -91,11 +93,18 @@ async def global_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in global_search_streaming(
         config=config,
         entities=entities,
@@ -105,17 +114,14 @@ async def global_search(
         dynamic_community_selection=dynamic_community_selection,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def global_search_streaming(
+def global_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -124,6 +130,7 @@ async def global_search_streaming(
     dynamic_community_selection: bool,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a global search and return the context data and response via a generator.
 
@@ -176,20 +183,9 @@ async def global_search_streaming(
         map_system_prompt=map_prompt,
         reduce_system_prompt=reduce_prompt,
         general_knowledge_inclusion_prompt=knowledge_prompt,
+        callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -204,6 +200,7 @@ async def multi_index_global_search(
     response_type: str,
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -323,6 +320,7 @@ async def multi_index_global_search(
         dynamic_community_selection=dynamic_community_selection,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     )
 
     # Update the context data by linking index names and community ids
@@ -343,13 +341,13 @@ async def local_search(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
 ]:
     """Perform a local search and return the context data and response.
 
-    Parameters
     ----------
     - config (GraphRagConfig): A graphrag configuration (from settings.yaml)
     - entities (pd.DataFrame): A DataFrame containing the final entities (from entities.parquet)
@@ -369,11 +367,18 @@ async def local_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in local_search_streaming(
         config=config,
         entities=entities,
@@ -385,17 +390,14 @@ async def local_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def local_search_streaming(
+def local_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -406,6 +408,7 @@ async def local_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -453,20 +456,9 @@ async def local_search_streaming(
         description_embedding_store=description_embedding_store,  # type: ignore
         response_type=response_type,
         system_prompt=prompt,
+        callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -483,6 +475,7 @@ async def multi_index_local_search(
     response_type: str,
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -687,6 +680,7 @@ async def multi_index_local_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     )
 
     # Update the context data by linking index names and community ids
@@ -706,6 +700,7 @@ async def drift_search(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -730,11 +725,18 @@ async def drift_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in drift_search_streaming(
         config=config,
         entities=entities,
@@ -745,17 +747,14 @@ async def drift_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def drift_search_streaming(
+def drift_search_streaming(
     config: GraphRagConfig,
     entities: pd.DataFrame,
     communities: pd.DataFrame,
@@ -765,6 +764,7 @@ async def drift_search_streaming(
     community_level: int,
     response_type: str,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a DRIFT search and return the context data and response.
 
@@ -819,20 +819,9 @@ async def drift_search_streaming(
         local_system_prompt=prompt,
         reduce_system_prompt=reduce_prompt,
         response_type=response_type,
+        callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -848,6 +837,7 @@ async def multi_index_drift_search(
     response_type: str,
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1027,6 +1017,7 @@ async def multi_index_drift_search(
         community_level=community_level,
         response_type=response_type,
         query=query,
+        callbacks=callbacks,
     )
 
     # Update the context data by linking index names and community ids
@@ -1044,6 +1035,7 @@ async def basic_search(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1064,29 +1056,34 @@ async def basic_search(
     ------
     TODO: Document any exceptions to expect.
     """
+    callbacks = callbacks or []
     full_response = ""
     context_data = {}
-    get_context_data = True
-    # NOTE: when streaming, the first chunk of returned data is the complete context data.
-    # All subsequent chunks are the query response.
+
+    def on_context(context: Any) -> None:
+        nonlocal context_data
+        context_data = context
+
+    local_callbacks = NoopQueryCallbacks()
+    local_callbacks.on_context = on_context
+    callbacks.append(local_callbacks)
+
     async for chunk in basic_search_streaming(
         config=config,
         text_units=text_units,
         query=query,
+        callbacks=callbacks,
     ):
-        if get_context_data:
-            context_data = chunk
-            get_context_data = False
-        else:
-            full_response += chunk
+        full_response += chunk
     return full_response, context_data
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
-async def basic_search_streaming(
+def basic_search_streaming(
     config: GraphRagConfig,
     text_units: pd.DataFrame,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> AsyncGenerator:
     """Perform a local search and return the context data and response via a generator.
 
@@ -1121,20 +1118,9 @@ async def basic_search_streaming(
         text_units=read_indexer_text_units(text_units),
         text_unit_embeddings=description_embedding_store,
         system_prompt=prompt,
+        callbacks=callbacks,
     )
-    search_result = search_engine.stream_search(query=query)
-
-    # NOTE: when streaming results, a context data object is returned as the first result
-    # and the query response in subsequent tokens
-    context_data = {}
-    get_context_data = True
-    async for stream_chunk in search_result:
-        if get_context_data:
-            context_data = reformat_context_data(stream_chunk)  # type: ignore
-            yield context_data
-            get_context_data = False
-        else:
-            yield stream_chunk
+    return search_engine.stream_search(query=query)
 
 
 @validate_call(config={"arbitrary_types_allowed": True})
@@ -1144,6 +1130,7 @@ async def multi_index_basic_search(
     index_names: list[str],
     streaming: bool,
     query: str,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> tuple[
     str | dict[str, Any] | list[dict[str, Any]],
     str | list[pd.DataFrame] | dict[str, pd.DataFrame],
@@ -1206,4 +1193,5 @@ async def multi_index_basic_search(
         config,
         text_units=text_units_combined,
         query=query,
+        callbacks=callbacks,
     )

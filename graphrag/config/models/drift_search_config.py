@@ -5,115 +5,117 @@
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 
 
 class DRIFTSearchConfig(BaseModel):
     """The default configuration section for Cache."""
 
     prompt: str | None = Field(
-        description="The drift search prompt to use.", default=None
+        description="The drift search prompt to use.",
+        default=graphrag_config_defaults.drift_search.prompt,
     )
     reduce_prompt: str | None = Field(
-        description="The drift search reduce prompt to use.", default=None
+        description="The drift search reduce prompt to use.",
+        default=graphrag_config_defaults.drift_search.reduce_prompt,
     )
     temperature: float = Field(
         description="The temperature to use for token generation.",
-        default=defs.DRIFT_SEARCH_LLM_TEMPERATURE,
+        default=graphrag_config_defaults.drift_search.temperature,
     )
     top_p: float = Field(
         description="The top-p value to use for token generation.",
-        default=defs.DRIFT_SEARCH_LLM_TOP_P,
+        default=graphrag_config_defaults.drift_search.top_p,
     )
     n: int = Field(
         description="The number of completions to generate.",
-        default=defs.DRIFT_SEARCH_LLM_N,
+        default=graphrag_config_defaults.drift_search.n,
     )
     max_tokens: int = Field(
         description="The maximum context size in tokens.",
-        default=defs.DRIFT_SEARCH_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.max_tokens,
     )
     data_max_tokens: int = Field(
         description="The data llm maximum tokens.",
-        default=defs.DRIFT_SEARCH_DATA_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.data_max_tokens,
     )
 
     reduce_max_tokens: int = Field(
         description="The reduce llm maximum tokens response to produce.",
-        default=defs.DRIFT_SEARCH_REDUCE_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.reduce_max_tokens,
     )
 
     reduce_temperature: float = Field(
         description="The temperature to use for token generation in reduce.",
-        default=defs.DRIFT_SEARCH_REDUCE_LLM_TEMPERATURE,
+        default=graphrag_config_defaults.drift_search.reduce_temperature,
     )
 
     concurrency: int = Field(
         description="The number of concurrent requests.",
-        default=defs.DRIFT_SEARCH_CONCURRENCY,
+        default=graphrag_config_defaults.drift_search.concurrency,
     )
 
     drift_k_followups: int = Field(
         description="The number of top global results to retrieve.",
-        default=defs.DRIFT_SEARCH_K_FOLLOW_UPS,
+        default=graphrag_config_defaults.drift_search.drift_k_followups,
     )
 
     primer_folds: int = Field(
         description="The number of folds for search priming.",
-        default=defs.DRIFT_SEARCH_PRIMER_FOLDS,
+        default=graphrag_config_defaults.drift_search.primer_folds,
     )
 
     primer_llm_max_tokens: int = Field(
         description="The maximum number of tokens for the LLM in primer.",
-        default=defs.DRIFT_SEARCH_PRIMER_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.primer_llm_max_tokens,
     )
 
     n_depth: int = Field(
         description="The number of drift search steps to take.",
-        default=defs.DRIFT_N_DEPTH,
+        default=graphrag_config_defaults.drift_search.n_depth,
     )
 
     local_search_text_unit_prop: float = Field(
         description="The proportion of search dedicated to text units.",
-        default=defs.DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP,
+        default=graphrag_config_defaults.drift_search.local_search_text_unit_prop,
     )
 
     local_search_community_prop: float = Field(
         description="The proportion of search dedicated to community properties.",
-        default=defs.DRIFT_LOCAL_SEARCH_COMMUNITY_PROP,
+        default=graphrag_config_defaults.drift_search.local_search_community_prop,
     )
 
     local_search_top_k_mapped_entities: int = Field(
         description="The number of top K entities to map during local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES,
+        default=graphrag_config_defaults.drift_search.local_search_top_k_mapped_entities,
     )
 
     local_search_top_k_relationships: int = Field(
         description="The number of top K relationships to map during local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS,
+        default=graphrag_config_defaults.drift_search.local_search_top_k_relationships,
     )
 
     local_search_max_data_tokens: int = Field(
         description="The maximum context size in tokens for local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.local_search_max_data_tokens,
     )
 
     local_search_temperature: float = Field(
         description="The temperature to use for token generation in local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE,
+        default=graphrag_config_defaults.drift_search.local_search_temperature,
     )
 
     local_search_top_p: float = Field(
         description="The top-p value to use for token generation in local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_LLM_TOP_P,
+        default=graphrag_config_defaults.drift_search.local_search_top_p,
     )
 
     local_search_n: int = Field(
         description="The number of completions to generate in local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_LLM_N,
+        default=graphrag_config_defaults.drift_search.local_search_n,
     )
 
     local_search_llm_max_gen_tokens: int = Field(
         description="The maximum number of generated tokens for the LLM in local search.",
-        default=defs.DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS,
+        default=graphrag_config_defaults.drift_search.local_search_llm_max_gen_tokens,
     )

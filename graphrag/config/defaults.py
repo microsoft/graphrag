@@ -3,6 +3,7 @@
 
 """Common default configuration values."""
 
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from graphrag.config.enums import (
@@ -12,7 +13,7 @@ from graphrag.config.enums import (
     ChunkStrategyType,
     InputFileType,
     InputType,
-    LLMType,
+    ModelType,
     NounPhraseExtractorType,
     OutputType,
     ReportingType,
@@ -20,198 +21,420 @@ from graphrag.config.enums import (
 )
 from graphrag.vector_stores.factory import VectorStoreType
 
+DEFAULT_OUTPUT_BASE_DIR = "output"
 DEFAULT_CHAT_MODEL_ID = "default_chat_model"
+DEFAULT_CHAT_MODEL_TYPE = ModelType.OpenAIChat
+DEFAULT_CHAT_MODEL = "gpt-4-turbo-preview"
+DEFAULT_CHAT_MODEL_AUTH_TYPE = AuthType.APIKey
 DEFAULT_EMBEDDING_MODEL_ID = "default_embedding_model"
-ASYNC_MODE = AsyncType.Threaded
+DEFAULT_EMBEDDING_MODEL_TYPE = ModelType.OpenAIEmbedding
+DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_EMBEDDING_MODEL_AUTH_TYPE = AuthType.APIKey
+DEFAULT_VECTOR_STORE_ID = "default_vector_store"
+
 ENCODING_MODEL = "cl100k_base"
 COGNITIVE_SERVICES_AUDIENCE = "https://cognitiveservices.azure.com/.default"
-AUTH_TYPE = AuthType.APIKey
-#
-# LLM Parameters
-#
-LLM_FREQUENCY_PENALTY = 0.0
-LLM_TYPE = LLMType.OpenAIChat
-LLM_MODEL = "gpt-4-turbo-preview"
-LLM_MAX_TOKENS = 4000
-LLM_TEMPERATURE = 0
-LLM_TOP_P = 1
-LLM_N = 1
-LLM_REQUEST_TIMEOUT = 180.0
-LLM_TOKENS_PER_MINUTE = 50_000
-LLM_REQUESTS_PER_MINUTE = 1_000
-RETRY_STRATEGY = "native"
-LLM_MAX_RETRIES = 10
-LLM_MAX_RETRY_WAIT = 10.0
-LLM_PRESENCE_PENALTY = 0.0
-LLM_CONCURRENT_REQUESTS = 25
 
-#
-# Text embedding
-#
-EMBEDDING_TYPE = LLMType.OpenAIEmbedding
-EMBEDDING_MODEL = "text-embedding-3-small"
-EMBEDDING_BATCH_SIZE = 16
-EMBEDDING_BATCH_MAX_TOKENS = 8191
-EMBEDDING_TARGET = TextEmbeddingTarget.required
-EMBEDDING_MODEL_ID = DEFAULT_EMBEDDING_MODEL_ID
 
-# LLM response caching
-CACHE_TYPE = CacheType.file
-CACHE_BASE_DIR = "cache"
+@dataclass
+class BasicSearchDefaults:
+    """Default values for basic search."""
 
-# Text chunking
-CHUNK_SIZE = 1200
-CHUNK_OVERLAP = 100
-CHUNK_GROUP_BY_COLUMNS = ["id"]
-CHUNK_STRATEGY = ChunkStrategyType.tokens
-CHUNK_PREPEND_METADATA = False
-CHUNK_SIZE_INCLUDES_METADATA = False
+    prompt: None = None
+    text_unit_prop: float = 0.5
+    conversation_history_max_turns: int = 5
+    temperature: float = 0
+    top_p: float = 1
+    n: int = 1
+    max_tokens: int = 12_000
+    llm_max_tokens: int = 2000
 
-# Claim extraction
-DESCRIPTION = "Any claims or facts that could be relevant to information discovery."
-CLAIM_MAX_GLEANINGS = 1
-EXTRACT_CLAIMS_ENABLED = False
-EXTRACT_CLAIMS_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
-# Graph clustering
-MAX_CLUSTER_SIZE = 10
-USE_LCC = True
-CLUSTER_GRAPH_SEED = 0xDEADBEEF
+@dataclass
+class CacheDefaults:
+    """Default values for cache."""
 
-# Community report summarization
-COMMUNITY_REPORT_MAX_LENGTH = 2000
-COMMUNITY_REPORT_MAX_INPUT_LENGTH = 8000
-COMMUNITY_REPORT_MODEL_ID = DEFAULT_CHAT_MODEL_ID
+    type = CacheType.file
+    base_dir: str = "cache"
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+    cosmosdb_account_url: None = None
 
-# Graph extraction via LLM
-EXTRACT_GRAPH_ENTITY_TYPES = ["organization", "person", "geo", "event"]
-EXTRACT_GRAPH_MAX_GLEANINGS = 1
-EXTRACT_GRAPH_MODEL_ID = DEFAULT_CHAT_MODEL_ID
 
-# Graph extraction via NLP
-NLP_NORMALIZE_EDGE_WEIGHTS = True
-NLP_EXTRACTOR_TYPE = NounPhraseExtractorType.RegexEnglish
-NLP_MAX_WORD_LENGTH = 15
-NLP_MODEL_NAME = "en_core_web_md"
-NLP_EXCLUDE_NOUNS = None
-NLP_WORD_DELIMITER = " "
-NLP_INCLUDE_NAMED_ENTITIES = True
-NLP_EXCLUDE_ENTITY_TAGS = ["DATE"]
-NLP_EXCLUDE_POS_TAGS = ["DET", "PRON", "INTJ", "X"]
-NLP_NOUN_PHRASE_TAGS = ["PROPN", "NOUNS"]
-NLP_NOUN_PHRASE_CFG = {
-    "PROPN,PROPN": "PROPN",
-    "NOUN,NOUN": "NOUNS",
-    "NOUNS,NOUN": "NOUNS",
-    "ADJ,ADJ": "ADJ",
-    "ADJ,NOUN": "NOUNS",
-}
+@dataclass
+class ChunksDefaults:
+    """Default values for chunks."""
 
-# Input file params
-INPUT_FILE_TYPE = InputFileType.text
-INPUT_TYPE = InputType.file
-INPUT_BASE_DIR = "input"
-INPUT_FILE_ENCODING = "utf-8"
-INPUT_TEXT_COLUMN = "text"
-INPUT_CSV_PATTERN = ".*\\.csv$"
-INPUT_TEXT_PATTERN = ".*\\.txt$"
+    size: int = 1200
+    overlap: int = 100
+    group_by_columns: list[str] = field(default_factory=lambda: ["id"])
+    strategy = ChunkStrategyType.tokens
+    encoding_model: str = "cl100k_base"
+    prepend_metadata: bool = False
+    chunk_size_includes_metadata: bool = False
 
-NODE2VEC_ENABLED = False
-NODE2VEC_DIMENSIONS = 1536
-NODE2VEC_NUM_WALKS = 10
-NODE2VEC_WALK_LENGTH = 40
-NODE2VEC_WINDOW_SIZE = 2
-NODE2VEC_ITERATIONS = 3
-NODE2VEC_RANDOM_SEED = 597832
-REPORTING_TYPE = ReportingType.file
-REPORTING_BASE_DIR = "logs"
-SNAPSHOTS_GRAPHML = False
-SNAPSHOTS_EMBEDDINGS = False
-OUTPUT_BASE_DIR = "output"
-OUTPUT_TYPE = OutputType.file
-UPDATE_OUTPUT_BASE_DIR = "update_output"
-SUMMARIZE_DESCRIPTIONS_MAX_LENGTH = 500
-SUMMARIZE_MODEL_ID = DEFAULT_CHAT_MODEL_ID
-UMAP_ENABLED = False
 
-# Graph Pruning
-PRUNE_MIN_NODE_FREQ = 2
-PRUNE_MAX_NODE_FREQ_STD = None
-PRUNE_MIN_NODE_DEGREE = 1
-PRUNE_MAX_NODE_DEGREE_STD = None
-PRUNE_MIN_EDGE_WEIGHT_PCT = 40
-PRUNE_REMOVE_EGO_NODES = False
-PRUNE_LCC_ONLY = False
+@dataclass
+class ClusterGraphDefaults:
+    """Default values for cluster graph."""
 
-VECTOR_STORE_TYPE = VectorStoreType.LanceDB.value
-VECTOR_STORE_DB_URI = str(Path(OUTPUT_BASE_DIR) / "lancedb")
-VECTOR_STORE_CONTAINER_NAME = "default"
-VECTOR_STORE_OVERWRITE = True
-VECTOR_STORE_DEFAULT_ID = "default_vector_store"
+    max_cluster_size: int = 10
+    use_lcc: bool = True
+    seed: int = 0xDEADBEEF
 
-# Local Search
-LOCAL_SEARCH_TEXT_UNIT_PROP = 0.5
-LOCAL_SEARCH_COMMUNITY_PROP = 0.15
-LOCAL_SEARCH_CONVERSATION_HISTORY_MAX_TURNS = 5
-LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES = 10
-LOCAL_SEARCH_TOP_K_RELATIONSHIPS = 10
-LOCAL_SEARCH_MAX_TOKENS = 12_000
-LOCAL_SEARCH_LLM_TEMPERATURE = 0
-LOCAL_SEARCH_LLM_TOP_P = 1
-LOCAL_SEARCH_LLM_N = 1
-LOCAL_SEARCH_LLM_MAX_TOKENS = 2000
 
-# Global Search
-GLOBAL_SEARCH_LLM_TEMPERATURE = 0
-GLOBAL_SEARCH_LLM_TOP_P = 1
-GLOBAL_SEARCH_LLM_N = 1
-GLOBAL_SEARCH_MAX_TOKENS = 12_000
-GLOBAL_SEARCH_DATA_MAX_TOKENS = 12_000
-GLOBAL_SEARCH_MAP_MAX_TOKENS = 1000
-GLOBAL_SEARCH_REDUCE_MAX_TOKENS = 2_000
-GLOBAL_SEARCH_CONCURRENCY = 32
+@dataclass
+class CommunityReportDefaults:
+    """Default values for community report."""
 
-# Global Search with dynamic community selection
-DYNAMIC_SEARCH_LLM_MODEL = "gpt-4o-mini"
-DYNAMIC_SEARCH_RATE_THRESHOLD = 1
-DYNAMIC_SEARCH_KEEP_PARENT = False
-DYNAMIC_SEARCH_NUM_REPEATS = 1
-DYNAMIC_SEARCH_USE_SUMMARY = False
-DYNAMIC_SEARCH_CONCURRENT_COROUTINES = 16
-DYNAMIC_SEARCH_MAX_LEVEL = 2
+    graph_prompt: None = None
+    text_prompt: None = None
+    max_length: int = 2000
+    max_input_length: int = 8000
+    strategy: None = None
+    model_id: str = DEFAULT_CHAT_MODEL_ID
 
-# DRIFT Search
-DRIFT_SEARCH_LLM_TEMPERATURE = 0
-DRIFT_SEARCH_LLM_TOP_P = 1
-DRIFT_SEARCH_LLM_N = 1
-DRIFT_SEARCH_MAX_TOKENS = 12_000
-DRIFT_SEARCH_DATA_MAX_TOKENS = 12_000
-DRIFT_SEARCH_CONCURRENCY = 32
 
-DRIFT_SEARCH_K_FOLLOW_UPS = 20
-DRIFT_SEARCH_PRIMER_FOLDS = 5
-DRIFT_SEARCH_PRIMER_MAX_TOKENS = 12_000
+@dataclass
+class DriftSearchDefaults:
+    """Default values for drift search."""
 
-DRIFT_SEARCH_REDUCE_LLM_TEMPERATURE = 0
-DRIFT_SEARCH_REDUCE_MAX_TOKENS = 2_000
+    prompt: None = None
+    reduce_prompt: None = None
+    temperature: float = 0
+    top_p: float = 1
+    n: int = 1
+    max_tokens: int = 12_000
+    data_max_tokens: int = 12_000
+    reduce_max_tokens: int = 2_000
+    reduce_temperature: float = 0
+    concurrency: int = 32
+    drift_k_followups: int = 20
+    primer_folds: int = 5
+    primer_llm_max_tokens: int = 12_000
+    n_depth: int = 3
+    local_search_text_unit_prop: float = 0.9
+    local_search_community_prop: float = 0.1
+    local_search_top_k_mapped_entities: int = 10
+    local_search_top_k_relationships: int = 10
+    local_search_max_data_tokens: int = 12_000
+    local_search_temperature: float = 0
+    local_search_top_p: float = 1
+    local_search_n: int = 1
+    local_search_llm_max_gen_tokens: int = 12_000
 
-DRIFT_LOCAL_SEARCH_TEXT_UNIT_PROP = 0.9
-DRIFT_LOCAL_SEARCH_COMMUNITY_PROP = 0.1
-DRIFT_LOCAL_SEARCH_TOP_K_MAPPED_ENTITIES = 10
-DRIFT_LOCAL_SEARCH_TOP_K_RELATIONSHIPS = 10
-DRIFT_LOCAL_SEARCH_MAX_TOKENS = 12_000
-DRIFT_LOCAL_SEARCH_LLM_TEMPERATURE = 0
-DRIFT_LOCAL_SEARCH_LLM_TOP_P = 1
-DRIFT_LOCAL_SEARCH_LLM_N = 1
-DRIFT_LOCAL_SEARCH_LLM_MAX_TOKENS = 2000
 
-DRIFT_N_DEPTH = 3
+@dataclass
+class EmbedGraphDefaults:
+    """Default values for embedding graph."""
 
-# Basic Search
-BASIC_SEARCH_TEXT_UNIT_PROP = 0.5
-BASIC_SEARCH_CONVERSATION_HISTORY_MAX_TURNS = 5
-BASIC_SEARCH_MAX_TOKENS = 12_000
-BASIC_SEARCH_LLM_TEMPERATURE = 0
-BASIC_SEARCH_LLM_TOP_P = 1
-BASIC_SEARCH_LLM_N = 1
-BASIC_SEARCH_LLM_MAX_TOKENS = 2000
+    enabled: bool = False
+    dimensions: int = 1536
+    num_walks: int = 10
+    walk_length: int = 40
+    window_size: int = 2
+    iterations: int = 3
+    random_seed: int = 597832
+    use_lcc: bool = True
+
+
+@dataclass
+class EmbedTextDefaults:
+    """Default values for embedding text."""
+
+    model: str = "text-embedding-3-small"
+    batch_size: int = 16
+    batch_max_tokens: int = 8191
+    target = TextEmbeddingTarget.required
+    model_id: str = DEFAULT_EMBEDDING_MODEL_ID
+    names: list[str] = field(default_factory=list)
+    strategy: None = None
+    vector_store_id: str = DEFAULT_VECTOR_STORE_ID
+
+
+@dataclass
+class ExtractClaimsDefaults:
+    """Default values for claim extraction."""
+
+    enabled: bool = False
+    prompt: None = None
+    description: str = (
+        "Any claims or facts that could be relevant to information discovery."
+    )
+    max_gleanings: int = 1
+    strategy: None = None
+    encoding_model: None = None
+    model_id: str = DEFAULT_CHAT_MODEL_ID
+
+
+@dataclass
+class ExtractGraphDefaults:
+    """Default values for extracting graph."""
+
+    prompt: None = None
+    entity_types: list[str] = field(
+        default_factory=lambda: ["organization", "person", "geo", "event"]
+    )
+    max_gleanings: int = 1
+    strategy: None = None
+    encoding_model: None = None
+    model_id: str = DEFAULT_CHAT_MODEL_ID
+
+
+@dataclass
+class TextAnalyzerDefaults:
+    """Default values for text analyzer."""
+
+    extractor_type = NounPhraseExtractorType.RegexEnglish
+    model_name: str = "en_core_web_md"
+    max_word_length: int = 15
+    word_delimiter: str = " "
+    include_named_entities: bool = True
+    exclude_nouns: None = None
+    exclude_entity_tags: list[str] = field(default_factory=lambda: ["DATE"])
+    exclude_pos_tags: list[str] = field(
+        default_factory=lambda: ["DET", "PRON", "INTJ", "X"]
+    )
+    noun_phrase_tags: list[str] = field(default_factory=lambda: ["PROPN", "NOUNS"])
+    noun_phrase_grammars: dict[str, str] = field(
+        default_factory=lambda: {
+            "PROPN,PROPN": "PROPN",
+            "NOUN,NOUN": "NOUNS",
+            "NOUNS,NOUN": "NOUNS",
+            "ADJ,ADJ": "ADJ",
+            "ADJ,NOUN": "NOUNS",
+        }
+    )
+
+
+@dataclass
+class ExtractGraphNLPDefaults:
+    """Default values for NLP graph extraction."""
+
+    normalize_edge_weights: bool = True
+    text_analyzer: TextAnalyzerDefaults = field(default_factory=TextAnalyzerDefaults)
+    concurrent_requests: int = 25
+
+
+@dataclass
+class GlobalSearchDefaults:
+    """Default values for global search."""
+
+    map_prompt: None = None
+    reduce_prompt: None = None
+    knowledge_prompt: None = None
+    temperature: float = 0
+    top_p: float = 1
+    n: int = 1
+    max_tokens: int = 12_000
+    data_max_tokens: int = 12_000
+    map_max_tokens: int = 1000
+    reduce_max_tokens: int = 2000
+    concurrency: int = 32
+    dynamic_search_llm: str = "gpt-4o-mini"
+    dynamic_search_threshold: int = 1
+    dynamic_search_keep_parent: bool = False
+    dynamic_search_num_repeats: int = 1
+    dynamic_search_use_summary: bool = False
+    dynamic_search_concurrent_coroutines: int = 16
+    dynamic_search_max_level: int = 2
+
+
+@dataclass
+class InputDefaults:
+    """Default values for input."""
+
+    type = InputType.file
+    file_type = InputFileType.text
+    base_dir: str = "input"
+    connection_string: None = None
+    storage_account_blob_url: None = None
+    container_name: None = None
+    encoding: str = "utf-8"
+    file_pattern: str = ".*\\.txt$"
+    file_filter: None = None
+    text_column: str = "text"
+    title_column: None = None
+    metadata: None = None
+
+
+@dataclass
+class LanguageModelDefaults:
+    """Default values for language model."""
+
+    api_key: None = None
+    auth_type = AuthType.APIKey
+    encoding_model: str = ""
+    max_tokens: int = 4000
+    temperature: float = 0
+    top_p: float = 1
+    n: int = 1
+    frequency_penalty: float = 0.0
+    presence_penalty: float = 0.0
+    request_timeout: float = 180.0
+    api_base: None = None
+    api_version: None = None
+    deployment_name: None = None
+    organization: None = None
+    proxy: None = None
+    audience: None = None
+    model_supports_json: None = None
+    tokens_per_minute: int = 50_000
+    requests_per_minute: int = 1_000
+    retry_strategy: str = "native"
+    max_retries: int = 10
+    max_retry_wait: float = 10.0
+    concurrent_requests: int = 25
+    responses: None = None
+    async_mode: AsyncType = AsyncType.Threaded
+
+
+@dataclass
+class LocalSearchDefaults:
+    """Default values for local search."""
+
+    prompt: None = None
+    text_unit_prop: float = 0.5
+    community_prop: float = 0.15
+    conversation_history_max_turns: int = 5
+    top_k_entities: int = 10
+    top_k_relationships: int = 10
+    temperature: float = 0
+    top_p: float = 1
+    n: int = 1
+    max_tokens: int = 12_000
+    llm_max_tokens: int = 2000
+
+
+@dataclass
+class OutputDefaults:
+    """Default values for output."""
+
+    type = OutputType.file
+    base_dir: str = DEFAULT_OUTPUT_BASE_DIR
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+    cosmosdb_account_url: None = None
+
+
+@dataclass
+class PruneGraphDefaults:
+    """Default values for pruning graph."""
+
+    min_node_freq: int = 2
+    max_node_freq_std: None = None
+    min_node_degree: int = 1
+    max_node_degree_std: None = None
+    min_edge_weight_pct: int = 40
+    remove_ego_nodes: bool = False
+    lcc_only: bool = False
+
+
+@dataclass
+class ReportingDefaults:
+    """Default values for reporting."""
+
+    type = ReportingType.file
+    base_dir: str = "logs"
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+
+
+@dataclass
+class SnapshotsDefaults:
+    """Default values for snapshots."""
+
+    embeddings: bool = False
+    graphml: bool = False
+
+
+@dataclass
+class SummarizeDescriptionsDefaults:
+    """Default values for summarizing descriptions."""
+
+    prompt: None = None
+    max_length: int = 500
+    strategy: None = None
+    model_id: str = DEFAULT_CHAT_MODEL_ID
+
+
+@dataclass
+class UmapDefaults:
+    """Default values for UMAP."""
+
+    enabled: bool = False
+
+
+@dataclass
+class UpdateIndexOutputDefaults:
+    """Default values for update index output."""
+
+    type = OutputType.file
+    base_dir: str = "update_output"
+    connection_string: None = None
+    container_name: None = None
+    storage_account_blob_url: None = None
+
+
+@dataclass
+class VectorStoreDefaults:
+    """Default values for vector stores."""
+
+    type = VectorStoreType.LanceDB.value
+    db_uri: str = str(Path(DEFAULT_OUTPUT_BASE_DIR) / "lancedb")
+    container_name: str = "default"
+    overwrite: bool = True
+    url: None = None
+    api_key: None = None
+    audience: None = None
+    database_name: None = None
+
+
+@dataclass
+class GraphRagConfigDefaults:
+    """Default values for GraphRAG."""
+
+    root_dir: str = ""
+    models: dict = field(default_factory=dict)
+    reporting: ReportingDefaults = field(default_factory=ReportingDefaults)
+    output: OutputDefaults = field(default_factory=OutputDefaults)
+    outputs: None = None
+    update_index_output: UpdateIndexOutputDefaults = field(
+        default_factory=UpdateIndexOutputDefaults
+    )
+    cache: CacheDefaults = field(default_factory=CacheDefaults)
+    input: InputDefaults = field(default_factory=InputDefaults)
+    embed_graph: EmbedGraphDefaults = field(default_factory=EmbedGraphDefaults)
+    embed_text: EmbedTextDefaults = field(default_factory=EmbedTextDefaults)
+    chunks: ChunksDefaults = field(default_factory=ChunksDefaults)
+    snapshots: SnapshotsDefaults = field(default_factory=SnapshotsDefaults)
+    extract_graph: ExtractGraphDefaults = field(default_factory=ExtractGraphDefaults)
+    extract_graph_nlp: ExtractGraphNLPDefaults = field(
+        default_factory=ExtractGraphNLPDefaults
+    )
+    summarize_descriptions: SummarizeDescriptionsDefaults = field(
+        default_factory=SummarizeDescriptionsDefaults
+    )
+    community_reports: CommunityReportDefaults = field(
+        default_factory=CommunityReportDefaults
+    )
+    extract_claims: ExtractClaimsDefaults = field(default_factory=ExtractClaimsDefaults)
+    prune_graph: PruneGraphDefaults = field(default_factory=PruneGraphDefaults)
+    cluster_graph: ClusterGraphDefaults = field(default_factory=ClusterGraphDefaults)
+    umap: UmapDefaults = field(default_factory=UmapDefaults)
+    local_search: LocalSearchDefaults = field(default_factory=LocalSearchDefaults)
+    global_search: GlobalSearchDefaults = field(default_factory=GlobalSearchDefaults)
+    drift_search: DriftSearchDefaults = field(default_factory=DriftSearchDefaults)
+    basic_search: BasicSearchDefaults = field(default_factory=BasicSearchDefaults)
+    vector_store: dict[str, VectorStoreDefaults] = field(
+        default_factory=lambda: {DEFAULT_VECTOR_STORE_ID: VectorStoreDefaults()}
+    )
+    workflows: None = None
+
+
+language_model_defaults = LanguageModelDefaults()
+vector_store_defaults = VectorStoreDefaults()
+graphrag_config_defaults = GraphRagConfigDefaults()

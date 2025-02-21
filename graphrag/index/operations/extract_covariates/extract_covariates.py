@@ -10,18 +10,18 @@ from typing import Any
 
 import pandas as pd
 
-import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_covariates.claim_extractor import ClaimExtractor
 from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
 from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.language_model.manager import ModelManager
 
 log = logging.getLogger(__name__)
 
@@ -94,21 +94,25 @@ async def run_extract_claims(
 ) -> CovariateExtractionResult:
     """Run the Claim extraction chain."""
     llm_config = LanguageModelConfig(**strategy_config["llm"])
-    llm = load_llm(
-        "extract_claims",
-        llm_config,
+    llm = ModelManager().get_or_create_chat_model(
+        name="extract_claims",
+        model_type=llm_config.type,
+        config=llm_config,
         callbacks=callbacks,
         cache=cache,
     )
+
     extraction_prompt = strategy_config.get("extraction_prompt")
-    max_gleanings = strategy_config.get("max_gleanings", defs.CLAIM_MAX_GLEANINGS)
+    max_gleanings = strategy_config.get(
+        "max_gleanings", graphrag_config_defaults.extract_claims.max_gleanings
+    )
     tuple_delimiter = strategy_config.get("tuple_delimiter")
     record_delimiter = strategy_config.get("record_delimiter")
     completion_delimiter = strategy_config.get("completion_delimiter")
     encoding_model = strategy_config.get("encoding_name")
 
     extractor = ClaimExtractor(
-        llm_invoker=llm,
+        model_invoker=llm,
         extraction_prompt=extraction_prompt,
         max_gleanings=max_gleanings,
         encoding_model=encoding_model,

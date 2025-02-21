@@ -6,10 +6,10 @@
 import asyncio
 import sys
 
-import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
+from graphrag.config.defaults import language_model_defaults
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.llm.load_llm import load_llm, load_llm_embeddings
+from graphrag.language_model.manager import ModelManager
 from graphrag.logger.print_progress import ProgressLogger
 
 
@@ -20,15 +20,17 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     default_llm_settings = parameters.get_language_model_config("default_chat_model")
     # if max_retries is not set, set it to the default value
     if default_llm_settings.max_retries == -1:
-        default_llm_settings.max_retries = defs.LLM_MAX_RETRIES
-    llm = load_llm(
+        default_llm_settings.max_retries = language_model_defaults.max_retries
+    llm = ModelManager().register_chat(
         name="test-llm",
+        model_type=default_llm_settings.type,
         config=default_llm_settings,
         callbacks=NoopWorkflowCallbacks(),
         cache=None,
     )
+
     try:
-        asyncio.run(llm("This is an LLM connectivity test. Say Hello World"))
+        asyncio.run(llm.chat("This is an LLM connectivity test. Say Hello World"))
         logger.success("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
@@ -38,14 +40,16 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embedding_llm_settings = parameters.get_language_model_config(
         parameters.embed_text.model_id
     )
-    embed_llm = load_llm_embeddings(
+    embed_llm = ModelManager().register_embedding(
         name="test-embed-llm",
-        llm_config=embedding_llm_settings,
+        model_type=embedding_llm_settings.type,
+        config=embedding_llm_settings,
         callbacks=NoopWorkflowCallbacks(),
         cache=None,
     )
+
     try:
-        asyncio.run(embed_llm(["This is an LLM Embedding Test String"]))
+        asyncio.run(embed_llm.embed(["This is an LLM Embedding Test String"]))
         logger.success("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa

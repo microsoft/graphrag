@@ -5,7 +5,7 @@
 
 from pydantic import BaseModel, Field, model_validator
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import vector_store_defaults
 from graphrag.vector_stores.factory import VectorStoreType
 
 
@@ -14,17 +14,20 @@ class VectorStoreConfig(BaseModel):
 
     type: str = Field(
         description="The vector store type to use.",
-        default=defs.VECTOR_STORE_TYPE,
+        default=vector_store_defaults.type,
     )
 
-    db_uri: str | None = Field(description="The database URI to use.", default=None)
+    db_uri: str | None = Field(
+        description="The database URI to use.",
+        default=None,
+    )
 
     def _validate_db_uri(self) -> None:
         """Validate the database URI."""
         if self.type == VectorStoreType.LanceDB.value and (
             self.db_uri is None or self.db_uri.strip() == ""
         ):
-            self.db_uri = defs.VECTOR_STORE_DB_URI
+            self.db_uri = vector_store_defaults.db_uri
 
         if self.type != VectorStoreType.LanceDB.value and (
             self.db_uri is not None and self.db_uri.strip() != ""
@@ -34,7 +37,7 @@ class VectorStoreConfig(BaseModel):
 
     url: str | None = Field(
         description="The database URL when type == azure_ai_search.",
-        default=None,
+        default=vector_store_defaults.url,
     )
 
     def _validate_url(self) -> None:
@@ -59,25 +62,27 @@ class VectorStoreConfig(BaseModel):
 
     api_key: str | None = Field(
         description="The database API key when type == azure_ai_search.",
-        default=None,
+        default=vector_store_defaults.api_key,
     )
 
     audience: str | None = Field(
         description="The database audience when type == azure_ai_search.",
-        default=None,
+        default=vector_store_defaults.audience,
     )
 
     container_name: str = Field(
         description="The container name to use.",
-        default=defs.VECTOR_STORE_CONTAINER_NAME,
+        default=vector_store_defaults.container_name,
     )
 
     database_name: str | None = Field(
-        description="The database name to use when type == cosmos_db.", default=None
+        description="The database name to use when type == cosmos_db.",
+        default=vector_store_defaults.database_name,
     )
 
     overwrite: bool = Field(
-        description="Overwrite the existing data.", default=defs.VECTOR_STORE_OVERWRITE
+        description="Overwrite the existing data.",
+        default=vector_store_defaults.overwrite,
     )
 
     @model_validator(mode="after")

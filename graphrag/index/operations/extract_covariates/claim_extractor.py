@@ -9,10 +9,10 @@ from dataclasses import dataclass
 from typing import Any
 
 import tiktoken
-from fnllm.types import ChatLLM
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
 from graphrag.index.typing import ErrorHandlerFn
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
     EXTRACT_CLAIMS_PROMPT,
@@ -36,7 +36,7 @@ class ClaimExtractorResult:
 class ClaimExtractor:
     """Claim extractor class definition."""
 
-    _llm: ChatLLM
+    _model: ChatModel
     _extraction_prompt: str
     _summary_prompt: str
     _output_formatter_prompt: str
@@ -52,7 +52,7 @@ class ClaimExtractor:
 
     def __init__(
         self,
-        llm_invoker: ChatLLM,
+        model_invoker: ChatModel,
         extraction_prompt: str | None = None,
         input_text_key: str | None = None,
         input_entity_spec_key: str | None = None,
@@ -66,7 +66,7 @@ class ClaimExtractor:
         on_error: ErrorHandlerFn | None = None,
     ):
         """Init method definition."""
-        self._llm = llm_invoker
+        self._model = model_invoker
         self._extraction_prompt = extraction_prompt or EXTRACT_CLAIMS_PROMPT
         self._input_text_key = input_text_key or "input_text"
         self._input_entity_spec_key = input_entity_spec_key or "entity_specs"
@@ -82,12 +82,14 @@ class ClaimExtractor:
             input_resolved_entities_key or "resolved_entities"
         )
         self._max_gleanings = (
-            max_gleanings if max_gleanings is not None else defs.CLAIM_MAX_GLEANINGS
+            max_gleanings
+            if max_gleanings is not None
+            else graphrag_config_defaults.extract_claims.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
+        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
         yes = f"{encoding.encode('Y')[0]}"
         no = f"{encoding.encode('N')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
@@ -164,7 +166,7 @@ class ClaimExtractor:
             self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER
         )
 
-        response = await self._llm(
+        response = await self._model.chat(
             self._extraction_prompt.format(**{
                 self._input_text_key: doc,
                 **prompt_args,
@@ -175,7 +177,7 @@ class ClaimExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._llm(
+            response = await self._model.chat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -189,7 +191,7 @@ class ClaimExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._llm(
+            response = await self._model.chat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,

@@ -12,11 +12,11 @@ from typing import Any
 
 import networkx as nx
 import tiktoken
-from fnllm.types import ChatLLM
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
 from graphrag.index.typing import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_graph import (
     CONTINUE_PROMPT,
     GRAPH_EXTRACTION_PROMPT,
@@ -42,7 +42,7 @@ class GraphExtractionResult:
 class GraphExtractor:
     """Unipartite graph extractor class definition."""
 
-    _llm: ChatLLM
+    _model: ChatModel
     _join_descriptions: bool
     _tuple_delimiter_key: str
     _record_delimiter_key: str
@@ -59,7 +59,7 @@ class GraphExtractor:
 
     def __init__(
         self,
-        llm_invoker: ChatLLM,
+        model_invoker: ChatModel,
         tuple_delimiter_key: str | None = None,
         record_delimiter_key: str | None = None,
         input_text_key: str | None = None,
@@ -73,7 +73,7 @@ class GraphExtractor:
     ):
         """Init method definition."""
         # TODO: streamline construction
-        self._llm = llm_invoker
+        self._model = model_invoker
         self._join_descriptions = join_descriptions
         self._input_text_key = input_text_key or "input_text"
         self._tuple_delimiter_key = tuple_delimiter_key or "tuple_delimiter"
@@ -86,12 +86,12 @@ class GraphExtractor:
         self._max_gleanings = (
             max_gleanings
             if max_gleanings is not None
-            else defs.EXTRACT_GRAPH_MAX_GLEANINGS
+            else graphrag_config_defaults.extract_graph.max_gleanings
         )
         self._on_error = on_error or (lambda _e, _s, _d: None)
 
         # Construct the looping arguments
-        encoding = tiktoken.get_encoding(encoding_model or defs.ENCODING_MODEL)
+        encoding = tiktoken.get_encoding(encoding_model or ENCODING_MODEL)
         yes = f"{encoding.encode('Y')[0]}"
         no = f"{encoding.encode('N')[0]}"
         self._loop_args = {"logit_bias": {yes: 100, no: 100}, "max_tokens": 1}
@@ -152,7 +152,7 @@ class GraphExtractor:
     async def _process_document(
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
-        response = await self._llm(
+        response = await self._model.chat(
             self._extraction_prompt.format(**{
                 **prompt_variables,
                 self._input_text_key: text,
@@ -162,7 +162,7 @@ class GraphExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._llm(
+            response = await self._model.chat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -173,7 +173,7 @@ class GraphExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._llm(
+            response = await self._model.chat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,

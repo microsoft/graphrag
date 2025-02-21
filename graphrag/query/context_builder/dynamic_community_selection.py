@@ -12,8 +12,8 @@ from typing import Any
 
 import tiktoken
 
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
 from graphrag.query.llm.base import BaseLLM

@@ -6,8 +6,8 @@
 import tiktoken
 from pydantic import BaseModel, Field, model_validator
 
-import graphrag.config.defaults as defs
-from graphrag.config.enums import AsyncType, AuthType, LLMType
+from graphrag.config.defaults import language_model_defaults
+from graphrag.config.enums import AsyncType, AuthType, ModelType
 from graphrag.config.errors import (
     ApiKeyMissingError,
     AzureApiBaseMissingError,
@@ -22,7 +22,7 @@ class LanguageModelConfig(BaseModel):
 
     api_key: str | None = Field(
         description="The API key to use for the LLM service.",
-        default=None,
+        default=language_model_defaults.api_key,
     )
 
     def _validate_api_key(self) -> None:
@@ -56,7 +56,7 @@ class LanguageModelConfig(BaseModel):
 
     auth_type: AuthType = Field(
         description="The authentication type.",
-        default=defs.AUTH_TYPE,
+        default=language_model_defaults.auth_type,
     )
 
     def _validate_auth_type(self) -> None:
@@ -71,14 +71,17 @@ class LanguageModelConfig(BaseModel):
             If the Azure authentication type conflicts with the model being used.
         """
         if self.auth_type == AuthType.AzureManagedIdentity and (
-            self.type == LLMType.OpenAIChat or self.type == LLMType.OpenAIEmbedding
+            self.type == ModelType.OpenAIChat or self.type == ModelType.OpenAIEmbedding
         ):
             msg = f"auth_type of azure_managed_identity is not supported for model type {self.type.value}. Please rerun `graphrag init` and set the auth_type to api_key."
             raise ConflictingSettingsError(msg)
 
-    type: LLMType = Field(description="The type of LLM model to use.")
+    type: ModelType = Field(description="The type of LLM model to use.")
     model: str = Field(description="The LLM model to use.")
-    encoding_model: str = Field(description="The encoding model to use", default="")
+    encoding_model: str = Field(
+        description="The encoding model to use",
+        default=language_model_defaults.encoding_model,
+    )
 
     def _validate_encoding_model(self) -> None:
         """Validate the encoding model.
@@ -93,33 +96,35 @@ class LanguageModelConfig(BaseModel):
 
     max_tokens: int = Field(
         description="The maximum number of tokens to generate.",
-        default=defs.LLM_MAX_TOKENS,
+        default=language_model_defaults.max_tokens,
     )
     temperature: float = Field(
         description="The temperature to use for token generation.",
-        default=defs.LLM_TEMPERATURE,
+        default=language_model_defaults.temperature,
     )
     top_p: float = Field(
         description="The top-p value to use for token generation.",
-        default=defs.LLM_TOP_P,
+        default=language_model_defaults.top_p,
     )
     n: int = Field(
         description="The number of completions to generate.",
-        default=defs.LLM_N,
+        default=language_model_defaults.n,
     )
     frequency_penalty: float = Field(
         description="The frequency penalty to use for token generation.",
-        default=defs.LLM_FREQUENCY_PENALTY,
+        default=language_model_defaults.frequency_penalty,
     )
     presence_penalty: float = Field(
         description="The presence penalty to use for token generation.",
-        default=defs.LLM_PRESENCE_PENALTY,
+        default=language_model_defaults.presence_penalty,
     )
     request_timeout: float = Field(
-        description="The request timeout to use.", default=defs.LLM_REQUEST_TIMEOUT
+        description="The request timeout to use.",
+        default=language_model_defaults.request_timeout,
     )
     api_base: str | None = Field(
-        description="The base URL for the LLM API.", default=None
+        description="The base URL for the LLM API.",
+        default=language_model_defaults.api_base,
     )
 
     def _validate_api_base(self) -> None:
@@ -133,13 +138,14 @@ class LanguageModelConfig(BaseModel):
             If the API base is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_base is None or self.api_base.strip() == ""):
             raise AzureApiBaseMissingError(self.type.value)
 
     api_version: str | None = Field(
-        description="The version of the LLM API to use.", default=None
+        description="The version of the LLM API to use.",
+        default=language_model_defaults.api_version,
     )
 
     def _validate_api_version(self) -> None:
@@ -153,13 +159,14 @@ class LanguageModelConfig(BaseModel):
             If the API base is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_version is None or self.api_version.strip() == ""):
             raise AzureApiVersionMissingError(self.type.value)
 
     deployment_name: str | None = Field(
-        description="The deployment name to use for the LLM service.", default=None
+        description="The deployment name to use for the LLM service.",
+        default=language_model_defaults.deployment_name,
     )
 
     def _validate_deployment_name(self) -> None:
@@ -173,53 +180,57 @@ class LanguageModelConfig(BaseModel):
             If the deployment name is missing and is required.
         """
         if (
-            self.type == LLMType.AzureOpenAIChat
-            or self.type == LLMType.AzureOpenAIEmbedding
+            self.type == ModelType.AzureOpenAIChat
+            or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
             raise AzureDeploymentNameMissingError(self.type.value)
 
     organization: str | None = Field(
-        description="The organization to use for the LLM service.", default=None
+        description="The organization to use for the LLM service.",
+        default=language_model_defaults.organization,
     )
     proxy: str | None = Field(
-        description="The proxy to use for the LLM service.", default=None
+        description="The proxy to use for the LLM service.",
+        default=language_model_defaults.proxy,
     )
     audience: str | None = Field(
         description="Azure resource URI to use with managed identity for the llm connection.",
-        default=None,
+        default=language_model_defaults.audience,
     )
     model_supports_json: bool | None = Field(
-        description="Whether the model supports JSON output mode.", default=None
+        description="Whether the model supports JSON output mode.",
+        default=language_model_defaults.model_supports_json,
     )
     tokens_per_minute: int = Field(
         description="The number of tokens per minute to use for the LLM service.",
-        default=defs.LLM_TOKENS_PER_MINUTE,
+        default=language_model_defaults.tokens_per_minute,
     )
     requests_per_minute: int = Field(
         description="The number of requests per minute to use for the LLM service.",
-        default=defs.LLM_REQUESTS_PER_MINUTE,
+        default=language_model_defaults.requests_per_minute,
     )
     retry_strategy: str = Field(
         description="The retry strategy to use for the LLM service.",
-        default=defs.RETRY_STRATEGY,
+        default=language_model_defaults.retry_strategy,
     )
     max_retries: int = Field(
         description="The maximum number of retries to use for the LLM service.",
-        default=defs.LLM_MAX_RETRIES,
+        default=language_model_defaults.max_retries,
     )
     max_retry_wait: float = Field(
         description="The maximum retry wait to use for the LLM service.",
-        default=defs.LLM_MAX_RETRY_WAIT,
+        default=language_model_defaults.max_retry_wait,
     )
     concurrent_requests: int = Field(
         description="Whether to use concurrent requests for the LLM service.",
-        default=defs.LLM_CONCURRENT_REQUESTS,
+        default=language_model_defaults.concurrent_requests,
     )
     responses: list[str | BaseModel] | None = Field(
-        default=None, description="Static responses to use in mock mode."
+        default=language_model_defaults.responses,
+        description="Static responses to use in mock mode.",
     )
     async_mode: AsyncType = Field(
-        description="The async mode to use.", default=defs.ASYNC_MODE
+        description="The async mode to use.", default=language_model_defaults.async_mode
     )
 
     def _validate_azure_settings(self) -> None:

@@ -4,13 +4,11 @@
 """A module containing run_graph_intelligence,  run_extract_graph and _create_text_splitter methods to run graph intelligence."""
 
 import networkx as nx
-from fnllm.types import ChatLLM
 
-import graphrag.config.defaults as defs
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
-from graphrag.index.llm.load_llm import load_llm
 from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor
 from graphrag.index.operations.extract_graph.typing import (
     Document,
@@ -18,6 +16,8 @@ from graphrag.index.operations.extract_graph.typing import (
     EntityTypes,
     StrategyConfig,
 )
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 
 async def run_graph_intelligence(
@@ -29,17 +29,20 @@ async def run_graph_intelligence(
 ) -> EntityExtractionResult:
     """Run the graph intelligence entity extraction strategy."""
     llm_config = LanguageModelConfig(**args["llm"])
-    llm = load_llm(
-        "extract_graph",
-        llm_config,
+
+    llm = ModelManager().get_or_create_chat_model(
+        name="extract_graph",
+        model_type=llm_config.type,
+        config=llm_config,
         callbacks=callbacks,
         cache=cache,
     )
+
     return await run_extract_graph(llm, docs, entity_types, callbacks, args)
 
 
 async def run_extract_graph(
-    llm: ChatLLM,
+    model: ChatModel,
     docs: list[Document],
     entity_types: EntityTypes,
     callbacks: WorkflowCallbacks | None,
@@ -51,10 +54,12 @@ async def run_extract_graph(
     completion_delimiter = args.get("completion_delimiter", None)
     extraction_prompt = args.get("extraction_prompt", None)
     encoding_model = args.get("encoding_name", None)
-    max_gleanings = args.get("max_gleanings", defs.EXTRACT_GRAPH_MAX_GLEANINGS)
+    max_gleanings = args.get(
+        "max_gleanings", graphrag_config_defaults.extract_graph.max_gleanings
+    )
 
     extractor = GraphExtractor(
-        llm_invoker=llm,
+        model_invoker=model,
         prompt=extraction_prompt,
         encoding_model=encoding_model,
         max_gleanings=max_gleanings,

@@ -3,15 +3,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from fnllm.types import ChatLLM
-
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.community_report_rating import (
     GENERATE_REPORT_RATING_PROMPT,
 )
 
 
 async def generate_community_report_rating(
-    llm: ChatLLM, domain: str, persona: str, docs: str | list[str]
+    model: ChatModel, domain: str, persona: str, docs: str | list[str]
 ) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
 
@@ -31,6 +30,6 @@ async def generate_community_report_rating(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await llm(domain_prompt)
+    response = await model.chat(domain_prompt)
 
     return str(response.output.content).strip()

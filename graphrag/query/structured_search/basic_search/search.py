@@ -10,12 +10,13 @@ from typing import Any
 
 import tiktoken
 
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.prompts.query.basic_search_system_prompt import (
     BASIC_SEARCH_SYSTEM_PROMPT,
 )
 from graphrag.query.context_builder.builders import BasicContextBuilder
 from graphrag.query.context_builder.conversation_history import ConversationHistory
-from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
+from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
@@ -40,7 +41,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         token_encoder: tiktoken.Encoding | None = None,
         system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
-        callbacks: list[BaseLLMCallback] | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
         llm_params: dict[str, Any] = DEFAULT_LLM_PARAMS,
         context_builder_params: dict | None = None,
     ):
@@ -52,7 +53,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             context_builder_params=context_builder_params or {},
         )
         self.system_prompt = system_prompt or BASIC_SEARCH_SYSTEM_PROMPT
-        self.callbacks = callbacks
+        self.callbacks = callbacks or []
         self.response_type = response_type
 
     async def search(
@@ -91,13 +92,16 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             response = await self.llm.agenerate(
                 messages=search_messages,
                 streaming=True,
-                callbacks=self.callbacks,
+                callbacks=self.callbacks,  # type: ignore
                 **self.llm_params,
             )
 
             llm_calls["response"] = 1
             prompt_tokens["response"] = num_tokens(search_prompt, self.token_encoder)
             output_tokens["response"] = num_tokens(response, self.token_encoder)
+
+            for callback in self.callbacks:
+                callback.on_context(context_result.context_records)
 
             return SearchResult(
                 response=response,
@@ -121,7 +125,7 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
                 output_tokens=0,
             )
 
-    async def stream_search(
+    def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
@@ -143,11 +147,11 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
             {"role": "user", "content": query},
         ]
 
-        # send context records first before sending the reduce response
-        yield context_result.context_records
-        async for response in self.llm.astream_generate(  # type: ignore
+        for callback in self.callbacks:
+            callback.on_context(context_result.context_records)
+
+        return self.llm.astream_generate(  # type: ignore
             messages=search_messages,
-            callbacks=self.callbacks,
+            callbacks=self.callbacks,  # type: ignore
             **self.llm_params,
-        ):
-            yield response
+        )

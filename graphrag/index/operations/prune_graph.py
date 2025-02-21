@@ -9,7 +9,7 @@ import graspologic as glc
 import networkx as nx
 import numpy as np
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import DegreeView

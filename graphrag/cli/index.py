@@ -153,7 +153,7 @@ def _run_index(
             True,
         )
 
-    if skip_validation:
+    if not skip_validation:
         validate_config_names(progress_logger, config)
 
     info(f"Starting pipeline run. {dry_run=}", verbose)
