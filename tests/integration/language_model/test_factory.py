@@ -47,6 +47,9 @@ async def test_create_custom_chat_model():
     response = await model.achat("prompt")
     assert response.output.content == "content"
 
+    response = model.chat("prompt")
+    assert response.output.content == "content"
+
 
 async def test_create_custom_embedding_llm():
     class CustomEmbeddingModel:
@@ -71,4 +74,13 @@ async def test_create_custom_embedding_llm():
     llm = ModelManager().get_or_create_embedding_model("custom", "custom_embedding")
     assert isinstance(llm, CustomEmbeddingModel)
     response = await llm.aembed("text")
+    assert response == [1.0]
+
+    response = llm.embed("text")
+    assert response == [1.0]
+
+    response = await llm.aembed_batch(["text"])
+    assert response == [[1.0]]
+
+    response = llm.embed_batch(["text"])
     assert response == [[1.0]]
