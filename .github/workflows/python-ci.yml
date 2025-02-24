@@ -87,3 +87,7 @@ jobs:
       - name: Unit Test
         run: |
           poetry run poe test_unit
+
+      - name: Verb Test
+        run: |
+          poetry run poe test_verbs

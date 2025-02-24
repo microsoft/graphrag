@@ -101,10 +101,6 @@ jobs:
         run: |
           poetry build
 
-      - name: Verb Test
-        run: |
-          poetry run poe test_verbs
-
       - name: Install Azurite
         id: azuright
         uses: potatoqualitee/azuright@v1.1
