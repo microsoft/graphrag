@@ -26,7 +26,7 @@ async def test_create_custom_chat_llm():
     ModelFactory.register_chat("custom_chat", CustomChatLLM)
     llm = ModelManager().get_or_create_chat_model("custom", "custom_chat")
     assert isinstance(llm, CustomChatLLM)
-    response = await llm.chat("prompt")
+    response = await llm.achat("prompt")
     assert response.output.content == "content"
 
 
@@ -41,5 +41,5 @@ async def test_create_custom_embedding_llm():
     ModelFactory.register_embedding("custom_embedding", CustomEmbeddingLLM)
     llm = ModelManager().get_or_create_embedding_model("custom", "custom_embedding")
     assert isinstance(llm, CustomEmbeddingLLM)
-    response = await llm.embed("text")
+    response = await llm.aembed("text")
     assert response == [[1.0]]

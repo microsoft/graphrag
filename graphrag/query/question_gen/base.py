@@ -9,11 +9,11 @@ from typing import Any
 
 import tiktoken
 
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.builders import (
     GlobalContextBuilder,
     LocalContextBuilder,
 )
-from graphrag.query.llm.base import BaseLLM
 
 
 @dataclass
@@ -32,20 +32,20 @@ class BaseQuestionGen(ABC):
 
     def __init__(
         self,
-        llm: BaseLLM,
+        model: ChatModel,
         context_builder: GlobalContextBuilder | LocalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         llm_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
     ):
-        self.llm = llm
+        self.model = model
         self.context_builder = context_builder
         self.token_encoder = token_encoder
         self.llm_params = llm_params or {}
         self.context_builder_params = context_builder_params or {}
 
     @abstractmethod
-    def generate(
+    async def generate(
         self,
         question_history: list[str],
         context_data: str | None,

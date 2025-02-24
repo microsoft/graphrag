@@ -22,6 +22,6 @@ async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     language_prompt = DETECT_LANGUAGE_PROMPT.format(input_text=docs_str)
 
-    response = await model.chat(language_prompt)
+    response = await model.achat(language_prompt)
 
     return str(response.output.content)

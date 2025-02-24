@@ -46,11 +46,11 @@ async def generate_entity_types(
     history = [{"role": "system", "content": persona}]
 
     if json_mode:
-        response = await model.chat(
+        response = await model.achat(
             entity_types_prompt, history=history, json_model=EntityTypesResponse
         )
         parsed_model = response.parsed_response
         return parsed_model.entity_types if parsed_model else []
 
-    response = await model.chat(entity_types_prompt, history=history, json=json_mode)
+    response = await model.achat(entity_types_prompt, history=history, json=json_mode)
     return str(response.output.content)

@@ -14,6 +14,7 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
+from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
@@ -39,7 +40,6 @@ from graphrag.query.input.retrieval.community_reports import (
     get_candidate_communities,
 )
 from graphrag.query.input.retrieval.text_units import get_candidate_text_units
-from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import LocalContextBuilder
 from graphrag.vector_stores.base import BaseVectorStore
@@ -54,7 +54,7 @@ class LocalSearchMixedContext(LocalContextBuilder):
         self,
         entities: list[Entity],
         entity_text_embeddings: BaseVectorStore,
-        text_embedder: BaseTextEmbedding,
+        text_embedder: EmbeddingModel,
         text_units: list[TextUnit] | None = None,
         community_reports: list[CommunityReport] | None = None,
         relationships: list[Relationship] | None = None,

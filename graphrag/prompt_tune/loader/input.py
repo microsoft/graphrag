@@ -30,7 +30,9 @@ async def _embed_chunks(
 ) -> tuple[pd.DataFrame, np.ndarray]:
     """Convert text chunks into dense text embeddings."""
     sampled_text_chunks = text_chunks.sample(n=min(n_subset_max, len(text_chunks)))
-    embeddings = await embedding_llm.embed(sampled_text_chunks["chunks"].tolist())
+    embeddings = await embedding_llm.aembed_batch(
+        sampled_text_chunks["chunks"].tolist()
+    )
     return text_chunks, np.array(embeddings)
 
 
