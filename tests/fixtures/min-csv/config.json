@@ -81,8 +81,8 @@
             ],
             "max_runtime": 150,
             "expected_artifacts": [
-                "embeddings.text_units.text.parquet",
-                "embeddings.entities.description.parquet",
+                "embeddings.text_unit.text.parquet",
+                "embeddings.entity.description.parquet",
                 "embeddings.community.full_content.parquet"
             ]
         }
