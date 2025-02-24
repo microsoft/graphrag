@@ -235,7 +235,7 @@ def get_drift_search_engine(
         )
 
     chat_model = ModelManager().get_or_create_chat_model(
-        name="drif_search_chat",
+        name="drift_search_chat",
         model_type=chat_model_settings.type,
         config=chat_model_settings,
     )
@@ -284,26 +284,26 @@ def get_basic_search_engine(
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
     chat_model_settings = config.get_language_model_config(
-        config.drift_search.chat_model_id
+        config.basic_search.chat_model_id
     )
 
     if chat_model_settings.max_retries == -1:
         chat_model_settings.max_retries = len(text_units)
 
     chat_model = ModelManager().get_or_create_chat_model(
-        name="drif_search_chat",
+        name="basic_search_chat",
         model_type=chat_model_settings.type,
         config=chat_model_settings,
     )
 
     embedding_model_settings = config.get_language_model_config(
-        config.drift_search.embedding_model_id
+        config.basic_search.embedding_model_id
     )
     if embedding_model_settings.max_retries == -1:
         embedding_model_settings.max_retries = len(text_units)
 
     embedding_model = ModelManager().get_or_create_embedding_model(
-        name="drift_search_embedding",
+        name="basic_search_embedding",
         model_type=embedding_model_settings.type,
         config=embedding_model_settings,
     )

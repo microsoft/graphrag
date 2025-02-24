@@ -102,7 +102,7 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
     )
 
 
-# FNLLM does not support sync operations, so we workaround runnning in an available loop/thread.
+# FNLLM does not support sync operations, so we workaround running in an available loop/thread.
 T = TypeVar("T")
 
 _loop = asyncio.new_event_loop()
