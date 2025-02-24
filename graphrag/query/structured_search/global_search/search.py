@@ -480,7 +480,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         async for chunk_response in self.model.achat_stream(
             prompt=query,
             history=search_messages,
-            model_parameters=llm_kwargs,
+            **llm_kwargs,
         ):
             for callback in self.callbacks:
                 callback.on_llm_new_token(chunk_response)
