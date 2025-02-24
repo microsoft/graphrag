@@ -59,6 +59,7 @@ def finalize_entities(
             "type",
             "description",
             "text_unit_ids",
+            "frequency",
             "degree",
             "x",
             "y",

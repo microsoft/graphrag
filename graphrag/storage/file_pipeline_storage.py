@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 from collections.abc import Iterator
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
@@ -17,7 +18,10 @@ from aiofiles.ospath import exists
 
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.storage.pipeline_storage import (
+    PipelineStorage,
+    get_timestamp_formatted_with_local_tz,
+)
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +51,9 @@ class FilePipelineStorage(PipelineStorage):
         def item_filter(item: dict[str, Any]) -> bool:
             if file_filter is None:
                 return True
-            return all(re.match(value, item[key]) for key, value in file_filter.items())
+            return all(
+                re.search(value, item[key]) for key, value in file_filter.items()
+            )
 
         search_path = Path(self._root_dir) / (base_dir or "")
         log.info("search %s for files matching %s", search_path, file_pattern.pattern)
@@ -56,7 +62,7 @@ class FilePipelineStorage(PipelineStorage):
         num_total = len(all_files)
         num_filtered = 0
         for file in all_files:
-            match = file_pattern.match(f"{file}")
+            match = file_pattern.search(f"{file}")
             if match:
                 group = match.groupdict()
                 if item_filter(group):
@@ -144,6 +150,15 @@ class FilePipelineStorage(PipelineStorage):
     def keys(self) -> list[str]:
         """Return the keys in the storage."""
         return [item.name for item in Path(self._root_dir).iterdir() if item.is_file()]
+
+    async def get_creation_date(self, key: str) -> str:
+        """Get the creation date of a file."""
+        file_path = Path(join_path(self._root_dir, key))
+
+        creation_timestamp = file_path.stat().st_ctime
+        creation_time_utc = datetime.fromtimestamp(creation_timestamp, tz=timezone.utc)
+
+        return get_timestamp_formatted_with_local_tz(creation_time_utc)
 
 
 def join_path(file_path: str, file_name: str) -> Path:

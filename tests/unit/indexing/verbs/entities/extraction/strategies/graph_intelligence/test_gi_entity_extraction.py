@@ -21,7 +21,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -34,7 +34,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                     ##
                     ("relationship"<|>TEST_ENTITY_1<|>TEST_ENTITY_3<|>TEST_ENTITY_1 and TEST_ENTITY_3 are related because TEST_ENTITY_3 is director of TEST_ENTITY_1<|>1))
                     """.strip()
-                ]
+                ],
+                name="test_run_extract_graph_single_document_correct_entities_returned",
             ),
         )
 
@@ -55,7 +56,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -72,7 +73,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                     ##
                     ("relationship"<|>TEST_ENTITY_1<|>TEST_ENTITY_3<|>TEST_ENTITY_1 and TEST_ENTITY_3 are related because TEST_ENTITY_3 is director of TEST_ENTITY_1<|>1))
                     """.strip(),
-                ]
+                ],
+                name="test_run_extract_graph_multiple_documents_correct_entities_returned",
             ),
         )
 
@@ -91,7 +93,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -108,7 +110,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                     ##
                     ("relationship"<|>TEST_ENTITY_1<|>TEST_ENTITY_3<|>TEST_ENTITY_1 and TEST_ENTITY_3 are related because TEST_ENTITY_3 is director of TEST_ENTITY_1<|>1))
                     """.strip(),
-                ]
+                ],
+                name="test_run_extract_graph_multiple_documents_correct_edges_returned",
             ),
         )
 
@@ -135,7 +138,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -152,7 +155,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                     ##
                     ("relationship"<|>TEST_ENTITY_1<|>TEST_ENTITY_3<|>TEST_ENTITY_1 and TEST_ENTITY_3 are related because TEST_ENTITY_3 is director of TEST_ENTITY_1<|>1))
                     """.strip(),
-                ]
+                ],
+                name="test_run_extract_graph_multiple_documents_correct_entity_source_ids_mapped",
             ),
         )
 
@@ -184,7 +188,7 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                 "max_gleanings": 0,
                 "summarize_descriptions": False,
             },
-            llm=create_mock_llm(
+            model=create_mock_llm(
                 responses=[
                     """
                     ("entity"<|>TEST_ENTITY_1<|>COMPANY<|>TEST_ENTITY_1 is a test company)
@@ -201,7 +205,8 @@ class TestRunChain(unittest.IsolatedAsyncioTestCase):
                     ##
                     ("relationship"<|>TEST_ENTITY_1<|>TEST_ENTITY_3<|>TEST_ENTITY_1 and TEST_ENTITY_3 are related because TEST_ENTITY_3 is director of TEST_ENTITY_1<|>1))
                     """.strip(),
-                ]
+                ],
+                name="test_run_extract_graph_multiple_documents_correct_edge_source_ids_mapped",
             ),
         )
 

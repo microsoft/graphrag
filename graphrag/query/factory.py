@@ -5,13 +5,14 @@
 
 import tiktoken
 
+from graphrag.callbacks.query_callbacks import QueryCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
-from graphrag.model.text_unit import TextUnit
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
+from graphrag.data_model.text_unit import TextUnit
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.basic_search.basic_context import (
@@ -43,6 +44,7 @@ def get_local_search_engine(
     response_type: str,
     description_embedding_store: BaseVectorStore,
     system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -88,6 +90,7 @@ def get_local_search_engine(
             "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
         response_type=response_type,
+        callbacks=callbacks,
     )
 
 
@@ -101,6 +104,7 @@ def get_global_search_engine(
     map_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
     general_knowledge_inclusion_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     # TODO: Global search should select model based on config??
@@ -169,6 +173,7 @@ def get_global_search_engine(
         },
         concurrent_coroutines=gs_config.concurrency,
         response_type=response_type,
+        callbacks=callbacks,
     )
 
 
@@ -182,6 +187,7 @@ def get_drift_search_engine(
     response_type: str,
     local_system_prompt: str | None = None,
     reduce_system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -205,6 +211,7 @@ def get_drift_search_engine(
             response_type=response_type,
         ),
         token_encoder=token_encoder,
+        callbacks=callbacks,
     )
 
 
@@ -213,6 +220,7 @@ def get_basic_search_engine(
     text_unit_embeddings: BaseVectorStore,
     config: GraphRagConfig,
     system_prompt: str | None = None,
+    callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
     default_llm_settings = config.get_language_model_config("default_chat_model")
@@ -246,4 +254,5 @@ def get_basic_search_engine(
             "embedding_vectorstore_key": "id",
             "max_tokens": ls_config.max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)
         },
+        callbacks=callbacks,
     )

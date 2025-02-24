@@ -16,8 +16,8 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import CacheType, IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.run.run_pipeline import run_pipeline
-from graphrag.index.typing import PipelineRunResult
-from graphrag.index.workflows.factory import create_pipeline
+from graphrag.index.typing import PipelineRunResult, WorkflowFunction
+from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.base import ProgressLogger
 
 log = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 async def build_index(
     config: GraphRagConfig,
     method: IndexingMethod = IndexingMethod.Standard,
+    is_update_run: bool = False,
     memory_profile: bool = False,
     callbacks: list[WorkflowCallbacks] | None = None,
     progress_logger: ProgressLogger | None = None,
@@ -50,8 +51,6 @@ async def build_index(
     list[PipelineRunResult]
         The list of pipeline run results
     """
-    is_update_run = bool(config.update_index_output)
-
     pipeline_cache = (
         NoopPipelineCache() if config.cache.type == CacheType.none is None else None
     )
@@ -64,7 +63,7 @@ async def build_index(
     if memory_profile:
         log.warning("New pipeline does not yet support memory profiling.")
 
-    pipeline = create_pipeline(config, method)
+    pipeline = PipelineFactory.create_pipeline(config, method)
 
     async for output in run_pipeline(
         pipeline,
@@ -83,3 +82,8 @@ async def build_index(
             progress_logger.info(str(output.result))
 
     return outputs
+
+
+def register_workflow_function(name: str, workflow: WorkflowFunction):
+    """Register a custom workflow function. You can then include the name in the settings.yaml workflows list."""
+    PipelineFactory.register(name, workflow)

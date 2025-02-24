@@ -94,6 +94,10 @@ async def extract_graph(
     )
     strategy_config = {**strategy}
 
+    # if max_retries is not set, inject a dynamically assigned value based on the total number of expected LLM calls to be made
+    if strategy_config.get("llm") and strategy_config["llm"]["max_retries"] == -1:
+        strategy_config["llm"]["max_retries"] = len(text_units)
+
     num_started = 0
 
     async def run_strategy(row):
@@ -150,7 +154,11 @@ def _merge_entities(entity_dfs) -> pd.DataFrame:
     all_entities = pd.concat(entity_dfs, ignore_index=True)
     return (
         all_entities.groupby(["title", "type"], sort=False)
-        .agg(description=("description", list), text_unit_ids=("source_id", list))
+        .agg(
+            description=("description", list),
+            text_unit_ids=("source_id", list),
+            frequency=("source_id", "count"),
+        )
         .reset_index()
     )
 

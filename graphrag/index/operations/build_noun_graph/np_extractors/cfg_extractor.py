@@ -172,3 +172,7 @@ class CFGNounPhraseExtractor(BaseNounPhraseExtractor):
                 cleaned_tokens, self.max_word_length
             ),
         }
+
+    def __str__(self) -> str:
+        """Return string representation of the extractor, used for cache key generation."""
+        return f"cfg_{self.model_name}_{self.max_word_length}_{self.include_named_entities}_{self.exclude_entity_tags}_{self.exclude_pos_tags}_{self.exclude_nouns}_{self.word_delimiter}_{self.noun_phrase_grammars}_{self.noun_phrase_tags}"

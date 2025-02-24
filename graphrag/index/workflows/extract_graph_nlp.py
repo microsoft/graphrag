@@ -5,44 +5,64 @@
 
 import pandas as pd
 
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
-from graphrag.index.flows.extract_graph_nlp import (
-    extract_graph_nlp,
+from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
+from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
+    create_noun_phrase_extractor,
 )
-from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.operations.snapshot_graphml import snapshot_graphml
+from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
-
-workflow_name = "extract_graph_nlp"
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
-) -> pd.DataFrame | None:
+    _callbacks: WorkflowCallbacks,
+) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
 
-    entities, relationships = extract_graph_nlp(
+    entities, relationships = await extract_graph_nlp(
         text_units,
-        callbacks,
+        context.cache,
         extraction_config=config.extract_graph_nlp,
-        pruning_config=config.prune_graph,
-        embed_config=config.embed_graph,
-        layout_enabled=config.umap.enabled,
     )
 
     await write_table_to_storage(entities, "entities", context.storage)
     await write_table_to_storage(relationships, "relationships", context.storage)
 
-    if config.snapshots.graphml:
-        # todo: extract graphs at each level, and add in meta like descriptions
-        graph = create_graph(relationships)
-        await snapshot_graphml(
-            graph,
-            name="graph",
-            storage=context.storage,
-        )
+    return WorkflowFunctionOutput(
+        result={
+            "entities": entities,
+            "relationships": relationships,
+        },
+        config=None,
+    )
+
+
+async def extract_graph_nlp(
+    text_units: pd.DataFrame,
+    cache: PipelineCache,
+    extraction_config: ExtractGraphNLPConfig,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """All the steps to create the base entity graph."""
+    text_analyzer_config = extraction_config.text_analyzer
+    text_analyzer = create_noun_phrase_extractor(text_analyzer_config)
+    extracted_nodes, extracted_edges = await build_noun_graph(
+        text_units,
+        text_analyzer=text_analyzer,
+        normalize_edge_weights=extraction_config.normalize_edge_weights,
+        num_threads=extraction_config.concurrent_requests,
+        cache=cache,
+    )
+
+    # add in any other columns required by downstream workflows
+    extracted_nodes["type"] = "NOUN PHRASE"
+    extracted_nodes["description"] = ""
+    extracted_edges["description"] = ""
+
+    return (extracted_nodes, extracted_edges)

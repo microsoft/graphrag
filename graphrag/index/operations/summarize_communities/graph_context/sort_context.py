@@ -4,7 +4,7 @@
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 from graphrag.query.llm.text_utils import num_tokens
 
 

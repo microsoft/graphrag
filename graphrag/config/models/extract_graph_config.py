@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
@@ -15,25 +15,28 @@ class ExtractGraphConfig(BaseModel):
     """Configuration section for entity extraction."""
 
     prompt: str | None = Field(
-        description="The entity extraction prompt to use.", default=None
+        description="The entity extraction prompt to use.",
+        default=graphrag_config_defaults.extract_graph.prompt,
     )
     entity_types: list[str] = Field(
         description="The entity extraction entity types to use.",
-        default=defs.EXTRACT_GRAPH_ENTITY_TYPES,
+        default=graphrag_config_defaults.extract_graph.entity_types,
     )
     max_gleanings: int = Field(
         description="The maximum number of entity gleanings to use.",
-        default=defs.EXTRACT_GRAPH_MAX_GLEANINGS,
+        default=graphrag_config_defaults.extract_graph.max_gleanings,
     )
     strategy: dict | None = Field(
-        description="Override the default entity extraction strategy", default=None
+        description="Override the default entity extraction strategy",
+        default=graphrag_config_defaults.extract_graph.strategy,
     )
     encoding_model: str | None = Field(
-        default=None, description="The encoding model to use."
+        default=graphrag_config_defaults.extract_graph.encoding_model,
+        description="The encoding model to use.",
     )
     model_id: str = Field(
         description="The model ID to use for text embeddings.",
-        default=defs.EXTRACT_GRAPH_MODEL_ID,
+        default=graphrag_config_defaults.extract_graph.model_id,
     )
 
     def resolved_strategy(
@@ -47,8 +50,7 @@ class ExtractGraphConfig(BaseModel):
         return self.strategy or {
             "type": ExtractEntityStrategyType.graph_intelligence,
             "llm": model_config.model_dump(),
-            "stagger": model_config.parallelization_stagger,
-            "num_threads": model_config.parallelization_num_threads,
+            "num_threads": model_config.concurrent_requests,
             "extraction_prompt": (Path(root_dir) / self.prompt).read_text(
                 encoding="utf-8"
             )
