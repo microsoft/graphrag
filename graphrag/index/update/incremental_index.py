@@ -301,6 +301,10 @@ def _update_and_merge_text_units(
             lambda x: [entity_id_mapping.get(i, i) for i in x] if x is not None else x
         )
 
+    initial_id = old_text_units["human_readable_id"].max() + 1
+    delta_text_units["human_readable_id"] = np.arange(
+        initial_id, initial_id + len(delta_text_units)
+    )
     # Merge the final text units
     return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
 
