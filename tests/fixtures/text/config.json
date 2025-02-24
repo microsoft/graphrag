@@ -7,7 +7,7 @@
                 1,
                 2500
             ],
-            "max_runtime": 150,
+            "max_runtime": 30,
             "expected_artifacts": 0
         },
         "extract_graph": {
@@ -48,7 +48,7 @@
                 1,
                 2500
             ],
-            "max_runtime": 150,
+            "max_runtime": 30,
             "expected_artifacts": 1
         },
         "create_community_reports": {
@@ -79,7 +79,7 @@
                 "relationship_ids",
                 "entity_ids"
             ],
-            "max_runtime": 150,
+            "max_runtime": 30,
             "expected_artifacts": 1
         },
         "create_final_documents": {
@@ -87,7 +87,7 @@
                 1,
                 2500
             ],
-            "max_runtime": 150,
+            "max_runtime": 30,
             "expected_artifacts": 1
         },
         "generate_text_embeddings": {
