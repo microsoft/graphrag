@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add LMM Manager and Factory, to support provider registration"
-}

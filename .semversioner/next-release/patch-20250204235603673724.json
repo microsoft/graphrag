@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix proper use of n_depth for drift search"
-}
