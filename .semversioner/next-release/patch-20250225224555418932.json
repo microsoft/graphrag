@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix summarization over large datasets for inc indexing. Fix relationship summarization"
-}

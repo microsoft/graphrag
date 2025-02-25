@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Add pipeline_start and pipeline_end callbacks."
-}

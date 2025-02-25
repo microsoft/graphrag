@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Fix missing embeddings workflow in FastGraphRAG."
-}
