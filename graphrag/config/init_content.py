@@ -151,7 +151,6 @@ local_search:
 
 global_search:
   chat_model_id: {graphrag_config_defaults.global_search.chat_model_id}
-  embedding_model_id: {graphrag_config_defaults.global_search.embedding_model_id}
   map_prompt: "prompts/global_search_map_system_prompt.txt"
   reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
   knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
