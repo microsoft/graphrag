@@ -25,7 +25,7 @@
       "type": "minor"
     },
     {
-      "description": "Move embeddings snspshots to the workflow runner.",
+      "description": "Move embeddings snapshots to the workflow runner.",
       "type": "minor"
     },
     {

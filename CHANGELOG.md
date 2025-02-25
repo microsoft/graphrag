@@ -9,7 +9,7 @@ Note: version releases in the 0.x.y range may introduce breaking changes.
 - minor: Add LMM Manager and Factory, to support provider registration
 - minor: Add NLP graph extraction.
 - minor: Add pipeline_start and pipeline_end callbacks.
-- minor: Move embeddings snspshots to the workflow runner.
+- minor: Move embeddings snapshots to the workflow runner.
 - minor: Remove config inheritance, hydration, and automatic env var overlays.
 - minor: Rework the update output storage structure.
 - patch: Add caching to NLP extractor.
