@@ -74,7 +74,8 @@
             ],
             "nan_allowed_columns": [
                 "relationship_ids",
-                "entity_ids"
+                "entity_ids",
+                "covariate_ids"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["text_units.parquet"]
@@ -83,6 +84,9 @@
             "row_range": [
                 1,
                 1
+            ],
+            "nan_allowed_columns": [
+                "metadata"
             ],
             "max_runtime": 30,
             "expected_artifacts": ["documents.parquet"]
