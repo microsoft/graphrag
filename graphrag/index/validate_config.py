@@ -40,6 +40,8 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embedding_llm_settings = parameters.get_language_model_config(
         parameters.embed_text.model_id
     )
+    if embedding_llm_settings.max_retries == -1:
+        embedding_llm_settings.max_retries = language_model_defaults.max_retries
     embed_llm = ModelManager().register_embedding(
         name="test-embed-llm",
         model_type=embedding_llm_settings.type,
