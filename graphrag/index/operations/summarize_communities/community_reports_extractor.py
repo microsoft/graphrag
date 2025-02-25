@@ -3,7 +3,6 @@
 
 """A module containing 'CommunityReportsResult' and 'CommunityReportsExtractor' models."""
 
-import json
 import logging
 import traceback
 from dataclasses import dataclass
