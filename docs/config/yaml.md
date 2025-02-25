@@ -295,6 +295,8 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
+- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `text_unit_prop` **float** - The text unit proportion. 
 - `community_prop` **float** - The community proportion.
@@ -311,6 +313,7 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
+- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
 - `map_prompt` **str** - The mapper prompt file to use.
 - `reduce_prompt` **str** - The reducer prompt file to use.
 - `knowledge_prompt` **str** - The knowledge prompt file to use.
@@ -337,6 +340,8 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
+- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `reduce_prompt` **str** - The reducer prompt file to use.
 - `temperature` **float** - The temperature to use for token generation.",
@@ -363,6 +368,8 @@ Indicates whether we should run UMAP dimensionality reduction. This is used to p
 
 #### Fields
 
+- `chat_model_id` **str** - Name of the model definition to use for Chat Completion calls.
+- `embedding_model_id` **str** - Name of the model definition to use for Embedding calls.
 - `prompt` **str** - The prompt file to use.
 - `text_unit_prop` **float** - The text unit proportion. 
 - `community_prop` **float** - The community proportion.
