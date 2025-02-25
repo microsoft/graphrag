@@ -7,6 +7,7 @@ import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.typing import WorkflowFunctionOutput
 from graphrag.utils.storage import (
@@ -65,21 +66,14 @@ def create_final_text_units(
     if final_covariates is not None:
         covariate_join = _covariates(final_covariates)
         final_joined = _join(relationship_joined, covariate_join)
+    else:
+        final_joined["covariate_ids"] = [[] for i in range(len(final_joined))]
 
     aggregated = final_joined.groupby("id", sort=False).agg("first").reset_index()
 
     return aggregated.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "text",
-            "n_tokens",
-            "document_ids",
-            "entity_ids",
-            "relationship_ids",
-            *([] if final_covariates is None else ["covariate_ids"]),
-        ],
+        TEXT_UNITS_FINAL_COLUMNS,
     ]
 
 

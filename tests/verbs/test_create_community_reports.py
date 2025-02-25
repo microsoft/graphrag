@@ -79,4 +79,4 @@ async def test_create_community_reports():
 
     # assert a handful of mock data items to confirm they get put in the right spot
     assert actual["rank"][:1][0] == 2
-    assert actual["rank_explanation"][:1][0] == "<rating_explanation>"
+    assert actual["rating_explanation"][:1][0] == "<rating_explanation>"

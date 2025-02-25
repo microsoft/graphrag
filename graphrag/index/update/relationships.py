@@ -6,6 +6,8 @@
 import numpy as np
 import pandas as pd
 
+from graphrag.data_model.schemas import RELATIONSHIPS_FINAL_COLUMNS
+
 
 def _update_and_merge_relationships(
     old_relationships: pd.DataFrame, delta_relationships: pd.DataFrame
@@ -59,14 +61,5 @@ def _update_and_merge_relationships(
 
     return final_relationships.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "source",
-            "target",
-            "description",
-            "weight",
-            "combined_degree",
-            "text_unit_ids",
-        ],
+        RELATIONSHIPS_FINAL_COLUMNS,
     ]
