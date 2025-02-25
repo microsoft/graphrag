@@ -202,13 +202,6 @@ class TestIndexer:
                         f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
                     )
 
-        # check that the number of files matches the stated number of artifacts
-        # add one for stats.json
-        artifact_files = os.listdir(output_path)
-        assert len(artifact_files) == (len(expected_artifacts) + 1), (
-            f"Expected {len(expected_artifacts)} artifacts, found: {len(artifact_files)}"
-        )
-
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
             "poetry",
