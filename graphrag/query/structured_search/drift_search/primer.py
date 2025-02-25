@@ -15,11 +15,10 @@ from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.config.models.drift_search_config import DRIFTSearchConfig
 from graphrag.data_model.community_report import CommunityReport
+from graphrag.language_model.protocol.base import ChatModel, EmbeddingModel
 from graphrag.prompts.query.drift_search_system_prompt import (
     DRIFT_PRIMER_PROMPT,
 )
-from graphrag.query.llm.base import BaseTextEmbedding
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import SearchResult
 
@@ -31,8 +30,8 @@ class PrimerQueryProcessor:
 
     def __init__(
         self,
-        chat_llm: ChatOpenAI,
-        text_embedder: BaseTextEmbedding,
+        chat_model: ChatModel,
+        text_embedder: EmbeddingModel,
         reports: list[CommunityReport],
         token_encoder: tiktoken.Encoding | None = None,
     ):
@@ -45,12 +44,12 @@ class PrimerQueryProcessor:
             reports (list[CommunityReport]): List of community reports.
             token_encoder (tiktoken.Encoding, optional): Token encoder for token counting.
         """
-        self.chat_llm = chat_llm
+        self.chat_model = chat_model
         self.text_embedder = text_embedder
         self.token_encoder = token_encoder
         self.reports = reports
 
-    def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
+    async def expand_query(self, query: str) -> tuple[str, dict[str, int]]:
         """
         Expand the query using a random community report template.
 
@@ -68,9 +67,9 @@ class PrimerQueryProcessor:
                   {template}\n"
                   Ensure that the hypothetical answer does not reference new named entities that are not present in the original query."""
 
-        messages = [{"role": "user", "content": prompt}]
+        model_response = await self.chat_model.achat(prompt)
+        text = model_response.output.content
 
-        text = self.chat_llm.generate(messages)
         prompt_tokens = num_tokens(prompt, self.token_encoder)
         output_tokens = num_tokens(text, self.token_encoder)
         token_ct = {
@@ -83,7 +82,7 @@ class PrimerQueryProcessor:
             return query, token_ct
         return text, token_ct
 
-    def __call__(self, query: str) -> tuple[list[float], dict[str, int]]:
+    async def __call__(self, query: str) -> tuple[list[float], dict[str, int]]:
         """
         Call method to process the query, expand it, and embed the result.
 
@@ -94,7 +93,7 @@ class PrimerQueryProcessor:
         -------
         tuple[list[float], int]: List of embeddings for the expanded query and the token count.
         """
-        hyde_query, token_ct = self.expand_query(query)
+        hyde_query, token_ct = await self.expand_query(query)
         log.info("Expanded query: %s", hyde_query)
         return self.text_embedder.embed(hyde_query), token_ct
 
@@ -105,7 +104,7 @@ class DRIFTPrimer:
     def __init__(
         self,
         config: DRIFTSearchConfig,
-        chat_llm: ChatOpenAI,
+        chat_model: ChatModel,
         token_encoder: tiktoken.Encoding | None = None,
     ):
         """
@@ -116,7 +115,7 @@ class DRIFTPrimer:
             chat_llm (ChatOpenAI): The language model used for searching.
             token_encoder (tiktoken.Encoding, optional): Token encoder for managing tokens.
         """
-        self.llm = chat_llm
+        self.chat_model = chat_model
         self.config = config
         self.token_encoder = token_encoder
 
@@ -138,11 +137,9 @@ class DRIFTPrimer:
         prompt = DRIFT_PRIMER_PROMPT.format(
             query=query, community_reports=community_reports
         )
-        messages = [{"role": "user", "content": prompt}]
 
-        response = await self.llm.agenerate(
-            messages, response_format={"type": "json_object"}
-        )
+        model_response = await self.chat_model.achat(prompt, json=True)
+        response = model_response.output.content
 
         parsed_response = json.loads(response)
 
@@ -173,6 +170,7 @@ class DRIFTPrimer:
         start_time = time.perf_counter()
         report_folds = self.split_reports(top_k_reports)
         tasks = [self.decompose_query(query, fold) for fold in report_folds]
+
         results_with_tokens = await tqdm_asyncio.gather(*tasks, leave=False)
 
         completion_time = time.perf_counter() - start_time

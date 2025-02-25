@@ -28,3 +28,6 @@ class QueryCallbacks(BaseLLMCallback):
 
     def on_reduce_response_end(self, reduce_response_output: str) -> None:
         """Handle the end of reduce operation."""
+
+    def on_llm_new_token(self, token) -> None:
+        """Handle when a new token is generated."""

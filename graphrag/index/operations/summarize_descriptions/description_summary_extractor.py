@@ -125,7 +125,7 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._model.chat(
+        response = await self._model.achat(
             self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(

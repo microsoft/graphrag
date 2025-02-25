@@ -3,6 +3,7 @@
 
 """A module containing mock model provider definitions."""
 
+from collections.abc import AsyncGenerator
 from typing import Any
 
 from pydantic import BaseModel
@@ -28,9 +29,38 @@ class MockChatLLM:
         self.responses = config.responses if config and config.responses else responses
         self.response_index = 0
 
-    async def chat(
+    async def achat(
         self,
         prompt: str,
+        history: list | None = None,
+        **kwargs,
+    ) -> ModelResponse:
+        """Return the next response in the list."""
+        return self.chat(prompt, history, **kwargs)
+
+    async def achat_stream(
+        self,
+        prompt: str,
+        history: list | None = None,
+        **kwargs,
+    ) -> AsyncGenerator[str, None]:
+        """Return the next response in the list."""
+        if not self.responses:
+            return
+
+        for response in self.responses:
+            response = (
+                response.model_dump_json()
+                if isinstance(response, BaseModel)
+                else response
+            )
+
+            yield response
+
+    def chat(
+        self,
+        prompt: str,
+        history: list | None = None,
         **kwargs,
     ) -> ModelResponse:
         """Return the next response in the list."""
@@ -50,6 +80,15 @@ class MockChatLLM:
             parsed_response=parsed_json,
         )
 
+    def chat_stream(
+        self,
+        prompt: str,
+        history: list | None = None,
+        **kwargs,
+    ) -> AsyncGenerator[str, None]:
+        """Return the next response in the list."""
+        raise NotImplementedError
+
 
 class MockEmbeddingLLM:
     """A mock embedding LLM provider."""
@@ -57,8 +96,24 @@ class MockEmbeddingLLM:
     def __init__(self, **kwargs: Any):
         pass
 
-    async def embed(self, text: str | list[str], **kwargs: Any) -> list[list[float]]:
+    def embed_batch(self, text_list: list[str], **kwargs: Any) -> list[list[float]]:
         """Generate an embedding for the input text."""
-        if isinstance(text, str):
+        if isinstance(text_list, str):
             return [[1.0, 1.0, 1.0]]
-        return [[1.0, 1.0, 1.0] for _ in text]
+        return [[1.0, 1.0, 1.0] for _ in text_list]
+
+    def embed(self, text: str, **kwargs: Any) -> list[float]:
+        """Generate an embedding for the input text."""
+        return [1.0, 1.0, 1.0]
+
+    async def aembed(self, text: str, **kwargs: Any) -> list[float]:
+        """Generate an embedding for the input text."""
+        return [1.0, 1.0, 1.0]
+
+    async def aembed_batch(
+        self, text_list: list[str], **kwargs: Any
+    ) -> list[list[float]]:
+        """Generate an embedding for the input text."""
+        if isinstance(text_list, str):
+            return [[1.0, 1.0, 1.0]]
+        return [[1.0, 1.0, 1.0] for _ in text_list]

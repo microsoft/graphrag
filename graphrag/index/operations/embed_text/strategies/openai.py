@@ -88,7 +88,7 @@ async def _execute(
 ) -> list[list[float]]:
     async def embed(chunk: list[str]):
         async with semaphore:
-            chunk_embeddings = await model.embed(chunk)
+            chunk_embeddings = await model.aembed_batch(chunk)
             result = np.array(chunk_embeddings)
             tick(1)
         return result
