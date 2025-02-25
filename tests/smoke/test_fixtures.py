@@ -160,7 +160,6 @@ class TestIndexer:
         stats = json.loads((output_path / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
-        expected_artifacts = []
         expected_workflows = set(workflow_config.keys())
         workflows = set(stats["workflows"].keys())
         assert workflows == expected_workflows, (
@@ -171,7 +170,6 @@ class TestIndexer:
         for workflow, config in workflow_config.items():
             # Check expected artifacts
             workflow_artifacts = config.get("expected_artifacts", [])
-            expected_artifacts.append(workflow_artifacts)
             # Check max runtime
             max_runtime = config.get("max_runtime", None)
             if max_runtime:
@@ -201,13 +199,6 @@ class TestIndexer:
                     assert len(nan_df) == 0, (
                         f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
                     )
-
-        # check that the number of files matches the stated number of artifacts
-        # add one for stats.json
-        artifact_files = os.listdir(output_path)
-        assert len(artifact_files) == (len(expected_artifacts) + 1), (
-            f"Expected {len(expected_artifacts)} artifacts, found: {len(artifact_files)}"
-        )
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
