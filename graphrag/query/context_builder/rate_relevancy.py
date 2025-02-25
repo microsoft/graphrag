@@ -11,8 +11,8 @@ from typing import Any
 import numpy as np
 import tiktoken
 
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
-from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 
 log = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 async def rate_relevancy(
     query: str,
     description: str,
-    llm: BaseLLM,
+    model: ChatModel,
     token_encoder: tiktoken.Encoding,
     rate_query: str = RATE_QUERY,
     num_repeats: int = 1,
@@ -47,11 +47,13 @@ async def rate_relevancy(
             "role": "system",
             "content": rate_query.format(description=description, question=query),
         },
-        {"role": "user", "content": query},
     ]
     for _ in range(num_repeats):
         async with semaphore if semaphore is not None else nullcontext():
-            response = await llm.agenerate(messages=messages, **llm_kwargs)
+            model_response = await model.achat(
+                prompt=query, history=messages, model_parameters=llm_kwargs, json=True
+            )
+            response = model_response.output.content
         try:
             _, parsed_response = try_parse_json_object(response)
             ratings.append(parsed_response["rating"])

@@ -15,6 +15,14 @@ class LocalSearchConfig(BaseModel):
         description="The local search prompt to use.",
         default=graphrag_config_defaults.local_search.prompt,
     )
+    chat_model_id: str = Field(
+        description="The model ID to use for local search.",
+        default=graphrag_config_defaults.local_search.chat_model_id,
+    )
+    embedding_model_id: str = Field(
+        description="The model ID to use for text embeddings.",
+        default=graphrag_config_defaults.local_search.embedding_model_id,
+    )
     text_unit_prop: float = Field(
         description="The text unit proportion.",
         default=graphrag_config_defaults.local_search.text_unit_prop,

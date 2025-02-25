@@ -15,6 +15,7 @@ import pandas as pd
 import tiktoken
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.global_search_knowledge_system_prompt import (
     GENERAL_KNOWLEDGE_INSTRUCTION,
 )
@@ -29,7 +30,6 @@ from graphrag.query.context_builder.builders import GlobalContextBuilder
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.llm.base import BaseLLM
 from graphrag.query.llm.text_utils import num_tokens, try_parse_json_object
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 
@@ -60,7 +60,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
 
     def __init__(
         self,
-        llm: BaseLLM,
+        model: ChatModel,
         context_builder: GlobalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         map_system_prompt: str | None = None,
@@ -77,7 +77,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         concurrent_coroutines: int = 32,
     ):
         super().__init__(
-            llm=llm,
+            model=model,
             context_builder=context_builder,
             token_encoder=token_encoder,
             context_builder_params=context_builder_params,
@@ -106,7 +106,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator:
+    ) -> AsyncGenerator[str, None]:
         """Stream the global search response."""
         context_result = await self.context_builder.build_context(
             query=query,
@@ -130,7 +130,7 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
         async for response in self._stream_reduce_response(
             map_responses=map_responses,  # type: ignore
             query=query,
-            **self.reduce_llm_params,
+            model_parameters=self.reduce_llm_params,
         ):
             yield response
 
@@ -218,12 +218,15 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             search_prompt = self.map_system_prompt.format(context_data=context_data)
             search_messages = [
                 {"role": "system", "content": search_prompt},
-                {"role": "user", "content": query},
             ]
             async with self.semaphore:
-                search_response = await self.llm.agenerate(
-                    messages=search_messages, streaming=False, **llm_kwargs
+                model_response = await self.model.achat(
+                    prompt=query,
+                    history=search_messages,
+                    model_parameters=llm_kwargs,
+                    json=True,
                 )
+                search_response = model_response.output.content
                 log.info("Map response: %s", search_response)
             try:
                 # parse search response json
@@ -373,12 +376,16 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
                 {"role": "user", "content": query},
             ]
 
-            search_response = await self.llm.agenerate(
-                search_messages,
-                streaming=True,
-                callbacks=self.callbacks,  # type: ignore
-                **llm_kwargs,  # type: ignore
-            )
+            search_response = ""
+            async for chunk_response in self.model.achat_stream(
+                prompt=query,
+                history=search_messages,
+                model_parameters=llm_kwargs,
+            ):
+                search_response += chunk_response
+                for callback in self.callbacks:
+                    callback.on_llm_new_token(chunk_response)
+
             return SearchResult(
                 response=search_response,
                 context_data=text_data,
@@ -468,12 +475,13 @@ class GlobalSearch(BaseSearch[GlobalContextBuilder]):
             search_prompt += "\n" + self.general_knowledge_inclusion_prompt
         search_messages = [
             {"role": "system", "content": search_prompt},
-            {"role": "user", "content": query},
         ]
 
-        async for resp in self.llm.astream_generate(  # type: ignore
-            search_messages,
-            callbacks=self.callbacks,  # type: ignore
-            **llm_kwargs,  # type: ignore
+        async for chunk_response in self.model.achat_stream(
+            prompt=query,
+            history=search_messages,
+            **llm_kwargs,
         ):
-            yield resp
+            for callback in self.callbacks:
+                callback.on_llm_new_token(chunk_response)
+            yield chunk_response

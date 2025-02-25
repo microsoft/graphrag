@@ -18,7 +18,8 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
-from graphrag.query.factory import get_text_embedder
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.input.loaders.dfs import (
     read_communities,
     read_community_reports,
@@ -27,7 +28,6 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
@@ -106,7 +106,15 @@ def read_indexer_reports(
         content_embedding_col not in reports_df.columns
         or reports_df.loc[:, content_embedding_col].isna().any()
     ):
-        embedder = get_text_embedder(config)
+        # TODO: Find a way to retrieve the right embedding model id.
+        embedding_model_settings = config.get_language_model_config(
+            "default_embedding_model"
+        )
+        embedder = ModelManager().get_or_create_embedding_model(
+            name="default_embedding",
+            model_type=embedding_model_settings.type,
+            config=embedding_model_settings,
+        )
         reports_df = embed_community_reports(
             reports_df, embedder, embedding_col=content_embedding_col
         )
@@ -211,7 +219,7 @@ def read_indexer_communities(
 
 def embed_community_reports(
     reports_df: pd.DataFrame,
-    embedder: OpenAIEmbedding,
+    embedder: EmbeddingModel,
     source_col: str = "full_content",
     embedding_col: str = "full_content_embedding",
 ) -> pd.DataFrame:

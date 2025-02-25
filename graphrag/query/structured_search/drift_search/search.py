@@ -12,9 +12,9 @@ import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
 from graphrag.callbacks.query_callbacks import QueryCallbacks
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
@@ -33,7 +33,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
     def __init__(
         self,
-        llm: ChatOpenAI,
+        model: ChatModel,
         context_builder: DRIFTSearchContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         query_state: QueryState | None = None,
@@ -49,14 +49,14 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             token_encoder (tiktoken.Encoding, optional): Token encoder for managing tokens.
             query_state (QueryState, optional): State of the current search query.
         """
-        super().__init__(llm, context_builder, token_encoder)
+        super().__init__(model, context_builder, token_encoder)
 
         self.context_builder = context_builder
         self.token_encoder = token_encoder
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
             config=self.context_builder.config,
-            chat_llm=llm,
+            chat_model=model,
             token_encoder=token_encoder,
         )
         self.callbacks = callbacks or []
@@ -90,11 +90,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         }
 
         return LocalSearch(
-            llm=self.llm,
+            model=self.model,
             system_prompt=self.context_builder.local_system_prompt,
             context_builder=self.context_builder.local_mixed_context,
             token_encoder=self.token_encoder,
-            llm_params=llm_params,
+            model_params=llm_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
             callbacks=self.callbacks,
@@ -203,7 +203,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         # Check if query state is empty
         if not self.query_state.graph:
             # Prime the search with the primer
-            primer_context, token_ct = self.context_builder.build_context(query)
+            primer_context, token_ct = await self.context_builder.build_context(query)
             llm_calls["build_context"] = token_ct["llm_calls"]
             prompt_tokens["build_context"] = token_ct["prompt_tokens"]
             output_tokens["build_context"] = token_ct["prompt_tokens"]
@@ -362,15 +362,15 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
-            {"role": "user", "content": query},
         ]
 
-        reduced_response = self.llm.generate(
-            messages=search_messages,
-            streaming=False,
-            callbacks=self.callbacks,  # type: ignore
-            **llm_kwargs,
+        model_response = await self.model.achat(
+            prompt=query,
+            history=search_messages,
+            model_parameters=llm_kwargs,
         )
+
+        reduced_response = model_response.output.content
 
         llm_calls["reduce"] = 1
         prompt_tokens["reduce"] = num_tokens(
@@ -380,7 +380,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
         return reduced_response
 
-    def _reduce_response_streaming(
+    async def _reduce_response_streaming(
         self,
         responses: str | dict[str, Any],
         query: str,
@@ -419,11 +419,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
-            {"role": "user", "content": query},
         ]
 
-        return self.llm.astream_generate(
-            search_messages,
-            callbacks=self.callbacks,  # type: ignore
-            **llm_kwargs,
-        )
+        async for response in self.model.achat_stream(
+            prompt=query,
+            history=search_messages,
+            model_parameters=llm_kwargs,
+        ):
+            for callback in self.callbacks:
+                callback.on_llm_new_token(response)
+            yield response

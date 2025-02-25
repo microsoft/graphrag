@@ -57,7 +57,7 @@ async def generate_entity_relationship_examples(
     messages = messages[:MAX_EXAMPLES]
 
     tasks = [
-        model.chat(message, history=history, json=json_mode) for message in messages
+        model.achat(message, history=history, json=json_mode) for message in messages
     ]
 
     responses = await asyncio.gather(*tasks)
