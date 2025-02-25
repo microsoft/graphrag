@@ -5,6 +5,11 @@
 
 import pandas as pd
 
+from graphrag.data_model.schemas import (
+    COMMUNITIES_FINAL_COLUMNS,
+    COMMUNITY_REPORTS_FINAL_COLUMNS,
+)
+
 
 def _update_and_merge_communities(
     old_communities: pd.DataFrame,
@@ -76,19 +81,7 @@ def _update_and_merge_communities(
 
     merged_communities = merged_communities.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "community",
-            "parent",
-            "level",
-            "title",
-            "entity_ids",
-            "relationship_ids",
-            "text_unit_ids",
-            "period",
-            "size",
-        ],
+        COMMUNITIES_FINAL_COLUMNS,
     ]
     return merged_communities, community_id_mapping
 
@@ -155,22 +148,4 @@ def _update_and_merge_community_reports(
         "community"
     ]
 
-    return merged_community_reports.loc[
-        :,
-        [
-            "id",
-            "human_readable_id",
-            "community",
-            "parent",
-            "level",
-            "title",
-            "summary",
-            "full_content",
-            "rank",
-            "rank_explanation",
-            "findings",
-            "full_content_json",
-            "period",
-            "size",
-        ],
-    ]
+    return merged_community_reports.loc[:, COMMUNITY_REPORTS_FINAL_COLUMNS]

@@ -12,6 +12,7 @@ import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
@@ -146,18 +147,5 @@ def create_communities(
 
     return final_communities.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "community",
-            "level",
-            "parent",
-            "children",
-            "title",
-            "entity_ids",
-            "relationship_ids",
-            "text_unit_ids",
-            "period",
-            "size",
-        ],
+        COMMUNITIES_FINAL_COLUMNS,
     ]

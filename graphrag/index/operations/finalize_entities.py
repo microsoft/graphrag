@@ -9,6 +9,7 @@ import pandas as pd
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.embed_graph_config import EmbedGraphConfig
+from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
 from graphrag.index.operations.compute_degree import compute_degree
 from graphrag.index.operations.create_graph import create_graph
 from graphrag.index.operations.embed_graph.embed_graph import embed_graph
@@ -52,16 +53,5 @@ def finalize_entities(
     )
     return final_entities.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "title",
-            "type",
-            "description",
-            "text_unit_ids",
-            "frequency",
-            "degree",
-            "x",
-            "y",
-        ],
+        ENTITIES_FINAL_COLUMNS,
     ]
