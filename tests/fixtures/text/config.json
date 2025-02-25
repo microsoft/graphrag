@@ -51,7 +51,7 @@
         "create_communities": {
             "row_range": [
                 1,
-                10
+                30
             ],
             "max_runtime": 30,
             "expected_artifacts": ["communities.parquet"]
@@ -59,7 +59,7 @@
         "create_community_reports": {
             "row_range": [
                 1,
-                10
+                30
             ],
             "nan_allowed_columns": [
                 "title",
