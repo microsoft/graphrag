@@ -25,7 +25,6 @@ from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.embed_text import embed_text
 from graphrag.index.typing import WorkflowFunctionOutput
-from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
@@ -50,7 +49,7 @@ async def run_workflow(
     embedded_fields = get_embedded_fields(config)
     text_embed = get_embedding_settings(config)
 
-    await generate_text_embeddings(
+    result = await generate_text_embeddings(
         final_documents=final_documents,
         final_relationships=final_relationships,
         final_text_units=final_text_units,
@@ -58,13 +57,19 @@ async def run_workflow(
         final_community_reports=final_community_reports,
         callbacks=callbacks,
         cache=context.cache,
-        storage=context.storage,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
-        snapshot_embeddings_enabled=config.snapshots.embeddings,
     )
 
-    return WorkflowFunctionOutput(result=None, config=None)
+    if config.snapshots.embeddings:
+        for name, table in result.items():
+            await write_table_to_storage(
+                table,
+                f"embeddings.{name}",
+                context.storage,
+            )
+
+    return WorkflowFunctionOutput(result=result, config=None)
 
 
 async def generate_text_embeddings(
@@ -75,11 +80,9 @@ async def generate_text_embeddings(
     final_community_reports: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    storage: PipelineStorage,
     text_embed_config: dict,
     embedded_fields: set[str],
-    snapshot_embeddings_enabled: bool = False,
-) -> None:
+) -> dict[str, pd.DataFrame]:
     """All the steps to generate all embeddings."""
     embedding_param_map = {
         document_text_embedding: {
@@ -135,16 +138,16 @@ async def generate_text_embeddings(
     }
 
     log.info("Creating embeddings")
+    outputs = {}
     for field in embedded_fields:
-        await _run_and_snapshot_embeddings(
+        outputs[field] = await _run_and_snapshot_embeddings(
             name=field,
             callbacks=callbacks,
             cache=cache,
-            storage=storage,
             text_embed_config=text_embed_config,
-            snapshot_embeddings_enabled=snapshot_embeddings_enabled,
             **embedding_param_map[field],
         )
+    return outputs
 
 
 async def _run_and_snapshot_embeddings(
@@ -153,21 +156,16 @@ async def _run_and_snapshot_embeddings(
     embed_column: str,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
-    storage: PipelineStorage,
     text_embed_config: dict,
-    snapshot_embeddings_enabled: bool,
-) -> None:
+) -> pd.DataFrame:
     """All the steps to generate single embedding."""
-    if text_embed_config:
-        data["embedding"] = await embed_text(
-            input=data,
-            callbacks=callbacks,
-            cache=cache,
-            embed_column=embed_column,
-            embedding_name=name,
-            strategy=text_embed_config["strategy"],
-        )
+    data["embedding"] = await embed_text(
+        input=data,
+        callbacks=callbacks,
+        cache=cache,
+        embed_column=embed_column,
+        embedding_name=name,
+        strategy=text_embed_config["strategy"],
+    )
 
-        if snapshot_embeddings_enabled is True:
-            data = data.loc[:, ["id", "embedding"]]
-            await write_table_to_storage(data, f"embeddings.{name}", storage)
+    return data.loc[:, ["id", "embedding"]]
