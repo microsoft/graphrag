@@ -12,6 +12,7 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates as extractor,
@@ -83,20 +84,4 @@ async def extract_covariates(
     covariates["id"] = covariates["covariate_type"].apply(lambda _x: str(uuid4()))
     covariates["human_readable_id"] = covariates.index + 1
 
-    return covariates.loc[
-        :,
-        [
-            "id",
-            "human_readable_id",
-            "covariate_type",
-            "type",
-            "description",
-            "subject_id",
-            "object_id",
-            "status",
-            "start_date",
-            "end_date",
-            "source_text",
-            "text_unit_id",
-        ],
-    ]
+    return covariates.loc[:, COVARIATES_FINAL_COLUMNS]

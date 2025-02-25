@@ -175,7 +175,7 @@ def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
         [
             schemas.SHORT_ID,
             schemas.CLAIM_SUBJECT,
-            schemas.CLAIM_TYPE,
+            schemas.TYPE,
             schemas.CLAIM_STATUS,
             schemas.DESCRIPTION,
         ],

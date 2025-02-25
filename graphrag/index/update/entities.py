@@ -12,6 +12,7 @@ import pandas as pd
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.data_model.schemas import ENTITIES_FINAL_COLUMNS
 from graphrag.index.operations.summarize_descriptions.graph_intelligence_strategy import (
     run_graph_intelligence as run_entity_summarization,
 )
@@ -79,21 +80,7 @@ def _group_and_resolve_entities(
     resolved: pd.DataFrame = pd.DataFrame(aggregated)
 
     # Modify column order to keep consistency
-    resolved = resolved.loc[
-        :,
-        [
-            "id",
-            "human_readable_id",
-            "title",
-            "type",
-            "description",
-            "text_unit_ids",
-            "frequency",
-            "degree",
-            "x",
-            "y",
-        ],
-    ]
+    resolved = resolved.loc[:, ENTITIES_FINAL_COLUMNS]
 
     return resolved, id_mapping
 
