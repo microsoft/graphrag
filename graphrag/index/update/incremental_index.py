@@ -145,19 +145,24 @@ async def update_dataframe_outputs(
     progress_logger.info("Updating Text Embeddings")
     embedded_fields = get_embedded_fields(config)
     text_embed = get_embedding_settings(config)
-    await generate_text_embeddings(
-        final_documents=final_documents_df,
-        final_relationships=merged_relationships_df,
-        final_text_units=merged_text_units,
-        final_entities=merged_entities_df,
-        final_community_reports=merged_community_reports,
+    result = await generate_text_embeddings(
+        documents=final_documents_df,
+        relationships=merged_relationships_df,
+        text_units=merged_text_units,
+        entities=merged_entities_df,
+        community_reports=merged_community_reports,
         callbacks=callbacks,
         cache=cache,
-        storage=output_storage,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
-        snapshot_embeddings_enabled=config.snapshots.embeddings,
     )
+    if config.snapshots.embeddings:
+        for name, table in result.items():
+            await write_table_to_storage(
+                table,
+                f"embeddings.{name}",
+                output_storage,
+            )
 
 
 async def _update_community_reports(
