@@ -105,6 +105,27 @@ async def extract_graph(
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
+    entities, relationships = await get_summarized_entities_relationships(
+        extracted_entities=extracted_entities,
+        extracted_relationships=extracted_relationships,
+        callbacks=callbacks,
+        cache=cache,
+        summarization_strategy=summarization_strategy,
+        summarization_num_threads=summarization_num_threads,
+    )
+
+    return (entities, relationships)
+
+
+async def get_summarized_entities_relationships(
+    extracted_entities: pd.DataFrame,
+    extracted_relationships: pd.DataFrame,
+    callbacks: WorkflowCallbacks,
+    cache: PipelineCache,
+    summarization_strategy: dict[str, Any] | None = None,
+    summarization_num_threads: int = 4,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Summarize the entities and relationships."""
     entity_summaries, relationship_summaries = await summarize_descriptions(
         entities_df=extracted_entities,
         relationships_df=extracted_relationships,
@@ -120,8 +141,7 @@ async def extract_graph(
 
     extracted_entities.drop(columns=["description"], inplace=True)
     entities = extracted_entities.merge(entity_summaries, on="title", how="left")
-
-    return (entities, relationships)
+    return entities, relationships
 
 
 def _validate_data(df: pd.DataFrame) -> bool:
