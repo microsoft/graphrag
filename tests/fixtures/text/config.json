@@ -78,7 +78,7 @@
         "create_final_text_units": {
             "row_range": [
                 1,
-                10
+                50
             ],
             "nan_allowed_columns": [
                 "relationship_ids",
