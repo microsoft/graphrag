@@ -86,11 +86,7 @@ class CommunityReportsExtractor:
                 model_parameters={"max_tokens": self._max_report_length},
             )
 
-            # TODO: Json mode is currently broken on fnllm: https://github.com/microsoft/essex-toolkit/issues/364
-            # once fixed, just assign to output the response.parsed_json
-            output = CommunityReportResponse.model_validate(
-                json.loads(response.output.content)
-            )
+            output = response.parsed_response
         except Exception as e:
             log.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)
