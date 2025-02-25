@@ -3,7 +3,7 @@
 
 """A module containing the 'PipelineRunResult' model."""
 
-from collections.abc import Awaitable, Callable, Generator
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -29,18 +29,3 @@ WorkflowFunction = Callable[
     Awaitable[WorkflowFunctionOutput],
 ]
 Workflow = tuple[str, WorkflowFunction]
-
-Pipeline = Generator[Workflow]
-
-
-@dataclass
-class PipelineRunResult:
-    """Pipeline run result class definition."""
-
-    workflow: str
-    """The name of the workflow that was executed."""
-    result: Any | None
-    """The result of the workflow function. This can be anything - we use it only for logging downstream, and expect each workflow function to write official outputs to the provided storage."""
-    config: GraphRagConfig | None
-    """Final config after running the workflow, which may have been mutated."""
-    errors: list[BaseException] | None

@@ -527,7 +527,7 @@ def _resolve_output_files(
         return dataframe_dict
     # Loading output files for single-index search
     dataframe_dict["multi-index"] = False
-    output_config = config.output.model_dump()  # type: ignore
+    output_config = config.output.model_dump()
     storage_obj = StorageFactory().create_storage(
         storage_type=output_config["type"], kwargs=output_config
     )

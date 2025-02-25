@@ -15,20 +15,19 @@ import pandas as pd
 
 from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.console_workflow_callbacks import ConsoleWorkflowCallbacks
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.context import PipelineRunStats
 from graphrag.index.input.factory import create_input
-from graphrag.index.run.utils import create_callback_chain, create_run_context
-from graphrag.index.typing import Pipeline, PipelineRunResult
+from graphrag.index.run.pipeline import Pipeline
+from graphrag.index.run.pipeline_run_result import PipelineRunResult
+from graphrag.index.run.utils import create_run_context
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
 )
 from graphrag.logger.base import ProgressLogger
-from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.logger.progress import Progress
 from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -40,24 +39,21 @@ log = logging.getLogger(__name__)
 async def run_pipeline(
     pipeline: Pipeline,
     config: GraphRagConfig,
-    cache: PipelineCache | None = None,
-    callbacks: list[WorkflowCallbacks] | None = None,
-    logger: ProgressLogger | None = None,
+    callbacks: WorkflowCallbacks,
+    logger: ProgressLogger,
     is_update_run: bool = False,
 ) -> AsyncIterable[PipelineRunResult]:
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
-    progress_logger = logger or NullProgressLogger()
-    callbacks = callbacks or [ConsoleWorkflowCallbacks()]
-    callback_chain = create_callback_chain(callbacks, progress_logger)
-    storage_config = config.output.model_dump()  # type: ignore
+
+    storage_config = config.output.model_dump()
     storage = StorageFactory().create_storage(
-        storage_type=storage_config["type"],  # type: ignore
+        storage_type=storage_config["type"],
         kwargs=storage_config,
     )
-    cache_config = config.cache.model_dump()  # type: ignore
-    cache = cache or CacheFactory().create_cache(
-        cache_type=cache_config["type"],  # type: ignore
+    cache_config = config.cache.model_dump()
+    cache = CacheFactory().create_cache(
+        cache_type=cache_config["type"],
         root_dir=root_dir,
         kwargs=cache_config,
     )
@@ -65,18 +61,18 @@ async def run_pipeline(
     dataset = await create_input(config.input, logger, root_dir)
 
     if is_update_run:
-        progress_logger.info("Running incremental indexing.")
+        logger.info("Running incremental indexing.")
 
         delta_dataset = await get_delta_docs(dataset, storage)
 
         # warn on empty delta dataset
         if delta_dataset.new_inputs.empty:
             warning_msg = "Incremental indexing found no new documents, exiting."
-            progress_logger.warning(warning_msg)
+            logger.warning(warning_msg)
         else:
-            update_storage_config = config.update_index_output.model_dump()  # type: ignore
+            update_storage_config = config.update_index_output.model_dump()
             update_storage = StorageFactory().create_storage(
-                storage_type=update_storage_config["type"],  # type: ignore
+                storage_type=update_storage_config["type"],
                 kwargs=update_storage_config,
             )
             # we use this to store the new subset index, and will merge its content with the previous index
@@ -94,12 +90,12 @@ async def run_pipeline(
                 dataset=delta_dataset.new_inputs,
                 cache=cache,
                 storage=delta_storage,
-                callbacks=callback_chain,
-                logger=progress_logger,
+                callbacks=callbacks,
+                logger=logger,
             ):
                 yield table
 
-            progress_logger.success("Finished running workflows on new documents.")
+            logger.success("Finished running workflows on new documents.")
 
             await update_dataframe_outputs(
                 previous_storage=previous_storage,
@@ -108,11 +104,11 @@ async def run_pipeline(
                 config=config,
                 cache=cache,
                 callbacks=NoopWorkflowCallbacks(),
-                progress_logger=progress_logger,
+                progress_logger=logger,
             )
 
     else:
-        progress_logger.info("Running standard indexing.")
+        logger.info("Running standard indexing.")
 
         async for table in _run_pipeline(
             pipeline=pipeline,
@@ -120,8 +116,8 @@ async def run_pipeline(
             dataset=dataset,
             cache=cache,
             storage=storage,
-            callbacks=callback_chain,
-            logger=progress_logger,
+            callbacks=callbacks,
+            logger=logger,
         ):
             yield table
 
@@ -148,7 +144,7 @@ async def _run_pipeline(
         await _dump_stats(context.stats, context.storage)
         await write_table_to_storage(dataset, "documents", context.storage)
 
-        for name, workflow_function in pipeline:
+        for name, workflow_function in pipeline.run():
             last_workflow = name
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
