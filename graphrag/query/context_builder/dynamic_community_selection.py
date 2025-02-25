@@ -14,9 +14,9 @@ import tiktoken
 
 from graphrag.data_model.community import Community
 from graphrag.data_model.community_report import CommunityReport
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
-from graphrag.query.llm.base import BaseLLM
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class DynamicCommunitySelection:
         self,
         community_reports: list[CommunityReport],
         communities: list[Community],
-        llm: BaseLLM,
+        model: ChatModel,
         token_encoder: tiktoken.Encoding,
         rate_query: str = RATE_QUERY,
         use_summary: bool = False,
@@ -44,7 +44,7 @@ class DynamicCommunitySelection:
         concurrent_coroutines: int = 8,
         llm_kwargs: Any = DEFAULT_RATE_LLM_PARAMS,
     ):
-        self.llm = llm
+        self.model = model
         self.token_encoder = token_encoder
         self.rate_query = rate_query
         self.num_repeats = num_repeats
@@ -98,7 +98,7 @@ class DynamicCommunitySelection:
                         if self.use_summary
                         else self.reports[community].full_content
                     ),
-                    llm=self.llm,
+                    model=self.model,
                     token_encoder=self.token_encoder,
                     rate_query=self.rate_query,
                     num_repeats=self.num_repeats,

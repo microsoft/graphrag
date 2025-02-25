@@ -5,11 +5,11 @@ from typing import Any
 
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.types import TextEmbedder
+from graphrag.language_model.manager import ModelManager
 from graphrag.query.context_builder.entity_extraction import (
     EntityVectorStoreKey,
     map_query_to_entities,
 )
-from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
@@ -60,14 +60,6 @@ class MockBaseVectorStore(BaseVectorStore):
         return result
 
 
-class MockBaseTextEmbedding(BaseTextEmbedding):
-    def embed(self, text: str, **kwargs: Any) -> list[float]:
-        return [len(text)]
-
-    async def aembed(self, text: str, **kwargs: Any) -> list[float]:
-        return [len(text)]
-
-
 def test_map_query_to_entities():
     entities = [
         Entity(
@@ -102,7 +94,9 @@ def test_map_query_to_entities():
             VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
             for entity in entities
         ]),
-        text_embedder=MockBaseTextEmbedding(),
+        text_embedder=ModelManager().get_or_create_embedding_model(
+            model_type="mock_embedding", name="mock"
+        ),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
         k=1,
@@ -122,7 +116,9 @@ def test_map_query_to_entities():
             VectorStoreDocument(id=entity.title, text=entity.title, vector=None)
             for entity in entities
         ]),
-        text_embedder=MockBaseTextEmbedding(),
+        text_embedder=ModelManager().get_or_create_embedding_model(
+            model_type="mock_embedding", name="mock"
+        ),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=1,
@@ -142,7 +138,9 @@ def test_map_query_to_entities():
             VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
             for entity in entities
         ]),
-        text_embedder=MockBaseTextEmbedding(),
+        text_embedder=ModelManager().get_or_create_embedding_model(
+            model_type="mock_embedding", name="mock"
+        ),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.ID,
         k=2,
@@ -167,7 +165,9 @@ def test_map_query_to_entities():
             VectorStoreDocument(id=entity.id, text=entity.title, vector=None)
             for entity in entities
         ]),
-        text_embedder=MockBaseTextEmbedding(),
+        text_embedder=ModelManager().get_or_create_embedding_model(
+            model_type="mock_embedding", name="mock"
+        ),
         all_entities_dict={entity.id: entity for entity in entities},
         embedding_vectorstore_key=EntityVectorStoreKey.TITLE,
         k=2,

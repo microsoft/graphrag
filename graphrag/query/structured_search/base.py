@@ -11,6 +11,7 @@ from typing import Any, Generic, TypeVar
 import pandas as pd
 import tiktoken
 
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
     DRIFTContextBuilder,
@@ -20,7 +21,6 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.llm.base import BaseLLM
 
 
 @dataclass
@@ -56,16 +56,16 @@ class BaseSearch(ABC, Generic[T]):
 
     def __init__(
         self,
-        llm: BaseLLM,
+        model: ChatModel,
         context_builder: T,
         token_encoder: tiktoken.Encoding | None = None,
-        llm_params: dict[str, Any] | None = None,
+        model_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
     ):
-        self.llm = llm
+        self.model = model
         self.context_builder = context_builder
         self.token_encoder = token_encoder
-        self.llm_params = llm_params or {}
+        self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 
     @abstractmethod
@@ -80,11 +80,12 @@ class BaseSearch(ABC, Generic[T]):
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def stream_search(
+    async def stream_search(
         self,
         query: str,
         conversation_history: ConversationHistory | None = None,
-    ) -> AsyncGenerator[Any, None]:
+    ) -> AsyncGenerator[str, None]:
         """Stream search for the given query."""
+        yield ""  # This makes it an async generator.
         msg = "Subclasses must implement this method"
         raise NotImplementedError(msg)

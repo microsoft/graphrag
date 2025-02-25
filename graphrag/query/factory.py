@@ -13,8 +13,8 @@ from graphrag.data_model.covariate import Covariate
 from graphrag.data_model.entity import Entity
 from graphrag.data_model.relationship import Relationship
 from graphrag.data_model.text_unit import TextUnit
+from graphrag.language_model.manager import ModelManager
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.get_client import get_llm, get_text_embedder
 from graphrag.query.structured_search.basic_search.basic_context import (
     BasicSearchContext,
 )
@@ -47,15 +47,38 @@ def get_local_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> LocalSearch:
     """Create a local search engine based on data + configuration."""
-    default_llm_settings = config.get_language_model_config("default_chat_model")
-    llm = get_llm(config)
-    text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
+    model_settings = config.get_language_model_config(config.local_search.chat_model_id)
+
+    if model_settings.max_retries == -1:
+        model_settings.max_retries = (
+            len(reports) + len(entities) + len(relationships) + len(covariates)
+        )
+
+    chat_model = ModelManager().get_or_create_chat_model(
+        name="local_search_chat",
+        model_type=model_settings.type,
+        config=model_settings,
+    )
+
+    embedding_settings = config.get_language_model_config(
+        config.local_search.embedding_model_id
+    )
+    if embedding_settings.max_retries == -1:
+        embedding_settings.max_retries = (
+            len(reports) + len(entities) + len(relationships)
+        )
+    embedding_model = ModelManager().get_or_create_embedding_model(
+        name="local_search_embedding",
+        model_type=embedding_settings.type,
+        config=embedding_settings,
+    )
+
+    token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
 
     ls_config = config.local_search
 
     return LocalSearch(
-        llm=llm,
+        model=chat_model,
         system_prompt=system_prompt,
         context_builder=LocalSearchMixedContext(
             community_reports=reports,
@@ -65,11 +88,11 @@ def get_local_search_engine(
             covariates=covariates,
             entity_text_embeddings=description_embedding_store,
             embedding_vectorstore_key=EntityVectorStoreKey.ID,  # if the vectorstore uses entity title as ids, set this to EntityVectorStoreKey.TITLE
-            text_embedder=text_embedder,
+            text_embedder=embedding_model,
             token_encoder=token_encoder,
         ),
         token_encoder=token_encoder,
-        llm_params={
+        model_params={
             "max_tokens": ls_config.llm_max_tokens,  # change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 1000=1500)
             "temperature": ls_config.temperature,
             "top_p": ls_config.top_p,
@@ -108,10 +131,20 @@ def get_global_search_engine(
 ) -> GlobalSearch:
     """Create a global search engine based on data + configuration."""
     # TODO: Global search should select model based on config??
-    default_llm_settings = config.get_language_model_config("default_chat_model")
+    model_settings = config.get_language_model_config(
+        config.global_search.chat_model_id
+    )
+
+    if model_settings.max_retries == -1:
+        model_settings.max_retries = len(reports) + len(entities)
+    model = ModelManager().get_or_create_chat_model(
+        name="global_search",
+        model_type=model_settings.type,
+        config=model_settings,
+    )
 
     # Here we get encoding based on specified encoding name
-    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
+    token_encoder = tiktoken.get_encoding(model_settings.encoding_model)
     gs_config = config.global_search
 
     dynamic_community_selection_kwargs = {}
@@ -119,9 +152,9 @@ def get_global_search_engine(
         # TODO: Allow for another llm definition only for Global Search to leverage -mini models
 
         dynamic_community_selection_kwargs.update({
-            "llm": get_llm(config),
+            "model": model,
             # And here we get encoding based on model
-            "token_encoder": tiktoken.encoding_for_model(default_llm_settings.model),
+            "token_encoder": tiktoken.encoding_for_model(model_settings.model),
             "keep_parent": gs_config.dynamic_search_keep_parent,
             "num_repeats": gs_config.dynamic_search_num_repeats,
             "use_summary": gs_config.dynamic_search_use_summary,
@@ -131,7 +164,7 @@ def get_global_search_engine(
         })
 
     return GlobalSearch(
-        llm=get_llm(config),
+        model=model,
         map_system_prompt=map_system_prompt,
         reduce_system_prompt=reduce_system_prompt,
         general_knowledge_inclusion_prompt=general_knowledge_inclusion_prompt,
@@ -190,16 +223,43 @@ def get_drift_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> DRIFTSearch:
     """Create a local search engine based on data + configuration."""
-    default_llm_settings = config.get_language_model_config("default_chat_model")
-    llm = get_llm(config)
-    text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
+    chat_model_settings = config.get_language_model_config(
+        config.drift_search.chat_model_id
+    )
+
+    if chat_model_settings.max_retries == -1:
+        chat_model_settings.max_retries = (
+            config.drift_search.drift_k_followups
+            * config.drift_search.primer_folds
+            * config.drift_search.n_depth
+        )
+
+    chat_model = ModelManager().get_or_create_chat_model(
+        name="drift_search_chat",
+        model_type=chat_model_settings.type,
+        config=chat_model_settings,
+    )
+
+    embedding_model_settings = config.get_language_model_config(
+        config.drift_search.embedding_model_id
+    )
+    if embedding_model_settings.max_retries == -1:
+        embedding_model_settings.max_retries = (
+            len(reports) + len(entities) + len(relationships)
+        )
+
+    embedding_model = ModelManager().get_or_create_embedding_model(
+        name="drift_search_embedding",
+        model_type=embedding_model_settings.type,
+        config=embedding_model_settings,
+    )
+    token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
     return DRIFTSearch(
-        llm=llm,
+        model=chat_model,
         context_builder=DRIFTSearchContextBuilder(
-            chat_llm=llm,
-            text_embedder=text_embedder,
+            model=chat_model,
+            text_embedder=embedding_model,
             entities=entities,
             relationships=relationships,
             reports=reports,
@@ -223,18 +283,40 @@ def get_basic_search_engine(
     callbacks: list[QueryCallbacks] | None = None,
 ) -> BasicSearch:
     """Create a basic search engine based on data + configuration."""
-    default_llm_settings = config.get_language_model_config("default_chat_model")
-    llm = get_llm(config)
-    text_embedder = get_text_embedder(config)
-    token_encoder = tiktoken.get_encoding(default_llm_settings.encoding_model)
+    chat_model_settings = config.get_language_model_config(
+        config.basic_search.chat_model_id
+    )
+
+    if chat_model_settings.max_retries == -1:
+        chat_model_settings.max_retries = len(text_units)
+
+    chat_model = ModelManager().get_or_create_chat_model(
+        name="basic_search_chat",
+        model_type=chat_model_settings.type,
+        config=chat_model_settings,
+    )
+
+    embedding_model_settings = config.get_language_model_config(
+        config.basic_search.embedding_model_id
+    )
+    if embedding_model_settings.max_retries == -1:
+        embedding_model_settings.max_retries = len(text_units)
+
+    embedding_model = ModelManager().get_or_create_embedding_model(
+        name="basic_search_embedding",
+        model_type=embedding_model_settings.type,
+        config=embedding_model_settings,
+    )
+
+    token_encoder = tiktoken.get_encoding(chat_model_settings.encoding_model)
 
     ls_config = config.basic_search
 
     return BasicSearch(
-        llm=llm,
+        model=chat_model,
         system_prompt=system_prompt,
         context_builder=BasicSearchContext(
-            text_embedder=text_embedder,
+            text_embedder=embedding_model,
             text_unit_embeddings=text_unit_embeddings,
             text_units=text_units,
             token_encoder=token_encoder,
