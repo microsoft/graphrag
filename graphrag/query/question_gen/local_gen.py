@@ -9,6 +9,8 @@ from typing import Any, cast
 
 import tiktoken
 
+from graphrag.callbacks.llm_callbacks import BaseLLMCallback
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.query.question_gen_system_prompt import QUESTION_SYSTEM_PROMPT
 from graphrag.query.context_builder.builders import (
     ContextBuilderResult,
@@ -17,7 +19,6 @@ from graphrag.query.context_builder.builders import (
 from graphrag.query.context_builder.conversation_history import (
     ConversationHistory,
 )
-from graphrag.query.llm.base import BaseLLM, BaseLLMCallback
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.question_gen.base import BaseQuestionGen, QuestionResult
 
@@ -29,7 +30,7 @@ class LocalQuestionGen(BaseQuestionGen):
 
     def __init__(
         self,
-        llm: BaseLLM,
+        model: ChatModel,
         context_builder: LocalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
         system_prompt: str = QUESTION_SYSTEM_PROMPT,
@@ -38,7 +39,7 @@ class LocalQuestionGen(BaseQuestionGen):
         context_builder_params: dict[str, Any] | None = None,
     ):
         super().__init__(
-            llm=llm,
+            model=model,
             context_builder=context_builder,
             token_encoder=token_encoder,
             llm_params=llm_params,
@@ -95,15 +96,17 @@ class LocalQuestionGen(BaseQuestionGen):
             )
             question_messages = [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": question_text},
             ]
 
-            response = await self.llm.agenerate(
-                messages=question_messages,
-                streaming=True,
-                callbacks=self.callbacks,
-                **self.llm_params,
-            )
+            response = ""
+            async for chunk in self.model.achat_stream(
+                prompt=question_text,
+                history=question_messages,
+                model_parameters=self.llm_params,
+            ):
+                response += chunk
+                for callback in self.callbacks:
+                    callback.on_llm_new_token(chunk)
 
             return QuestionResult(
                 response=response.split("\n"),
@@ -126,7 +129,7 @@ class LocalQuestionGen(BaseQuestionGen):
                 prompt_tokens=num_tokens(system_prompt, self.token_encoder),
             )
 
-    def generate(
+    async def generate(
         self,
         question_history: list[str],
         context_data: str | None,
@@ -178,12 +181,15 @@ class LocalQuestionGen(BaseQuestionGen):
                 {"role": "user", "content": question_text},
             ]
 
-            response = self.llm.generate(
-                messages=question_messages,
-                streaming=True,
-                callbacks=self.callbacks,
-                **self.llm_params,
-            )
+            response = ""
+            async for chunk in self.model.achat_stream(
+                prompt=question_text,
+                history=question_messages,
+                model_parameters=self.llm_params,
+            ):
+                response += chunk
+                for callback in self.callbacks:
+                    callback.on_llm_new_token(chunk)
 
             return QuestionResult(
                 response=response.split("\n"),

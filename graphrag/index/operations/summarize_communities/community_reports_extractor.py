@@ -78,7 +78,7 @@ class CommunityReportsExtractor:
             prompt = self._extraction_prompt.replace(
                 "{" + self._input_text_key + "}", input_text
             )
-            response = await self._model.chat(
+            response = await self._model.achat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
                 name="create_community_report",
