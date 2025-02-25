@@ -7,6 +7,8 @@ from uuid import uuid4
 
 import pandas as pd
 
+from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
+
 
 def finalize_community_reports(
     reports: pd.DataFrame,
@@ -27,21 +29,5 @@ def finalize_community_reports(
 
     return community_reports.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "community",
-            "level",
-            "parent",
-            "children",
-            "title",
-            "summary",
-            "full_content",
-            "rank",
-            "rank_explanation",
-            "findings",
-            "full_content_json",
-            "period",
-            "size",
-        ],
+        COMMUNITY_REPORTS_FINAL_COLUMNS,
     ]
