@@ -1930,8 +1930,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1986,6 +1986,34 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 </div>
 </div>
 </div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[2], line 11</span>
+<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">tiktoken</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">indexer_adapters</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     read_indexer_communities,
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     read_indexer_entities,
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     read_indexer_reports,
+<span class="ansi-green-intense-fg ansi-bold">     10</span> )
+<span class="ansi-green-fg">---&gt; 11</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">chat_openai</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ChatOpenAI
+<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">typing</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> OpenaiApiType
+<span class="ansi-green-intense-fg ansi-bold">     13</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">structured_search</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">global_search</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">community_context</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-intense-fg ansi-bold">     14</span>     GlobalCommunityContext,
+<span class="ansi-green-intense-fg ansi-bold">     15</span> )
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.query.llm.oai'</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
@@ -2009,8 +2037,8 @@ from graphrag.query.structured_search.global_search.search import GlobalSearch</
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2051,6 +2079,32 @@ llm = ChatOpenAI(
 )
 
 token_encoder = tiktoken.encoding_for_model(llm_model)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[3], line 4</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> api_key <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_API_KEY</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">      2</span> llm_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_LLM_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-fg">----&gt; 4</span> llm <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">ChatOpenAI</span>(
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     model<span style="color: rgb(98,98,98)">=</span>llm_model,
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     api_type<span style="color: rgb(98,98,98)">=</span>OpenaiApiType<span style="color: rgb(98,98,98)">.</span>OpenAI,  <span style="color: rgb(95,135,135)"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     max_retries<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">20</span>,
+<span class="ansi-green-intense-fg ansi-bold">      9</span> )
+<span class="ansi-green-intense-fg ansi-bold">     11</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(llm_model)
+
+<span class="ansi-red-fg">NameError</span>: name 'ChatOpenAI' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2344,8 +2398,8 @@ context_builder = GlobalCommunityContext(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 10</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> mini_llm <span style="color: rgb(98,98,98)">=</span> ChatOpenAI(
+Cell <span class="ansi-green-fg">In[6], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> mini_llm <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">ChatOpenAI</span>(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     model<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">gpt-4o-mini</span><span style="color: rgb(175,0,0)">"</span>,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     api_type<span style="color: rgb(98,98,98)">=</span>OpenaiApiType<span style="color: rgb(98,98,98)">.</span>OpenAI,  <span style="color: rgb(95,135,135)"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
@@ -2353,18 +2407,13 @@ Cell <span class="ansi-green-fg">In[6], line 10</span>
 <span class="ansi-green-intense-fg ansi-bold">      6</span> )
 <span class="ansi-green-intense-fg ansi-bold">      7</span> mini_token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>encoding_for_model(mini_llm<span style="color: rgb(98,98,98)">.</span>model)
 <span class="ansi-green-intense-fg ansi-bold">      9</span> context_builder <span style="color: rgb(98,98,98)">=</span> GlobalCommunityContext(
-<span class="ansi-green-fg">---&gt; 10</span>     community_reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
+<span class="ansi-green-intense-fg ansi-bold">     10</span>     community_reports<span style="color: rgb(98,98,98)">=</span>reports,
 <span class="ansi-green-intense-fg ansi-bold">     11</span>     communities<span style="color: rgb(98,98,98)">=</span>communities,
-<span class="ansi-green-intense-fg ansi-bold">     12</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,  <span style="color: rgb(95,135,135)"># default to None if you don't want to use community weights for ranking</span>
-<span class="ansi-green-intense-fg ansi-bold">     13</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
-<span class="ansi-green-intense-fg ansi-bold">     14</span>     dynamic_community_selection<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">True</span>,
-<span class="ansi-green-intense-fg ansi-bold">     15</span>     dynamic_community_selection_kwargs<span style="color: rgb(98,98,98)">=</span>{
-<span class="ansi-green-intense-fg ansi-bold">     16</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">llm</span><span style="color: rgb(175,0,0)">"</span>: mini_llm,
-<span class="ansi-green-intense-fg ansi-bold">     17</span>         <span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">token_encoder</span><span style="color: rgb(175,0,0)">"</span>: mini_token_encoder,
+<span class="ansi-green-fg">   (...)</span>
 <span class="ansi-green-intense-fg ansi-bold">     18</span>     },
 <span class="ansi-green-intense-fg ansi-bold">     19</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'ChatOpenAI' is not defined</pre>
 </div>
 </div>
 </div>
@@ -2512,10 +2561,10 @@ reduce_llm_params = {
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[8], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> GlobalSearch(
+Cell <span class="ansi-green-fg">In[8], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> search_engine <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">GlobalSearch</span>(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     max_data_tokens<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">12_000</span>,  <span style="color: rgb(95,135,135)"># change this based on the token limit you have on your model (if you are using a model with 8k limit, a good setting could be 5000)</span>
 <span class="ansi-green-intense-fg ansi-bold">      6</span>     map_llm_params<span style="color: rgb(98,98,98)">=</span>map_llm_params,
@@ -2527,7 +2576,7 @@ Cell <span class="ansi-green-fg">In[8], line 3</span>
 <span class="ansi-green-intense-fg ansi-bold">     12</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
 <span class="ansi-green-intense-fg ansi-bold">     13</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'GlobalSearch' is not defined</pre>
 </div>
 </div>
 </div>

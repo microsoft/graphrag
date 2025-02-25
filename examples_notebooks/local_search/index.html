@@ -2175,8 +2175,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -2239,6 +2239,33 @@ from graphrag.query.structured_search.local_search.mixed_context import (
 )
 from graphrag.query.structured_search.local_search.search import LocalSearch
 from graphrag.vector_stores.lancedb import LanceDBVectorStore</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[2], line 14</span>
+<span class="ansi-green-intense-fg ansi-bold">      6</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">context_builder</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">entity_extraction</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> EntityVectorStoreKey
+<span class="ansi-green-intense-fg ansi-bold">      7</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">indexer_adapters</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> (
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     read_indexer_covariates,
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     read_indexer_entities,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">     12</span>     read_indexer_text_units,
+<span class="ansi-green-intense-fg ansi-bold">     13</span> )
+<span class="ansi-green-fg">---&gt; 14</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">chat_openai</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> ChatOpenAI
+<span class="ansi-green-intense-fg ansi-bold">     15</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">embedding</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> OpenAIEmbedding
+<span class="ansi-green-intense-fg ansi-bold">     16</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">graphrag</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">query</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">llm</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">oai</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">typing</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> OpenaiApiType
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'graphrag.query.llm.oai'</pre>
 </div>
 </div>
 </div>
@@ -2962,8 +2989,8 @@ File <span class="ansi-green-fg">~/.cache/pypoetry/virtualenvs/graphrag-F2jvqev7
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -3024,6 +3051,38 @@ text_embedder = OpenAIEmbedding(
     deployment_name=embedding_model,
     max_retries=20,
 )</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[9], line 5</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> llm_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_LLM_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-intense-fg ansi-bold">      3</span> embedding_model <span style="color: rgb(98,98,98)">=</span> os<span style="color: rgb(98,98,98)">.</span>environ[<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">GRAPHRAG_EMBEDDING_MODEL</span><span style="color: rgb(175,0,0)">"</span>]
+<span class="ansi-green-fg">----&gt; 5</span> llm <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">ChatOpenAI</span>(
+<span class="ansi-green-intense-fg ansi-bold">      6</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
+<span class="ansi-green-intense-fg ansi-bold">      7</span>     model<span style="color: rgb(98,98,98)">=</span>llm_model,
+<span class="ansi-green-intense-fg ansi-bold">      8</span>     api_type<span style="color: rgb(98,98,98)">=</span>OpenaiApiType<span style="color: rgb(98,98,98)">.</span>OpenAI,  <span style="color: rgb(95,135,135)"># OpenaiApiType.OpenAI or OpenaiApiType.AzureOpenAI</span>
+<span class="ansi-green-intense-fg ansi-bold">      9</span>     max_retries<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">20</span>,
+<span class="ansi-green-intense-fg ansi-bold">     10</span> )
+<span class="ansi-green-intense-fg ansi-bold">     12</span> token_encoder <span style="color: rgb(98,98,98)">=</span> tiktoken<span style="color: rgb(98,98,98)">.</span>get_encoding(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">cl100k_base</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">     14</span> text_embedder <span style="color: rgb(98,98,98)">=</span> OpenAIEmbedding(
+<span class="ansi-green-intense-fg ansi-bold">     15</span>     api_key<span style="color: rgb(98,98,98)">=</span>api_key,
+<span class="ansi-green-intense-fg ansi-bold">     16</span>     api_base<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">     20</span>     max_retries<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(98,98,98)">20</span>,
+<span class="ansi-green-intense-fg ansi-bold">     21</span> )
+
+<span class="ansi-red-fg">NameError</span>: name 'ChatOpenAI' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3098,9 +3157,9 @@ text_embedder = OpenAIEmbedding(
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[10], line 2</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> context_builder <span style="color: rgb(98,98,98)">=</span> LocalSearchMixedContext(
-<span class="ansi-green-fg">----&gt; 2</span>     community_reports<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">reports</span>,
+Cell <span class="ansi-green-fg">In[10], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> context_builder <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LocalSearchMixedContext</span>(
+<span class="ansi-green-intense-fg ansi-bold">      2</span>     community_reports<span style="color: rgb(98,98,98)">=</span>reports,
 <span class="ansi-green-intense-fg ansi-bold">      3</span>     text_units<span style="color: rgb(98,98,98)">=</span>text_units,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     entities<span style="color: rgb(98,98,98)">=</span>entities,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     relationships<span style="color: rgb(98,98,98)">=</span>relationships,
@@ -3112,7 +3171,7 @@ Cell <span class="ansi-green-fg">In[10], line 2</span>
 <span class="ansi-green-intense-fg ansi-bold">     11</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
 <span class="ansi-green-intense-fg ansi-bold">     12</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'reports' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'LocalSearchMixedContext' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3274,17 +3333,17 @@ llm_params = {
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[12], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> search_engine <span style="color: rgb(98,98,98)">=</span> LocalSearch(
+Cell <span class="ansi-green-fg">In[12], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> search_engine <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LocalSearch</span>(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     llm_params<span style="color: rgb(98,98,98)">=</span>llm_params,
 <span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
 <span class="ansi-green-intense-fg ansi-bold">      7</span>     response_type<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">multiple paragraphs</span><span style="color: rgb(175,0,0)">"</span>,  <span style="color: rgb(95,135,135)"># free form text describing the response type and format, can be anything, e.g. prioritized list, single paragraph, multiple paragraphs, multiple-page report</span>
 <span class="ansi-green-intense-fg ansi-bold">      8</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'LocalSearch' is not defined</pre>
 </div>
 </div>
 </div>
@@ -3712,16 +3771,16 @@ Cell <span class="ansi-green-fg">In[19], line 1</span>
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[20], line 3</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> question_generator <span style="color: rgb(98,98,98)">=</span> LocalQuestionGen(
+Cell <span class="ansi-green-fg">In[20], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> question_generator <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">LocalQuestionGen</span>(
 <span class="ansi-green-intense-fg ansi-bold">      2</span>     llm<span style="color: rgb(98,98,98)">=</span>llm,
-<span class="ansi-green-fg">----&gt; 3</span>     context_builder<span style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">context_builder</span>,
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     context_builder<span style="color: rgb(98,98,98)">=</span>context_builder,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>     token_encoder<span style="color: rgb(98,98,98)">=</span>token_encoder,
 <span class="ansi-green-intense-fg ansi-bold">      5</span>     llm_params<span style="color: rgb(98,98,98)">=</span>llm_params,
 <span class="ansi-green-intense-fg ansi-bold">      6</span>     context_builder_params<span style="color: rgb(98,98,98)">=</span>local_context_params,
 <span class="ansi-green-intense-fg ansi-bold">      7</span> )
 
-<span class="ansi-red-fg">NameError</span>: name 'context_builder' is not defined</pre>
+<span class="ansi-red-fg">NameError</span>: name 'LocalQuestionGen' is not defined</pre>
 </div>
 </div>
 </div>
