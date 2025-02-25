@@ -36,13 +36,11 @@ async def run_workflow(
     callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
-    final_documents = await load_table_from_storage("documents", context.storage)
-    final_relationships = await load_table_from_storage(
-        "relationships", context.storage
-    )
-    final_text_units = await load_table_from_storage("text_units", context.storage)
-    final_entities = await load_table_from_storage("entities", context.storage)
-    final_community_reports = await load_table_from_storage(
+    documents = await load_table_from_storage("documents", context.storage)
+    relationships = await load_table_from_storage("relationships", context.storage)
+    text_units = await load_table_from_storage("text_units", context.storage)
+    entities = await load_table_from_storage("entities", context.storage)
+    community_reports = await load_table_from_storage(
         "community_reports", context.storage
     )
 
@@ -50,11 +48,11 @@ async def run_workflow(
     text_embed = get_embedding_settings(config)
 
     result = await generate_text_embeddings(
-        final_documents=final_documents,
-        final_relationships=final_relationships,
-        final_text_units=final_text_units,
-        final_entities=final_entities,
-        final_community_reports=final_community_reports,
+        documents=documents,
+        relationships=relationships,
+        text_units=text_units,
+        entities=entities,
+        community_reports=community_reports,
         callbacks=callbacks,
         cache=context.cache,
         text_embed_config=text_embed,
@@ -73,11 +71,11 @@ async def run_workflow(
 
 
 async def generate_text_embeddings(
-    final_documents: pd.DataFrame | None,
-    final_relationships: pd.DataFrame | None,
-    final_text_units: pd.DataFrame | None,
-    final_entities: pd.DataFrame | None,
-    final_community_reports: pd.DataFrame | None,
+    documents: pd.DataFrame | None,
+    relationships: pd.DataFrame | None,
+    text_units: pd.DataFrame | None,
+    entities: pd.DataFrame | None,
+    community_reports: pd.DataFrame | None,
     callbacks: WorkflowCallbacks,
     cache: PipelineCache,
     text_embed_config: dict,
@@ -86,52 +84,48 @@ async def generate_text_embeddings(
     """All the steps to generate all embeddings."""
     embedding_param_map = {
         document_text_embedding: {
-            "data": final_documents.loc[:, ["id", "text"]]
-            if final_documents is not None
-            else None,
+            "data": documents.loc[:, ["id", "text"]] if documents is not None else None,
             "embed_column": "text",
         },
         relationship_description_embedding: {
-            "data": final_relationships.loc[:, ["id", "description"]]
-            if final_relationships is not None
+            "data": relationships.loc[:, ["id", "description"]]
+            if relationships is not None
             else None,
             "embed_column": "description",
         },
         text_unit_text_embedding: {
-            "data": final_text_units.loc[:, ["id", "text"]]
-            if final_text_units is not None
+            "data": text_units.loc[:, ["id", "text"]]
+            if text_units is not None
             else None,
             "embed_column": "text",
         },
         entity_title_embedding: {
-            "data": final_entities.loc[:, ["id", "title"]]
-            if final_entities is not None
-            else None,
+            "data": entities.loc[:, ["id", "title"]] if entities is not None else None,
             "embed_column": "title",
         },
         entity_description_embedding: {
-            "data": final_entities.loc[:, ["id", "title", "description"]].assign(
+            "data": entities.loc[:, ["id", "title", "description"]].assign(
                 title_description=lambda df: df["title"] + ":" + df["description"]
             )
-            if final_entities is not None
+            if entities is not None
             else None,
             "embed_column": "title_description",
         },
         community_title_embedding: {
-            "data": final_community_reports.loc[:, ["id", "title"]]
-            if final_community_reports is not None
+            "data": community_reports.loc[:, ["id", "title"]]
+            if community_reports is not None
             else None,
             "embed_column": "title",
         },
         community_summary_embedding: {
-            "data": final_community_reports.loc[:, ["id", "summary"]]
-            if final_community_reports is not None
+            "data": community_reports.loc[:, ["id", "summary"]]
+            if community_reports is not None
             else None,
             "embed_column": "summary",
         },
         community_full_content_embedding: {
-            "data": final_community_reports.loc[:, ["id", "full_content"]]
-            if final_community_reports is not None
+            "data": community_reports.loc[:, ["id", "full_content"]]
+            if community_reports is not None
             else None,
             "embed_column": "full_content",
         },
