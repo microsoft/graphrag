@@ -11,11 +11,11 @@ from graphrag.logger.print_progress import PrintProgressLogger
 from graphrag.prompt_tune.generator.community_report_summarization import (
     COMMUNITY_SUMMARIZATION_FILENAME,
 )
-from graphrag.prompt_tune.generator.entity_extraction_prompt import (
-    ENTITY_EXTRACTION_FILENAME,
-)
 from graphrag.prompt_tune.generator.entity_summarization_prompt import (
     ENTITY_SUMMARIZATION_FILENAME,
+)
+from graphrag.prompt_tune.generator.extract_graph_prompt import (
+    EXTRACT_GRAPH_FILENAME,
 )
 
 
@@ -75,13 +75,13 @@ async def prompt_tune(
     if output_path:
         logger.info(f"Writing prompts to {output_path}")  # noqa: G004
         output_path.mkdir(parents=True, exist_ok=True)
-        entity_extraction_prompt_path = output_path / ENTITY_EXTRACTION_FILENAME
+        extract_graph_prompt_path = output_path / EXTRACT_GRAPH_FILENAME
         entity_summarization_prompt_path = output_path / ENTITY_SUMMARIZATION_FILENAME
         community_summarization_prompt_path = (
             output_path / COMMUNITY_SUMMARIZATION_FILENAME
         )
         # Write files to output path
-        with entity_extraction_prompt_path.open("wb") as file:
+        with extract_graph_prompt_path.open("wb") as file:
             file.write(prompts[0].encode(encoding="utf-8", errors="strict"))
         with entity_summarization_prompt_path.open("wb") as file:
             file.write(prompts[1].encode(encoding="utf-8", errors="strict"))

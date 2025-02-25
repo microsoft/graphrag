@@ -2,82 +2,39 @@
     "input_path": "./tests/fixtures/min-csv",
     "input_file_type": "text",
     "workflow_config": {
-        "compute_communities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 0
-        },
         "create_base_text_units": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 0
+            "max_runtime": 30
         },
         "extract_graph": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 300,
-            "expected_artifacts": 0
+            "max_runtime": 500
         },
-        "create_final_entities": {
+        "finalize_graph": {
             "row_range": [
                 1,
-                2500
+                500
             ],
             "nan_allowed_columns": [
-                "type",
-                "description"
-            ],
-            "subworkflows": 1,
-            "max_runtime": 300,
-            "expected_artifacts": 1
-        },
-        "create_final_relationships": {
-            "row_range": [
-                1,
-                6000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_nodes": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "description",
                 "x",
                 "y"
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": [
+                "entities.parquet",
+                "relationships.parquet"
+            ]
         },
-        "create_final_communities": {
+        "create_communities": {
             "row_range": [
-                1,
-                2500
+                10,
+                30
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["communities.parquet"]
         },
-        "create_final_community_reports": {
+        "create_community_reports": {
             "row_range": [
-                1,
-                2500
+                10,
+                30
             ],
             "nan_allowed_columns": [
                 "title",
@@ -90,40 +47,44 @@
                 "period",
                 "size"
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
-            "expected_artifacts": 1
+            "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
             "row_range": [
-                1,
-                2500
+                10,
+                50
             ],
             "nan_allowed_columns": [
                 "relationship_ids",
-                "entity_ids"
+                "entity_ids",
+                "covariate_ids"
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["text_units.parquet"]
         },
         "create_final_documents": {
             "row_range": [
-                1,
-                2500
+                15,
+                15
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "nan_allowed_columns": [
+                "metadata"
+            ],
+            "max_runtime": 30,
+            "expected_artifacts": ["documents.parquet"]
         },
         "generate_text_embeddings": {
             "row_range": [
                 1,
-                2500
+                500
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
-            "expected_artifacts": 1
+            "expected_artifacts": [
+                "embeddings.text_unit.text.parquet",
+                "embeddings.entity.description.parquet",
+                "embeddings.community.full_content.parquet"
+            ]
         }
     },
     "query_config": [

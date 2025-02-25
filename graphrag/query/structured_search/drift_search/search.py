@@ -11,10 +11,10 @@ from typing import Any
 import tiktoken
 from tqdm.asyncio import tqdm_asyncio
 
-from graphrag.config.models.drift_search_config import DRIFTSearchConfig
+from graphrag.callbacks.query_callbacks import QueryCallbacks
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.conversation_history import ConversationHistory
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
-from graphrag.query.llm.oai.chat_openai import ChatOpenAI
 from graphrag.query.llm.text_utils import num_tokens
 from graphrag.query.structured_search.base import BaseSearch, SearchResult
 from graphrag.query.structured_search.drift_search.action import DriftAction
@@ -33,11 +33,11 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
 
     def __init__(
         self,
-        llm: ChatOpenAI,
+        model: ChatModel,
         context_builder: DRIFTSearchContextBuilder,
-        config: DRIFTSearchConfig | None = None,
         token_encoder: tiktoken.Encoding | None = None,
         query_state: QueryState | None = None,
+        callbacks: list[QueryCallbacks] | None = None,
     ):
         """
         Initialize the DRIFTSearch class.
@@ -49,15 +49,17 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             token_encoder (tiktoken.Encoding, optional): Token encoder for managing tokens.
             query_state (QueryState, optional): State of the current search query.
         """
-        super().__init__(llm, context_builder, token_encoder)
+        super().__init__(model, context_builder, token_encoder)
 
-        self.config = config or DRIFTSearchConfig()
         self.context_builder = context_builder
         self.token_encoder = token_encoder
         self.query_state = query_state or QueryState()
         self.primer = DRIFTPrimer(
-            config=self.config, chat_llm=llm, token_encoder=token_encoder
+            config=self.context_builder.config,
+            chat_model=model,
+            token_encoder=token_encoder,
         )
+        self.callbacks = callbacks or []
         self.local_search = self.init_local_search()
 
     def init_local_search(self) -> LocalSearch:
@@ -69,32 +71,33 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         LocalSearch: An instance of the LocalSearch class with the configured parameters.
         """
         local_context_params = {
-            "text_unit_prop": self.config.local_search_text_unit_prop,
-            "community_prop": self.config.local_search_community_prop,
-            "top_k_mapped_entities": self.config.local_search_top_k_mapped_entities,
-            "top_k_relationships": self.config.local_search_top_k_relationships,
+            "text_unit_prop": self.context_builder.config.local_search_text_unit_prop,
+            "community_prop": self.context_builder.config.local_search_community_prop,
+            "top_k_mapped_entities": self.context_builder.config.local_search_top_k_mapped_entities,
+            "top_k_relationships": self.context_builder.config.local_search_top_k_relationships,
             "include_entity_rank": True,
             "include_relationship_weight": True,
             "include_community_rank": False,
             "return_candidate_context": False,
             "embedding_vectorstore_key": EntityVectorStoreKey.ID,
-            "max_tokens": self.config.local_search_max_data_tokens,
+            "max_tokens": self.context_builder.config.local_search_max_data_tokens,
         }
 
         llm_params = {
-            "max_tokens": self.config.local_search_llm_max_gen_tokens,
-            "temperature": self.config.local_search_temperature,
+            "max_tokens": self.context_builder.config.local_search_llm_max_gen_tokens,
+            "temperature": self.context_builder.config.local_search_temperature,
             "response_format": {"type": "json_object"},
         }
 
         return LocalSearch(
-            llm=self.llm,
+            model=self.model,
             system_prompt=self.context_builder.local_system_prompt,
             context_builder=self.context_builder.local_mixed_context,
             token_encoder=self.token_encoder,
-            llm_params=llm_params,
+            model_params=llm_params,
             context_builder_params=local_context_params,
             response_type="multiple paragraphs",
+            callbacks=self.callbacks,
         )
 
     def _process_primer_results(
@@ -145,7 +148,7 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         error_msg = "Response must be a list of dictionaries."
         raise ValueError(error_msg)
 
-    async def asearch_step(
+    async def _search_step(
         self, global_query: str, search_engine: LocalSearch, actions: list[DriftAction]
     ) -> list[DriftAction]:
         """
@@ -161,12 +164,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         list[DriftAction]: The results from executing the search actions asynchronously.
         """
         tasks = [
-            action.asearch(search_engine=search_engine, global_query=global_query)
+            action.search(search_engine=search_engine, global_query=global_query)
             for action in actions
         ]
         return await tqdm_asyncio.gather(*tasks, leave=False)
 
-    async def asearch(
+    async def search(
         self,
         query: str,
         conversation_history: Any = None,
@@ -200,12 +203,12 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         # Check if query state is empty
         if not self.query_state.graph:
             # Prime the search with the primer
-            primer_context, token_ct = self.context_builder.build_context(query)
+            primer_context, token_ct = await self.context_builder.build_context(query)
             llm_calls["build_context"] = token_ct["llm_calls"]
             prompt_tokens["build_context"] = token_ct["prompt_tokens"]
             output_tokens["build_context"] = token_ct["prompt_tokens"]
 
-            primer_response = await self.primer.asearch(
+            primer_response = await self.primer.search(
                 query=query, top_k_reports=primer_context
             )
             llm_calls["primer"] = primer_response.llm_calls
@@ -220,15 +223,17 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         # Main loop
         epochs = 0
         llm_call_offset = 0
-        while epochs < self.config.n:
+        while epochs < self.context_builder.config.n_depth:
             actions = self.query_state.rank_incomplete_actions()
             if len(actions) == 0:
                 log.info("No more actions to take. Exiting DRIFT loop.")
                 break
-            actions = actions[: self.config.drift_k_followups]
-            llm_call_offset += len(actions) - self.config.drift_k_followups
+            actions = actions[: self.context_builder.config.drift_k_followups]
+            llm_call_offset += (
+                len(actions) - self.context_builder.config.drift_k_followups
+            )
             # Process actions
-            results = await self.asearch_step(
+            results = await self._search_step(
                 global_query=query, search_engine=self.local_search, actions=actions
             )
 
@@ -254,16 +259,21 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         reduced_response = response_state
         if reduce:
             # Reduce response_state to a single comprehensive response
+            for callback in self.callbacks:
+                callback.on_reduce_response_start(response_state)
+
             reduced_response = await self._reduce_response(
                 responses=response_state,
                 query=query,
                 llm_calls=llm_calls,
                 prompt_tokens=prompt_tokens,
                 output_tokens=output_tokens,
-                max_tokens=self.config.reduce_max_tokens,
-                temperature=self.config.reduce_temperature,
+                max_tokens=self.context_builder.config.reduce_max_tokens,
+                temperature=self.context_builder.config.reduce_temperature,
             )
 
+            for callback in self.callbacks:
+                callback.on_reduce_response_end(reduced_response)
         return SearchResult(
             response=reduced_response,
             context_data=context_data,
@@ -277,50 +287,38 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
             output_tokens_categories=output_tokens,
         )
 
-    def search(
-        self,
-        query: str,
-        conversation_history: Any = None,
-        **kwargs,
-    ) -> SearchResult:
-        """
-        Perform a synchronous DRIFT search (Not Implemented).
-
-        Args:
-            query (str): The query to search for.
-            conversation_history (Any, optional): The conversation history.
-
-        Raises
-        ------
-        NotImplementedError: Synchronous DRIFT is not implemented.
-        """
-        error_msg = "Synchronous DRIFT is not implemented."
-        raise NotImplementedError(error_msg)
-
-    async def astream_search(
+    async def stream_search(
         self, query: str, conversation_history: ConversationHistory | None = None
     ) -> AsyncGenerator[str, None]:
         """
-        Perform a streaming DRIFT search (Not Implemented).
+        Perform a streaming DRIFT search asynchronously.
 
         Args:
             query (str): The query to search for.
             conversation_history (ConversationHistory, optional): The conversation history.
         """
-        result = await self.asearch(
+        result = await self.search(
             query=query, conversation_history=conversation_history, reduce=False
         )
 
         if isinstance(result.response, list):
             result.response = result.response[0]
 
+        for callback in self.callbacks:
+            callback.on_reduce_response_start(result.response)
+
+        full_response = ""
         async for resp in self._reduce_response_streaming(
             responses=result.response,
             query=query,
-            max_tokens=self.config.reduce_max_tokens,
-            temperature=self.config.reduce_temperature,
+            max_tokens=self.context_builder.config.reduce_max_tokens,
+            temperature=self.context_builder.config.reduce_temperature,
         ):
+            full_response += resp
             yield resp
+
+        for callback in self.callbacks:
+            callback.on_reduce_response_end(full_response)
 
     async def _reduce_response(
         self,
@@ -364,15 +362,15 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
-            {"role": "user", "content": query},
         ]
 
-        reduced_response = self.llm.generate(
-            messages=search_messages,
-            streaming=False,
-            callbacks=None,
-            **llm_kwargs,
+        model_response = await self.model.achat(
+            prompt=query,
+            history=search_messages,
+            model_parameters=llm_kwargs,
         )
+
+        reduced_response = model_response.output.content
 
         llm_calls["reduce"] = 1
         prompt_tokens["reduce"] = num_tokens(
@@ -421,12 +419,13 @@ class DRIFTSearch(BaseSearch[DRIFTSearchContextBuilder]):
         )
         search_messages = [
             {"role": "system", "content": search_prompt},
-            {"role": "user", "content": query},
         ]
 
-        async for resp in self.llm.astream_generate(
-            search_messages,
-            callbacks=None,
-            **llm_kwargs,
+        async for response in self.model.achat_stream(
+            prompt=query,
+            history=search_messages,
+            model_parameters=llm_kwargs,
         ):
-            yield resp
+            for callback in self.callbacks:
+                callback.on_llm_new_token(response)
+            yield response

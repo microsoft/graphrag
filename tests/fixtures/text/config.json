@@ -2,37 +2,31 @@
     "input_path": "./tests/fixtures/text",
     "input_file_type": "text",
     "workflow_config": {
-        "compute_communities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 0
-        },
         "create_base_text_units": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 0
+            "max_runtime": 30
         },
         "extract_graph": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 300,
-            "expected_artifacts": 0
+            "max_runtime": 500
         },
-        "create_final_covariates": {
+        "finalize_graph": {
             "row_range": [
                 1,
-                2500
+                100
+            ],
+            "nan_allowed_columns": [
+                "x",
+                "y"
+            ],
+            "max_runtime": 30,
+            "expected_artifacts": [
+                "entities.parquet",
+                "relationships.parquet"
+            ]
+        },
+        "extract_covariates": {
+            "row_range": [
+                1,
+                100
             ],
             "nan_allowed_columns": [
                 "type",
@@ -43,59 +37,21 @@
                 "end_date",
                 "source_text"
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
-            "expected_artifacts": 1
+            "expected_artifacts": ["covariates.parquet"]
         },
-        "create_final_entities": {
+        "create_communities": {
             "row_range": [
                 1,
-                2500
+                30
             ],
-            "nan_allowed_columns": [
-                "type",
-                "description"
-            ],
-            "subworkflows": 1,
-            "max_runtime": 300,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["communities.parquet"]
         },
-        "create_final_relationships": {
+        "create_community_reports": {
             "row_range": [
                 1,
-                6000
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_nodes": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "nan_allowed_columns": [
-                "description",
-                "x",
-                "y"
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_communities": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
-        },
-        "create_final_community_reports": {
-            "row_range": [
-                1,
-                2500
+                30
             ],
             "nan_allowed_columns": [
                 "title",
@@ -108,40 +64,44 @@
                 "period",
                 "size"
             ],
-            "subworkflows": 1,
             "max_runtime": 300,
-            "expected_artifacts": 1
+            "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
             "row_range": [
                 1,
-                2500
+                10
             ],
             "nan_allowed_columns": [
                 "relationship_ids",
-                "entity_ids"
+                "entity_ids",
+                "covariate_ids"
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["text_units.parquet"]
         },
         "create_final_documents": {
             "row_range": [
                 1,
-                2500
+                1
             ],
-            "subworkflows": 1,
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "nan_allowed_columns": [
+                "metadata"
+            ],
+            "max_runtime": 30,
+            "expected_artifacts": ["documents.parquet"]
         },
         "generate_text_embeddings": {
             "row_range": [
                 1,
-                2500
+                100
             ],
-            "subworkflows": 1,
             "max_runtime": 150,
-            "expected_artifacts": 1
+            "expected_artifacts": [
+                "embeddings.text_unit.text.parquet",
+                "embeddings.entity.description.parquet",
+                "embeddings.community.full_content.parquet"
+            ]
         }
     },
     "query_config": [
@@ -152,6 +112,14 @@
         {
             "query": "What is the major conflict in this story and who are the protagonist and antagonist?",
             "method": "global"
+        },
+        {
+            "query": "What is the main theme of the story?",
+            "method": "drift"
+        },
+        {
+            "query": "Who is Jordan Hayes?",
+            "method": "basic"
         }
     ],
     "slow": false

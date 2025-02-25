@@ -6,11 +6,10 @@
 import logging
 import re
 from io import BytesIO
-from typing import cast
 
 import pandas as pd
 
-from graphrag.index.config.input import PipelineCSVInputConfig, PipelineInputConfig
+from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -23,19 +22,18 @@ input_type = "csv"
 
 
 async def load(
-    config: PipelineInputConfig,
+    config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
     """Load csv inputs from a directory."""
-    csv_config = cast("PipelineCSVInputConfig", config)
-    log.info("Loading csv files from %s", csv_config.base_dir)
+    log.info("Loading csv files from %s", config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
             group = {}
         buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding or "latin-1")
+        data = pd.read_csv(buffer, encoding=config.encoding)
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
@@ -43,66 +41,29 @@ async def load(
             )
         if "id" not in data.columns:
             data["id"] = data.apply(lambda x: gen_sha512_hash(x, x.keys()), axis=1)
-        if csv_config.source_column is not None and "source" not in data.columns:
-            if csv_config.source_column not in data.columns:
-                log.warning(
-                    "source_column %s not found in csv file %s",
-                    csv_config.source_column,
-                    path,
-                )
-            else:
-                data["source"] = data.apply(
-                    lambda x: x[csv_config.source_column], axis=1
-                )
-        if csv_config.text_column is not None and "text" not in data.columns:
-            if csv_config.text_column not in data.columns:
+        if config.text_column is not None and "text" not in data.columns:
+            if config.text_column not in data.columns:
                 log.warning(
                     "text_column %s not found in csv file %s",
-                    csv_config.text_column,
+                    config.text_column,
                     path,
                 )
             else:
-                data["text"] = data.apply(lambda x: x[csv_config.text_column], axis=1)
-        if csv_config.title_column is not None and "title" not in data.columns:
-            if csv_config.title_column not in data.columns:
+                data["text"] = data.apply(lambda x: x[config.text_column], axis=1)
+        if config.title_column is not None:
+            if config.title_column not in data.columns:
                 log.warning(
                     "title_column %s not found in csv file %s",
-                    csv_config.title_column,
+                    config.title_column,
                     path,
                 )
             else:
-                data["title"] = data.apply(lambda x: x[csv_config.title_column], axis=1)
+                data["title"] = data.apply(lambda x: x[config.title_column], axis=1)
+        else:
+            data["title"] = data.apply(lambda _: path, axis=1)
 
-        if csv_config.timestamp_column is not None:
-            fmt = csv_config.timestamp_format
-            if fmt is None:
-                msg = "Must specify timestamp_format if timestamp_column is specified"
-                raise ValueError(msg)
-
-            if csv_config.timestamp_column not in data.columns:
-                log.warning(
-                    "timestamp_column %s not found in csv file %s",
-                    csv_config.timestamp_column,
-                    path,
-                )
-            else:
-                data["timestamp"] = pd.to_datetime(
-                    data[csv_config.timestamp_column], format=fmt
-                )
-
-            # TODO: Theres probably a less gross way to do this
-            if "year" not in data.columns:
-                data["year"] = data.apply(lambda x: x["timestamp"].year, axis=1)
-            if "month" not in data.columns:
-                data["month"] = data.apply(lambda x: x["timestamp"].month, axis=1)
-            if "day" not in data.columns:
-                data["day"] = data.apply(lambda x: x["timestamp"].day, axis=1)
-            if "hour" not in data.columns:
-                data["hour"] = data.apply(lambda x: x["timestamp"].hour, axis=1)
-            if "minute" not in data.columns:
-                data["minute"] = data.apply(lambda x: x["timestamp"].minute, axis=1)
-            if "second" not in data.columns:
-                data["second"] = data.apply(lambda x: x["timestamp"].second, axis=1)
+        creation_date = await storage.get_creation_date(path)
+        data["creation_date"] = data.apply(lambda _: creation_date, axis=1)
 
         return data
 

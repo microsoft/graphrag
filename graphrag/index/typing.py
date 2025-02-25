@@ -3,18 +3,29 @@
 
 """A module containing the 'PipelineRunResult' model."""
 
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
+from typing import Any
 
-import pandas as pd
+from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.config.models.graph_rag_config import GraphRagConfig
+from graphrag.index.context import PipelineRunContext
 
 ErrorHandlerFn = Callable[[BaseException | None, str | None, dict | None], None]
 
 
 @dataclass
-class PipelineRunResult:
-    """Pipeline run result class definition."""
+class WorkflowFunctionOutput:
+    """Data container for Workflow function results."""
 
-    workflow: str
-    result: pd.DataFrame | None
-    errors: list[BaseException] | None
+    result: Any | None
+    """The result of the workflow function. This can be anything - we use it only for logging downstream, and expect each workflow function to write official outputs to the provided storage."""
+    config: GraphRagConfig | None
+    """If the config is mutated, return the mutated config here. This allows users to design workflows that tune config for downstream workflow use."""
+
+
+WorkflowFunction = Callable[
+    [GraphRagConfig, PipelineRunContext, WorkflowCallbacks],
+    Awaitable[WorkflowFunctionOutput],
+]
+Workflow = tuple[str, WorkflowFunction]

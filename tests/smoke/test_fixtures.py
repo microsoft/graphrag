@@ -152,27 +152,14 @@ class TestIndexer:
     def __assert_indexer_outputs(
         self, root: Path, workflow_config: dict[str, dict[str, Any]]
     ):
-        outputs_path = root / "output"
-        output_entries = list(outputs_path.iterdir())
-        # Sort the output folders by creation time, most recent
-        output_entries.sort(key=lambda entry: entry.stat().st_ctime, reverse=True)
+        output_path = root / "output"
 
-        if not debug:
-            assert len(output_entries) == 1, (
-                f"Expected one output folder, found {len(output_entries)}"
-            )
-
-        output_path = output_entries[0]
         assert output_path.exists(), "output folder does not exist"
 
-        artifacts = output_path / "artifacts"
-        assert artifacts.exists(), "artifact folder does not exist"
-
         # Check stats for all workflow
-        stats = json.loads((artifacts / "stats.json").read_bytes().decode("utf-8"))
+        stats = json.loads((output_path / "stats.json").read_bytes().decode("utf-8"))
 
         # Check all workflows run
-        expected_artifacts = 0
         expected_workflows = set(workflow_config.keys())
         workflows = set(stats["workflows"].keys())
         assert workflows == expected_workflows, (
@@ -180,56 +167,38 @@ class TestIndexer:
         )
 
         # [OPTIONAL] Check runtime
-        for workflow in expected_workflows:
+        for workflow, config in workflow_config.items():
             # Check expected artifacts
-            expected_artifacts = expected_artifacts + workflow_config[workflow].get(
-                "expected_artifacts", 1
-            )
+            workflow_artifacts = config.get("expected_artifacts", [])
             # Check max runtime
-            max_runtime = workflow_config[workflow].get("max_runtime", None)
+            max_runtime = config.get("max_runtime", None)
             if max_runtime:
                 assert stats["workflows"][workflow]["overall"] <= max_runtime, (
                     f"Expected max runtime of {max_runtime}, found: {stats['workflows'][workflow]['overall']} for workflow: {workflow}"
                 )
-
-        # Check artifacts
-        artifact_files = os.listdir(artifacts)
-
-        # check that the number of workflows matches the number of artifacts
-        assert len(artifact_files) == (expected_artifacts + 3), (
-            f"Expected {expected_artifacts + 3} artifacts, found: {len(artifact_files)}"
-        )  # Embeddings add to the count
-
-        for artifact in artifact_files:
-            if artifact.endswith(".parquet"):
-                output_df = pd.read_parquet(artifacts / artifact)
-                artifact_name = artifact.split(".")[0]
-
-                try:
-                    workflow = workflow_config[artifact_name]
+            # Check expected artifacts
+            for artifact in workflow_artifacts:
+                if artifact.endswith(".parquet"):
+                    output_df = pd.read_parquet(output_path / artifact)
 
                     # Check number of rows between range
                     assert (
-                        workflow["row_range"][0]
+                        config["row_range"][0]
                         <= len(output_df)
-                        <= workflow["row_range"][1]
+                        <= config["row_range"][1]
                     ), (
-                        f"Expected between {workflow['row_range'][0]} and {workflow['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
+                        f"Expected between {config['row_range'][0]} and {config['row_range'][1]}, found: {len(output_df)} for file: {artifact}"
                     )
 
                     # Get non-nan rows
                     nan_df = output_df.loc[
                         :,
-                        ~output_df.columns.isin(
-                            workflow.get("nan_allowed_columns", [])
-                        ),
+                        ~output_df.columns.isin(config.get("nan_allowed_columns", [])),
                     ]
                     nan_df = nan_df[nan_df.isna().any(axis=1)]
                     assert len(nan_df) == 0, (
                         f"Found {len(nan_df)} rows with NaN values for file: {artifact} on columns: {nan_df.columns[nan_df.isna().any()].tolist()}"
                     )
-                except KeyError:
-                    log.warning("No workflow config found %s", artifact_name)
 
     def __run_query(self, root: Path, query_config: dict[str, str]):
         command = [
@@ -300,13 +269,6 @@ class TestIndexer:
             result = self.__run_query(root, query)
             print(f"Query: {query}\nResponse: {result.stdout}")
 
-            # Check stderr because lancedb logs path creating as WARN which leads to false negatives
-            stderror = (
-                result.stderr if "No existing dataset at" not in result.stderr else ""
-            )
-
-            assert stderror == "" or stderror.replace("\n", "") in KNOWN_WARNINGS, (
-                f"Query failed with error: {stderror}"
-            )
+            assert result.returncode == 0, "Query failed"
             assert result.stdout is not None, "Query returned no output"
             assert len(result.stdout) > 0, "Query returned empty output"

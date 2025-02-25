@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.types import TextEmbedder
 
 DEFAULT_VECTOR_SIZE: int = 1536
 

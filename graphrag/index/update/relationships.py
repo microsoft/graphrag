@@ -3,8 +3,12 @@
 
 """Relationship related operations and utils for Incremental Indexing."""
 
+import itertools
+
 import numpy as np
 import pandas as pd
+
+from graphrag.data_model.schemas import RELATIONSHIPS_FINAL_COLUMNS
 
 
 def _update_and_merge_relationships(
@@ -40,9 +44,27 @@ def _update_and_merge_relationships(
     )
 
     # Merge the DataFrames without copying if possible
-    final_relationships = pd.concat(
+    merged_relationships = pd.concat(
         [old_relationships, delta_relationships], ignore_index=True, copy=False
     )
+
+    # Group by title and resolve conflicts
+    aggregated = (
+        merged_relationships.groupby(["source", "target"])
+        .agg({
+            "id": "first",
+            "human_readable_id": "first",
+            "description": lambda x: list(x.astype(str)),  # Ensure str
+            # Concatenate nd.array into a single list
+            "text_unit_ids": lambda x: list(itertools.chain(*x.tolist())),
+            "weight": "mean",
+            "combined_degree": "sum",
+        })
+        .reset_index()
+    )
+
+    # Force the result into a DataFrame
+    final_relationships: pd.DataFrame = pd.DataFrame(aggregated)
 
     # Recalculate target and source degrees
     final_relationships["source_degree"] = final_relationships.groupby("source")[
@@ -59,14 +81,5 @@ def _update_and_merge_relationships(
 
     return final_relationships.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "source",
-            "target",
-            "description",
-            "weight",
-            "combined_degree",
-            "text_unit_ids",
-        ],
+        RELATIONSHIPS_FINAL_COLUMNS,
     ]

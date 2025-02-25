@@ -12,11 +12,11 @@ from typing import Any
 
 import tiktoken
 
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.language_model.protocol.base import ChatModel
 from graphrag.query.context_builder.rate_prompt import RATE_QUERY
 from graphrag.query.context_builder.rate_relevancy import rate_relevancy
-from graphrag.query.llm.base import BaseLLM
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class DynamicCommunitySelection:
         self,
         community_reports: list[CommunityReport],
         communities: list[Community],
-        llm: BaseLLM,
+        model: ChatModel,
         token_encoder: tiktoken.Encoding,
         rate_query: str = RATE_QUERY,
         use_summary: bool = False,
@@ -44,7 +44,7 @@ class DynamicCommunitySelection:
         concurrent_coroutines: int = 8,
         llm_kwargs: Any = DEFAULT_RATE_LLM_PARAMS,
     ):
-        self.llm = llm
+        self.model = model
         self.token_encoder = token_encoder
         self.rate_query = rate_query
         self.num_repeats = num_repeats
@@ -56,23 +56,7 @@ class DynamicCommunitySelection:
         self.llm_kwargs = llm_kwargs
 
         self.reports = {report.community_id: report for report in community_reports}
-        # mapping from community to sub communities
-        self.node2children = {
-            community.short_id: (
-                []
-                if community.sub_community_ids is None
-                else [str(x) for x in community.sub_community_ids]
-            )
-            for community in communities
-            if community.short_id is not None
-        }
-
-        # mapping from community to parent community
-        self.node2parent: dict[str, str] = {
-            sub_community: community
-            for community, sub_communities in self.node2children.items()
-            for sub_community in sub_communities
-        }
+        self.communities = {community.short_id: community for community in communities}
 
         # mapping from level to communities
         self.levels: dict[str, list[str]] = {}
@@ -114,7 +98,7 @@ class DynamicCommunitySelection:
                         if self.use_summary
                         else self.reports[community].full_content
                     ),
-                    llm=self.llm,
+                    model=self.model,
                     token_encoder=self.token_encoder,
                     rate_query=self.rate_query,
                     num_repeats=self.num_repeats,
@@ -140,18 +124,18 @@ class DynamicCommunitySelection:
                     relevant_communities.add(community)
                     # find children nodes of the current node and append them to the queue
                     # TODO check why some sub_communities are NOT in report_df
-                    if community in self.node2children:
-                        for sub_community in self.node2children[community]:
-                            if sub_community in self.reports:
-                                communities_to_rate.append(sub_community)
+                    if community in self.communities:
+                        for child in self.communities[community].children:
+                            if child in self.reports:
+                                communities_to_rate.append(child)
                             else:
                                 log.debug(
                                     "dynamic community selection: cannot find community %s in reports",
-                                    sub_community,
+                                    child,
                                 )
                     # remove parent node if the current node is deemed relevant
-                    if not self.keep_parent and community in self.node2parent:
-                        relevant_communities.discard(self.node2parent[community])
+                    if not self.keep_parent and community in self.communities:
+                        relevant_communities.discard(self.communities[community].parent)
             queue = communities_to_rate
             level += 1
             if (

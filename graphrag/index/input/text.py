@@ -10,7 +10,7 @@ from typing import Any
 
 import pandas as pd
 
-from graphrag.index.config.input import PipelineInputConfig
+from graphrag.config.models.input_config import InputConfig
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.base import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 
 async def load(
-    config: PipelineInputConfig,
+    config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
@@ -38,6 +38,7 @@ async def load(
         new_item = {**group, "text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(Path(path).name)
+        new_item["creation_date"] = await storage.get_creation_date(path)
         return new_item
 
     files = list(

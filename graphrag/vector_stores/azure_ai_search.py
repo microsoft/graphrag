@@ -24,7 +24,7 @@ from azure.search.documents.indexes.models import (
 )
 from azure.search.documents.models import VectorizedQuery
 
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,
@@ -111,6 +111,7 @@ class AzureAISearchVectorStore(BaseVectorStore):
                         name="vector",
                         type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                         searchable=True,
+                        hidden=False,  # DRIFT needs to return the vector for client-side similarity
                         vector_search_dimensions=self.vector_size,
                         vector_search_profile_name=self.vector_search_profile_name,
                     ),

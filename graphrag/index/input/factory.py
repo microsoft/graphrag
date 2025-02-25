@@ -12,7 +12,6 @@ import pandas as pd
 
 from graphrag.config.enums import InputType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.index.config.input import PipelineInputConfig
 from graphrag.index.input.csv import input_type as csv
 from graphrag.index.input.csv import load as load_csv
 from graphrag.index.input.text import input_type as text
@@ -30,7 +29,7 @@ loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
 
 
 async def create_input(
-    config: PipelineInputConfig | InputConfig,
+    config: InputConfig,
     progress_reporter: ProgressLogger | None = None,
     root_dir: str | None = None,
 ) -> pd.DataFrame:
@@ -73,8 +72,23 @@ async def create_input(
             f"Loading Input ({config.file_type})", transient=False
         )
         loader = loaders[config.file_type]
-        results = await loader(config, progress, storage)
-        return cast("pd.DataFrame", results)
+        result = await loader(config, progress, storage)
+        # Convert metadata columns to strings and collapse them into a JSON object
+        if config.metadata:
+            if all(col in result.columns for col in config.metadata):
+                # Collapse the metadata columns into a single JSON object column
+                result["metadata"] = result[config.metadata].apply(
+                    lambda row: row.to_dict(), axis=1
+                )
+            else:
+                value_error_msg = (
+                    "One or more metadata columns not found in the DataFrame."
+                )
+                raise ValueError(value_error_msg)
+
+            result[config.metadata] = result[config.metadata].astype(str)
+
+        return cast("pd.DataFrame", result)
 
     msg = f"Unknown input type {config.file_type}"
     raise ValueError(msg)

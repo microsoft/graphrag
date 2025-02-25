@@ -10,7 +10,7 @@ from azure.cosmos import ContainerProxy, CosmosClient, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 from azure.identity import DefaultAzureCredential
 
-from graphrag.model.types import TextEmbedder
+from graphrag.data_model.types import TextEmbedder
 from graphrag.vector_stores.base import (
     DEFAULT_VECTOR_SIZE,
     BaseVectorStore,

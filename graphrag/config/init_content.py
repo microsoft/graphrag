@@ -4,6 +4,11 @@
 """Content for the init CLI command to generate a default configuration."""
 
 import graphrag.config.defaults as defs
+from graphrag.config.defaults import (
+    graphrag_config_defaults,
+    language_model_defaults,
+    vector_store_defaults,
+)
 
 INIT_YAML = f"""\
 ### This config file contains required core defaults that must be set, along with a handful of common optional settings.
@@ -12,100 +17,118 @@ INIT_YAML = f"""\
 ### LLM settings ###
 ## There are a number of settings to tune the threading and token limits for LLM calls - check the docs.
 
-encoding_model: {defs.ENCODING_MODEL} # this needs to be matched to your model!
-
-llm:
-  api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
-  type: {defs.LLM_TYPE.value} # or azure_openai_chat
-  model: {defs.LLM_MODEL}
-  model_supports_json: true # recommended if this is available for your model.
-  # audience: "https://cognitiveservices.azure.com/.default"
-  # api_base: https://<instance>.openai.azure.com
-  # api_version: 2024-02-15-preview
-  # organization: <organization_id>
-  # deployment_name: <azure_model_deployment_name>
-
-parallelization:
-  stagger: {defs.PARALLELIZATION_STAGGER}
-  # num_threads: {defs.PARALLELIZATION_NUM_THREADS}
-
-async_mode: {defs.ASYNC_MODE.value} # or asyncio
-
-embeddings:
-  async_mode: {defs.ASYNC_MODE.value} # or asyncio
-  vector_store: {defs.VECTOR_STORE}
-  llm:
-    api_key: ${{GRAPHRAG_API_KEY}}
-    type: {defs.EMBEDDING_TYPE.value} # or azure_openai_embedding
-    model: {defs.EMBEDDING_MODEL}
+models:
+  {defs.DEFAULT_CHAT_MODEL_ID}:
+    type: {defs.DEFAULT_CHAT_MODEL_TYPE.value} # or azure_openai_chat
     # api_base: https://<instance>.openai.azure.com
-    # api_version: 2024-02-15-preview
+    # api_version: 2024-05-01-preview
+    auth_type: {defs.DEFAULT_CHAT_MODEL_AUTH_TYPE.value} # or azure_managed_identity
+    api_key: ${{GRAPHRAG_API_KEY}} # set this in the generated .env file
     # audience: "https://cognitiveservices.azure.com/.default"
     # organization: <organization_id>
+    model: {defs.DEFAULT_CHAT_MODEL}
     # deployment_name: <azure_model_deployment_name>
+    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
+    model_supports_json: true # recommended if this is available for your model.
+    concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
+    async_mode: {language_model_defaults.async_mode.value} # or asyncio
+    retry_strategy: native
+    max_retries: -1                   # set to -1 for dynamic retry logic (most optimal setting based on server response)
+    tokens_per_minute: 0              # set to 0 to disable rate limiting
+    requests_per_minute: 0            # set to 0 to disable rate limiting
+  {defs.DEFAULT_EMBEDDING_MODEL_ID}:
+    type: {defs.DEFAULT_EMBEDDING_MODEL_TYPE.value} # or azure_openai_embedding
+    # api_base: https://<instance>.openai.azure.com
+    # api_version: 2024-05-01-preview
+    auth_type: {defs.DEFAULT_EMBEDDING_MODEL_AUTH_TYPE.value} # or azure_managed_identity
+    api_key: ${{GRAPHRAG_API_KEY}}
+    # audience: "https://cognitiveservices.azure.com/.default"
+    # organization: <organization_id>
+    model: {defs.DEFAULT_EMBEDDING_MODEL}
+    # deployment_name: <azure_model_deployment_name>
+    # encoding_model: {defs.ENCODING_MODEL} # automatically set by tiktoken if left undefined
+    model_supports_json: true # recommended if this is available for your model.
+    concurrent_requests: {language_model_defaults.concurrent_requests} # max number of simultaneous LLM requests allowed
+    async_mode: {language_model_defaults.async_mode.value} # or asyncio
+    retry_strategy: native
+    max_retries: -1                   # set to -1 for dynamic retry logic (most optimal setting based on server response)
+    tokens_per_minute: 0              # set to 0 to disable rate limiting
+    requests_per_minute: 0            # set to 0 to disable rate limiting
+
+vector_store:
+  {defs.DEFAULT_VECTOR_STORE_ID}:
+    type: {vector_store_defaults.type}
+    db_uri: {vector_store_defaults.db_uri}
+    container_name: {vector_store_defaults.container_name}
+    overwrite: {vector_store_defaults.overwrite}
+
+embed_text:
+  model_id: {graphrag_config_defaults.embed_text.model_id}
+  vector_store_id: {graphrag_config_defaults.embed_text.vector_store_id}
 
 ### Input settings ###
 
 input:
-  type: {defs.INPUT_TYPE.value} # or blob
-  file_type: {defs.INPUT_FILE_TYPE.value} # or csv
-  base_dir: "{defs.INPUT_BASE_DIR}"
-  file_encoding: {defs.INPUT_FILE_ENCODING}
-  file_pattern: ".*\\\\.txt$"
+  type: {graphrag_config_defaults.input.type.value} # or blob
+  file_type: {graphrag_config_defaults.input.file_type.value} # or csv
+  base_dir: "{graphrag_config_defaults.input.base_dir}"
+  file_encoding: {graphrag_config_defaults.input.encoding}
+  file_pattern: ".*\\\\.txt$$"
 
 chunks:
-  size: {defs.CHUNK_SIZE}
-  overlap: {defs.CHUNK_OVERLAP}
-  group_by_columns: [{",".join(defs.CHUNK_GROUP_BY_COLUMNS)}]
+  size: {graphrag_config_defaults.chunks.size}
+  overlap: {graphrag_config_defaults.chunks.overlap}
+  group_by_columns: [{",".join(graphrag_config_defaults.chunks.group_by_columns)}]
 
-### Storage settings ###
+### Output settings ###
 ## If blob storage is specified in the following four sections,
 ## connection_string and container_name must be provided
 
 cache:
-  type: {defs.CACHE_TYPE.value} # one of [blob, cosmosdb, file]
-  base_dir: "{defs.CACHE_BASE_DIR}"
+  type: {graphrag_config_defaults.cache.type.value} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.cache.base_dir}"
 
 reporting:
-  type: {defs.REPORTING_TYPE.value} # or console, blob
-  base_dir: "{defs.REPORTING_BASE_DIR}"
+  type: {graphrag_config_defaults.reporting.type.value} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.reporting.base_dir}"
 
-storage:
-  type: {defs.STORAGE_TYPE.value} # one of [blob, cosmosdb, file]
-  base_dir: "{defs.STORAGE_BASE_DIR}"
-
-## only turn this on if running `graphrag index` with custom settings
-## we normally use `graphrag update` with the defaults
-update_index_storage:
-  # type: {defs.STORAGE_TYPE.value} # or blob
-  # base_dir: "{defs.UPDATE_STORAGE_BASE_DIR}"
+output:
+  type: {graphrag_config_defaults.output.type.value} # [file, blob, cosmosdb]
+  base_dir: "{graphrag_config_defaults.output.base_dir}"
 
 ### Workflow settings ###
 
-skip_workflows: []
-
-entity_extraction:
-  prompt: "prompts/entity_extraction.txt"
-  entity_types: [{",".join(defs.ENTITY_EXTRACTION_ENTITY_TYPES)}]
-  max_gleanings: {defs.ENTITY_EXTRACTION_MAX_GLEANINGS}
+extract_graph:
+  model_id: {graphrag_config_defaults.extract_graph.model_id}
+  prompt: "prompts/extract_graph.txt"
+  entity_types: [{",".join(graphrag_config_defaults.extract_graph.entity_types)}]
+  max_gleanings: {graphrag_config_defaults.extract_graph.max_gleanings}
 
 summarize_descriptions:
+  model_id: {graphrag_config_defaults.summarize_descriptions.model_id}
   prompt: "prompts/summarize_descriptions.txt"
-  max_length: {defs.SUMMARIZE_DESCRIPTIONS_MAX_LENGTH}
+  max_length: {graphrag_config_defaults.summarize_descriptions.max_length}
 
-claim_extraction:
+extract_graph_nlp:
+  text_analyzer:
+    extractor_type: {graphrag_config_defaults.extract_graph_nlp.text_analyzer.extractor_type.value} # [regex_english, syntactic_parser, cfg]
+
+extract_claims:
   enabled: false
-  prompt: "prompts/claim_extraction.txt"
-  description: "{defs.CLAIM_DESCRIPTION}"
-  max_gleanings: {defs.CLAIM_MAX_GLEANINGS}
+  model_id: {graphrag_config_defaults.extract_claims.model_id}
+  prompt: "prompts/extract_claims.txt"
+  description: "{graphrag_config_defaults.extract_claims.description}"
+  max_gleanings: {graphrag_config_defaults.extract_claims.max_gleanings}
 
 community_reports:
-  prompt: "prompts/community_report.txt"
-  max_length: {defs.COMMUNITY_REPORT_MAX_LENGTH}
-  max_input_length: {defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH}
+  model_id: {graphrag_config_defaults.community_reports.model_id}
+  graph_prompt: "prompts/community_report_graph.txt"
+  text_prompt: "prompts/community_report_text.txt"
+  max_length: {graphrag_config_defaults.community_reports.max_length}
+  max_input_length: {graphrag_config_defaults.community_reports.max_input_length}
 
 cluster_graph:
-  max_cluster_size: {defs.MAX_CLUSTER_SIZE}
+  max_cluster_size: {graphrag_config_defaults.cluster_graph.max_cluster_size}
 
 embed_graph:
   enabled: false # if true, will generate node2vec embeddings for nodes
@@ -116,25 +139,31 @@ umap:
 snapshots:
   graphml: false
   embeddings: false
-  transient: false
 
 ### Query settings ###
 ## The prompt locations are required here, but each search method has a number of optional knobs that can be tuned.
 ## See the config docs: https://microsoft.github.io/graphrag/config/yaml/#query
 
 local_search:
+  chat_model_id: {graphrag_config_defaults.local_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.local_search.embedding_model_id}
   prompt: "prompts/local_search_system_prompt.txt"
 
 global_search:
+  chat_model_id: {graphrag_config_defaults.global_search.chat_model_id}
   map_prompt: "prompts/global_search_map_system_prompt.txt"
   reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
   knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
 
 drift_search:
+  chat_model_id: {graphrag_config_defaults.drift_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.drift_search.embedding_model_id}
   prompt: "prompts/drift_search_system_prompt.txt"
   reduce_prompt: "prompts/drift_search_reduce_prompt.txt"
 
 basic_search:
+  chat_model_id: {graphrag_config_defaults.basic_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.basic_search.embedding_model_id}
   prompt: "prompts/basic_search_system_prompt.txt"
 """
 

@@ -1,30 +1,49 @@
-claim_extraction:
-  enabled: true
+models:
+  default_chat_model:
+    azure_auth_type: api_key
+    type: ${GRAPHRAG_LLM_TYPE}
+    api_key: ${GRAPHRAG_API_KEY}
+    api_base: ${GRAPHRAG_API_BASE}
+    api_version: ${GRAPHRAG_API_VERSION}
+    deployment_name: ${GRAPHRAG_LLM_DEPLOYMENT_NAME}
+    model: ${GRAPHRAG_LLM_MODEL}
+    tokens_per_minute: ${GRAPHRAG_LLM_TPM}
+    requests_per_minute: ${GRAPHRAG_LLM_RPM}
+    model_supports_json: true
+    concurrent_requests: 50
+    async_mode: threaded
+  default_embedding_model:
+    azure_auth_type: api_key
+    type: ${GRAPHRAG_EMBEDDING_TYPE}
+    api_key: ${GRAPHRAG_API_KEY}
+    api_base: ${GRAPHRAG_API_BASE}
+    api_version: ${GRAPHRAG_API_VERSION}
+    deployment_name: ${GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME}
+    model: ${GRAPHRAG_EMBEDDING_MODEL}
+    tokens_per_minute: ${GRAPHRAG_EMBEDDING_TPM}
+    requests_per_minute: ${GRAPHRAG_EMBEDDING_RPM}
+    concurrent_requests: 50
+    async_mode: threaded
 
-embeddings:
-  vector_store:
+vector_store:
+  default_vector_store:
     type: "azure_ai_search"
     url: ${AZURE_AI_SEARCH_URL_ENDPOINT}
     api_key: ${AZURE_AI_SEARCH_API_KEY}
     container_name: "simple_text_ci"
+
+extract_claims:
+  enabled: true
 
 community_reports:
   prompt: "prompts/community_report.txt"
   max_length: 2000
   max_input_length: 8000
 
-
-storage:
-  type: file # or blob
-  base_dir: "output/${timestamp}/artifacts"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
-
-reporting:
-  type: file # or console, blob
-  base_dir: "output/${timestamp}/reports"
-  # connection_string: <azure_blob_storage_connection_string>
-  # container_name: <azure_blob_storage_container_name>
-
 snapshots:
   embeddings: True
+
+drift_search:
+  n_depth: 1
+  drift_k_followups: 3
+  primer_folds: 3

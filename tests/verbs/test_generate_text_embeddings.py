@@ -3,16 +3,18 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import TextEmbeddingTarget
-from graphrag.index.config.embeddings import (
+from graphrag.config.embeddings import (
     all_embeddings,
 )
+from graphrag.config.enums import ModelType, TextEmbeddingTarget
+from graphrag.index.operations.embed_text.embed_text import TextEmbedStrategyType
 from graphrag.index.workflows.generate_text_embeddings import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
 
 from .util import (
+    DEFAULT_MODEL_CONFIG,
     create_test_context,
 )
 
@@ -20,19 +22,25 @@ from .util import (
 async def test_generate_text_embeddings():
     context = await create_test_context(
         storage=[
-            "create_final_documents",
-            "create_final_relationships",
-            "create_final_text_units",
-            "create_final_entities",
-            "create_final_community_reports",
+            "documents",
+            "relationships",
+            "text_units",
+            "entities",
+            "community_reports",
         ]
     )
 
-    config = create_graphrag_config()
-    config.embeddings.strategy = {
-        "type": "mock",
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    llm_settings = config.get_language_model_config(
+        config.embed_text.model_id
+    ).model_dump()
+    llm_settings["type"] = ModelType.MockEmbedding
+
+    config.embed_text.strategy = {
+        "type": TextEmbedStrategyType.openai,
+        "llm": llm_settings,
     }
-    config.embeddings.target = TextEmbeddingTarget.all
+    config.embed_text.target = TextEmbeddingTarget.all
     config.snapshots.embeddings = True
 
     await run_workflow(

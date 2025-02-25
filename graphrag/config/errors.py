@@ -6,35 +6,54 @@
 class ApiKeyMissingError(ValueError):
     """LLM Key missing error."""
 
-    def __init__(self, embedding: bool = False) -> None:
+    def __init__(self, llm_type: str, azure_auth_type: str | None = None) -> None:
         """Init method definition."""
-        api_type = "Embedding" if embedding else "Completion"
-        api_key = "GRAPHRAG_EMBEDDING_API_KEY" if embedding else "GRAPHRAG_LLM_API_KEY"
-        msg = f"API Key is required for {api_type} API. Please set either the OPENAI_API_KEY, GRAPHRAG_API_KEY or {api_key} environment variable."
+        msg = f"API Key is required for {llm_type}"
+        if azure_auth_type:
+            msg += f" when using {azure_auth_type} authentication"
+        msg += ". Please rerun `graphrag init` and set the API_KEY."
         super().__init__(msg)
 
 
 class AzureApiBaseMissingError(ValueError):
     """Azure API Base missing error."""
 
-    def __init__(self, embedding: bool = False) -> None:
+    def __init__(self, llm_type: str) -> None:
         """Init method definition."""
-        api_type = "Embedding" if embedding else "Completion"
-        api_base = "GRAPHRAG_EMBEDDING_API_BASE" if embedding else "GRAPHRAG_API_BASE"
-        msg = f"API Base is required for {api_type} API. Please set either the OPENAI_API_BASE, GRAPHRAG_API_BASE or {api_base} environment variable."
+        msg = f"API Base is required for {llm_type}. Please rerun `graphrag init` and set the api_base."
+        super().__init__(msg)
+
+
+class AzureApiVersionMissingError(ValueError):
+    """Azure API version missing error."""
+
+    def __init__(self, llm_type: str) -> None:
+        """Init method definition."""
+        msg = f"API Version is required for {llm_type}. Please rerun `graphrag init` and set the api_version."
         super().__init__(msg)
 
 
 class AzureDeploymentNameMissingError(ValueError):
     """Azure Deployment Name missing error."""
 
-    def __init__(self, embedding: bool = False) -> None:
+    def __init__(self, llm_type: str) -> None:
         """Init method definition."""
-        api_type = "Embedding" if embedding else "Completion"
-        api_base = (
-            "GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME"
-            if embedding
-            else "GRAPHRAG_LLM_DEPLOYMENT_NAME"
-        )
-        msg = f"Deployment Name is required for {api_type} API. Please set either the OPENAI_DEPLOYMENT_NAME, GRAPHRAG_LLM_DEPLOYMENT_NAME or {api_base} environment variable."
+        msg = f"Deployment name is required for {llm_type}. Please rerun `graphrag init` set the deployment_name."
+        super().__init__(msg)
+
+
+class LanguageModelConfigMissingError(ValueError):
+    """Missing model configuration error."""
+
+    def __init__(self, key: str = "") -> None:
+        """Init method definition."""
+        msg = f'A {key} model configuration is required. Please rerun `graphrag init` and set models["{key}"] in settings.yaml.'
+        super().__init__(msg)
+
+
+class ConflictingSettingsError(ValueError):
+    """Missing model configuration error."""
+
+    def __init__(self, msg: str) -> None:
+        """Init method definition."""
         super().__init__(msg)

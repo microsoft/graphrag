@@ -3,11 +3,9 @@
 
 """A module containing run_graph_intelligence,  run_resolve_entities and _create_text_list_splitter methods to run graph intelligence."""
 
-from fnllm import ChatLLM
-
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.llm.load_llm import load_llm, read_llm_params
+from graphrag.config.models.language_model_config import LanguageModelConfig
 from graphrag.index.operations.summarize_descriptions.description_summary_extractor import (
     SummarizeExtractor,
 )
@@ -15,6 +13,8 @@ from graphrag.index.operations.summarize_descriptions.typing import (
     StrategyConfig,
     SummarizedDescriptionResult,
 )
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import ChatModel
 
 
 async def run_graph_intelligence(
@@ -25,15 +25,20 @@ async def run_graph_intelligence(
     args: StrategyConfig,
 ) -> SummarizedDescriptionResult:
     """Run the graph intelligence entity extraction strategy."""
-    llm_config = read_llm_params(args.get("llm", {}))
-    llm = load_llm(
-        "summarize_descriptions", llm_config, callbacks=callbacks, cache=cache
+    llm_config = LanguageModelConfig(**args["llm"])
+    llm = ModelManager().get_or_create_chat_model(
+        name="summarize_descriptions",
+        model_type=llm_config.type,
+        config=llm_config,
+        callbacks=callbacks,
+        cache=cache,
     )
+
     return await run_summarize_descriptions(llm, id, descriptions, callbacks, args)
 
 
 async def run_summarize_descriptions(
-    llm: ChatLLM,
+    model: ChatModel,
     id: str | tuple[str, str],
     descriptions: list[str],
     callbacks: WorkflowCallbacks,
@@ -47,7 +52,7 @@ async def run_summarize_descriptions(
     max_tokens = args.get("max_tokens", None)
 
     extractor = SummarizeExtractor(
-        llm_invoker=llm,
+        model_invoker=model,
         summarization_prompt=summarize_prompt,
         entity_name_key=entity_name_key,
         input_descriptions_key=input_descriptions_key,

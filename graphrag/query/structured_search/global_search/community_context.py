@@ -7,9 +7,9 @@ from typing import Any
 
 import tiktoken
 
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.entity import Entity
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.entity import Entity
 from graphrag.query.context_builder.builders import ContextBuilderResult
 from graphrag.query.context_builder.community_context import (
     build_community_context,
@@ -46,7 +46,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
             self.dynamic_community_selection = DynamicCommunitySelection(
                 community_reports=community_reports,
                 communities=communities,
-                llm=dynamic_community_selection_kwargs.pop("llm"),
+                model=dynamic_community_selection_kwargs.pop("model"),
                 token_encoder=dynamic_community_selection_kwargs.pop("token_encoder"),
                 **dynamic_community_selection_kwargs,
             )
