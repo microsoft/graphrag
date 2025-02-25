@@ -2099,7 +2099,7 @@ File <span class="ansi-green-fg">~/work/graphrag/graphrag/graphrag/config/load_c
     <span class="n">final_nodes</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"degree"</span><span class="p">,</span> <span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="p">)</span>
 <span class="n">final_entities</span> <span class="o">=</span> <span class="n">final_entities</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">graph_props</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
-<span class="c1"># we're also persistint the frequency column</span>
+<span class="c1"># we're also persisting the frequency column</span>
 <span class="n">final_entities</span><span class="p">[</span><span class="s2">"frequency"</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_entities</span><span class="p">[</span><span class="s2">"text_unit_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
 
@@ -2168,7 +2168,7 @@ graph_props = (
     final_nodes.loc[:, ["id", "degree", "x", "y"]].groupby("id").first().reset_index()
 )
 final_entities = final_entities.merge(graph_props, on="id", how="left")
-# we're also persistint the frequency column
+# we're also persisting the frequency column
 final_entities["frequency"] = final_entities["text_unit_ids"].count()
 
 
