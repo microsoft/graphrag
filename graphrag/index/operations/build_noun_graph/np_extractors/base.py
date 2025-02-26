@@ -3,7 +3,12 @@
 
 """Base class for noun phrase extractors."""
 
+import logging
 from abc import ABCMeta, abstractmethod
+
+import spacy
+
+log = logging.getLogger(__name__)
 
 
 class BaseNounPhraseExtractor(metaclass=ABCMeta):
@@ -37,3 +42,20 @@ class BaseNounPhraseExtractor(metaclass=ABCMeta):
     @abstractmethod
     def __str__(self) -> str:
         """Return string representation of the extractor, used for cache key generation."""
+
+    @staticmethod
+    def load_spacy_model(
+        model_name: str, exclude: list[str] | None = None
+    ) -> spacy.language.Language:
+        """Load a SpaCy model."""
+        if exclude is None:
+            exclude = []
+        try:
+            return spacy.load(model_name, exclude=exclude)
+        except OSError:
+            msg = f"Model `{model_name}` not found. Attempting to download..."
+            log.info(msg)
+            from spacy.cli.download import download
+
+            download(model_name)
+            return spacy.load(model_name, exclude=exclude)
