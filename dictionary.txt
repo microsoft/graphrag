@@ -78,6 +78,7 @@ semversioner
 mkdocs
 fnllm
 typer
+spacy
 
 # Library Methods
 iterrows
