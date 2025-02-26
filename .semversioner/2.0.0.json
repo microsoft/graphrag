@@ -1,0 +1,146 @@
+{
+  "changes": [
+    {
+      "description": "Add children to communities to avoid re-compute.",
+      "type": "major"
+    },
+    {
+      "description": "Reorganize and rename workflows and their outputs.",
+      "type": "major"
+    },
+    {
+      "description": "Rework API to accept callbacks.",
+      "type": "major"
+    },
+    {
+      "description": "Add LMM Manager and Factory, to support provider registration",
+      "type": "minor"
+    },
+    {
+      "description": "Add NLP graph extraction.",
+      "type": "minor"
+    },
+    {
+      "description": "Add pipeline_start and pipeline_end callbacks.",
+      "type": "minor"
+    },
+    {
+      "description": "Move embeddings snapshots to the workflow runner.",
+      "type": "minor"
+    },
+    {
+      "description": "Remove config inheritance, hydration, and automatic env var overlays.",
+      "type": "minor"
+    },
+    {
+      "description": "Rework the update output storage structure.",
+      "type": "minor"
+    },
+    {
+      "description": "Add caching to NLP extractor.",
+      "type": "patch"
+    },
+    {
+      "description": "Add vector store id reference to embeddings config.",
+      "type": "patch"
+    },
+    {
+      "description": "Export NLP community reports prompt.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix DRIFT search on Azure AI Search.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix StopAsyncIteration catch.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix missing embeddings workflow in FastGraphRAG.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix proper use of n_depth for drift search",
+      "type": "patch"
+    },
+    {
+      "description": "Fix report generation recursion.",
+      "type": "patch"
+    },
+    {
+      "description": "Fix summarization over large datasets for inc indexing. Fix relationship summarization",
+      "type": "patch"
+    },
+    {
+      "description": "Optimize data iteration by removing some iterrows from code",
+      "type": "patch"
+    },
+    {
+      "description": "Patch json mode for community reports",
+      "type": "patch"
+    },
+    {
+      "description": "Properly increment text unit IDs during updates.",
+      "type": "patch"
+    },
+    {
+      "description": "Refactor config defaults from constants to type-safe, hierarchical dataclass.",
+      "type": "patch"
+    },
+    {
+      "description": "Require explicit azure auth settings when using AOI.",
+      "type": "patch"
+    },
+    {
+      "description": "Separates graph pruning for differential usage.",
+      "type": "patch"
+    },
+    {
+      "description": "Tuck flow functions under their workflow modules.",
+      "type": "patch"
+    },
+    {
+      "description": "Update fnllm. Remove unused libs.",
+      "type": "patch"
+    },
+    {
+      "description": "Use ModelProvider for query module",
+      "type": "patch"
+    },
+    {
+      "description": "Use shared schema for final outputs.",
+      "type": "patch"
+    },
+    {
+      "description": "add dynamic retry logic.",
+      "type": "patch"
+    },
+    {
+      "description": "add option to prepend metadata into chunks",
+      "type": "patch"
+    },
+    {
+      "description": "cleanup query code duplication.",
+      "type": "patch"
+    },
+    {
+      "description": "implemented multi-index querying for api layer",
+      "type": "patch"
+    },
+    {
+      "description": "multi index query cli support",
+      "type": "patch"
+    },
+    {
+      "description": "remove unused columns and change property document_attribute_columns to metadata",
+      "type": "patch"
+    },
+    {
+      "description": "update multi-index query to support new workflows",
+      "type": "patch"
+    }
+  ],
+  "created_at": "2025-02-25T23:30:50+00:00",
+  "version": "2.0.0"
+}

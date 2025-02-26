@@ -1,6 +1,44 @@
 # Changelog
 Note: version releases in the 0.x.y range may introduce breaking changes.
 
+## 2.0.0
+
+- major: Add children to communities to avoid re-compute.
+- major: Reorganize and rename workflows and their outputs.
+- major: Rework API to accept callbacks.
+- minor: Add LMM Manager and Factory, to support provider registration
+- minor: Add NLP graph extraction.
+- minor: Add pipeline_start and pipeline_end callbacks.
+- minor: Move embeddings snapshots to the workflow runner.
+- minor: Remove config inheritance, hydration, and automatic env var overlays.
+- minor: Rework the update output storage structure.
+- patch: Add caching to NLP extractor.
+- patch: Add vector store id reference to embeddings config.
+- patch: Export NLP community reports prompt.
+- patch: Fix DRIFT search on Azure AI Search.
+- patch: Fix StopAsyncIteration catch.
+- patch: Fix missing embeddings workflow in FastGraphRAG.
+- patch: Fix proper use of n_depth for drift search
+- patch: Fix report generation recursion.
+- patch: Fix summarization over large datasets for inc indexing. Fix relationship summarization
+- patch: Optimize data iteration by removing some iterrows from code
+- patch: Patch json mode for community reports
+- patch: Properly increment text unit IDs during updates.
+- patch: Refactor config defaults from constants to type-safe, hierarchical dataclass.
+- patch: Require explicit azure auth settings when using AOI.
+- patch: Separates graph pruning for differential usage.
+- patch: Tuck flow functions under their workflow modules.
+- patch: Update fnllm. Remove unused libs.
+- patch: Use ModelProvider for query module
+- patch: Use shared schema for final outputs.
+- patch: add dynamic retry logic.
+- patch: add option to prepend metadata into chunks
+- patch: cleanup query code duplication.
+- patch: implemented multi-index querying for api layer
+- patch: multi index query cli support
+- patch: remove unused columns and change property document_attribute_columns to metadata
+- patch: update multi-index query to support new workflows
+
 ## 1.2.0
 
 - minor: Add Drift Reduce response and streaming endpoint
