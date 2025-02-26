@@ -46,7 +46,7 @@ format-jinja = """
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-environs = "^11.0.0"
+environs = ">=11,<15"
 
 # Vector Stores
 azure-search-documents = "^11.5.2"
