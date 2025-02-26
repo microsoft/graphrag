@@ -5,7 +5,6 @@
 
 from typing import Any
 
-import spacy
 from spacy.tokens.span import Span
 from spacy.util import filter_spans
 
@@ -55,9 +54,9 @@ class SyntacticNounPhraseExtractor(BaseNounPhraseExtractor):
         self.include_named_entities = include_named_entities
         self.exclude_entity_tags = exclude_entity_tags
         if not include_named_entities:
-            self.nlp = spacy.load(model_name, exclude=["lemmatizer", "ner"])
+            self.nlp = self.load_spacy_model(model_name, exclude=["lemmatizer", "ner"])
         else:
-            self.nlp = spacy.load(model_name, exclude=["lemmatizer"])
+            self.nlp = self.load_spacy_model(model_name, exclude=["lemmatizer"])
 
         self.exclude_pos_tags = exclude_pos_tags
 
