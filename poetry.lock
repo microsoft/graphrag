@@ -1108,20 +1108,6 @@ files = [
 ]
 
 [[package]]
-name = "en_core_web_md"
-version = "3.8.0"
-description = "English pipeline optimized for CPU. Components: tok2vec, tagger, parser, senter, ner, attribute_ruler, lemmatizer."
-optional = false
-python-versions = "*"
-files = [
-    {file = "en_core_web_md-3.8.0.tar.gz", hash = "sha256:504fe70715dca9464bf11e385fbe80e92ae127394df3f9c45242926082425551"},
-]
-
-[package.source]
-type = "url"
-url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0.tar.gz"
-
-[[package]]
 name = "environs"
 version = "11.2.1"
 description = "simplified environment variable parsing"
@@ -5845,4 +5831,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "10f2f9d7477992ddaf5d952fa5d0d0238a655a34d3638b4ce7914452d57a755b"
+content-hash = "1258bf4de115ac572a4e01bb8eebb92d85300378c0c6b57aac3b468d49ce53e4"
