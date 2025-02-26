@@ -32,6 +32,13 @@ FastGraphRAG has a handful of NLP [options built in](https://microsoft.github.io
 
 Note that we also generally configure the text chunking to produce much smaller chunks (50-100 tokens). This results in a better co-occurrence graph.
 
+⚠️ Note On SpaCy model download
+
+This package requires SpaCy model `en_core_web_md` to function correctly. If the required model is not installed, the package will automatically download and install it the first time it is used.
+
+You can install it manually by running `python -m spacy download en_core_web_md`.
+
+
 ## Choosing a Method
 
 Standard GraphRAG provides a rich description of real-world entities and relationships, but is more expensive that FastGraphRAG. We estimate graph extraction to constitute roughly 75% of indexing cost. FastGraphRAG is therefore much cheaper, but the tradeoff is that the extracted graph is less directly relevant for use outside of GraphRAG, and the graph tends to be quite a bit noisier. If high fidelity entities and graph exploration are important to your use case, we recommend staying with traditional GraphRAG. If your use case is primarily aimed at summary questions using global search, FastGraphRAG is a reasonable and cheaper alternative.
