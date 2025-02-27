@@ -6,6 +6,7 @@ from pandas.testing import assert_series_equal
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
+from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
 from graphrag.index.workflows.extract_covariates import (
     run_workflow,
 )
@@ -26,7 +27,6 @@ MOCK_LLM_RESPONSES = [
 
 async def test_extract_covariates():
     input = load_test_table("text_units")
-    expected = load_test_table("covariates")
 
     context = await create_test_context(
         storage=["text_units"],
@@ -52,7 +52,9 @@ async def test_extract_covariates():
 
     actual = await load_table_from_storage("covariates", context.storage)
 
-    assert len(actual.columns) == len(expected.columns)
+    for column in COVARIATES_FINAL_COLUMNS:
+        assert column in actual.columns
+
     # our mock only returns one covariate per text unit, so that's a 1:1 mapping versus the LLM-extracted content in the test data
     assert len(actual) == len(input)
 

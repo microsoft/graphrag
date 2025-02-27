@@ -3,6 +3,7 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
 from graphrag.index.workflows.create_final_documents import (
     run_workflow,
 )
@@ -36,6 +37,9 @@ async def test_create_final_documents():
 
     compare_outputs(actual, expected)
 
+    for column in DOCUMENTS_FINAL_COLUMNS:
+        assert column in actual.columns
+
 
 async def test_create_final_documents_with_metadata_column():
     context = await create_test_context(
@@ -58,12 +62,7 @@ async def test_create_final_documents_with_metadata_column():
 
     actual = await load_table_from_storage("documents", context.storage)
 
-    # our test dataframe does not have metadata, so we'll assert without it
-    # and separately confirm it is in the output
-    compare_outputs(
-        actual, expected, columns=["id", "human_readable_id", "text", "metadata"]
-    )
-    assert len(actual.columns) == 7
-    assert "title" in actual.columns
-    assert "text_unit_ids" in actual.columns
-    assert "metadata" in actual.columns
+    compare_outputs(actual, expected)
+
+    for column in DOCUMENTS_FINAL_COLUMNS:
+        assert column in actual.columns

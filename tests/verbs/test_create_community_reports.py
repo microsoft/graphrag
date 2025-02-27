@@ -5,6 +5,7 @@
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
+from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
 from graphrag.index.operations.summarize_communities.community_reports_extractor import (
     CommunityReportResponse,
     FindingModel,
@@ -80,3 +81,6 @@ async def test_create_community_reports():
     # assert a handful of mock data items to confirm they get put in the right spot
     assert actual["rank"][:1][0] == 2
     assert actual["rating_explanation"][:1][0] == "<rating_explanation>"
+
+    for column in COMMUNITY_REPORTS_FINAL_COLUMNS:
+        assert column in actual.columns
