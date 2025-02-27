@@ -3,6 +3,7 @@
 
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.workflows.create_communities import (
     run_workflow,
 )
@@ -36,11 +37,14 @@ async def test_create_communities():
 
     actual = await load_table_from_storage("communities", context.storage)
 
-    assert "period" in expected.columns
     columns = list(expected.columns.values)
+    # don't compare period since it is created with the current date each time
     columns.remove("period")
     compare_outputs(
         actual,
         expected,
         columns=columns,
     )
+
+    for column in COMMUNITIES_FINAL_COLUMNS:
+        assert column in actual.columns
