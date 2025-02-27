@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from devtools import pformat
+from pprint import pformat
 from pydantic import BaseModel, Field
 
 from graphrag.index.config.cache import PipelineCacheConfigTypes

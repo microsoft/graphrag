@@ -1,3 +1,63 @@
+
+python/*/lib/
+dist/
+
+# Test Output
+.coverage
+coverage/
+licenses.txt
+examples_notebooks/*/data
+tests/fixtures/cache
+tests/fixtures/*/cache
+tests/fixtures/*/output
+output/lancedb
+
+
+# Random
+.DS_Store
+*.log*
+.venv
+venv/
+.conda
+.tmp
+
+.env
+build.zip
+
+.turbo
+
+__pycache__
+
+.pipeline
+
+# Azurite
+temp_azurite/
+__azurite*.json
+__blobstorage*.json
+__blobstorage__/
+
+# Getting started example
+ragtest/
+.ragtest/
+.pipelines
+.pipeline
+
+
+# mkdocs
+site/
+
+# Docs migration
+docsite/
+.yarn/
+.pnp*
+
+# PyCharm
+.idea/
+
+# Jupyter notebook
+.ipynb_checkpoints/
+
+
 **/__pycache__/
 workdir/
 sac/
