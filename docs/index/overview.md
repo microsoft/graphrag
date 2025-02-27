@@ -27,16 +27,15 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 
 ```bash
 # Via Poetry
-poetry run poe cli --root <data_root> # default config mode
+poetry run poe index --root <data_root> # default config mode
 ```
 
 ### Python API
 
-Please see the [examples folder](https://github.com/microsoft/graphrag/blob/main/examples/README.md) for a handful of functional pipelines illustrating how to create and run via a custom settings.yml or through custom python scripts.
+Please see the indexing API [python file](https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py) for the recommended method to call directly from Python code.
 
 ## Further Reading
 
 - To start developing within the _GraphRAG_ project, see [getting started](../developing.md)
 - To understand the underlying concepts and execution model of the indexing library, see [the architecture documentation](../index/architecture.md)
-- To get running with a series of examples, see [the examples documentation](https://github.com/microsoft/graphrag/blob/main/examples/README.md)
 - To read more about configuring the indexing engine, see [the configuration documentation](../config/overview.md)

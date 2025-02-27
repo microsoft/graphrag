@@ -5,12 +5,13 @@ To start using GraphRAG, you must generate a configuration file. The `init` comm
 ## Usage
 
 ```sh
-graphrag init [--root PATH]
+graphrag init [--root PATH] [--force, --no-force]
 ```
 
 ## Options
 
 - `--root PATH` - The project root directory to initialize graphrag at. Default is the current directory.
+- `--force`, `--no-force` - Optional, default is --no-force. Overwrite existing configuration and prompt files if they exist.
 
 ## Example
 

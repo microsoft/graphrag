@@ -26,13 +26,6 @@ stateDiagram-v2
     ExtractGraph --> EmbedGraph
 ```
 
-### Dataframe Message Format
-
-The primary unit of communication between workflows, and between workflow steps is an instance of `pandas.DataFrame`.
-Although side-effects are possible, our goal is to be _data-centric_ and _table-centric_ in our approach to data processing.
-This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
-Our underlying dataframe technology may change over time, but our primary goal is to support the workflow schema while retaining single-machine ease of use and developer ergonomics.
-
 ### LLM Caching
 
 The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
