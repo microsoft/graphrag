@@ -3,8 +3,6 @@
 
 """Utility functions for the GraphRAG run module."""
 
-import json
-
 from graphrag.cache.memory_pipeline_cache import InMemoryCache
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.progress_workflow_callbacks import ProgressWorkflowCallbacks
@@ -16,22 +14,18 @@ from graphrag.storage.memory_pipeline_storage import MemoryPipelineStorage
 from graphrag.storage.pipeline_storage import PipelineStorage
 
 
-async def create_run_context(
-    storage: PipelineStorage | None,
-    cache: PipelineCache | None,
-    stats: PipelineRunStats | None,
+def create_run_context(
+    storage: PipelineStorage | None = None,
+    cache: PipelineCache | None = None,
+    stats: PipelineRunStats | None = None,
     state: PipelineState | None = None,
 ) -> PipelineRunContext:
     """Create the run context for the pipeline."""
-    storage = storage or MemoryPipelineStorage()
-    if state is None:
-        state_file = await storage.get("context.json")
-        state = json.loads(state_file) if state_file else {}
     return PipelineRunContext(
         stats=stats or PipelineRunStats(),
         cache=cache or InMemoryCache(),
-        storage=storage,
-        state=state,  # type: ignore
+        storage=storage or MemoryPipelineStorage(),
+        state=state or {},
     )
 
 

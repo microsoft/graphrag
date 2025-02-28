@@ -36,9 +36,23 @@ async def test_pipeline_state():
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     config.workflows = ["workflow_1", "workflow_2"]
     callbacks = NoopWorkflowCallbacks()
-    context = await create_run_context(None, None, None, None)
+    context = create_run_context()
 
     for _, fn in PipelineFactory.create_pipeline(config).run():
         await fn(config, context, callbacks)
 
     assert context.state["count"] == 2
+
+
+async def test_pipeline_existing_state():
+    PipelineFactory.register("workflow_2", run_workflow_2)
+
+    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
+    config.workflows = ["workflow_2"]
+    callbacks = NoopWorkflowCallbacks()
+    context = create_run_context(state={"count": 4})
+
+    for _, fn in PipelineFactory.create_pipeline(config).run():
+        await fn(config, context, callbacks)
+
+    assert context.state["count"] == 5

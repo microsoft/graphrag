@@ -133,9 +133,9 @@ async def _run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
-    context = await create_run_context(
-        storage=storage, cache=cache, stats=None, state=None
-    )
+    state_json = await storage.get("state.json")
+    state = json.loads(state_json) if state_json else {}
+    context = create_run_context(storage=storage, cache=cache, state=state)
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
