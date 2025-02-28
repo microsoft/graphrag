@@ -134,7 +134,7 @@ async def _run_pipeline(
     start_time = time.time()
 
     # load existing state in case any workflows are stateful
-    state_json = await storage.get("state.json")
+    state_json = await storage.get("context.json")
     state = json.loads(state_json) if state_json else {}
 
     context = create_run_context(
@@ -180,7 +180,7 @@ async def _dump_json(context: PipelineRunContext) -> None:
         "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
     )
     await context.storage.set(
-        "state.json", json.dumps(context.state, indent=4, ensure_ascii=False)
+        "context.json", json.dumps(context.state, indent=4, ensure_ascii=False)
     )
 
 
