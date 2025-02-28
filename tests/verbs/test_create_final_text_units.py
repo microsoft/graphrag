@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.workflows.create_final_text_units import (
@@ -32,11 +31,7 @@ async def test_create_final_text_units():
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     config.extract_claims.enabled = True
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     actual = await load_table_from_storage("text_units", context.storage)
 

@@ -18,11 +18,11 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.input.factory import create_input
-from graphrag.index.run.pipeline import Pipeline
-from graphrag.index.run.pipeline_run_result import PipelineRunResult
 from graphrag.index.run.utils import create_run_context
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.pipeline import Pipeline
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
@@ -133,9 +133,13 @@ async def _run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
+    # load existing state in case any workflows are stateful
     state_json = await storage.get("state.json")
     state = json.loads(state_json) if state_json else {}
-    context = create_run_context(storage=storage, cache=cache, state=state)
+
+    context = create_run_context(
+        storage=storage, cache=cache, callbacks=callbacks, state=state
+    )
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
@@ -150,11 +154,7 @@ async def _run_pipeline(
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
             work_time = time.time()
-            result = await workflow_function(
-                config,
-                context,
-                callbacks,
-            )
+            result = await workflow_function(config, context)
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
             yield PipelineRunResult(

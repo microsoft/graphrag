@@ -16,7 +16,7 @@ from graphrag.index.operations.extract_graph.typing import (
     EntityExtractStrategy,
     ExtractEntityStrategyType,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 
 log = logging.getLogger(__name__)
 

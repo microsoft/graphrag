@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag.index.context import PipelineState
+from graphrag.index.typing.state import PipelineState
 
 
 @dataclass

@@ -3,7 +3,6 @@
 
 from pandas.testing import assert_series_equal
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
@@ -44,11 +43,7 @@ async def test_extract_covariates():
         "claim_description": "description",
     }
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     actual = await load_table_from_storage("covariates", context.storage)
 

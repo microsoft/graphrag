@@ -1,17 +1,14 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""A module containing the 'PipelineRunResult' model."""
+"""Pipeline workflow types."""
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
-
-ErrorHandlerFn = Callable[[BaseException | None, str | None, dict | None], None]
+from graphrag.index.typing.context import PipelineRunContext
 
 
 @dataclass
@@ -23,7 +20,7 @@ class WorkflowFunctionOutput:
 
 
 WorkflowFunction = Callable[
-    [GraphRagConfig, PipelineRunContext, WorkflowCallbacks],
+    [GraphRagConfig, PipelineRunContext],
     Awaitable[WorkflowFunctionOutput],
 ]
 Workflow = tuple[str, WorkflowFunction]

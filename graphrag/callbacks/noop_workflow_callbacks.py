@@ -4,7 +4,7 @@
 """A no-op implementation of WorkflowCallbacks."""
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.index.run.pipeline_run_result import PipelineRunResult
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.logger.progress import Progress
 
 

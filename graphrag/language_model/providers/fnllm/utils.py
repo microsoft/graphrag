@@ -18,7 +18,7 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import (
     LanguageModelConfig,
 )
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.providers.fnllm.cache import FNLLMCacheProvider
 
 

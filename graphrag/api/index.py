@@ -14,10 +14,10 @@ from graphrag.callbacks.reporting import create_pipeline_reporter
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.pipeline_run_result import PipelineRunResult
 from graphrag.index.run.run_pipeline import run_pipeline
 from graphrag.index.run.utils import create_callback_chain
-from graphrag.index.typing import WorkflowFunction
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
+from graphrag.index.typing.workflow import WorkflowFunction
 from graphrag.index.workflows.factory import PipelineFactory
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger

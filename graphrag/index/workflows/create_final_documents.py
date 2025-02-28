@@ -5,18 +5,16 @@
 
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
-from graphrag.index.context import PipelineRunContext
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     _config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     documents = await load_table_from_storage("documents", context.storage)

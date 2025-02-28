@@ -14,7 +14,7 @@ import networkx as nx
 import tiktoken
 
 from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_graph import (

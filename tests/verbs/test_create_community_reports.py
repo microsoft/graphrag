@@ -2,7 +2,6 @@
 # Licensed under the MIT License
 
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
 from graphrag.data_model.schemas import COMMUNITY_REPORTS_FINAL_COLUMNS
@@ -65,11 +64,7 @@ async def test_create_community_reports():
         "graph_prompt": "",
     }
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     actual = await load_table_from_storage("community_reports", context.storage)
 
