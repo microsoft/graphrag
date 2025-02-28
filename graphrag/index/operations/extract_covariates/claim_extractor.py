@@ -11,7 +11,7 @@ from typing import Any
 import tiktoken
 
 from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,

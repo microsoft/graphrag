@@ -12,7 +12,7 @@ from graphrag.index.operations.layout_graph.typing import (
     GraphLayout,
     NodePosition,
 )
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 
 # TODO: This could be handled more elegantly, like what columns to use
 # for "size" or "cluster"

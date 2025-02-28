@@ -13,18 +13,17 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.data_model.schemas import COVARIATES_FINAL_COLUMNS
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.extract_covariates.extract_covariates import (
     extract_covariates as extractor,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to extract and format covariates."""
     text_units = await load_table_from_storage("text_units", context.storage)
@@ -41,7 +40,7 @@ async def run_workflow(
 
     output = await extract_covariates(
         text_units,
-        callbacks,
+        context.callbacks,
         context.cache,
         "claim",
         extraction_strategy,
@@ -52,7 +51,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "covariates", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def extract_covariates(

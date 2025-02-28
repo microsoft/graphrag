@@ -11,10 +11,10 @@ import pandas as pd
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.chunking_config import ChunkStrategyType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.operations.chunk_text.strategies import get_encoding_fn
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.index.utils.hashing import gen_sha512_hash
 from graphrag.logger.progress import Progress
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
@@ -23,7 +23,6 @@ from graphrag.utils.storage import load_table_from_storage, write_table_to_stora
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform base text_units."""
     documents = await load_table_from_storage("documents", context.storage)
@@ -32,7 +31,7 @@ async def run_workflow(
 
     output = create_base_text_units(
         documents,
-        callbacks,
+        context.callbacks,
         chunks.group_by_columns,
         chunks.size,
         chunks.overlap,
@@ -44,7 +43,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "text_units", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 def create_base_text_units(

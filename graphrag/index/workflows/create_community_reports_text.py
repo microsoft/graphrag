@@ -12,7 +12,6 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
@@ -26,7 +25,8 @@ from graphrag.index.operations.summarize_communities.text_unit_context.context_b
     build_level_context,
     build_local_context,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
@@ -35,7 +35,6 @@ log = logging.getLogger(__name__)
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     entities = await load_table_from_storage("entities", context.storage)
@@ -56,7 +55,7 @@ async def run_workflow(
         entities,
         communities,
         text_units,
-        callbacks,
+        context.callbacks,
         context.cache,
         summarization_strategy,
         async_mode=async_mode,
@@ -65,7 +64,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def create_community_reports_text(

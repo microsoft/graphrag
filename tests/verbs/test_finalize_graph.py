@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.data_model.schemas import (
     ENTITIES_FINAL_COLUMNS,
@@ -24,11 +23,7 @@ async def test_finalize_graph():
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
@@ -54,11 +49,7 @@ async def test_finalize_graph_umap():
     config.embed_graph.enabled = True
     config.umap.enabled = True
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
