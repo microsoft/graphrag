@@ -13,7 +13,6 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -29,8 +28,8 @@ from graphrag.index.update.incremental_index import (
 )
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
@@ -46,17 +45,8 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
 
-    storage_config = config.output.model_dump()
-    storage = StorageFactory().create_storage(
-        storage_type=storage_config["type"],
-        kwargs=storage_config,
-    )
-    cache_config = config.cache.model_dump()
-    cache = CacheFactory().create_cache(
-        cache_type=cache_config["type"],
-        root_dir=root_dir,
-        kwargs=cache_config,
-    )
+    storage = create_storage_from_config(config.output)
+    cache = create_cache_from_config(config.cache, root_dir)
 
     dataset = await create_input(config.input, logger, root_dir)
 
@@ -70,11 +60,7 @@ async def run_pipeline(
             warning_msg = "Incremental indexing found no new documents, exiting."
             logger.warning(warning_msg)
         else:
-            update_storage_config = config.update_index_output.model_dump()
-            update_storage = StorageFactory().create_storage(
-                storage_type=update_storage_config["type"],
-                kwargs=update_storage_config,
-            )
+            update_storage = create_storage_from_config(config.update_index_output)
             # we use this to store the new subset index, and will merge its content with the previous index
             timestamped_storage = update_storage.child(time.strftime("%Y%m%d-%H%M%S"))
             delta_storage = timestamped_storage.child("delta")

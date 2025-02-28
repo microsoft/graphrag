@@ -6,8 +6,14 @@
 from pathlib import Path
 from typing import Any
 
+from graphrag.cache.factory import CacheFactory
+from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.config.embeddings import create_collection_name
+from graphrag.config.models.cache_config import CacheConfig
+from graphrag.config.models.output_config import OutputConfig
 from graphrag.data_model.types import TextEmbedder
+from graphrag.storage.factory import StorageFactory
+from graphrag.storage.pipeline_storage import PipelineStorage
 from graphrag.vector_stores.base import (
     BaseVectorStore,
     VectorStoreDocument,
@@ -230,3 +236,22 @@ def load_search_prompt(root_dir: str, prompt_config: str | None) -> str | None:
         if prompt_file.exists():
             return prompt_file.read_bytes().decode(encoding="utf-8")
     return None
+
+
+def create_storage_from_config(output: OutputConfig) -> PipelineStorage:
+    """Create a storage object from the config."""
+    storage_config = output.model_dump()
+    return StorageFactory().create_storage(
+        storage_type=storage_config["type"],
+        kwargs=storage_config,
+    )
+
+
+def create_cache_from_config(cache: CacheConfig, root_dir: str) -> PipelineCache:
+    """Create a cache object from the config."""
+    cache_config = cache.model_dump()
+    return CacheFactory().create_cache(
+        cache_type=cache_config["type"],
+        root_dir=root_dir,
+        kwargs=cache_config,
+    )
