@@ -11,7 +11,7 @@
         "finalize_graph": {
             "row_range": [
                 1,
-                100
+                500
             ],
             "nan_allowed_columns": [
                 "x",
