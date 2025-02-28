@@ -26,7 +26,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "documents", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 def create_final_documents(

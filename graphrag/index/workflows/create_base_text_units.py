@@ -44,7 +44,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "text_units", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 def create_base_text_units(

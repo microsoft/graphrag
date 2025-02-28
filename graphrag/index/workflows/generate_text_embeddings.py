@@ -47,7 +47,7 @@ async def run_workflow(
     embedded_fields = get_embedded_fields(config)
     text_embed = get_embedding_settings(config)
 
-    result = await generate_text_embeddings(
+    output = await generate_text_embeddings(
         documents=documents,
         relationships=relationships,
         text_units=text_units,
@@ -60,14 +60,14 @@ async def run_workflow(
     )
 
     if config.snapshots.embeddings:
-        for name, table in result.items():
+        for name, table in output.items():
             await write_table_to_storage(
                 table,
                 f"embeddings.{name}",
                 context.storage,
             )
 
-    return WorkflowFunctionOutput(result=result, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def generate_text_embeddings(

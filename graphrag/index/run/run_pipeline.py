@@ -18,7 +18,7 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunStats
+from graphrag.index.context import PipelineRunContext
 from graphrag.index.input.factory import create_input
 from graphrag.index.run.pipeline import Pipeline
 from graphrag.index.run.pipeline_run_result import PipelineRunResult
@@ -133,15 +133,16 @@ async def _run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
-    context = create_run_context(storage=storage, cache=cache, stats=None)
+    context = await create_run_context(
+        storage=storage, cache=cache, stats=None, state=None
+    )
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
     last_workflow = "starting documents"
 
-    conf = config.model_copy()
     try:
-        await _dump_stats(context.stats, context.storage)
+        await _dump_json(context)
         await write_table_to_storage(dataset, "documents", context.storage)
 
         for name, workflow_function in pipeline.run():
@@ -150,31 +151,36 @@ async def _run_pipeline(
             callbacks.workflow_start(name, None)
             work_time = time.time()
             result = await workflow_function(
-                conf,
+                config,
                 context,
                 callbacks,
             )
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
-            if result.config:
-                conf = result.config
-            yield PipelineRunResult(name, result.result, conf, None)
+            yield PipelineRunResult(
+                workflow=name, result=result.result, state=context.state, errors=None
+            )
 
             context.stats.workflows[name] = {"overall": time.time() - work_time}
 
         context.stats.total_runtime = time.time() - start_time
-        await _dump_stats(context.stats, context.storage)
+        await _dump_json(context)
 
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         callbacks.error("Error running pipeline!", e, traceback.format_exc())
-        yield PipelineRunResult(last_workflow, None, conf, [e])
+        yield PipelineRunResult(
+            workflow=last_workflow, result=None, state=context.state, errors=[e]
+        )
 
 
-async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None:
-    """Dump the stats to the storage."""
-    await storage.set(
-        "stats.json", json.dumps(asdict(stats), indent=4, ensure_ascii=False)
+async def _dump_json(context: PipelineRunContext) -> None:
+    """Dump the stats and context state to the storage."""
+    await context.storage.set(
+        "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
+    )
+    await context.storage.set(
+        "state.json", json.dumps(context.state, indent=4, ensure_ascii=False)
     )
 
 

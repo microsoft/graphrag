@@ -20,8 +20,6 @@ class WorkflowFunctionOutput:
 
     result: Any | None
     """The result of the workflow function. This can be anything - we use it only for logging downstream, and expect each workflow function to write official outputs to the provided storage."""
-    config: GraphRagConfig | None
-    """If the config is mutated, return the mutated config here. This allows users to design workflows that tune config for downstream workflow use."""
 
 
 WorkflowFunction = Callable[

@@ -52,7 +52,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "covariates", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def extract_covariates(

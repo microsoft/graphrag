@@ -38,8 +38,7 @@ async def run_workflow(
         result={
             "entities": pruned_entities,
             "relationships": pruned_relationships,
-        },
-        config=None,
+        }
     )
 
 

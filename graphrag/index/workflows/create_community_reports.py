@@ -71,7 +71,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def create_community_reports(

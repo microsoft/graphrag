@@ -33,7 +33,7 @@ DEFAULT_MODEL_CONFIG = {
 
 async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:
     """Create a test context with tables loaded into storage storage."""
-    context = create_run_context(None, None, None)
+    context = await create_run_context(None, None, None)
 
     # always set the input docs, but since our stored table is final, drop what wouldn't be in the original source input
     input = load_test_table("documents")

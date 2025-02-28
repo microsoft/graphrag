@@ -39,8 +39,7 @@ async def run_workflow(
         result={
             "entities": entities,
             "relationships": relationships,
-        },
-        config=None,
+        }
     )
 
 

@@ -6,6 +6,7 @@
 
 from dataclasses import dataclass as dc_dataclass
 from dataclasses import field
+from typing import Any
 
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -28,6 +29,9 @@ class PipelineRunStats:
     """A dictionary of workflows."""
 
 
+PipelineState = dict[Any, Any]
+
+
 @dc_dataclass
 class PipelineRunContext:
     """Provides the context for the current pipeline run."""
@@ -37,3 +41,5 @@ class PipelineRunContext:
     "Long-term storage for pipeline verbs to use. Items written here will be written to the storage provider."
     cache: PipelineCache
     "Cache instance for reading previous LLM responses."
+    state: PipelineState
+    "Arbitrary property bag for runtime state, persistent pre-computes, or experimental features."
