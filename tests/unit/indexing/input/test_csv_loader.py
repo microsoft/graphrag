@@ -17,6 +17,7 @@ async def test_csv_loader_one_file():
     assert documents.shape == (2, 4)
     assert documents["title"].iloc[0] == "input.csv"
 
+
 async def test_csv_loader_one_file_with_title():
     config = InputConfig(
         type=InputType.file,
@@ -29,6 +30,7 @@ async def test_csv_loader_one_file_with_title():
     assert documents.shape == (2, 4)
     assert documents["title"].iloc[0] == "Hello"
 
+
 async def test_csv_loader_one_file_with_metadata():
     config = InputConfig(
         type=InputType.file,
@@ -36,11 +38,12 @@ async def test_csv_loader_one_file_with_metadata():
         file_pattern=".*\\.csv$",
         base_dir="tests/unit/indexing/input/data/one-csv",
         title_column="title",
-        metadata=["title"]
+        metadata=["title"],
     )
     documents = await create_input(config=config)
     assert documents.shape == (2, 5)
     assert documents["metadata"][0] == {"title": "Hello"}
+
 
 async def test_csv_loader_multiple_files():
     config = InputConfig(
@@ -49,7 +52,5 @@ async def test_csv_loader_multiple_files():
         file_pattern=".*\\.csv$",
         base_dir="tests/unit/indexing/input/data/multiple-csvs",
     )
-    # the loader should concat all csvs into a single dataframe
     documents = await create_input(config=config)
     assert documents.shape == (4, 4)
-

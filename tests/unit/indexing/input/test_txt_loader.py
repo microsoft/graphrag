@@ -24,12 +24,13 @@ async def test_txt_loader_one_file_with_metadata():
         file_type=InputFileType.text,
         file_pattern=".*\\.txt$",
         base_dir="tests/unit/indexing/input/data/one-txt",
-        metadata=["title"]
+        metadata=["title"],
     )
     documents = await create_input(config=config)
     assert documents.shape == (1, 5)
     # unlike csv, we cannot set the title to anything other than the filename
     assert documents["metadata"][0] == {"title": "input.txt"}
+
 
 async def test_txt_loader_multiple_files():
     config = InputConfig(
@@ -38,7 +39,5 @@ async def test_txt_loader_multiple_files():
         file_pattern=".*\\.txt$",
         base_dir="tests/unit/indexing/input/data/multiple-txts",
     )
-    # the loader should concat all text files into a single dataframe
     documents = await create_input(config=config)
     assert documents.shape == (2, 4)
-

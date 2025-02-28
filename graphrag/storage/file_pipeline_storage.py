@@ -56,7 +56,6 @@ class FilePipelineStorage(PipelineStorage):
             )
 
         search_path = Path(self._root_dir) / (base_dir or "")
-        print("SEARCH PATH ", search_path)
         log.info("search %s for files matching %s", search_path, file_pattern.pattern)
         all_files = list(search_path.rglob("**/*"))
         num_loaded = 0

@@ -187,6 +187,7 @@ upvote
 # Misc
 Arxiv
 kwds
+jsons
 
 # Dulce
 astrotechnician

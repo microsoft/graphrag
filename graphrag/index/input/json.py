@@ -3,9 +3,9 @@
 
 """A module containing load method definition."""
 
+import json
 import logging
 import re
-from io import BytesIO
 
 import pandas as pd
 
@@ -16,22 +16,26 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 
 log = logging.getLogger(__name__)
 
-DEFAULT_FILE_PATTERN = re.compile(r"(?P<filename>[^\\/]).csv$")
+DEFAULT_FILE_PATTERN = re.compile(r"(?P<filename>[^\\/]).json$")
 
 
-async def load_csv(
+async def load_json(
     config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
-    """Load csv inputs from a directory."""
-    log.info("Loading csv files from %s", config.base_dir)
+    """Load json inputs from a directory."""
+    log.info("Loading json files from %s", config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
             group = {}
-        buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding)
+        text = await storage.get(path)
+        as_json = json.loads(text)
+        # json file could just be a single object, or an array of objects
+        rows = as_json if isinstance(as_json, list) else [as_json]
+        data = pd.DataFrame(rows)
+
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(
@@ -42,7 +46,7 @@ async def load_csv(
         if config.text_column is not None and "text" not in data.columns:
             if config.text_column not in data.columns:
                 log.warning(
-                    "text_column %s not found in csv file %s",
+                    "text_column %s not found in json file %s",
                     config.text_column,
                     path,
                 )
@@ -51,7 +55,7 @@ async def load_csv(
         if config.title_column is not None:
             if config.title_column not in data.columns:
                 log.warning(
-                    "title_column %s not found in csv file %s",
+                    "title_column %s not found in json file %s",
                     config.title_column,
                     path,
                 )
@@ -79,7 +83,7 @@ async def load_csv(
     )
 
     if len(files) == 0:
-        msg = f"No CSV files found in {config.base_dir}"
+        msg = f"No JSON files found in {config.base_dir}"
         raise ValueError(msg)
 
     files_loaded = []
@@ -87,11 +91,12 @@ async def load_csv(
     for file, group in files:
         try:
             files_loaded.append(await load_file(file, group))
-        except Exception:  # noqa: BLE001 (catching Exception is fine here)
-            log.warning("Warning! Error loading csv file %s. Skipping...", file)
+        except Exception as e:  # noqa: BLE001 (catching Exception is fine here)
+            log.warning("Warning! Error loading json file %s. Skipping...", file)
+            log.warning("Error: %s", e)
 
-    log.info("Found %d csv files, loading %d", len(files), len(files_loaded))
+    log.info("Found %d json files, loading %d", len(files), len(files_loaded))
     result = pd.concat(files_loaded)
-    total_files_log = f"Total number of unfiltered csv rows: {len(result)}"
+    total_files_log = f"Total number of unfiltered json rows: {len(result)}"
     log.info(total_files_log)
     return result

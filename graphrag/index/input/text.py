@@ -18,11 +18,11 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 DEFAULT_FILE_PATTERN = re.compile(
     r".*[\\/](?P<source>[^\\/]+)[\\/](?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})_(?P<author>[^_]+)_\d+\.txt"
 )
-input_type = "text"
+
 log = logging.getLogger(__name__)
 
 
-async def load(
+async def load_text(
     config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
