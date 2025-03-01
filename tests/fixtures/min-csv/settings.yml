@@ -34,7 +34,6 @@ vector_store:
 
 input:
   file_type: csv
-  file_pattern: ".*\\.csv$$"
 
 snapshots:
   embeddings: True

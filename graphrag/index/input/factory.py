@@ -10,12 +10,11 @@ from typing import cast
 
 import pandas as pd
 
-from graphrag.config.enums import InputType
+from graphrag.config.enums import InputFileType, InputType
 from graphrag.config.models.input_config import InputConfig
-from graphrag.index.input.csv import input_type as csv
-from graphrag.index.input.csv import load as load_csv
-from graphrag.index.input.text import input_type as text
-from graphrag.index.input.text import load as load_text
+from graphrag.index.input.csv import load_csv
+from graphrag.index.input.json import load_json
+from graphrag.index.input.text import load_text
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.null_progress import NullProgressLogger
 from graphrag.storage.blob_pipeline_storage import BlobPipelineStorage
@@ -23,8 +22,9 @@ from graphrag.storage.file_pipeline_storage import FilePipelineStorage
 
 log = logging.getLogger(__name__)
 loaders: dict[str, Callable[..., Awaitable[pd.DataFrame]]] = {
-    text: load_text,
-    csv: load_csv,
+    InputFileType.text: load_text,
+    InputFileType.csv: load_csv,
+    InputFileType.json: load_json,
 }
 
 

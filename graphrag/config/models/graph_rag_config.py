@@ -166,6 +166,14 @@ class GraphRagConfig(BaseModel):
     )
     """The input configuration."""
 
+    def _validate_input_pattern(self) -> None:
+        """Validate the input file pattern based on the specified type."""
+        if len(self.input.file_pattern) == 0:
+            if self.input.file_type == defs.InputFileType.text:
+                self.input.file_pattern = ".*\\.txt$"
+            else:
+                self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
+
     embed_graph: EmbedGraphConfig = Field(
         description="Graph embedding configuration.",
         default=EmbedGraphConfig(),
@@ -336,6 +344,7 @@ class GraphRagConfig(BaseModel):
         """Validate the model configuration."""
         self._validate_root_dir()
         self._validate_models()
+        self._validate_input_pattern()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
         self._validate_multi_output_base_dirs()

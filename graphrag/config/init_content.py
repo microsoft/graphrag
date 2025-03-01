@@ -70,10 +70,8 @@ embed_text:
 
 input:
   type: {graphrag_config_defaults.input.type.value} # or blob
-  file_type: {graphrag_config_defaults.input.file_type.value} # or csv
+  file_type: {graphrag_config_defaults.input.file_type.value} # [csv, text, json]
   base_dir: "{graphrag_config_defaults.input.base_dir}"
-  file_encoding: {graphrag_config_defaults.input.encoding}
-  file_pattern: ".*\\\\.txt$$"
 
 chunks:
   size: {graphrag_config_defaults.chunks.size}
