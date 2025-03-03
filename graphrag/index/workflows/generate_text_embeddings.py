@@ -22,9 +22,9 @@ from graphrag.config.embeddings import (
     text_unit_text_embedding,
 )
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.embed_text import embed_text
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
@@ -33,7 +33,6 @@ log = logging.getLogger(__name__)
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     documents = await load_table_from_storage("documents", context.storage)
@@ -47,27 +46,27 @@ async def run_workflow(
     embedded_fields = get_embedded_fields(config)
     text_embed = get_embedding_settings(config)
 
-    result = await generate_text_embeddings(
+    output = await generate_text_embeddings(
         documents=documents,
         relationships=relationships,
         text_units=text_units,
         entities=entities,
         community_reports=community_reports,
-        callbacks=callbacks,
+        callbacks=context.callbacks,
         cache=context.cache,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
     )
 
     if config.snapshots.embeddings:
-        for name, table in result.items():
+        for name, table in output.items():
             await write_table_to_storage(
                 table,
                 f"embeddings.{name}",
                 context.storage,
             )
 
-    return WorkflowFunctionOutput(result=result, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def generate_text_embeddings(

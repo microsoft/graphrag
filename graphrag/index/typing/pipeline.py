@@ -5,7 +5,7 @@
 
 from collections.abc import Generator
 
-from graphrag.index.typing import Workflow
+from graphrag.index.typing.workflow import Workflow
 
 
 class Pipeline:

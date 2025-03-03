@@ -6,22 +6,20 @@
 import pandas as pd
 
 from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.extract_graph_nlp_config import ExtractGraphNLPConfig
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.build_noun_graph.build_noun_graph import build_noun_graph
 from graphrag.index.operations.build_noun_graph.np_extractors.factory import (
     create_noun_phrase_extractor,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
@@ -39,8 +37,7 @@ async def run_workflow(
         result={
             "entities": entities,
             "relationships": relationships,
-        },
-        config=None,
+        }
     )
 
 

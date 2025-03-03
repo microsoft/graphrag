@@ -7,8 +7,8 @@ from typing import ClassVar
 
 from graphrag.config.enums import IndexingMethod
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.run.pipeline import Pipeline
-from graphrag.index.typing import WorkflowFunction
+from graphrag.index.typing.pipeline import Pipeline
+from graphrag.index.typing.workflow import WorkflowFunction
 
 
 class PipelineFactory:

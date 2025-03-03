@@ -11,21 +11,20 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
@@ -46,7 +45,7 @@ async def run_workflow(
 
     entities, relationships = await extract_graph(
         text_units=text_units,
-        callbacks=callbacks,
+        callbacks=context.callbacks,
         cache=context.cache,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extract_graph_llm_settings.concurrent_requests,
@@ -63,8 +62,7 @@ async def run_workflow(
         result={
             "entities": entities,
             "relationships": relationships,
-        },
-        config=None,
+        }
     )
 
 

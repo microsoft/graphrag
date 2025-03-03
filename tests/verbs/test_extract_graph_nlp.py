@@ -2,8 +2,7 @@
 # Licensed under the MIT License
 
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.models.prune_graph_config import PruneGraphConfig
-from graphrag.index.workflows.prune_graph import (
+from graphrag.index.workflows.extract_graph_nlp import (
     run_workflow,
 )
 from graphrag.utils.storage import load_table_from_storage
@@ -14,18 +13,21 @@ from .util import (
 )
 
 
-async def test_prune_graph():
+async def test_extract_graph_nlp():
     context = await create_test_context(
-        storage=["entities", "relationships"],
+        storage=["text_units"],
     )
 
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    config.prune_graph = PruneGraphConfig(
-        min_node_freq=4, min_node_degree=0, min_edge_weight_pct=0
-    )
 
     await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
+    edges_actual = await load_table_from_storage("relationships", context.storage)
 
-    assert len(nodes_actual) == 21
+    # this will be the raw count of entities and edges with no pruning
+    # with NLP it is deterministic, so we can assert exact row counts
+    assert len(nodes_actual) == 1148
+    assert len(nodes_actual.columns) == 5
+    assert len(edges_actual) == 29445
+    assert len(edges_actual.columns) == 5

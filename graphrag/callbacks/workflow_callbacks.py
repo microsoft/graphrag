@@ -5,7 +5,7 @@
 
 from typing import Protocol
 
-from graphrag.index.run.pipeline_run_result import PipelineRunResult
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.logger.progress import Progress
 
 

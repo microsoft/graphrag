@@ -13,24 +13,23 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from graphrag.cache.factory import CacheFactory
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunStats
 from graphrag.index.input.factory import create_input
-from graphrag.index.run.pipeline import Pipeline
-from graphrag.index.run.pipeline_run_result import PipelineRunResult
 from graphrag.index.run.utils import create_run_context
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.pipeline import Pipeline
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.index.update.incremental_index import (
     get_delta_docs,
     update_dataframe_outputs,
 )
 from graphrag.logger.base import ProgressLogger
 from graphrag.logger.progress import Progress
-from graphrag.storage.factory import StorageFactory
 from graphrag.storage.pipeline_storage import PipelineStorage
+from graphrag.utils.api import create_cache_from_config, create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 log = logging.getLogger(__name__)
@@ -46,17 +45,8 @@ async def run_pipeline(
     """Run all workflows using a simplified pipeline."""
     root_dir = config.root_dir
 
-    storage_config = config.output.model_dump()
-    storage = StorageFactory().create_storage(
-        storage_type=storage_config["type"],
-        kwargs=storage_config,
-    )
-    cache_config = config.cache.model_dump()
-    cache = CacheFactory().create_cache(
-        cache_type=cache_config["type"],
-        root_dir=root_dir,
-        kwargs=cache_config,
-    )
+    storage = create_storage_from_config(config.output)
+    cache = create_cache_from_config(config.cache, root_dir)
 
     dataset = await create_input(config.input, logger, root_dir)
 
@@ -70,11 +60,7 @@ async def run_pipeline(
             warning_msg = "Incremental indexing found no new documents, exiting."
             logger.warning(warning_msg)
         else:
-            update_storage_config = config.update_index_output.model_dump()
-            update_storage = StorageFactory().create_storage(
-                storage_type=update_storage_config["type"],
-                kwargs=update_storage_config,
-            )
+            update_storage = create_storage_from_config(config.update_index_output)
             # we use this to store the new subset index, and will merge its content with the previous index
             timestamped_storage = update_storage.child(time.strftime("%Y%m%d-%H%M%S"))
             delta_storage = timestamped_storage.child("delta")
@@ -133,15 +119,20 @@ async def _run_pipeline(
 ) -> AsyncIterable[PipelineRunResult]:
     start_time = time.time()
 
-    context = create_run_context(storage=storage, cache=cache, stats=None)
+    # load existing state in case any workflows are stateful
+    state_json = await storage.get("context.json")
+    state = json.loads(state_json) if state_json else {}
+
+    context = create_run_context(
+        storage=storage, cache=cache, callbacks=callbacks, state=state
+    )
 
     log.info("Final # of rows loaded: %s", len(dataset))
     context.stats.num_documents = len(dataset)
     last_workflow = "starting documents"
 
-    conf = config.model_copy()
     try:
-        await _dump_stats(context.stats, context.storage)
+        await _dump_json(context)
         await write_table_to_storage(dataset, "documents", context.storage)
 
         for name, workflow_function in pipeline.run():
@@ -149,32 +140,33 @@ async def _run_pipeline(
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
             work_time = time.time()
-            result = await workflow_function(
-                conf,
-                context,
-                callbacks,
-            )
+            result = await workflow_function(config, context)
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
-            if result.config:
-                conf = result.config
-            yield PipelineRunResult(name, result.result, conf, None)
+            yield PipelineRunResult(
+                workflow=name, result=result.result, state=context.state, errors=None
+            )
 
             context.stats.workflows[name] = {"overall": time.time() - work_time}
 
         context.stats.total_runtime = time.time() - start_time
-        await _dump_stats(context.stats, context.storage)
+        await _dump_json(context)
 
     except Exception as e:
         log.exception("error running workflow %s", last_workflow)
         callbacks.error("Error running pipeline!", e, traceback.format_exc())
-        yield PipelineRunResult(last_workflow, None, conf, [e])
+        yield PipelineRunResult(
+            workflow=last_workflow, result=None, state=context.state, errors=[e]
+        )
 
 
-async def _dump_stats(stats: PipelineRunStats, storage: PipelineStorage) -> None:
-    """Dump the stats to the storage."""
-    await storage.set(
-        "stats.json", json.dumps(asdict(stats), indent=4, ensure_ascii=False)
+async def _dump_json(context: PipelineRunContext) -> None:
+    """Dump the stats and context state to the storage."""
+    await context.storage.set(
+        "stats.json", json.dumps(asdict(context.stats), indent=4, ensure_ascii=False)
+    )
+    await context.storage.set(
+        "context.json", json.dumps(context.state, indent=4, ensure_ascii=False)
     )
 
 
