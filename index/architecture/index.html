@@ -645,15 +645,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dataframe-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dataframe Message Format
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#llm-caching" class="md-nav__link">
     <span class="md-ellipsis">
       LLM Caching
@@ -1521,15 +1512,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dataframe-message-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dataframe Message Format
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#llm-caching" class="md-nav__link">
     <span class="md-ellipsis">
       LLM Caching
@@ -1581,11 +1563,6 @@ stateDiagram-v2
     ExtractGraph --&gt; GenerateReports
     ExtractGraph --&gt; EmbedEntities
     ExtractGraph --&gt; EmbedGraph</code></pre>
-<h3 id="dataframe-message-format">Dataframe Message Format</h3>
-<p>The primary unit of communication between workflows, and between workflow steps is an instance of <code>pandas.DataFrame</code>.
-Although side-effects are possible, our goal is to be <em>data-centric</em> and <em>table-centric</em> in our approach to data processing.
-This allows us to easily reason about our data, and to leverage the power of dataframe-based ecosystems.
-Our underlying dataframe technology may change over time, but our primary goal is to support the workflow schema while retaining single-machine ease of use and developer ergonomics.</p>
 <h3 id="llm-caching">LLM Caching</h3>
 <p>The GraphRAG library was designed with LLM interactions in mind, and a common setback when working with LLM APIs is various errors due to network latency, throttling, etc..
 Because of these potential error cases, we've added a cache layer around LLM interactions.

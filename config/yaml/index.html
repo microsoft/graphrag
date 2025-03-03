@@ -1434,19 +1434,33 @@
 </code></pre></div>
 <h1 id="config-sections">Config Sections</h1>
 <h2 id="indexing">Indexing</h2>
-<h3 id="llm">llm</h3>
-<p>This is the base LLM configuration section. Other steps may override this configuration with their own LLM configuration.</p>
+<h3 id="models">models</h3>
+<p>This is a dict of model configurations. The dict key is used to reference this configuration elsewhere when a model instance is desired. In this way, you can specify as many different models as you need, and reference them differentially in the workflow steps.</p>
+<p>For example:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>models:
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  default_chat_model:
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    api_key: ${GRAPHRAG_API_KEY}
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    type: openai_chat
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    model: gpt-4o
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    model_supports_json: true
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  default_embedding_model:
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    api_key: ${GRAPHRAG_API_KEY}
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    type: openai_embedding
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    model: text-embedding-ada-002
+</code></pre></div></p>
 <h4 id="fields">Fields</h4>
 <ul>
 <li><code>api_key</code> <strong>str</strong> - The OpenAI API key to use.</li>
 <li><code>type</code> <strong>openai_chat|azure_openai_chat|openai_embedding|azure_openai_embedding</strong> - The type of LLM to use.</li>
 <li><code>model</code> <strong>str</strong> - The model name.</li>
+<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the encoding model aligned with the language model (i.e., it is retrieved from tiktoken if unset).</li>
 <li><code>max_tokens</code> <strong>int</strong> - The maximum number of output tokens.</li>
 <li><code>request_timeout</code> <strong>float</strong> - The per-request timeout.</li>
 <li><code>api_base</code> <strong>str</strong> - The API base url to use.</li>
-<li><code>api_version</code> <strong>str</strong> - The API version</li>
+<li><code>api_version</code> <strong>str</strong> - The API version.</li>
 <li><code>organization</code> <strong>str</strong> - The client organization.</li>
 <li><code>proxy</code> <strong>str</strong> - The proxy URL to use.</li>
+<li><code>azure_auth_type</code> <strong>api_key|managed_identity</strong> - if using Azure, please indicate how you want to authenticate requests.</li>
 <li><code>audience</code> <strong>str</strong> - (Azure OpenAI only) The URI of the target Azure resource/service for which a managed identity token is requested. Used if <code>api_key</code> is not defined. Default=<code>https://cognitiveservices.azure.com/.default</code></li>
 <li><code>deployment_name</code> <strong>str</strong> - The deployment name to use (Azure).</li>
 <li><code>model_supports_json</code> <strong>bool</strong> - Whether the model supports JSON-mode output.</li>
@@ -1459,26 +1473,33 @@
 <li><code>temperature</code> <strong>float</strong> - The temperature to use.</li>
 <li><code>top_p</code> <strong>float</strong> - The top-p value to use.</li>
 <li><code>n</code> <strong>int</strong> - The number of completions to generate.</li>
+<li><code>parallelization_stagger</code> <strong>float</strong> - The threading stagger value.</li>
+<li><code>parallelization_num_threads</code> <strong>int</strong> - The maximum number of work threads.</li>
+<li><code>async_mode</code> <strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or `threaded.</li>
 </ul>
-<h3 id="parallelization">parallelization</h3>
+<h3 id="embed_text">embed_text</h3>
+<p>By default, the GraphRAG indexer will only export embeddings required for our query methods. However, the model has embeddings defined for all plaintext fields, and these can be customized by setting the <code>target</code> and <code>names</code> fields.</p>
+<p>Supported embeddings names are:
+- <code>text_unit.text</code>
+- <code>document.text</code>
+- <code>entity.title</code>
+- <code>entity.description</code>
+- <code>relationship.description</code>
+- <code>community.title</code>
+- <code>community.summary</code>
+- <code>community.full_content</code></p>
 <h4 id="fields_1">Fields</h4>
 <ul>
-<li><code>stagger</code> <strong>float</strong> - The threading stagger value.</li>
-<li><code>num_threads</code> <strong>int</strong> - The maximum number of work threads.</li>
-</ul>
-<h3 id="async_mode">async_mode</h3>
-<p><strong>asyncio|threaded</strong> The async mode to use. Either <code>asyncio</code> or `threaded.</p>
-<h3 id="embeddings">embeddings</h3>
-<h4 id="fields_2">Fields</h4>
-<ul>
-<li><code>llm</code> (see LLM top-level config)</li>
-<li><code>parallelization</code> (see Parallelization top-level config)</li>
-<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for text embedding.</li>
 <li><code>batch_size</code> <strong>int</strong> - The maximum batch size to use.</li>
 <li><code>batch_max_tokens</code> <strong>int</strong> - The maximum batch # of tokens.</li>
-<li><code>target</code> <strong>required|all|none</strong> - Determines which set of embeddings to export.</li>
-<li><code>skip</code> <strong>list[str]</strong> - Which embeddings to skip. Only useful if target=all to customize the list.</li>
-<li><code>vector_store</code> <strong>dict</strong> - The vector store to use. Configured for lancedb by default.<ul>
+<li><code>target</code> <strong>required|all|selected|none</strong> - Determines which set of embeddings to export.</li>
+<li><code>names</code> <strong>list[str]</strong> - If target=selected, this should be an explicit list of the embeddings names we support.</li>
+</ul>
+<h3 id="vector_store">vector_store</h3>
+<p>Where to put all vectors for the system. Configured for lancedb by default.</p>
+<h4 id="fields_2">Fields</h4>
+<ul>
 <li><code>type</code> <strong>str</strong> - <code>lancedb</code> or <code>azure_ai_search</code>. Default=<code>lancedb</code></li>
 <li><code>db_uri</code> <strong>str</strong> (only for lancedb) - The database uri. Default=<code>storage.base_dir/lancedb</code></li>
 <li><code>url</code> <strong>str</strong> (only for AI Search) - AI Search endpoint</li>
@@ -1487,10 +1508,8 @@
 <li><code>overwrite</code> <strong>bool</strong> (only used at index creation time) - Overwrite collection if it exist. Default=<code>True</code></li>
 <li><code>container_name</code> <strong>str</strong> - The name of a vector container. This stores all indexes (tables) for a given dataset ingest. Default=<code>default</code></li>
 </ul>
-</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the text-embedding strategy.</li>
-</ul>
 <h3 id="input">input</h3>
+<p>Our pipeline can ingest .csv or .txt data from an input folder. These files can be nested within subfolders. In general, CSV-based data provides the most customizability. Each CSV should at least contain a <code>text</code> field. You can use the <code>metadata</code> list to specify additional columns from the CSV to include as headers in each text chunk, allowing you to repeat document content within each chunk for better LLM inclusion.</p>
 <h4 id="fields_3">Fields</h4>
 <ul>
 <li><code>type</code> <strong>file|blob</strong> - The input type to use. Default=<code>file</code></li>
@@ -1502,23 +1521,22 @@
 <li><code>file_encoding</code> <strong>str</strong> - The encoding of the input file. Default is <code>utf-8</code></li>
 <li><code>file_pattern</code> <strong>str</strong> - A regex to match input files. Default is <code>.*\.csv$</code> if in csv mode and <code>.*\.txt$</code> if in text mode.</li>
 <li><code>file_filter</code> <strong>dict</strong> - Key/value pairs to filter. Default is None.</li>
-<li><code>source_column</code> <strong>str</strong> - (CSV Mode Only) The source column name.</li>
-<li><code>timestamp_column</code> <strong>str</strong> - (CSV Mode Only) The timestamp column name.</li>
-<li><code>timestamp_format</code> <strong>str</strong> - (CSV Mode Only) The source format.</li>
 <li><code>text_column</code> <strong>str</strong> - (CSV Mode Only) The text column name.</li>
-<li><code>title_column</code> <strong>str</strong> - (CSV Mode Only) The title column name.</li>
-<li><code>document_attribute_columns</code> <strong>list[str]</strong> - (CSV Mode Only) The additional document attributes to include.</li>
+<li><code>metadata</code> <strong>list[str]</strong> - (CSV Mode Only) The additional document attributes to include.</li>
 </ul>
 <h3 id="chunks">chunks</h3>
+<p>These settings configure how we parse documents into text chunks. This is necessary because very large documents may not fit into a single context window, and graph extraction accuracy can be modulated. Also note the <code>metadata</code> setting in the input document config, which will replicate document metadata into each chunk.</p>
 <h4 id="fields_4">Fields</h4>
 <ul>
 <li><code>size</code> <strong>int</strong> - The max chunk size in tokens.</li>
 <li><code>overlap</code> <strong>int</strong> - The chunk overlap in tokens.</li>
 <li><code>group_by_columns</code> <strong>list[str]</strong> - group documents by fields before chunking.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. Default is to use the top-level encoding model.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the chunking strategy.</li>
+<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use for splitting on token boundaries.</li>
+<li><code>prepend_metadata</code> <strong>bool</strong> - Determines if metadata values should be added at the beginning of each chunk. Default=<code>False</code>.</li>
+<li><code>chunk_size_includes_metadata</code> <strong>bool</strong> - Specifies whether the chunk size calculation should include metadata tokens. Default=<code>False</code>.</li>
 </ul>
 <h3 id="cache">cache</h3>
+<p>This section controls the cache mechanism used by the pipeline. This is used to cache LLM invocation results.</p>
 <h4 id="fields_5">Fields</h4>
 <ul>
 <li><code>type</code> <strong>file|memory|none|blob</strong> - The cache type to use. Default=<code>file</code></li>
@@ -1527,7 +1545,8 @@
 <li><code>base_dir</code> <strong>str</strong> - The base directory to write cache to, relative to the root.</li>
 <li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
 </ul>
-<h3 id="storage">storage</h3>
+<h3 id="output">output</h3>
+<p>This section controls the storage mechanism used by the pipeline used for exporting output tables.</p>
 <h4 id="fields_6">Fields</h4>
 <ul>
 <li><code>type</code> <strong>file|memory|blob</strong> - The storage type to use. Default=<code>file</code></li>
@@ -1537,6 +1556,7 @@
 <li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
 </ul>
 <h3 id="update_index_storage">update_index_storage</h3>
+<p>The section defines a secondary storage location for running incremental indexing, to preserve your original outputs.</p>
 <h4 id="fields_7">Fields</h4>
 <ul>
 <li><code>type</code> <strong>file|memory|blob</strong> - The storage type to use. Default=<code>file</code></li>
@@ -1546,6 +1566,7 @@
 <li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
 </ul>
 <h3 id="reporting">reporting</h3>
+<p>This section controls the reporting mechanism used by the pipeline, for common events and error messages. The default is to write reports to a file in the output directory. However, you can also choose to write reports to the console or to an Azure Blob Storage container.</p>
 <h4 id="fields_8">Fields</h4>
 <ul>
 <li><code>type</code> <strong>file|console|blob</strong> - The reporting type to use. Default=<code>file</code></li>
@@ -1554,60 +1575,78 @@
 <li><code>base_dir</code> <strong>str</strong> - The base directory to write reports to, relative to the root.</li>
 <li><code>storage_account_blob_url</code> <strong>str</strong> - The storage account blob URL to use.</li>
 </ul>
-<h3 id="entity_extraction">entity_extraction</h3>
+<h3 id="extract_graph">extract_graph</h3>
 <h4 id="fields_9">Fields</h4>
 <ul>
-<li><code>llm</code> (see LLM top-level config)</li>
-<li><code>parallelization</code> (see Parallelization top-level config)</li>
-<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>entity_types</code> <strong>list[str]</strong> - The entity types to identify.</li>
 <li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. By default, this will use the top-level encoding model.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the entity extraction strategy.</li>
 </ul>
 <h3 id="summarize_descriptions">summarize_descriptions</h3>
 <h4 id="fields_10">Fields</h4>
 <ul>
-<li><code>llm</code> (see LLM top-level config)</li>
-<li><code>parallelization</code> (see Parallelization top-level config)</li>
-<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per summarization.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the summarize description strategy.</li>
 </ul>
-<h3 id="claim_extraction">claim_extraction</h3>
+<h3 id="extract_graph_nlp">extract_graph_nlp</h3>
+<p>Defines settings for NLP-based graph extraction methods.</p>
 <h4 id="fields_11">Fields</h4>
 <ul>
+<li><code>normalize_edge_weights</code> <strong>bool</strong> - Whether to normalize the edge weights during graph construction. Default=<code>True</code>.</li>
+<li><code>text_analyzer</code> <strong>dict</strong> - Parameters for the NLP model.</li>
+<li>extractor_type <strong>regex_english|syntactic_parser|cfg</strong> - Default=<code>regex_english</code>.</li>
+<li>model_name <strong>str</strong> - Name of NLP model (for SpaCy-based models)</li>
+<li>max_word_length <strong>int</strong> - Longest word to allow. Default=<code>15</code>.</li>
+<li>word_delimiter <strong>str</strong> - Delimiter to split words. Default ' '.</li>
+<li>include_named_entities <strong>bool</strong> - Whether to include named entities in noun phrases. Default=<code>True</code>.</li>
+<li>exclude_nouns <strong>list[str] | None</strong> - List of nouns to exclude. If <code>None</code>, we use an internal stopword list.</li>
+<li>exclude_entity_tags <strong>list[str]</strong> - List of entity tags to ignore.</li>
+<li>exclude_pos_tags <strong>list[str]</strong> - List of part-of-speech tags to ignore.</li>
+<li>noun_phrase_tags <strong>list[str]</strong> - List of noun phrase tags to ignore.</li>
+<li>noun_phrase_grammars <strong>dict[str, str]</strong> - Noun phrase grammars for the model (cfg-only).</li>
+</ul>
+<h3 id="extract_claims">extract_claims</h3>
+<h4 id="fields_12">Fields</h4>
+<ul>
 <li><code>enabled</code> <strong>bool</strong> - Whether to enable claim extraction. Off by default, because claim prompts really need user tuning.</li>
-<li><code>llm</code> (see LLM top-level config)</li>
-<li><code>parallelization</code> (see Parallelization top-level config)</li>
-<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>description</code> <strong>str</strong> - Describes the types of claims we want to extract.</li>
 <li><code>max_gleanings</code> <strong>int</strong> - The maximum number of gleaning cycles to use.</li>
-<li><code>encoding_model</code> <strong>str</strong> - The text encoding model to use. By default, this will use the top-level encoding model.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the claim extraction strategy.</li>
 </ul>
 <h3 id="community_reports">community_reports</h3>
-<h4 id="fields_12">Fields</h4>
+<h4 id="fields_13">Fields</h4>
 <ul>
-<li><code>llm</code> (see LLM top-level config)</li>
-<li><code>parallelization</code> (see Parallelization top-level config)</li>
-<li><code>async_mode</code> (see Async Mode top-level config)</li>
+<li><code>model_id</code> <strong>str</strong> - Name of the model definition to use for API calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>max_length</code> <strong>int</strong> - The maximum number of output tokens per report.</li>
 <li><code>max_input_length</code> <strong>int</strong> - The maximum number of input tokens to use when generating reports.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the community reports strategy.</li>
+</ul>
+<h3 id="prune_graph">prune_graph</h3>
+<p>Parameters for manual graph pruning. This can be used to optimize the modularity of your graph clusters, by removing overly-connected or rare nodes.</p>
+<h4 id="fields_14">Fields</h4>
+<ul>
+<li>min_node_freq <strong>int</strong> - The minimum node frequency to allow.</li>
+<li>max_node_freq_std <strong>float | None</strong> - The maximum standard deviation of node frequency to allow.</li>
+<li>min_node_degree <strong>int</strong> - The minimum node degree to allow.</li>
+<li>max_node_degree_std <strong>float | None</strong> - The maximum standard deviation of node degree to allow.</li>
+<li>min_edge_weight_pct <strong>int</strong> - The minimum edge weight percentile to allow.</li>
+<li>remove_ego_nodes <strong>bool</strong> - Remove ego nodes.</li>
+<li>lcc_only <strong>bool</strong> - Only use largest connected component.</li>
 </ul>
 <h3 id="cluster_graph">cluster_graph</h3>
-<h4 id="fields_13">Fields</h4>
+<p>These are the settings used for Leiden hierarchical clustering of the graph to create communities.</p>
+<h4 id="fields_15">Fields</h4>
 <ul>
 <li><code>max_cluster_size</code> <strong>int</strong> - The maximum cluster size to export.</li>
-<li><code>strategy</code> <strong>dict</strong> - Fully override the cluster_graph strategy.</li>
+<li><code>use_lcc</code> <strong>bool</strong> - Whether to only use the largest connected component.</li>
+<li><code>seed</code> <strong>int</strong> - A randomization seed to provide if consistent run-to-run results are desired. We do provide a default in order to guarantee clustering stability.</li>
 </ul>
 <h3 id="embed_graph">embed_graph</h3>
-<h4 id="fields_14">Fields</h4>
+<p>We use node2vec to embed the graph. This is primarily used for visualization, so it is not turned on by default. However, if you do prefer to embed the graph for secondary analysis, you can turn this on and we will persist the embeddings to your configured vector store.</p>
+<h4 id="fields_16">Fields</h4>
 <ul>
 <li><code>enabled</code> <strong>bool</strong> - Whether to enable graph embeddings.</li>
 <li><code>num_walks</code> <strong>int</strong> - The node2vec number of walks.</li>
@@ -1618,25 +1657,23 @@
 <li><code>strategy</code> <strong>dict</strong> - Fully override the embed graph strategy.</li>
 </ul>
 <h3 id="umap">umap</h3>
-<h4 id="fields_15">Fields</h4>
+<p>Indicates whether we should run UMAP dimensionality reduction. This is used to provide an x/y coordinate to each graph node, suitable for visualization. If this is not enabled, nodes will receive a 0/0 x/y coordinate. If this is enabled, you <em>must</em> enable graph embedding as well.</p>
+<h4 id="fields_17">Fields</h4>
 <ul>
 <li><code>enabled</code> <strong>bool</strong> - Whether to enable UMAP layouts.</li>
 </ul>
 <h3 id="snapshots">snapshots</h3>
-<h4 id="fields_16">Fields</h4>
+<h4 id="fields_18">Fields</h4>
 <ul>
 <li><code>embeddings</code> <strong>bool</strong> - Export embeddings snapshots to parquet.</li>
 <li><code>graphml</code> <strong>bool</strong> - Export graph snapshots to GraphML.</li>
-<li><code>transient</code> <strong>bool</strong> - Export transient workflow tables snapshots to parquet.</li>
 </ul>
-<h3 id="encoding_model">encoding_model</h3>
-<p><strong>str</strong> - The text encoding model to use. Default=<code>cl100k_base</code>.</p>
-<h3 id="skip_workflows">skip_workflows</h3>
-<p><strong>list[str]</strong> - Which workflow names to skip.</p>
 <h2 id="query">Query</h2>
 <h3 id="local_search">local_search</h3>
-<h4 id="fields_17">Fields</h4>
+<h4 id="fields_19">Fields</h4>
 <ul>
+<li><code>chat_model_id</code> <strong>str</strong> - Name of the model definition to use for Chat Completion calls.</li>
+<li><code>embedding_model_id</code> <strong>str</strong> - Name of the model definition to use for Embedding calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
 <li><code>text_unit_prop</code> <strong>float</strong> - The text unit proportion. </li>
 <li><code>community_prop</code> <strong>float</strong> - The community proportion.</li>
@@ -1650,8 +1687,9 @@
 <li><code>llm_max_tokens</code> <strong>int</strong> - The LLM maximum tokens.</li>
 </ul>
 <h3 id="global_search">global_search</h3>
-<h4 id="fields_18">Fields</h4>
+<h4 id="fields_20">Fields</h4>
 <ul>
+<li><code>chat_model_id</code> <strong>str</strong> - Name of the model definition to use for Chat Completion calls.</li>
 <li><code>map_prompt</code> <strong>str</strong> - The mapper prompt file to use.</li>
 <li><code>reduce_prompt</code> <strong>str</strong> - The reducer prompt file to use.</li>
 <li><code>knowledge_prompt</code> <strong>str</strong> - The knowledge prompt file to use.</li>
@@ -1675,9 +1713,12 @@
 <li><code>dynamic_search_max_level</code> <strong>int</strong> - The maximum level of community hierarchy to consider if none of the processed communities are relevant.</li>
 </ul>
 <h3 id="drift_search">drift_search</h3>
-<h4 id="fields_19">Fields</h4>
+<h4 id="fields_21">Fields</h4>
 <ul>
+<li><code>chat_model_id</code> <strong>str</strong> - Name of the model definition to use for Chat Completion calls.</li>
+<li><code>embedding_model_id</code> <strong>str</strong> - Name of the model definition to use for Embedding calls.</li>
 <li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>reduce_prompt</code> <strong>str</strong> - The reducer prompt file to use.</li>
 <li><code>temperature</code> <strong>float</strong> - The temperature to use for token generation.",</li>
 <li><code>top_p</code> <strong>float</strong> - The top-p value to use for token generation.</li>
 <li><code>n</code> <strong>int</strong> - The number of completions to generate.</li>
@@ -1698,6 +1739,25 @@
 <li><code>local_search_n</code> <strong>int</strong> - The number of completions to generate in local search.</li>
 <li><code>local_search_llm_max_gen_tokens</code> <strong>int</strong> - The maximum number of generated tokens for the LLM in local search.</li>
 </ul>
+<h3 id="basic_search">basic_search</h3>
+<h4 id="fields_22">Fields</h4>
+<ul>
+<li><code>chat_model_id</code> <strong>str</strong> - Name of the model definition to use for Chat Completion calls.</li>
+<li><code>embedding_model_id</code> <strong>str</strong> - Name of the model definition to use for Embedding calls.</li>
+<li><code>prompt</code> <strong>str</strong> - The prompt file to use.</li>
+<li><code>text_unit_prop</code> <strong>float</strong> - The text unit proportion. </li>
+<li><code>community_prop</code> <strong>float</strong> - The community proportion.</li>
+<li><code>conversation_history_max_turns</code> <strong>int</strong> - The conversation history maximum turns.</li>
+<li><code>top_k_entities</code> <strong>int</strong> - The top k mapped entities.</li>
+<li><code>top_k_relationships</code> <strong>int</strong> - The top k mapped relations.</li>
+<li><code>temperature</code> <strong>float | None</strong> - The temperature to use for token generation.</li>
+<li><code>top_p</code> <strong>float | None</strong> - The top-p value to use for token generation.</li>
+<li><code>n</code> <strong>int | None</strong> - The number of completions to generate.</li>
+<li><code>max_tokens</code> <strong>int</strong> - The maximum tokens.</li>
+<li><code>llm_max_tokens</code> <strong>int</strong> - The LLM maximum tokens.</li>
+</ul>
+<h3 id="workflows">workflows</h3>
+<p><strong>list[str]</strong> - This is a list of workflow names to run, in order. GraphRAG has built-in pipelines to configure this, but you can run exactly and only what you want by specifying the list here. Useful if you have done part of the processing yourself.</p>
 
 
 

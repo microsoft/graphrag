@@ -1611,15 +1611,14 @@ After you have a config file you can run the pipeline using the CLI or the Pytho
 <h2 id="usage">Usage</h2>
 <h3 id="cli">CLI</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Via Poetry</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>cli<span class="w"> </span>--root<span class="w"> </span>&lt;data_root&gt;<span class="w"> </span><span class="c1"># default config mode</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>poetry<span class="w"> </span>run<span class="w"> </span>poe<span class="w"> </span>index<span class="w"> </span>--root<span class="w"> </span>&lt;data_root&gt;<span class="w"> </span><span class="c1"># default config mode</span>
 </code></pre></div>
 <h3 id="python-api">Python API</h3>
-<p>Please see the <a href="https://github.com/microsoft/graphrag/blob/main/examples/README.md">examples folder</a> for a handful of functional pipelines illustrating how to create and run via a custom settings.yml or through custom python scripts.</p>
+<p>Please see the indexing API <a href="https://github.com/microsoft/graphrag/blob/main/graphrag/api/index.py">python file</a> for the recommended method to call directly from Python code.</p>
 <h2 id="further-reading">Further Reading</h2>
 <ul>
 <li>To start developing within the <em>GraphRAG</em> project, see <a href="../../developing/">getting started</a></li>
 <li>To understand the underlying concepts and execution model of the indexing library, see <a href="../architecture/">the architecture documentation</a></li>
-<li>To get running with a series of examples, see <a href="https://github.com/microsoft/graphrag/blob/main/examples/README.md">the examples documentation</a></li>
 <li>To read more about configuring the indexing engine, see <a href="../../config/overview/">the configuration documentation</a></li>
 </ul>
 
