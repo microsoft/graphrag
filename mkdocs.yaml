@@ -29,6 +29,7 @@ nav:
       - Overview: "index/overview.md"
       - Architecture: "index/architecture.md"
       - Dataflow: "index/default_dataflow.md"
+      - Inputs: "index/inputs.md"
       - Outputs: "index/outputs.md"
   - Prompt Tuning:
       - Overview: "prompt_tuning/overview.md"
