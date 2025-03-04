@@ -42,14 +42,14 @@ class BasicSearch(BaseSearch[BasicContextBuilder]):
         system_prompt: str | None = None,
         response_type: str = "multiple paragraphs",
         callbacks: list[QueryCallbacks] | None = None,
-        llm_params: dict[str, Any] = DEFAULT_LLM_PARAMS,
+        model_params: dict[str, Any] = DEFAULT_LLM_PARAMS,
         context_builder_params: dict | None = None,
     ):
         super().__init__(
             model=model,
             context_builder=context_builder,
             token_encoder=token_encoder,
-            model_params=llm_params,
+            model_params=model_params,
             context_builder_params=context_builder_params or {},
         )
         self.system_prompt = system_prompt or BASIC_SEARCH_SYSTEM_PROMPT

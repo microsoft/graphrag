@@ -35,14 +35,14 @@ class LocalQuestionGen(BaseQuestionGen):
         token_encoder: tiktoken.Encoding | None = None,
         system_prompt: str = QUESTION_SYSTEM_PROMPT,
         callbacks: list[BaseLLMCallback] | None = None,
-        llm_params: dict[str, Any] | None = None,
+        model_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
     ):
         super().__init__(
             model=model,
             context_builder=context_builder,
             token_encoder=token_encoder,
-            llm_params=llm_params,
+            model_params=model_params,
             context_builder_params=context_builder_params,
         )
         self.system_prompt = system_prompt
@@ -102,7 +102,7 @@ class LocalQuestionGen(BaseQuestionGen):
             async for chunk in self.model.achat_stream(
                 prompt=question_text,
                 history=question_messages,
-                model_parameters=self.llm_params,
+                model_parameters=self.model_params,
             ):
                 response += chunk
                 for callback in self.callbacks:
@@ -185,7 +185,7 @@ class LocalQuestionGen(BaseQuestionGen):
             async for chunk in self.model.achat_stream(
                 prompt=question_text,
                 history=question_messages,
-                model_parameters=self.llm_params,
+                model_parameters=self.model_params,
             ):
                 response += chunk
                 for callback in self.callbacks:

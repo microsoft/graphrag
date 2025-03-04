@@ -35,13 +35,13 @@ class BaseQuestionGen(ABC):
         model: ChatModel,
         context_builder: GlobalContextBuilder | LocalContextBuilder,
         token_encoder: tiktoken.Encoding | None = None,
-        llm_params: dict[str, Any] | None = None,
+        model_params: dict[str, Any] | None = None,
         context_builder_params: dict[str, Any] | None = None,
     ):
         self.model = model
         self.context_builder = context_builder
         self.token_encoder = token_encoder
-        self.llm_params = llm_params or {}
+        self.model_params = model_params or {}
         self.context_builder_params = context_builder_params or {}
 
     @abstractmethod
