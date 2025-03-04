@@ -145,18 +145,25 @@ snapshots:
 ## See the config docs: https://microsoft.github.io/graphrag/config/yaml/#query
 
 local_search:
+  chat_model_id: {graphrag_config_defaults.local_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.local_search.embedding_model_id}
   prompt: "prompts/local_search_system_prompt.txt"
 
 global_search:
+  chat_model_id: {graphrag_config_defaults.global_search.chat_model_id}
   map_prompt: "prompts/global_search_map_system_prompt.txt"
   reduce_prompt: "prompts/global_search_reduce_system_prompt.txt"
   knowledge_prompt: "prompts/global_search_knowledge_system_prompt.txt"
 
 drift_search:
+  chat_model_id: {graphrag_config_defaults.drift_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.drift_search.embedding_model_id}
   prompt: "prompts/drift_search_system_prompt.txt"
   reduce_prompt: "prompts/drift_search_reduce_prompt.txt"
 
 basic_search:
+  chat_model_id: {graphrag_config_defaults.basic_search.chat_model_id}
+  embedding_model_id: {graphrag_config_defaults.basic_search.embedding_model_id}
   prompt: "prompts/basic_search_system_prompt.txt"
 """
 

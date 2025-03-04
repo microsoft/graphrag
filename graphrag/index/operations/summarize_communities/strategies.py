@@ -78,7 +78,7 @@ async def _run_extractor(
             level=level,
             rank=report.rating,
             title=report.title,
-            rank_explanation=report.rating_explanation,
+            rating_explanation=report.rating_explanation,
             summary=report.summary,
             findings=[
                 Finding(explanation=f.explanation, summary=f.summary)

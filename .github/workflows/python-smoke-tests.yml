@@ -47,17 +47,13 @@ jobs:
       GRAPHRAG_API_VERSION: ${{ secrets.GRAPHRAG_API_VERSION }}
       GRAPHRAG_LLM_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_LLM_DEPLOYMENT_NAME }}
       GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME: ${{ secrets.GRAPHRAG_EMBEDDING_DEPLOYMENT_NAME }}
-      GRAPHRAG_CACHE_CONTAINER_NAME: "cicache"
-      GRAPHRAG_CACHE_BASE_DIR": "cache"
       GRAPHRAG_LLM_MODEL: ${{ secrets.GRAPHRAG_LLM_MODEL }}
       GRAPHRAG_EMBEDDING_MODEL: ${{ secrets.GRAPHRAG_EMBEDDING_MODEL }}
-      # We have Windows + Linux runners in 3.10 and 3.11, so we need to divide the rate limits by 4
-      GRAPHRAG_LLM_TPM: 100_000 # 400_000 / 4
-      GRAPHRAG_LLM_RPM: 500 # 2_000 / 4
-      GRAPHRAG_EMBEDDING_TPM: 87_500 # 350,000 / 4
-      GRAPHRAG_EMBEDDING_RPM: 525 # 2,100 / 4
-      GRAPHRAG_CHUNK_SIZE: 1200
-      GRAPHRAG_CHUNK_OVERLAP: 0
+      # We have Windows + Linux runners in 3.10, so we need to divide the rate limits by 2
+      GRAPHRAG_LLM_TPM: 200_000 # 400_000 / 2
+      GRAPHRAG_LLM_RPM: 1_000 # 2_000 / 2
+      GRAPHRAG_EMBEDDING_TPM: 225_000 # 450_000 / 2
+      GRAPHRAG_EMBEDDING_RPM: 1_000 # 2_000 / 2
       # Azure AI Search config
       AZURE_AI_SEARCH_URL_ENDPOINT: ${{ secrets.AZURE_AI_SEARCH_URL_ENDPOINT }}
       AZURE_AI_SEARCH_API_KEY: ${{ secrets.AZURE_AI_SEARCH_API_KEY }}
@@ -101,10 +97,6 @@ jobs:
         run: |
           poetry build
 
-      - name: Verb Test
-        run: |
-          poetry run poe test_verbs
-
       - name: Install Azurite
         id: azuright
         uses: potatoqualitee/azuright@v1.1
@@ -118,4 +110,4 @@ jobs:
         if: always()
         with:
           name: smoke-test-artifacts-${{ matrix.python-version }}-${{ matrix.poetry-version }}-${{ runner.os }}
-          path: tests/fixtures/*/output
+          path: tests/fixtures/*

@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.enums import ModelType
 from graphrag.index.workflows.extract_graph import (
@@ -60,11 +59,7 @@ async def test_extract_graph():
         "llm": summarize_llm_settings,
     }
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)

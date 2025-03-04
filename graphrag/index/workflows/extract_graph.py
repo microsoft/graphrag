@@ -11,21 +11,20 @@ from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.extract_graph.extract_graph import (
     extract_graph as extractor,
 )
 from graphrag.index.operations.summarize_descriptions import (
     summarize_descriptions,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to create the base entity graph."""
     text_units = await load_table_from_storage("text_units", context.storage)
@@ -46,7 +45,7 @@ async def run_workflow(
 
     entities, relationships = await extract_graph(
         text_units=text_units,
-        callbacks=callbacks,
+        callbacks=context.callbacks,
         cache=context.cache,
         extraction_strategy=extraction_strategy,
         extraction_num_threads=extract_graph_llm_settings.concurrent_requests,
@@ -63,8 +62,7 @@ async def run_workflow(
         result={
             "entities": entities,
             "relationships": relationships,
-        },
-        config=None,
+        }
     )
 
 
@@ -105,6 +103,27 @@ async def extract_graph(
         callbacks.error(error_msg)
         raise ValueError(error_msg)
 
+    entities, relationships = await get_summarized_entities_relationships(
+        extracted_entities=extracted_entities,
+        extracted_relationships=extracted_relationships,
+        callbacks=callbacks,
+        cache=cache,
+        summarization_strategy=summarization_strategy,
+        summarization_num_threads=summarization_num_threads,
+    )
+
+    return (entities, relationships)
+
+
+async def get_summarized_entities_relationships(
+    extracted_entities: pd.DataFrame,
+    extracted_relationships: pd.DataFrame,
+    callbacks: WorkflowCallbacks,
+    cache: PipelineCache,
+    summarization_strategy: dict[str, Any] | None = None,
+    summarization_num_threads: int = 4,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Summarize the entities and relationships."""
     entity_summaries, relationship_summaries = await summarize_descriptions(
         entities_df=extracted_entities,
         relationships_df=extracted_relationships,
@@ -120,8 +139,7 @@ async def extract_graph(
 
     extracted_entities.drop(columns=["description"], inplace=True)
     entities = extracted_entities.merge(entity_summaries, on="title", how="left")
-
-    return (entities, relationships)
+    return entities, relationships
 
 
 def _validate_data(df: pd.DataFrame) -> bool:

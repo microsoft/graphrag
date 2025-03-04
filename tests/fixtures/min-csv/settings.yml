@@ -41,5 +41,5 @@ snapshots:
 
 drift_search:
   n_depth: 1
-  k_follow_ups: 3
+  drift_k_followups: 3
   primer_folds: 3

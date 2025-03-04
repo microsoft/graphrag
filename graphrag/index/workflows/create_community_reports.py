@@ -11,7 +11,6 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import AsyncType
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.operations.finalize_community_reports import (
     finalize_community_reports,
 )
@@ -25,7 +24,8 @@ from graphrag.index.operations.summarize_communities.graph_context.context_build
 from graphrag.index.operations.summarize_communities.summarize_communities import (
     summarize_communities,
 )
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import (
     load_table_from_storage,
     storage_has_table,
@@ -36,7 +36,6 @@ from graphrag.utils.storage import (
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform community reports."""
     edges = await load_table_from_storage("relationships", context.storage)
@@ -62,7 +61,7 @@ async def run_workflow(
         entities=entities,
         communities=communities,
         claims_input=claims,
-        callbacks=callbacks,
+        callbacks=context.callbacks,
         cache=context.cache,
         summarization_strategy=summarization_strategy,
         async_mode=async_mode,
@@ -71,7 +70,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "community_reports", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 async def create_community_reports(
@@ -175,7 +174,7 @@ def _prep_claims(input: pd.DataFrame) -> pd.DataFrame:
         [
             schemas.SHORT_ID,
             schemas.CLAIM_SUBJECT,
-            schemas.CLAIM_TYPE,
+            schemas.TYPE,
             schemas.CLAIM_STATUS,
             schemas.DESCRIPTION,
         ],

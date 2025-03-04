@@ -13,7 +13,7 @@ from graphrag.config.enums import AsyncType
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
     BaseNounPhraseExtractor,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.index.utils.hashing import gen_sha512_hash
 
 

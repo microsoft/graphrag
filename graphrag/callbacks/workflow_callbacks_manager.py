@@ -4,6 +4,7 @@
 """A module containing the WorkflowCallbacks registry."""
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.logger.progress import Progress
 
 
@@ -19,6 +20,18 @@ class WorkflowCallbacksManager(WorkflowCallbacks):
     def register(self, callbacks: WorkflowCallbacks) -> None:
         """Register a new WorkflowCallbacks type."""
         self._callbacks.append(callbacks)
+
+    def pipeline_start(self, names: list[str]) -> None:
+        """Execute this callback when a the entire pipeline starts."""
+        for callback in self._callbacks:
+            if hasattr(callback, "pipeline_start"):
+                callback.pipeline_start(names)
+
+    def pipeline_end(self, results: list[PipelineRunResult]) -> None:
+        """Execute this callback when the entire pipeline ends."""
+        for callback in self._callbacks:
+            if hasattr(callback, "pipeline_end"):
+                callback.pipeline_end(results)
 
     def workflow_start(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow starts."""

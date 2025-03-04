@@ -5,17 +5,16 @@
 
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.data_model.schemas import DOCUMENTS_FINAL_COLUMNS
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     _config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final documents."""
     documents = await load_table_from_storage("documents", context.storage)
@@ -25,7 +24,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "documents", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 def create_final_documents(
@@ -66,17 +65,7 @@ def create_final_documents(
     rejoined["id"] = rejoined["id"].astype(str)
     rejoined["human_readable_id"] = rejoined.index + 1
 
-    # set the final column order, but adjust for metadata
-    core_columns = [
-        "id",
-        "human_readable_id",
-        "title",
-        "text",
-        "text_unit_ids",
-        "creation_date",
-    ]
-    final_columns = [column for column in core_columns if column in rejoined.columns]
-    if "metadata" in rejoined.columns:
-        final_columns.append("metadata")
+    if "metadata" not in rejoined.columns:
+        rejoined["metadata"] = pd.Series(dtype="object")
 
-    return rejoined.loc[:, final_columns]
+    return rejoined.loc[:, DOCUMENTS_FINAL_COLUMNS]

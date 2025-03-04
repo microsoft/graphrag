@@ -5,7 +5,6 @@
 
 from typing import Any
 
-import spacy
 from spacy.tokens.doc import Doc
 
 from graphrag.index.operations.build_noun_graph.np_extractors.base import (
@@ -57,9 +56,13 @@ class CFGNounPhraseExtractor(BaseNounPhraseExtractor):
         self.include_named_entities = include_named_entities
         self.exclude_entity_tags = exclude_entity_tags
         if not include_named_entities:
-            self.nlp = spacy.load(model_name, exclude=["lemmatizer", "parser", "ner"])
+            self.nlp = self.load_spacy_model(
+                model_name, exclude=["lemmatizer", "parser", "ner"]
+            )
         else:
-            self.nlp = spacy.load(model_name, exclude=["lemmatizer", "parser"])
+            self.nlp = self.load_spacy_model(
+                model_name, exclude=["lemmatizer", "parser"]
+            )
 
         self.exclude_pos_tags = exclude_pos_tags
         self.noun_phrase_grammars = noun_phrase_grammars

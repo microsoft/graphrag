@@ -14,7 +14,7 @@ import networkx as nx
 import tiktoken
 
 from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.string import clean_str
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_graph import (
@@ -152,7 +152,7 @@ class GraphExtractor:
     async def _process_document(
         self, text: str, prompt_variables: dict[str, str]
     ) -> str:
-        response = await self._model.chat(
+        response = await self._model.achat(
             self._extraction_prompt.format(**{
                 **prompt_variables,
                 self._input_text_key: text,
@@ -162,7 +162,7 @@ class GraphExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._model.chat(
+            response = await self._model.achat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -173,7 +173,7 @@ class GraphExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._model.chat(
+            response = await self._model.achat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,

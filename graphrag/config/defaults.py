@@ -48,6 +48,8 @@ class BasicSearchDefaults:
     n: int = 1
     max_tokens: int = 12_000
     llm_max_tokens: int = 2000
+    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
 @dataclass
@@ -122,7 +124,9 @@ class DriftSearchDefaults:
     local_search_temperature: float = 0
     local_search_top_p: float = 1
     local_search_n: int = 1
-    local_search_llm_max_gen_tokens: int = 12_000
+    local_search_llm_max_gen_tokens: int = 4_096
+    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
 @dataclass
@@ -239,6 +243,7 @@ class GlobalSearchDefaults:
     dynamic_search_use_summary: bool = False
     dynamic_search_concurrent_coroutines: int = 16
     dynamic_search_max_level: int = 2
+    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
 
 
 @dataclass
@@ -305,6 +310,8 @@ class LocalSearchDefaults:
     n: int = 1
     max_tokens: int = 12_000
     llm_max_tokens: int = 2000
+    chat_model_id: str = DEFAULT_CHAT_MODEL_ID
+    embedding_model_id: str = DEFAULT_EMBEDDING_MODEL_ID
 
 
 @dataclass

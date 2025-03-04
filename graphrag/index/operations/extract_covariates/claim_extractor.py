@@ -11,7 +11,7 @@ from typing import Any
 import tiktoken
 
 from graphrag.config.defaults import ENCODING_MODEL, graphrag_config_defaults
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.extract_claims import (
     CONTINUE_PROMPT,
@@ -166,7 +166,7 @@ class ClaimExtractor:
             self._completion_delimiter_key, DEFAULT_COMPLETION_DELIMITER
         )
 
-        response = await self._model.chat(
+        response = await self._model.achat(
             self._extraction_prompt.format(**{
                 self._input_text_key: doc,
                 **prompt_args,
@@ -177,7 +177,7 @@ class ClaimExtractor:
 
         # Repeat to ensure we maximize entity count
         for i in range(self._max_gleanings):
-            response = await self._model.chat(
+            response = await self._model.achat(
                 CONTINUE_PROMPT,
                 name=f"extract-continuation-{i}",
                 history=response.history,
@@ -191,7 +191,7 @@ class ClaimExtractor:
             if i >= self._max_gleanings - 1:
                 break
 
-            response = await self._model.chat(
+            response = await self._model.achat(
                 LOOP_PROMPT,
                 name=f"extract-loopcheck-{i}",
                 history=response.history,

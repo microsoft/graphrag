@@ -7,12 +7,12 @@ import pandas as pd
 import tiktoken
 
 from graphrag.data_model.text_unit import TextUnit
+from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.context_builder.builders import (
     BasicContextBuilder,
     ContextBuilderResult,
 )
 from graphrag.query.context_builder.conversation_history import ConversationHistory
-from graphrag.query.llm.base import BaseTextEmbedding
 from graphrag.vector_stores.base import BaseVectorStore
 
 
@@ -21,7 +21,7 @@ class BasicSearchContext(BasicContextBuilder):
 
     def __init__(
         self,
-        text_embedder: BaseTextEmbedding,
+        text_embedder: EmbeddingModel,
         text_unit_embeddings: BaseVectorStore,
         text_units: list[TextUnit] | None = None,
         token_encoder: tiktoken.Encoding | None = None,

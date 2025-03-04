@@ -21,7 +21,7 @@ from graphrag.index.operations.summarize_communities.typing import (
 from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
 
 log = logging.getLogger(__name__)

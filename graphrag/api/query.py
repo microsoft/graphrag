@@ -435,10 +435,11 @@ def local_search_streaming(
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    logger.info(msg)
 
     description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
+        config_args=vector_store_args,
         embedding_name=entity_description_embedding,
     )
 
@@ -453,7 +454,7 @@ def local_search_streaming(
         entities=entities_,
         relationships=read_indexer_relationships(relationships),
         covariates={"claims": covariates_},
-        description_embedding_store=description_embedding_store,  # type: ignore
+        description_embedding_store=description_embedding_store,
         response_type=response_type,
         system_prompt=prompt,
         callbacks=callbacks,
@@ -789,15 +790,16 @@ def drift_search_streaming(
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    logger.info(msg)
 
     description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
+        config_args=vector_store_args,
         embedding_name=entity_description_embedding,
     )
 
     full_content_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
+        config_args=vector_store_args,
         embedding_name=community_full_content_embedding,
     )
 
@@ -815,7 +817,7 @@ def drift_search_streaming(
         text_units=read_indexer_text_units(text_units),
         entities=entities_,
         relationships=read_indexer_relationships(relationships),
-        description_embedding_store=description_embedding_store,  # type: ignore
+        description_embedding_store=description_embedding_store,
         local_system_prompt=prompt,
         reduce_system_prompt=reduce_prompt,
         response_type=response_type,
@@ -1104,10 +1106,11 @@ def basic_search_streaming(
     vector_store_args = {}
     for index, store in config.vector_store.items():
         vector_store_args[index] = store.model_dump()
-    logger.info(f"Vector Store Args: {redact(vector_store_args)}")  # type: ignore # noqa
+    msg = f"Vector Store Args: {redact(vector_store_args)}"
+    logger.info(msg)
 
     description_embedding_store = get_embedding_store(
-        config_args=vector_store_args,  # type: ignore
+        config_args=vector_store_args,
         embedding_name=text_unit_text_embedding,
     )
 

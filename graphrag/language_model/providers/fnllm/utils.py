@@ -3,6 +3,11 @@
 
 """A module containing utils for fnllm."""
 
+import asyncio
+import threading
+from collections.abc import Coroutine
+from typing import Any, TypeVar
+
 from fnllm.base.config import JsonStrategy, RetryStrategy
 from fnllm.openai import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
 from fnllm.openai.types.chat.parameters import OpenAIChatParameters
@@ -13,7 +18,7 @@ from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.language_model_config import (
     LanguageModelConfig,
 )
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.providers.fnllm.cache import FNLLMCacheProvider
 
 
@@ -25,6 +30,8 @@ def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider 
 
 
 def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
+    """Create an error handler from a WorkflowCallbacks."""
+
     def on_error(
         error: BaseException | None = None,
         stack: str | None = None,
@@ -36,6 +43,7 @@ def _create_error_handler(callbacks: WorkflowCallbacks) -> ErrorHandlerFn:
 
 
 def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAIConfig:
+    """Create an OpenAIConfig from a LanguageModelConfig."""
     encoding_model = config.encoding_model
     json_strategy = (
         JsonStrategy.VALID if config.model_supports_json else JsonStrategy.LOOSE
@@ -92,3 +100,28 @@ def _create_openai_config(config: LanguageModelConfig, azure: bool) -> OpenAICon
         chat_parameters=chat_parameters,
         sleep_on_rate_limit_recommendation=True,
     )
+
+
+# FNLLM does not support sync operations, so we workaround running in an available loop/thread.
+T = TypeVar("T")
+
+_loop = asyncio.new_event_loop()
+
+_thr = threading.Thread(target=_loop.run_forever, name="Async Runner", daemon=True)
+
+
+def run_coroutine_sync(coroutine: Coroutine[Any, Any, T]) -> T:
+    """
+    Run a coroutine synchronously.
+
+    Args:
+        coroutine: The coroutine to run.
+
+    Returns
+    -------
+        The result of the coroutine.
+    """
+    if not _thr.is_alive():
+        _thr.start()
+    future = asyncio.run_coroutine_threadsafe(coroutine, _loop)
+    return future.result()

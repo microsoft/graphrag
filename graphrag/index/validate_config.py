@@ -30,7 +30,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     )
 
     try:
-        asyncio.run(llm.chat("This is an LLM connectivity test. Say Hello World"))
+        asyncio.run(llm.achat("This is an LLM connectivity test. Say Hello World"))
         logger.success("LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"LLM configuration error detected. Exiting...\n{e}")  # noqa
@@ -40,6 +40,8 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     embedding_llm_settings = parameters.get_language_model_config(
         parameters.embed_text.model_id
     )
+    if embedding_llm_settings.max_retries == -1:
+        embedding_llm_settings.max_retries = language_model_defaults.max_retries
     embed_llm = ModelManager().register_embedding(
         name="test-embed-llm",
         model_type=embedding_llm_settings.type,
@@ -49,7 +51,7 @@ def validate_config_names(logger: ProgressLogger, parameters: GraphRagConfig) ->
     )
 
     try:
-        asyncio.run(embed_llm.embed(["This is an LLM Embedding Test String"]))
+        asyncio.run(embed_llm.aembed_batch(["This is an LLM Embedding Test String"]))
         logger.success("Embedding LLM Config Params Validated")
     except Exception as e:  # noqa: BLE001
         logger.error(f"Embedding LLM configuration error detected. Exiting...\n{e}")  # noqa

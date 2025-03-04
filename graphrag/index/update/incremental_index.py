@@ -18,9 +18,9 @@ from graphrag.index.update.communities import (
 )
 from graphrag.index.update.entities import (
     _group_and_resolve_entities,
-    _run_entity_summarization,
 )
 from graphrag.index.update.relationships import _update_and_merge_relationships
+from graphrag.index.workflows.extract_graph import get_summarized_entities_relationships
 from graphrag.index.workflows.generate_text_embeddings import generate_text_embeddings
 from graphrag.logger.print_progress import ProgressLogger
 from graphrag.storage.pipeline_storage import PipelineStorage
@@ -104,16 +104,14 @@ async def update_dataframe_outputs(
         "documents", previous_storage, delta_storage, output_storage
     )
 
-    # Update entities and merge them
-    progress_logger.info("Updating Entities")
-    merged_entities_df, entity_id_mapping = await _update_entities(
+    # Update entities, relationships and merge them
+    progress_logger.info("Updating Entities and Relationships")
+    (
+        merged_entities_df,
+        merged_relationships_df,
+        entity_id_mapping,
+    ) = await _update_entities_and_relationships(
         previous_storage, delta_storage, output_storage, config, cache, callbacks
-    )
-
-    # Update relationships with the entities id mapping
-    progress_logger.info("Updating Relationships")
-    merged_relationships_df = await _update_relationships(
-        previous_storage, delta_storage, output_storage
     )
 
     # Update and merge final text units
@@ -145,24 +143,32 @@ async def update_dataframe_outputs(
     progress_logger.info("Updating Text Embeddings")
     embedded_fields = get_embedded_fields(config)
     text_embed = get_embedding_settings(config)
-    await generate_text_embeddings(
-        final_documents=final_documents_df,
-        final_relationships=merged_relationships_df,
-        final_text_units=merged_text_units,
-        final_entities=merged_entities_df,
-        final_community_reports=merged_community_reports,
+    result = await generate_text_embeddings(
+        documents=final_documents_df,
+        relationships=merged_relationships_df,
+        text_units=merged_text_units,
+        entities=merged_entities_df,
+        community_reports=merged_community_reports,
         callbacks=callbacks,
         cache=cache,
-        storage=output_storage,
         text_embed_config=text_embed,
         embedded_fields=embedded_fields,
-        snapshot_embeddings_enabled=config.snapshots.embeddings,
     )
+    if config.snapshots.embeddings:
+        for name, table in result.items():
+            await write_table_to_storage(
+                table,
+                f"embeddings.{name}",
+                output_storage,
+            )
 
 
 async def _update_community_reports(
-    previous_storage, delta_storage, output_storage, community_id_mapping
-):
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+    community_id_mapping: dict,
+) -> pd.DataFrame:
     """Update the community reports output."""
     old_community_reports = await load_table_from_storage(
         "community_reports", previous_storage
@@ -181,7 +187,11 @@ async def _update_community_reports(
     return merged_community_reports
 
 
-async def _update_communities(previous_storage, delta_storage, output_storage):
+async def _update_communities(
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+) -> dict:
     """Update the communities output."""
     old_communities = await load_table_from_storage("communities", previous_storage)
     delta_communities = await load_table_from_storage("communities", delta_storage)
@@ -194,7 +204,11 @@ async def _update_communities(previous_storage, delta_storage, output_storage):
     return community_id_mapping
 
 
-async def _update_covariates(previous_storage, delta_storage, output_storage):
+async def _update_covariates(
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+) -> None:
     """Update the covariates output."""
     old_covariates = await load_table_from_storage("covariates", previous_storage)
     delta_covariates = await load_table_from_storage("covariates", delta_storage)
@@ -204,8 +218,11 @@ async def _update_covariates(previous_storage, delta_storage, output_storage):
 
 
 async def _update_text_units(
-    previous_storage, delta_storage, output_storage, entity_id_mapping
-):
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+    entity_id_mapping: dict,
+) -> pd.DataFrame:
     """Update the text units output."""
     old_text_units = await load_table_from_storage("text_units", previous_storage)
     delta_text_units = await load_table_from_storage("text_units", delta_storage)
@@ -218,26 +235,15 @@ async def _update_text_units(
     return merged_text_units
 
 
-async def _update_relationships(previous_storage, delta_storage, output_storage):
-    """Update the relationships output."""
-    old_relationships = await load_table_from_storage("relationships", previous_storage)
-    delta_relationships = await load_table_from_storage("relationships", delta_storage)
-    merged_relationships_df = _update_and_merge_relationships(
-        old_relationships,
-        delta_relationships,
-    )
-
-    await write_table_to_storage(
-        merged_relationships_df, "relationships", output_storage
-    )
-
-    return merged_relationships_df
-
-
-async def _update_entities(
-    previous_storage, delta_storage, output_storage, config, cache, callbacks
-):
-    """Update Final Entities output."""
+async def _update_entities_and_relationships(
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+    config: GraphRagConfig,
+    cache: PipelineCache,
+    callbacks: WorkflowCallbacks,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """Update Final Entities  and Relationships output."""
     old_entities = await load_table_from_storage("entities", previous_storage)
     delta_entities = await load_table_from_storage("entities", delta_storage)
 
@@ -245,21 +251,49 @@ async def _update_entities(
         old_entities, delta_entities
     )
 
-    # Re-run description summarization
-    merged_entities_df = await _run_entity_summarization(
+    # Update Relationships
+    old_relationships = await load_table_from_storage("relationships", previous_storage)
+    delta_relationships = await load_table_from_storage("relationships", delta_storage)
+    merged_relationships_df = _update_and_merge_relationships(
+        old_relationships,
+        delta_relationships,
+    )
+
+    summarization_llm_settings = config.get_language_model_config(
+        config.summarize_descriptions.model_id
+    )
+    summarization_strategy = config.summarize_descriptions.resolved_strategy(
+        config.root_dir, summarization_llm_settings
+    )
+
+    (
         merged_entities_df,
-        config,
-        cache,
-        callbacks,
+        merged_relationships_df,
+    ) = await get_summarized_entities_relationships(
+        extracted_entities=merged_entities_df,
+        extracted_relationships=merged_relationships_df,
+        callbacks=callbacks,
+        cache=cache,
+        summarization_strategy=summarization_strategy,
+        summarization_num_threads=summarization_llm_settings.concurrent_requests,
     )
 
     # Save the updated entities back to storage
     await write_table_to_storage(merged_entities_df, "entities", output_storage)
 
-    return merged_entities_df, entity_id_mapping
+    await write_table_to_storage(
+        merged_relationships_df, "relationships", output_storage
+    )
+
+    return merged_entities_df, merged_relationships_df, entity_id_mapping
 
 
-async def _concat_dataframes(name, previous_storage, delta_storage, output_storage):
+async def _concat_dataframes(
+    name: str,
+    previous_storage: PipelineStorage,
+    delta_storage: PipelineStorage,
+    output_storage: PipelineStorage,
+) -> pd.DataFrame:
     """Concatenate dataframes."""
     old_df = await load_table_from_storage(name, previous_storage)
     delta_df = await load_table_from_storage(name, delta_storage)
@@ -301,6 +335,10 @@ def _update_and_merge_text_units(
             lambda x: [entity_id_mapping.get(i, i) for i in x] if x is not None else x
         )
 
+    initial_id = old_text_units["human_readable_id"].max() + 1
+    delta_text_units["human_readable_id"] = np.arange(
+        initial_id, initial_id + len(delta_text_units)
+    )
     # Merge the final text units
     return pd.concat([old_text_units, delta_text_units], ignore_index=True, copy=False)
 

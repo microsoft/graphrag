@@ -20,7 +20,7 @@ from graphrag.index.operations.extract_covariates.typing import (
     Covariate,
     CovariateExtractionResult,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.language_model.manager import ModelManager
 
 log = logging.getLogger(__name__)

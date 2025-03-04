@@ -78,6 +78,7 @@ semversioner
 mkdocs
 fnllm
 typer
+spacy
 
 # Library Methods
 iterrows
@@ -120,10 +121,7 @@ unhot
 groupby
 retryer
 agenerate
-aembed
-dedupe
 dropna
-dtypes
 notna
 
 # LLM Terms
@@ -131,6 +129,8 @@ AOAI
 embedder
 llm
 llms
+achat
+aembed
 
 # Galaxy-Brain Terms
 Unipartite

@@ -46,7 +46,7 @@ class GlobalCommunityContext(GlobalContextBuilder):
             self.dynamic_community_selection = DynamicCommunitySelection(
                 community_reports=community_reports,
                 communities=communities,
-                llm=dynamic_community_selection_kwargs.pop("llm"),
+                model=dynamic_community_selection_kwargs.pop("model"),
                 token_encoder=dynamic_community_selection_kwargs.pop("token_encoder"),
                 **dynamic_community_selection_kwargs,
             )

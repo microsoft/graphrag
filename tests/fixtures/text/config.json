@@ -3,33 +3,30 @@
     "input_file_type": "text",
     "workflow_config": {
         "create_base_text_units": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "max_runtime": 150,
-            "expected_artifacts": 0
+            "max_runtime": 30
         },
         "extract_graph": {
-            "row_range": [
-                1,
-                2500
-            ],
-            "max_runtime": 500,
-            "expected_artifacts": 0
+            "max_runtime": 500
         },
         "finalize_graph": {
             "row_range": [
                 1,
-                2500
+                500
+            ],
+            "nan_allowed_columns": [
+                "x",
+                "y"
             ],
             "max_runtime": 30,
-            "expected_artifacts": 2
+            "expected_artifacts": [
+                "entities.parquet",
+                "relationships.parquet"
+            ]
         },
         "extract_covariates": {
             "row_range": [
                 1,
-                2500
+                100
             ],
             "nan_allowed_columns": [
                 "type",
@@ -41,20 +38,20 @@
                 "source_text"
             ],
             "max_runtime": 300,
-            "expected_artifacts": 1
+            "expected_artifacts": ["covariates.parquet"]
         },
         "create_communities": {
             "row_range": [
                 1,
-                2500
+                30
             ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["communities.parquet"]
         },
         "create_community_reports": {
             "row_range": [
                 1,
-                2500
+                30
             ],
             "nan_allowed_columns": [
                 "title",
@@ -68,35 +65,43 @@
                 "size"
             ],
             "max_runtime": 300,
-            "expected_artifacts": 1
+            "expected_artifacts": ["community_reports.parquet"]
         },
         "create_final_text_units": {
             "row_range": [
                 1,
-                2500
+                10
             ],
             "nan_allowed_columns": [
                 "relationship_ids",
-                "entity_ids"
+                "entity_ids",
+                "covariate_ids"
             ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "max_runtime": 30,
+            "expected_artifacts": ["text_units.parquet"]
         },
         "create_final_documents": {
             "row_range": [
                 1,
-                2500
+                1
             ],
-            "max_runtime": 150,
-            "expected_artifacts": 1
+            "nan_allowed_columns": [
+                "metadata"
+            ],
+            "max_runtime": 30,
+            "expected_artifacts": ["documents.parquet"]
         },
         "generate_text_embeddings": {
             "row_range": [
                 1,
-                2500
+                100
             ],
             "max_runtime": 150,
-            "expected_artifacts": 1
+            "expected_artifacts": [
+                "embeddings.text_unit.text.parquet",
+                "embeddings.entity.description.parquet",
+                "embeddings.community.full_content.parquet"
+            ]
         }
     },
     "query_config": [

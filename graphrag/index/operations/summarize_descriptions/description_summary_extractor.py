@@ -6,7 +6,7 @@
 import json
 from dataclasses import dataclass
 
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.index.utils.tokens import num_tokens_from_string
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.summarize_descriptions import SUMMARIZE_PROMPT
@@ -125,7 +125,7 @@ class SummarizeExtractor:
         self, id: str | tuple[str, str] | list[str], descriptions: list[str]
     ):
         """Summarize descriptions using the LLM."""
-        response = await self._model.chat(
+        response = await self._model.achat(
             self._summarization_prompt.format(**{
                 self._entity_name_key: json.dumps(id, ensure_ascii=False),
                 self._input_descriptions_key: json.dumps(

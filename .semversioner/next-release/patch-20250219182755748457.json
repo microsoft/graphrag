@@ -1,4 +1,0 @@
-{
-  "type": "patch",
-  "description": "Refactor config defaults from constants to type-safe, hierarchical dataclass."
-}

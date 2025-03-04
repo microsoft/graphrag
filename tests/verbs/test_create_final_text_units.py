@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
+from graphrag.data_model.schemas import TEXT_UNITS_FINAL_COLUMNS
 from graphrag.index.workflows.create_final_text_units import (
     run_workflow,
 )
@@ -31,45 +31,11 @@ async def test_create_final_text_units():
     config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
     config.extract_claims.enabled = True
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     actual = await load_table_from_storage("text_units", context.storage)
+
+    for column in TEXT_UNITS_FINAL_COLUMNS:
+        assert column in actual.columns
 
     compare_outputs(actual, expected)
-
-
-async def test_create_final_text_units_no_covariates():
-    expected = load_test_table("text_units")
-
-    context = await create_test_context(
-        storage=[
-            "text_units",
-            "entities",
-            "relationships",
-            "covariates",
-        ],
-    )
-
-    config = create_graphrag_config({"models": DEFAULT_MODEL_CONFIG})
-    config.extract_claims.enabled = False
-
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
-
-    actual = await load_table_from_storage("text_units", context.storage)
-
-    # we're short a covariate_ids column
-    columns = list(expected.columns.values)
-    columns.remove("covariate_ids")
-    compare_outputs(
-        actual,
-        expected,
-        columns=columns,
-    )

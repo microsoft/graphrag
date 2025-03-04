@@ -22,6 +22,6 @@ async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
     docs_str = " ".join(docs) if isinstance(docs, list) else docs
     domain_prompt = GENERATE_DOMAIN_PROMPT.format(input_text=docs_str)
 
-    response = await model.chat(domain_prompt)
+    response = await model.achat(domain_prompt)
 
     return str(response.output.content)

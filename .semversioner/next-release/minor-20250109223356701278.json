@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "Remove config inheritance, hydration, and automatic env var overlays."
-}

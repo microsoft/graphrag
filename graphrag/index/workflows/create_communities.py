@@ -10,19 +10,18 @@ from uuid import uuid4
 import numpy as np
 import pandas as pd
 
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.index.context import PipelineRunContext
+from graphrag.data_model.schemas import COMMUNITIES_FINAL_COLUMNS
 from graphrag.index.operations.cluster_graph import cluster_graph
 from graphrag.index.operations.create_graph import create_graph
-from graphrag.index.typing import WorkflowFunctionOutput
+from graphrag.index.typing.context import PipelineRunContext
+from graphrag.index.typing.workflow import WorkflowFunctionOutput
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 
 async def run_workflow(
     config: GraphRagConfig,
     context: PipelineRunContext,
-    _callbacks: WorkflowCallbacks,
 ) -> WorkflowFunctionOutput:
     """All the steps to transform final communities."""
     entities = await load_table_from_storage("entities", context.storage)
@@ -42,7 +41,7 @@ async def run_workflow(
 
     await write_table_to_storage(output, "communities", context.storage)
 
-    return WorkflowFunctionOutput(result=output, config=None)
+    return WorkflowFunctionOutput(result=output)
 
 
 def create_communities(
@@ -146,18 +145,5 @@ def create_communities(
 
     return final_communities.loc[
         :,
-        [
-            "id",
-            "human_readable_id",
-            "community",
-            "level",
-            "parent",
-            "children",
-            "title",
-            "entity_ids",
-            "relationship_ids",
-            "text_unit_ids",
-            "period",
-            "size",
-        ],
+        COMMUNITIES_FINAL_COLUMNS,
     ]

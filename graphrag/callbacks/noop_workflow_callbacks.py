@@ -4,11 +4,18 @@
 """A no-op implementation of WorkflowCallbacks."""
 
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 from graphrag.logger.progress import Progress
 
 
 class NoopWorkflowCallbacks(WorkflowCallbacks):
     """A no-op implementation of WorkflowCallbacks."""
+
+    def pipeline_start(self, names: list[str]) -> None:
+        """Execute this callback when a the entire pipeline starts."""
+
+    def pipeline_end(self, results: list[PipelineRunResult]) -> None:
+        """Execute this callback when the entire pipeline ends."""
 
     def workflow_start(self, name: str, instance: object) -> None:
         """Execute this callback when a workflow starts."""

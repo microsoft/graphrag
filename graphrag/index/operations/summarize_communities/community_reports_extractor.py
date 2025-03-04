@@ -3,7 +3,6 @@
 
 """A module containing 'CommunityReportsResult' and 'CommunityReportsExtractor' models."""
 
-import json
 import logging
 import traceback
 from dataclasses import dataclass
@@ -11,7 +10,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompts.index.community_report import COMMUNITY_REPORT_PROMPT
 
@@ -78,7 +77,7 @@ class CommunityReportsExtractor:
             prompt = self._extraction_prompt.replace(
                 "{" + self._input_text_key + "}", input_text
             )
-            response = await self._model.chat(
+            response = await self._model.achat(
                 prompt,
                 json=True,  # Leaving this as True to avoid creating new cache entries
                 name="create_community_report",
@@ -86,11 +85,7 @@ class CommunityReportsExtractor:
                 model_parameters={"max_tokens": self._max_report_length},
             )
 
-            # TODO: Json mode is currently broken on fnllm: https://github.com/microsoft/essex-toolkit/issues/364
-            # once fixed, just assign to output the response.parsed_json
-            output = CommunityReportResponse.model_validate(
-                json.loads(response.output.content)
-            )
+            output = response.parsed_response
         except Exception as e:
             log.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)

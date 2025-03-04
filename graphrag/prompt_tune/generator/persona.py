@@ -22,6 +22,6 @@ async def generate_persona(
     formatted_task = task.format(domain=domain)
     persona_prompt = GENERATE_PERSONA_PROMPT.format(sample_task=formatted_task)
 
-    response = await model.chat(persona_prompt)
+    response = await model.achat(persona_prompt)
 
     return str(response.output.content)

@@ -7,7 +7,7 @@ from typing import Any
 
 from fnllm.events import LLMEvents
 
-from graphrag.index.typing import ErrorHandlerFn
+from graphrag.index.typing.error_handler import ErrorHandlerFn
 
 
 class FNLLMEvents(LLMEvents):

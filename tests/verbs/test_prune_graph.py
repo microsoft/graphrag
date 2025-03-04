@@ -1,7 +1,6 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
 from graphrag.config.models.prune_graph_config import PruneGraphConfig
 from graphrag.index.workflows.prune_graph import (
@@ -25,11 +24,7 @@ async def test_prune_graph():
         min_node_freq=4, min_node_degree=0, min_edge_weight_pct=0
     )
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
 

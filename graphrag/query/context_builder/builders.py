@@ -54,7 +54,7 @@ class DRIFTContextBuilder(ABC):
     """Base class for DRIFT-search context builders."""
 
     @abstractmethod
-    def build_context(
+    async def build_context(
         self,
         query: str,
         **kwargs,

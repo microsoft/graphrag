@@ -30,6 +30,6 @@ async def generate_community_report_rating(
         domain=domain, persona=persona, input_text=docs_str
     )
 
-    response = await model.chat(domain_prompt)
+    response = await model.achat(domain_prompt)
 
     return str(response.output.content).strip()

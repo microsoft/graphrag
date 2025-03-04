@@ -13,7 +13,7 @@ from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
-from graphrag.storage.factory import StorageFactory
+from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 if TYPE_CHECKING:
@@ -391,7 +391,6 @@ def run_drift_search(
     logger.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
-    # TODO: Map/Reduce Drift Search answer to a single response
     return response, context_data
 
 
@@ -498,10 +497,7 @@ def _resolve_output_files(
         dataframe_dict["num_indexes"] = len(config.outputs)
         dataframe_dict["index_names"] = config.outputs.keys()
         for output in config.outputs.values():
-            output_config = output.model_dump()
-            storage_obj = StorageFactory().create_storage(
-                storage_type=output_config["type"], kwargs=output_config
-            )
+            storage_obj = create_storage_from_config(output)
             for name in output_list:
                 if name not in dataframe_dict:
                     dataframe_dict[name] = []
@@ -528,10 +524,7 @@ def _resolve_output_files(
         return dataframe_dict
     # Loading output files for single-index search
     dataframe_dict["multi-index"] = False
-    output_config = config.output.model_dump()  # type: ignore
-    storage_obj = StorageFactory().create_storage(
-        storage_type=output_config["type"], kwargs=output_config
-    )
+    storage_obj = create_storage_from_config(config.output)
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
         dataframe_dict[name] = df_value
