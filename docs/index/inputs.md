@@ -109,6 +109,7 @@ settings.yaml
 
 ```yaml
 input:
+    file_type: text
     metadata: [title]
 
 chunks:
@@ -159,6 +160,7 @@ settings.yaml
 
 ```yaml
 input:
+    file_type: csv
     title_column: headline
     text_column: article
     metadata: [headline]
@@ -198,6 +200,70 @@ Raw Text Chunks
 
 
 In this example we can see that the two input documents were parsed into fourteen output text chunks. The title (headline) of each document is prepended and included in the computed chunk size, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last five tokens are shared. Why would you use overlap in your text chunks? Consider that when you are splitting documents based on tokens, it is highly likely that sentences or even related concepts will be split into separate chunks. Each text chunk is processed separately by the language model, so this may result in incomplete "ideas" at the boundaries of the chunk. Overlap ensures that these split concepts are fully contained in at least one of the chunks.
+
+
+#### JSON files
+
+This final example uses a JSON file for each of the same two articles. In this example we'll set the object fields to read, but we will not add metadata to the text chunks.
+
+--
+
+**File:** article1.json
+
+**Content**
+
+```json
+{
+    "headline": "US to lift most federal COVID-19 vaccine mandates",
+    "content": "WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors, as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as the deadly virus raged, and their end marks the latest display of how President Joe Biden's administration is moving to treat COVID-19 as a routine, endemic illness. "While I believe that these vaccine mandates had a tremendous beneficial impact, we are now at a point where we think that it makes a lot of sense to pull these requirements down," White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday."
+}
+```
+
+**File:** article2.json
+
+**Content**
+
+```json
+{
+    "headline": "NY lawmakers begin debating budget 1 month after due date",
+    "content": "ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget she said contains "significant wins" for New Yorkers. "I would have liked to have done this sooner. I think we would all agree to that," Cousins told reporters before voting began. "This has been a very policy-laden budget and a lot of the policies had to parsed through." Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges to prescribe the "least restrictive" means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum wage would be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That's up from $15 in the city and $14.20 upstate."
+}
+```
+
+--
+
+settings.yaml
+
+```yaml
+input:
+    file_type: json
+    title_column: headline
+    text_column: content
+
+chunks:
+    size: 100
+    overlap: 10
+```
+
+Documents DataFrame
+
+| id                    | title                                                     | text                     | creation_date                  | metadata |
+| --------------------- | --------------------------------------------------------- | ------------------------ | ------------------------------ | -------- |
+| (generated from text) | US to lift most federal COVID-19 vaccine mandates         | (article column content) | (create date of article1.json) | { }      |
+| (generated from text) | NY lawmakers begin debating budget 1 month after due date | (article column content) | (create date of article2.json) | { }      |
+
+Raw Text Chunks
+
+| content | length  |
+| ------- | ------: |
+| WASHINGTON (AP) The Biden administration will end most of the last remaining federal COVID-19 vaccine requirements next week when the national public health emergency for the coronavirus ends, the White House said Monday. Vaccine requirements for federal workers and federal contractors, as well as foreign air travelers to the U.S., will end May 11. The government is also beginning the process of lifting shot requirements for Head Start educators, healthcare workers, and noncitizens at U.S. land borders. The requirements are among the last vestiges of some of the more coercive measures taken by the federal government to promote vaccination as | 100 |
+| measures taken by the federal government to promote vaccination as  the deadly virus raged, and their end marks the latest display of how President Joe Biden's administration is moving to treat COVID-19 as a routine, endemic illness. "While I believe that these vaccine mandates had a tremendous beneficial impact, we are now at a point where we think that it makes a lot of sense to pull these requirements down," White House COVID-19 coordinator Dr. Ashish Jha told The Associated Press on Monday. | 83 |
+| ALBANY, N.Y. (AP) New York lawmakers began voting Monday on a $229 billion state budget due a month ago that would raise the minimum wage, crack down on illicit pot shops and ban gas stoves and furnaces in new buildings. Negotiations among Gov. Kathy Hochul and her fellow Democrats in control of the Legislature dragged on past the April 1 budget deadline, largely because of disagreements over changes to the bail law and other policy proposals included in the spending plan. Floor debates on some budget bills began Monday. State Senate Majority Leader Andrea Stewart-Cousins said she expected voting to | 100 |
+| Senate Majority Leader Andrea Stewart-Cousins said she expected voting to be wrapped up Tuesday for a budget she said contains "significant wins" for New Yorkers. "I would have liked to have done this sooner. I think we would all agree to that," Cousins told reporters before voting began. "This has been a very policy-laden budget and a lot of the policies had to parsed through." Hochul was able to push through a change to the bail law that will eliminate the standard that requires judges to prescribe the "least restrictive" means to ensure defendants return to court. Hochul said judges | 100 |
+| means to ensure defendants return to court. Hochul said judges needed the extra discretion. Some liberal lawmakers argued that it would undercut the sweeping bail reforms approved in 2019 and result in more people with low incomes and people of color in pretrial detention. Here are some other policy provisions that will be included in the budget, according to state officials. The minimum wage would be raised to $17 in New York City and some of its suburbs and $16 in the rest of the state by 2026. That's up from $15 in the city and $14.20 upstate. | 98 |
+
+
+In this example the two input documents were parsed into five output text chunks. There is no metadata prepended, so each chunk matches the configured chunk size (except the last one for each document). We've also configured some overlap in these text chunks, so the last ten tokens are shared.
 
 
 
