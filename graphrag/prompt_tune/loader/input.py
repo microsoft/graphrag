@@ -6,11 +6,9 @@
 import numpy as np
 import pandas as pd
 
-import graphrag.config.defaults as defs
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.index.input.factory import create_input
-from graphrag.index.operations.chunk_text.chunk_text import chunk_text
 from graphrag.index.workflows.create_base_text_units import create_base_text_units
 from graphrag.language_model.manager import ModelManager
 from graphrag.language_model.protocol.base import EmbeddingModel
