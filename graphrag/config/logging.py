@@ -34,9 +34,7 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
 
 
 def enable_logging_with_config(
-    config: GraphRagConfig,
-    verbose: bool = False,
-    filename: str = "indexing-engine.log"
+    config: GraphRagConfig, verbose: bool = False, filename: str = "indexing-engine.log"
 ) -> tuple[bool, str]:
     """Enable logging to a file based on the config.
 

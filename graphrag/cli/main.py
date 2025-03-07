@@ -313,10 +313,16 @@ def _prompt_tune_cli(
         ),
     ] = 2,
     chunk_size: Annotated[
-        int, typer.Option(help="The size of each example text chunk. Overrides chunks.size in the configuration file.")
+        int,
+        typer.Option(
+            help="The size of each example text chunk. Overrides chunks.size in the configuration file."
+        ),
     ] = graphrag_config_defaults.chunks.size,
     overlap: Annotated[
-        int, typer.Option(help="The overlap size for chunking documents. Overrides chunks.overlap in the configuration file")
+        int,
+        typer.Option(
+            help="The overlap size for chunking documents. Overrides chunks.overlap in the configuration file"
+        ),
     ] = graphrag_config_defaults.chunks.overlap,
     language: Annotated[
         str | None,

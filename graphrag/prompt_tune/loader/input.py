@@ -28,9 +28,7 @@ async def _embed_chunks(
 ) -> tuple[pd.DataFrame, np.ndarray]:
     """Convert text chunks into dense text embeddings."""
     sampled_text_chunks = text_chunks.sample(n=min(n_subset_max, len(text_chunks)))
-    embeddings = await embedding_llm.aembed_batch(
-        sampled_text_chunks["text"].tolist()
-    )
+    embeddings = await embedding_llm.aembed_batch(sampled_text_chunks["text"].tolist())
     return text_chunks, np.array(embeddings)
 
 
@@ -66,20 +64,20 @@ async def load_docs_in_chunks(
     dataset = await create_input(config.input, logger, root)
     chunk_config = config.chunks
     chunks_df = create_base_text_units(
-        documents = dataset,
-        callbacks = NoopWorkflowCallbacks(),
-        group_by_columns = chunk_config.group_by_columns,
-        size = chunk_size,
-        overlap = overlap,
-        encoding_model = chunk_config.encoding_model,
-        strategy = chunk_config.strategy,
-        prepend_metadata = chunk_config.prepend_metadata,
-        chunk_size_includes_metadata = chunk_config.chunk_size_includes_metadata,
+        documents=dataset,
+        callbacks=NoopWorkflowCallbacks(),
+        group_by_columns=chunk_config.group_by_columns,
+        size=chunk_size,
+        overlap=overlap,
+        encoding_model=chunk_config.encoding_model,
+        strategy=chunk_config.strategy,
+        prepend_metadata=chunk_config.prepend_metadata,
+        chunk_size_includes_metadata=chunk_config.chunk_size_includes_metadata,
     )
 
     # Depending on the select method, build the dataset
     if limit <= 0 or limit > len(chunks_df):
-        logger.warning(f"Limit out of range, using default number of chunks: {LIMIT}") # noqa: G004
+        logger.warning(f"Limit out of range, using default number of chunks: {LIMIT}")  # noqa: G004
         limit = LIMIT
 
     if select_method == DocSelectionType.TOP:

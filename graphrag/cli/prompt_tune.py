@@ -66,7 +66,7 @@ async def prompt_tune(
     # override chunking config in the configuration
     if chunk_size != graph_config.chunks.size:
         graph_config.chunks.size = chunk_size
-    
+
     if overlap != graph_config.chunks.overlap:
         graph_config.chunks.overlap = overlap
 
@@ -74,9 +74,7 @@ async def prompt_tune(
     info, error, success = _logger(progress_logger)
 
     enabled_logging, log_path = enable_logging_with_config(
-        graph_config,
-        verbose,
-        filename="prompt-tune.log"
+        graph_config, verbose, filename="prompt-tune.log"
     )
     if enabled_logging:
         info(f"Logging enabled at {log_path}", verbose)

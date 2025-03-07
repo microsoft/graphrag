@@ -54,7 +54,9 @@ async def generate_indexing_prompts(
     logger: ProgressLogger,
     root: str,
     chunk_size: PositiveInt = graphrag_config_defaults.chunks.size,
-    overlap: Annotated[int, annotated_types.Gt(-1)] = graphrag_config_defaults.chunks.overlap,
+    overlap: Annotated[
+        int, annotated_types.Gt(-1)
+    ] = graphrag_config_defaults.chunks.overlap,
     limit: PositiveInt = 15,
     selection_method: DocSelectionType = DocSelectionType.RANDOM,
     domain: str | None = None,
@@ -113,7 +115,9 @@ async def generate_indexing_prompts(
         default_llm_settings.max_retries = min(
             len(doc_list), language_model_defaults.max_retries
         )
-        logger.warning(f"max_retries not set, using default value: {default_llm_settings.max_retries}")  # noqa: G004
+        logger.warning(
+            f"max_retries not set, using default value: {default_llm_settings.max_retries}"
+        )  # noqa: G004
 
     logger.info("Creating language model...")
     llm = ModelManager().register_chat(
