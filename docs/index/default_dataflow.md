@@ -11,7 +11,6 @@ The knowledge model is a specification for data outputs that conform to our data
 - `Covariate` - Extracted claim information, which contains statements about entities which may be time-bound.
 - `Community` - Once the graph of entities and relationships is built, we perform hierarchical community detection on them to create a clustering structure.
 - `Community Report` - The contents of each community are summarized into a generated report, useful for human reading and downstream search.
-- `Node` - This table contains layout information for rendered graph-views of the Entities and Documents which have been embedded and clustered.
 
 ## The Default Configuration Workflow
 
@@ -48,7 +47,7 @@ flowchart TB
     subgraph phase6[Phase 6: Network Visualization]
     graph_outputs --> graph_embed[Graph Embedding]
     graph_embed --> umap_entities[Umap Entities]
-    umap_entities --> combine_nodes[Final Nodes]
+    umap_entities --> combine_nodes[Final Entities]
     end
     subgraph phase7[Phase 7: Text Embeddings]
     textUnits --> text_embed[Text Embedding]
@@ -186,7 +185,7 @@ In this phase of the workflow, we perform some steps to support network visualiz
 title: Network Visualization Workflows
 ---
 flowchart LR
-    ag[Graph Table] --> ge[Node2Vec Graph Embedding] --> ne[Umap Entities] --> ng[Nodes Table]
+    ag[Graph Table] --> ge[Node2Vec Graph Embedding] --> ne[Umap Entities] --> ng[Entities Table]
 ```
 
 ### Graph Embedding
@@ -195,7 +194,7 @@ In this step, we generate a vector representation of our graph using the Node2Ve
 
 ### Dimensionality Reduction
 
-For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are then exported as a table of _Nodes_. The rows of this table include the UMAP dimensions as x/y coordinates.
+For each of the logical graphs, we perform a UMAP dimensionality reduction to generate a 2D representation of the graph. This will allow us to visualize the graph in a 2D space and understand the relationships between the nodes in the graph. The UMAP embeddings are reduced to two dimensions as x/y coordinates.
 
 ## Phase 7: Text Embedding
 
