@@ -257,7 +257,7 @@ class InputDefaults:
     storage_account_blob_url: None = None
     container_name: None = None
     encoding: str = "utf-8"
-    file_pattern: str = ".*\\.txt$"
+    file_pattern: str = ""
     file_filter: None = None
     text_column: str = "text"
     title_column: None = None
