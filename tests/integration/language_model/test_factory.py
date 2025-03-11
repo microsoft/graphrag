@@ -37,7 +37,6 @@ async def test_create_custom_chat_model():
             self, prompt: str, history: list | None = None, **kwargs: Any
         ) -> AsyncGenerator[str, None]:
             yield ""
-            ...
 
         def chat_stream(
             self, prompt: str, history: list | None = None, **kwargs: Any
