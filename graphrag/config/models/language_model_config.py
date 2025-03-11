@@ -15,6 +15,7 @@ from graphrag.config.errors import (
     AzureDeploymentNameMissingError,
     ConflictingSettingsError,
 )
+from graphrag.language_model.factory import ModelFactory
 
 
 class LanguageModelConfig(BaseModel):
@@ -44,7 +45,7 @@ class LanguageModelConfig(BaseModel):
             self.api_key is None or self.api_key.strip() == ""
         ):
             raise ApiKeyMissingError(
-                self.type.value,
+                self.type,
                 self.auth_type.value,
             )
 
@@ -73,10 +74,28 @@ class LanguageModelConfig(BaseModel):
         if self.auth_type == AuthType.AzureManagedIdentity and (
             self.type == ModelType.OpenAIChat or self.type == ModelType.OpenAIEmbedding
         ):
-            msg = f"auth_type of azure_managed_identity is not supported for model type {self.type.value}. Please rerun `graphrag init` and set the auth_type to api_key."
+            msg = f"auth_type of azure_managed_identity is not supported for model type {self.type}. Please rerun `graphrag init` and set the auth_type to api_key."
             raise ConflictingSettingsError(msg)
 
-    type: ModelType = Field(description="The type of LLM model to use.")
+    type: ModelType | str = Field(description="The type of LLM model to use.")
+
+    def _validate_type(self) -> None:
+        """Validate the model type.
+
+        Raises
+        ------
+        KeyError
+            If the model name is not recognized.
+        """
+        # Type should be contained by the registered models
+        if (
+            self.type not in ModelFactory.get_chat_models()
+            and self.type not in ModelFactory.get_embedding_models()
+        ):
+            raise KeyError(
+                f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
+            )
+
     model: str = Field(description="The LLM model to use.")
     encoding_model: str = Field(
         description="The encoding model to use",
@@ -141,7 +160,7 @@ class LanguageModelConfig(BaseModel):
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_base is None or self.api_base.strip() == ""):
-            raise AzureApiBaseMissingError(self.type.value)
+            raise AzureApiBaseMissingError(self.type)
 
     api_version: str | None = Field(
         description="The version of the LLM API to use.",
@@ -251,6 +270,7 @@ class LanguageModelConfig(BaseModel):
 
     @model_validator(mode="after")
     def _validate_model(self):
+        self._validate_type()
         self._validate_auth_type()
         self._validate_api_key()
         self._validate_azure_settings()

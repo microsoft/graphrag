@@ -70,6 +70,16 @@ class ModelFactory:
             raise ValueError(msg)
         return cls._embedding_registry[model_type](**kwargs)
 
+    @classmethod
+    def get_chat_models(cls) -> list[str]:
+        """Get the registered ChatModel implementations."""
+        return list(cls._chat_registry.keys())
+
+    @classmethod
+    def get_embedding_models(cls) -> list[str]:
+        """Get the registered EmbeddingModel implementations."""
+        return list(cls._embedding_registry.keys())
+
 
 # --- Register default implementations ---
 ModelFactory.register_chat(
