@@ -115,9 +115,8 @@ async def generate_indexing_prompts(
         default_llm_settings.max_retries = min(
             len(doc_list), language_model_defaults.max_retries
         )
-        logger.warning(
-            f"max_retries not set, using default value: {default_llm_settings.max_retries}"
-        )  # noqa: G004
+        msg = f"max_retries not set, using default value: {default_llm_settings.max_retries}"
+        logger.warning(msg)
 
     logger.info("Creating language model...")
     llm = ModelManager().register_chat(
