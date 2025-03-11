@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
     
     
       
@@ -1474,37 +1474,45 @@
 <p>Options:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>  --root PATH                     The project root directory.  \[default: .]
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  --config PATH                   The configuration to use.
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  --domain TEXT                   The domain your input data is related to.
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>                                  For example &#39;space science&#39;, &#39;microbiology&#39;,
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>                                  &#39;environmental news&#39;. If not defined, a
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                                  domain will be inferred from the input data.
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  --selection-method [all|random|top|auto]
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>                                  The text chunk selection method.  \[default:
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>                                  random]
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  --n-subset-max INTEGER          The number of text chunks to embed when
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>                                  --selection-method=auto.  \[default: 300]
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  --k INTEGER                     The maximum number of documents to select
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>                                  from each centroid when --selection-
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>                                  method=auto.  \[default: 15]
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>  --limit INTEGER                 The number of documents to load when
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                                  --selection-method={random,top}.  \[default:
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>                                  15]
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>  --max-tokens INTEGER            The max token count for prompt generation.
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>                                  \[default: 2000]
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>  --min-examples-required INTEGER
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>                                  The minimum number of examples to
-<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>                                  generate/include in the entity extraction
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>                                  prompt.  \[default: 2]
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>  --chunk-size INTEGER            The max token count for prompt generation.
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>                                  \[default: 200]
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>  --language TEXT                 The primary language used for inputs and
-<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>                                  outputs in graphrag prompts.
-<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>  --discover-entity-types / --no-discover-entity-types
-<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>                                  Discover and extract unspecified entity
-<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>                                  types.  \[default: discover-entity-types]
-<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>  --output PATH                   The directory to save prompts to, relative
-<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>                                  to the project root directory.  \[default:
-<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>                                  prompts]
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  --verbose / --no-verbose        Run the prompt tuning pipeline with verbose
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>                                  logging  \[default: no-verbose]
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  --logger [rich|print|none]      The progress logger to use.  \[default:
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                                  rich]
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  --domain TEXT                   The domain your input data is related to.
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>                                  For example &#39;space science&#39;, &#39;microbiology&#39;,
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>                                  &#39;environmental news&#39;. If not defined, a
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>                                  domain will be inferred from the input data.
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  --selection-method [all|random|top|auto]
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>                                  The text chunk selection method.  \[default:
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>                                  random]
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  --n-subset-max INTEGER          The number of text chunks to embed when
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>                                  --selection-method=auto.  \[default: 300]
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>  --k INTEGER                     The maximum number of documents to select
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>                                  from each centroid when --selection-
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>                                  method=auto.  \[default: 15]
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>  --limit INTEGER                 The number of documents to load when
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>                                  --selection-method={random,top}.  \[default:
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>                                  15]
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>  --max-tokens INTEGER            The max token count for prompt generation.
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>                                  \[default: 2000]
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>  --min-examples-required INTEGER
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>                                  The minimum number of examples to
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>                                  generate/include in the entity extraction
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>                                  prompt.  \[default: 2]
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>  --chunk-size INTEGER            The size of each example text chunk.
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>                                  Overrides chunks.size in the configuration
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>                                  file.  \[default: 1200]
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>  --overlap INTEGER               The overlap size for chunking documents.
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>                                  Overrides chunks.overlap in the
+<a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>                                  configuration file  \[default: 100]
+<a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>  --language TEXT                 The primary language used for inputs and
+<a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>                                  outputs in graphrag prompts.
+<a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>  --discover-entity-types / --no-discover-entity-types
+<a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>                                  Discover and extract unspecified entity
+<a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>                                  types.  \[default: discover-entity-types]
+<a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>  --output PATH                   The directory to save prompts to, relative
+<a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>                                  to the project root directory.  \[default:
+<a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>                                  prompts]
 </code></pre></div>
 <h2 id="query">query</h2>
 <p>Query a knowledge graph index.</p>
@@ -1656,7 +1664,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "content.code.select", "navigation.footer", "navigation.tabs"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
       
         <script src="../scripts/create_cookie_banner.js"></script>
       
