@@ -3,23 +3,28 @@
 
 """A module containing utils for fnllm."""
 
+from __future__ import annotations
+
 import asyncio
 import threading
-from collections.abc import Coroutine
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from fnllm.base.config import JsonStrategy, RetryStrategy
 from fnllm.openai import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
 from fnllm.openai.types.chat.parameters import OpenAIChatParameters
 
 import graphrag.config.defaults as defs
-from graphrag.cache.pipeline_cache import PipelineCache
-from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
-from graphrag.config.models.language_model_config import (
-    LanguageModelConfig,
-)
-from graphrag.index.typing.error_handler import ErrorHandlerFn
 from graphrag.language_model.providers.fnllm.cache import FNLLMCacheProvider
+
+if TYPE_CHECKING:
+    from collections.abc import Coroutine
+
+    from graphrag.cache.pipeline_cache import PipelineCache
+    from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
+    from graphrag.config.models.language_model_config import (
+        LanguageModelConfig,
+    )
+    from graphrag.index.typing.error_handler import ErrorHandlerFn
 
 
 def _create_cache(cache: PipelineCache | None, name: str) -> FNLLMCacheProvider | None:
