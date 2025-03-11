@@ -1,0 +1,4 @@
+{
+  "type": "patch",
+  "description": "Add check for custom model tyoes while config loading"
+}
