@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Updated the prompt tunning client to support csv-metadata injection and updated ourput file types to match the new naming convention."
+}

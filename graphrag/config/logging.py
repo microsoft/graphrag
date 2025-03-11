@@ -34,7 +34,7 @@ def enable_logging(log_filepath: str | Path, verbose: bool = False) -> None:
 
 
 def enable_logging_with_config(
-    config: GraphRagConfig, verbose: bool = False
+    config: GraphRagConfig, verbose: bool = False, filename: str = "indexing-engine.log"
 ) -> tuple[bool, str]:
     """Enable logging to a file based on the config.
 
@@ -55,7 +55,7 @@ def enable_logging_with_config(
         (True, str) if logging was enabled.
     """
     if config.reporting.type == ReportingType.file:
-        log_path = Path(config.reporting.base_dir) / "indexing-engine.log"
+        log_path = Path(config.reporting.base_dir) / filename
         enable_logging(log_path, verbose)
         return (True, str(log_path))
     return (False, "")
