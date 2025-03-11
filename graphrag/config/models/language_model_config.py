@@ -88,10 +88,7 @@ class LanguageModelConfig(BaseModel):
             If the model name is not recognized.
         """
         # Type should be contained by the registered models
-        if (
-            self.type not in ModelFactory.get_chat_models()
-            and self.type not in ModelFactory.get_embedding_models()
-        ):
+        if not ModelFactory.is_supported_model(self.type):
             msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
             raise KeyError(msg)
 
