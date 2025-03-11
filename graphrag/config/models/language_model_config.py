@@ -92,9 +92,8 @@ class LanguageModelConfig(BaseModel):
             self.type not in ModelFactory.get_chat_models()
             and self.type not in ModelFactory.get_embedding_models()
         ):
-            raise KeyError(
-                f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
-            )
+            msg = f"Model type {self.type} is not recognized, must be one of {ModelFactory.get_chat_models() + ModelFactory.get_embedding_models()}."
+            raise KeyError(msg)
 
     model: str = Field(description="The LLM model to use.")
     encoding_model: str = Field(
@@ -181,7 +180,7 @@ class LanguageModelConfig(BaseModel):
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.api_version is None or self.api_version.strip() == ""):
-            raise AzureApiVersionMissingError(self.type.value)
+            raise AzureApiVersionMissingError(self.type)
 
     deployment_name: str | None = Field(
         description="The deployment name to use for the LLM service.",
@@ -202,7 +201,7 @@ class LanguageModelConfig(BaseModel):
             self.type == ModelType.AzureOpenAIChat
             or self.type == ModelType.AzureOpenAIEmbedding
         ) and (self.deployment_name is None or self.deployment_name.strip() == ""):
-            raise AzureDeploymentNameMissingError(self.type.value)
+            raise AzureDeploymentNameMissingError(self.type)
 
     organization: str | None = Field(
         description="The organization to use for the LLM service.",
