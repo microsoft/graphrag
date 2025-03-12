@@ -12,6 +12,7 @@ Identify the relations and structure of the community of interest, specifically 
 """
 
 K = 15
+LIMIT = 15
 MAX_TOKEN_COUNT = 2000
 MIN_CHUNK_SIZE = 200
 N_SUBSET_MAX = 300

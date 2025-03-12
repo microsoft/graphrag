@@ -9,7 +9,7 @@ from graphrag.prompt_tune.template.community_report_summarization import (
     COMMUNITY_REPORT_SUMMARIZATION_PROMPT,
 )
 
-COMMUNITY_SUMMARIZATION_FILENAME = "community_report.txt"
+COMMUNITY_SUMMARIZATION_FILENAME = "community_report_graph.txt"
 
 
 def create_community_summarization_prompt(

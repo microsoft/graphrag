@@ -3,8 +3,8 @@
 
 """A module containing load method definition."""
 
+import json
 import logging
-from io import BytesIO
 
 import pandas as pd
 
@@ -16,19 +16,23 @@ from graphrag.storage.pipeline_storage import PipelineStorage
 log = logging.getLogger(__name__)
 
 
-async def load_csv(
+async def load_json(
     config: InputConfig,
     progress: ProgressLogger | None,
     storage: PipelineStorage,
 ) -> pd.DataFrame:
-    """Load csv inputs from a directory."""
-    log.info("Loading csv files from %s", config.base_dir)
+    """Load json inputs from a directory."""
+    log.info("Loading json files from %s", config.base_dir)
 
     async def load_file(path: str, group: dict | None) -> pd.DataFrame:
         if group is None:
             group = {}
-        buffer = BytesIO(await storage.get(path, as_bytes=True))
-        data = pd.read_csv(buffer, encoding=config.encoding)
+        text = await storage.get(path, encoding=config.encoding)
+        as_json = json.loads(text)
+        # json file could just be a single object, or an array of objects
+        rows = as_json if isinstance(as_json, list) else [as_json]
+        data = pd.DataFrame(rows)
+
         additional_keys = group.keys()
         if len(additional_keys) > 0:
             data[[*additional_keys]] = data.apply(

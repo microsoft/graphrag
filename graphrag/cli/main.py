@@ -11,14 +11,10 @@ from typing import Annotated
 
 import typer
 
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.enums import IndexingMethod, SearchMethod
 from graphrag.logger.types import LoggerType
-from graphrag.prompt_tune.defaults import (
-    MAX_TOKEN_COUNT,
-    MIN_CHUNK_SIZE,
-    N_SUBSET_MAX,
-    K,
-)
+from graphrag.prompt_tune.defaults import LIMIT, MAX_TOKEN_COUNT, N_SUBSET_MAX, K
 from graphrag.prompt_tune.types import DocSelectionType
 
 INVALID_METHOD_ERROR = "Invalid method"
@@ -274,6 +270,12 @@ def _prompt_tune_cli(
             ),
         ),
     ] = None,
+    verbose: Annotated[
+        bool, typer.Option(help="Run the prompt tuning pipeline with verbose logging")
+    ] = False,
+    logger: Annotated[
+        LoggerType, typer.Option(help="The progress logger to use.")
+    ] = LoggerType.RICH,
     domain: Annotated[
         str | None,
         typer.Option(
@@ -300,7 +302,7 @@ def _prompt_tune_cli(
         typer.Option(
             help="The number of documents to load when --selection-method={random,top}."
         ),
-    ] = 15,
+    ] = LIMIT,
     max_tokens: Annotated[
         int, typer.Option(help="The max token count for prompt generation.")
     ] = MAX_TOKEN_COUNT,
@@ -311,8 +313,17 @@ def _prompt_tune_cli(
         ),
     ] = 2,
     chunk_size: Annotated[
-        int, typer.Option(help="The max token count for prompt generation.")
-    ] = MIN_CHUNK_SIZE,
+        int,
+        typer.Option(
+            help="The size of each example text chunk. Overrides chunks.size in the configuration file."
+        ),
+    ] = graphrag_config_defaults.chunks.size,
+    overlap: Annotated[
+        int,
+        typer.Option(
+            help="The overlap size for chunking documents. Overrides chunks.overlap in the configuration file"
+        ),
+    ] = graphrag_config_defaults.chunks.overlap,
     language: Annotated[
         str | None,
         typer.Option(
@@ -343,10 +354,13 @@ def _prompt_tune_cli(
             root=root,
             config=config,
             domain=domain,
+            verbose=verbose,
+            logger=logger,
             selection_method=selection_method,
             limit=limit,
             max_tokens=max_tokens,
             chunk_size=chunk_size,
+            overlap=overlap,
             language=language,
             discover_entity_types=discover_entity_types,
             output=output,
