@@ -196,3 +196,7 @@ astrotechnician
 epitheg
 unspooled
 unnavigated
+
+# Names
+Hochul
+Ashish
